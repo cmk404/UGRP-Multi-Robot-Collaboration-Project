@@ -180,6 +180,72 @@ def test_teacher_interference_is_typed_infrastructure_only(tmp_path,export_api):
     assert all(path.read_bytes()==data for path,data in before.items())
 
 
+def monitored_teacher_interference_fixture(tmp_path):
+    incident, launcher, manager, raw = teacher_interference_fixture(tmp_path)
+    old = launcher.parent
+    collection = old.with_name('route-teachers-managed-v2')
+    old.rename(collection)
+    launcher = collection/'launcher.json'
+    manager = collection/'managed/south-train-a/manifest.json'
+    raw = collection/'raw/south-train-a'
+    foreign = {'pid': 90, 'cwd': '/unrelated/project', 'reason': 'foreign_test_or_torch_job'}
+    data = json.loads(manager.read_text()); data['output'] = str(raw)
+    put(manager.parent, manager.name, data)
+    data = json.loads(launcher.read_text())
+    data.update(status='foreign_interference_abort', launcher_source_sha='b'*40,
+                foreign_interference={'processes':[foreign]},
+                cases=[{'id':'south-train-a','raw':str(raw),
+                        'status':'aborted_foreign_interference_during_run',
+                        'run':{'pid':12,'exit_code':130,'timed_out':False,
+                               'foreign_interference':{'processes':[foreign]}}},
+                       {'id':'south-train-b','status':'unstarted_foreign_interference'},
+                       {'id':'south-development','status':'unstarted_foreign_interference'}])
+    put(launcher.parent, launcher.name, data)
+    data = json.loads(incident.read_text())
+    data.update(collection=str(collection), launcher_source_sha='b'*40,
+                launcher_sha256=hashlib.sha256(launcher.read_bytes()).hexdigest(),
+                first_case_status='aborted_foreign_interference_during_run',
+                foreign_owner=foreign,
+                manager_manifest_sha256=hashlib.sha256(manager.read_bytes()).hexdigest())
+    data['own_stop'].pop('owned_pid_readback')
+    data['own_stop']['owned_process_group_gone'] = True
+    current = put(incident.parent, 'teacher-interference-abort-v2.json', data)
+    return current, launcher, manager, raw
+
+
+def test_monitored_teacher_abort_keeps_new_source_and_no_robot_verdict(tmp_path,export_api):
+    convert, EA = export_api
+    incident, launcher, manager, raw = monitored_teacher_interference_fixture(tmp_path)
+    manifest = convert(incident, tmp_path/'export')
+    events = EA(str(tmp_path/'export')).Reload()
+    assert manifest['complete'] is True
+    assert manifest['source'] == str(incident)
+    assert manifest['metadata']['report_provenance']['incident']['path'] == str(incident)
+    assert manifest['metadata']['report_provenance']['manager_sha256'] == hashlib.sha256(manager.read_bytes()).hexdigest()
+    assert events.Scalars('infrastructure/unstarted_cases')[0].value == 2
+    assert all(tag.startswith('infrastructure/') for tag in events.Tags()['scalars'])
+    assert manifest['videos'] == []
+    assert not (raw/'result.json').exists()
+
+
+@pytest.mark.parametrize('damage', ('foreign_owner', 'group_cleanup', 'manager_hash', 'collection_escape', 'unstarted_status'))
+def test_monitored_teacher_abort_rejects_broken_provenance(tmp_path,export_api,damage):
+    convert, _ = export_api
+    incident, launcher, manager, raw = monitored_teacher_interference_fixture(tmp_path)
+    data = json.loads(incident.read_text())
+    if damage == 'foreign_owner': data['foreign_owner']['pid'] = 91
+    elif damage == 'group_cleanup': data['own_stop']['owned_process_group_gone'] = False
+    elif damage == 'manager_hash': data['manager_manifest_sha256'] = '0'*64
+    elif damage == 'collection_escape': data['collection'] = str(tmp_path/'elsewhere'/'route-teachers-managed-v2')
+    elif damage == 'unstarted_status':
+        state = json.loads(launcher.read_text()); state['cases'][1]['status'] = 'teacher_failed'
+        put(launcher.parent, launcher.name, state)
+        data['launcher_sha256'] = hashlib.sha256(launcher.read_bytes()).hexdigest()
+    put(incident.parent, incident.name, data)
+    with pytest.raises(ValueError, match='Teacher infrastructure'):
+        convert(incident, tmp_path/'export')
+
+
 @pytest.mark.parametrize('damage',('launcher_hash','manager_exit','physical_result','pid_readback','unstarted_raw'))
 def test_teacher_interference_rejects_mismatched_or_reclassified_source(tmp_path,export_api,damage):
     convert,_=export_api

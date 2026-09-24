@@ -794,38 +794,70 @@ def export_termination_audit(src, w, data):
             'predictions_sha256':data['predictions_sha256']},metrics
 
 
-def export_teacher_infrastructure_abort(src, w, incident):
+def export_teacher_infrastructure_abort(src, w, incident, incident_name='teacher-interference-abort.json'):
     """Import one saved collection interruption, never a robot outcome."""
-    collection = src.root / 'route-teachers-managed'
+    collection = Path(str(incident.get('collection', '')))
+    if (collection.parent != src.root or collection.is_symlink()
+            or not re.fullmatch(r'route-teachers-managed(?:-v[1-9][0-9]*)?', collection.name)):
+        raise ValueError('Teacher infrastructure collection must be a local sibling')
+    prefix = collection.name
     raw = collection / 'raw/south-train-a'
-    launcher = src.read('route-teachers-managed/launcher.json', required=True)
-    manager = src.read('route-teachers-managed/managed/south-train-a/manifest.json', required=True)
-    src.read('route-teachers-managed/raw/south-train-a/episode-setup-only.json', required=True)
-    src.read('route-teachers-managed/raw/south-train-a/scene-manifest.json', required=True)
+    launcher_name = prefix + '/launcher.json'
+    manager_name = prefix + '/managed/south-train-a/manifest.json'
+    setup_name = prefix + '/raw/south-train-a/episode-setup-only.json'
+    scene_name = prefix + '/raw/south-train-a/scene-manifest.json'
+    launcher = src.read(launcher_name, required=True)
+    manager = src.read(manager_name, required=True)
+    src.read(setup_name, required=True)
+    src.read(scene_name, required=True)
     owned = obj(obj(incident.get('own_stop')).get('owned_pid_readback'))
+    stop = obj(incident.get('own_stop'))
+    cleanup = (bool(owned) and not any(value != '' for value in owned.values())
+               and str(stop.get('target_pid')) in owned)
+    case_rows = rows(launcher.get('cases'))
+    monitored = launcher.get('status') == 'foreign_interference_abort'
+    if monitored:
+        first = case_rows[0] if case_rows else {}
+        run = obj(first.get('run'))
+        interference = obj(run.get('foreign_interference'))
+        cleanup = (stop.get('owned_process_group_gone') is True
+                   and type(stop.get('target_pid')) is int and stop['target_pid'] > 0
+                   and run.get('pid') == stop['target_pid'] and run.get('exit_code') == 130
+                   and run.get('timed_out') is False)
+        cases_valid = (len(case_rows) == 3
+                       and first.get('id') == 'south-train-a'
+                       and first.get('status') == incident.get('first_case_status')
+                       == 'aborted_foreign_interference_during_run'
+                       and first.get('raw') == str(raw)
+                       and [c.get('id') for c in case_rows[1:]] == incident.get('unstarted_cases')
+                       and all(c.get('status') == 'unstarted_foreign_interference' for c in case_rows[1:])
+                       and incident.get('foreign_owner') in rows(interference.get('processes'))
+                       and obj(launcher.get('foreign_interference')).get('processes') == interference.get('processes')
+                       and incident.get('manager_manifest_sha256') == src.files[manager_name]['sha256'])
+    else:
+        cases_valid = (launcher.get('status') == 'collection_incomplete'
+                       and incident.get('first_case_status') == 'aborted_by_owner_due_concurrent_foreign_simulation'
+                       and len(case_rows) == 1 and case_rows[0].get('id') == 'south-train-a')
     unstarted = incident.get('unstarted_cases')
     elapsed = incident.get('elapsed_collection_wall_s')
     source_tree = obj(obj(manager.get('source')).get('execution_tree')).get('sha256')
     if (incident.get('schema') != 'ugrp.teacher_collection_interference_abort.v1'
             or incident.get('collection') != str(collection)
-            or incident.get('teacher_source_sha') != '931d910998a94361342c372ec2675c475daa625f'
-            or incident.get('launcher_source_sha') != 'e0d330da0045b285bcf7707d5707c63f608a5fd6'
+            or not re.fullmatch(r'[0-9a-f]{40}', str(incident.get('teacher_source_sha', '')))
+            or not re.fullmatch(r'[0-9a-f]{40}', str(incident.get('launcher_source_sha', '')))
             or incident.get('first_case') != 'south-train-a'
-            or incident.get('first_case_status') != 'aborted_by_owner_due_concurrent_foreign_simulation'
+            or not cases_valid
             or incident.get('physical_success', False) is not None
             or incident.get('admitted_for_training') is not False
             or unstarted != ['south-train-b', 'south-development']
             or not finite(elapsed) or elapsed <= 0
-            or incident.get('launcher_sha256') != src.files['route-teachers-managed/launcher.json']['sha256']
+            or incident.get('launcher_sha256') != src.files[launcher_name]['sha256']
             or launcher.get('schema') != 'ugrp.act.route_teacher_launcher.v1'
-            or launcher.get('status') != 'collection_incomplete'
             or launcher.get('teacher_source_sha') != incident.get('teacher_source_sha')
             or launcher.get('launcher_source_sha') != incident.get('launcher_source_sha')
             or not finite(launcher.get('elapsed_wall_s'))
             or not math.isclose(launcher['elapsed_wall_s'], elapsed, rel_tol=1e-9)
             or launcher.get('input_sha256_before') != launcher.get('input_sha256_after')
-            or len(rows(launcher.get('cases'))) != 1
-            or rows(launcher['cases'])[0].get('id') != 'south-train-a'
             or manager.get('schema') != 'ugrp.simulation_run.v1'
             or manager.get('workflow_id') != 'dispatch-skills'
             or manager.get('status') != 'interrupted'
@@ -841,8 +873,7 @@ def export_teacher_infrastructure_abort(src, w, incident):
             or obj(incident.get('own_stop')).get('signal') != 'SIGINT'
             or obj(incident.get('own_stop')).get('exit_code') != 130
             or obj(incident.get('own_stop')).get('all_known_own_pids_gone') is not True
-            or not owned or any(value != '' for value in owned.values())
-            or str(obj(incident.get('own_stop')).get('target_pid')) not in owned
+            or not cleanup
             or incident.get('foreign_processes_touched') is not False
             or not raw.is_dir() or (raw / 'result.json').exists()
             or any((collection / 'raw' / case).exists() or
@@ -853,12 +884,12 @@ def export_teacher_infrastructure_abort(src, w, incident):
                'infrastructure/elapsed_collection_wall_s': elapsed,
                'infrastructure/interrupted_manager_exit_code': 130}
     for tag, value in metrics.items(): w.scalar(tag, value)
-    provenance = {'incident': {'path': str(src.root / 'teacher-interference-abort.json'),
-                               'sha256': src.files['teacher-interference-abort.json']['sha256']},
-                  'launcher_sha256': src.files['route-teachers-managed/launcher.json']['sha256'],
-                  'manager_sha256': src.files['route-teachers-managed/managed/south-train-a/manifest.json']['sha256'],
-                  'raw_setup_sha256': src.files['route-teachers-managed/raw/south-train-a/episode-setup-only.json']['sha256'],
-                  'raw_scene_sha256': src.files['route-teachers-managed/raw/south-train-a/scene-manifest.json']['sha256']}
+    provenance = {'incident': {'path': str(src.root / incident_name),
+                               'sha256': src.files[incident_name]['sha256']},
+                  'launcher_sha256': src.files[launcher_name]['sha256'],
+                  'manager_sha256': src.files[manager_name]['sha256'],
+                  'raw_setup_sha256': src.files[setup_name]['sha256'],
+                  'raw_scene_sha256': src.files[scene_name]['sha256']}
     w.text('infrastructure/status_and_scope', {'status': incident['first_case_status'],
         'started_attempts': 1, 'unstarted_cases': unstarted,
         'physical_success': None, 'physical_failure': None,
@@ -881,7 +912,8 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
     direct_benchmark = source.is_file() and source.name == 'runtime-benchmark-comparison.json'
-    direct_incident = source.is_file() and source.name == 'teacher-interference-abort.json'
+    direct_incident = source.is_file() and bool(re.fullmatch(
+        r'teacher-interference-abort(?:-v[1-9][0-9]*)?\.json', source.name))
     source_root = source.parent if direct_benchmark or direct_incident else source
     if not source_root.is_dir() or (source.is_file() and not (direct_benchmark or direct_incident)):
         raise ValueError(f'Not a supported source directory or benchmark file: {source}')
@@ -893,7 +925,7 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
         kind, data = 'act-runtime-benchmark', src.read('runtime-benchmark-comparison.json', required=True)
     elif direct_incident:
         result = None
-        kind, data = 'teacher-infrastructure-abort', src.read('teacher-interference-abort.json', required=True)
+        kind, data = 'teacher-infrastructure-abort', src.read(source.name, required=True)
     else:
         result = src.read('result.json')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
@@ -935,7 +967,7 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
         if kind == 'training': meta, metrics = export_training(src, w, data)
         elif kind == 'act-finalization': meta, metrics = export_finalization(src, w, data)
         elif kind == 'act-runtime-benchmark': meta, metrics = export_runtime_benchmark(src, w, data)
-        elif kind == 'teacher-infrastructure-abort': meta, metrics = export_teacher_infrastructure_abort(src, w, data)
+        elif kind == 'teacher-infrastructure-abort': meta, metrics = export_teacher_infrastructure_abort(src, w, data, source.name)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
         elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
         elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
