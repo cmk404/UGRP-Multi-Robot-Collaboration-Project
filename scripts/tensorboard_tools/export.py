@@ -57,6 +57,79 @@ def slug(value): return re.sub(r'[^a-zA-Z0-9._-]+', '-', str(value)).strip('-')[
 def stable_digest(value): return sha(json.dumps(value, sort_keys=True, allow_nan=False).encode())
 
 
+def coverage_document(path):
+    """Read an external coverage correction; absence or malformed content is fatal."""
+    path = Path(path)
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
+        raise ValueError(f'Coverage audit missing, linked, or oversized: {path}')
+    data = path.read_bytes()
+    try: audit = json.loads(data)
+    except (ValueError, UnicodeError) as exc:
+        raise ValueError(f'Invalid coverage audit JSON: {path}') from exc
+    if not isinstance(audit, dict) or audit.get('schema') != 'ugrp.act_request_coverage_audit.v1':
+        raise ValueError('Coverage audit schema mismatch')
+    raw = audit.get('source_raw')
+    if not isinstance(raw, str) or not Path(raw).is_absolute():
+        raise ValueError('Coverage audit source_raw must be absolute')
+    return audit, {'path': str(path.resolve()), 'sha256': sha(data), 'size': len(data)}
+
+
+def load_coverage_audit(src, path):
+    """Verify an orphan capture without asserting that either worker got a request."""
+    audit, provenance = coverage_document(path)
+    if Path(provenance['path']).is_relative_to(src.root):
+        raise ValueError('Coverage audit must be outside the raw source')
+    if audit['source_raw'] != str(src.root):
+        raise ValueError('Coverage audit source_raw mismatch')
+    decisions = src.read('pair-decisions.json', required=True)
+    if not isinstance(decisions, list) or src.files['pair-decisions.json']['sha256'] != audit.get('pair_decisions_sha256'):
+        raise ValueError('Coverage audit pair-decisions SHA mismatch')
+    act_rows = [row for row in rows(decisions) if row.get('kind') in
+                ('act_carry', 'act_stale_prediction', 'act_inference_error')]
+    if not act_rows:
+        raise ValueError('Coverage audit requires recorded ACT requests')
+    known = sum(isinstance(inp.get('wire_sha256'), str) and bool(re.fullmatch(
+        r'[0-9a-fA-F]{64}', inp['wire_sha256']))
+        for row in act_rows for inp in obj(row.get('inputs')).values())
+    if type(audit.get('recorded_wire_request_rows')) is not int or audit['recorded_wire_request_rows'] != known:
+        raise ValueError('Coverage audit recorded request count mismatch')
+    groups = audit.get('orphan_capture_groups')
+    bounds = audit.get('possible_unlogged_slots')
+    if (not isinstance(groups, list) or not groups or not isinstance(bounds, dict)
+            or type(bounds.get('min')) is not int or bounds['min'] != 0
+            or type(bounds.get('max')) is not int or bounds['max'] != 2 * len(groups)
+            or audit.get('worker_receipt_independently_verified') is not False):
+        raise ValueError('Coverage audit orphan bounds or worker-receipt scope invalid')
+    referenced = set()
+    def collect(value):
+        if isinstance(value, dict):
+            if isinstance(value.get('path'), str): referenced.add(value['path'])
+            for child in value.values(): collect(child)
+        elif isinstance(value, list):
+            for child in value: collect(child)
+    collect(act_rows)
+    seen = set()
+    for group in groups:
+        if not isinstance(group, dict) or not isinstance(group.get('tag'), str):
+            raise ValueError('Coverage audit orphan capture group invalid')
+        tag = group['tag']
+        if not re.fullmatch(r'act-carry-[0-9]+-attempt-[0-9]+', tag) or tag in seen:
+            raise ValueError('Coverage audit orphan capture tag invalid or duplicated')
+        seen.add(tag)
+        files = group.get('files')
+        if not isinstance(files, dict) or set(files) != {'r1', 'r3', 'top'}:
+            raise ValueError('Coverage audit requires r1, r3, and TOP capture hashes')
+        for slot in ('r1', 'r3', 'top'):
+            ref = files[slot]
+            expected = f'rgb/{tag}-{slot}.jpg'
+            if (not isinstance(ref, dict) or ref.get('path') != expected
+                    or not isinstance(ref.get('sha256'), str)
+                    or not re.fullmatch(r'[0-9a-fA-F]{64}', ref['sha256'])
+                    or expected in referenced or src.image(ref) is None):
+                raise ValueError(f'Coverage audit orphan image missing, referenced, or hash mismatched: {expected}')
+    return audit, provenance
+
+
 def inside(root, relative):
     if not isinstance(relative, str) or Path(relative).is_absolute(): return None
     p = root / relative
@@ -224,8 +297,10 @@ def export_training(src, w, data):
             'dataset_sha256': data.get('dataset_sha256'), 'complete': data.get('complete')}, {}
 
 
-def export_execution(src, w, result, max_images):
+def export_execution(src, w, result, max_images, coverage_audit=None):
     if result.get('schema_version') == RUN_SCHEMA:
+        if coverage_audit is not None:
+            raise ValueError('Coverage audit applies only to ACT dispatch evidence, not communication runs')
         return export_communication(src, w, result)
     cfg = obj(result.get('config')); usage = obj(result.get('usage'))
     if (src.root / 'turns.json').is_file(): family = 'jev-motion'
@@ -260,6 +335,8 @@ def export_execution(src, w, result, max_images):
             meta['command_count_scope'] = 'recorded raw action rows only; excludes setup descriptions and internal macro servo commands'
     carries = []
     act_predictions = []
+    if coverage_audit is not None and family != 'dispatch-act':
+        raise ValueError('Coverage audit applies only to ACT dispatch evidence')
     if family == 'dispatch-act':
         entries = rows(src.read('pair-decisions.json', required=True))
         carries = [(i, row) for i, row in enumerate(entries) if row.get('kind') == 'act_carry']
@@ -300,13 +377,28 @@ def export_execution(src, w, result, max_images):
         meta['act_request_count_scope'] = 'saved input rows with a 64-character wire hash; worker receipt not independently verified'
         meta['unconfirmed_act_slots'] = unconfirmed_slots
         meta['unverified_saved_act_inputs'] = unverified_saved_inputs
-        meta['act_request_verification_complete'] = not (unverified_saved_inputs or unconfirmed_slots)
+        meta['act_request_verification_complete'] = not (unverified_saved_inputs or unconfirmed_slots or coverage_audit)
+        if coverage_audit is not None:
+            bounds = coverage_audit['possible_unlogged_slots']
+            meta['act_recorded_wire_request_rows'] = attempted
+            meta['act_possible_unlogged_slots_min'] = bounds['min']
+            meta['act_possible_unlogged_slots_max'] = bounds['max']
+            meta['act_possible_request_slot_total_min'] = attempted + bounds['min']
+            meta['act_possible_request_slot_total_max'] = attempted + bounds['max']
+            meta['act_worker_received_total_independently_verified'] = False
+            meta['act_coverage_orphan_capture_groups'] = [g['tag'] for g in coverage_audit['orphan_capture_groups']]
+            meta['act_request_count_scope'] += '; external hashed orphan capture leaves possible unlogged slots, not confirmed worker calls'
+            w.text('inference_errors/coverage_audit', coverage_audit)
         metrics['execution/act_accepted_responses'] = accepted_responses
         metrics['execution/act_stale_responses'] = stale_responses
         metrics['execution/act_error_responses'] = error_responses
         metrics['execution/act_verified_error_attempts'] = verified_error_attempts
         metrics['execution/act_unverified_error_attempts'] = unverified_error_attempts
         metrics['execution/act_unconfirmed_slots'] = unconfirmed_slots
+        if coverage_audit is not None:
+            metrics['execution/act_recorded_wire_request_rows'] = attempted
+            metrics['execution/act_possible_unlogged_slots_min'] = coverage_audit['possible_unlogged_slots']['min']
+            metrics['execution/act_possible_unlogged_slots_max'] = coverage_audit['possible_unlogged_slots']['max']
         # llm_calls excludes local ACT. Preserve an explicit total if supplied.
         if finite(result.get('model_calls')):
             meta['reported_model_calls'] = result['model_calls']
@@ -317,6 +409,8 @@ def export_execution(src, w, result, max_images):
                                      if finite(external) else
                                      'saved ACT input rows with wire hash only; external calls unknown; '
                                      'unconfirmed ACT slots excluded')
+        if coverage_audit is not None:
+            meta['model_calls_scope'] += '; orphan-capture possible requests excluded, so the displayed value is a recorded lower bound'
         if not finite(metrics['result/commands']):
             issued = src.read('issued-commands.json')
             if isinstance(issued, dict):
@@ -487,7 +581,8 @@ def export_termination_audit(src, w, data):
             'predictions_sha256':data['predictions_sha256']},metrics
 
 
-def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False):
+def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=False,
+            coverage_audit=None):
     """Export one source once. Existing destinations are rejected (no duplicate steps)."""
     source, output = Path(source).resolve(), Path(output).resolve()
     if not source.is_dir(): raise ValueError(f'Not a source directory: {source}')
@@ -511,17 +606,24 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
     elif (source / 'progress.json').exists():
         kind, data = 'training', {'progress': src.read('progress.json', required=True)}
     else: raise ValueError('No complete result.json or supported training progress; source left untouched')
+    coverage = coverage_provenance = None
+    if coverage_audit is not None:
+        if kind != 'execution':
+            raise ValueError('Coverage audit applies only to execution evidence')
+        coverage, coverage_provenance = load_coverage_audit(src, coverage_audit)
     at = time.time(); output.mkdir(parents=True, exist_ok=False)
     temporary = tempfile.TemporaryDirectory(prefix='ugrp-tensorboard-export-')
     w = Writer(Path(temporary.name), at)
     manifest = {'schema': 'ugrp.tensorboard-export.v1', 'source': str(source), 'exported_at_s': at,
                 'event_wall_time': 'export time, not historical execution time', 'exporter': exporter_version(), 'complete': False}
+    if coverage_provenance is not None:
+        manifest['external_coverage_audit'] = coverage_provenance
     try:
         if kind == 'training': meta, metrics = export_training(src, w, data)
         elif kind == 'cloud-job': meta, metrics = export_cloud_job(src, w, data)
         elif kind == 'hardware-probe': meta, metrics = export_hardware_probe(src, w, data)
         elif kind == 'termination-audit': meta, metrics = export_termination_audit(src, w, data)
-        else: meta, metrics = export_execution(src, w, data, max_images)
+        else: meta, metrics = export_execution(src, w, data, max_images, coverage)
         videos = []
         video_names = ('motion.mp4', 'execution.mp4')
         if isinstance(result, dict) and result.get('schema_version') == RUN_SCHEMA:
@@ -547,6 +649,10 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
             current = inside(src.root, relative)
             if current is None or sha(current.read_bytes()) != record['sha256']:
                 raise ValueError(f'Source changed during export: {relative}; no event file published')
+        if coverage_provenance is not None:
+            current = Path(coverage_provenance['path'])
+            if not current.is_file() or sha(current.read_bytes()) != coverage_provenance['sha256']:
+                raise ValueError('Coverage audit changed during export; no event file published')
         for event_file in Path(temporary.name).iterdir():
             shutil.copy2(event_file, output / event_file.name)
         manifest['complete'] = True
@@ -567,10 +673,22 @@ def main():
     p.add_argument('--output', type=Path, required=True, help='New export collection directory')
     p.add_argument('--max-images', type=int, default=8, help='Evenly sampled decisions per run, including first/last; 0 disables images')
     p.add_argument('--media-port', type=int, default=6007)
+    p.add_argument('--coverage-audit', type=Path, action='append', default=[],
+                   help='External ACT request coverage JSON; repeat per audited --source, mapped by source_raw')
     args = p.parse_args()
     if not 0 <= args.max_images <= 100: p.error('--max-images must be in 0..100')
     if not 1 <= args.media_port <= 65535: p.error('invalid media port')
     sources = list(dict.fromkeys(x.resolve() for x in args.source))
+    coverage_by_source = {}
+    for path in args.coverage_audit:
+        try: audit, _ = coverage_document(path)
+        except ValueError as exc: p.error(str(exc))
+        source_raw = Path(audit['source_raw'])
+        if source_raw not in sources:
+            p.error(f'coverage audit source_raw is not a selected --source: {source_raw}')
+        if source_raw in coverage_by_source:
+            p.error(f'duplicate coverage audits for source: {source_raw}')
+        coverage_by_source[source_raw] = path
     output = args.output.resolve()
     if any(output == s or output.is_relative_to(s) for s in sources): p.error('output must be outside every source directory')
     if output.exists(): p.error('output must be new; existing events are never overwritten or appended')
@@ -579,7 +697,9 @@ def main():
     for source in sources:
         name = slug(source.parent.name) + '__' + slug(source.name) + '__' + sha(str(source).encode())[:8]
         try:
-            m = convert(source, output/name, max_images=args.max_images, media_port=args.media_port)
+            m = convert(source, output/name, max_images=args.max_images,
+                        media_port=args.media_port,
+                        coverage_audit=coverage_by_source.get(source))
             exported.append({'name': name, 'source': str(source), 'counts': m['counts']})
             print(json.dumps(exported[-1], ensure_ascii=False), flush=True)
         except (ValueError, OSError) as e:
