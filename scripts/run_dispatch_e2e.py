@@ -299,6 +299,8 @@ def main(argv=None):
                    help='bounded asynchronous RGB control and isolated observer; separately versioned candidate')
     p.add_argument('--rolling-visual-servo',action='store_true',
                    help='experimental solo approach: bounded drive while paired RGB is captured; requires realtime control and open map')
+    p.add_argument('--bounded-carrier-relink',action='store_true',
+                   help='experimental solo carry: finite current-RGB carrier revalidation across TOP cargo occlusion; requires rolling realtime open-map skill')
     p.add_argument('--planning-rounds',type=int,default=8)
     p.add_argument('--max-replans',type=int,default=2)
     p.add_argument('--rounds',type=int,default=24)
@@ -333,6 +335,8 @@ def main(argv=None):
     if args.executor!='skills' and (args.viewer or args.task):p.error('--viewer/--task use the existing skills executor')
     if args.rolling_visual_servo and (args.executor!='skills' or not args.realtime_control):
         p.error('--rolling-visual-servo requires skills --realtime-control')
+    if args.bounded_carrier_relink and not args.rolling_visual_servo:
+        p.error('--bounded-carrier-relink requires --rolling-visual-servo')
     if args.task and args.plan_replay:p.error('--task requires new planning; cannot change a replayed plan')
     if args.carry_act_model and not args.carry_act_python:p.error('ACT interpreter required')
     if args.carry_max_steps is not None and args.carry_max_steps<=0:p.error('positive carry-max-steps required')

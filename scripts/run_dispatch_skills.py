@@ -25,6 +25,8 @@ if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from harness.camera_motion_identity import ImageMotionIdentity
 from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply
 from harness.dispatch_skill_binding import SkillBindings, ImageRoute
+from harness.dispatch_skill_binding import (_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
+    _CARRIER_RELINK_MAX_ELAPSED_S,_CARRIER_RELINK_MAX_MOTION_PX)
 from harness.dispatch_feasibility import negotiate_executable
 from harness.dispatch_yield import SoloYield,WheelObserver
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
@@ -72,6 +74,7 @@ class SkillScene(DispatchScene):
         self.efficient_capture=False
         self.realtime_control=False
         self.rolling_visual_servo=False
+        self.bounded_carrier_relink=False
         self._decision_workers=None
         self._solo_pending=None
         self._solo_pending_lease=None
@@ -326,8 +329,11 @@ class SkillScene(DispatchScene):
         fast_servo=fast_servo_map_supported(authored,realtime_control=self.realtime_control)
         if getattr(self,'rolling_visual_servo',False) and not fast_servo:
             raise ValueError('rolling visual servo requires realtime dispatch_open without internal obstacles')
+        if getattr(self,'bounded_carrier_relink',False) and not fast_servo:
+            raise ValueError('bounded carrier relink requires realtime dispatch_open without internal obstacles')
         self.solo=SoloBoxTransport(robot_id=self.bindings.solo,
-            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo),
+            navigator=ImageRoute(self.bindings,'box',time_aware_box_reacquisition=fast_servo,
+                                 bounded_carrier_relink=self.bounded_carrier_relink),
             attachment_min_saturation=150,release_refine_ground_fit=True,
             fast_near_field_servo=fast_servo)
         self.solo_executor=VisualMacroExecutor(self.ports[self.bindings.solo],
@@ -1079,8 +1085,11 @@ def run(args):
     scene.efficient_capture=getattr(args,'efficient_capture',False)
     scene.realtime_control=bool(getattr(args,'realtime_control',False))
     scene.rolling_visual_servo=bool(getattr(args,'rolling_visual_servo',False))
+    scene.bounded_carrier_relink=bool(getattr(args,'bounded_carrier_relink',False))
     if scene.rolling_visual_servo and not scene.realtime_control:
         raise ValueError('rolling visual servo requires realtime control')
+    if scene.bounded_carrier_relink and not (scene.rolling_visual_servo and scene.realtime_control):
+        raise ValueError('bounded carrier relink requires rolling realtime control')
     started=time.monotonic();pair=team=None
     motion_started_wall=motion_started_sim=None
     result={'source_sha':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
@@ -1100,6 +1109,12 @@ def run(args):
             'near_motion_reobserve_buffer_m':NEAR_MOTION_REOBSERVE_BUFFER_M,
             'final_entry_settle_s':FINAL_ENTRY_SETTLE_S,
             'issued_command_integral_is_not_measured_travel':True},
+        'bounded_carrier_relink':{'requested':scene.bounded_carrier_relink,'applied':False,
+            'scope':'solo carry only, realtime dispatch_open with rolling approach',
+            'max_total_occluded_frames':_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
+            'max_elapsed_s':_CARRIER_RELINK_MAX_ELAPSED_S,
+            'max_cumulative_visual_motion_px':_CARRIER_RELINK_MAX_MOTION_PX,
+            'final_slot_requires_direct_top_cargo':True},
         'input_boundary':'own fixed RGB + common fixed TOP RGB + static authored map + own issued commands + peer claims; referee output only'}
     try:
         scene.open();scene.deadline=started+args.max_wall_s
@@ -1187,6 +1202,7 @@ def run(args):
         motion_started_wall=time.monotonic();motion_started_sim=scene.time()
         scene.start_solo()
         result['rolling_approach']['applied']=scene.rolling_visual_servo
+        result['bounded_carrier_relink']['applied']=scene.bounded_carrier_relink
         pair=BoundPairSkill(scene,scene.bindings,skill,grasp,stages,grasp_root,reference,identity)
         while not scene.bindings.permission('beam','APPROACH'):scene.step(.2)
         result['phase']='APPROACH';result['pair_approach']=pair.approach()

@@ -1,0 +1,33 @@
+{
+  "schema": "ugrp.bounded_carrier_relink_saved_boundary_diagnosis.v1",
+  "scope": "Offline actor-RGB replay only; not a new native physics trial or mission success.",
+  "source_sha": "c78174e129296da3ac1efea71c0e61e36092af80",
+  "fixture_manifest": "tests/fixtures/bounded_carrier_relink/manifest.json",
+  "method": "Reconstruct ImageRoute immediately before the last cargo-specific TOP KLT observations from saved actor decision metadata and exact saved TOP/own JPEGs. Replay the last KLT frame, the three original linked-carrier observations, then the failed next image through the opt-in controller. The failed capture timestamp/frame ID is approximated from the previous completed row only for the finite freshness check because the failed worker produced no committed decision row; its RGB bytes are exact.",
+  "boundaries": [
+    {
+      "raw": "outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1",
+      "original_failed_index": 346,
+      "last_cargo_specific_klt_index": 342,
+      "legacy_proxy_indices": [343, 344, 345],
+      "replay_result": "fourth proxy observation accepted by current carrier revalidation",
+      "fresh_linked_corner_count": 28,
+      "old_cloud_overlap_fraction": 1.0,
+      "current_orange_foreground_fraction": 0.9642857142857143,
+      "current_own_attachment": "saved adjacent normalized own RGB passes min saturation 150 comotion gate"
+    },
+    {
+      "raw": "outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-2",
+      "original_failed_index": 396,
+      "last_cargo_specific_klt_index": 392,
+      "legacy_proxy_indices": [393, 394, 395],
+      "replay_result": "fourth proxy observation accepted by current carrier revalidation",
+      "fresh_linked_corner_count": 22,
+      "old_cloud_overlap_fraction": 1.0,
+      "current_orange_foreground_fraction": 0.6818181818181818,
+      "current_own_attachment": "saved adjacent normalized own RGB passes min saturation 150 comotion gate"
+    }
+  ],
+  "interpretation": "Fresh TOP orange-carrier pixels and a recent cargo-specific KLT-to-carrier visual link can support one more image-based navigation observation. TOP cargo itself remains unresolved in these failed images. Proxy tracking alone does not confirm cargo placement and cannot authorize final slot or release.",
+  "uncertainty": "The thin TOP cyan appearance may reflect chassis occlusion, gripper occlusion, or an edge-on/tilted cargo. The replay does not determine physical pose or prove that a strong direct TOP silhouette later returns. Finite budget exhaustion is an intended fail-closed outcome."
+}

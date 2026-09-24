@@ -79,6 +79,7 @@ class SoloBoxTransport:
         self.steps = 0
         self.goal_confirmations = 0
         self.grip_reobservations = 0
+        self._release_direct_checked = False
 
     @property
     def phase(self):
@@ -101,6 +102,21 @@ class SoloBoxTransport:
         previous_phase = self.box.phase
         recorder=getattr(self.navigator,'record_attachment_top',None)
         if recorder is not None:recorder(previous_phase,top_jpeg)
+        if (previous_phase=='release' and not self._release_direct_checked
+                and isinstance(self.navigator,ImageRoute)
+                and self.navigator.bounded_carrier_relink):
+            # A final-slot sighting on the previous decision cannot silently
+            # authorize this capture's first lowering pose. Recheck both RGB
+            # views before the release phase mutates the arm state.
+            prior=self.box._carry_previous_image
+            attachment=(self.box._compare_attachment(prior,own['image'])
+                        if isinstance(prior,str) else None)
+            features['release_direct_gate']=self.navigator.verify_release_visual(
+                top_jpeg,(attachment,own['image'],own['image']),
+                observed_at_s=own.get('sim_time'),frame_id=own.get('frame_id'),
+                own_sha256=own.get('sha256'))
+            self.box.last_attachment=attachment
+            self._release_direct_checked=True
         action = self.box.decide(own)
         if previous_phase == 'lift' and self.box.phase == 'verify_lift':
             # Establish the visual attachment anchor after lift settling, not
@@ -138,6 +154,7 @@ class SoloBoxTransport:
                     action, features = self.navigator.observe(top_jpeg)
                 if features['done']:
                     self.box.phase = 'release'
+                    self._release_direct_checked=False
                     return {'kind':'wait','duration':.1}, features
                 return action, features
             if len(features['boxes']) != 1:

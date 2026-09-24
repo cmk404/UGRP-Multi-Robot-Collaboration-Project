@@ -1,0 +1,31 @@
+{
+  "schema": "ugrp.bounded_carrier_relink_protocol.v1",
+  "status": "draft_before_v40_source_freeze_or_physical_outcomes",
+  "candidate_source": "new v40 branch from c78174e129296da3ac1efea71c0e61e36092af80; exact source and bundle hashes pending freeze",
+  "prior_evidence": {
+    "rolling_diagnostic_1": "outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-1",
+    "rolling_diagnostic_2": "outputs/dispatch-rolling-servo-20260924/original-rolling-diagnostic-2",
+    "scope": "Both saved v29 diagnostics stopped during solo carry after three linked carrier frames because strong direct TOP cargo was unresolved. Those outcomes remain failures, not v40 results."
+  },
+  "hypothesis": "A previously cargo-correlated TOP carrier can be followed through a short visually supported cyan-silhouette loss if current orange corners relink to the old cloud, their motion agrees with the linked flow, and same-capture own RGB still validates attachment.",
+  "control_boundary": {
+    "opt_in_flag": "--bounded-carrier-relink",
+    "default": false,
+    "requires": "--rolling-visual-servo and realtime dispatch_open without internal obstacles",
+    "first_three_proxy_frames": "Original linked TOP RGB carrier route remains first; relink activates only after the original three-frame cap.",
+    "finite_budget": "At most 12 total carrier-only observations including the original three, at most 3.2 SIM seconds from first proxy observation, and at most 105 pixels summed per-frame visual carrier motion; refreshed cloud does not reset any budget. The first proxy frame must be within 0.6 SIM seconds and after the last cargo-to-carrier visual-link frame.",
+    "direct_priority": "Existing direct cyan and cargo-specific RGB KLT paths remain unchanged outside occlusion. During opt-in occlusion, even one strong cyan component is only provisional and cannot reset the finite proxy budget; recovery requires two consecutive strong current direct TOP cyan observations linked to current carrier motion, prior cargo appearance, and same-capture own attachment. At the final slot a provisional observation issues zero motion, then a new paired frame/time may confirm the stationary silhouette even if TOP JPEG bytes are identical.",
+    "final_delivery": "Current strong directly segmented TOP cyan cargo must be inside the authored slot at each final waypoint observation and again on a fresh capture before the first release pose; carrier proxy alone cannot authorize final delivery or release. The original lowering/open/retract sequence is unchanged after that entry gate.",
+    "input": "Student control uses current own RGB, common TOP RGB, self-issued command history, and authored static map only. Capture time is a freshness guard, not measured motion.",
+    "unchanged": "Original cameras/FOV, rendering, physics/contact, grasp/release motion, weld OFF, owner leases and TTL, evaluation gates."
+  },
+  "offline_acceptance": [
+    "Both saved failure boundaries gain current carrier support from the old linked cloud with current own attachment and distinct TOP/own capture hashes; record exact per-frame support and budgets.",
+    "Nearby different orange object, partial/ambiguous cloud, detached/mismatched/panned own view, stale/repeated captures and exhausted total budget hold or fail closed.",
+    "One or two deceptive cyan components cannot switch identity or reset proxy budget unless the two-view appearance, carrier-motion, frame/time and current own-attachment gates all pass; provisional final-slot observation holds for a second view without placement or release.",
+    "If direct TOP cargo never returns, finite proxy use ends without final placement or release.",
+    "Existing v28/v29 direct/KLT/proxy success fixtures and default-OFF paths retain behavior."
+  ],
+  "physical_claim_boundary": "Saved-frame replay and unit tests are component evidence only. Freeze source, bundle, models, map and run controls before any new native cohort; retain every launch and compare paired physical outcomes without inheriting v28/v29 success.",
+  "limitations": "TOP RGB may show an edge-on or tilted cargo as thin weak cyan, not necessarily chassis occlusion. Carrier continuity is visual proxy evidence and cannot prove cargo pose/contact. No direct cargo return means intentional failure."
+}
