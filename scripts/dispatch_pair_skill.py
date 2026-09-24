@@ -999,6 +999,8 @@ class BoundPairSkill:
     def drive(self,forwards,duration_s=.2):
         self.drive_mecanum({r:dict(forward=v,left=0.,turn=0.) for r,v in forwards.items()},duration_s)
     def stop_dwell(self,*,coarse_audit=None):
+        if coarse_audit is None:
+            return self.drive({r:0. for r in ROBOTS},.25)
         self.drive_mecanum({r:dict(forward=0.,left=0.,turn=0.) for r in ROBOTS},
                            .25,coarse_audit=coarse_audit)
 
