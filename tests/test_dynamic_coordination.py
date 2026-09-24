@@ -145,7 +145,6 @@ def test_recovery_reply_validation_and_recoverable_reasons():
         with pytest.raises(ValueError):
             dyn.validate_recovery_reply(json.dumps(bad), 'q', 'e')
     assert dyn.recoverable(RuntimeError('coarse RGB approach budget exhausted'))
-    assert dyn.recoverable(RuntimeError('diagnostic injected approach failure after a completed approach'))
     assert not dyn.recoverable(RuntimeError('pair perception result/capture provenance mismatch'))
 
 
@@ -173,10 +172,13 @@ def _scene():
 
 def _run_approach(monkeypatch, pair, decisions, **args):
     from scripts import run_dispatch_skills as runner
-    events = []
-    monkeypatch.setattr(dyn, 'consult', lambda *a, **k: (decisions.pop(0), [{'round': 0}]))
+    events, consulted = [], []
+    def consult(team, participants, event, *a, **k):
+        consulted.append(event)
+        return decisions.pop(0), [{'round': 0}]
+    monkeypatch.setattr(dyn, 'consult', consult)
     team = SimpleNamespace(event=lambda *a, **k: events.append(a))
-    result = {'coordination': {'mode': 'dynamic', 'recoveries': []}}
+    result = {'coordination': {'mode': 'dynamic', 'recoveries': [], 'consulted': consulted}}
     namespace = SimpleNamespace(coordination='dynamic', approach_retries=2, **args)
     return runner._approach(pair, _scene(), team, {}, namespace, result), result, events
 
@@ -205,6 +207,10 @@ def test_diagnostic_injection_fails_the_first_completed_approach_only(monkeypatc
     report, result, _ = _run_approach(monkeypatch, pair, ['retry'], diagnostic_fail_approach_once=True)
     assert report['approach_ok'] and pair.backoffs == 1
     assert result['coordination']['recoveries'][0]['diagnostic_injection'] is True
+    # The robots see a real controller stop reason; the injection is output-only.
+    seen = result['coordination']['consulted'][0]
+    assert 'diagnostic_injection' not in seen
+    assert seen['failure']['reason'] == 'coarse RGB approach budget exhausted'
 
 
 def test_plan_first_approach_stays_fail_closed():
@@ -233,3 +239,48 @@ def test_cli_forwards_dynamic_options(tmp_path, monkeypatch):
     assert seen[-1].diagnostic_fail_approach_once
     with pytest.raises(SystemExit):
         run_dispatch_e2e.main(['--output', str(tmp_path / 'b'), '--diagnostic-fail-approach-once', *base])
+
+
+def _backoff_pair(top, centers):
+    """BoundPairSkill with only the back-off dependencies stubbed."""
+    import numpy as np
+    from pathlib import Path
+    from harness.dispatch_skill_binding import PairCoarsePixels
+    from scripts.dispatch_pair_skill import BoundPairSkill
+    root = Path(__file__).parent/'fixtures'
+    tracker = PairCoarsePixels.__new__(PairCoarsePixels)
+    tracker.reference = (root/'camera_goal_transport'/'reference-top.jpg').read_bytes()
+    tracker.centers = {slot: np.array(c, float) for slot, c in centers.items()}
+    pair = BoundPairSkill.__new__(BoundPairSkill)
+    pair.io, pair.coarse, pair.calls, pair.driven = SimpleNamespace(), tracker, [], []
+    pair.drive = lambda forwards, duration_s=.2: pair.driven.append(forwards)
+    pair.capture = lambda tag: {'r1': {'raw_top_bytes': (root/'dynamic_recovery'/top).read_bytes()}}
+    return pair, tracker
+
+
+# Start-of-run own-probe centres vs. the last RGB-tracked coarse centres of D3.
+IDENTITY_CENTERS = {'r1': [109.1, 358.5], 'r3': [108.1, 144.2]}
+TRACKED_CENTERS = {'r1': [222.4, 356.9], 'r3': [218.6, 166.7]}
+
+
+def test_backoff_keeps_rgb_tracked_crops_and_recentres_them():
+    stale, _ = _backoff_pair('after-long-backoff-top.jpg', IDENTITY_CENTERS)
+    raw = stale.capture('x')['r1']['raw_top_bytes']
+    assert all(stale.coarse.decide(raw, s)['mask']['local_wheel_pixels'] == 0 for s in ('r1', 'r3'))
+    pair, tracker = _backoff_pair('after-long-backoff-top.jpg', TRACKED_CENTERS)
+    pair.back_off()
+    assert pair.coarse is tracker and len(pair.driven) == 21  # 20 reverse slices + stop dwell
+    assert all(pair.coarse.decide(raw, s)['ok'] is True for s in ('r1', 'r3'))
+    row = pair.calls[-1]
+    assert row['kind'] == 'recovery_recenter' and row['slices'] == 20
+    assert row['crop_centers_before_px'] == TRACKED_CENTERS
+
+
+def test_backoff_stays_synchronous_and_bounded():
+    pair, _ = _backoff_pair('after-short-backoff-top.jpg', TRACKED_CENTERS)
+    for slices, speed in ((21, .05), (10, .06), (0, .05)):
+        with pytest.raises(ValueError):
+            pair.back_off(slices, speed)
+    pair.io.realtime_control = True
+    with pytest.raises(RuntimeError, match='synchronous'):
+        pair.back_off()

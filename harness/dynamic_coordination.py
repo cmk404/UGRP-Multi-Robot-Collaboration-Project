@@ -30,7 +30,6 @@ RECOVERABLE_APPROACH_FAILURES = (
     'fine RGB alignment outside saved skill support',
     'fine docking outside saved support',
     'fine docking confirmation budget exhausted',
-    'diagnostic injected approach failure',
 )
 
 _COMMON = '''You are an equal robot peer in a three-robot team, not a central controller.

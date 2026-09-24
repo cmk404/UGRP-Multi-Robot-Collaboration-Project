@@ -854,11 +854,13 @@ class BoundPairSkill:
             if ready_count>=2:return report
         raise RuntimeError('fine docking confirmation budget exhausted')
 
-    def back_off(self,slices=10,speed=.05):
+    def back_off(self,slices=20,speed=.05):
         """Dynamic recovery only: short straight reverse of both carriers.
 
         Issued commands only; the next approach re-observes from RGB. The coarse
-        pixel tracker restarts from the original own-probe identity evidence.
+        pixel tracker keeps its RGB-tracked wheel crops (the start-of-run probe
+        centres are far from the beam by now) and re-centres them on one fresh
+        stopped TOP frame, so the next approach does not start from stale crops.
         """
         if getattr(self.io,'realtime_control',False):
             raise RuntimeError('recovery back-off supports synchronous execution only')
@@ -866,8 +868,17 @@ class BoundPairSkill:
             raise ValueError('bounded recovery back-off required')
         for _ in range(slices):self.drive({r:-speed for r in ROBOTS})
         self.stop_dwell()
-        if self.coarse is not None:
-            self.coarse=PairCoarsePixels(self.identity,self.bindings,self.reference)
+        if self.coarse is None:return
+        raw=self.capture('recovery-recenter')['r1']['raw_top_bytes']
+        before={slot:[float(v) for v in c] for slot,c in self.coarse.centers.items()}
+        for slot in self.coarse.centers:
+            for _ in range(3):
+                decision=self.coarse.decide(raw,slot)
+                if not decision.get('wheel_center_px'):break
+                self.coarse.centers[slot]=np.array(decision['wheel_center_px'])
+        self.calls.append({'kind':'recovery_recenter','slices':slices,'speed':speed,
+            'crop_centers_before_px':before,
+            'crop_centers_after_px':{slot:[float(v) for v in c] for slot,c in self.coarse.centers.items()}})
 
     def carry(self,navigator,max_steps=None):
         if self.bindings.cluttered:return self.carry_with_rotation(max_steps)

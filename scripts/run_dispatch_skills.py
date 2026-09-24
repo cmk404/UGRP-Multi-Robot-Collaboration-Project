@@ -1078,10 +1078,14 @@ def _approach(pair,scene,team,task,args,result):
     inject=dynamic and getattr(args,'diagnostic_fail_approach_once',False)
     attempt=0
     while True:
+        injected=False
         try:
             report=pair.approach()
             if inject and attempt==0:
-                raise RuntimeError('diagnostic injected approach failure after a completed approach')
+                # The robots see a real controller stop reason, so the team's
+                # decision rests on its images; the injection is output-only.
+                injected=True
+                raise RuntimeError('coarse RGB approach budget exhausted')
             return report
         except RuntimeError as exc:
             from harness.dynamic_coordination import consult,recoverable
@@ -1091,11 +1095,11 @@ def _approach(pair,scene,team,task,args,result):
             participants=[scene.bindings.pair[slot] for slot in sorted(scene.bindings.pair)]
             event={'event_id':f'approach-{attempt}','kind':'pair_approach_failure','stage':'APPROACH',
                    'failure':{'reason':str(exc)},'participants':participants,
-                   'retries_left':retries-attempt,'diagnostic_injection':str(exc).startswith('diagnostic')}
+                   'retries_left':retries-attempt}
             decision,rounds=consult(team,participants,event,frames,scene.command_history,task,
                                     scene.time(),turn=attempt)
             result['coordination']['recoveries'].append({**event,'sim_time_s':scene.time(),
-                'decision':decision,'rounds':rounds})
+                'diagnostic_injection':injected,'decision':decision,'rounds':rounds})
             team.event('RECOVERY_DECISION',scene.time(),event_id=event['event_id'],decision=decision)
             print(f'RECOVERY {event["event_id"]}: {decision}',flush=True)
             if decision!='retry':raise RuntimeError(f'{exc}; team decided to abort') from exc
