@@ -46,14 +46,18 @@ def test_goal_validation_and_episode_supply():
     assert 'setup_only' not in json.dumps(task) and 'position_m' not in json.dumps(task)
 
 
-def test_zone_scene_resolves_in_the_standard_catalog():
-    from sim.session_config import validate_config
-    from sim.session_scenes import Scene, catalog
-    assert 'zones/zone_open' in {r['id'] for r in catalog()}
-    scene = Scene(validate_config({'version': 1, 'scene': {'layout': 'zones/zone_open', 'seed': 11}})['scene'], '.')
+def test_zone_scene_reuses_the_standard_scene_path_without_touching_bundle_sources():
+    from harness.rgb_execution_bundle import source_closure
+    from sim.session_scenes import Scene
+    from sim.zone_scene import ZoneScene, catalog
+    assert [r['id'] for r in catalog()] == ['zones/zone_open'] and issubclass(ZoneScene, Scene)
+    scene = ZoneScene({'layout': 'zones/zone_open', 'seed': 11, 'params': {}, 'contact_profile': None, 'map_file': None,
+                       'cargo_ids': None, 'robots': {}, 'objects': [], 'builder': None}, '.')
     assert scene.config['goal'] == za.goal_counts(za.DEFAULT_GOAL) and len(scene.inventory) == 5
     config = za.episode('zone_open', 11, goal=GOAL)
-    assert Scene.from_zone_config(config).config['setup_only'] == config['setup_only']
+    assert ZoneScene.from_zone_config(config).config['setup_only'] == config['setup_only']
+    assert scene.record()['selection'] == 'zones/zone_open'
+    assert not {n for n in source_closure() if 'zone' in n}
 
 
 def test_rgb_detection_matches_the_setup_within_two_centimetres():

@@ -9,6 +9,7 @@
 - 경기장 6.45 × 2.3 m(x −1.05…5.40, y −3.15…−0.85). 서쪽 적재 구역(파랑 바닥), 동쪽 구역 A(주황, 북동)·B(파랑, 남동)·C(보라, 중앙). 구역마다 칸 3개가 y 방향으로 놓인다.
 - TOP은 승인된 `cctv_top`을 그대로 두고, 같은 규격(높이 2.5 m, FOV 55°, 아래 방향)의 `cctv_top_east`를 3.3 m 동쪽에 추가했다. 로봇 외관·자기 카메라는 바뀌지 않는다.
 - 상자는 기존 청록 상자와 모양·질량·마찰이 같고 **칠만 다르다**(cyan, red, green, yellow). 로봇이 영상에서 종류를 구분하기 위한 변경이다.
+- 장면은 표준 `sim.session_scenes.Scene`을 상속한 `sim.zone_scene.ZoneScene`이 만든다(소스 기록·스폰/물체 초기화·기록 형식 재사용). 고정된 RGB 운반 번들 소스를 바꾸지 않으려고 별도 파일에 두었고, 공용 장면 목록 등록은 다음 운반 번들 등록 때 함께 한다.
 - 지도는 `maps/zones/zone_open.json`(코드 정의와 일치 검사), 목표·배치는 `sim/zone_arena.py`의 `episode(goal, extra_boxes, seed)`가 만든다. 배치는 설정 전용이며 로봇에게 주지 않는다.
 
 ## 로봇이 받는 것 / 받지 않는 것
@@ -36,5 +37,7 @@
   --coordination dynamic --goal '{"A":{"red":2},"B":{"cyan":1},"C":{"green":1,"red":1}}' \
   --extra-boxes '{"red":1}' --seed 11 --record-replay
 ```
+
+`--record-replay`로 기록한 실행은 `.venv-sim/bin/python -m scripts.zone_replay <출력 폴더>`로 MuJoCo 창에서 다시 본다(관찰 전용, 넓은 경기장 화면).
 
 `--mode fixture`는 모델 없이 규칙 응답으로 절차만 확인한다(시각 판단 아님). 결과 `result.json`: `physical_success_teacher_condition`(심판, 교사 조건), `goal_met_rgb`, `makespan_sim_s`, `llm_calls`, `usage`, `coordination_stats`(충돌·무효 선언·협상 턴), 로봇별 `jobs`. 원본 대화는 `team/`, 교사 사건은 `teacher-events.json`.

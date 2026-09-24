@@ -30,7 +30,7 @@ def _sha(path: Path) -> str:
 class ReplayRecorder:
     """Sample world state at a fixed SIM rate; write once at close."""
 
-    def __init__(self, world, output: Path, *, fps: int = DEFAULT_FPS, view: dict | None = None):
+    def __init__(self, world, output: Path, *, fps: int = DEFAULT_FPS):
         import mujoco
         if not isinstance(fps, int) or not 1 <= fps <= 60:
             raise ValueError('replay fps must be an integer in 1..60')
@@ -39,8 +39,6 @@ class ReplayRecorder:
         self.dir.mkdir(parents=True, exist_ok=False)
         self.period = 1. / fps
         self.fps = fps
-        # Optional free-camera framing for the native window (wider arenas).
-        self.view = dict(view) if view else None
         mujoco.mj_saveModel(world.model, str(self.dir / 'model.mjb'), None)
         self.times, self.qpos, self.mocap_pos, self.mocap_quat = [], [], [], []
         self.labels: list[list] = []
@@ -79,7 +77,6 @@ class ReplayRecorder:
                     'sim_start_s': self.times[0] if self.times else None,
                     'sim_end_s': self.times[-1] if self.times else None,
                     'nq': int(model.nq), 'nmocap': int(model.nmocap),
-                    **({'view': self.view} if self.view else {}),
                     'files_sha256': {name: _sha(self.dir / name)
                                      for name in ('model.mjb', 'states.npz', 'labels.json')},
                     'scope': 'observer-only post-run kinematic replay; never actor, controller or referee input'}
@@ -150,12 +147,10 @@ def play(run_dir: Path, *, speed: float = 1., max_wall_s: float | None = None) -
                                           show_left_ui=False, show_right_ui=False)
     with viewer.lock():
         viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
-        view = {'lookat': [.55, -2., .1], 'distance': 4.8, 'azimuth': 90, 'elevation': -55,
-                **manifest.get('view', {})}
-        viewer.cam.lookat[:] = view['lookat']
-        viewer.cam.distance = view['distance']
-        viewer.cam.azimuth = view['azimuth']
-        viewer.cam.elevation = view['elevation']
+        viewer.cam.lookat[:] = [.55, -2., .1]
+        viewer.cam.distance = 4.8
+        viewer.cam.azimuth = 90
+        viewer.cam.elevation = -55
         viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_SHADOW] = 0
         viewer.user_scn.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = 0
     print(f'재생: SIM {end - start:.1f}초, {speed:g}× · Space 일시정지/재개 · ←/→ {SEEK_S:g}초 이동 · '

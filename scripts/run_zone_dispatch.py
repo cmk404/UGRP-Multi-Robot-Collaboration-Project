@@ -40,12 +40,12 @@ class ZoneRun:
         import mujoco
         from sim.camera_robot_port import CameraRobotPort
         from sim.multi_masterpi_production import MultiMasterPiProductionV2
-        from sim.session_scenes import Scene
+        from sim.zone_scene import ZoneScene
         from scripts.zone_teacher import ZoneTeacherExecutor
         self.config, self.out = config, Path(output)
         self.out.mkdir(parents=True, exist_ok=False)
         (self.out/'rgb').mkdir()
-        self.definition = Scene.from_zone_config(config)
+        self.definition = ZoneScene.from_zone_config(config)
         self.world = MultiMasterPiProductionV2(seed=config['seed'], width=960, height=720, render=True,
             warehouse_layout=self.definition.engine_layout, warehouse_cargo_ids=None,
             xml_transform=self.definition.transform)
@@ -57,11 +57,8 @@ class ZoneRun:
                                             config['setup_only']['objects'], self._log)
         self.replay = None
         if record_replay:
-            from scripts.dispatch_replay import ReplayRecorder
-            bounds = config['static_map']['bounds_m']
-            self.replay = ReplayRecorder(self.world, self.out, view={
-                'lookat': [(bounds[0]+bounds[1])/2, (bounds[2]+bounds[3])/2, .1],
-                'distance': 7.5, 'azimuth': 90, 'elevation': -60})
+            from scripts.zone_replay import ZoneReplayRecorder, arena_view
+            self.replay = ZoneReplayRecorder(self.world, self.out, view=arena_view(config['static_map']['bounds_m']))
         self.robot_geoms = {i for i in range(self.world.model.ngeom)
                             if (mujoco.mj_id2name(self.world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '')
                             .startswith(tuple(r+'__' for r in ROBOTS))}
