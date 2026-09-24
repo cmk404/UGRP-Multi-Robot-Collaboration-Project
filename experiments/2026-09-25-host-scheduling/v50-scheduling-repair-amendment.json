@@ -1,0 +1,29 @@
+{
+  "schema": "ugrp.v50_scheduling_repair_amendment.v1",
+  "registered_utc": "2026-09-24T17:37:23.535230+00:00",
+  "source_sha": "0139faf849bc63230aae5ab0057aab695494f2e6",
+  "previous_cohort": "/Users/changmin/projects/ugrp/outputs/settled-view-v50-20260925",
+  "previous_denominator": {
+    "started": 1,
+    "infrastructure_aborts": 1,
+    "evaluable_physical": 0,
+    "NOT_RUN": 1
+  },
+  "new_cohort": "/Users/changmin/projects/ugrp/outputs/settled-view-v50-scheduling-repair-20260925",
+  "controller_or_inputs_changed": false,
+  "purpose": "Validate unchanged v50 after preventing concurrent local tests and repairing lock visibility",
+  "max_trials": 2,
+  "second_trial_gate": "original runner physical + protocol success, plus independent root evidence audit pass",
+  "max_process_allocation_s": 740,
+  "retry_policy": "No replacement run within cohort; stop after first failure/infra abort; retain both cohorts in any report",
+  "host_gates": [
+    "canonical atomic lock",
+    "strict existing foreign-process preflight",
+    "continuous interference guard stopping only own group",
+    "explicit handoff from current Claude lock owner and map-goto waiter",
+    "local full pytest must use guarded launcher or own canonical lock"
+  ],
+  "training": false,
+  "qualification_cohort": false,
+  "changes_to_v50_protocol": []
+}
