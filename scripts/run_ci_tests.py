@@ -17,6 +17,7 @@ TEST_PATTERNS = (
     "tests/test_simulation_console.py",
     "tests/test_simulation_dispatch.py",
     "tests/test_dispatch_replay.py",
+    "tests/test_dispatch_plan_guidance.py",
     "tests/test_dynamic_coordination.py",
     "tests/test_simulation_extensions.py",
     "tests/test_simulation_scenes.py",
