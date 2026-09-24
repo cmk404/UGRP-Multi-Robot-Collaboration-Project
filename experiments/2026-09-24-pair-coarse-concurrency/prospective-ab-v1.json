@@ -1,0 +1,117 @@
+{
+  "schema": "ugrp.pair_coarse_concurrency_prospective_ab.v1",
+  "status": "planned_not_run",
+  "purpose": "fixed south-train-a physical A/B; same new source with opt-in OFF versus ON",
+  "reviewed_implementation_commit": "d2be823a23e90cc9f9c63bb8e6839f2565587c9a",
+  "execution_source_sha": null,
+  "execution_bundle_id": null,
+  "freeze_owner": "root; assign only after focused tests, review and source freeze",
+  "historical_context_only": {
+    "case": "route-teachers-managed-v3/south-train-a",
+    "source_sha": "931d910998a94361342c372ec2675c475daa625f",
+    "raw_result_sha256": "ae4db1591ebf5f756656a0b63f30b2885ef87ccd2e9af1bb85a3fa89ce5bdd4c",
+    "coarse_decisions": 120,
+    "failure": "coarse RGB approach budget exhausted",
+    "wall_s": 277.9706107079983,
+    "included_in_new_ab_denominator": false
+  },
+  "fixed_inputs": {
+    "executor": "skills",
+    "variant": "shared_crossing",
+    "seed": 11,
+    "required_dock": "dock_a",
+    "plan_replay_path": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-adaptive-final19-20260918/F3/committed-plan.json",
+    "plan_replay_sha256": "398b303eb826d120047deeb03e156c80250d392bb0e8354bec655e4a0175ca57",
+    "new_llm_calls_for_plan": false,
+    "grasp_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/grasp",
+    "grasp_manifest_sha256": "372ecd9eed79627f64664a88ddeb7ba57975ecd824d079c34b03a6f847941933",
+    "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/dispatch-e2e/outputs/dispatch-transfer-t4/models/varied",
+    "stage_manifest_sha256": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+    "reference_top_path": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+    "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+    "static_map_sha256": "18427114fa288e6e5d2ca0a6b5f7c29cffae4b7d6bc78f20ee931f22c64816ef",
+    "contact_profile": "local_contact_fine",
+    "realtime_control": true,
+    "efficient_capture": true,
+    "viewer": true,
+    "realtime_factor": 1,
+    "video_fps": 10,
+    "spawn_offset": [0.006, 0.004, 0.25],
+    "max_wall_s_per_run": 360,
+    "weld": false,
+    "coarse_decision_cap": 120
+  },
+  "execution_budget": {
+    "planned_runs": 2,
+    "attempts_per_arm": 1,
+    "manager_timeout_s_per_run": 370,
+    "aggregate_wall_cap_s": 740,
+    "aggregate_cleanup_reserve_s": 20,
+    "retry": false,
+    "physical_start_requires_exclusive_host_lock": true
+  },
+  "arms": [
+    {
+      "id": "off",
+      "coarse_concurrent_alignment": false,
+      "extra_flag": null,
+      "output_directory": null,
+      "status": "not_run"
+    },
+    {
+      "id": "on",
+      "coarse_concurrent_alignment": true,
+      "extra_flag": "--coarse-concurrent-alignment",
+      "output_directory": null,
+      "status": "not_run"
+    }
+  ],
+  "pre_run_gate": [
+    "same frozen code and bundle for both arms; only extra_flag differs",
+    "same exact plan, model, reference TOP and authored static-map hashes",
+    "no concurrent foreign physics, training or pytest owner",
+    "unique outputs and no mutation of historical v3 originals",
+    "port receipt interface for exact command-to-RGB audit implemented or audit status explicitly incomplete"
+  ],
+  "required_raw_outputs_per_arm": [
+    "result.json",
+    "pair-decisions.json",
+    "issued-commands.json",
+    "referee-only.jsonl",
+    "execution.mp4",
+    "RGB inputs and source/scene/bundle manifests",
+    "manager manifest and console log"
+  ],
+  "audit_interface_needed": {
+    "one_row_per_robot_per_coarse_batch": true,
+    "fields": [
+      "batch_id",
+      "coarse_index",
+      "physical_robot_id",
+      "model_slot",
+      "frame_id",
+      "observed_at_s",
+      "common_top_sha256",
+      "own_rgb_sha256",
+      "model_proposal",
+      "coordinated_command",
+      "port_ack_motor_pwm",
+      "actual_issued_at_s",
+      "effective_expiry_s",
+      "source_sha",
+      "static_map_sha256"
+    ],
+    "current_gap": "cluttered-map command_history lacks direct source-frame/own-RGB and port PWM receipt; do not infer complete TTL/PWM audit from row order"
+  },
+  "acceptance": {
+    "denominator": "2 planned arms; report failures, timeouts and unstarted arms separately",
+    "decision_capture_age_s_max": 0.4,
+    "issued_command_end_before_original_rgb_deadline_s": 0.6,
+    "lead_gap_px_strict_less_than": 16,
+    "parallel_command_evidence": "same SIM interval with r1 positive issued forward and r3 issued turn or left PWM",
+    "physical_motion_evidence": "separate referee-only trajectory and execution video; never infer from command alone",
+    "whole_mission_success": "result protocol_complete and physical_success plus referee cargo release and stable dock evidence",
+    "teacher_admission_from_this_ab": false,
+    "act_training_admission_from_this_ab": false
+  }
+}
