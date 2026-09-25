@@ -56,8 +56,18 @@ SPEED_M_S = .06
 FORWARD_GAIN, LEFT_GAIN = 2.2 / 1.4, 1.65 / 1.4       # drive model steady state (cargo_formation_teacher)
 LEGS = (('axial', .60), ('lateral', .30))
 BARRIER_TTL_S = 1.0
-GRIP_MIN_SIGNATURE = .04          # dev-calibrated, see README
-HOLD_MIN_IOU = .45
+# dev 601 calib run (7d97bab): grip-view signature r1 0.029 / r2 0.060, so 0.04 rejected a real grip.
+# The grip itself is confirmed by the lift co-motion IoU (grip view vs lift view: r1 0.735, r2 0.835).
+GRIP_MIN_SIGNATURE = .02
+HOLD_MIN_IOU = .45                # lift co-motion only
+# Carry/barrier hold: strip presence ratio (held signature fraction / lift anchor fraction). In dev 601 the
+# held-strip IoU fell to 0.46 on r1 with NO slip (GT offset constant; shading of the thin strip), while
+# the ratio stayed >= 0.99. A dropped beam leaves the lower frame, i.e. ratio -> 0.
+HOLD_MIN_RATIO = .5
+# Static drive calibration for the loaded pair carry (labelled, like a camera calibration): dev 601 GT
+# travel / commanded = axial 0.463/0.60, lateral 0.209/0.30 with the teacher's unloaded gains.
+CARRY_ODOM_SCALE = {'axial': .772, 'lateral': .697}
+CARRY_ODOM_SOURCE = 'dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)'
 LOST_FRAMES = 2
 PRESTATION_BACK_M = .30
 LIMIT_S = 240.
@@ -235,8 +245,14 @@ class PairStudent:
         if now >= self.next_look:
             self.next_look = now + LOOK_EVERY_S
             obs = self.look(now)
-            iou = ob.signature_iou(self.anchor, ob.held_signature(obs['image'])) if self.anchor is not None else 1.
-            self.report(key, obs, now, ready=iou >= HOLD_MIN_IOU, reason=f'held_iou={iou:.2f}')
+            ratio = self.hold_ratio(obs)
+            self.report(key, obs, now, ready=ratio >= HOLD_MIN_RATIO, reason=f'hold_ratio={ratio:.2f}')
+
+    def hold_ratio(self, obs):
+        if self.anchor is None:
+            return 1.
+        base = ob.signature_fraction(self.anchor)
+        return ob.signature_fraction(ob.held_signature(obs['image'])) / base if base > 0 else 0.
 
     def _wait_lift(self, now, arm_idle):
         def go(t):
@@ -277,9 +293,11 @@ class PairStudent:
         if now >= self.next_look:
             self.next_look = now + LOOK_EVERY_S
             obs = self.look(now)
-            iou = ob.signature_iou(self.anchor, ob.held_signature(obs['image']))
-            self.log(self.rid, 'carry_view', now, held_iou=round(iou, 3))
-            self.lost = self.lost + 1 if iou < HOLD_MIN_IOU else 0
+            sig = ob.held_signature(obs['image'])
+            iou = ob.signature_iou(self.anchor, sig)
+            ratio = self.hold_ratio(obs)
+            self.log(self.rid, 'carry_view', now, held_iou=round(iou, 3), hold_ratio=round(ratio, 3))
+            self.lost = self.lost + 1 if ratio < HOLD_MIN_RATIO else 0
             if self.lost >= LOST_FRAMES:
                 self.port.hold(now)
                 self.sync_for('carry').hold(f'{self.rid}_load_changed', now)
@@ -321,7 +339,7 @@ def build_schedule(rid, t0):
     sign = 1. if ROLES[rid] == 'end_neg' else -1.
     out, t = [], t0
     for kind, dist in LEGS:
-        dur = dist / SPEED_M_S
+        dur = dist / (SPEED_M_S * CARRY_ODOM_SCALE[kind])
         if kind == 'axial':
             cmd = {'forward': sign * SPEED_M_S / FORWARD_GAIN, 'left': 0., 'turn': 0.}
         else:
@@ -532,6 +550,9 @@ def main():
         'counts_as_m1': False, 'development_seed': a.seed in DEV_SEEDS,
         'controller_inputs': 'own robot_cam JPEG + own issued PWM + task sheet + PairCarrySync barrier (own frame ids)',
         'task_sheet': {'legs': LEGS, 'speed_m_s': SPEED_M_S, 'roles': ROLES},
+        'carry_odometry_calibration': {'scale': CARRY_ODOM_SCALE, 'source': CARRY_ODOM_SOURCE},
+        'thresholds': {'grip_min_signature': GRIP_MIN_SIGNATURE, 'lift_min_iou': HOLD_MIN_IOU,
+                       'hold_min_ratio': HOLD_MIN_RATIO, 'lost_frames': LOST_FRAMES},
         'final_states': reached, 'failures': {r: s.failure for r, s in students.items()},
         'claims': {r: s.claims for r, s in students.items()},
         'frames': {r: s.frames for r, s in students.items()}, 'commands': {r: s.commands for r, s in students.items()},
