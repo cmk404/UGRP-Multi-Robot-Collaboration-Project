@@ -159,6 +159,78 @@ v1과 501–505 결과는 위 기록 그대로 둔다. v2는 새 모듈 `harness
   - grip creep 자체를 줄인다(파지 깊이·운반 자세).
 - TensorBoard 새 스냅샷은 `outputs/tensorboard/0925-zone-owncam-skill-v2`(파생 보기 `outputs/zone-owncam-skill-20260925/tensorboard-view-v2/`, 공용 서버에서 run 19개와 값 일치 확인)다. v2 시험 10개, v2 개발 run, v1 기준 5개가 들어 있다. 보기 키는 `zone_owncam_skill_v2_20260926`.
 
+## 운반 미끄러짐 원인 (2026-09-26, v3 이전 진단)
+질문: v2에서 상자가 속도와 관계없이 약 60 s마다 손가락 사이로 미끄러졌다. 받아들여야 할 물리인가, 접촉·파지력 인공물인가?
+
+**점검한 설정**
+- 파지 명령: PWM 1500이다. `sim/masterpi_dynamics_v2.py`의 `closure=(2000-pwm)/500×0.016 m`에서 완전 닫힘 목표에 해당한다. 턱은 상자에 막혀 11.7 mm에서 멈추고, 목표와의 차이(4.3 mm)×kp 1200으로 턱당 5.19 N을 누른다(forcerange ±18 N 안).
+- 손가락–상자 접촉 쌍: mu 3.4, condim 3, solref 0.013, `solreffriction (0, -6000)`(감쇠만 있는 마찰 기준). 상자는 30 g이다.
+- 프로필: zone 단독 운반(`run_zone_owncam_skill.py`)은 `local_contact_fine`이다(`noslip_iterations 0`). 화물용 `cargo_noslip_v1`(`sim/zone_cargo_contact.py`, `local_contact_fine`+`noslip_iterations 10`, 해시 `2e003d85…`)은 `CargoZoneScene`에서만 명시적으로 선택된다. zone 교사, RGB 스킬, ACT에는 아직 적용된 적이 없다(zone-cargo-catalogue §8).
+- 실물 MasterPi: 파지력·미끄러짐 보정은 `validated:false`이다. 실측 미끄러짐 자료는 없다.
+
+**진단 probe** `scripts/probe_zone_box_grip_hold.py`(소스 `a4225bc`, 깨끗한 트리, GT 교사 파지, weld OFF, 평가 전용)
+- 절차: carry 자세(v1/v2 `CARRY_POSTURE`)에서 180 s 정지 유지한 뒤 교사 사각 주행(약 63 s)을 한다.
+
+| 프로필 | noslip | 정지 180 s 끝 변위 | 정지 creep | 주행 중 추가 변위 | 법선력 합 | 접선력 합 | 끝까지 들림 |
+|---|---|---|---|---|---|---|---|
+| `local_contact_fine` | 0 | 6.35 mm | **2.09 mm/min**(선형) | 2.10 mm | 10.38 N | 0.30 N | ✓ |
+| `cargo_noslip_v1` | 10 | 0.05 mm | **0.016 mm/min** | 0.03 mm | 10.38 N | 0.30 N | ✓ |
+
+- **판정: 수치 인공물이다. 받아들일 물리가 아니다.**
+  - 무게를 버티는 데 필요한 마찰비는 0.30/10.38 = 0.029로, mu 3.4의 1% 미만이다. Coulomb 마찰이라면 완전히 붙어 있어야 한다.
+  - 변위는 정지 중에도 시간에 비례해 선형으로 늘었고(주행 여부와 무관), 파지력과 접촉력이 같은 상태에서 noslip만 켜면 130배 줄었다. soft 마찰 제약의 감쇠-only 기준이 만드는 creep이다(cargo 카탈로그 §8의 0.5 kg 측정과 같은 기전).
+  - v2의 "약 60 s마다 재장착"은 이 creep(60 s에 약 2 mm)이 근거리 anchor 경고(18 px)에 닿는 시간과 맞는다. 따라서 **v2의 재장착은 인공물을 가리는 행동이었다.** v2 결과표는 그대로 두되, 재장착 횟수는 물리적 행동 근거가 아니라고 해석을 고친다.
+- 조치:
+  - 기본값은 바꾸지 않는다. 러너에 `--contact-profile {local_contact_fine, cargo_noslip_v1}`을 추가했다. 기본은 `local_contact_fine`이고, 선택한 프로필·해시·실제 `noslip_iterations`를 result.json에 기록한다.
+  - noslip은 전역 solver 옵션이다. 차체 주행과 정지 상자가 변하지 않는다는 근거는 cargo 카탈로그 기록이며, 이 스킬 장면에서의 영향은 v3 두 조건 비교로 확인한다.
+- 원자료: `outputs/zone-owncam-skill-20260925/grip-hold/{local_contact_fine,cargo_noslip_v1}/`(samples.jsonl, result.json, hashes.json).
+
+## v3 사전 등록 (`wrist_zone_skill_v3`, 시험 실행 전 커밋)
+v1·v2 파일은 바이트 그대로다. 테스트가 d016c04·edd075d 해시로 확인한다. v3는 `harness/wrist_zone_skill_v3.py`다.
+
+**바꾼 것(v2 실패별)**
+- 519: N7은 `external_navigation` 과제에서 `TOP_GEOMETRY_AMBIGUOUS_FOR_DROP`를 "외부 계획기가 check_grip을 명시적으로 선택하라"는 인계로 쓴다. v2는 이것을 종료로 처리했다.
+  - v3는 차체를 세우고, 현재 프레임을 anchor로 N7의 좌/우/홈 자기 카메라 부착 탐침(`carry_probe_*`)을 실행한다(최대 2회).
+  - 통과하면 운반을 재개하고, 실패하면 N7 사유로 정직하게 종료한다.
+- 518: 구역 B(파랑) 칠 위에서 조명받은 상자는 어둡고 채도가 낮은 청록이라 `detect_own(own_zone_v2)`가 놓친다.
+  - v3는 놓은 뒤 확인에 N7 바닥 직육면체 적합(`observe_ground_box`, 채도 150, 위치 정밀화)을 먼저 쓴다. 바로 앞 release 검사가 쓰는 검출기와 같다. 실패하면 `detect_own`으로 넘어간다. 어느 검출기를 썼는지 기록한다.
+  - 오프라인 확인(기록된 v2 프레임): 518 look-back 프레임은 적합 성공 (0.168, -0.009) m였다. 511/513/516에서는 `detect_own`과 1 cm 안에서 일치했다.
+- 재장착 로직(v2)은 남겨 두되, 인공물 제거 조건에서는 발동하지 않을 것으로 예상한다. 발동하면 시각 오경보로 따로 보고한다.
+- 입력 경계는 v1·v2와 같다. `pose_source=gt_stub_eval_only`, 문 통과 없음, **M1 아님**, weld OFF, #178 위치 추정기 미연결.
+
+**개발 시드 (합산 금지)**: 407(북→구역 B 긴 운반), 518과 519 재실행(v2 시험 시드를 v3 개발용으로만 사용).
+
+**v3 개발 기록** (소스 `5117fa8`; 뒤의 두 실행은 문서만 수정된 dirty 트리, 실행 코드 동일; `outputs/.../dev-v3/`)
+
+| 실행 | 프로필 | 결과 | GT 슬롯 | SIM s | 재장착 | grip check | look-back 검출기 |
+|---|---|---|---|---|---|---|---|
+| 519-lcf | local_contact_fine | IN_SLOT | ✓ | 212.1 | 1 | 2회 모두 ATTACHED | N7 바닥 적합 |
+| 518-ns | cargo_noslip_v1 | IN_SLOT | ✓ | 149.5 | 0 | 0 | N7 바닥 적합 |
+| 519-ns | cargo_noslip_v1 | IN_SLOT | ✓ | 149.8 | 0 | 0 | N7 바닥 적합 |
+| 407-ns | cargo_noslip_v1 | IN_SLOT | ✓ | 175.6 | 0 | 0 | N7 바닥 적합 |
+
+- v2가 끝내지 못한 두 경우(519 운반 중 정지, 518 거짓 음성)가 v3에서 모두 풀렸다. 개발 중 추가 조정은 없었다.
+- noslip 조건에서는 anchor 경고도 재장착도 0이었다. v2의 재장착이 creep 때문이었다는 판정과 맞는다.
+
+**시험 시드와 조건 (고정)**
+- 시드 **521–530**, 조건별 각 1회. 시나리오는 `SCENARIOS`에 있다. 모두 분할벽 동쪽이고, 운반 거리는 1.05–3.23 m, 구역 B 목적지는 4개다.
+- **주 조건 P**: `--profile v3 --contact-profile cargo_noslip_v1`(명시).
+- **보조 조건 S**: `--profile v3 --contact-profile local_contact_fine`. 스킬 수정 효과와 프로필 효과를 분리하고, 인공물이 행동에 주는 비용(재장착 수·시간)을 잰다.
+- 주 지표: 조건 P의 **GT 슬롯 배치 수/10**. 평가 전용 GT로, 주문 슬롯 ±0.06 m 안 바닥에 있고 기울기가 15° 미만이어야 한다.
+
+**판정 기준 (조건 P)**
+- G1 GT 슬롯 배치 ≥ 9/10.
+- G2 자기 판정과 GT 일치 ≥ 9/10, 거짓 IN_SLOT 0.
+- G3 weld eq_active 0, 벽 접촉 0, 모든 단계의 `pose_source=gt_stub_eval_only`.
+- G4 GT 배치 성공인데 `NO_UNIQUE_CYAN_BOX`로 끝난 경우 0, 들고 있는 채 `CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP`로 끝난 경우 0.
+- 보고 항목: 재장착 수(예상 0), grip check 수와 결과, SIM 시간, 명령 수, 검출기별 look-back 수. 조건 S는 같은 항목으로 보고하고 게이트는 적용하지 않는다(비교용).
+- 한도: SIM 420 s, 제어 1300단계(v2와 같음).
+
+**중단 규칙**
+- 시험 커밋 SHA 고정, 깨끗한 트리. 코호트 도중 소스 변경·재조정·재실행은 하지 않는다. 첫 제어 단계 전 인프라 예외만 1회 재실행하고 기록한다.
+- 조건 P 10개를 먼저 돌린 뒤 조건 S 10개를 돌린다. **거짓 IN_SLOT이 한 번이라도 나오면 즉시 코호트를 멈추고 보고한다.** 그 밖에는 결과와 무관하게 모두 돌린다.
+- 동시 SIM은 2개 이하, 스레드는 1(OMP/OPENBLAS/VECLIB/MKL=1)로 제한한다. 시드별 부하 평균을 기록한다.
+
 ## M1까지 남은 차단 요인
 1. 자세 추정기 연결: PR #177의 파티클 필터를 `PoseEstimate` 인터페이스에 붙여야 한다. 지금은 stub이다.
 2. 문 통과 정책: carry_p30 주행과 look_p20 정지 관찰, 문기둥 태그(`_tags_v2`).

@@ -19,6 +19,9 @@ DEV_RUNS = ('dev/401-a', 'dev/401-b', 'dev/402-a868328', 'dev/402-d016c04', 'dev
 V2_COHORT = 'cohort-v2-edd075d'
 V2_TEST_SEEDS = tuple(range(511, 521))
 V2_DEV_RUNS = ('dev-v2/403-a', 'dev-v2/404-a', 'dev-v2/404-b', 'dev-v2/405-b', 'dev-v2/405-c', 'dev-v2/406-c')
+GRIP_HOLD = ('grip-hold/local_contact_fine', 'grip-hold/cargo_noslip_v1')
+V3_TEST_SEEDS = tuple(range(521, 531))
+V3_ARMS = {'P': 'cargo_noslip_v1', 'S': 'local_contact_fine'}   # cohort-v3-<sha>/<arm>/<seed>
 
 
 def sha(path):
@@ -75,7 +78,36 @@ def run_summary(folder):
             'wall_seconds': r['wall_seconds'],
             'artifact_sha256': json.loads((folder / 'hashes.json').read_text()),
             'input_frames': len(list((folder / 'inputs').glob('*.jpg'))),
-            'profile': r.get('profile'), 'sim_limit_s': r.get('sim_limit_s'), 'skill_summary': r.get('skill_summary')}
+            'profile': r.get('profile'), 'sim_limit_s': r.get('sim_limit_s'), 'skill_summary': r.get('skill_summary'),
+            'contact_profile_selected': r.get('contact_profile_selected'),
+            'cargo_contact_profile': r.get('cargo_contact_profile'),
+            'solver_noslip_iterations': r.get('solver_noslip_iterations')}
+
+
+def grip_hold_summary(folder):
+    r = json.loads((folder / 'result.json').read_text())
+    return {'raw_dir': str(folder), 'result_sha256': sha(folder / 'result.json'),
+            'samples_sha256': sha(folder / 'samples.jsonl'), **r}
+
+
+def cohort_stats(runs):
+    ev = [r['evaluation_only'] for r in runs]
+    return {'n': len(runs), 'pose_source': 'gt_stub_eval_only', 'counts_as_m1': False,
+            'place_in_slot_gt': sum(e['place_in_slot_gt'] for e in ev),
+            'grasp_success_gt': sum(e['grasp_success_gt'] for e in ev),
+            'skill_claim_agrees_with_gt': sum(e['skill_claim_agrees_with_gt'] for e in ev),
+            'false_success': sum(e['skill_claim_in_slot'] and not e['place_in_slot_gt'] for e in ev),
+            'weld_eq_active_max': max((e['weld_eq_active_max'] for e in ev), default=None),
+            'wall_contact_steps': sum(e['r1_wall_contact_steps'] for e in ev),
+            'sim_seconds': [r['sim_seconds'] for r in runs], 'steps': [r['steps'] for r in runs],
+            'reasons': [r['reason'] for r in runs],
+            'reseats': [(r['skill_summary'] or {}).get('reseats') for r in runs],
+            'retreats': [(r['skill_summary'] or {}).get('retreats') for r in runs],
+            'grip_checks': [[c.get('result') for c in (r['skill_summary'] or {}).get('grip_checks', [])] for r in runs],
+            'placement_detector': [(r['skill_summary'] or {}).get('placement_detector') for r in runs],
+            'contact_profiles': sorted({r.get('contact_profile_selected') or 'local_contact_fine' for r in runs}),
+            'g4_violations': [r['seed'] for r in runs if (r['evaluation_only']['place_in_slot_gt'] and r['reason'].endswith('NO_UNIQUE_CYAN_BOX'))
+                              or r['reason'] == 'CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP']}
 
 
 def contact_sheet():
@@ -127,6 +159,20 @@ def main():
         'sim_seconds': [r['sim_seconds'] for r in v2], 'reasons': [r['reason'] for r in v2],
         'reseats': [(r['skill_summary'] or {}).get('reseats') for r in v2],
         'retreats': [(r['skill_summary'] or {}).get('retreats') for r in v2]}
+    out['grip_hold_probe'] = {Path(d).name: grip_hold_summary(RAW / d) for d in GRIP_HOLD
+                              if (RAW / d / 'result.json').exists()}
+    out['v3_development_runs'] = [run_summary(f.parent) for f in sorted(RAW.glob('dev-v3/*/result.json'))]
+    out['v3_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v3-*')):
+        for arm, profile in V3_ARMS.items():
+            runs = [run_summary(folder / arm / str(s)) for s in V3_TEST_SEEDS
+                    if (folder / arm / str(s) / 'result.json').exists()]
+            if runs:
+                out['v3_cohorts'][f'{folder.name}/{arm}'] = {
+                    'arm': arm, 'contact_profile': profile, 'runs': runs, 'summary': cohort_stats(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v3_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
     v2_log = RAW / V2_COHORT / 'cohort.log'
     if v2_log.exists():
         out['v2_cohort_log'] = {'path': str(v2_log), 'sha256': sha(v2_log)}
@@ -137,6 +183,9 @@ def main():
     contact_sheet()
     print(json.dumps(out['cohort_summary'], ensure_ascii=False))
     print(json.dumps(out['v2_cohort_summary'], ensure_ascii=False))
+    for key, value in out['v3_cohorts'].items():
+        if key != 'logs':
+            print(key, json.dumps(value['summary'], ensure_ascii=False))
 
 
 if __name__ == '__main__':
