@@ -254,6 +254,10 @@ def track(args):
         static = json.loads((run_dir/'episode-setup-only.json').read_text())['static_map']
         labels = json.loads((run_dir/'box-labels.json').read_text())
         _, jobs = _jobs(run_dir)
+        if not jobs:
+            manifest['runs'][rel] = {'jobs': [], 'note': 'no issued job'}
+            print(f'{rel}: no issued job', flush=True)
+            continue
         commands = _commands(run_dir)
         views = _views(static)
         reference, ref_names = _reference(run_dir, static)
