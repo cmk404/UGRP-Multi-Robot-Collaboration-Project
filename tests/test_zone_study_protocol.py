@@ -7,8 +7,13 @@ parsing and schema violations, language drift being flagged and not repaired,
 and leader rotation by seed.
 """
 import copy
+import dataclasses
 import inspect
 import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -83,10 +88,16 @@ def test_four_main_conditions_and_the_reference_ceiling():
     assert zp.spec('reference_R').main_condition is False
     assert zp.spec('reference_R').robot_llm is False and zp.spec('reference_R').commander_llm is True
     assert zp.actors('peer_ko') == ROBOTS and zp.actors('reference_R') == (zp.COMMANDER,)
-    # only the channel differs between the main conditions
-    fields = [(s.rotating_leader, s.robot_llm, s.commander_llm) for n, s in zp.SPECS.items()
-              if s.main_condition and n != 'leader_ko']
-    assert set(fields) == {(False, True, False)}
+    # Only channel fields may differ between the four main conditions. Listing
+    # every field means a new ConditionSpec field cannot escape this check.
+    fields = tuple(f.name for f in dataclasses.fields(zp.ConditionSpec))
+    channel = ('name', 'topology', 'encoding', 'rotating_leader', 'max_window_utterances',
+               'max_robot_utterances')
+    assert set(fields) == set(channel) | {'robot_llm', 'commander_llm', 'main_condition'}
+    same = {tuple(getattr(zp.SPECS[c], f) for f in fields if f not in channel) for c in main}
+    assert same == {(True, False, True)}               # robot_llm, commander_llm, main_condition
+    assert {zp.SPECS[c].topology for c in main} == {'none', 'mesh', 'star'}
+    assert {zp.SPECS[c].encoding for c in main} == {'none', 'ko_free', 'structured'}
 
 
 def test_leader_rotates_r1_r2_r3_by_seed():
@@ -234,35 +245,123 @@ def test_delivery_delay_and_inbox_fields():
 
 
 def test_a_message_cannot_change_claims_reservations_or_peer_actions():
-    """Transport has no decision state, takes none, and relaying changes none."""
-    host = {'claims': {'r1': {'order_id': 'order-1'}}, 'reservations': {'A': 'r1'},
-            'actions': {'r2': {'kind': 'wait'}}}
-    before = copy.deepcopy(host)
+    """Falsifiable checks: the transport owns no decision state, cannot be given
+    one, copies every body it relays, and never mutates the caller's reply."""
     t = transport('peer_ko')
-    t.send('r1', recipients=['r2', 'r3'], text='order-1은 제가 맡습니다. r2는 물러나 주십시오.', at_sim_s=10.)
     reply = {'request_id': 'q-r2', 'action': {'kind': 'wait'}, 'decision_sources': ['message', 'own_rgb'],
-             'messages': [{'recipients': ['r1'], 'text': '거절합니다. 제가 이미 접근 중입니다.', 'reply_to': None}]}
-    value = zp.validate_reply(json.dumps(reply), request_id='q-r2', condition='peer_ko', actor='r2',
-                             order_ids=('order-1', 'order-2'))
+             'messages': [{'recipients': ['r1'], 'text': '거절합니다. 제가 이미 접근 중입니다.',
+                           'reply_to': None}]}
+    value = zp.validate_reply(json.dumps(reply, ensure_ascii=False), request_id='q-r2',
+                             condition='peer_ko', actor='r2', order_ids=('order-1', 'order-2'))
+    frozen = copy.deepcopy(value)
     zp.relay(t, 'r2', value, at_sim_s=10.3)
-    assert host == before                               # nothing in the host ledger moved
-    assert not (set(vars(t)) & {'claims', 'reservations', 'actions', 'board', 'jobs'})
+    assert value == frozen                            # relay does not rewrite the reply or its action
+    # the host could mutate its own copy afterwards; the delivered record must not follow
+    value['messages'][0]['text'] = '양보하겠습니다.'
+    value['action']['kind'] = 'claim'
+    record, = t.inbox('r1', now_sim_s=99.)
+    assert record['text'] == frozen['messages'][0]['text']
+    assert set(record) <= set(zp.INBOX_FIELDS) and 'action' not in record
+    # no decision state is stored, and no transport entry point can be handed one
+    assert not (set(vars(t)) & set(zp.FORBIDDEN_TRANSPORT_PARAMS))
     assert not (zp.transport_parameter_names() & set(zp.FORBIDDEN_TRANSPORT_PARAMS))
-    # the delivered record carries no action either
-    assert all('action' not in m and 'kind' not in m for m in t.inbox('r1', now_sim_s=99.))
 
 
-def test_relay_reports_each_rejection_without_repairing_it():
-    t = transport('leader_ko', seed=12)                # leader r1
-    reply = {'request_id': 'q-r2', 'action': {'kind': 'continue'}, 'decision_sources': ['own_rgb'],
-             'messages': [{'recipients': ['r1'], 'text': '보고합니다.', 'reply_to': None},
-                          {'recipients': ['r3'], 'text': '같이 가시죠.', 'reply_to': None}]}
+def test_structured_bodies_are_copied_not_shared():
+    t = transport('structured')
+    body = struct()
+    t.send('r1', recipients=['r2'], structured=body, at_sim_s=10.)
+    body['zone'] = 'C'                                # a later host edit must not reach the inbox
+    assert t.inbox('r2', now_sim_s=99.)[0]['message']['zone'] == 'A'
+
+
+def test_structured_reply_to_cannot_smuggle_a_sentence():
+    """reply_to is an id, so condition 4 really has no free text."""
+    t = transport('structured')
+    prose = 'order-1은 제가 맡습니다. r2는 물러나 주십시오. ' * 20
+    assert t.send('r1', recipients=['r2'], structured=struct(reply_to=prose),
+                  at_sim_s=10.).rejection == 'schema'
+    with pytest.raises(zp.ProtocolError):
+        zp.validate_structured(struct(reply_to=prose), vocab=t.vocab)
+    assert not zp.is_message_id(prose) and not zp.is_message_id('w1 r2 1')
+    assert zp.is_message_id('w1-r2-1') and not zp.is_message_id('x' * (zp.MESSAGE_ID_MAX + 1))
+    # a well-formed id that this robot never received is refused as well
+    assert t.send('r1', recipients=['r2'], structured=struct(reply_to='w1-r3-1'),
+                  at_sim_s=10.).rejection == 'unknown_reply_to'
+    assert t.inbox('r2', now_sim_s=99.) == ()
+
+
+def test_validator_leaves_recipient_topology_to_the_transport():
+    """Documented layer split: a wrong recipient costs the utterance, not the
+    action, so the mistake is recorded instead of voiding the whole reply."""
+    reply = {'request_id': 'q-r2', 'action': {'kind': 'claim', 'order_id': 'order-1',
+                                             'role': 'end_neg', 'destination_zone': 'A'},
+             'decision_sources': ['own_rgb'],
+             'messages': [{'recipients': ['r3'], 'text': '같이 가시죠.', 'reply_to': None}]}
     value = zp.validate_reply(reply, request_id='q-r2', condition='leader_ko', actor='r2',
-                             order_ids=('order-1',))
-    receipts = zp.relay(t, 'r2', value, at_sim_s=10.)
-    assert [r.accepted for r in receipts] == [True, False]
-    assert receipts[1].rejection == 'no_follower_to_follower'
-    assert t.inbox('r3', now_sim_s=99.) == () and len(t.inbox('r1', now_sim_s=99.)) == 1
+                             order_ids=('order-1',), roles_by_order={'order-1': ('end_neg',)})
+    t = transport('leader_ko', seed=12)               # leader r1
+    receipt, = zp.relay(t, 'r2', value, at_sim_s=10.)
+    assert receipt.rejection == 'no_follower_to_follower'
+    assert value['action']['order_id'] == 'order-1'    # the action survives the rejected utterance
+    assert t.inbox('r3', now_sim_s=99.) == () and t.rejections[0]['rejection'] == 'no_follower_to_follower'
+
+
+def test_unknown_sender_and_reopened_windows_are_refused():
+    t = transport('peer_ko')
+    assert t.send('r9', recipients=['r1'], text=KO_TEXT, at_sim_s=10.).rejection == 'unknown_sender'
+    assert t.send(zp.COMMANDER, recipients=['r1'], text=KO_TEXT, at_sim_s=10.).rejection == 'unknown_sender'
+    with pytest.raises(zp.ProtocolError):             # re-opening a window would reset the cap
+        t.open_window('w1', at_sim_s=20.)
+    assert t.windows == ['w1']
+
+
+def test_optional_run_budget_survives_new_windows():
+    t = zp.Transport('peer_ko', max_total_utterances=3)
+    for i in range(4):
+        t.open_window(f'w{i}', at_sim_s=10. * i)
+        for _ in range(2):
+            t.send('r1', recipients=['r2'], text=f'{i}번 보고입니다.', at_sim_s=10. * i)
+    assert t.sent_count() == 3
+    assert [r['rejection'] for r in t.rejections] == ['total_cap'] * 5
+
+
+def test_inbox_returns_every_delivered_message_and_records_a_cut():
+    t = transport('peer_ko', max_window_utterances=12, max_robot_utterances=12)
+    for i in range(10):
+        t.send('r2', recipients=['r1'], text=f'{i}번 보고입니다.', at_sim_s=10.)
+    assert t.delivered_count('r1') == 10 and len(t.inbox('r1', now_sim_s=99.)) == 10
+    assert t.truncations == []
+    assert len(t.inbox('r1', now_sim_s=99., last=4)) == 4
+    assert t.truncations == [{'robot_id': 'r1', 'now_sim_s': 99., 'delivered': 10, 'kept': 4}]
+
+
+def test_peer_and_structured_share_the_same_utterance_budget():
+    peer, structured = zp.spec('peer_ko'), zp.spec('structured')
+    assert (peer.max_window_utterances, peer.max_robot_utterances) == \
+           (structured.max_window_utterances, structured.max_robot_utterances) == (6, 2)
+    assert zp.allowed_edges('peer_ko') == zp.allowed_edges('structured')
+    assert transport('peer_ko').remaining('r1') == transport('structured').remaining('r1') == 2
+
+
+def test_guards_still_raise_under_optimised_python():
+    """The rejection-name and inbox-field guards are real raises, not asserts,
+    so they also hold when pytest is run with python -O."""
+    root = Path(__file__).resolve().parents[1]
+    code = ('import harness.zone_study_protocol as zp\n'
+            'try:\n'
+            '    zp._Reject("not_a_rejection", "x")\n'
+            'except zp.ProtocolError:\n'
+            '    print("reject-guard")\n'
+            'env = zp.Envelope("m", "r1", ("r2",), 1.0, text="보고합니다.")\n'
+            'object.__setattr__(env, "structured", {"act": "inform"})\n'
+            'print("record-keys", sorted(env.record(delivered_at_sim_s=1.1)) == '
+            'sorted(("message_id", "from_robot", "recipients", "sent_at_sim_s", '
+            '"delivered_at_sim_s", "reply_to", "text")))\n')
+    out = subprocess.run([sys.executable, '-O', '-c', code], capture_output=True, text=True,
+                         cwd=root, env={**os.environ, 'PYTHONPATH': str(root)})
+    assert out.returncode == 0, out.stderr
+    assert out.stdout.split() == ['reject-guard', 'record-keys', 'True'], out.stdout
 
 
 # --- reply parsing and schema violations ----------------------------------
@@ -451,13 +550,21 @@ def test_condition_blocks_say_exactly_what_the_channel_allows():
     assert 'kind "order"' in commander and '참고 상한' in commander
 
 
-def test_task_and_language_blocks_are_identical_across_main_conditions():
-    """Only the channel block and the messages line may differ."""
-    heads = {pk.system_prompt(c, 'r1', seed=12).split('통신:')[0] for c in
-             ('no_comm', 'peer_ko', 'structured')}
-    assert len(heads) == 1
-    assert pk.KO_LANGUAGE in pk.system_prompt('peer_ko', 'r1')
-    assert pk.KO_LANGUAGE_STRUCT in pk.system_prompt('structured', 'r1')
+def test_goal_and_input_boundary_text_is_identical_across_all_main_conditions():
+    """The task and input-boundary text is byte-identical in all four main
+    conditions; the role sentence and the channel/language blocks may differ."""
+    bodies = set()
+    for condition in ('no_comm', 'peer_ko', 'leader_ko', 'structured'):
+        for rid in ROBOTS:
+            head = pk.system_prompt(condition, rid, seed=12).split('통신:')[0]
+            bodies.add(head.split('\n', 1)[1])        # drop only the identity/role sentence
+    assert len(bodies) == 1, bodies
+    # the language rule differs only between free text and the fixed schema
+    assert pk.KO_LANGUAGE.strip() in pk.system_prompt('peer_ko', 'r1')
+    assert pk.KO_LANGUAGE.strip() in pk.system_prompt('no_comm', 'r1')
+    assert pk.KO_LANGUAGE.strip() in pk.system_prompt('leader_ko', 'r1', seed=12)
+    assert pk.KO_LANGUAGE_STRUCT.strip() in pk.system_prompt('structured', 'r1')
+    assert pk.KO_LANGUAGE.strip() not in pk.system_prompt('structured', 'r1')
 
 
 @pytest.mark.parametrize('condition,rid,seed', CASES)
@@ -527,6 +634,59 @@ def test_public_map_drops_the_top_cameras():
     assert out['passages'] == MAP_PUBLIC['passages'] and out['regions'] == MAP_PUBLIC['regions']
     with pytest.raises(zp.ProtocolError):
         pk.public_map({'regions': {}})
+    # a forbidden key nested inside an allowed block cannot be dropped safely
+    with pytest.raises(zp.ProtocolError):
+        pk.public_map({**MAP_PUBLIC, 'regions': {**MAP_PUBLIC['regions'],
+                                                 'zone_A': {'top_cameras': ['cctv_top']}}})
+
+
+def test_study_inputs_enforce_the_boundary_at_construction():
+    """Building the bundle by hand cannot bypass the input allowlists."""
+    # a TOP camera or any key outside the allowlist is projected away
+    dropped = inputs(map_public={**MAP_PUBLIC, 'top_cameras': [{'name': 'cctv_top'}],
+                                 'box_positions': {'tile-1': [1, 2, 0]}})
+    assert 'top_cameras' not in json.dumps(dropped.map_public)
+    assert 'box_positions' not in dropped.map_public
+    # anything that cannot be dropped safely is refused
+    for bad in ({'map_public': {**MAP_PUBLIC, 'regions': {'zone_A': {'top_cameras': ['cctv_top']}}}},
+                {'order_sheet': {**ORDER_SHEET, 'orders': [{**ORDER_SHEET['orders'][0],
+                                                            'status': 'delivered'}]}},
+                {'own_belief': {'ground_truth_xyz_m': [1, 2, 0]}},
+                {'own_belief': {'r2_position_m': [1, 2]}},
+                {'own_belief': {'region': 'pickup', 'confidence': 0.9}},
+                {'own_commands': ({'command': 'drive', 'measured_qpos': [0.1]},)},
+                {'own_commands': ({'command': 'drive', 'status': 'grasp_success'},)},
+                {'own_commands': ({'robot': 'r2', 'command': 'drive'},)},
+                {'map_sha256': 'short'}):
+        with pytest.raises(zp.ProtocolError):
+            inputs(**bad)
+    allowed = inputs(own_belief={'region': 'pickup', 'confidence': 'low', 'sources': ['own-r1-0042']},
+                     own_commands=({'command': 'drive', 'issued_at_sim_s': 1., 'status': 'queue_empty'},))
+    assert allowed.own_belief['confidence'] == 'low' and allowed.own_commands[0]['status'] == 'queue_empty'
+
+
+def test_delivered_records_must_match_the_condition_encoding():
+    free = {'message_id': 'w1-r2-1', 'from_robot': 'r2', 'recipients': ['r1'], 'sent_at_sim_s': 1.,
+            'delivered_at_sim_s': 1.1, 'reply_to': None, 'text': KO_TEXT}
+    fixed = {**free, 'message': struct()}
+    del fixed['text']
+    with pytest.raises(zp.ProtocolError):             # free text into the structured condition
+        pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), inbox=(free,))
+    with pytest.raises(zp.ProtocolError):             # structured body into the Korean condition
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), inbox=(fixed,))
+    with pytest.raises(zp.ProtocolError):             # never both
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
+                         inbox=({**free, 'message': struct()},))
+    assert pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), inbox=(fixed,))
+
+
+def test_commander_views_must_be_the_robot_roster():
+    with pytest.raises(zp.ProtocolError):
+        pk.build_request('reference_R', zp.COMMANDER, request_id='q', inputs=inputs(),
+                         robot_views={'ground_truth_view': JPEG})
+    with pytest.raises(zp.ProtocolError):
+        pk.build_request('reference_R', zp.COMMANDER, request_id='q', inputs=inputs(),
+                         robot_views={'r1': JPEG, 'r2': JPEG})
 
 
 def test_order_sheet_rejects_live_state_and_bad_roles():
@@ -611,7 +771,7 @@ def test_one_window_round_trip_per_condition(condition, seed):
         assert len(t.inbox(lead, now_sim_s=99.)) == 2
     after = pk.build_request(condition, ROBOTS[0], request_id='q-2', inputs=inputs(), seed=seed,
                              window={'window_id': 'w1'}, inbox=t.inbox(ROBOTS[0], now_sim_s=99.),
-                             sent=('w1-r1-1',))
+                             sent=t.sent_ids(ROBOTS[0], 'w1'))
     window = json.loads(after['messages'][1]['content'])['dialogue_window']
-    assert window['your_utterances_left'] == 1
+    assert t.sent_ids(ROBOTS[0], 'w1') and window['your_utterances_left'] == 1
     assert all(set(m) <= set(zp.INBOX_FIELDS) for m in window['received'])

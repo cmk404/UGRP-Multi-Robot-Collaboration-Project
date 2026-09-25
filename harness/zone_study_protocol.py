@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import copy
 import inspect
+import re
 from dataclasses import dataclass, field
 
 from harness.three_robot_plan import parse
@@ -85,7 +86,16 @@ FORBIDDEN_TRANSPORT_PARAMS = ('claims', 'claim', 'reservation', 'reservations', 
 REJECTIONS = ('channel_closed', 'no_follower_to_follower', 'unknown_sender', 'unknown_recipient',
               'self_recipient', 'no_recipients', 'free_text_not_allowed', 'structured_not_allowed',
               'empty_text', 'text_too_long', 'schema', 'window_cap', 'robot_cap', 'no_window',
-              'unknown_reply_to')
+              'unknown_reply_to', 'total_cap')
+
+# A message_id is an identifier, never a place to hide prose: the structured
+# condition would otherwise carry free text in ``reply_to``.
+MESSAGE_ID_MAX = 64
+_MESSAGE_ID = re.compile(r'[A-Za-z0-9_.:-]{1,%d}\Z' % MESSAGE_ID_MAX)
+
+
+def is_message_id(value) -> bool:
+    return isinstance(value, str) and bool(_MESSAGE_ID.fullmatch(value))
 
 
 class ProtocolError(ValueError):
@@ -233,7 +243,9 @@ class Envelope:
             out['text'] = self.text
         else:
             out['message'] = copy.deepcopy(self.structured)
-        assert set(out) <= set(INBOX_FIELDS)
+        extra = set(out) - set(INBOX_FIELDS)
+        if extra:                                   # checked in -O too
+            raise ProtocolError(f'inbox record must not carry {sorted(extra)}')
         return out
 
 
@@ -266,7 +278,7 @@ class Transport:
     def __init__(self, condition, *, seed=None, leader=None, robots=ROBOTS,
                  item_ids=(), order_ids=(), roles=(), passages=(), location_refs=(),
                  delivery_delay_sim_s=DELIVERY_DELAY_SIM_S, max_window_utterances=None,
-                 max_robot_utterances=None):
+                 max_robot_utterances=None, max_total_utterances=None):
         self.spec = spec(condition)
         self.condition = self.spec.name
         self.robots = tuple(robots)
@@ -275,13 +287,18 @@ class Transport:
         self.delivery_delay_sim_s = float(delivery_delay_sim_s)
         self.cap_window = self.spec.max_window_utterances if max_window_utterances is None else max_window_utterances
         self.cap_robot = self.spec.max_robot_utterances if max_robot_utterances is None else max_robot_utterances
+        # Optional episode budget. Re-opening windows must not be a way around
+        # the per-window cap, so the runner can bound the whole run here.
+        self.cap_total = max_total_utterances
         self.vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
                       'role': frozenset(roles), 'passage': frozenset(passages),
                       'location_ref': frozenset(location_refs)}
         self._inbox = {rid: [] for rid in self.robots}
         self.window = None
+        self.windows = []      # every window id opened, in order
         self.log = []          # evaluation only: every attempt, accepted or not
         self.rejections = []   # evaluation only
+        self.truncations = []  # evaluation only: inbox records a caller cut off
 
     def _received_ids(self, rid) -> frozenset:
         """A robot may only reply to a message it actually received."""
@@ -289,8 +306,13 @@ class Transport:
 
     # -- windows ----------------------------------------------------------
     def open_window(self, window_id, *, at_sim_s) -> Window:
+        """Open a new window. A window id is never reused, so the per-window
+        cap cannot be reset by re-opening the same window."""
         if not isinstance(window_id, str) or not window_id:
             raise ProtocolError('window id required')
+        if window_id in self.windows:
+            raise ProtocolError(f'window {window_id!r} was already opened; use a new id')
+        self.windows.append(window_id)
         self.window = Window(window_id, float(at_sim_s))
         return self.window
 
@@ -302,6 +324,8 @@ class Transport:
         if not self.spec.channel_open or self.window is None:
             return 0
         left = self.cap_window - self.window.utterances
+        if self.cap_total is not None:
+            left = min(left, self.cap_total - self.sent_count())
         if sender is not None:
             left = min(left, self.cap_robot - self.window.per_robot.get(sender, 0))
         return max(0, left)
@@ -364,8 +388,11 @@ class Transport:
                 seen.add(rid)
                 targets.append(rid)
         body_text, body_struct = self._body(text, structured)
-        if reply_to is not None and reply_to not in self._received_ids(sender):
-            raise _Reject('unknown_reply_to', str(reply_to))
+        for candidate in (reply_to, (body_struct or {}).get('reply_to')):
+            if candidate is not None and candidate not in self._received_ids(sender):
+                raise _Reject('unknown_reply_to', str(candidate))
+        if self.cap_total is not None and self.sent_count() >= self.cap_total:
+            raise _Reject('total_cap', f'{self.cap_total} per run')
         if self.window.utterances >= self.cap_window:
             raise _Reject('window_cap', f'{self.cap_window} per window')
         if self.window.per_robot.get(sender, 0) >= self.cap_robot:
@@ -392,16 +419,26 @@ class Transport:
             raise _Reject('schema', str(exc)) from None
 
     # -- receiving --------------------------------------------------------
-    def inbox(self, rid, *, now_sim_s, last=8) -> tuple:
+    def inbox(self, rid, *, now_sim_s, last=None) -> tuple:
         """Messages actually delivered to ``rid`` by ``now_sim_s``.
 
-        Only the explicit recipients ever see an utterance; ``no_comm`` and
-        ``reference_R`` always return ().
+        Every delivered message is returned by default: a silently dropped
+        utterance would be an unrecorded information loss. ``last`` is an
+        explicit caller choice and the drop is reported in ``truncations``.
         """
         if rid not in self._inbox:
             raise ProtocolError(f'unknown robot {rid!r}')
         out = [env.record(delivered_at_sim_s=at) for at, env in self._inbox[rid] if at <= float(now_sim_s)]
-        return tuple(out[-last:])
+        if last is not None and len(out) > last:
+            self.truncations.append({'robot_id': rid, 'now_sim_s': float(now_sim_s),
+                                     'delivered': len(out), 'kept': last})
+            return tuple(out[-last:])
+        return tuple(out)
+
+    def sent_ids(self, rid, window_id=None) -> tuple:
+        """message_ids this robot actually got accepted (optionally one window)."""
+        return tuple(e['message_id'] for e in self.log if e['accepted'] and e['sender'] == rid
+                     and (window_id is None or e['window'] == window_id))
 
     def delivered_count(self, rid) -> int:
         return len(self._inbox[rid])
@@ -416,7 +453,8 @@ class _Reject(ProtocolError):
 
     def __init__(self, reason, detail=None):
         super().__init__(f'{reason}: {detail}' if detail else reason)
-        assert reason in REJECTIONS, reason
+        if reason not in REJECTIONS:                 # checked in -O too
+            raise ProtocolError(f'unknown rejection reason {reason!r}')
         self.reason, self.detail = reason, detail
 
 
@@ -448,8 +486,8 @@ def validate_structured(value, *, vocab) -> dict:
     seen = value['observed_at_sim_s']
     if seen is not None and (isinstance(seen, bool) or not isinstance(seen, (int, float)) or seen < 0):
         raise ProtocolError('observed_at_sim_s must be a non-negative number or null')
-    if value['reply_to'] is not None and not isinstance(value['reply_to'], str):
-        raise ProtocolError('reply_to must be a message_id string or null')
+    if value['reply_to'] is not None and not is_message_id(value['reply_to']):
+        raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
     return copy.deepcopy(value)
 
 
@@ -552,6 +590,13 @@ def validate_reply(raw, *, request_id, condition, actor, order_ids=(), item_ids=
 
 
 def _check_message(value, *, spec, robots, vocab, actor):
+    """Schema of one outgoing message.
+
+    Deliberately NOT a topology check: which recipient a robot may reach is
+    decided and recorded by ``Transport`` (``no_follower_to_follower``). A wrong
+    recipient must cost the utterance, not void the whole reply and its action,
+    so the mistake stays measurable.
+    """
     keys = {'recipients', 'reply_to', 'text' if spec.encoding == 'ko_free' else 'message'}
     if not isinstance(value, dict) or set(value) != keys:
         raise ProtocolError('each message needs exactly ' + ', '.join(sorted(keys)))
@@ -563,8 +608,8 @@ def _check_message(value, *, spec, robots, vocab, actor):
             raise ProtocolError(f'unknown recipient {rid!r}')
         if rid == actor:
             raise ProtocolError('a robot does not address itself')
-    if value['reply_to'] is not None and not isinstance(value['reply_to'], str):
-        raise ProtocolError('reply_to must be a message_id string or null')
+    if value['reply_to'] is not None and not is_message_id(value['reply_to']):
+        raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
     if spec.encoding == 'ko_free':
         text = value['text']
         if not isinstance(text, str) or not text.strip():
@@ -616,4 +661,4 @@ __all__ = ['PROTOCOL_VERSION', 'CONDITIONS', 'SPECS', 'ConditionSpec', 'Protocol
            'ROBOT_ACTION_KINDS', 'COMMANDER_ACTION_KINDS', 'INBOX_FIELDS', 'REJECTIONS',
            'FORBIDDEN_TRANSPORT_PARAMS', 'MAX_WINDOW_UTTERANCES', 'MAX_ROBOT_UTTERANCES',
            'PROMPT_TEXT_CHARS', 'MAX_TEXT_CHARS', 'KOREAN_MIN_RATIO', 'DELIVERY_DELAY_SIM_S',
-           'transport_parameter_names']
+           'MESSAGE_ID_MAX', 'is_message_id', 'transport_parameter_names']

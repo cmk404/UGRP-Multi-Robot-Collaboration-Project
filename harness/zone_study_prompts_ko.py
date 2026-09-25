@@ -50,11 +50,28 @@ ORDER_KEYS = ('order_id', 'kind', 'item_ids', 'count', 'required_robots', 'roles
 ORDER_FORBIDDEN_KEYS = ('pose', 'xyz', 'xyz_m', 'held_by', 'carried_by', 'delivered', 'status',
                         'current_location', 'current_zone', 'body', 'body_name', 'qpos', 'progress')
 FORBIDDEN_IMAGE_TOKENS = ('top', 'nav_cam', 'cctv')
+# Own belief: only fields a robot can build from its own allowed inputs (the
+# design's belief example). Package A/B may widen this on purpose, never by
+# accident, so an unknown key is refused instead of forwarded.
+BELIEF_KEYS = ('region', 'last_visual_anchor', 'last_requested_destination',
+               'last_visually_confirmed_region', 'confidence', 'sources')
+BELIEF_CONFIDENCE = ('low', 'medium', 'high')
+# Own issued commands: the command and its own queue state, never a measured
+# joint, a contact, a success judgement or another robot's command.
+OWN_COMMAND_KEYS = ('command', 'args', 'issued_at_sim_s', 'status', 'request_id', 'window_id')
+OWN_COMMAND_STATUS = ('command_issued', 'queue_empty', 'hold_requested', 'local_timeout')
 
 
 @dataclass(frozen=True)
 class StudyInputs:
-    """Minimal local stand-in for the package A per-call input bundle."""
+    """Minimal local stand-in for the package A per-call input bundle.
+
+    The input boundary is enforced here, at construction: the map is projected
+    through ``public_map``, the order sheet through ``validate_order_sheet`` and
+    the belief and command history through their allowlists. Building the bundle
+    by hand therefore cannot smuggle a TOP camera, a ground-truth pose, another
+    robot's state or a completion judgement into a prompt.
+    """
     map_public: dict
     map_sha256: str
     order_sheet: dict
@@ -65,6 +82,16 @@ class StudyInputs:
     map_figure_jpeg: bytes | None = None
     sim_time_s: float = 0.0
     adapter: str = 'local_minimal_v1'
+
+    def __post_init__(self):
+        set_ = object.__setattr__
+        set_(self, 'map_public', public_map(self.map_public))
+        set_(self, 'order_sheet', validate_order_sheet(self.order_sheet))
+        set_(self, 'own_belief', validate_belief(self.own_belief))
+        set_(self, 'own_commands', validate_own_commands(self.own_commands))
+        for name in ('map_sha256', 'order_sheet_sha256'):
+            if not isinstance(getattr(self, name), str) or len(getattr(self, name)) != 64:
+                raise zp.ProtocolError(f'{name} must be a sha256 hex digest')
 
     def order_ids(self) -> tuple:
         return tuple(o['order_id'] for o in self.order_sheet['orders'])
@@ -96,8 +123,8 @@ def from_contract(obj) -> StudyInputs:
                if get(k) is None]
     if missing:
         raise zp.ProtocolError(f'contract object is missing {missing}; {ADAPTER_NOTE}')
-    return StudyInputs(map_public=public_map(get('map_public')), map_sha256=get('map_sha256'),
-                       order_sheet=validate_order_sheet(get('order_sheet')),
+    return StudyInputs(map_public=get('map_public'), map_sha256=get('map_sha256'),
+                       order_sheet=get('order_sheet'),
                        order_sheet_sha256=get('order_sheet_sha256'), wrist_jpeg=get('wrist_jpeg'),
                        own_commands=tuple(get('own_commands', ()) or ()),
                        own_belief=dict(get('own_belief', {}) or {}),
@@ -106,14 +133,65 @@ def from_contract(obj) -> StudyInputs:
 
 
 def public_map(static_map: dict) -> dict:
-    """Keep only static, robot-allowed map content; drop the TOP cameras."""
+    """Keep only static, robot-allowed map content; drop the TOP cameras.
+
+    Keys outside the allowlist are dropped. A forbidden key NESTED inside an
+    allowed block cannot be dropped safely, so it is refused instead.
+    """
     if not isinstance(static_map, dict) or 'map_id' not in static_map:
         raise zp.ProtocolError('static map must be the authored map object')
     out = {k: copy.deepcopy(static_map[k]) for k in MAP_PUBLIC_KEYS if k in static_map}
-    leaked = [k for k in MAP_FORBIDDEN_KEYS if k in out]
+    leaked = sorted(_nested_keys(out) & set(MAP_FORBIDDEN_KEYS))
     if leaked:
         raise zp.ProtocolError(f'public map must not carry {leaked}')
     return out
+
+
+def _nested_keys(value) -> set:
+    if isinstance(value, dict):
+        return set(value) | {k for v in value.values() for k in _nested_keys(v)}
+    if isinstance(value, (list, tuple)):
+        return {k for v in value for k in _nested_keys(v)}
+    return set()
+
+
+def validate_belief(belief) -> dict:
+    """Own belief: allowlisted fields only, so no ground truth can ride along."""
+    if belief is None:
+        return {}
+    if not isinstance(belief, dict):
+        raise zp.ProtocolError('own_belief must be an object')
+    extra = sorted(set(belief) - set(BELIEF_KEYS))
+    if extra:
+        raise zp.ProtocolError(f'own_belief carries unknown fields {extra}; allowed: {BELIEF_KEYS}')
+    for key in ('region', 'last_visual_anchor', 'last_requested_destination',
+                'last_visually_confirmed_region'):
+        if belief.get(key) is not None and not isinstance(belief[key], str):
+            raise zp.ProtocolError(f'own_belief.{key} must be a string or null')
+    if belief.get('confidence') is not None and belief['confidence'] not in BELIEF_CONFIDENCE:
+        raise zp.ProtocolError(f'own_belief.confidence must be one of {BELIEF_CONFIDENCE} or null')
+    sources = belief.get('sources')
+    if sources is not None and (not isinstance(sources, list)
+                                or not all(isinstance(s, str) for s in sources)):
+        raise zp.ProtocolError('own_belief.sources must be a list of source ids')
+    return copy.deepcopy(belief)
+
+
+def validate_own_commands(commands) -> tuple:
+    """The robot's own issued commands: no measurement, contact or peer record."""
+    out = []
+    for entry in tuple(commands or ()):
+        if not isinstance(entry, dict):
+            raise zp.ProtocolError('each own command must be an object')
+        extra = sorted(set(entry) - set(OWN_COMMAND_KEYS))
+        if extra:
+            raise zp.ProtocolError(f'own_commands carries unknown fields {extra}; '
+                                   f'allowed: {OWN_COMMAND_KEYS}')
+        if entry.get('status') is not None and entry['status'] not in OWN_COMMAND_STATUS:
+            raise zp.ProtocolError(f'own_commands status must be one of {OWN_COMMAND_STATUS}; '
+                                   'an executor success or contact judgement is not a robot input')
+        out.append(copy.deepcopy(entry))
+    return tuple(out)
 
 
 def validate_order_sheet(sheet: dict) -> dict:
@@ -348,12 +426,19 @@ def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None,
     role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots)
     if (robot_views is not None) != (role == 'commander'):
         raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
+    if robot_views is not None and set(robot_views) != set(robots):
+        raise zp.ProtocolError(f'robot_views must be exactly {tuple(robots)}')
     if not s.channel_open and (tuple(inbox) or tuple(sent) or window):
         raise zp.ProtocolError(f'{condition} has no dialogue channel: inbox, sent and window must be empty')
+    body_key = 'text' if s.encoding == 'ko_free' else 'message'
     for record in inbox:
         extra = set(record) - set(zp.INBOX_FIELDS)
         if extra:
             raise zp.ProtocolError(f'inbox record carries non-robot-facing fields {sorted(extra)}')
+        if s.channel_open and body_key not in record:
+            raise zp.ProtocolError(f'{condition} delivers {body_key}; got {sorted(record)}')
+        if 'text' in record and 'message' in record:
+            raise zp.ProtocolError('a delivered message is free text or structured, never both')
     body = {'request_id': request_id, 'robot_id': rid, 'condition': condition,
             'sim_time_s': inputs.sim_time_s,
             'static_map': copy.deepcopy(inputs.map_public), 'static_map_sha256': inputs.map_sha256,
@@ -387,6 +472,7 @@ def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None,
 
 
 __all__ = ['PROMPT_VERSION', 'ADAPTER_NOTE', 'StudyInputs', 'from_contract', 'public_map',
-           'validate_order_sheet', 'system_prompt', 'build_request', 'IMAGE_OWN', 'IMAGE_MAP',
-           'ORDER_SHEET_SCHEMA', 'ORDER_KEYS', 'MAP_PUBLIC_KEYS', 'MAP_FORBIDDEN_KEYS',
-           'FORBIDDEN_IMAGE_TOKENS']
+           'validate_order_sheet', 'validate_belief', 'validate_own_commands', 'system_prompt',
+           'build_request', 'IMAGE_OWN', 'IMAGE_MAP', 'ORDER_SHEET_SCHEMA', 'ORDER_KEYS',
+           'MAP_PUBLIC_KEYS', 'MAP_FORBIDDEN_KEYS', 'FORBIDDEN_IMAGE_TOKENS', 'BELIEF_KEYS',
+           'OWN_COMMAND_KEYS', 'OWN_COMMAND_STATUS']
