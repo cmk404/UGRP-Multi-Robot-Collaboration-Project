@@ -183,9 +183,9 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(row["status"], "launcher_failed")
         self.assertEqual(row["exit_code"], 2)
 
-    def test_catalog_has_twenty_nine_selectable_workflows_and_distinct_adapters(self):
+    def test_catalog_has_thirty_selectable_workflows_and_distinct_adapters(self):
         data, digest = wm.catalog(PROJECT)
-        self.assertEqual(len(data["workflows"]), 29)
+        self.assertEqual(len(data["workflows"]), 30)
         self.assertEqual(len(digest), 64)
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "dispatch-skills")["runner"], "scripts.run_dispatch_e2e")
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "communication")["output_kind"]["prepare"], "file")
@@ -229,6 +229,7 @@ raise SystemExit(3 if a.fail else 0)
             "zone-color-eval": ["render", "--split", "dev"],
             "zone-cargo-perception-eval": ["render", "--split", "dev"],
             "zone-rgb-outcome-eval": ["track", "--split", "dev_v2"],
+            "zone-owncam-loc-record": ["--episodes", str(source)],
         }
         with mock.patch.dict(os.environ, {"UGRP_SIM_TOKEN": "secret"}), \
              mock.patch.object(subprocess, "Popen", side_effect=AssertionError("planning launched a child")):

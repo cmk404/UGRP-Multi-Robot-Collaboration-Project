@@ -48,8 +48,14 @@ ROBOT_RADIUS_M = .17
 SYMMETRY = {'can': None, 'tile': 180., 'long_beam': 180., 'heavy_crate': 180., 'tri_frame': 120.}
 
 
-def load_split():
-    return json.loads(SPLIT_FILE.read_text())
+# v2 split (2026-09-25, profile top_cargo_v2 review): targeted cases for the
+# two review findings, on fresh seeds. Selected by the split file's view_plan.
+VIEW_PLANS = {'v1': VIEW_PLAN,
+              'v2': VIEW_PLAN + (('parallel_beams', 2), ('box_in_frame', 2))}
+
+
+def load_split(path=None):
+    return json.loads(Path(path or SPLIT_FILE).read_text())
 
 
 def _cls(kind, colour=None):
@@ -235,6 +241,8 @@ def plan_view(case, index, rng, info, items, robot_ids):
     zone = {k: (r['center_m'], r['half_extents_m']) for k, r in regions.items()}
     pickup = zone['pickup']
     cams = static['top_cameras']
+    info.pop('_case_params', None)
+    v1_BEAM_W = .040
     xs = sorted({c['position_m'][0] for c in cams})
     ys = sorted({c['position_m'][1] for c in cams})
     seam_x, seam_y = (xs[0]+xs[-1])/2, (ys[0]+ys[-1])/2
@@ -393,6 +401,69 @@ def plan_view(case, index, rng, info, items, robot_ids):
                 return None
         if not (boxes_at_layout() and scatter(cargo)):
             return None
+    elif case == 'parallel_beams':
+        # Two beams side by side: edge gap 0.5-8 cm (centre lines 4.5-12 cm
+        # apart), along-axis offset up to 10 cm; index 1 lies across a TOP seam.
+        b1, b2 = [o for o in cargo if items[o]['kind'] == 'long_beam'][:2]
+        for _ in range(400):
+            yaw = rng.uniform(-math.pi, math.pi)
+            gap = rng.uniform(.005, .08)
+            sep = v1_BEAM_W + gap
+            along = rng.uniform(-.10, .10)
+            if index % 2:
+                c = (seam_x+rng.uniform(-.1, .1), rng.uniform(lay.lo[1]+.4, lay.hi[1]-.4)) if rng.random() < .5 else \
+                    (rng.uniform(lay.lo[0]+.4, lay.hi[0]-.4), seam_y+rng.uniform(-.1, .1))
+            else:
+                c = lay.random_xy()
+            nx, ny = -math.sin(yaw), math.cos(yaw)
+            pa = (c[0]-nx*sep/2, c[1]-ny*sep/2, yaw)
+            pb = (c[0]+nx*sep/2+along*math.cos(yaw), c[1]+ny*sep/2+along*math.sin(yaw), yaw)
+            if lay.item_ok('long_beam', pa):
+                lay.items[b1] = ('long_beam', pa)
+                if lay.item_ok('long_beam', pb, ignore_items=(b1,)):
+                    lay.items[b2] = ('long_beam', pb)
+                    info['_case_params'] = {'beams': [b1, b2], 'centre_sep_m': sep, 'edge_gap_m': gap,
+                                            'along_offset_m': along, 'across_seam': bool(index % 2)}
+                    break
+                lay.items.pop(b1)
+        else:
+            return None
+        if not (boxes_at_layout() and scatter(cargo) and free_robots()):
+            return None
+    elif case == 'box_in_frame':
+        # Boxes in the open interior of the frame (<= 4.5 cm from its centre,
+        # clear of the bars); index 1 also puts a box just outside a bar.
+        frame = next(o for o in cargo if items[o]['kind'] == 'tri_frame')
+        if lay.place(frame, 'tri_frame') is None:
+            return None
+        fx, fy, fyaw = lay.items[frame][1]
+        free = list(boxes)
+        rng.shuffle(free)
+        inside, outside = [], []
+        for _ in range(rng.randint(1, 2)):
+            for _ in range(200):
+                r, a = rng.uniform(0, .045), rng.uniform(-math.pi, math.pi)
+                pose = (fx+r*math.cos(a), fy+r*math.sin(a), rng.uniform(-math.pi/4, math.pi/4))
+                if all(math.dist(pose[:2], lay.items[b][1][:2]) >= .045 for b in inside):
+                    b = free.pop()
+                    lay.items[b] = ('box', pose)
+                    inside.append(b)
+                    break
+        if index % 2:
+            k = rng.randrange(3)
+            a0, a1 = fyaw+k*2*math.pi/3, fyaw+(k+1)*2*math.pi/3
+            mid = (.1*(math.cos(a0)+math.cos(a1)), .1*(math.sin(a0)+math.sin(a1)))   # bar midpoint, 0.1 m from centre
+            d = rng.uniform(.045, .06)                                                  # centre-line to box centre
+            t = rng.uniform(-.08, .08)
+            ux, uy = mid[0]/.1, mid[1]/.1
+            pose = (fx+ux*(.1+d)-uy*t, fy+uy*(.1+d)+ux*t, rng.uniform(-math.pi/4, math.pi/4))
+            if lay.item_ok('box', pose, gap=0., ignore_items=(frame,)):
+                b = free.pop()
+                lay.items[b] = ('box', pose)
+                outside.append(b)
+        info['_case_params'] = {'frame': frame, 'boxes_inside': inside, 'boxes_outside_bar': outside}
+        if not (scatter(boxes, pickup) and scatter(cargo) and free_robots()):
+            return None
     else:
         raise ValueError(case)
     if not free_robots():
@@ -479,13 +550,17 @@ def _item_truth(world, items):
 
 def render(args):
     import cv2
-    split = load_split()
+    split_file = Path(args.split_file or SPLIT_FILE)
+    split = load_split(split_file)
     specs = [{'seed': s} for s in split['splits'][args.split]]
+    plan_name = split.get('view_plan', 'v1')
     out = Path(args.output)
     (out/'frames').mkdir(parents=True, exist_ok=False)
     (out/'eval-labels').mkdir()
     load = {'start': os.getloadavg()[0]}
-    manifest = {'schema': SCHEMA, 'split': args.split, 'split_file_sha256': sha256(SPLIT_FILE),
+    manifest = {'schema': SCHEMA, 'split': args.split, 'split_file_sha256': sha256(split_file),
+                'split_file': str(split_file.relative_to(ROOT)) if split_file.is_relative_to(ROOT) else str(split_file),
+                'view_plan': plan_name,
                 'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                 'source_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
                 'clock': 'synchronous SIM; render after settle', 'views': [], 'scenes': []}
@@ -501,7 +576,7 @@ def render(args):
             manifest['scenes'].append({'scene': SCENE, 'seed': seed, 'scene_xml_sha256': info['scene_xml_sha256'],
                                        'catalogue_sha256': info['catalogue_sha256'],
                                        'items': {k: v['class'] for k, v in items.items()}})
-            for case, count in VIEW_PLAN:
+            for case, count in VIEW_PLANS[plan_name]:
                 for i in range(count):
                     planned = None
                     for _ in range(30):
@@ -524,6 +599,8 @@ def render(args):
                     labels = {'view_id': view_id, 'scene': SCENE, 'seed': seed, 'case': case,
                               'items': truth, 'robots': robot_truth, 'cameras': {},
                               'geom_table': {str(k): v for k, v in table.items()}}
+                    if info.get('_case_params'):
+                        labels['case_params'] = info['_case_params']
                     for cam in tops:
                         jpeg = world.render_team_jpeg(camera=cam, quality=95)
                         (vdir/f'{cam}.jpg').write_bytes(jpeg)
@@ -550,7 +627,8 @@ FULL_FRACTION = .6
 MIN_VISIBLE_PX = 20
 PIXEL_MATCH_PAD = 4
 MATCH_RADIUS_M = {'box': .05, 'can': .05, 'tile': .05, 'heavy_crate': .08, 'long_beam': .10, 'tri_frame': .10}
-PROFILES = ('top_cargo_v1', 'top_zone_v2', 'zone_perception_v1')
+PROFILES = ('top_cargo_v1', 'top_cargo_v2', 'top_zone_v2', 'zone_perception_v1')
+CARGO_MODULES = {'top_cargo_v1': 'harness.zone_cargo_perception', 'top_cargo_v2': 'harness.zone_cargo_perception_v2'}
 CARGO_CLASSES = ('can', 'tile', 'long_beam', 'heavy_crate', 'tri_frame')
 BOX_CLASSES = ('box_cyan', 'box_green', 'box_red', 'box_yellow')
 CLASSES = BOX_CLASSES + CARGO_CLASSES
@@ -602,10 +680,10 @@ def _bg_category(seg, table, px):
 
 
 def _detect(profile, jpeg, camera):
+    import importlib
     from harness import zone_color_boxes as zcb
-    from harness.zone_cargo_perception import detect_cargo_top
-    if profile == 'top_cargo_v1':
-        rows = detect_cargo_top(jpeg, camera)
+    if profile in CARGO_MODULES:
+        rows = importlib.import_module(CARGO_MODULES[profile]).detect_cargo_top(jpeg, camera)
         return [{**r, 'class': _cls(r['kind'], r.get('colour'))} for r in rows]
     rows = zcb.detect_top(jpeg, camera, zcb.KINDS, profile=profile)
     return [{'class': _cls('box', r['kind']), 'kind': 'box', 'colour': r['kind'], 'pixel': r['pixel'],
@@ -614,10 +692,10 @@ def _detect(profile, jpeg, camera):
 
 
 def _merged(profile, tops, static):
+    import importlib
     from harness import zone_perception as zp
-    from harness.zone_cargo_perception import detect_all_cargo
-    if profile == 'top_cargo_v1':
-        items = detect_all_cargo(tops, static)['items']
+    if profile in CARGO_MODULES:
+        items = importlib.import_module(CARGO_MODULES[profile]).detect_all_cargo(tops, static)['items']
         return [{**r, 'class': _cls(r['kind'], r.get('colour'))} for r in items]
     if profile == 'zone_perception_v1':
         rows = zp.detect_all(tops, static)
@@ -782,7 +860,7 @@ def _score_merged(profile, vid, case, labels, tops, static):
             rec['xy_error_m'] = math.dist(d['floor_xy_m'], t['xy'])
             rec['yaw_error_deg'] = _yaw_error(d.get('yaw_rad'), t['yaw_rad'], SYMMETRY.get(t['class']))
             rec['confidence'] = d.get('confidence')
-            if t['kind'] != 'box' and profile == 'top_cargo_v1':
+            if t['kind'] != 'box' and profile in CARGO_MODULES:
                 rec['grip_error_m'] = _grip_error(d, t)
                 rec['centre_mode'] = (d.get('evidence') or {}).get('centre_mode')
         else:
@@ -864,7 +942,21 @@ def summarize(records, frames):
                                              and r['true_class'].startswith('box_') for r in dets)}
         fp = [r for r in dets if r['outcome'] == 'fp_background']
         fp_by_bg = {c: sum(r['background'] == c for r in fp) for c in sorted({r['background'] for r in fp})}
+        count_error = {}
+        if level == 'merged':
+            # Per view: reported items of a class vs visible items of that class.
+            for cls in CLASSES:
+                under = over = views = 0
+                for vid in sorted({r['view_id'] for r in rs}):
+                    n_gt = sum(1 for r in gts if r['view_id'] == vid and r['class'] == cls)
+                    n_det = sum(1 for r in dets if r['view_id'] == vid and r['class'] == cls)
+                    if n_gt or n_det:
+                        views += 1
+                        under += n_det < n_gt
+                        over += n_det > n_gt
+                count_error[cls] = {'views': views, 'undercount_views': under, 'overcount_views': over}
         out[level] = {'frames': frames[level], 'per_class': per_class, 'confusion_matrix': matrix,
+                      'count_error_views': count_error,
                       'box_cargo_confusion': box_cargo, 'false_positives_total': len(fp),
                       'false_positives_by_background': fp_by_bg,
                       'false_positives_per_frame': round(len(fp)/frames[level], 4) if frames[level] else None}
@@ -900,6 +992,8 @@ def parser():
     sub = p.add_subparsers(dest='command', required=True)
     r = sub.add_parser('render', help='render TOP frames + eval labels for one split')
     r.add_argument('--split', choices=('dev', 'test'), required=True)
+    r.add_argument('--split-file', type=Path, default=None,
+                   help='split JSON (default: the v1 record split); its view_plan selects the case set')
     r.add_argument('--output', type=Path, required=True)
     s = sub.add_parser('score', help='run detectors on rendered frames and score them')
     s.add_argument('--frames', type=Path, required=True, help='output directory of render')

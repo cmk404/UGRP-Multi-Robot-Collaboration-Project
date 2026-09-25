@@ -1,0 +1,374 @@
+{
+ "schema": "ugrp.owncam_loc_episodes.v1",
+ "note": "dev/test split fixed 2026-09-25 before any recording; test is evaluated once with frozen parameters",
+ "episodes": [
+  {
+   "episode_id": "dev-tc-s11",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "teacher_carry",
+   "spawn_y": -0.85,
+   "zone": "A",
+   "slot": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "dev-ls-s11",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "look_search",
+   "spawn_y": 0.55,
+   "zone": "C",
+   "slot": "C2",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    0.55
+   ]
+  },
+  {
+   "episode_id": "dev-ll-s11",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "look_level",
+   "spawn_y": -2.25,
+   "zone": "A",
+   "slot": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    -2.25
+   ]
+  },
+  {
+   "episode_id": "dev-cl-s11",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "carry_level",
+   "spawn_y": 0.55,
+   "zone": "B",
+   "slot": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "dev-tc-s12",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 12,
+   "mode": "teacher_carry",
+   "spawn_y": 0.55,
+   "zone": "B",
+   "slot": "B1",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "dev-ls-s12",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 12,
+   "mode": "look_search",
+   "spawn_y": -2.25,
+   "zone": "A",
+   "slot": "A3",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    -2.25
+   ]
+  },
+  {
+   "episode_id": "dev-ll-s12",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 12,
+   "mode": "look_level",
+   "spawn_y": -0.85,
+   "zone": "C",
+   "slot": "C1",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    -0.85
+   ]
+  },
+  {
+   "episode_id": "dev-cl-s12",
+   "split": "dev",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 12,
+   "mode": "carry_level",
+   "spawn_y": -0.85,
+   "zone": "A",
+   "slot": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "test-tc-s21",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 21,
+   "mode": "teacher_carry",
+   "spawn_y": -2.25,
+   "zone": "C",
+   "slot": "C3",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "test-ls-s21",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 21,
+   "mode": "look_search",
+   "spawn_y": -0.85,
+   "zone": "B",
+   "slot": "B3",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    -0.85
+   ]
+  },
+  {
+   "episode_id": "test-ll-s21",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 21,
+   "mode": "look_level",
+   "spawn_y": 0.55,
+   "zone": "B",
+   "slot": "B1",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    0.55
+   ]
+  },
+  {
+   "episode_id": "test-cl-s21",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 21,
+   "mode": "carry_level",
+   "spawn_y": -2.25,
+   "zone": "C",
+   "slot": "C2",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "test-tc-s22",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 22,
+   "mode": "teacher_carry",
+   "spawn_y": 0.55,
+   "zone": "A",
+   "slot": "A3",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  },
+  {
+   "episode_id": "test-ls-s22",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 22,
+   "mode": "look_search",
+   "spawn_y": 0.55,
+   "zone": "A",
+   "slot": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    0.55
+   ]
+  },
+  {
+   "episode_id": "test-ll-s22",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 22,
+   "mode": "look_level",
+   "spawn_y": -0.85,
+   "zone": "A",
+   "slot": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "return_to": [
+    -0.4,
+    -0.85
+   ]
+  },
+  {
+   "episode_id": "test-cl-s22",
+   "split": "test",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 22,
+   "mode": "carry_level",
+   "spawn_y": -0.85,
+   "zone": "B",
+   "slot": "B3",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine"
+  }
+ ]
+}

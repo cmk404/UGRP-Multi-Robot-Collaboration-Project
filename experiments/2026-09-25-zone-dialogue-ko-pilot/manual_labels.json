@@ -1,0 +1,268 @@
+{
+  "labeller": "Claude (pilot author), not blind to variant; sample drawn with random.Random(20260925) from V1/V2 single-turn and V2 dialogue messages",
+  "n": 20,
+  "exact_match": 18,
+  "rows": [
+    {
+      "id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V1:0",
+      "message": "r3의 제안을 수락합니다. 계획대로 진행하겠습니다.",
+      "rule": [
+        "agree"
+      ],
+      "manual": [
+        "agree"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V2:0",
+      "message": "red-1 완료했습니다. 구역 A의 남은 red 상자로 red-2를 가져가겠습니다.",
+      "rule": [
+        "claim",
+        "report"
+      ],
+      "manual": [
+        "claim",
+        "report"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "dialogue:M3:V2:t1:r3",
+      "message": "r3: 바로 앞에 있는 yellow-1을 C 구역으로 옮기겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V2:0",
+      "message": "목표 완수를 위해 각자 2개씩 작업을 균등 분배한 계획을 제안합니다. 확인 후 동의해 주세요.",
+      "rule": [
+        "propose",
+        "request"
+      ],
+      "manual": [
+        "propose",
+        "request"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V1:0",
+      "message": "r3가 green-1을 C로 운반하겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V1:0",
+      "message": "제안된 계획을 수락합니다. r1, r2 모두 수락 후 작업을 시작합시다.",
+      "rule": [
+        "agree"
+      ],
+      "manual": [
+        "agree",
+        "request"
+      ],
+      "exact_match": false,
+      "note": "Suggests all accept before starting (request missed by rules)."
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V1:0",
+      "message": "r1의 제안을 수락합니다. r3는 green-1과 yellow-1을 C로 운반하겠습니다.",
+      "rule": [
+        "agree",
+        "claim"
+      ],
+      "manual": [
+        "agree",
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "dialogue:M2:V2:t2:r3",
+      "message": "green-1을 구역 C로 운반하겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "dialogue:M1:V2:t3:r3",
+      "message": "r1의 cyan-1, r2의 green-1 선택 확인했습니다. 저는 구역 A에 필요한 red 상자 중 red-1을 맡겠습니다.",
+      "rule": [
+        "agree",
+        "claim"
+      ],
+      "manual": [
+        "agree",
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V2:0",
+      "message": "내가 제안자이므로 r1의 제안대로 계획을 확정하여 제출합니다. r1: green-1->C, cyan-3->B / r2: yellow-1->C, cyan-1->B / r3: red-1->A, red-2->A",
+      "rule": [
+        "other"
+      ],
+      "manual": [
+        "propose"
+      ],
+      "exact_match": false,
+      "note": "Proposer submits its own plan while saying it follows r1 proposal (content/claim mismatch; not checked further)."
+    },
+    {
+      "id": "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V2:0",
+      "message": "cyan-1 배달 완료 후 구역 B의 두 번째 cyan 상자로 cyan-3을 가져가겠습니다.",
+      "rule": [
+        "claim",
+        "report"
+      ],
+      "manual": [
+        "claim",
+        "report"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "dialogue:M2:V2:t3:r1",
+      "message": "red-1을 구역 A로 운반하겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V2:0",
+      "message": "r1의 제안을 확인하고 수락합니다. 각 구역의 목표 상자 수와 색상을 정확히 만족하며 균등하게 분배되었습니다.",
+      "rule": [
+        "agree"
+      ],
+      "manual": [
+        "agree"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s14-plan_first-nominal/r1/plan-2:V2:0",
+      "message": "r3, 논의된 대로 제안을 올려줘: r1은 green-1, yellow-1 -> C, r2는 red-1, red-2 -> A, r3은 cyan-1, cyan-2 -> B.",
+      "rule": [
+        "propose",
+        "request"
+      ],
+      "manual": [
+        "propose",
+        "request"
+      ],
+      "exact_match": true,
+      "note": "Informal register (올려줘) and asks r3 to propose a specific assignment."
+    },
+    {
+      "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V1:0",
+      "message": "모든 목표 작업이 완료되었습니다. 대기합니다.",
+      "rule": [
+        "report",
+        "standby"
+      ],
+      "manual": [
+        "report",
+        "standby"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V1:0",
+      "message": "각 로봇이 2개씩 운반하도록 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
+      "rule": [
+        "propose",
+        "request"
+      ],
+      "manual": [
+        "propose",
+        "request"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V1:0",
+      "message": "모든 목표가 완료되었거나 r1이 진행 중이므로 대기합니다.",
+      "rule": [
+        "report",
+        "standby"
+      ],
+      "manual": [
+        "report",
+        "standby"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V1:0",
+      "message": "r3: cyan-1 상자를 B 구역으로 운반하겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V1:0",
+      "message": "zone C에 green-1을 전달하겠습니다.",
+      "rule": [
+        "claim"
+      ],
+      "manual": [
+        "claim"
+      ],
+      "exact_match": true,
+      "note": "Code-switch: zone C."
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V2:0",
+      "message": "r1의 제안을 수락합니다. 계획대로 green-1과 yellow-1을 구역 C로 운반하겠습니다.",
+      "rule": [
+        "agree",
+        "claim"
+      ],
+      "manual": [
+        "agree",
+        "claim"
+      ],
+      "exact_match": true,
+      "note": null
+    }
+  ]
+}

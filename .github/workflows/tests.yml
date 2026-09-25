@@ -108,12 +108,12 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-  ubuntu-simulation:
+  ubuntu-simulation-runtime:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 10
     env:
       MUJOCO_GL: osmesa
-      UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.quickstart-sessions
+      UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.quickstart-sessions-runtime
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -145,7 +145,7 @@ jobs:
         run: python -m pytest -q tests/test_dispatch_scene_parity.py
 
       - name: Verify asynchronous RGB, physics parity, observer isolation, and recording
-        run: python -m pytest -q tests/test_dispatch_realtime.py tests/test_dispatch_async_video.py tests/test_dispatch_native_process.py tests/test_snapshot_render.py tests/test_physics_drive_kernel.py tests/test_contact_audit_kernel.py
+        run: python -m pytest -q tests/test_dispatch_realtime.py tests/test_dispatch_async_video.py tests/test_dispatch_native_process.py tests/test_snapshot_render.py tests/test_physics_drive_kernel.py tests/test_contact_audit_kernel.py tests/test_zone_landmarks_sim.py
 
       - name: Keep the native window open after reset and invalid physics
         run: MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run native-recovery-ci -- python -m scripts.check_simulation_recovery --output outputs/simulation-ci/recovery
@@ -178,12 +178,14 @@ jobs:
         run: |
           MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run console-ci -- python -m scripts.sim_cli console configs/simulation/local.json --mode manual --task 'r1 앞으로 0.5초' --exit-after-task --wall-seconds 60 --output outputs/simulation-ci/console
           python -c "import json; r=json.load(open('outputs/simulation-ci/console/result.json')); assert r['operator_session_complete'] and r['commands']==1 and r['model_calls']==0 and not r['console_errors'], r"
+
       - name: Verify existing plan wiring and isolated native dispatch observer
         run: |
           python -m pytest -q tests/test_simulation_dispatch.py
           UGRP_TEST_NATIVE_VIEWER=1 MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run dispatch-view-ci -- python -m pytest -q tests/test_simulation_dispatch.py::test_real_native_observer_lifecycle
           python -m pytest -q tests/test_dispatch_replay.py
           UGRP_TEST_NATIVE_VIEWER=1 MUJOCO_GL=glfw xvfb-run -a python scripts/ugrp_session.py run dispatch-replay-ci -- python -m pytest -q tests/test_dispatch_replay.py::test_real_native_replay_window_reaches_the_last_frame
+
       - name: Keep simulator verification
         if: always()
         uses: actions/upload-artifact@v4
@@ -192,6 +194,36 @@ jobs:
           path: outputs/simulation-ci/
           if-no-files-found: warn
           retention-days: 14
+
+  ubuntu-simulation-scenarios:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MUJOCO_GL: osmesa
+      UGRP_SESSION_DIR: ${{ github.workspace }}/outputs/.quickstart-sessions-scenarios
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements-sim.txt
+            requirements-test.txt
+
+      - name: Install Ubuntu rendering and recording tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libosmesa6 libgl1 libglfw3 xvfb xauth ffmpeg fonts-noto-cjk
+          ffmpeg -hide_banner -encoders | grep libx264
+
+      - name: Install simulator dependencies
+        run: |
+          python -m pip install -r requirements-sim.txt -r requirements-test.txt
+          python -m pip check
 
       - name: Render and move without a model or GPU
         run: |
