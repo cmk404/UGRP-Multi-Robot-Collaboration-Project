@@ -10,13 +10,13 @@ GOAL = {'A': {'cyan': 1}}
 EXTRA = {'red': 1}
 
 
-def build(tagged, render):
+def build(tagged, render, name='zone_wide_door_tags_v1'):
     from sim.multi_masterpi_production import MultiMasterPiProductionV2
     from sim.session_scenes import ROOT
     from sim.zone_landmarks import TaggedZoneScene
     from sim.zone_scene import ZoneScene
     if tagged:
-        scene = TaggedZoneScene.from_tagged('zone_wide_door_tags_v1', 11, GOAL, EXTRA,
+        scene = TaggedZoneScene.from_tagged(name, 11, GOAL, EXTRA,
                                             contact_profile='local_contact_fine')
     else:
         scene = ZoneScene({'layout': 'zones/zone_wide_door', 'seed': 11, 'map_file': None, 'cargo_ids': None,
@@ -48,8 +48,13 @@ def drive(world, seconds=1.5):
 
 class TaggedScenePhysicsTests(unittest.TestCase):
     def test_tags_do_not_change_physics(self):
+        for name in ('zone_wide_door_tags_v1', 'zone_wide_door_tags_v2'):
+            with self.subTest(map=name):
+                self._same_physics(name)
+
+    def _same_physics(self, name):
         base_scene, base = build(False, False)
-        tag_scene, tagged = build(True, False)
+        tag_scene, tagged = build(True, False, name)
         try:
             self.assertEqual(base_scene.config['setup_only'], tag_scene.config['setup_only'])
             self.assertEqual((base.model.nbody, base.model.njnt, base.model.nq),

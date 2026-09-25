@@ -15,12 +15,22 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_MODULES = (ROOT/'harness'/'owncam_localizer.py', ROOT/'harness'/'wall_tags.py')
+RUNTIME_MODULES = (ROOT/'harness'/'owncam_localizer.py', ROOT/'harness'/'wall_tags.py',
+                   ROOT/'harness'/'owncam_drive.py')
 ALLOWED_IMPORTS = {'__future__', 'math', 'copy', 'collections.abc', 'numpy', 'cv2', 'harness.wall_tags',
-                   'harness.visual_arm', 'sim.masterpi_camera_profile'}
+                   'harness.visual_arm', 'sim.masterpi_camera_profile', 'harness.owncam_localizer',
+                   'harness.map_goto'}
 # Simulator state accessors that must never appear in the run-time path.
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'xmat', 'qpos', 'qvel', 'cam_xpos', 'cam_xmat', 'base_xyz', 'base_rpy',
              'site_xyz', 'eval_only', 'frames_gt', 'gt_trajectory', 'MjData', 'world.data', '.data.body')
+# Published tagged versions: never rewritten.
+TAGGED_SHA256 = {
+    'zone_wide_door_tags_v1': 'f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14',
+    'zone_wide_two_doors_tags_v1': '2562d2f09940e9ba864cf1fe71740592e5305835a6c1af24b3493298a583c4ed',
+    'zone_wide_corridor_tags_v1': 'a349d42d60f3fcefd1efa29016aeb39e15e40c0092268c0485814e7f9f3916db',
+    'zone_wide_door_tags_v2': 'f9b0ef0d9f35457b34711c0ec5d11688af3130238560195c982660137ad3e73b',
+    'zone_wide_two_doors_tags_v2': '10f9b2f854a161843d9dc53bb518431cd9a35317b4252491f8e4186a25e3b206',
+}
 # Base maps as merged in PR #173 (head 4789d93): must stay byte-identical.
 BASE_MAP_SHA256 = {
     'zone_wide_door': 'a4d2c03de5d0085c2d0ea04d631ec4e9dd95de6dffbb8d44c09870e2ec921903',
@@ -139,6 +149,18 @@ class GeometryTests(unittest.TestCase):
 
 
 class TaggedMapTests(unittest.TestCase):
+    def test_published_tagged_maps_are_unchanged(self):
+        for name, sha in TAGGED_SHA256.items():
+            data = (ROOT/'maps'/'zones'/f'{name}.json').read_bytes()
+            self.assertEqual(hashlib.sha256(data).hexdigest(), sha, name)
+
+    def test_shared_postures_match_pr176(self):
+        from harness.owncam_drive import CARRY_POSTURE, LOOK_P20, LOOK_PANS
+        # harness/wrist_zone_skill.py on claude/zone-owncam-skill (PR #176)
+        self.assertEqual(CARRY_POSTURE, {1: 1500, 3: 777, 4: 2053, 5: 1646, 6: 1500})
+        self.assertEqual(LOOK_P20, {3: 1072, 4: 2400, 5: 1482})
+        self.assertEqual(LOOK_PANS, (1500, 1230, 1770, 1500))
+
     def test_base_maps_are_unchanged(self):
         for name, sha in BASE_MAP_SHA256.items():
             data = (ROOT/'maps'/'zones'/f'{name}.json').read_bytes()
@@ -161,12 +183,13 @@ class TaggedMapTests(unittest.TestCase):
         for name in TAGGED_MAPS:
             static = tagged(name)
             walls = {o['id']: o for o in static['obstacles']}
+            posts = {p['id']: p for p in static['landmarks'].get('door_posts', [])}
             tags = static['landmarks']['tags']
             placement = static['landmarks']['placement']
             self.assertEqual([t['id'] for t in tags], list(range(len(tags))))
             self.assertLess(len(tags), 587)  # tag36h11 dictionary size
             for tag in tags:
-                wall = walls[tag['wall']]
+                wall = posts[tag['post']] if tag.get('mount') == 'door_post' else walls[tag['wall']]
                 (cx, cy), (hx, hy) = wall['center_m'], wall['half_extents_m']
                 nx, ny = tag['normal_xy']
                 x, y, z = tag['center_m']
@@ -177,11 +200,35 @@ class TaggedMapTests(unittest.TestCase):
                 along = abs(x - cx) if ny else abs(y - cy)
                 self.assertLessEqual(along + placement['plate_m']/2, (hx if ny else hy) + 1e-9)
                 for other in static['obstacles']:
-                    if other['id'] == wall['id']:
+                    if other['id'] in (wall['id'], tag['wall']):
                         continue
                     (ox, oy), (ohx, ohy) = other['center_m'], other['half_extents_m']
                     front = (x + nx*.005, y + ny*.005)
                     self.assertFalse(abs(front[0] - ox) < ohx and abs(front[1] - oy) < ohy, (name, tag['id']))
+
+    def test_v2_door_posts_stand_on_walls_with_two_tag_heights_per_face(self):
+        from sim.zone_landmarks import PLACEMENT_V2
+        for name in ('zone_wide_door_tags_v2', 'zone_wide_two_doors_tags_v2'):
+            static = tagged(name)
+            walls = {o['id']: o for o in static['obstacles']}
+            posts = static['landmarks']['door_posts']
+            self.assertTrue(posts)
+            for post in posts:
+                wall = walls[post['wall']]
+                for k in (0, 1):   # the post footprint lies inside its wall footprint
+                    self.assertLessEqual(abs(post['center_m'][k] - wall['center_m'][k]) + post['half_extents_m'][k],
+                                         wall['half_extents_m'][k] + 1e-9)
+                on_post = [t for t in static['landmarks']['tags'] if t.get('post') == post['id']]
+                self.assertEqual(sorted((tuple(t['normal_xy']), t['center_m'][2]) for t in on_post),
+                                 sorted((n, z) for n in ((-1, 0), (1, 0)) for z in
+                                        PLACEMENT_V2['door_posts']['tag_center_heights_m']))
+            # wall-face tags within 1 m of a door edge are at most 0.30 m apart
+            door = next(p for p in static['passages'] if p['kind'] == 'door')
+            edge = door['center_m'][1] + door['width_m']/2
+            near = sorted(t['center_m'][1] for t in static['landmarks']['tags'] if t['normal_xy'] == [-1, 0]
+                          and not t.get('mount') and abs(t['center_m'][0] - door['center_m'][0]) < .05
+                          and 0 < t['center_m'][1] - edge <= 1.)
+            self.assertTrue(all(b - a <= .30 + 1e-6 for a, b in zip(near, near[1:])), near)
 
     def test_every_door_has_post_tags_on_both_faces(self):
         for name in ('zone_wide_door_tags_v1', 'zone_wide_two_doors_tags_v1'):
