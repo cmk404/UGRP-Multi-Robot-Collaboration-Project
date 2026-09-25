@@ -66,7 +66,10 @@ FINE_PHASE_PREFIXES = ('reseat',)
 PROBE_PAN_PWM = 60
 PROBE_SETTLE_S = .5
 ORDER_KINDS = ('own_rgb_point', 'own_rgb_bay')
-BAY_HALF_M = (.25, .25)               # v5 CoarseOrderSheet bay (>= 0.15 m: coarse by construction)
+# v5 CoarseOrderSheet bay (>= 0.15 m: coarse by construction). x half 0.15 m puts v5's approach point
+# 0.40 m west of the own-RGB target (the v1 standoff), clear of the idle peers at the spawn column
+# (dev-a2 s91: half 0.25 -> approach x -0.69 next to a peer at (-0.85, -2.25), 226 contact steps).
+BAY_HALF_M = (.15, .25)
 
 
 class _LegDriver(OwnCamDriverV2):

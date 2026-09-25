@@ -22,6 +22,67 @@
         "controller_schema": "ugrp.m1_owncam_delivery.v2"
       },
       "offline_check": "replay of dev-a1 s91 own inputs through the amended pose source: error during the grasp 3 cm (was up to 0.95 m), first loaded look 2.7 cm; normal-operation error unchanged (in-sample on s91; dev-a2 s91-s93 is the live check)"
+    },
+    {
+      "id": "A2-dev-a2-s91-s92",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a2 (32c7069) s91 and s92: both SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS. Search found the target (GT error 3.1 / 2.3 cm), the localizer held (s91: one kidnap reset), but v5's RobustFaceAligner never became ready: the pickup-grid boxes are axis-aligned (yaw 0) and the wrist camera sees one face head-on; offline replay of the grasp frames through the same floor-cuboid fit gives yaw errors (mod 90) with |err| > 7 deg in 35 % (s91) / 53 % (s92) of frames, p10/p90 -25/+21 deg (s92), below v5's 60 % inlier rule. v5's own cohort used boxes yawed 5-28 deg. This is a skill-side perception limit (PR #181 owns it; reported there). s91 also had 226 peer-robot contact steps: v5's bay approach point (bay west edge - 0.25 m) with bay half 0.25 m lies at x -0.69, next to an idle peer at its spawn (-0.85, -2.25).",
+      "changes": [
+        "controller: bay half extent (0.15, 0.25) m instead of (0.25, 0.25): v5's approach point becomes the own-RGB target x - 0.40 m (the v1 standoff), clear of the spawn column; still a coarse bay (>= 0.15 m, no box position)",
+        "runner: dev-only setup field box_yaw_deg (rotates the cyan box in place; setup-only, recorded under evaluation_only.setup_diagnostic; refused for test episodes)",
+        "adds two DEV DIAGNOSTIC episodes with rotated boxes to exercise carry / door / place / look-back with v5 while the face-on limit is open; they are dev evidence only and never M1 cohort evidence"
+      ],
+      "student_patch": {
+        "controller_schema": "ugrp.m1_owncam_delivery.v2",
+        "bay_half_m": [
+          0.15,
+          0.25
+        ]
+      },
+      "add_episodes": [
+        {
+          "episode_id": "m1devdiag-s94",
+          "split": "dev",
+          "seed": 94,
+          "spawn_y": 0.55,
+          "slot_id": "A1",
+          "map": "zone_wide_door_tags_v2",
+          "goal": {
+            "A": {
+              "cyan": 1
+            }
+          },
+          "extra_boxes": {
+            "red": 2,
+            "green": 1
+          },
+          "contact_profile": "local_contact_fine",
+          "box_yaw_deg": 15.0,
+          "label": "dev diagnostic (rotated box), not an M1 cohort episode"
+        },
+        {
+          "episode_id": "m1devdiag-s95",
+          "split": "dev",
+          "seed": 95,
+          "spawn_y": -0.85,
+          "slot_id": "C2",
+          "map": "zone_wide_door_tags_v2",
+          "goal": {
+            "C": {
+              "cyan": 1
+            }
+          },
+          "extra_boxes": {
+            "red": 2,
+            "green": 1
+          },
+          "contact_profile": "local_contact_fine",
+          "box_yaw_deg": -20.0,
+          "label": "dev diagnostic (rotated box), not an M1 cohort episode"
+        }
+      ],
+      "test_status": "The registered test (101-106, axis-aligned boxes) is NOT run while the face-on grasp limit is open: dev 0/2 at the grasp predicts a blocked test; freezing now would spend the one-shot cohort on a known skill blocker."
     }
   ]
 }

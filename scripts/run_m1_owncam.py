@@ -88,6 +88,19 @@ def run(spec, out, student):
                                       warehouse_layout=scene.engine_layout, warehouse_cargo_ids=None,
                                       xml_transform=scene.transform)
     scene.setup(world)
+    setup_diag = {}
+    if spec.get('box_yaw_deg') is not None:
+        # Dev diagnostic only (amendment A2): rotate the cyan box in place (setup-only, never an input).
+        if spec['split'] != 'dev':
+            raise ValueError('box_yaw_deg is a dev diagnostic setting')
+        cyan = next(o for _, o in sorted(scene.config['setup_only']['objects'].items()) if o['kind'] == 'cyan')
+        jid = mujoco.mj_name2id(world.model, mujoco.mjtObj.mjOBJ_JOINT, cyan['joint_name'])
+        q, v = int(world.model.jnt_qposadr[jid]), int(world.model.jnt_dofadr[jid])
+        half = math.radians(float(spec['box_yaw_deg']))/2
+        world.data.qpos[q + 3:q + 7] = [math.cos(half), 0, 0, math.sin(half)]
+        world.data.qvel[v:v + 6] = 0
+        mujoco.mj_forward(world.model, world.data)
+        setup_diag = {'box_yaw_deg': float(spec['box_yaw_deg'])}
     static = scene.config['static_map']
     objects = scene.config['setup_only']['objects']
     spawns = scene.config['setup_only']['spawns']
@@ -286,7 +299,7 @@ def run(spec, out, student):
               'outcome': outcome, **outcome_block, **judged, 'm1_success': strict_m1, 'success': strict_m1,
               'counts_as_m1': bool(judged['counts_as_m1'] and outcome_block['counts_as_m1']),
               'input_contract': input_contract,
-              'evaluation_only': {'gt_box_final_xyz': [round(bx, 4), round(by, 4), round(bz, 4)],
+              'evaluation_only': {'gt_box_final_xyz': [round(bx, 4), round(by, 4), round(bz, 4)], 'setup_diagnostic': setup_diag,
                                   'slot_xy': slot_xy, 'gt_box_in_slot': gt_in_slot,
                                   'search_target_error_m': None if target is None else
                                   round(math.hypot(target[0] - box0[0], target[1] - box0[1]), 4),
@@ -330,17 +343,26 @@ def run(spec, out, student):
 
 def effective_student(prereg_path: Path, prereg: dict) -> dict:
     """The registered student block with the recorded amendments applied in order (never silently)."""
-    student = dict(prereg['student'])
+    return effective_prereg(prereg_path, prereg)[0]
+
+
+def effective_prereg(prereg_path: Path, prereg: dict) -> tuple[dict, list]:
+    """(student, episodes): amendments patch the student and may ADD dev episodes only."""
+    student, episodes = dict(prereg['student']), list(prereg['episodes'])
     amend_path = prereg_path.parent/'prereg_amendments.json'
     applied = []
     if amend_path.exists():
         for a in json.loads(amend_path.read_text())['amendments']:
             if a.get('student_patch'):
                 student.update(a['student_patch'])
-                applied.append(a['id'])
+            for e in a.get('add_episodes', []):
+                if e['split'] != 'dev' or any(x['episode_id'] == e['episode_id'] for x in episodes):
+                    raise ValueError(f"amendment {a['id']} may only add new dev episodes")
+                episodes.append(e)
+            applied.append(a['id'])
         student['amendments_applied'] = applied
         student['amendments_sha256'] = sha_bytes(amend_path.read_bytes())
-    return student
+    return student, episodes
 
 
 def main(argv=None):
@@ -350,9 +372,9 @@ def main(argv=None):
     p.add_argument('--output', required=True)
     args = p.parse_args(argv)
     prereg = json.loads(Path(args.prereg).read_text())
-    student = effective_student(Path(args.prereg), prereg)
+    student, episodes = effective_prereg(Path(args.prereg), prereg)
     only = {s for s in args.only.split(',') if s}
-    for spec in prereg['episodes']:
+    for spec in episodes:
         if only and spec['episode_id'] not in only:
             continue
         result, manifest = run(spec, Path(args.output)/spec['episode_id'], student)

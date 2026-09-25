@@ -247,10 +247,10 @@ class ControllerTests(unittest.TestCase):
         ctl.target_xy, ctl.pickup_source = (-.19, -2.48), 'own_rgb_search'
         order = ctl._make_order()
         self.assertIsInstance(order, CoarseOrderSheet)
-        self.assertEqual(order.pickup_bay_half_m, (.25, .25))
+        self.assertEqual(order.pickup_bay_half_m, (.15, .25))
         self.assertFalse(hasattr(order, 'pickup_xy_m'))
         gx, gy = ctl._approach_goal(ctl.target_xy)
-        self.assertAlmostEqual(gx, -.19 - .25 - BAY_APPROACH_CLEARANCE_M)
+        self.assertAlmostEqual(gx, -.19 - .15 - BAY_APPROACH_CLEARANCE_M)
         self.assertEqual(ctl.skill_factory(order).mode, 'm1')
         v4 = self._ctl('own_rgb_point')
         v4.target_xy = (-.19, -2.48)
