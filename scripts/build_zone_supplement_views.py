@@ -279,10 +279,47 @@ class Builder:
                     }, f'results.{split}.{profile}.{scene}.{view}')
 
 
+def rename_snapshot(snapshot: Path, index: Path) -> dict:
+    """Give the exported runs short names and keep the exporter's name and condition.
+
+    TensorBoard uses the directory name as the run label, so only the label
+    changes; each run keeps its own manifest and the original source path.
+    """
+    rows = {row['source']: row for row in load(index)['rows']}
+    collection = load(snapshot / 'collection.json')
+    for entry in collection['exported']:
+        row = rows.get(entry['source'])
+        if row is None:
+            raise SystemExit('exported run is not in the derived-view index: ' + entry['source'])
+        current, target = snapshot / entry['name'], snapshot / row['run']
+        if current.resolve() != target.resolve():
+            if target.exists():
+                raise SystemExit('short run name already exists: ' + str(target))
+            current.rename(target)
+        entry['original_name'] = entry.pop('name')
+        entry['name'] = row['run']
+        entry['condition'] = row['condition']
+        entry['origin'] = row['origin']
+        entry['pointer'] = row['pointer']
+    (snapshot / 'collection.json').write_text(json.dumps(collection, ensure_ascii=False, indent=2) + '\n')
+    return {'renamed': len(collection['exported']), 'failed': len(collection.get('failed') or [])}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', type=Path, required=True, help='new derived-view root (must not exist)')
+    parser.add_argument('--output', type=Path, help='new derived-view root (must not exist)')
+    parser.add_argument('--rename-snapshot', type=Path,
+                        help='exported snapshot directory to relabel with short run names')
+    parser.add_argument('--index', type=Path, help='derived-view index.json for --rename-snapshot')
     args = parser.parse_args()
+    if args.rename_snapshot:
+        if not args.index:
+            parser.error('--rename-snapshot needs --index')
+        print(json.dumps(rename_snapshot(args.rename_snapshot.resolve(), args.index.resolve()),
+                         ensure_ascii=False))
+        return 0
+    if not args.output:
+        parser.error('--output is required')
     output = args.output.resolve()
     if output.exists():
         parser.error('derived-view root must be new; originals and earlier views are never overwritten')
