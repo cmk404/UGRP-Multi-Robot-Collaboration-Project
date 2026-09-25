@@ -37,7 +37,7 @@ from harness.visual_arm import forward_grip
 PROFILE = 'wrist_zone_skill_v1'
 # Grasp settings of the dispatch solo path (coloured floors, v61 closure).
 BOX_SKILL_OPTIONS = {'task': 'external_navigation', 'attachment_home_reference': 'previous_endpoint',
-                     'attachment_min_saturation': 150}
+                     'attachment_min_saturation': 150, 'release_refine_ground_fit': True}
 # Carry posture (issued PWM, grip closed): grip site 0.14 m ahead, 0.18 m high,
 # tool pitch -30 deg (optical axis about -22.6 deg). See
 # experiments/2026-09-25-zone-owncam-skill (carry_p30).
