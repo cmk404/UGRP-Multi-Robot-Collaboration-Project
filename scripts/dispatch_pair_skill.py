@@ -31,6 +31,43 @@ RECOVERY_RECENTER_SLICES = 5
 # TOP from a docked pose) the next coarse approach could not resolve a
 # carrier heading next to the beam; after 40 slices (~70 px) it could.
 RECOVERY_BACKOFF_SLICES = 40
+# Dynamic regrasp re-approach. The beam's north half is yellow (hue ~28) under
+# the fixed light, outside the hue<=24 binding mask; the mask keeps it only as
+# a thin shaded edge. In W2 (v58) that edge thinned after the failed grasp,
+# the hue<=24 shaft shrank 123 -> 95 px, the beam-centred TOP shifted 14 px
+# and the learned lateral model saw a moved floor (support distance ~1e3-1e4)
+# although the beam had not moved. When the hue<=24 shaft is truncated
+# against the hue<=35 shaft and the hue<=35 centre is where it was at the
+# failed grasp, the re-approach keeps that grasp's RGB translation.
+REGRASP_TRUNCATED_RATIO = .9
+REGRASP_STILL_PX = 2.
+
+
+def regrasp_binding(raw_top, anchor):
+    """RGB-only choice of the re-approach translation after a dynamic regrasp.
+
+    anchor: {'translation_px', 'beam35_center'} saved at the failed grasp.
+    Returns (translation_px or None, evidence); None keeps the per-frame
+    hue<=24 binding.
+    """
+    evidence = {'anchor_translation_px': list(anchor['translation_px'])}
+    wide = beam_feature(raw_top, hue_upper=35)
+    try:
+        narrow = beam_feature(raw_top)
+        evidence['hue24_length_px'] = float(narrow['length_px'])
+    except ValueError as error:
+        narrow = None
+        evidence['hue24_unresolved'] = str(error)
+    size = np.array(wide['image_size'], float)
+    moved = float(np.linalg.norm((np.array(wide['center']) - anchor['beam35_center']) * size))
+    evidence.update(hue35_length_px=float(wide['length_px']), hue35_moved_px=moved)
+    truncated = narrow is None or narrow['length_px'] < REGRASP_TRUNCATED_RATIO * wide['length_px']
+    evidence['hue24_truncated'] = bool(truncated)
+    if truncated and moved <= REGRASP_STILL_PX:
+        evidence['applied'] = True
+        return list(anchor['translation_px']), evidence
+    evidence['applied'] = False
+    return None, evidence
 # Cluttered maps issue one existing .2s coarse command per RGB batch. Admit it
 # only while that whole command fits within the original capture + .6s TTL.
 COARSE_CONCURRENT_MAX_CAPTURE_AGE_S = .4
@@ -850,11 +887,16 @@ class BoundPairSkill:
 
     def _bind_capture(self,frames,count):
         bind_started_wall_s=time.monotonic()
+        fixed=self.grasp_translation if self.phase.startswith('grasp') else None
+        regrasp=None
+        if fixed is None and not self.transport_started and getattr(self,'regrasp_anchor',None):
+            fixed,regrasp=regrasp_binding(frames['r1']['top_bytes'],self.regrasp_anchor)
         top, transform=canonical_pair_top(frames['r1']['top_bytes'],self.reference,
-            translation_px=self.grasp_translation if self.phase.startswith('grasp') else None,
+            translation_px=fixed,
             hue_upper=35 if self.transport_started else 24,
             observed_beam=self.carried_beam.observe(frames['r1']['top_bytes']) if self.transport_started else None)
         if self.transport_started:self.beam_continuity.observe(transform['observed_beam'])
+        if regrasp is not None:transform['regrasp_binding']=regrasp
         self.latest_translation=transform['translation_px']
         top_ref=image_record(self.out/'rgb'/f'pair-{count}-canonical-top.jpg',self.out,top)
         bind_completed_wall_s=time.monotonic()
@@ -1015,7 +1057,10 @@ class BoundPairSkill:
         self._clear_approach_pending(hold=True)
         self._clear_fine_pending(hold=True)
         self._fine_candidate=None
-        if stage=='grasp_initialization':self.grasp_translation=self.latest_translation
+        if stage=='grasp_initialization':
+            self.grasp_translation=self.latest_translation
+            raw=(self.last_capture or {}).get('r1',{}).get('raw_top_bytes')
+            self.grasp_beam35_center=beam_feature(raw,hue_upper=35)['center'] if raw else None
         self.phase=stage
         if stage=='grasp_close':
             frames,d=self.observe_and_compute('preclose-support',lambda frames:{
@@ -1242,6 +1287,9 @@ class BoundPairSkill:
         """
         if getattr(self.io,'realtime_control',False):
             raise RuntimeError('regrasp supports synchronous execution only')
+        if self.grasp_translation is not None and getattr(self,'grasp_beam35_center',None) is not None:
+            self.regrasp_anchor={'translation_px':list(self.grasp_translation),
+                                 'beam35_center':list(self.grasp_beam35_center)}
         self.set_down()
         self.replay([self.skill['initialization_replay'][0]],'regrasp_fold')
         self.previous_grasp_reports=getattr(self,'previous_grasp_reports',[])+[self.grasp_report]
