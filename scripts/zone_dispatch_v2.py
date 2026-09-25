@@ -116,6 +116,171 @@ def _issue(zone, rid, claim, labels, results, active):
     print(f'CLAIM {rid} {claim.item}/{claim.role} -> {claim.zone}', flush=True)
 
 
+class V2Run:
+    """What a coordination loop may use: the run's handles, never the teacher's truth beyond ``ex``'s
+    claim interface (``ex.claim`` via ``_issue``, ``ex.robots[r].busy`` and ended claims)."""
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
+
+    def issue(self, rid, claim):
+        _issue(self.zone, rid, claim, self.labels, self.results, self.active)
+
+    def delivered(self):
+        # Robot-facing delivered list (outcome source), not the teacher-motion ledger.
+        return self.results.delivered()
+
+    def board(self):
+        return self.results.board(self.active) if self.switches['peer_board'] else None
+
+    def all_idle(self):
+        return not self.active and not any(r.busy for r in self.ex.robots.values())
+
+
+class ModeLoop:
+    """One coordination condition of the v2 driver (the seam for new conditions).
+
+    ``prepare`` runs once before motion; ``on_claim_end`` sees each robot-facing
+    result; ``step`` runs every 0.5 SIM s with the idle robots and returns None
+    (continue), 'done' or 'stalled'. A new condition (e.g. ``leader``: one model
+    commands every robot) is a new subclass registered in ``COORDINATIONS`` plus
+    its switch defaults in ``harness.zone_protocol_v2.CONDITIONS`` and its
+    message templates there; the executor, results ledger and referee stay shared.
+    """
+    name = None
+
+    def prepare(self, run, result, tops):
+        pass
+
+    def on_claim_end(self, run, rid, out):
+        pass
+
+    def step(self, run, idle):
+        raise NotImplementedError
+
+
+class IndependentLoop(ModeLoop):
+    """No communication: each idle robot claims alone from its own view."""
+    name = 'independent'
+
+    def __init__(self):
+        self.next_ask = {r: 0. for r in ROBOTS}
+        self.last_ask = {r: -1. for r in ROBOTS}
+        self.answer = {r: None for r in ROBOTS}
+        self.last_end = 0.
+        self.own_turns = {r: 0 for r in ROBOTS}
+        self.turn = 0
+
+    def on_claim_end(self, run, rid, out):
+        self.last_end = run.zone.time()
+        if not out['delivered']:
+            self.next_ask[rid] = run.zone.time() + SOLO_REASK_S
+
+    def step(self, run, idle):
+        zone = run.zone
+        due = [r for r in idle if self.next_ask[r] <= zone.time()]
+        if due:
+            self.turn += 1
+            decided = independent_round(zone, run.team, run.task, run.labels, run.goal, due, run.results.own_jobs,
+                                        run.stats, self.turn, self.own_turns, run.views)
+            for rid in due:
+                self.last_ask[rid] = zone.time()
+                if rid in decided['accepted']:
+                    run.issue(rid, decided['accepted'][rid])
+                    self.answer[rid] = 'job'
+                else:
+                    self.answer[rid] = 'null' if rid in decided['idle'] else 'invalid'
+                    self.next_ask[rid] = zone.time() + SOLO_REASK_S
+        if run.all_idle() and all(self.answer[r] == 'null' and self.last_ask[r] >= self.last_end for r in ROBOTS):
+            return 'done'
+        return None
+
+
+class DynamicLoop(ModeLoop):
+    """Idle robots claim roles each round; the host checks (per switch); robots see what the switches allow."""
+    name = 'dynamic'
+
+    def __init__(self):
+        self.turn = 0
+
+    def on_claim_end(self, run, rid, out):
+        if run.switches['wake_on_peer_job_end']:
+            run.stats['done_robots'] = []
+
+    def step(self, run, idle):
+        stats = run.stats
+        waiting = [r for r in idle if r not in stats['done_robots']]
+        if waiting:
+            self.turn += 1
+            decided = dynamic_round(run.zone, run.team, run.task, run.labels, run.goal, waiting, run.active,
+                                    run.results.own_jobs, run.board, stats, self.turn, run.delivered(),
+                                    run.switches, run.views)
+            for rid, claim in decided['accepted'].items():
+                run.issue(rid, claim)
+            for rid in waiting:
+                if rid not in decided['accepted']:
+                    stats['done_robots'].append(rid)
+            if not run.active and set(stats['done_robots']) >= set(idle):
+                if not decided['idle_all'] and stats['stalled_turns'] < STALL_TURNS:
+                    stats['stalled_turns'] += 1
+                    stats['done_robots'] = []
+                else:
+                    return 'done' if decided['idle_all'] else 'stalled'
+        elif run.all_idle():
+            return 'done'
+        return None
+
+
+class PlanFirstLoop(ModeLoop):
+    """Legacy (not a research condition since 2026-09-25; kept so ZC1/ZC2-style plan_first runs stay
+    possible): negotiate one plan before motion, then issue each robot's queue in order."""
+    name = 'plan_first'
+
+    def __init__(self):
+        self.queues = {r: [] for r in ROBOTS}
+
+    def prepare(self, run, result, tops):
+        zone, agreement, labels, goal = run.zone, run.agreement, run.labels, run.goal
+        result['phase'] = 'NEGOTIATE'
+        view = observe_items(tops, zone.config['static_map'], labels, run.perception)
+        for turn in range(run.args.planning_rounds):
+            frames, tops = zone.capture(f'plan-{turn}')
+            context = agreement.context()
+            ctx = {r: zp2.context(r, labels=labels, view=view, own_jobs=run.results.own_jobs[r],
+                                  inbox=run.team.inbox[r] if run.switches['peer_messages'] else None) for r in ROBOTS}
+            def build(rid, request_id, ctx=ctx, context=context, frames=frames):
+                return zp2.build_request('plan_first', rid, request_id=request_id, task=run.task, frame=frames[rid],
+                                         ctx=ctx[rid], views=run.views, agreement=context)
+            def fixture(rid, request_id, context=context):
+                return zp2.fixture_plan_reply(request_id, context, goal, labels)
+            replies = run.team.ask(ROBOTS, build,
+                lambda raw, rq, c=context: validate_plan_reply(raw, rq, c, plan_validator=agreement.plan_validator),
+                fixture, phase='plan', turn=turn, sim_time=zone.time(),
+                recipients=None if run.switches['peer_messages'] else [])
+            run.stats['plan_turns'] += 1
+            if agreement.receive(replies, turn):
+                break
+        if agreement.committed is None:
+            raise RuntimeError('no plan agreed within the planning rounds')
+        write(run.args.output/'committed-plan.json', agreement.committed)
+        plan = validate_team_plan(agreement.committed['plan'], goal, labels)
+        for rid in ROBOTS:
+            self.queues[rid] = [normalize_claim(rid, job, labels) for job in plan['assignments'][rid]]
+        print('PLAN COMMITTED ' + agreement.committed['plan_hash'], flush=True)
+
+    def step(self, run, idle):
+        for rid in idle:
+            if self.queues[rid]:
+                run.issue(rid, self.queues[rid].pop(0))
+        if not run.active and not any(self.queues.values()) and not any(r.busy for r in run.ex.robots.values()):
+            return 'done'
+        return None
+
+
+# Coordination conditions of protocol v2. Research conditions (2026-09-25): independent, dynamic and a
+# future 'leader' (one model commands every robot; designed separately, not implemented here).
+COORDINATIONS = {'independent': IndependentLoop, 'dynamic': DynamicLoop, 'plan_first': PlanFirstLoop}
+
+
 def run_v2(args, goal):
     if not args.contact_profile:
         raise SystemExit('protocol v2 needs an explicit --contact-profile (A2 smokes: cargo_noslip_v1); '
@@ -171,12 +336,11 @@ def run_v2(args, goal):
     ex = zone.executor
     active = {}
     results = RobotResults(ROBOTS, outcome_source)
-    own_jobs = results.own_jobs
-    queues = {r: [] for r in ROBOTS}
     stats = {'claim_rounds': 0, 'collisions': 0, 'invalid_claims': 0, 'plan_turns': 0, 'done_robots': [],
              'stalled_turns': 0}
-    solo = {'next_ask': {r: 0. for r in ROBOTS}, 'last_ask': {r: -1. for r in ROBOTS},
-            'answer': {r: None for r in ROBOTS}, 'last_end': 0., 'own_turns': {r: 0 for r in ROBOTS}}
+    run = V2Run(args=args, zone=zone, ex=ex, team=team, agreement=agreement, task=task, goal=goal, labels=labels,
+                views=views, results=results, active=active, stats=stats, switches=switches, perception=perception)
+    loop = COORDINATIONS[args.coordination]()
     stalled = False
     motion_started = None
     try:
@@ -191,56 +355,18 @@ def run_v2(args, goal):
         result['labels'] = {k: v['kind'] for k, v in labels.items()}
         write(args.output/'task.json', task)
 
-        def delivered():
-            # Robot-facing delivered list (outcome source), not the teacher-motion ledger.
-            return results.delivered()
-
-        def board():
-            return results.board(active) if switches['peer_board'] else None
-
         def collect_done():
             for c in ex.pop_ended():
                 rid = c.rid
                 active.pop(rid, None)
                 out = results.end(rid, c, zone.time())
-                if switches['wake_on_peer_job_end']:
-                    stats['done_robots'] = []
-                solo['last_end'] = zone.time()
-                if args.coordination == 'independent' and not out['delivered']:
-                    solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
+                loop.on_claim_end(run, rid, out)
                 zone._log('claim_end', rid, zone.time(), outcome=c.outcome, item=c.item_id, receipt=c.receipt,
                           robot_facing=out)
 
-        if args.coordination == 'plan_first':
-            result['phase'] = 'NEGOTIATE'
-            view = observe_items(tops, config['static_map'], labels, perception)
-            for turn in range(args.planning_rounds):
-                frames, tops = zone.capture(f'plan-{turn}')
-                context = agreement.context()
-                ctx = {r: zp2.context(r, labels=labels, view=view, own_jobs=own_jobs[r],
-                                      inbox=team.inbox[r] if switches['peer_messages'] else None) for r in ROBOTS}
-                def build(rid, request_id, ctx=ctx, context=context, frames=frames):
-                    return zp2.build_request('plan_first', rid, request_id=request_id, task=task, frame=frames[rid],
-                                             ctx=ctx[rid], views=views, agreement=context)
-                def fixture(rid, request_id, context=context):
-                    return zp2.fixture_plan_reply(request_id, context, goal, labels)
-                replies = team.ask(ROBOTS, build,
-                    lambda raw, rq, c=context: validate_plan_reply(raw, rq, c, plan_validator=agreement.plan_validator),
-                    fixture, phase='plan', turn=turn, sim_time=zone.time(),
-                    recipients=None if switches['peer_messages'] else [])
-                stats['plan_turns'] += 1
-                if agreement.receive(replies, turn):
-                    break
-            if agreement.committed is None:
-                raise RuntimeError('no plan agreed within the planning rounds')
-            write(args.output/'committed-plan.json', agreement.committed)
-            plan = validate_team_plan(agreement.committed['plan'], goal, labels)
-            for rid in ROBOTS:
-                queues[rid] = [normalize_claim(rid, job, labels) for job in plan['assignments'][rid]]
-            print('PLAN COMMITTED ' + agreement.committed['plan_hash'], flush=True)
+        loop.prepare(run, result, tops)
         result['phase'] = 'EXECUTE'
         motion_started = zone.time()
-        turn = 0
         next_progress = motion_started
         while zone.time() - motion_started < max_sim_s:
             if zone.time() >= next_progress:
@@ -252,50 +378,10 @@ def run_v2(args, goal):
                     'delivered': ex.ledger.delivered}), flush=True)
             collect_done()
             idle = [r for r in ROBOTS if r not in active and not ex.robots[r].busy]
-            if args.coordination == 'plan_first':
-                for rid in idle:
-                    if queues[rid]:
-                        _issue(zone, rid, queues[rid].pop(0), labels, results, active)
-                if not active and not any(queues.values()) and not any(r.busy for r in ex.robots.values()):
-                    break
-            elif args.coordination == 'independent':
-                due = [r for r in idle if solo['next_ask'][r] <= zone.time()]
-                if due:
-                    turn += 1
-                    decided = independent_round(zone, team, task, labels, goal, due, own_jobs, stats, turn,
-                                                solo['own_turns'], views)
-                    for rid in due:
-                        solo['last_ask'][rid] = zone.time()
-                        if rid in decided['accepted']:
-                            _issue(zone, rid, decided['accepted'][rid], labels, results, active)
-                            solo['answer'][rid] = 'job'
-                        else:
-                            solo['answer'][rid] = 'null' if rid in decided['idle'] else 'invalid'
-                            solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
-                if not active and all(solo['answer'][r] == 'null' and solo['last_ask'][r] >= solo['last_end']
-                                      for r in ROBOTS) and not any(r.busy for r in ex.robots.values()):
-                    break
-            else:
-                waiting = [r for r in idle if r not in stats['done_robots']]
-                if waiting:
-                    turn += 1
-                    decided = dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board,
-                                            stats, turn, delivered(), switches, views)
-                    for rid, claim in decided['accepted'].items():
-                        _issue(zone, rid, claim, labels, results, active)
-                    for rid in waiting:
-                        if rid not in decided['accepted']:
-                            stats['done_robots'].append(rid)
-                    if not active and set(stats['done_robots']) >= set(idle):
-                        if not decided['idle_all'] and stats['stalled_turns'] < STALL_TURNS:
-                            stats['stalled_turns'] += 1
-                            stats['done_robots'] = []
-                        else:
-                            if not decided['idle_all']:
-                                stalled = True
-                            break
-                elif not active and not any(r.busy for r in ex.robots.values()):
-                    break
+            verdict = loop.step(run, idle)
+            if verdict:
+                stalled = verdict == 'stalled'
+                break
             zone.step(.5)
         control_end = zone.time()
         result['phase'] = ('STALLED' if stalled else 'FINISHED' if control_end - motion_started < max_sim_s
@@ -323,7 +409,7 @@ def run_v2(args, goal):
         result['wall_s'] = round(time.monotonic() - started, 2)
         result['eq_active_max'] = zone.eq_active_max
         result['neq'] = zone.neq
-        result['jobs'] = own_jobs
+        result['jobs'] = results.own_jobs
         result['finished_reports'], result['stopped_reports'] = results.finished, results.stopped
         result['robot_results'] = results.record()
         result['coordination_stats'] = stats

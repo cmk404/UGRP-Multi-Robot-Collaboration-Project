@@ -469,3 +469,10 @@ def test_weak_v2_beams_never_become_new_items_without_confirmation():
     in_a = dict(lone, floor_xy_m=[4.6, .4])
     assert view_from_detections([in_a], static, {})['zone_counts_seen']['A'] == {}
     assert view_from_detections([in_a], static, {}, 'top_cargo_v1')['zone_counts_seen']['A'] == {'long_beam': 1}
+
+
+def test_coordination_table_is_the_single_seam_for_conditions():
+    from scripts.zone_dispatch_v2 import COORDINATIONS, ModeLoop
+    assert set(COORDINATIONS) == set(zp2.CONDITIONS) == set(zp2.READ_BY_MODE)
+    assert all(issubclass(c, ModeLoop) and c.name == k for k, c in COORDINATIONS.items())
+    assert 'leader' not in COORDINATIONS            # designed separately; registers here when implemented

@@ -39,6 +39,10 @@ ZONES = ZONE_IDS
 # so a later A/B/C/D design can toggle them one at a time (audit confounds C1/C3).
 # The mode names only pick the defaults below; ``condition_switches`` applies
 # explicit per-run overrides (--condition-switches) and records both.
+# Research conditions (user, 2026-09-25): independent, dynamic and a future
+# 'leader' (one model commands every robot; its loop registers in
+# scripts.zone_dispatch_v2.COORDINATIONS, its defaults here). plan_first is kept
+# only so ZC1/ZC2-style plan_first runs stay possible (legacy, minimal v2 support).
 SWITCHES = ('peer_board', 'host_arbitration', 'conflict_notices', 'wake_on_peer_job_end', 'peer_messages')
 CONDITIONS = {
     # peer_board: the host shows active peer claims and every robot's reported results.

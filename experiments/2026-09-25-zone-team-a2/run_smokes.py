@@ -23,9 +23,12 @@ ROOT = Path(__file__).resolve().parents[2]
 MIXED = {'A': {'long_beam': 1}, 'B': {'heavy_crate': 1, 'red': 1}, 'C': {'can': 1, 'green': 1, 'tile': 1}}
 TRI = {'A': {'tri_frame': 1, 'red': 1}, 'C': {'green': 1}}
 # (run id, variant, goal, seed, coordination, extra args)
+# Research conditions (user, 2026-09-25): independent and dynamic (leader not implemented yet);
+# plan_first is legacy: one run checks its minimal v2 support (cohort 1 ran it on both seeds).
 RUNS = [
     *[(f'a-two-{m}-s{s}', 'zone_wide_two_doors', MIXED, s, m, []) for s in (11, 12)
-      for m in ('plan_first', 'dynamic', 'independent')],
+      for m in ('dynamic', 'independent')],
+    ('a-two-plan_first-s11', 'zone_wide_two_doors', MIXED, 11, 'plan_first', []),
     ('b-door-tri-dynamic-s11', 'zone_wide_door', TRI, 11, 'dynamic', []),
     ('b-two-tri-dynamic-s11', 'zone_wide_two_doors', TRI, 11, 'dynamic', []),
     ('c-two-graspfail-dynamic-s11', 'zone_wide_two_doors', MIXED, 11, 'dynamic',
