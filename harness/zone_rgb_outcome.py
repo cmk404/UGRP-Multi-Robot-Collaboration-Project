@@ -465,7 +465,8 @@ def observe(job, reference_tops, before_tops, current_tops, static_map, *, own_r
 
 # --------------------------------------------------------------------------- decisions
 
-def decide(job, history, *, assigned_at, now, commands=None, released_at_source=0, deadline_s=DEADLINE_S):
+def decide(job, history, *, assigned_at, now, commands=None, released_at_source=0, deadline_s=DEADLINE_S,
+           closing=False):
     """Decision from the observation history (oldest first). Returns
     ``{'status': 'confirmed'|'unconfirmed', 'outcome': <outcome>|'unconfirmed', ...}``.
 
@@ -475,8 +476,10 @@ def decide(job, history, *, assigned_at, now, commands=None, released_at_source=
       Catalogue items also need every carrier's gripper known and open.
     * still_at_source early: RELEASES_AT_SOURCE command-evidenced releases each
       followed by the item still tracked at the source, and now still there.
-    * at the teacher-free deadline: the last three observations agree on a
+    * at the teacher-free deadline, or when the job is closed (``closing``: a
+      carrier was issued its next job): the last three observations agree on a
       non-delivered outcome with confidence >= COMMIT_CONFIDENCE, else not_seen.
+      Closing never confirms ``delivered`` unless it was already stable.
     * otherwise unconfirmed.
     """
     base = {'status': 'unconfirmed', 'outcome': UNCONFIRMED, 'confidence': 0., 'rule': 'observing',
@@ -508,15 +511,16 @@ def decide(job, history, *, assigned_at, now, commands=None, released_at_source=
         return {'status': 'confirmed', 'outcome': 'still_at_source', 'confidence': .95,
                 'rule': 'released_at_source', 'decided_at': last['t'], 'evidence_images': last['images'],
                 'flags': [f'{released_at_source}_releases_with_item_still_at_source']}
-    if now - assigned_at >= deadline_s:
+    if closing or now - assigned_at >= deadline_s:
+        tag = 'closed_' if closing and now - assigned_at < deadline_s else 'deadline_'
         tail3 = history[-3:]
         outs = {o['outcome'] for o in tail3}
         if (len(outs) == 1 and last['outcome'] not in ('delivered', 'not_seen')
                 and all(o['confidence'] >= COMMIT_CONFIDENCE for o in tail3)):
             return {'status': 'confirmed', 'outcome': last['outcome'], 'confidence': min(o['confidence'] for o in tail3),
-                    'rule': 'deadline_' + last['rule'], 'decided_at': last['t'],
+                    'rule': tag + last['rule'], 'decided_at': last['t'],
                     'evidence_images': sorted({i for o in tail3 for i in o['images']}), 'flags': []}
-        return {'status': 'confirmed', 'outcome': 'not_seen', 'confidence': 0., 'rule': 'deadline_not_seen',
+        return {'status': 'confirmed', 'outcome': 'not_seen', 'confidence': 0., 'rule': tag + 'not_seen',
                 'decided_at': last['t'], 'evidence_images': last['images'], 'flags': sorted(outs)}
     base['latest_observation'] = {k: last[k] for k in ('t', 'outcome', 'confidence', 'rule')}
     return base
@@ -562,6 +566,22 @@ class JobTracker:
         at_source = sum(1 for v in self.release_checks.values() if v)
         self.decision = decide(self.job, self.history, assigned_at=self.assigned_at, now=t, commands=commands,
                                released_at_source=at_source, deadline_s=self.deadline_s)
+        return self.decision
+
+    def close(self, t, *, commands=None):
+        """End the observation window (a carrier was issued its next job, so later
+        frames may show that job's work in the same area). Finalizes from the
+        observations so far; never turns into ``delivered`` unless already stable."""
+        if self.decision['status'] != 'confirmed':
+            at_source = sum(1 for v in self.release_checks.values() if v)
+            if self.history:
+                self.decision = decide(self.job, self.history, assigned_at=self.assigned_at, now=t, commands=commands,
+                                       released_at_source=at_source, deadline_s=self.deadline_s, closing=True)
+            else:
+                self.decision = {'status': 'confirmed', 'outcome': 'not_seen', 'confidence': 0.,
+                                 'rule': 'closed_before_first_tick', 'decided_at': round(float(t), 3),
+                                 'evidence_images': [], 'flags': []}
+            self.decision['closed_at'] = round(float(t), 3)
         return self.decision
 
 

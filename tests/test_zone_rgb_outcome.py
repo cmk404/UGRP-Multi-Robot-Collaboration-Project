@@ -215,6 +215,20 @@ def test_three_command_evidenced_releases_at_the_source_confirm_early():
     assert d['status'] == 'confirmed' and d['rule'] == 'released_at_source'
 
 
+def test_close_finalizes_without_turning_into_delivered():
+    tr = zro.JobTracker(JOB, REFERENCE, BEFORE, STATIC, assigned_at=0.)
+    tr.update(1., BEFORE)
+    tr.update(2., BEFORE)
+    tr.update(3., BEFORE)
+    d = tr.close(3.5)
+    assert d['status'] == 'confirmed' and d['rule'] == 'closed_still_at_source_tracked' and d['closed_at'] == 3.5
+    # later frames (the next job filling the same slot) no longer change it
+    assert tr.update(4., DELIVERED)['outcome'] == 'still_at_source'
+    tr2 = zro.JobTracker(JOB, REFERENCE, BEFORE, STATIC, assigned_at=0.)
+    tr2.update(1., DELIVERED)
+    assert tr2.close(1.5)['outcome'] == 'not_seen'
+
+
 def test_issued_arm_and_releases_follow_the_command_log():
     log = [{'robot_id': 'r1', 'sim_time_s': 0., 'kind': 'initial', 'pulses': {'1': 2000, '3': 740}},
            cmd(1., 1500), {'robot_id': 'r1', 'sim_time_s': 1.5, 'kind': 'look', 'pan_pulse': 1400}, cmd(2., 2000)]

@@ -241,8 +241,11 @@ def track(args):
     runs = split[args.split]
     if args.only:
         runs = [r for r in runs if args.only in r]
+    if args.part:
+        i, n = (int(v) for v in args.part.split('/'))
+        runs = runs[i::n]
     out_root = new_dir(args.out)
-    manifest = {'schema': 'ugrp.zone_rgb_outcome.track.v2', 'split': args.split, 'cadence_s': zro.CADENCE_S,
+    manifest = {'schema': 'ugrp.zone_rgb_outcome.track.v2', 'split': args.split, 'part': args.part, 'cadence_s': zro.CADENCE_S,
                 'deadline_s': zro.DEADLINE_S, 'source_sha': git_sha(),
                 'module_sha256': sha(ROOT/'harness'/'zone_rgb_outcome.py'), 'load_avg_start': load_avg(), 'runs': {}}
     started = time.monotonic()
@@ -277,11 +280,22 @@ def track(args):
                 'inputs': {'run': rel, 'job_id': job['job_id'], 'robot': job['robot'], 'spec': spec,
                            'assigned_at': job['assign_t'], 'reference_frames': ref_names, 'before_frames': bnames,
                            'commands_logged': commands is not None, 'slot': j['slot']}}
+        # A job's window closes when its robot is issued its next job (the robot's
+        # own job history; the issue time itself follows the executor end: L4b).
+        by_robot = {}
+        for job in sorted(jobs, key=lambda j: j['assign_t']):
+            by_robot.setdefault(job['robot'], []).append(job)
+        for seq in by_robot.values():
+            for a, b in zip(seq, seq[1:]):
+                trackers[a['job_id']]['close_at'] = b['assign_t']
         # Fixed SIM grid, independent of any executor end.
         k = math.floor(min(j['assign_t'] for j in jobs)/zro.CADENCE_S) + 1
         while k*zro.CADENCE_S <= t_end + 1e-9:
             t = round(k*zro.CADENCE_S, 6)
             k += 1
+            for v in trackers.values():
+                if v.get('close_at') is not None and v['close_at'] < t and v['tracker'].decision['status'] != 'confirmed':
+                    v['tracker'].close(v['close_at'], commands=commands)
             live = [v for v in trackers.values() if v['job']['assign_t'] < t
                     and v['tracker'].decision['status'] != 'confirmed']
             if not live:
@@ -356,6 +370,11 @@ def label(args):
             rp.set(t)
             xyz = rp.body_xyz(body)
             gt.append({'t': t, 'gt': _gt_class(xyz, source_xyz, region), 'z': round(xyz[2], 4)})
+        dec = json.loads((inp_path.parent/'decision.json').read_text())
+        gt_decision = None
+        if dec.get('decided_at') is not None:
+            rp.set(dec['decided_at'])
+            gt_decision = _gt_class(rp.body_xyz(body), source_xyz, region)
         rp.set(float(rp.times[-1]))
         final = _gt_class(rp.body_xyz(body), source_xyz, region)
         end = next((e for e in events if e['event'] == 'phase' and e.get('job') == inp['job_id']
@@ -378,7 +397,8 @@ def label(args):
             'scope': 'evaluation only; never a robot input', 'object': oid, 'body': body,
             'teacher_outcome': end['outcome'] if end else 'unfinished_at_run_end',
             'teacher_end_t': end['sim_time_s'] if end else None, 'injected': injected,
-            'first_gt_delivered_t': first_delivered, 'final_gt': final, 'ticks': gt}, indent=1) + '\n')
+            'first_gt_delivered_t': first_delivered, 'final_gt': final, 'gt_at_decision': gt_decision,
+            'ticks': gt}, indent=1) + '\n')
         rp.close()
     print(f'labels written to {out_root}')
 
@@ -389,10 +409,13 @@ RIGHT = {'delivered': 'delivered', 'still_at_source': 'still_at_source', 'elsewh
 
 
 def score(args):
-    track_dir, label_dir = Path(args.track), Path(args.labels)
+    if len(args.track) != len(args.labels):
+        raise SystemExit('give one --labels dir per --track dir, in the same order')
     out_root = new_dir(args.out)
     rows = []
-    for dec_path in sorted(track_dir.glob('*/*/decision.json')):
+    pairs = [(Path(t), Path(lb), p) for t, lb in zip(args.track, args.labels)
+             for p in sorted(Path(t).glob('*/*/decision.json'))]
+    for track_dir, label_dir, dec_path in pairs:
         rel = dec_path.parent.relative_to(track_dir)
         dec = json.loads(dec_path.read_text())
         inp = json.loads((dec_path.parent/'inputs.json').read_text())
@@ -400,7 +423,7 @@ def score(args):
         lab = json.loads((label_dir/rel/'eval-labels.json').read_text())
         gt_at = {g['t']: g['gt'] for g in lab['ticks']}
         if dec['status'] == 'confirmed':
-            gt = gt_at[dec['decided_at']]
+            gt = lab['gt_at_decision']
         else:
             gt = lab['ticks'][-1]['gt'] if lab['ticks'] else lab['final_gt']
         raw_fd = [o['t'] for o in obs if o['rule'] == 'delivered_source_proven' and gt_at.get(o['t']) != 'delivered']
@@ -413,7 +436,7 @@ def score(args):
                      'first_gt_delivered_t': lab['first_gt_delivered_t'], 'teacher_end_t': lab['teacher_end_t'],
                      'ticks': len(obs), 'raw_proven_delivered_on_non_delivered_ticks': raw_fd})
     summary = summarize(rows)
-    out = {'schema': 'ugrp.zone_rgb_outcome.score.v2', 'track': str(track_dir), 'labels': str(label_dir),
+    out = {'schema': 'ugrp.zone_rgb_outcome.score.v2', 'track': args.track, 'labels': args.labels,
            'source_sha': git_sha(), 'summary': summary, 'jobs': rows}
     (out_root/'score.json').write_text(json.dumps(out, indent=1) + '\n')
     print(json.dumps(summary, indent=1))
@@ -688,12 +711,13 @@ def parser():
     s.add_argument('--split', required=True)
     s.add_argument('--out', required=True)
     s.add_argument('--only')
+    s.add_argument('--part', help='i/n: every n-th run starting at i')
     s = sub.add_parser('label')
     s.add_argument('--track', required=True)
     s.add_argument('--out', required=True)
     s = sub.add_parser('score')
-    s.add_argument('--track', required=True)
-    s.add_argument('--labels', required=True)
+    s.add_argument('--track', required=True, nargs='+')
+    s.add_argument('--labels', required=True, nargs='+')
     s.add_argument('--out', required=True)
     s = sub.add_parser('synth')
     s.add_argument('--split-file', default=split_file)
