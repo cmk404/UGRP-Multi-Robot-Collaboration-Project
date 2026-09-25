@@ -33,7 +33,7 @@ FRAME_S = .2
 STUDENT_LIMIT_S = 240.
 TEACHER_LIMIT_S = 400.
 DOOR_REGION = (.6, .5)
-CALIBRATION = ROOT/'experiments'/'2026-09-25-zone-owncam-loc'/'calibration_frozen.json'
+CALIBRATION = ROOT/'experiments'/'2026-09-25-zone-owncam-loop'/'calibration_loop.json'
 KEEPOUT_HALF_M = .06
 
 

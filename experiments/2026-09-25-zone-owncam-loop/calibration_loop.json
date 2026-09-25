@@ -1,0 +1,292 @@
+{
+  "schema": "ugrp.owncam_loc_calibration.v1",
+  "params": {
+    "particles": 2000,
+    "motion": {
+      "gain": [
+        [
+          1.3323,
+          -0.0822,
+          -0.0053
+        ],
+        [
+          0.0052,
+          1.0177,
+          -0.0462
+        ],
+        [
+          -0.0045,
+          0.1279,
+          1.4885
+        ]
+      ],
+      "tau_s": 0.3,
+      "noise_rel": [
+        0.3176,
+        0.4438,
+        0.1116
+      ],
+      "noise_abs": [
+        0.01538,
+        0.00504,
+        0.01406
+      ],
+      "scale_std": 0.2148,
+      "scale_walk": 0.01
+    },
+    "measurement": {
+      "azimuth_std_rad": 0.00179,
+      "elevation_std_rad": 0.01899,
+      "range_log_std": 0.019,
+      "normal_std_rad": 0.52,
+      "outlier_prob": 0.05,
+      "outlier_margin": 6.0,
+      "invisible_log_penalty": -20.0,
+      "min_side_px": 8.0,
+      "max_range_m": null,
+      "range_log_bias": [
+        -0.01588,
+        0.01812
+      ],
+      "azimuth_floor_rad": 0.0087,
+      "range_floor": 0.03,
+      "elevation_floor_rad": 0.035,
+      "tag_temper": 1.0,
+      "elevation_bias_rad": -0.01868
+    },
+    "map": {
+      "robot_clearance_m": 0.07,
+      "wall_log_penalty": -8.0
+    },
+    "resample_ratio": 0.5,
+    "roughen": [
+      0.01,
+      0.01,
+      0.005
+    ],
+    "reset": {
+      "min_best_loglik": -12.0,
+      "fraction": 0.2,
+      "init_pos_std_m": 0.03,
+      "init_yaw_bins": 1
+    },
+    "motion_loaded": {
+      "gain": [
+        [
+          1.3533,
+          0.0667,
+          -0.0111
+        ],
+        [
+          -0.0038,
+          0.9079,
+          -0.0415
+        ],
+        [
+          0.0023,
+          -0.0512,
+          0.7411
+        ]
+      ],
+      "tau_s": 0.44,
+      "noise_rel": [
+        0.133,
+        0.2796,
+        0.0
+      ],
+      "noise_abs": [
+        0.01494,
+        0.00382,
+        0.09762
+      ],
+      "scale_std": 0.1457,
+      "scale_walk": 0.01
+    },
+    "measurement_loaded": {
+      "elevation_bias_rad": -0.04363,
+      "elevation_floor_rad": 0.02618,
+      "elevation_std_rad": 0.02618
+    }
+  },
+  "report": {
+    "motion_unloaded": {
+      "tau_s": 0.3,
+      "gain": [
+        [
+          1.3323,
+          -0.0822,
+          -0.0053
+        ],
+        [
+          0.0052,
+          1.0177,
+          -0.0462
+        ],
+        [
+          -0.0045,
+          0.1279,
+          1.4885
+        ]
+      ],
+      "velocity_residual_rms": [
+        0.0228,
+        0.0071,
+        0.0175
+      ],
+      "samples": 16229,
+      "slip_ratio_std": 0.2148
+    },
+    "motion_loaded": {
+      "tau_s": 0.44,
+      "gain": [
+        [
+          1.3533,
+          0.0667,
+          -0.0111
+        ],
+        [
+          -0.0038,
+          0.9079,
+          -0.0415
+        ],
+        [
+          0.0023,
+          -0.0512,
+          0.7411
+        ]
+      ],
+      "velocity_residual_rms": [
+        0.0151,
+        0.004,
+        0.055
+      ],
+      "samples": 5260,
+      "slip_ratio_std": 0.1457
+    },
+    "detections": 6667,
+    "bearing_deg": {
+      "median": 1.0371329717729998,
+      "p90": 1.0815401471748982
+    },
+    "azimuth_deg": {
+      "mean": -0.03697103182745255,
+      "std": 0.06346827535878914
+    },
+    "elevation_deg": {
+      "mean": -1.0698832105606584,
+      "std": 0.028585254898448507
+    },
+    "range_log": {
+      "median": -0.00025675748290251293,
+      "robust_std": 0.011341280924589584
+    },
+    "normal_deg": {
+      "median": 3.6580017239322102,
+      "p90": 9.266414733348155
+    },
+    "by_range": {
+      "0.0-0.5m": {
+        "n": 11,
+        "bearing_p50_deg": 1.1018738590743116,
+        "range_log_p50_abs": 0.0012272789341780353
+      },
+      "0.5-1.0m": {
+        "n": 404,
+        "bearing_p50_deg": 1.0818436093603077,
+        "range_log_p50_abs": 0.002525201813713061
+      },
+      "1.0-2.0m": {
+        "n": 2305,
+        "bearing_p50_deg": 1.0490093232823554,
+        "range_log_p50_abs": 0.006095095749558473
+      },
+      "2.0-3.0m": {
+        "n": 3060,
+        "bearing_p50_deg": 1.029015486896385,
+        "range_log_p50_abs": 0.009030298008109266
+      },
+      "3.0-5.0m": {
+        "n": 887,
+        "bearing_p50_deg": 1.019700308430566,
+        "range_log_p50_abs": 0.013498423527169831
+      },
+      "5.0-9.0m": {
+        "n": 0,
+        "bearing_p50_deg": null,
+        "range_log_p50_abs": null
+      }
+    }
+  },
+  "provenance": {
+    "episodes": [
+      "dev-tc-s11",
+      "dev-ls-s11",
+      "dev-ll-s11",
+      "dev-cl-s11",
+      "dev-tc-s12",
+      "dev-ls-s12",
+      "dev-ll-s12",
+      "dev-cl-s12"
+    ],
+    "files": {
+      "dev-tc-s11/inputs/commands.jsonl": "040182783b349d9df169abc8df4430c74c9f38dcba7c44bf9c87801d6da9ab7c",
+      "dev-tc-s11/eval_only/gt_trajectory.jsonl": "0fe1442f7845e899f41c703b19014815e9169ac526f5a9f90be362de107a4c54",
+      "dev-tc-s11/eval_only/frames_gt.jsonl": "45a4e2afdba1f6d0dd0fd434fed043e3847932e1761ae222935b6ff46a64fa77",
+      "dev-tc-s11/derived/detections.jsonl": "e78b651181e34697db23f84a9bddfd6b2f56957a36b730fc24c6fa2db3fe3da1",
+      "dev-ls-s11/inputs/commands.jsonl": "8100c7137f157d3731834ba4b5d0da3ef3ea3fa023faccb382d01223a1431743",
+      "dev-ls-s11/eval_only/gt_trajectory.jsonl": "3ff9373267560754a4f83e422af7ea82579e96be96b01bdfbcbb2195f8faa11d",
+      "dev-ls-s11/eval_only/frames_gt.jsonl": "683e5b9465fd6de3ec314bfaa5b471f2876c476958ec4c9654b626155f755a3a",
+      "dev-ls-s11/derived/detections.jsonl": "7a545b74898247190c876bfb46dceefdc9fae9a86ecf4c781f3f435be8cf22a5",
+      "dev-ll-s11/inputs/commands.jsonl": "02bfff07bf9995f8fd03a7619cb5e9a90bc9c80a9c210a87666bb98b97189eef",
+      "dev-ll-s11/eval_only/gt_trajectory.jsonl": "9f41ed100892b18c72825fe60691334b39cb962fd37225c23deacf063bab9a6a",
+      "dev-ll-s11/eval_only/frames_gt.jsonl": "658ea27a5f09d8ac16d6271a3ee327e6ea5729d2d0d6c47acbe12c0e6369cc4f",
+      "dev-ll-s11/derived/detections.jsonl": "d6bcf8a32c4b1a3727735560dc5996d311c65b799bf89646400fb448379be3bf",
+      "dev-cl-s11/inputs/commands.jsonl": "e226390dca6771384b621d34c2c1592cb4550f5d678b7405fcf69ac4772f0be4",
+      "dev-cl-s11/eval_only/gt_trajectory.jsonl": "e616a473c4e678a07f8638e12946266829033448ceed8b8bbda6a7642d6b26d9",
+      "dev-cl-s11/eval_only/frames_gt.jsonl": "2d9c19c7bc1d00676fe38b797f85849ddb0d974ed9faf302617136f13a3890a4",
+      "dev-cl-s11/derived/detections.jsonl": "98c40de015ce237d34d32f9027d68a3acaea3039c6651d6feba42162a13db0f1",
+      "dev-tc-s12/inputs/commands.jsonl": "f9f3acbec58abf0c0dc8328e0dc7a552b191a96b9d334174d534823ddb684225",
+      "dev-tc-s12/eval_only/gt_trajectory.jsonl": "2104b852ca33fd723baa1a8cdcc73c4ebff4256c017256ef8905a855647206f7",
+      "dev-tc-s12/eval_only/frames_gt.jsonl": "27a6b34e2d4c18579af74c811a5e6bf9caa315f0a152ab8491e0fa256e21f4a9",
+      "dev-tc-s12/derived/detections.jsonl": "9872a6db46585e33d9deb5ab865208f2640f2cbb3c61b4428d8a43b2e582782f",
+      "dev-ls-s12/inputs/commands.jsonl": "6c8b2137f0eee272c3754b32cd94c2a63954a6b3168477ce139e68c9ede8a912",
+      "dev-ls-s12/eval_only/gt_trajectory.jsonl": "682d73fc9e9b35c5f237d9ce1019dc3cbef43628caed4c9c70414e0691dffb89",
+      "dev-ls-s12/eval_only/frames_gt.jsonl": "246016efd6cd6166142e146c4795a5f073a6706f4dda4568ec1bbc3aa9877b33",
+      "dev-ls-s12/derived/detections.jsonl": "0e70db000c01ab90f9a54a67a15d77ac5f692500a21efd6c19e3d3d02f46e275",
+      "dev-ll-s12/inputs/commands.jsonl": "2b92f5353d303e1e69d7d42c133c10dd795f7248d9f274aa20dc28121372e871",
+      "dev-ll-s12/eval_only/gt_trajectory.jsonl": "e788eb177b5823251bd8df94a41ab34b5e0f40d387be51bcf2dc5b1dbca92af6",
+      "dev-ll-s12/eval_only/frames_gt.jsonl": "a11e45bae0406e78d2b5481925b7960804df1db2d7befd772550deaebbf72ab4",
+      "dev-ll-s12/derived/detections.jsonl": "c166f108f3e5246cb65c7f802cfed2ccfdc50e2e81ce489f742b3b94f13e4517",
+      "dev-cl-s12/inputs/commands.jsonl": "baf0dd6b5166af1c6376bfea1921007f9aa3a7ceaa16ef296b9905036ef78657",
+      "dev-cl-s12/eval_only/gt_trajectory.jsonl": "20e3c8459577f5833b052ea2b734b814eea79bf946b3e8c32146368a8a445b07",
+      "dev-cl-s12/eval_only/frames_gt.jsonl": "c7887c5b5e228ff1c27883cc41f85aebb770569ba7fb63477bce1db07626f005",
+      "dev-cl-s12/derived/detections.jsonl": "1862067d1446ec7bbe6eb09462de8a83cdff643070d2cbffcba0ca3a9e8aec06"
+    },
+    "note": "teacher logs (simulator truth) used offline as training data only"
+  },
+  "dev_tuning": {
+    "chosen": "a.5_r3_t1 + loaded motion model",
+    "overrides": {
+      "roughen": [
+        0.01,
+        0.01,
+        0.005
+      ],
+      "measurement.azimuth_floor_rad": 0.0087,
+      "measurement.range_floor": 0.03,
+      "measurement.elevation_floor_rad": 0.035,
+      "measurement.tag_temper": 1.0,
+      "measurement.normal_std_rad": 0.52,
+      "motion/motion_loaded noise": "x2 of the fitted rel/abs"
+    },
+    "selection": "dev look episodes (ls/ll s11,s12), 2 filter seeds; best G1/G3 p90 among ~25 variants; loaded motion model added after the dev dead-reckoning analysis (turn gain 0.74 loaded vs 1.49); test split never localized or scored before this freeze"
+  },
+  "loop_calibration": {
+    "base": "experiments/2026-09-25-zone-owncam-loc/calibration_frozen.json (unchanged file)",
+    "added": {
+      "measurement.elevation_bias_rad": "-1.07 deg: mean observed-minus-FK elevation, v1 dev recordings (unloaded)",
+      "measurement_loaded": "elevation bias -2.5 deg, floor/std 1.5 deg: loaded look_p20 -2.41+-0.53 and CARRY_POSTURE -2.83+-0.02 deg on dev closed-loop run dev-a1/dev-box-s31 (GT used offline only)"
+    },
+    "selection": "dev only; test never run"
+  }
+}
