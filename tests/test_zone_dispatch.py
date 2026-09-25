@@ -456,3 +456,14 @@ def test_teacher_stops_the_second_robot_and_injected_grasps_stay_open():
     assert a._grip() == CLOSED
     a.job['inject'] = 'grasp_stays_open'
     assert a._grip() == OPEN
+
+
+def test_planner_backs_out_of_an_overlapped_box_margin_before_ploughing():
+    from scripts.zone_teacher import BOX_CLEARANCE_M, plan_path
+    # ZC1 gate: r2 at (1.19, -0.05) right behind the red-2 box its open gripper
+    # had pushed to (1.27, -0.05); the next target lies further east.
+    bounds = [-1.05, 5.40, -3.15, 1.45]
+    box = (1.27, -.05, BOX_CLEARANCE_M)
+    path = plan_path((1.19, -.05), (1.60, -.60), bounds, [box])
+    assert path and math.hypot(path[0][0]-1.27, path[0][1]+.05) >= BOX_CLEARANCE_M + .17
+    assert all(math.hypot(x-1.27, y+.05) >= BOX_CLEARANCE_M + .17 - 1e-9 for x, y in path)

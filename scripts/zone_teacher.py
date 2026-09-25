@@ -28,6 +28,9 @@ PEER_CLEARANCE_M = .14
 # A drive phase (to the box, or carrying to the slot) that has not arrived
 # within this SIM time ends the job as teacher_path_blocked.
 DRIVE_PHASE_LIMIT_S = 120.
+# A drive goal inside another box's keep-out can never be reached (a box was
+# pushed onto the pregrasp or slot approach spot); stop after this long.
+GOAL_OCCUPIED_LIMIT_S = 10.
 # Two driving robots can block each other (one parked beside the other's goal,
 # or head-on in a lane between box columns) and both wait forever. A robot that
 # has had no path this long, while a path exists without peers, asks the peers
@@ -68,6 +71,15 @@ def plan_path(start, goal, bounds, discs, *, grid=GRID_M, radius=ROBOT_RADIUS_M,
     peers = [_no_closer(start, d, radius) for d in discs if isinstance(d, PeerDisc)]
     boxes = [d for d in discs if not isinstance(d, PeerDisc)]
     path = _astar(start, goal, bounds, boxes + peers, grid, radius, budget)
+    overlapped = [(x, y, r) for x, y, r in boxes if math.hypot(start[0]-x, start[1]-y) < r+radius]
+    if path is None and overlapped:
+        # Back out of the overlapped box margin to the nearest free cell first;
+        # ploughing straight through pushed a box along for minutes (ZC1 gate).
+        spot = retreat_point(start, [(x, y) for x, y, _ in overlapped], bounds, boxes + peers,
+                             clear=max(r for *_, r in overlapped)+radius+grid, grid=grid, radius=radius)
+        rest = spot and _astar(spot, goal, bounds, boxes + peers, grid, radius, budget)
+        if rest:
+            path = [spot] + rest
     if path is None:
         freed = [(x, y, r) for x, y, r in boxes if not r <= math.hypot(start[0]-x, start[1]-y) < r+radius]
         if len(freed) != len(boxes):
@@ -199,6 +211,7 @@ class TeacherRobot:
         self.blocked_since = None
         self.yield_req = None
         self.team = {self.rid: self}  # the executor links all robots
+        self.goal_occupied = False
 
     # --- ground truth (teacher only) ---
     def pose(self):
@@ -252,6 +265,7 @@ class TeacherRobot:
     def _set(self, phase, now, **detail):
         self.phase, self.phase_started, self.path = phase, now, None
         self.blocked_since = None
+        self.goal_occupied = False
         self.log('phase', self.rid, now, phase=phase, job=self.job and self.job['job_id'], **detail)
 
     def _finish(self, outcome, now, **detail):
@@ -273,6 +287,10 @@ class TeacherRobot:
                 if self.blocked_since is None:
                     self.blocked_since = now
                 self.port.hold(now)
+                if (now - self.blocked_since >= GOAL_OCCUPIED_LIMIT_S and any(
+                        not isinstance(d, PeerDisc) and math.hypot(goal[0]-d[0], goal[1]-d[1]) < d[2]+(CARRY_RADIUS_M if carrying else ROBOT_RADIUS_M)
+                        for d in discs)):
+                    self.goal_occupied = True
                 return False
             self.blocked_since = None
         while len(self.path) > 1 and math.hypot(self.path[0][0]-x, self.path[0][1]-y) < .12:
@@ -355,6 +373,12 @@ class TeacherRobot:
         if not self.busy:
             return
         job = self.job
+        if self.phase in ('to_box', 'carry') and self.goal_occupied:
+            if self.phase == 'carry':
+                self.arm.queue({1: OPEN}, now, duration=.3)
+                self.arm.queue(FOLDED, now)
+            self._finish('teacher_path_blocked', now, goal_occupied=True)
+            return
         if self.phase in ('to_box', 'carry') and now - self.phase_started > DRIVE_PHASE_LIMIT_S:
             if self.phase == 'carry':
                 self.arm.queue({1: OPEN}, now, duration=.3)
