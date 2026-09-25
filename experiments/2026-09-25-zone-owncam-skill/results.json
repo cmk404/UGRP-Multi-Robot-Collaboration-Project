@@ -1,0 +1,4270 @@
+{
+ "experiment_id": "2026-09-25-zone-owncam-skill",
+ "raw_root_local_only": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925",
+ "raw_note": "raw outputs are local (gitignored); not a remote backup",
+ "probes": {
+  "probe1_rest_drive_door": {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/view-probe-4219506",
+   "probe_json_sha256": "08354154861e027e205283f7474c9c8935986de5a3f7f53891442826bf4cf284",
+   "source_sha": "4219506a85c49fb4d1e22de0e37924dcd232d205",
+   "dirty_source": false,
+   "order": "rest-drive-door",
+   "scene_xml_sha256": "0b376aa53b50c392b57ecc24b0b7405382bfcf82fca9296a495635d2a5f94a43",
+   "grasp": {
+    "box_z_after_lift_m": 0.0853,
+    "held": true
+   },
+   "final": {
+    "box_z_m": 0.1989,
+    "still_held": true
+   },
+   "sim_seconds": 482.202,
+   "wall_seconds": 531.2,
+   "load_average_start": [
+    8.63,
+    8.32,
+    8.89
+   ],
+   "load_average_end": [
+    174.78,
+    81.05,
+    39.71
+   ],
+   "frame_count": 68,
+   "rest": [
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0,
+     "held_box_pixel_fraction": 0.6369,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.2254,
+     "elevation_deg": [
+      -46.6,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -39.07,
+      33.42
+     ],
+     "floor_centre_line_x_m": [
+      0.275,
+      0.324
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0001,
+     "held_box_pixel_fraction": 0.6366,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.226,
+     "elevation_deg": [
+      -46.64,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -63.15,
+      9.32
+     ],
+     "floor_centre_line_x_m": [
+      0.28,
+      0.333
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0001,
+     "held_box_pixel_fraction": 0.6346,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.2292,
+     "elevation_deg": [
+      -46.94,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -15.0,
+      57.72
+     ],
+     "floor_centre_line_x_m": [
+      0.28,
+      0.342
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0002,
+     "held_box_pixel_fraction": 0.6331,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.2309,
+     "elevation_deg": [
+      -27.89,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -32.15,
+      27.17
+     ],
+     "floor_centre_line_x_m": [
+      0.468,
+      0.668
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.014,
+       0.074
+      ],
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0003,
+     "held_box_pixel_fraction": 0.6322,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.232,
+     "elevation_deg": [
+      -27.89,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -56.45,
+      2.87
+     ],
+     "floor_centre_line_x_m": [
+      0.49,
+      0.645
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.029,
+       0.053
+      ],
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0003,
+     "held_box_pixel_fraction": 0.6301,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.234,
+     "elevation_deg": [
+      -27.89,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -7.96,
+      51.47
+     ],
+     "floor_centre_line_x_m": [
+      0.49,
+      0.729
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.03,
+       0.087
+      ],
+      "0.6": [
+       0.0,
+       0.0
+      ],
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0004,
+     "held_box_pixel_fraction": 0.6286,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.2359,
+     "elevation_deg": [
+      -13.14,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -29.77,
+      24.95
+     ],
+     "floor_centre_line_x_m": [
+      1.023,
+      3.739
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.137,
+       0.191
+      ],
+      "0.6": [
+       0.07,
+       0.174
+      ],
+      "1.0": [
+       0.005,
+       0.151
+      ],
+      "1.5": [
+       0.004,
+       0.122
+      ]
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0005,
+     "held_box_pixel_fraction": 0.6272,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.2392,
+     "elevation_deg": [
+      -13.32,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -54.07,
+      0.65
+     ],
+     "floor_centre_line_x_m": [
+      1.097,
+      1.482
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.145,
+       0.176
+      ],
+      "0.6": [
+       0.081,
+       0.125
+      ],
+      "1.0": [
+       0.004,
+       0.057
+      ],
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0005,
+     "held_box_pixel_fraction": 0.6254,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.2408,
+     "elevation_deg": [
+      -13.32,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -5.52,
+      49.25
+     ],
+     "floor_centre_line_x_m": [
+      1.063,
+      4.12
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.143,
+       0.193
+      ],
+      "0.6": [
+       0.077,
+       0.178
+      ],
+      "1.0": [
+       0.0,
+       0.158
+      ],
+      "1.5": [
+       0.0,
+       0.133
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0006,
+     "held_box_pixel_fraction": 0.6233,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.2432,
+     "elevation_deg": [
+      -3.54,
+      6.82
+     ],
+     "azimuth_deg": [
+      -29.18,
+      24.43
+     ],
+     "floor_centre_line_x_m": [
+      3.717,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.185,
+       0.24
+      ],
+      "0.6": [
+       0.17,
+       0.276
+      ],
+      "1.0": [
+       0.147,
+       0.323
+      ],
+      "1.5": [
+       0.119,
+       0.383
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0006,
+     "held_box_pixel_fraction": 0.6225,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.2439,
+     "elevation_deg": [
+      -3.57,
+      6.82
+     ],
+     "azimuth_deg": [
+      -53.48,
+      0.13
+     ],
+     "floor_centre_line_x_m": [
+      3.971,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.188,
+       0.227
+      ],
+      "0.6": [
+       0.172,
+       0.207
+      ],
+      "1.0": [
+       0.151,
+       0.209
+      ],
+      "1.5": [
+       0.125,
+       0.211
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0007,
+     "held_box_pixel_fraction": 0.6208,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.2472,
+     "elevation_deg": [
+      -3.61,
+      6.82
+     ],
+     "azimuth_deg": [
+      -4.88,
+      48.73
+     ],
+     "floor_centre_line_x_m": [
+      3.593,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.187,
+       0.237
+      ],
+      "0.6": [
+       0.169,
+       0.269
+      ],
+      "1.0": [
+       0.146,
+       0.312
+      ],
+      "1.5": [
+       0.116,
+       0.367
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0008,
+     "held_box_pixel_fraction": 0.6187,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.2495,
+     "elevation_deg": [
+      5.4,
+      16.78
+     ],
+     "azimuth_deg": [
+      -29.37,
+      24.7
+     ],
+     "floor_centre_line_x_m": null,
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.273,
+       0.33
+      ],
+      "0.6": [
+       0.306,
+       0.421
+      ],
+      "1.0": [
+       0.351,
+       0.541
+      ],
+      "1.5": [
+       0.407,
+       0.692
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0008,
+     "held_box_pixel_fraction": 0.6167,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.2505,
+     "elevation_deg": [
+      5.39,
+      16.78
+     ],
+     "azimuth_deg": [
+      -53.67,
+      0.4
+     ],
+     "floor_centre_line_x_m": null,
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.269,
+       0.321
+      ],
+      "0.6": [
+       0.299,
+       0.403
+      ],
+      "1.0": [
+       0.339,
+       0.511
+      ],
+      "1.5": [
+       0.389,
+       0.648
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0009,
+     "held_box_pixel_fraction": 0.615,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.2526,
+     "elevation_deg": [
+      5.37,
+      16.78
+     ],
+     "azimuth_deg": [
+      -5.07,
+      49.0
+     ],
+     "floor_centre_line_x_m": null,
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.267,
+       0.321
+      ],
+      "0.6": [
+       0.296,
+       0.403
+      ],
+      "1.0": [
+       0.333,
+       0.511
+      ],
+      "1.5": [
+       0.38,
+       0.648
+      ]
+     }
+    }
+   ],
+   "drive": [
+    {
+     "posture": "teacher_hover",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0024,
+     "max_box_offset_during_drive_m": 0.0024
+    },
+    {
+     "posture": "carry_p45",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0043,
+     "max_box_offset_during_drive_m": 0.0043
+    },
+    {
+     "posture": "carry_p30",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0061,
+     "max_box_offset_during_drive_m": 0.0061
+    },
+    {
+     "posture": "look_p20",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0078,
+     "max_box_offset_during_drive_m": 0.0078
+    },
+    {
+     "posture": "look_p10",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0096,
+     "max_box_offset_during_drive_m": 0.0096
+    }
+   ],
+   "door": [
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0098,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0099,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0099,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.01,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0101,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0101,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0102,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.3
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.3
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0103,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.5
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.5
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.8
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0104,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 18.0
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 18.0
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0105,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.8
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.8
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 16.5
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0106,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.5
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 18.0
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0106,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.8
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 18.0
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 18.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0108,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0108,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0109,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.011,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 44.3
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 44.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.011,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.1
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0111,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.1
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0112,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.3
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.1
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.0
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0113,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.3
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.5
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0114,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.1
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.0
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0115,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.5
+      },
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 45.0
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 45.0
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0115,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.5
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 42.5
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.5
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 23.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0116,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 43.3
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.0
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0118,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0118,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0119,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0119,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 65.1
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.012,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.2
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 30.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0121,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.2
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 30.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0122,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 65.4
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0122,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 70.3
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.2
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 31.1
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0123,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 70.3
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.2
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 31.1
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0124,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 67.8
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 67.1
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0125,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 70.8
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 69.8
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 31.8
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.6
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0126,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 70.8
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 69.8
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.6
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 31.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0128,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0128,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0129,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0129,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.013,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 98.7
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0131,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 98.7
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0132,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0132,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 105.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0133,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 105.7
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0134,
+     "held_box_pixel_fraction": null,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0135,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 106.9
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0137,
+     "held_box_pixel_fraction": null,
+     "detected": [
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 106.9
+      }
+     ]
+    }
+   ],
+   "zone_c": [
+    {
+     "posture": "teacher_hover",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.0001
+    },
+    {
+     "posture": "carry_p45",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.2803
+    },
+    {
+     "posture": "carry_p30",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.4706
+    },
+    {
+     "posture": "look_p20",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.285
+    },
+    {
+     "posture": "look_p10",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.0457
+    }
+   ]
+  },
+  "probe2_door_first": {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/view-probe-a868328-doorfirst",
+   "probe_json_sha256": "5b444dc89b1de0652d2f2056582899814c505c06fd7829e26930146fc8e98b4e",
+   "source_sha": "a86832818c50972745806ea590b32cfe8fb115b2",
+   "dirty_source": false,
+   "order": "door-first",
+   "scene_xml_sha256": "793dbde43f086d4f3a7779cf0318bf431e41934c1e9cc4571d01fb08fce0aa08",
+   "grasp": {
+    "box_z_after_lift_m": 0.0853,
+    "held": true
+   },
+   "final": {
+    "box_z_m": 0.1971,
+    "still_held": true
+   },
+   "sim_seconds": 559.152,
+   "wall_seconds": 1026.1,
+   "load_average_start": [
+    51.15,
+    82.01,
+    54.32
+   ],
+   "load_average_end": [
+    148.06,
+    110.79,
+    85.67
+   ],
+   "frame_count": 84,
+   "rest": [
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0049,
+     "held_box_pixel_fraction": 0.484,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.4104,
+     "elevation_deg": [
+      -54.35,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -43.88,
+      38.58
+     ],
+     "floor_centre_line_x_m": [
+      0.246,
+      0.324
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0049,
+     "held_box_pixel_fraction": 0.4833,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.4124,
+     "elevation_deg": [
+      -54.35,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -67.9,
+      14.28
+     ],
+     "floor_centre_line_x_m": [
+      0.247,
+      0.333
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "teacher_hover",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.005,
+     "held_box_pixel_fraction": 0.4824,
+     "camera_height_m": 0.1305,
+     "optical_axis_pitch_deg": -56.62,
+     "unoccluded_fraction_of_valid": 0.4134,
+     "elevation_deg": [
+      -54.35,
+      -32.4
+     ],
+     "azimuth_deg": [
+      -19.58,
+      62.61
+     ],
+     "floor_centre_line_x_m": [
+      0.247,
+      0.342
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": null,
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0051,
+     "held_box_pixel_fraction": 0.4817,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.4148,
+     "elevation_deg": [
+      -35.27,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -34.43,
+      29.6
+     ],
+     "floor_centre_line_x_m": [
+      0.386,
+      0.668
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.002,
+       0.074
+      ],
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0051,
+     "held_box_pixel_fraction": 0.4806,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.4171,
+     "elevation_deg": [
+      -35.63,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -58.73,
+      5.3
+     ],
+     "floor_centre_line_x_m": [
+      0.398,
+      0.645
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.0,
+       0.053
+      ],
+      "0.6": null,
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0052,
+     "held_box_pixel_fraction": 0.4792,
+     "camera_height_m": 0.173,
+     "optical_axis_pitch_deg": -37.54,
+     "unoccluded_fraction_of_valid": 0.4195,
+     "elevation_deg": [
+      -35.63,
+      -16.03
+     ],
+     "azimuth_deg": [
+      -10.13,
+      53.9
+     ],
+     "floor_centre_line_x_m": [
+      0.399,
+      0.729
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.0,
+       0.087
+      ],
+      "0.6": [
+       0.0,
+       0.0
+      ],
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p38",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0052,
+     "held_box_pixel_fraction": 0.4783,
+     "camera_height_m": 0.1909,
+     "optical_axis_pitch_deg": -30.61,
+     "unoccluded_fraction_of_valid": 0.4192,
+     "elevation_deg": [
+      -28.7,
+      -9.94
+     ],
+     "azimuth_deg": [
+      -32.44,
+      27.77
+     ],
+     "floor_centre_line_x_m": [
+      0.481,
+      1.089
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.027,
+       0.131
+      ],
+      "0.6": [
+       0.0,
+       0.072
+      ],
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p38",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0053,
+     "held_box_pixel_fraction": 0.477,
+     "camera_height_m": 0.1909,
+     "optical_axis_pitch_deg": -30.61,
+     "unoccluded_fraction_of_valid": 0.4201,
+     "elevation_deg": [
+      -28.7,
+      -9.94
+     ],
+     "azimuth_deg": [
+      -56.74,
+      3.56
+     ],
+     "floor_centre_line_x_m": [
+      0.502,
+      0.925
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.041,
+       0.104
+      ],
+      "0.6": [
+       0.0,
+       0.036
+      ],
+      "1.0": null,
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p38",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0053,
+     "held_box_pixel_fraction": 0.476,
+     "camera_height_m": 0.1909,
+     "optical_axis_pitch_deg": -30.61,
+     "unoccluded_fraction_of_valid": 0.4209,
+     "elevation_deg": [
+      -28.7,
+      -9.94
+     ],
+     "azimuth_deg": [
+      -8.24,
+      52.07
+     ],
+     "floor_centre_line_x_m": [
+      0.501,
+      1.207
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.041,
+       0.138
+      ],
+      "0.6": [
+       0.0,
+       0.085
+      ],
+      "1.0": [
+       0.0,
+       0.015
+      ],
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0054,
+     "held_box_pixel_fraction": 0.4744,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.4234,
+     "elevation_deg": [
+      -20.69,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -30.87,
+      26.35
+     ],
+     "floor_centre_line_x_m": [
+      0.669,
+      3.739
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.095,
+       0.191
+      ],
+      "0.6": [
+       0.003,
+       0.174
+      ],
+      "1.0": [
+       0.005,
+       0.151
+      ],
+      "1.5": [
+       0.004,
+       0.122
+      ]
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0054,
+     "held_box_pixel_fraction": 0.4728,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.428,
+     "elevation_deg": [
+      -21.06,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -55.1,
+      2.05
+     ],
+     "floor_centre_line_x_m": [
+      0.704,
+      1.482
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.103,
+       0.176
+      ],
+      "0.6": [
+       0.0,
+       0.125
+      ],
+      "1.0": [
+       0.004,
+       0.057
+      ],
+      "1.5": null
+     }
+    },
+    {
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0055,
+     "held_box_pixel_fraction": 0.4711,
+     "camera_height_m": 0.2082,
+     "optical_axis_pitch_deg": -22.6,
+     "unoccluded_fraction_of_valid": 0.4282,
+     "elevation_deg": [
+      -21.06,
+      -2.87
+     ],
+     "azimuth_deg": [
+      -6.57,
+      50.65
+     ],
+     "floor_centre_line_x_m": [
+      0.704,
+      4.12
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.104,
+       0.193
+      ],
+      "0.6": [
+       0.0,
+       0.178
+      ],
+      "1.0": [
+       0.0,
+       0.158
+      ],
+      "1.5": [
+       0.0,
+       0.133
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0055,
+     "held_box_pixel_fraction": 0.4697,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.4284,
+     "elevation_deg": [
+      -10.98,
+      6.82
+     ],
+     "azimuth_deg": [
+      -29.63,
+      25.22
+     ],
+     "floor_centre_line_x_m": [
+      1.165,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.146,
+       0.24
+      ],
+      "0.6": [
+       0.088,
+       0.276
+      ],
+      "1.0": [
+       0.01,
+       0.323
+      ],
+      "1.5": [
+       0.002,
+       0.383
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0056,
+     "held_box_pixel_fraction": 0.4686,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.4292,
+     "elevation_deg": [
+      -10.98,
+      6.82
+     ],
+     "azimuth_deg": [
+      -53.93,
+      0.95
+     ],
+     "floor_centre_line_x_m": [
+      1.229,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.15,
+       0.227
+      ],
+      "0.6": [
+       0.095,
+       0.207
+      ],
+      "1.0": [
+       0.023,
+       0.209
+      ],
+      "1.5": [
+       0.001,
+       0.211
+      ]
+     }
+    },
+    {
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0056,
+     "held_box_pixel_fraction": 0.4666,
+     "camera_height_m": 0.2041,
+     "optical_axis_pitch_deg": -12.52,
+     "unoccluded_fraction_of_valid": 0.4335,
+     "elevation_deg": [
+      -11.2,
+      6.82
+     ],
+     "azimuth_deg": [
+      -5.36,
+      49.52
+     ],
+     "floor_centre_line_x_m": [
+      1.226,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.149,
+       0.237
+      ],
+      "0.6": [
+       0.095,
+       0.269
+      ],
+      "1.0": [
+       0.022,
+       0.312
+      ],
+      "1.5": [
+       0.001,
+       0.367
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0057,
+     "held_box_pixel_fraction": 0.4637,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.4376,
+     "elevation_deg": [
+      -1.36,
+      16.78
+     ],
+     "azimuth_deg": [
+      -29.37,
+      24.84
+     ],
+     "floor_centre_line_x_m": [
+      10.172,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.232,
+       0.33
+      ],
+      "0.6": [
+       0.225,
+       0.421
+      ],
+      "1.0": [
+       0.215,
+       0.541
+      ],
+      "1.5": [
+       0.204,
+       0.692
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0058,
+     "held_box_pixel_fraction": 0.4623,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.4376,
+     "elevation_deg": [
+      -1.36,
+      16.78
+     ],
+     "azimuth_deg": [
+      -53.67,
+      0.54
+     ],
+     "floor_centre_line_x_m": [
+      11.925,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.233,
+       0.321
+      ],
+      "0.6": [
+       0.227,
+       0.403
+      ],
+      "1.0": [
+       0.219,
+       0.511
+      ],
+      "1.5": [
+       0.209,
+       0.648
+      ]
+     }
+    },
+    {
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0058,
+     "held_box_pixel_fraction": 0.4605,
+     "camera_height_m": 0.2392,
+     "optical_axis_pitch_deg": -2.53,
+     "unoccluded_fraction_of_valid": 0.4377,
+     "elevation_deg": [
+      -1.43,
+      16.78
+     ],
+     "azimuth_deg": [
+      -5.07,
+      49.14
+     ],
+     "floor_centre_line_x_m": [
+      11.935,
+      9.99
+     ],
+     "wall_z_range_centre_m": {
+      "0.3": [
+       0.232,
+       0.321
+      ],
+      "0.6": [
+       0.224,
+       0.403
+      ],
+      "1.0": [
+       0.214,
+       0.511
+      ],
+      "1.5": [
+       0.209,
+       0.648
+      ]
+     }
+    }
+   ],
+   "drive": [
+    {
+     "posture": "teacher_hover",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0072,
+     "max_box_offset_during_drive_m": 0.0072
+    },
+    {
+     "posture": "carry_p45",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0089,
+     "max_box_offset_during_drive_m": 0.0089
+    },
+    {
+     "posture": "carry_p38",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0106,
+     "max_box_offset_during_drive_m": 0.0106
+    },
+    {
+     "posture": "carry_p30",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0123,
+     "max_box_offset_during_drive_m": 0.0123
+    },
+    {
+     "posture": "look_p20",
+     "held": true,
+     "box_offset_in_gripper_m": 0.014,
+     "max_box_offset_during_drive_m": 0.014
+    },
+    {
+     "posture": "look_p10",
+     "held": true,
+     "box_offset_in_gripper_m": 0.0156,
+     "max_box_offset_during_drive_m": 0.0156
+    }
+   ],
+   "door": [
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0004,
+     "held_box_pixel_fraction": 0.6269,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0004,
+     "held_box_pixel_fraction": 0.6264,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0005,
+     "held_box_pixel_fraction": 0.6243,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p38",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0005,
+     "held_box_pixel_fraction": 0.6231,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p38",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0006,
+     "held_box_pixel_fraction": 0.6221,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p38",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0006,
+     "held_box_pixel_fraction": 0.6202,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0007,
+     "held_box_pixel_fraction": 0.6177,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0008,
+     "held_box_pixel_fraction": 0.6156,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0008,
+     "held_box_pixel_fraction": 0.6133,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.001,
+     "held_box_pixel_fraction": 0.6103,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.6
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.0
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 29.8
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.3
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.3
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0011,
+     "held_box_pixel_fraction": 0.6082,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 31.0
+      },
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.3
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 17.5
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 16.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0012,
+     "held_box_pixel_fraction": 0.605,
+     "detected": [
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 31.3
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 30.8
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 18.0
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 17.8
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 17.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0013,
+     "held_box_pixel_fraction": 0.6012,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0013,
+     "held_box_pixel_fraction": 0.5989,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.5,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0014,
+     "held_box_pixel_fraction": 0.5965,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0015,
+     "held_box_pixel_fraction": 0.5901,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0015,
+     "held_box_pixel_fraction": 0.5893,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0016,
+     "held_box_pixel_fraction": 0.5877,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p38",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0017,
+     "held_box_pixel_fraction": 0.5855,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p38",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0017,
+     "held_box_pixel_fraction": 0.5838,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p38",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0018,
+     "held_box_pixel_fraction": 0.5811,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0019,
+     "held_box_pixel_fraction": 0.5783,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 44.1
+      },
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 44.1
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.002,
+     "held_box_pixel_fraction": 0.5759,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.4
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0021,
+     "held_box_pixel_fraction": 0.5736,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 45.4
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0022,
+     "held_box_pixel_fraction": 0.571,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.1
+      },
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.1
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0023,
+     "held_box_pixel_fraction": 0.5686,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0024,
+     "held_box_pixel_fraction": 0.5658,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 45.8
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 24.3
+      },
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 24.3
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0025,
+     "held_box_pixel_fraction": 0.5624,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0026,
+     "held_box_pixel_fraction": 0.5601,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 1.0,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0026,
+     "held_box_pixel_fraction": 0.5573,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0027,
+     "held_box_pixel_fraction": 0.5516,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0027,
+     "held_box_pixel_fraction": 0.5509,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0028,
+     "held_box_pixel_fraction": 0.5493,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p38",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0029,
+     "held_box_pixel_fraction": 0.5483,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p38",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0029,
+     "held_box_pixel_fraction": 0.5458,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p38",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.003,
+     "held_box_pixel_fraction": 0.5439,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0031,
+     "held_box_pixel_fraction": 0.5408,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 64.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0032,
+     "held_box_pixel_fraction": 0.5386,
+     "detected": [
+      {
+       "id": 0,
+       "lateral_m": -0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.2
+      },
+      {
+       "id": 6,
+       "lateral_m": -0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 30.6
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0033,
+     "held_box_pixel_fraction": 0.5362,
+     "detected": [
+      {
+       "id": 3,
+       "lateral_m": 0.3,
+       "height_m": 0.05,
+       "size_m": 0.08,
+       "side_px": 68.1
+      },
+      {
+       "id": 9,
+       "lateral_m": 0.6,
+       "height_m": 0.05,
+       "size_m": 0.05,
+       "side_px": 30.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0034,
+     "held_box_pixel_fraction": 0.533,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0035,
+     "held_box_pixel_fraction": 0.5305,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 70.3
+      },
+      {
+       "id": 7,
+       "lateral_m": -0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0036,
+     "held_box_pixel_fraction": 0.5274,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 70.3
+      },
+      {
+       "id": 10,
+       "lateral_m": 0.6,
+       "height_m": 0.15,
+       "size_m": 0.05,
+       "side_px": 31.5
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0037,
+     "held_box_pixel_fraction": 0.5239,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0038,
+     "held_box_pixel_fraction": 0.5217,
+     "detected": [
+      {
+       "id": 8,
+       "lateral_m": -0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 32.0
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.6,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0038,
+     "held_box_pixel_fraction": 0.5192,
+     "detected": [
+      {
+       "id": 11,
+       "lateral_m": 0.6,
+       "height_m": 0.25,
+       "size_m": 0.05,
+       "side_px": 31.8
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0039,
+     "held_box_pixel_fraction": 0.5162,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0039,
+     "held_box_pixel_fraction": 0.5152,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p45",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.004,
+     "held_box_pixel_fraction": 0.5138,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p38",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.004,
+     "held_box_pixel_fraction": 0.5118,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p38",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0041,
+     "held_box_pixel_fraction": 0.5097,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p38",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0042,
+     "held_box_pixel_fraction": 0.508,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0043,
+     "held_box_pixel_fraction": 0.5044,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0044,
+     "held_box_pixel_fraction": 0.5023,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "carry_p30",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0045,
+     "held_box_pixel_fraction": 0.4999,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0046,
+     "held_box_pixel_fraction": 0.496,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0047,
+     "held_box_pixel_fraction": 0.494,
+     "detected": [
+      {
+       "id": 1,
+       "lateral_m": -0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 103.6
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p20",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0047,
+     "held_box_pixel_fraction": 0.4918,
+     "detected": [
+      {
+       "id": 4,
+       "lateral_m": 0.3,
+       "height_m": 0.15,
+       "size_m": 0.08,
+       "side_px": 104.1
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1500,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0049,
+     "held_box_pixel_fraction": 0.4889,
+     "detected": []
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1230,
+     "held": true,
+     "box_offset_in_gripper_m": 0.0049,
+     "held_box_pixel_fraction": 0.4863,
+     "detected": [
+      {
+       "id": 2,
+       "lateral_m": -0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 103.9
+      }
+     ]
+    },
+    {
+     "lens_distance_m": 0.3,
+     "posture": "look_p10",
+     "pan_pwm": 1770,
+     "held": true,
+     "box_offset_in_gripper_m": 0.005,
+     "held_box_pixel_fraction": 0.484,
+     "detected": [
+      {
+       "id": 5,
+       "lateral_m": 0.3,
+       "height_m": 0.25,
+       "size_m": 0.08,
+       "side_px": 104.4
+      }
+     ]
+    }
+   ],
+   "zone_c": [
+    {
+     "posture": "teacher_hover",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.0001
+    },
+    {
+     "posture": "carry_p45",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.2803
+    },
+    {
+     "posture": "carry_p38",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.4553
+    },
+    {
+     "posture": "carry_p30",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.489
+    },
+    {
+     "posture": "look_p20",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.3276
+    },
+    {
+     "posture": "look_p10",
+     "held": true,
+     "zone_c_purple_pixel_fraction": 0.0857
+    }
+   ]
+  }
+ },
+ "cohort": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/501",
+   "seed": 501,
+   "development_seed": false,
+   "source_sha": "9d3e65488cfbc22bbcf7254233fb6be8ecbdbd06",
+   "dirty_source": false,
+   "reason": "SIM_LIMIT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 300.4,
+   "steps": 556,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 15.1
+   },
+   "face_normal_source": null,
+   "face_nudges": null,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.3,
+     -2.6,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -1.3,
+     -0.1
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    99.89,
+    85.22,
+    68.8
+   ],
+   "load_average_end": [
+    58.5,
+    80.2,
+    79.16
+   ],
+   "wall_seconds": 705.7,
+   "artifact_sha256": {
+    "result.json": "c043804552adb1f0633307b26e2c9780d3d1f16550a8b4c9a3a3b2fb13524116",
+    "control.jsonl": "979afe5c34eff5020b07bf33344633020f83396ee75ac3f7c563a7b8b87f692c",
+    "evaluation-only.jsonl": "2c24262297eb3e60d7e1d90202737011a4550e47ed75804b99ca537ea54765a5",
+    "scene.xml": "7c0b064d90b057a3c8e05aee0c8fd4ce7ccdbdb6a11b5ad53c43db99a85891a0"
+   },
+   "input_frames": 555
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/502",
+   "seed": 502,
+   "development_seed": false,
+   "source_sha": "3982bde6d9f8023a5a9798f5e3042a8570a9307a",
+   "dirty_source": false,
+   "reason": "SIM_LIMIT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 300.4,
+   "steps": 555,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 16.7
+   },
+   "face_normal_source": null,
+   "face_nudges": null,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.4,
+     0.9,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -1.2,
+     0.1
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    53.24,
+    76.62,
+    77.91
+   ],
+   "load_average_end": [
+    64.11,
+    119.48,
+    109.96
+   ],
+   "wall_seconds": 689.4,
+   "artifact_sha256": {
+    "result.json": "b73c0fd04ea585f017779384a29a136aeea3daa8dfdbd36c7a82451e43c0d7ce",
+    "control.jsonl": "273265668d36d19cad2f8944b9d841851f843392fa293304c07490c8c43a75ef",
+    "evaluation-only.jsonl": "660b2955b2f71daefc84b48da782bcd0eb47d9a44219e633628311b31b98beec",
+    "scene.xml": "ff6fb296cd6bb7edf5e9c02c576b7fb2fa1651fadc23d278697f21eb084f7df9"
+   },
+   "input_frames": 554
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/503",
+   "seed": 503,
+   "development_seed": false,
+   "source_sha": "3982bde6d9f8023a5a9798f5e3042a8570a9307a",
+   "dirty_source": false,
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 127.338,
+   "steps": 268,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 13.5,
+    "to_carry_posture": 69.873,
+    "nav_preplace": 69.923,
+    "pre_release": 116.545,
+    "release": 116.945,
+    "look_back": 127.338
+   },
+   "face_normal_source": "static_map_approach_convention+pose_estimate",
+   "face_nudges": 6,
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1634,
+     0.0183
+    ],
+    "box_map_m": [
+     4.5969,
+     -0.0095
+    ],
+    "slot_error_m": [
+     -0.0031,
+     -0.0095
+    ],
+    "projection_iou": 0.844,
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source"
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     4.5947,
+     -0.0126,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0053,
+     -0.0126
+    ],
+    "max_box_z_m": 0.1708,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    61.3,
+    117.97,
+    109.49
+   ],
+   "load_average_end": [
+    20.76,
+    70.93,
+    91.32
+   ],
+   "wall_seconds": 229.2,
+   "artifact_sha256": {
+    "result.json": "a69762296d8b0d91aed67e62db472097c441c7055ecfb299c1847ed4925bc231",
+    "control.jsonl": "9041fe31ca93722a9e7eaccbce6cf2756033c64cdaa5d983999761cc3d186351",
+    "evaluation-only.jsonl": "910374410a3f99886428d49992ae06532b5b8aa2d486023e60ba3911bf50e7f0",
+    "scene.xml": "a52ded50c12c56473e68153364ab776ec0da78aa14d86685fc013e90adc79de5"
+   },
+   "input_frames": 268
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/504",
+   "seed": 504,
+   "development_seed": false,
+   "source_sha": "3982bde6d9f8023a5a9798f5e3042a8570a9307a",
+   "dirty_source": false,
+   "reason": "SIM_LIMIT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 300.55,
+   "steps": 554,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 23.0
+   },
+   "face_normal_source": null,
+   "face_nudges": null,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.7,
+     -2.0,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     0.7,
+     -1.55
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    20.76,
+    70.93,
+    91.32
+   ],
+   "load_average_end": [
+    20.51,
+    29.75,
+    60.64
+   ],
+   "wall_seconds": 466.2,
+   "artifact_sha256": {
+    "result.json": "eb68793ca56d79b7a3e150543f572597ab7d77d470edfb3110aa40036bd8c830",
+    "control.jsonl": "c3bd4208939f124ab24c754e98fab39f2c8ec8f4a9d3079e522ac8cf92424c3c",
+    "evaluation-only.jsonl": "6db9bc61e0336953ae5b18ca81903676107714e1911bfbd3f6d985a339317bef",
+    "scene.xml": "ebd3d9805eac1505af467e5368b16a16e2475ecd2f5feab1864e2aa4444ca4a4"
+   },
+   "input_frames": 553
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/505",
+   "seed": 505,
+   "development_seed": false,
+   "source_sha": "3982bde6d9f8023a5a9798f5e3042a8570a9307a",
+   "dirty_source": false,
+   "reason": "CARRY_VISUAL_GRASP_DRIFT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 173.309,
+   "steps": 332,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 31.8,
+    "to_carry_posture": 86.859,
+    "nav_preplace": 86.909
+   },
+   "face_normal_source": "static_map_approach_convention+pose_estimate",
+   "face_nudges": 3,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     4.4933,
+     -2.0085,
+     0.1679
+    ],
+    "box_tilt_deg": 30.83,
+    "slot_error_m": [
+     -0.1067,
+     0.0915
+    ],
+    "max_box_z_m": 0.1707,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    20.51,
+    29.75,
+    60.64
+   ],
+   "load_average_end": [
+    11.37,
+    21.05,
+    49.38
+   ],
+   "wall_seconds": 237.4,
+   "artifact_sha256": {
+    "result.json": "af90747652220a9fcebad30beef91fb25396354594c474eae1cb1966f285f5e7",
+    "control.jsonl": "b6a142421da787712d10c6171afd28608dc76cc57c7601e6036447a5c9f7f949",
+    "evaluation-only.jsonl": "517745f5659f9422ef956600049e65f6c9db0bdd0e128430c178ff47d99ac853",
+    "scene.xml": "8fa9278446e8a762883925e1e672d10454f4ba0dbcf22c79b6763d64b705436e"
+   },
+   "input_frames": 332
+  }
+ ],
+ "development_runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev/401-a",
+   "seed": 401,
+   "development_seed": true,
+   "source_sha": "4219506a85c49fb4d1e22de0e37924dcd232d205",
+   "dirty_source": true,
+   "reason": "GRASP_BOX_FACE_ALIGNMENT_UNOBSERVABLE",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 25.85,
+   "steps": 76,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 19.5
+   },
+   "face_normal_source": null,
+   "face_nudges": null,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.5,
+     -1.8,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     0.5,
+     -0.55
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    14.16,
+    12.92,
+    11.0
+   ],
+   "load_average_end": [
+    55.39,
+    23.16,
+    14.79
+   ],
+   "wall_seconds": 38.0,
+   "artifact_sha256": {
+    "result.json": "c053d96aac6c133af70d3b1b18c33c1b60cda1f92097226157de4fa79dd673f7",
+    "control.jsonl": "4f60f5c182c5b1f726b443a610a6f3f2c13a6743512c310644cde200be3531e6",
+    "evaluation-only.jsonl": "cd411d348dee67addacd5799aae4bcca1da730acaa055a5f90433dee956367fa",
+    "scene.xml": "27176716bf192a4e089cbc1e4412fdf54ad9b7713b6405395fae440942b278a8"
+   },
+   "input_frames": 76
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev/401-b",
+   "seed": 401,
+   "development_seed": true,
+   "source_sha": "4219506a85c49fb4d1e22de0e37924dcd232d205",
+   "dirty_source": true,
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 172.854,
+   "steps": 360,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 17.5,
+    "to_carry_posture": 98.463,
+    "nav_preplace": 98.513,
+    "pre_release": 161.903,
+    "release": 162.303,
+    "look_back": 172.854
+   },
+   "face_normal_source": "static_map_approach_convention+pose_estimate",
+   "face_nudges": 3,
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1614,
+     -0.0257
+    ],
+    "box_map_m": [
+     2.9976,
+     -1.2595
+    ],
+    "slot_error_m": [
+     -0.0024,
+     -0.0095
+    ],
+    "projection_iou": 0.586,
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source"
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     2.9971,
+     -1.2483,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0029,
+     0.0017
+    ],
+    "max_box_z_m": 0.1706,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    40.2,
+    25.88,
+    16.82
+   ],
+   "load_average_end": [
+    123.53,
+    101.89,
+    55.06
+   ],
+   "wall_seconds": 257.7,
+   "artifact_sha256": {
+    "result.json": "4358829990a181657da3a1445ba41bf33ebd715735f667ad976d04c8bde1c621",
+    "control.jsonl": "808bbbbbcd00e5cd47708268bf4e52ce3f273257ddcc4b561715920fd7d049ca",
+    "evaluation-only.jsonl": "659f5daa75c19d3419bff5408e476d628168ce4febbcbf77e624a0c5f9a12851",
+    "scene.xml": "27176716bf192a4e089cbc1e4412fdf54ad9b7713b6405395fae440942b278a8"
+   },
+   "input_frames": 360
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev/402-a868328",
+   "seed": 402,
+   "development_seed": true,
+   "source_sha": "a86832818c50972745806ea590b32cfe8fb115b2",
+   "dirty_source": false,
+   "reason": "RELEASE_RELEASE_OBJECT_NOT_GROUND_STATIONARY",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 150.318,
+   "steps": 316,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 36.9,
+    "to_carry_posture": 89.775,
+    "nav_preplace": 89.825,
+    "pre_release": 140.425,
+    "release": 140.825
+   },
+   "face_normal_source": "own_rgb_markerless_face_fits",
+   "face_nudges": 1,
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     4.596,
+     0.3905,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.004,
+     -0.0095
+    ],
+    "max_box_z_m": 0.171,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": false
+   },
+   "load_average_start": [
+    44.58,
+    81.85,
+    53.94
+   ],
+   "load_average_end": [
+    71.85,
+    83.56,
+    63.24
+   ],
+   "wall_seconds": 282.6,
+   "artifact_sha256": {
+    "result.json": "5129d940c22b080031a84f28a22c14539895d1fbf94d0346ea8179acb0f71d55",
+    "control.jsonl": "58d29f5ad229b00b2b10b68f75ada990732c80a5dc0476567bbfceec42292daf",
+    "evaluation-only.jsonl": "6dc15f2367483e03693d2527001c4baf706cf141c4f776f9ae834fdf972704d8",
+    "scene.xml": "4b1ca03bd3cae9ce2b036980daa823de4036b7b15eab4e456932e3d2cddf208f"
+   },
+   "input_frames": 316
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev/402-d016c04",
+   "seed": 402,
+   "development_seed": true,
+   "source_sha": "d016c045ae8805066a960ba66764b59a5dd3cde5",
+   "dirty_source": false,
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 151.218,
+   "steps": 319,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 36.9,
+    "to_carry_posture": 89.775,
+    "nav_preplace": 89.825,
+    "pre_release": 140.425,
+    "release": 140.825,
+    "look_back": 151.218
+   },
+   "face_normal_source": "own_rgb_markerless_face_fits",
+   "face_nudges": 1,
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1676,
+     -0.0152
+    ],
+    "box_map_m": [
+     4.6,
+     0.3898
+    ],
+    "slot_error_m": [
+     -0.0,
+     -0.0102
+    ],
+    "projection_iou": 0.972,
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source"
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     4.596,
+     0.3905,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.004,
+     -0.0095
+    ],
+    "max_box_z_m": 0.171,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    65.66,
+    81.27,
+    63.01
+   ],
+   "load_average_end": [
+    107.0,
+    85.68,
+    68.66
+   ],
+   "wall_seconds": 282.7,
+   "artifact_sha256": {
+    "result.json": "993d30642c9a2f91681603505a7606645ba3cd5cc26d4e01d121ada77e9f7faf",
+    "control.jsonl": "a1c5210025be348ca38f6ff71c3025dfce0f34ca7fbb3fc9e28edb2af87bb7f3",
+    "evaluation-only.jsonl": "3146078273934bb36decef194a00ccca49d9fd5a766c8dc3502d423c9375a75b",
+    "scene.xml": "4b1ca03bd3cae9ce2b036980daa823de4036b7b15eab4e456932e3d2cddf208f"
+   },
+   "input_frames": 319
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev/401-d016c04",
+   "seed": 401,
+   "development_seed": true,
+   "source_sha": "3982bde6d9f8023a5a9798f5e3042a8570a9307a",
+   "dirty_source": false,
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "pose_source": "gt_stub_eval_only",
+   "counts_as_m1": false,
+   "sim_seconds": 172.854,
+   "steps": 360,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 17.5,
+    "to_carry_posture": 98.463,
+    "nav_preplace": 98.513,
+    "pre_release": 161.903,
+    "release": 162.303,
+    "look_back": 172.854
+   },
+   "face_normal_source": "static_map_approach_convention+pose_estimate",
+   "face_nudges": 3,
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1614,
+     -0.0257
+    ],
+    "box_map_m": [
+     2.9976,
+     -1.2595
+    ],
+    "slot_error_m": [
+     -0.0024,
+     -0.0095
+    ],
+    "projection_iou": 0.586,
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source"
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     2.9971,
+     -1.2483,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0029,
+     0.0017
+    ],
+    "max_box_z_m": 0.1706,
+    "weld_eq_active_max": 0,
+    "r1_wall_contact_steps": 0,
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true
+   },
+   "load_average_start": [
+    11.37,
+    21.05,
+    49.38
+   ],
+   "load_average_end": [
+    12.39,
+    16.81,
+    39.66
+   ],
+   "wall_seconds": 276.2,
+   "artifact_sha256": {
+    "result.json": "697e87777f261daa00be866384c79c3cb82681d56bd133917854ea568b4e19dd",
+    "control.jsonl": "808bbbbbcd00e5cd47708268bf4e52ce3f273257ddcc4b561715920fd7d049ca",
+    "evaluation-only.jsonl": "659f5daa75c19d3419bff5408e476d628168ce4febbcbf77e624a0c5f9a12851",
+    "scene.xml": "27176716bf192a4e089cbc1e4412fdf54ad9b7713b6405395fae440942b278a8"
+   },
+   "input_frames": 360
+  }
+ ],
+ "cohort_summary": {
+  "n": 5,
+  "pose_source": "gt_stub_eval_only",
+  "counts_as_m1": false,
+  "grasp_success_gt": 2,
+  "place_in_slot_gt": 1,
+  "skill_claim_in_slot": 1,
+  "skill_claim_agrees_with_gt": 5,
+  "weld_eq_active_max": 0,
+  "sim_seconds": [
+   300.4,
+   300.4,
+   127.338,
+   300.55,
+   173.309
+  ],
+  "face_normal_sources": [
+   null,
+   null,
+   "static_map_approach_convention+pose_estimate",
+   null,
+   "static_map_approach_convention+pose_estimate"
+  ]
+ },
+ "cohort_log": {
+  "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/cohort.log",
+  "sha256": "74b6f13b6023c8908f27b7861acf335c2ede07afafbd4ffd8e65d4a2cdffa9bc"
+ }
+}
