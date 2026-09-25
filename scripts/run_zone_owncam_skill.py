@@ -31,6 +31,7 @@ if str(ROOT) not in sys.path:
 from harness.wrist_zone_skill import PROFILE, OrderSheet, PoseEstimate, WristZoneDelivery  # noqa: E402
 from harness import wrist_zone_skill_v2 as v2  # noqa: E402
 from harness import wrist_zone_skill_v3 as v3  # noqa: E402
+from harness import wrist_zone_skill_v4 as v4  # noqa: E402
 
 SCHEMA = 'ugrp.zone_owncam_skill_run.v1'
 POSE_SOURCE = 'gt_stub_eval_only'
@@ -44,7 +45,10 @@ V2_STEP_LIMIT = 1300
 # v3 (pre-registered in the experiment README before its first recorded run): same limits as v2
 V3_SIM_LIMIT_S = 420.
 V3_STEP_LIMIT = 1300
-PROFILES = {'v1': PROFILE, 'v2': v2.PROFILE, 'v3': v3.PROFILE}
+# v4 (pre-registered in the experiment README before its first recorded run): same limits as v2/v3
+V4_SIM_LIMIT_S = 420.
+V4_STEP_LIMIT = 1300
+PROFILES = {'v1': PROFILE, 'v2': v2.PROFILE, 'v3': v3.PROFILE, 'v4': v4.PROFILE}
 # Contact profiles selectable per run; always recorded. local_contact_fine is the zone default;
 # cargo_noslip_v1 (sim/zone_cargo_contact.py) is opt-in only and recorded with its hash.
 CONTACT_PROFILES = ('local_contact_fine', 'cargo_noslip_v1')
@@ -89,11 +93,26 @@ SCENARIOS = {
     528: {'start': (2.70, -0.20, -0.05), 'pickup_xy': (3.70, -0.40), 'slot': 'A2'},
     529: {'start': (3.00, -2.85, 0.10), 'pickup_xy': (3.80, -2.70), 'slot': 'C3'},
     530: {'start': (2.60, 0.70, 0.10), 'pickup_xy': (3.45, 0.55), 'slot': 'B2'},
+    # v4 development scenario (zone C destination; tuning allowed, labelled dev); v4 also replays 523/529 as dev
+    408: {'start': (2.55, -2.60, 0.05), 'pickup_xy': (3.55, -2.45), 'slot': 'C3'},
+    # v4 pre-registered test scenarios (fixed before the first v4 recorded run); zone C: 531-534, 538, 540
+    531: {'start': (2.55, -2.60, 0.00), 'pickup_xy': (3.60, -2.40), 'slot': 'C3'},
+    532: {'start': (3.40, 0.90, -0.10), 'pickup_xy': (3.90, 0.60), 'slot': 'C1'},
+    533: {'start': (2.60, 1.10, 0.00), 'pickup_xy': (3.50, 0.90), 'slot': 'C2'},
+    534: {'start': (3.80, -2.80, 0.10), 'pickup_xy': (4.05, -1.00), 'slot': 'C3'},
+    535: {'start': (2.50, -2.85, 0.00), 'pickup_xy': (3.45, -2.75), 'slot': 'A2'},
+    536: {'start': (3.20, 1.25, -0.05), 'pickup_xy': (3.95, 1.10), 'slot': 'B2'},
+    537: {'start': (2.45, -0.40, 0.10), 'pickup_xy': (3.60, -0.30), 'slot': 'A3'},
+    538: {'start': (3.70, -1.60, 0.00), 'pickup_xy': (4.10, -1.20), 'slot': 'C2'},
+    539: {'start': (2.70, 0.40, 0.00), 'pickup_xy': (3.75, 0.20), 'slot': 'B3'},
+    540: {'start': (3.30, -2.85, 0.00), 'pickup_xy': (3.95, -2.60), 'slot': 'C1'},
 }
 V2_DEV_SEEDS = (403, 404, 405, 406)
 V2_TEST_SEEDS = tuple(range(511, 521))
 V3_DEV_SEEDS = (407, 518, 519)
 V3_TEST_SEEDS = tuple(range(521, 531))
+V4_DEV_SEEDS = (408, 523, 529)
+V4_TEST_SEEDS = tuple(range(531, 541))
 
 
 def sha_file(path):
@@ -175,6 +194,10 @@ def main():
     parser.add_argument('--profile', choices=sorted(PROFILES), default='v1')
     parser.add_argument('--contact-profile', choices=CONTACT_PROFILES, default=CONTACT_PROFILE,
                         help='explicit, recorded contact profile (default: the zone local_contact_fine)')
+    parser.add_argument('--inject-drop-after-carry-s', type=float, default=None,
+                        help='EVALUATION FAULT INJECTION (drop-safety runs only): this many SIM seconds after the '
+                             'skill enters nav_preplace, move the held box from the jaws to the floor below them; '
+                             'recorded, never told to the skill')
     args = parser.parse_args()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
     if dirty and not args.allow_dirty:
@@ -191,10 +214,11 @@ def main():
     (out / 'scene.xml').write_text(world.scene_xml)
     port = CameraRobotPort(world, 'r1', allow_reverse=True, allow_mecanum=True)
     pose_source = GtStubPoseSource(world, 'r1')
-    delivery = {'v1': WristZoneDelivery, 'v2': v2.WristZoneDeliveryV2, 'v3': v3.WristZoneDeliveryV3}[args.profile]
+    delivery = {'v1': WristZoneDelivery, 'v2': v2.WristZoneDeliveryV2, 'v3': v3.WristZoneDeliveryV3,
+                'v4': v4.WristZoneDeliveryV4}[args.profile]
     skill = delivery(order, planner=make_planner(config['static_map'], order))
     sim_limit, step_limit = {'v1': (SIM_LIMIT_S, STEP_LIMIT), 'v2': (V2_SIM_LIMIT_S, V2_STEP_LIMIT),
-                             'v3': (V3_SIM_LIMIT_S, V3_STEP_LIMIT)}[args.profile]
+                             'v3': (V3_SIM_LIMIT_S, V3_STEP_LIMIT), 'v4': (V4_SIM_LIMIT_S, V4_STEP_LIMIT)}[args.profile]
     control = (out / 'control.jsonl').open('w')
     truth = (out / 'evaluation-only.jsonl').open('w')
     geoms = {i: mujoco.mj_id2name(world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '' for i in range(world.model.ngeom)}
@@ -250,6 +274,32 @@ def main():
         else:
             raise ValueError('UNKNOWN_MACRO')
 
+    fault = {'requested_after_carry_s': args.inject_drop_after_carry_s, 'carry_start_sim_s': None,
+             'applied_sim_s': None} if args.inject_drop_after_carry_s is not None else None
+
+    def maybe_inject_drop():
+        # Evaluation fault injection: the box leaves the jaws and rests on the floor below them.
+        if fault is None or fault['applied_sim_s'] is not None:
+            return
+        now = float(world.data.time)
+        if fault['carry_start_sim_s'] is None:
+            if skill.phase == 'nav_preplace':
+                fault['carry_start_sim_s'] = round(now, 3)
+            return
+        if now < fault['carry_start_sim_s'] + fault['requested_after_carry_s']:
+            return
+        jid = mujoco.mj_name2id(world.model, mujoco.mjtObj.mjOBJ_JOINT, box_body + '_free')
+        q, v = int(world.model.jnt_qposadr[jid]), int(world.model.jnt_dofadr[jid])
+        before = [round(float(x), 4) for x in world.data.body(box_body).xpos]
+        grip = world.data.body('r1__gripper').xpos
+        yaw = float(world.robot('r1').base_rpy()[2])
+        world.data.qpos[q:q + 7] = [float(grip[0]), float(grip[1]), .016, math.cos(yaw / 2), 0, 0, math.sin(yaw / 2)]
+        world.data.qvel[v:v + 6] = 0
+        mujoco.mj_forward(world.model, world.data)
+        fault.update({'applied_sim_s': round(now, 3), 'box_before_xyz': before,
+                      'box_after_xyz': [round(float(x), 4) for x in world.data.body(box_body).xpos],
+                      'kind': 'held box moved to the floor below the jaws (teleport drop)'})
+
     step(.5)
     reason, index = 'STEP_LIMIT', 0
     phase_times = {}
@@ -283,6 +333,7 @@ def main():
                 reason = action['reason']
                 break
             execute(action, obs)
+            maybe_inject_drop()
     finally:
         control.close()
         truth.close()
@@ -321,7 +372,10 @@ def main():
         'solver_noslip_iterations': int(world.model.opt.noslip_iterations), 'weld': 'off',
         'pose_source': POSE_SOURCE, 'pose_sources_seen': sorted(skill.pose_sources),
         'counts_as_m1': False,
-        'development_seed': args.seed in DEV_SEEDS + V2_DEV_SEEDS or (args.profile == 'v3' and args.seed not in V3_TEST_SEEDS),
+        'development_seed': (args.seed in DEV_SEEDS + V2_DEV_SEEDS or (args.profile == 'v3' and args.seed not in V3_TEST_SEEDS)
+                             or (args.profile == 'v4' and args.seed not in V4_TEST_SEEDS)),
+        'fault_injection': fault,
+        'counts_for': 'drop_safety_only' if fault is not None else 'delivery',
         'claim_scope': ('skill isolation on the open east section of zone_wide_door with a GT pose stub; '
                         'not M1, not own-camera localisation, no door crossing'),
         'controller_inputs': 'robot_cam JPEG + own issued PWM + pose estimate (gt_stub_eval_only) + static map + order sheet',

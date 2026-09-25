@@ -148,7 +148,8 @@ def test_placement_confirmation_maps_own_rgb_box_with_the_estimate(monkeypatch):
 def test_runner_scenarios_are_preregistered_and_never_m1():
     from scripts import run_zone_owncam_skill as run
     assert set(run.SCENARIOS) == {401, 402, 501, 502, 503, 504, 505, 403, 404, 405, 406, *range(511, 521),
-                                  407, *range(521, 531)}   # v3 dev 407 + test 521-530 added 2026-09-26
+                                  407, *range(521, 531),   # v3 dev 407 + test 521-530 added 2026-09-26
+                                  408, *range(531, 541)}   # v4 dev 408 + test 531-540 added 2026-09-26
     assert run.DEV_SEEDS == (401, 402) and run.POSE_SOURCE == 'gt_stub_eval_only'
     assert run.V2_DEV_SEEDS == (403, 404, 405, 406) and run.V2_TEST_SEEDS == tuple(range(511, 521))
     assert run.SCENARIOS[501] == {'start': (2.55, -2.60, 0.00), 'pickup_xy': (3.30, -2.60), 'slot': 'B1'}  # v1 frozen
