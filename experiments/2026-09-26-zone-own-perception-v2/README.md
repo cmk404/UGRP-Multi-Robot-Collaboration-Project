@@ -56,6 +56,8 @@ v1과 동일하다. 판단 함수가 받는 것은 **자기 손목 RGB 1장, 자
 | `local_contact_fine` | `high_m45` | 20 s | 1.254 mm | 1.254 mm | 없음 | 예 |
 | `cargo_noslip_v1` | `tilt_m20` | 6 s | 0.042 mm | 0.023 mm | 없음 | 예 |
 | `local_contact_fine` | `tilt_m20` | 6 s | 0.604 mm | 0.604 mm | 없음 | 예 |
+| `cargo_noslip_v1` (게이트 W9, 시드 171) | `high_m45` | 6 s | 0.044 mm | 0.024 mm | 없음 | 예 |
+| `local_contact_fine` (시드 171) | `high_m45` | 6 s | 0.485 mm | 0.485 mm | 없음 | 예 |
 
 두 프로필 모두 can을 놓치지 않았고, `cargo_noslip_v1`이 약 13–29배 조용하다. 주 프로필은 팀 화물 경로가 고르는 `cargo_noslip_v1`이다. 이것은 **한 시드의 교사 파지 물리 결과**이며 손목 RGB 스킬의 파지 성공률이 아니다.
 
@@ -167,22 +169,80 @@ belief 민감도(관측 가능 뷰 정확도 / 확신 오류): `peer_in_lane` �
 |---|---|
 | 자세 탐색 | `outputs/2026-09-26-held-can/view-1/view.json` (프레임 10장 포함) |
 | retention | `outputs/2026-09-26-held-can/ret-*` (`retention.json`, `trace.jsonl`, `events.json`, `scene.xml`) |
-| dev 프레임·라벨 | `outputs/2026-09-26-zone-own-perception-v2/dev-frames-4` (13 MB, 로컬 보관, Git 제외) |
-| dev 채점 | `dev-score-4`; 이 폴더의 `dev-summary.json`이 같은 내용 |
+| dev 프레임·라벨 | `outputs/2026-09-26-zone-own-perception-v2/dev-frames-4`(조정용), `dev-frames-clean`(`2a46f9d` 재현) — 각 13 MB, 로컬 보관, Git 제외 |
+| dev 채점 | `dev-score-4`(조정용), `dev-score-clean`(`2a46f9d`); 이 폴더의 `dev-summary.json`은 `dev-score-clean`과 같은 내용 |
+| test 프레임·라벨 | `outputs/2026-09-26-zone-own-perception-v2/test-frames` (13 MB, 로컬 보관, Git 제외) |
+| test 채점 | `test-score`; 이 폴더의 `test-summary.json`이 같은 내용 |
 | 장면 해시 (변형·시드 / CargoZoneScene / 추가물 포함 / 주문서) | door 141 `732f99f5` / `9623a92d` / `8462772a`; corridor 142 `70c96f2f` / `08404277` / `9a0b1813`; two_doors 143 `94eeba2a` / `55a3069f` / `3e3c9ec8`; door 144 `ea31ac8e` / `06b4603a` / `337685d2` |
 | 접촉 | `cargo_noslip_v1`, 화물 finger 접촉 pair 72쌍 미러, weld OFF |
 
 dev 렌더 wall 279.2 s, 1분 부하 7.61 → 6.55. 로컬 보관은 원격 백업이 아니며 `outputs/`는 Git에 포함되지 않는다.
 
-## test 결과
+## test 결과 (1회 채점, 사전 등록 뒤)
 
-*(사전 등록을 커밋한 뒤 1회 렌더·채점하고 이 절에 기록한다.)*
+렌더·채점 소스 `2a46f9d`(깨끗한 작업 트리 — manifest의 `source_dirty: false`), 렌더 `outputs/2026-09-26-zone-own-perception-v2/test-frames`(108뷰·324프레임, wall 317.8 s, 1분 부하 8.52 → 5.28), 채점 `test-score`(같은 내용을 이 폴더 `test-summary.json`에 보존). 뷰 단위, `gt_stub_eval_only`.
+
+**dev 재현:** 사전 등록을 커밋한 뒤 같은 dev 분할을 깨끗한 소스 `2a46f9d`로 다시 렌더·채점했고(`dev-frames-clean` 108뷰, wall 223.1 s, 부하 4.35 → 3.26), 세 belief 수준의 모든 판단에서 뷰 단위 지표가 조정용 실행(`dev-score-4`)과 **완전히 일치**했다. 이 폴더의 `dev-summary.json`은 재현한 `dev-score-clean`이다.
+
+| 판단 | 뷰 | unknown | 전체 정확도 | 결정 정확도 | 확신 오류 | 관측 가능(뷰 / 정확도 / unknown / 확신 오류) |
+|---|---:|---:|---:|---:|---:|---|
+| `peer_in_lane` | 24 | **.000** | 1.000 | **1.00** | **0** | 23 / 1.00 / .000 / 0 |
+| `team_cargo_identity` | 60 | .300 | .700 | **1.00** | **0** | 49 / .857 / .143 / 0 |
+| `team_cargo_handle` | 36 | .500 | .472 | .944 | 1 | 20 / .850 / .100 / 1 |
+| `held_item` | 24 | .292 | .667 | .941 | 1 | 12 / 1.00 / .000 / 0 |
+
+사례별(뷰 수 / unknown / 정답 / 오답):
+
+| 판단 | 사례 |
+|---|---|
+| `peer_in_lane` | `peer_in_passage` 4/0/4/0 · `peer_in_open` 4/0/4/0 · `peer_near_wall` 4/0/4/0 · `object_in_passage` 4/0/4/0 · `object_in_open` 4/0/4/0 · `clear_lane` 4/0/4/0 |
+| `team_cargo_identity` | slot: beam 4/0/4/0 · crate 4/0/4/0 · frame 4/0/4/0 · wrong_kind 4/0/4/0 · no_cargo 4/4/0/0 / near: beam 4/0/4/0 · crate 4/1/3/0 · frame 4/0/4/0 / grasp: beam 4/3/1/0 · crate 4/1/3/0 · frame 4/4/0/0 · wrong_end 4/1/3/0 / carry: beam 4/0/4/0 · crate 4/4/0/0 · frame 4/0/4/0 |
+| `team_cargo_handle` | slot: beam 4/1/3/0 · crate 4/0/4/0 · frame 4/0/3/**1** · wrong_kind 4/4/0/0 · no_cargo 4/4/0/0 / grasp: beam 4/1/3/0 · crate 4/1/3/0 · frame 4/3/1/0 · wrong_end 4/4/0/0 |
+| `held_item` | `held_can` 4/0/4/0 · `held_can_absent` 4/0/4/0 · `held_can_wrong_kind` 4/0/4/0 · `held_box_carry_posture` 4/0/4/0 · `held_can_carry_posture`(대조) 4/3/0/**1** · `held_box_held_check`(대조) 4/4/0/0 |
+
+### 게이트 판정 — 10개 중 9개 통과, W7 실패
+
+| ID | 기준 | 결과 | 판정 |
+|---|---|---|---|
+| W1 | 판단별 확신 오류 ≤ 1 | 0 / 0 / 1 / 1 | 통과 |
+| W2 | `peer_in_lane` 관측 가능 뷰 확신 오류 0 | 0 | 통과 |
+| W3 | 결정한 뷰 정확도 ≥ 0.85 | 1.00 / 1.00 / .944 / .941 | 통과 |
+| W4 | 관측 가능 뷰 정확도 ≥ 0.60 | 1.00 / .857 / .850 / 1.00 | 통과 |
+| W5 | 관측 가능 뷰 unknown ≤ 0.45 | .000 / .143 / .100 / .000 | 통과 |
+| W6 | `peer_*` ≥ 9/12, `object_*` ≥ 6/8 | **12/12**, **8/8** | 통과 |
+| W7 | `held_can` ≥ 3/4 `yes`, `held_can_absent` ≥ 3/4 `no`, 대조 2사례 확신 답 0 | 4/4, 4/4, **확신 답 1건** | **실패** |
+| W8 | `team_cargo_identity` slot·near 확신 오류 0 | 0 | 통과 |
+| W9 | test 계열 시드(171) retention 재실행 | `cargo_noslip_v1` 최대 0.044 mm, 접촉 상실 없음, 주기 완주, `eq_active` 0 (`local_contact_fine` 0.485 mm) | 통과 |
+| W10 | `tests/test_zone_own_perception_v2.py` 전체 통과 | 24/24 | 통과 |
+
+**동료/물체 판별은 test에서 완벽했다:** `peer_in_lane` 24뷰 모두 정답이고 `unknown` 0, 확신 오류 0이다. 동료 12뷰는 전부 `yes`+`peer_robot`, 미등록 물체 8뷰는 전부 `no`+`unmapped_object`로 답했다. 연구가 요구한 “문에 로봇이 서 있다” vs “문이 물체로 막혔다”의 구분이 test 분할에서 성립한다.
+
+### 실패와 오류 2건 (원인 확인)
+
+1. **W7 실패 — CARRY 자세에서 배경을 들린 물건으로 오인:** `zone_wide_corridor-s172-held_can_carry_posture`에서 답은 `no`+`cyan`(신뢰도 0.82, `OTHER_KIND_FILLS_VIEW`)이고 진실은 `yes`(can을 들고 있음)다. held-item 영역의 청록 점유가 **0.44**인데 들린 can은 그 영역에 **0 px**이다. 즉 로봇이 청록 상자 앞에 서 있었고, CARRY 자세에서 들린 can이 프레임 밖이라 영역이 **배경**을 보여줬다. v1의 “가장자리에 화물 색이 있으면 `empty`를 주장하지 않는다” 검사는 *부재* 주장만 막고 *다른 종류* 주장은 막지 않는다. v2는 v1의 CARRY 경로를 그대로 쓰므로 이 약점을 그대로 물려받았다. 이 사례는 대조군이라 결론에 유리하게 쓰이지 않지만, **CARRY 자세에서 `holding_item`/`held_item`의 `no`+다른 종류는 신뢰할 수 없다**는 것이 test에서 드러난 결과다. 제안(미구현, v3 후보): 영역의 색 성분이 들린 물건의 예상 위치·크기와 맞는지 확인하거나, 배경 거리(바닥 투영)로 영역 안의 먼 색을 배제한다.
+2. **`team_cargo_handle` 확신 오류 1건 — 경계 7 mm:** `zone_wide_corridor-s174-slot_tri_frame`에서 답은 `no`+`handle_elsewhere`, 진실은 `yes`다. 검출한 손잡이 접점은 전방 **0.457 m**이고 범위 상한은 0.450 m — 7 mm 초과다. 정답 손잡이 v1은 0.408 m로 범위 안이다. 원인은 체계적이다: lug는 46 mm 높이인데 화물 몸체가 lug 바닥을 가리면 성분의 최하단이 실제 접지점보다 위에 있어 바닥 투영이 거리를 **과대평가**한다. 제안(미구현, v3 후보): lug의 알려진 높이(46 mm)로 접점을 보정하거나, 범위 경계 ±30 mm를 `unknown`으로 둔다. 사후에 임계값을 옮기지 않았다.
+
+### belief 민감도 (관측 가능 뷰 정확도 / 확신 오류)
+
+| belief | `peer_in_lane` | `team_cargo_identity` | `team_cargo_handle` | `held_item` |
+|---|---|---|---|---|
+| `gt_stub_eval_only` | 1.00 / 0 | .857 / 0 | .850 / 1 | 1.00 / 0 |
+| `noise_30mm` | 1.00 / 0 | .857 / 0 | .850 / 1 | 1.00 / 0 |
+| `noise_60mm` | .870 / **1** | .857 / 0 | .850 / 1 | 1.00 / 0 |
+
+belief를 쓰는 판단은 `peer_in_lane`뿐이다. σ 60 mm에서 `peer_in_passage` 1뷰가 지도 대조를 넘겨 확신 오류가 됐다(σ 30 mm는 영향 없음). 나머지 세 판단은 지도를 쓰지 않아 belief와 무관하다. **결론: 동료/물체 판별을 실행에 쓰려면 자기 위치 belief 오차가 대략 30 mm 수준이어야 한다.** 위치 추정 정확도는 다른 패키지의 결과로 확인해야 하며 이 기록이 그것을 대신하지 않는다.
+
+### 장면 해시 (test)
+
+door 171 `11b103a9` / `e9610d3b` / `a15e18d3`; corridor 172 `58ea94ec` / `5767f669` / `d4fbd29a`; two_doors 173 `819fcaf4` / `111b89ba` / `243b400c`; corridor 174 `28bc241a` / `92dffcda` / `cc5ca107` (CargoZoneScene / 추가물 포함 / 주문서). 원본 프레임·라벨 13 MB는 로컬 `outputs/`에만 있고 Git에 없다.
 
 ## 한계
 
 - 오프라인 인식 평가다. 실제 임무 성공, 실시간 실행, 통신 조건 비교는 이 기록의 범위가 아니다.
-- `carry_*`·`held_*` 뷰는 물리 파지가 아니라 자세만 맞춘 fixture다. 파지 성공률로 읽지 않는다. retention은 교사 파지 1시드의 물리 결과다.
-- 운반 중 `heavy_crate`는 자기 카메라로 재식별할 수 없다(팔 그림자, 색 정보 0). 운반 중 종류 확인은 **자기 명령 이력이나 대화**에 의존해야 한다. 이것은 통신 연구에 유리한 사례가 아니라 **관측의 한계**로 읽어야 한다.
-- `tri_frame`은 파지 전 자세에서 종류를 확정하지 못해 “내 손잡이가 여기”도 `unknown`으로 남는다(dev 3/4).
-- `peer_in_lane`은 지도 대조에 belief를 쓰므로 σ 30 mm에서 벽 근처 확신 오류가 생긴다. 뒤에서 어두운 후면만 보이는 동료는 놓칠 수 있다(주황이 가려지면 signature가 없다).
+- `carry_*`·`held_*` 뷰는 물리 파지가 아니라 자세만 맞춘 fixture다. 파지 성공률로 읽지 않는다. retention은 교사 파지의 물리 결과이며, W9의 시드 171은 경기장 상자 배치만 바꾸므로 파지 기하는 시드 11과 같다 — **같은 기하의 반복 실행**이지 새 조건이 아니다.
+- **CARRY 자세의 `no`+다른 종류는 신뢰할 수 없다**(위 W7 실패). 들린 물건이 그 자세에서 프레임 밖이면 held-item 영역이 배경을 보여주고, 배경의 화물 색이 확신 있는 오답이 된다. v1의 `judge_holding_item`도 같은 구조다. 수정은 미구현이며 v3 후보로 제안만 남겼다.
+- `team_cargo_handle`의 거리 추정은 lug 높이(46 mm)를 보정하지 않아 접점을 과대평가한다. test에서 7 mm 경계 초과로 확신 오류 1건이 났다. 사후 임계값 변경은 하지 않았다.
+- 운반 중 `heavy_crate`는 자기 카메라로 재식별할 수 없다(팔 그림자, 채도 0 / 명도 7–13). 운반 중 종류 확인은 **자기 명령 이력이나 대화**에 의존해야 한다. 이것은 통신 연구에 유리한 사례가 아니라 **관측의 한계**로 읽어야 한다.
+- `tri_frame`은 파지 전 자세에서 종류를 확정하지 못해 “내 손잡이가 여기”도 `unknown`으로 남는다(dev 3/4, test 3/4).
+- `peer_in_lane`은 지도 대조에 belief를 쓰므로 σ 60 mm에서 확신 오류가 생긴다. 뒤에서 어두운 후면만 보이는 동료는 놓칠 수 있다(주황이 가려지면 signature가 없다).
 - 분할당 시드 4개 규모다. 비율은 사례 단위로 읽고 다른 실험 수치와 합산하지 않는다.
