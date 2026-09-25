@@ -352,3 +352,5 @@ def test_carry_clearance_hook_and_v1_executor_has_no_route_rules():
     team = zt.ZoneTeacherExecutor(world, {'r1': world.port('r1')}, za.authored_map('zone_wide'),
                                   {'b': {'body_name': 'b'}}, lambda *a, **k: None)
     assert team.robots['r1'].rects == () and team.robots['r1'].passages == []
+    # Drive-phase limit: unchanged for v1 maps, longer where trips detour through passages.
+    assert zt.DRIVE_PHASE_LIMIT_S == 120. and zt.ROUTE_DRIVE_PHASE_LIMIT_S == 240.
