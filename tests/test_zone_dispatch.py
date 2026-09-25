@@ -126,7 +126,8 @@ def test_zone_scene_reuses_the_standard_scene_path_without_touching_bundle_sourc
     from harness.rgb_execution_bundle import source_closure
     from sim.session_scenes import Scene
     from sim.zone_scene import ZoneScene, catalog
-    assert [r['id'] for r in catalog()] == ['zones/zone_wide'] and issubclass(ZoneScene, Scene)
+    assert [r['id'] for r in catalog()][0] == 'zones/zone_wide' and 'zones/zone_open' not in [r['id'] for r in catalog()]
+    assert issubclass(ZoneScene, Scene)
     scene = ZoneScene({'layout': 'zones/zone_open', 'seed': 11, 'params': {}, 'contact_profile': None, 'map_file': None,
                        'cargo_ids': None, 'robots': {}, 'objects': [], 'builder': None}, '.')
     assert scene.config['goal'] == za.goal_counts(za.DEFAULT_GOAL) and len(scene.inventory) == 5

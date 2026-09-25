@@ -93,8 +93,12 @@ def context(rid, *, task, labels, view, board, own_jobs, inbox, extra=None):
 
 
 def _system(template, rid, task, views):
-    return template.format(rid=rid, instruction=task['instruction'],
+    text = template.format(rid=rid, instruction=task['instruction'],
                            goal=json.dumps(task['goal'], sort_keys=True), images=_image_text(views))
+    if task.get('static_map_text'):
+        # Maps with interior walls: the authored walls and doors (static map).
+        text += '\nStatic map: ' + task['static_map_text']
+    return text
 
 
 def build_plan_request(rid, *, request_id, task, frame, agreement, ctx, views=DEFAULT_VIEWS):
