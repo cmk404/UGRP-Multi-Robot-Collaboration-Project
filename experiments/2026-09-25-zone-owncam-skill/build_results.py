@@ -39,6 +39,15 @@ V5_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_st
 V6_TEST_SEEDS = tuple(range(551, 561))
 V6_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay, '
                 'top-edge face yaw, static peer keep-outs'}
+V7_TEST_SEEDS = tuple(range(561, 573))
+V7_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay, '
+                'top-edge face yaw, static peer keep-outs, peers parked next to the box, face re-plan after guard'}
+V8_TEST_SEEDS = tuple(range(581, 592))
+V9_TEST_SEEDS = tuple(range(601, 611))
+V9_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), mostly west pickup floor, '
+                'v9 projected-centre vertical + face no-progress step + close-range look-down re-fit'}
+V8_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay incl. west pickup '
+                'floor + door crossing, frame-relative approach cyan gate'}
 MISSING = 'missing/infrastructure_failure'
 
 
@@ -206,7 +215,9 @@ def face_error_eval(folder):
     for line in (folder / 'control.jsonl').open():
         c = json.loads(line)
         fa = c.get('face_alignment') or {}
-        if c['box_skill_phase'] != 'approach' or not fa.get('ready'):
+        # only frames where the delivery is grasping: during v7 keepout_backoff / replan_nav the previous box
+        # skill's last (stale, unused) alignment is still logged
+        if c['phase'] != 'grasp' or c['box_skill_phase'] != 'approach' or not fa.get('ready'):
             continue
         t = truth[c['step']]
         qw, _qx, _qy, qz = t['box_quat']
@@ -237,6 +248,66 @@ def cohort_stats_v6(runs):
     fe = stats['face_error_eval_only'].values()
     ready = sum(f['ready_frames'] for f in fe)
     stats['face_ready_frames_within_5deg'] = f"{sum(f['within_5deg'] for f in fe)}/{ready}"
+    return stats
+
+
+def cohort_stats_v7(runs):
+    stats = cohort_stats_v6(runs)
+    summaries = [r['skill_summary'] or {} for r in runs]
+    stats.update({'keepout_replans': [s.get('keepout_replans') for s in summaries],
+                  'parked_rel_box_m': [r['scenario_setup_only'].get('parked_rel_box_m') for r in runs],
+                  'clean_aborts': [r['seed'] for r in runs if r['reason'] in (
+                      'NO_GRASPABLE_FACE_CLEAR_OF_KEEPOUTS', 'BAY_APPROACH_BLOCKED', 'KEEPOUT_REPLAN_LIMIT')],
+                  'guard_final_stops': [r['seed'] for r in runs if r['reason'] == 'STATIC_KEEPOUT_GUARD']})
+    return stats
+
+
+BOX_FALSE_POSITION_M = .25
+
+
+def box_detection_eval(folder):
+    """Evaluation only (v8 gate W3): own-RGB approach-stage box centre vs the true box centre in the base frame."""
+    import math
+    folder = Path(folder)
+    truth = {json.loads(l)['step']: json.loads(l) for l in (folder / 'evaluation-only.jsonl').open()}
+    errors, approach_frames = [], 0
+    for line in (folder / 'control.jsonl').open():
+        c = json.loads(line)
+        if c['phase'] != 'grasp' or c['box_skill_phase'] != 'approach':
+            continue
+        approach_frames += 1
+        box = c.get('box') or {}
+        if not box.get('visible'):
+            continue
+        t = truth[c['step']]
+        dx, dy = t['box_xyz'][0] - t['base_xyz'][0], t['box_xyz'][1] - t['base_xyz'][1]
+        cy, sy = math.cos(t['base_yaw']), math.sin(t['base_yaw'])
+        bx, by = cy * dx + sy * dy, -sy * dx + cy * dy
+        est = box['estimated_box_center_base_m']
+        errors.append(math.hypot(est[0] - bx, est[1] - by))
+    return {'approach_frames': approach_frames, 'detected_frames': len(errors),
+            'false_position_frames': sum(e > BOX_FALSE_POSITION_M for e in errors),
+            'max_err_m': round(max(errors), 3) if errors else None,
+            'p90_err_m': round(sorted(errors)[int(.9 * (len(errors) - 1))], 3) if errors else None}
+
+
+def cohort_stats_v8(runs):
+    stats = cohort_stats_v7(runs)
+    west = [r for r in runs if str(r['scenario_setup_only']['bay']).startswith('W')]
+    stats.update({'west_seeds': [r['seed'] for r in west],
+                  'west_diagnostic_success': sum(bool(r['diagnostic_success']) for r in west),
+                  'east_diagnostic_success': sum(bool(r['diagnostic_success']) for r in runs if r not in west),
+                  'grasp_target_not_visible': [r['seed'] for r in runs if 'NOT_VISIBLE' in str(r['reason'])],
+                  'last_floor_gate': {r['seed']: (r['skill_summary'] or {}).get('last_floor_gate') for r in runs},
+                  'box_detection': {r['seed']: box_detection_eval(r['raw_dir']) for r in runs}})
+    return stats
+
+
+def cohort_stats_v9(runs):
+    stats = cohort_stats_v8(runs)
+    summaries = [r['skill_summary'] or {} for r in runs]
+    stats['v9_stats'] = {r['seed']: s.get('v9_stats') for r, s in zip(runs, summaries)}
+    stats['sim_limit'] = [r['seed'] for r in runs if r['reason'] == 'SIM_LIMIT']
     return stats
 
 
@@ -353,6 +424,39 @@ def main():
         log = folder / 'cohort.log'
         if log.exists():
             out['v6_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v7_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v7/*/result.json'))]
+    out['v7_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v7-*')):
+        for arm, condition in V7_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V7_TEST_SEEDS)
+            missing_all[f'v7:{folder.name}/{arm}'] = missing
+            out['v7_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v7(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v7_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v8_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v8/*/result.json'))]
+    out['v8_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v8-*')):
+        for arm, condition in V8_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V8_TEST_SEEDS)
+            missing_all[f'v8:{folder.name}/{arm}'] = missing
+            out['v8_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v8(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v8_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v9_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v9/*/result.json'))]
+    out['v9_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v9-*')):
+        for arm, condition in V9_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V9_TEST_SEEDS)
+            missing_all[f'v9:{folder.name}/{arm}'] = missing
+            out['v9_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v9(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v9_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
     out['missing_seeds'] = {k: v for k, v in missing_all.items() if v}
     blocked = bool(out['missing_seeds'])
     out['cohort_report_blocked'] = blocked
@@ -366,7 +470,7 @@ def main():
     for key, value in {**out['v3_cohorts'], **out['v4_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
-    for key, value in {**out['v5_cohorts'], **out['v6_cohorts']}.items():
+    for key, value in {**out['v5_cohorts'], **out['v6_cohorts'], **out['v7_cohorts'], **out['v8_cohorts'], **out['v9_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
 
