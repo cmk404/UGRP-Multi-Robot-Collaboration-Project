@@ -5,7 +5,8 @@
     "dev-a2": "32c7069, amendment A1: skill v5 m1 mode, fine motion + kidnap reset, post-manipulation look, pan-probe re-anchor",
     "dev-a3": "ce33ffd, amendment A2: bay half 0.15 m, rotated-box dev diagnostics (runner robot_id bug: non-r1 robots rejected)",
     "dev-a4": "ea45e3d, amendment A3: skill gets the episode robot id",
-    "dev-a5": "6352fde, amendment A4: loaded carry leg through the door to the pre-place goal"
+    "dev-a5": "6352fde, amendment A4: loaded carry leg through the door to the pre-place goal",
+    "dev-a6": "amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge"
   },
   "test_status": "not run",
   "test_expected": [
@@ -776,6 +777,200 @@
       "pose_source": "owncam_pf_v2:757f7f09",
       "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
       "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "aa2dced46c506ae3b60cf0d2a898eeed1544d967",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "grasp_physical_both_fingers",
+        "box_retained_in_carry"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 0,
+        "both_finger_steps": 0,
+        "min_box_z_m": null,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.00010775542089962523,
+        "max_box_normal_force_n": 0.07357500374178916,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0803,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.05,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 144.83,
+      "looks": 1,
+      "commands": 1696,
+      "localizer_stats": {
+        "updates": 691,
+        "resets": 0,
+        "resamples": 161
+      },
+      "load_average": {
+        "start": [
+          4.58,
+          4.61,
+          4.87
+        ],
+        "end": [
+          6.75,
+          6.21,
+          5.54
+        ]
+      },
+      "wall_s": 315.7,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a4603f36c02bd9385acb8c5ff60c70bb3a41387fdfc05c1fad91a092fa08a9bf",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "aa2dced46c506ae3b60cf0d2a898eeed1544d967",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "grasp_physical_both_fingers",
+        "box_retained_in_carry"
+      ],
+      "setup_diagnostic": {
+        "box_yaw_deg": -20.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 0,
+        "both_finger_steps": 0,
+        "min_box_z_m": null,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.00010775542107669539,
+        "max_box_normal_force_n": 0.07357500656215206,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0706,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.85,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 99.43,
+      "looks": 1,
+      "commands": 1363,
+      "localizer_stats": {
+        "updates": 440,
+        "resets": 0,
+        "resamples": 86
+      },
+      "load_average": {
+        "start": [
+          4.58,
+          4.61,
+          4.87
+        ],
+        "end": [
+          8.18,
+          6.23,
+          5.48
+        ]
+      },
+      "wall_s": 234.0,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
       "weld": "off"
     }
   ]
