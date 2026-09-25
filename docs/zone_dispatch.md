@@ -4,7 +4,10 @@
 
 **이 벤치마크는 협업 층을 재는 도구다.** 로봇 이동과 파지는 정답 좌표·IK를 쓰는 **교사 실행기**가 실제 집게로 한다(weld OFF). 결과는 "교사 실행기 조건"이며 RGB 스킬 성공으로 보고하지 않는다. RGB 스킬로의 교체는 후속 단계다.
 
-## 장면 (`zones/zone_open`)
+## 은퇴한 장면 (`zones/zone_open`, 2026-09-25 은퇴)
+
+2026-09-25 사용자 요청("옛날의 작은 맵은 없애주라")으로 작은 `zone_open`은 새 실행에서 쓰지 않는다. 기본 지도는 `zone_wide`다. `maps/zones/zone_open.json`과 배치 코드는 Z1–Z3 기록과 재생을 재현하려고 바이트 그대로 남긴다. 러너는 `--variant zone_open`을 거절하며, 재현할 때만 `--allow-retired-variant`를 함께 준다. 장면 목록(`sim.zone_scene.catalog()`)에도 나오지 않는다. 아래 설명은 그 기록을 읽기 위한 것이다.
+
 
 - 경기장 6.45 × 2.3 m(x −1.05…5.40, y −3.15…−0.85). 서쪽 적재 구역(파랑 바닥, 지도 v2: 상자 자리 4열 × 3행, 0.6 m 간격이라 상자를 든 로봇도 사이로 지나갈 수 있다. 최대 12개), 동쪽 구역 A(주황, 북동)·B(파랑, 남동)·C(보라, 중앙). 구역마다 칸 3개가 y 방향으로 놓인다.
 - TOP은 승인된 `cctv_top`을 그대로 두고, 같은 규격(높이 2.5 m, FOV 55°, 아래 방향)의 `cctv_top_east`를 3.3 m 동쪽에 추가했다. 로봇 외관·자기 카메라는 바뀌지 않는다.
@@ -49,7 +52,7 @@
 ## 실행
 
 ```bash
-.venv-sim/bin/python -m scripts.run_zone_dispatch --output outputs/zone-NEW \
+.venv-sim/bin/python -m scripts.run_zone_dispatch --output outputs/zone-NEW --variant zone_wide \
   --coordination dynamic --goal '{"A":{"red":2},"B":{"cyan":1},"C":{"green":1,"red":1}}' \
   --extra-boxes '{"red":1}' --seed 11 --record-replay
 ```
