@@ -33,6 +33,22 @@
 `leader_ko`는 `leader_id`가 필수이고 다른 조건에는 있으면 거절한다. 순환 여부는 조건 요약의
 `leader_ids`에서 확인한다.
 
+### 패키지 C 표기 호환
+
+패키지 C(`kiro/zone-study-protocol`, PR 184)는 두 조건을 `structured`, `reference_R`로 적고
+메시지 봉투에 `from_robot`, `sent_at_sim_s`, `delivered_at_sim_s`, `structured`를 쓴다. 통합
+때 다시 고치지 않도록 `parse_trial()`이 두 표기를 모두 받아 위 표의 이름으로 정규화하고, 원래
+표기는 `condition_as_logged`에 남긴다.
+
+| 기록된 값 | 정규화 결과 |
+|---|---|
+| `structured` | `peer_structured` |
+| `reference_R` | `central_rgb_reference` |
+| `from_robot` | `sender` |
+| `sent_at_sim_s` | `sim_s` |
+| `delivered_at_sim_s` | `delivered_sim_s` |
+| `structured` (발화 payload) | `message` |
+
 ## 잠정 기록 형식
 
 로그 schema의 최종 소유자는 Package A(`kiro/zone-study-contract`)다. 그 PR이 올라오면
@@ -163,6 +179,9 @@ PR 172(병합)의 `harness/zone_dialogue_metrics.py`를 그대로 호출한다. 
   경계 위반으로도 보고한다.
 - 주장 추출은 규칙 기반이므로 재현성은 있으나 완전하지 않다. 사람 라벨과 비교할 때는 PR 172
   파일럿처럼 별도 `manual_labels`를 만들어 대조한다.
+- 규칙 추출은 **단서가 있는 문장 범위**로 한정한다. `door_narrow가 막혀 있습니다.
+  door_wide로 우회하십시오.`는 `door_wide`까지 막혔다고 주장하지 않는다. 주장의 보조 항목
+  (배송의 구역, 파지의 물건)만 같은 발화의 다른 문장에서 보충한다.
 
 ### 행위 유형
 

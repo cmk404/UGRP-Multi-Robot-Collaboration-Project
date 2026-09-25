@@ -120,6 +120,36 @@ class ParseTest(unittest.TestCase):
         with self.assertRaises(ev.TrialError):
             ev.parse_trial(bad)
 
+    def test_package_c_condition_names_are_accepted(self):
+        for logged, expected in (('structured', 'peer_structured'),
+                                 ('reference_R', ev.REFERENCE_CONDITION)):
+            record = trial()
+            record['condition'] = logged
+            parsed = ev.parse_trial(record)
+            self.assertEqual(parsed['condition'], expected)
+            self.assertEqual(parsed['condition_as_logged'], logged)
+
+    def test_package_c_envelope_fields_are_accepted(self):
+        record = trial(condition='peer_ko', utterances=[{
+            'message_id': 'm-1', 'from_robot': 'r1', 'recipients': ['r2'],
+            'sent_at_sim_s': 700.0, 'delivered_at_sim_s': 700.1, 'encoding': 'ko_free',
+            'text': 'long_beam-1을 A에 배달했습니다.', 'sim_cost_s': 1.9}])
+        parsed = ev.parse_trial(record)
+        self.assertEqual(parsed['utterances'][0]['sender'], 'r1')
+        self.assertEqual(parsed['utterances'][0]['sim_s'], 700.0)
+        dia = ev.dialogue_metrics(parsed)
+        self.assertEqual(dia['messages'][0]['claims'][0]['verdict'], 'true')
+        self.assertEqual(ev.channel_compliance(parsed)['violations'], [])
+
+    def test_package_c_structured_payload_key_is_accepted(self):
+        record = trial(condition='structured', utterances=[{
+            'message_id': 'm-1', 'from_robot': 'r1', 'recipients': ['r2'],
+            'sent_at_sim_s': 300.0, 'encoding': 'structured',
+            'structured': {'act': 'reject', 'item': 'crate-2'}}])
+        parsed = ev.parse_trial(record)
+        self.assertEqual(ev.act_types(parsed['utterances'][0])['coarse'], ['objection'])
+        self.assertEqual(ev.channel_compliance(parsed)['violations'], [])
+
 
 class EfficiencyTest(unittest.TestCase):
     def test_success_makespan_and_deliveries(self):
@@ -409,6 +439,24 @@ class DialogueTest(unittest.TestCase):
         dia = ev.dialogue_metrics(record)
         self.assertEqual([m['claims'][0]['verdict'] for m in dia['messages']],
                          ['true', 'false', 'true'])
+
+    def test_claims_are_scoped_to_the_cue_sentence(self):
+        claims = ev.extract_claims(
+            utter(text='door_narrow가 막혀 있습니다. door_wide로 우회하십시오.'))
+        self.assertEqual(claims, [{'type': 'blocked', 'passage': 'door_narrow'}])
+
+    def test_delivered_zone_falls_back_across_sentences(self):
+        claims = ev.extract_claims(
+            utter(text='A 구역에 도착했습니다. long_beam-1을 내려놓았습니다.'),
+            labels=('long_beam-1',))
+        self.assertIn({'type': 'delivered', 'item_id': 'long_beam-1', 'zone': 'A'}, claims)
+
+    def test_unrelated_item_in_another_sentence_is_not_claimed_delivered(self):
+        claims = ev.extract_claims(
+            utter(text='long_beam-1을 A에 배달했습니다. crate-2는 아직 찾지 못했습니다.'),
+            labels=('long_beam-1', 'crate-2'))
+        self.assertEqual([c['item_id'] for c in claims if c['type'] == 'delivered'],
+                         ['long_beam-1'])
 
     def test_explicit_claims_win_over_rules(self):
         record = ev.parse_trial(trial(utterances=[

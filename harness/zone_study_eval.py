@@ -54,6 +54,14 @@ CONDITION_LABELS_KO = {
     'peer_structured': '④ 정형 메시지',
     REFERENCE_CONDITION: 'R 전지적 지휘 참조 상한',
 }
+#: Package C (``kiro/zone-study-protocol``, PR 184) names two conditions
+#: differently. Accept both spellings and normalise to the names above so the
+#: integration does not need a rewrite; the original is kept in
+#: ``condition_as_logged``.
+CONDITION_ALIASES = {'structured': 'peer_structured', 'reference_R': REFERENCE_CONDITION}
+#: Package C's message envelope field names, mapped onto the ones used here.
+UTTERANCE_ALIASES = {'from_robot': 'sender', 'sent_at_sim_s': 'sim_s',
+                     'delivered_at_sim_s': 'delivered_sim_s', 'structured': 'message'}
 
 #: Free-text channels. ``structured`` carries no free text by construction.
 FREE_TEXT_ENCODINGS = ('ko_free',)
@@ -154,8 +162,16 @@ def parse_trial(obj):
         raise TrialError(f'unsupported schema {schema!r}; known: {SUPPORTED_SCHEMAS}')
     trial = copy.deepcopy(obj)
     condition = trial.get('condition')
+    if condition in CONDITION_ALIASES:
+        trial['condition_as_logged'] = condition
+        condition = trial['condition'] = CONDITION_ALIASES[condition]
     if condition not in CONDITIONS:
-        raise TrialError(f'unknown condition {condition!r}; known: {CONDITIONS}')
+        raise TrialError(f'unknown condition {condition!r}; known: {CONDITIONS}'
+                         f' (aliases: {sorted(CONDITION_ALIASES)})')
+    for utt in _rows(trial, 'utterances'):
+        for old, new in UTTERANCE_ALIASES.items():
+            if old in utt and new not in utt:
+                utt[new] = utt.pop(old)
     reason = trial.get('end_reason')
     if reason not in END_REASONS:
         raise TrialError(f'unknown end_reason {reason!r}; known: {END_REASONS}')
@@ -536,24 +552,52 @@ def extract_claims(utterance, labels=()):
     text = utterance.get('text') or ''
     if not text.strip():
         return []
-    items = [m for m in ITEM_RE.findall(text) if not labels or m in labels]
-    zones = ZONE_RE.findall(text)
-    passages = PASSAGE_RE.findall(text)
-    claims = []
-    if re.search(CLAIM_CUES['delivered'], text):
-        for item in items or [None]:
-            claims.append({'type': 'delivered', 'item_id': item,
-                           'zone': zones[0] if zones else None})
-    if re.search(CLAIM_CUES['holding'], text):
-        for item in items or [None]:
-            claims.append({'type': 'holding', 'item_id': item, 'robot': utterance.get('sender')})
-    if re.search(CLAIM_CUES['blocked'], text):
-        for passage in passages or [None]:
-            claims.append({'type': 'blocked', 'passage': passage})
-    if re.search(CLAIM_CUES['absent'], text):
-        for item in items or [None]:
-            claims.append({'type': 'absent', 'item_id': item,
-                           'location_ref': utterance.get('location_ref')})
+    return _text_claims(text, utterance, labels)
+
+
+SENTENCE_SPLIT = re.compile(r'(?<=[.!?。])\s+|\n+')
+
+
+def _ids(fragment, labels):
+    items = [m for m in ITEM_RE.findall(fragment) if not labels or m in labels]
+    return items, ZONE_RE.findall(fragment), PASSAGE_RE.findall(fragment)
+
+
+def _text_claims(text, utterance, labels):
+    """Claims scoped to the sentence carrying the cue.
+
+    Sentence scoping stops ``door_narrow가 막혀 있습니다. door_wide로 우회하십시오.``
+    from also asserting that ``door_wide`` is blocked. Only the *complement* of a
+    claim (the zone of a delivery, the item of a hold) falls back to ids named
+    elsewhere in the same utterance.
+    """
+    all_items, all_zones, _ = _ids(text, labels)
+    claims, seen = [], set()
+
+    def add(claim):
+        key = tuple(sorted(claim.items(), key=lambda kv: kv[0]))
+        if key not in seen:
+            seen.add(key)
+            claims.append(claim)
+
+    for sentence in SENTENCE_SPLIT.split(text):
+        if not sentence.strip():
+            continue
+        items, zones, passages = _ids(sentence, labels)
+        if re.search(CLAIM_CUES['delivered'], sentence):
+            for item in items or all_items or [None]:
+                add({'type': 'delivered', 'item_id': item,
+                     'zone': (zones or all_zones or [None])[0]})
+        if re.search(CLAIM_CUES['holding'], sentence):
+            for item in items or all_items or [None]:
+                add({'type': 'holding', 'item_id': item, 'robot': utterance.get('sender')})
+        if re.search(CLAIM_CUES['blocked'], sentence):
+            for passage in passages or [None]:
+                add({'type': 'blocked', 'passage': passage})
+        if re.search(CLAIM_CUES['absent'], sentence):
+            for item in items or all_items or [None]:
+                add({'type': 'absent', 'item_id': item,
+                     'location_ref': utterance.get('location_ref')})
     return claims
 
 
