@@ -1,0 +1,259 @@
+{
+ "status": "DRAFT",
+ "assumptions": [
+  "One run per (seed, condition, scenario); seeds are independent draws, so each cell outcome is Bernoulli with the seed-population-average rate (no within-cell beta-binomial overdispersion).",
+  "All 6 cells share the same seed list (paired blocks). Power below ignores the pairing (unpaired Fisher / independent Beta posteriors), which is conservative when seed difficulty is shared across conditions.",
+  "Two primary contrasts; family-wise alpha 0.05 via Bonferroni/Holm -> alpha 0.025 each.",
+  "P1 pools nominal and grasp-fail (arm size 2n) and is planned as an exact stratified (scenario) test; the Fisher-on-pooled approximation is used for sizing.",
+  "Bayesian: independent Beta(1,1) priors; decision P(p_dyn > p_other | data) >= threshold; assurance = probability of reaching that decision under the planning rates.",
+  "Planning rates: ZC2 observed 3/3 and 0/3 are extreme, so they are shrunk with Jeffreys posterior means; conservative and moderate alternatives are also listed."
+ ],
+ "zc2_observed_counts": {
+  "independent/nominal": "0/3",
+  "independent/graspfail": "1/3",
+  "plan_first/nominal": "3/3",
+  "plan_first/graspfail": "0/3",
+  "dynamic/nominal": "3/3",
+  "dynamic/graspfail": "3/3"
+ },
+ "zc2_jeffreys_means": {
+  "independent/nominal": 0.125,
+  "independent/graspfail": 0.375,
+  "plan_first/nominal": 0.875,
+  "plan_first/graspfail": 0.125,
+  "dynamic/nominal": 0.875,
+  "dynamic/graspfail": 0.875
+ },
+ "zc2_as_if_tested_now": {
+  "P1 pooled 6/6 vs 1/6": {
+   "fisher_two_sided_p": 0.0152,
+   "P(p_dyn>p_other) uniform prior": 0.9977,
+   "diff_newcombe95": [
+    0.277,
+    0.97
+   ]
+  },
+  "P2 3/3 vs 0/3": {
+   "fisher_two_sided_p": 0.1,
+   "P(p_dyn>p_other) uniform prior": 0.9857,
+   "diff_newcombe95": [
+    0.206,
+    1.0
+   ]
+  },
+  "S1 3/3 vs 0/3": {
+   "fisher_two_sided_p": 0.1,
+   "P(p_dyn>p_other) uniform prior": 0.9857,
+   "diff_newcombe95": [
+    0.206,
+    1.0
+   ]
+  }
+ },
+ "precision": {
+  "per_cell_rate": {
+   "0.15": {
+    "clopper_pearson": {
+     "worst_case_n": 47,
+     "expected_n_at_p": {
+      "0.5": 46,
+      "0.8": 31,
+      "0.9": 19,
+      "0.95": 14
+     }
+    },
+    "wilson": {
+     "worst_case_n": 39,
+     "expected_n_at_p": {
+      "0.5": 38,
+      "0.8": 25,
+      "0.9": 16,
+      "0.95": 12
+     }
+    }
+   },
+   "0.2": {
+    "clopper_pearson": {
+     "worst_case_n": 27,
+     "expected_n_at_p": {
+      "0.5": 26,
+      "0.8": 17,
+      "0.9": 12,
+      "0.95": 9
+     }
+    },
+    "wilson": {
+     "worst_case_n": 21,
+     "expected_n_at_p": {
+      "0.5": 20,
+      "0.8": 13,
+      "0.9": 9,
+      "0.95": 7
+     }
+    }
+   }
+  },
+  "difference_newcombe_per_arm_n": {
+   "0.15": {
+    "p=0.5 vs 0.5 (worst)": 81,
+    "0.875 vs 0.125": 37,
+    "0.8 vs 0.3": 60,
+    "0.8 vs 0.5": 67
+   },
+   "0.2": {
+    "p=0.5 vs 0.5 (worst)": 44,
+    "0.875 vs 0.125": 21,
+    "0.8 vs 0.3": 33,
+    "0.8 vs 0.5": 36
+   }
+  }
+ },
+ "power": {
+  "P1 dynamic vs independent (nominal+graspfail, per-scenario arm n; planned stratified test)": {
+   "observed_ZC2": "dynamic 6/6 vs independent 1/6",
+   "rows": [
+    {
+     "planning": "ZC2 shrunk (Jeffreys posterior means, pooled)",
+     "p_dynamic": 0.929,
+     "p_other": 0.214,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 4,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 6,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 5,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 7,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 3,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 4
+    },
+    {
+     "planning": "conservative",
+     "p_dynamic": 0.8,
+     "p_other": 0.3,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 9,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 12,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 10,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 13,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 7,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 8
+    },
+    {
+     "planning": "moderate",
+     "p_dynamic": 0.8,
+     "p_other": 0.5,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 22,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 29,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 26,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 34,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 16,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 20
+    }
+   ]
+  },
+  "P2 dynamic vs plan_first under grasp-fail injection": {
+   "observed_ZC2": "dynamic 3/3 vs plan_first 0/3",
+   "rows": [
+    {
+     "planning": "ZC2 shrunk (Jeffreys posterior means)",
+     "p_dynamic": 0.875,
+     "p_other": 0.125,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 8,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 10,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 9,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 10,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 5,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 6
+    },
+    {
+     "planning": "conservative",
+     "p_dynamic": 0.8,
+     "p_other": 0.3,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 18,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 23,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 20,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 25,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 11,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 15
+    },
+    {
+     "planning": "moderate",
+     "p_dynamic": 0.8,
+     "p_other": 0.5,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 44,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 58,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 52,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 67,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 31,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 39
+    }
+   ]
+  },
+  "S1 dynamic vs independent, nominal only (secondary)": {
+   "observed_ZC2": "dynamic 3/3 vs independent 0/3",
+   "rows": [
+    {
+     "planning": "ZC2 shrunk (Jeffreys posterior means)",
+     "p_dynamic": 0.875,
+     "p_other": 0.125,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 8,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 10,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 9,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 10,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 5,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 6
+    },
+    {
+     "planning": "conservative",
+     "p_dynamic": 0.8,
+     "p_other": 0.3,
+     "fisher_two_sided_alpha0.05_power0.8_n_per_cell": 18,
+     "fisher_two_sided_alpha0.05_power0.9_n_per_cell": 23,
+     "fisher_two_sided_alpha0.025_power0.8_n_per_cell": 20,
+     "fisher_two_sided_alpha0.025_power0.9_n_per_cell": 25,
+     "bayes_uniform_prior_P(dyn>other)>=0.95_assurance0.8_n_per_cell": 11,
+     "bayes_uniform_prior_P(dyn>other)>=0.975_assurance0.8_n_per_cell": 15
+    }
+   ]
+  }
+ },
+ "secondary_descriptive": {
+  "note": "SIM time, calls, tokens: report per-cell mean/SD/min/max and paired (same seed) differences with bootstrap CIs over seeds; no hypothesis test is primary.",
+  "sd_by_cell_ZC2": {
+   "independent/nominal": {
+    "makespan_sim_s_sd": 19.56,
+    "llm_calls_sd": 2.08,
+    "input_tokens_sd": 13181.81
+   },
+   "independent/graspfail": {
+    "makespan_sim_s_sd": 58.88,
+    "llm_calls_sd": 8.5,
+    "input_tokens_sd": 53974.3
+   },
+   "plan_first/nominal": {
+    "makespan_sim_s_sd": 4.77,
+    "llm_calls_sd": 4.73,
+    "input_tokens_sd": 31962.32
+   },
+   "plan_first/graspfail": {
+    "makespan_sim_s_sd": 9.36,
+    "llm_calls_sd": 1.53,
+    "input_tokens_sd": 10210.72
+   },
+   "dynamic/nominal": {
+    "makespan_sim_s_sd": 13.05,
+    "llm_calls_sd": 1.53,
+    "input_tokens_sd": 7871.38
+   },
+   "dynamic/graspfail": {
+    "makespan_sim_s_sd": 14.18,
+    "llm_calls_sd": 1.15,
+    "input_tokens_sd": 7704.55
+   }
+  },
+  "n_for_mean_makespan_half_width_10s": {
+   "independent/nominal": 15,
+   "independent/graspfail": 134,
+   "plan_first/nominal": 1,
+   "plan_first/graspfail": 4,
+   "dynamic/nominal": 7,
+   "dynamic/graspfail": 8
+  }
+ }
+}

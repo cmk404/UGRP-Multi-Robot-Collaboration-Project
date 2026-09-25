@@ -10,6 +10,7 @@
 
 - [구역 배송 벤치마크](../experiments/2026-09-25-zone-dispatch/README.md)(`zones/zone_open`, 교사 실행기): 구역별 색 개수 목표로 plan_first와 dynamic을 비교했다. Z3에서 4/4 목표를 달성했고, 호출과 토큰은 dynamic이 적었다. 이동과 IK는 정답 좌표로 하는 교사 조건이며 RGB 스킬 성공이 아니다. 두 방식 모두 대화하므로, 무통신과 비교한 통신 효과는 아직 재지 않았다.
 - [동적 협업 실패 결정](../experiments/2026-09-25-dynamic-team-recovery/README.md)(v51/v56/v58): 실패 주입 11회에서 결정 대화는 모두 선택지 안에서 끝났다. 빔 파지 실패 뒤의 물리 복구는 미해결이다.
+- [빔 재파지 뒤 지원 밖 원인](../experiments/2026-09-25-r3-regrasp-pose/README.md)(v61 오프라인 재분석): 실패 슬롯 r3는 물리 r1이다. 직접 원인은 들렸다 내려온 빔의 0.59 mm 정지 위치 변화이며, 기하 모델 배경에 박힌 빔 가장자리가 새 노란 성분이 됐다. 수정은 미실행.
 - [계획 판단 기준](../experiments/2026-09-25-plan-guidance/README.md)(v45): 목표만 알려줘도 동시 실행을 5/5 골랐다.
 - [목적지 선택 + 지도 A*](../experiments/2026-09-25-map-goto-navigation/README.md)(PR #148, 기본 OFF v59): 저장 계획 재생에서 A* 2/2, 기존 경로 2/2 성공.
 - [계산 후 재생](../experiments/2026-09-25-post-run-replay/README.md): 재생 기록을 켜고 꺼도 명령과 평가가 같다.
