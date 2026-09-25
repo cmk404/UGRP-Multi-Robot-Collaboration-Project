@@ -15,7 +15,7 @@
 | 항목 | 값 |
 |---|---|
 | 지도 | `zone_wide_door_tags_v1`. static_map `238edb67…`, base `zone_wide_door` 파일 `a4d2c03d…` 그대로, 태그 70개 |
-| 장면 | `TaggedZoneScene`, `local_contact_fine`, weld OFF, timestep 0.002 s, 동기 SIM |
+| 장면 | `TaggedZoneScene`, `local_contact_fine`, weld OFF, timestep 0.00025 s(모든 raw `manifest.json`의 `timestep_s`와 `scene.xml`의 `timestep` 값; 2026-09-26 정정, 이전 표기 0.002 s는 오기), 동기 SIM |
 | 카메라 | `robot_cam` 640×480 raw 어안(JPEG q90). TOP·nav_cam은 입력으로 쓰지 않음 |
 | 외부 파라미터 | `harness.visual_arm.camera_extrinsics(발행 PWM)`. 측정 관절은 쓰지 않음 |
 | 주행 | 정답 교사(`scripts/zone_teacher.py`, 읽기 전용 재사용). 0.25 s마다 촬영, 정지점마다 pan 1500→1900→1100→1500 |
