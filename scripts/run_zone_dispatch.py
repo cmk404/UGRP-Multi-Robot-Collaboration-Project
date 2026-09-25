@@ -235,7 +235,7 @@ def run(args):
                     own_jobs[rid][-1]['status'] = report['executor_receipt']
                     (finished if robot.outcome == 'placed_by_teacher' else failed).append(report)
                     if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit',
-                                         'box_taken_by_peer'):
+                                         'box_taken_by_peer', 'station_blocked'):
                         slots.give_back(job['slot'])
                     solo['last_end'] = zone.time()
                     if args.coordination == 'independent' and robot.outcome != 'placed_by_teacher':
