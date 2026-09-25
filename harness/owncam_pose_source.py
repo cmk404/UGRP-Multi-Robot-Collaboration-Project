@@ -117,6 +117,11 @@ class OwnCamPoseSource:
         elif kind == 'look':
             self.servo[6] = int(row['pan_pulse'])
 
+    def set_motion_profile(self, now: float, name: str | None) -> None:
+        """The controller names its own manipulation phase (own state, not a measurement)."""
+        if name != self.loc.motion_profile:
+            self.loc.set_motion_profile(now, name)
+
     def on_frame(self, now: float, rgb: np.ndarray) -> PoseReport:
         """One own ``robot_cam`` frame (RGB array decoded from the JPEG the robot saw)."""
         dets = self.detector.detect(rgb)

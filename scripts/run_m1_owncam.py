@@ -34,7 +34,7 @@ SIM_LIMIT_S = 720.
 SLOT_HALF_M = .06
 ON_FLOOR_MAX_Z_M = .05
 SKILLS = {'v4': ('harness.wrist_zone_skill_v4', 'WristZoneDeliveryV4')}
-RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_contract.py', 'harness/owncam_pose_source.py',
+RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_owncam_contract.py', 'harness/owncam_pose_source.py',
                  'harness/owncam_localizer.py', 'harness/owncam_drive.py', 'harness/owncam_drive_v2.py',
                  'harness/wall_tags.py', 'harness/map_goto.py', 'harness/zone_color_boxes.py',
                  'harness/wrist_zone_skill.py', 'harness/wrist_zone_skill_v2.py', 'harness/wrist_zone_skill_v3.py',
@@ -60,7 +60,7 @@ def run(spec, out, student):
     import cv2
     import mujoco
     import numpy as np
-    from harness import m1_contract
+    from harness import m1_owncam_contract
     from harness.m1_owncam_delivery import M1OwnCamDelivery
     from harness.map_goto import plan_path
     from harness.owncam_drive import LOADED_ENVELOPE
@@ -261,7 +261,7 @@ def run(spec, out, student):
     claim = placement.get('reason') == 'IN_SLOT'
     gate = summary['lookback_gate'] or {}
     wall_contacts = sum(1 for c in contacts if c['kind'] == 'wall')
-    judged = m1_contract.judge(
+    judged = m1_owncam_contract.judge(
         pose_sources=summary['pose_sources'], skill_reason=outcome, skill_claim_in_slot=claim,
         gt_box_in_slot=gt_in_slot, wall_contacts=wall_contacts, weld_used=state['max_eq_active'] > 0,
         face_fallback_used=summary['face_fallback_used'], pickup_source=summary['pickup_source'] or 'none',
@@ -284,7 +284,7 @@ def run(spec, out, student):
               'sim_s': round(float(data.time), 2), 'looks': summary['looks'], 'placement': placement,
               'lookback_gate': gate, 'controller': summary, 'phase_times': state['phase_times'],
               'commands': len(commands), 'frames': len(frames)}
-    m1_contract.assert_exportable(result)
+    m1_owncam_contract.assert_exportable(result)
     jsonl(out/'inputs'/'commands.jsonl', commands)
     jsonl(out/'inputs'/'frames.jsonl', frames)
     jsonl(out/'controller_events.jsonl', ctl.events)

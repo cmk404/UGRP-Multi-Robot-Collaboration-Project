@@ -16,7 +16,7 @@ Composition (read-only reuse):
   (``harness.wrist_zone_skill_v4`` imported read-only); in the carry leg its
   navigation commands are replaced by the driver's while its own-RGB carry
   checks still run on every frame;
-* M1 contract (``harness.m1_contract``): every observation is validated and
+* M1 contract (``harness.m1_owncam_contract``): every observation is validated and
   every pose source must be the own-camera estimator.
 """
 from __future__ import annotations
@@ -26,7 +26,7 @@ from collections.abc import Mapping, Sequence
 
 import numpy as np
 
-from harness import m1_contract
+from harness import m1_owncam_contract
 from harness.owncam_drive import CARRY_POSTURE, LOOK_P20, SEARCH_POSE, SETTLE_S, WIDE_LOOK_PANS
 from harness.owncam_drive_v2 import OwnCamDriverV2
 from harness.owncam_pose_source import OwnCamPoseSource, PoseLimits, PoseReport, check_limits
@@ -135,7 +135,7 @@ class M1OwnCamDelivery:
 
     def on_frame(self, now: float, obs: Mapping, rgb: np.ndarray) -> PoseReport:
         """Every own frame (5 Hz, and each skill decision frame)."""
-        m1_contract.validate_observation(obs, robot_id=self.robot_id, previous_frame_id=self.last_frame_id, now=now)
+        m1_owncam_contract.validate_observation(obs, robot_id=self.robot_id, previous_frame_id=self.last_frame_id, now=now)
         self.last_frame_id = int(obs['frame_id'])
         self.last_obs = obs
         report = self.pose.on_frame(now, rgb)
@@ -255,7 +255,7 @@ class M1OwnCamDelivery:
         return (float(near[:, 0].mean()), float(near[:, 1].mean())), len(near)
 
     def _estimate(self, report: PoseReport):
-        est = self.pose_estimate_cls(report.x_m, report.y_m, report.yaw_rad, m1_contract.require_m1_source(report.source))
+        est = self.pose_estimate_cls(report.x_m, report.y_m, report.yaw_rad, m1_owncam_contract.require_m1_source(report.source))
         self.pose_sources.add(est.source)
         return est
 

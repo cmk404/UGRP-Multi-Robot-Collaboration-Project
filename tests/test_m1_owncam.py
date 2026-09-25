@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-RUNTIME = (ROOT/'harness'/'m1_owncam_delivery.py', ROOT/'harness'/'m1_contract.py',
+RUNTIME = (ROOT/'harness'/'m1_owncam_delivery.py', ROOT/'harness'/'m1_owncam_contract.py',
            ROOT/'harness'/'owncam_pose_source.py')
 ALLOWED = {'__future__', 'math', 'hashlib', 'json', 'base64', 'collections.abc', 'dataclasses', 'numpy',
-           'harness', 'harness.m1_contract', 'harness.owncam_pose_source', 'harness.owncam_localizer',
+           'harness', 'harness.m1_owncam_contract', 'harness.owncam_pose_source', 'harness.owncam_localizer',
            'harness.wall_tags', 'harness.owncam_drive', 'harness.owncam_drive_v2', 'harness.zone_color_boxes',
            'harness.wrist_zone_skill'}
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'qpos', 'qvel', 'base_xyz', 'base_rpy', 'eval_only', 'gt_trajectory',
@@ -52,7 +52,7 @@ class BoundaryTests(unittest.TestCase):
 
     def test_controller_imports_with_mujoco_poisoned(self):
         code = ("import sys; sys.modules['mujoco'] = None\n"
-                "import harness.m1_owncam_delivery, harness.m1_contract, harness.owncam_pose_source\n"
+                "import harness.m1_owncam_delivery, harness.m1_owncam_contract, harness.owncam_pose_source\n"
                 "import harness.wrist_zone_skill_v4\n"
                 "bad = [m for m in sys.modules if m.startswith(('sim.multi_masterpi', 'sim.zone_scene', "
                 "'scripts.zone_teacher', 'sim.session'))]\n"
@@ -63,14 +63,14 @@ class BoundaryTests(unittest.TestCase):
 
 class ContractTests(unittest.TestCase):
     def test_sources(self):
-        from harness.m1_contract import M1ContractError, require_m1_source
+        from harness.m1_owncam_contract import M1ContractError, require_m1_source
         self.assertEqual(require_m1_source('owncam_pf_v2:abcd1234'), 'owncam_pf_v2:abcd1234')
         for bad in ('gt_stub_eval_only', 'gt', '', None, 'truth:owncam_pf', 'owncam'):
             with self.subTest(bad=bad), self.assertRaises(M1ContractError):
                 require_m1_source(bad)
 
     def test_observation_validation(self):
-        from harness.m1_contract import M1ContractError, validate_observation
+        from harness.m1_owncam_contract import M1ContractError, validate_observation
         validate_observation(obs(), robot_id='r1', previous_frame_id=4, now=10.1)
         cases = {'nav_cam': obs(camera='nav_cam'), 'top': obs(camera='cctv_top'), 'robot': obs(robot='r2'),
                  'old_frame': obs(frame_id=4), 'stale': obs(t=9.), 'hash': obs(sha='0'*64)}
@@ -79,7 +79,7 @@ class ContractTests(unittest.TestCase):
                 validate_observation(o, robot_id='r1', previous_frame_id=4, now=10.1)
 
     def _judge(self, **kw):
-        from harness.m1_contract import judge
+        from harness.m1_owncam_contract import judge
         base = dict(pose_sources=['owncam_pf_v2:abcd1234'], skill_reason='SKILL_OWN_RGB_PLACEMENT_IN_SLOT',
                     skill_claim_in_slot=True, gt_box_in_slot=True, wall_contacts=0, weld_used=False,
                     face_fallback_used=False, pickup_source='own_rgb_search', within_limit=True,
@@ -106,7 +106,7 @@ class ContractTests(unittest.TestCase):
         self.assertFalse(false['m1_success'] or false['diagnostic_success'])
 
     def test_exporter_guard(self):
-        from harness.m1_contract import M1ContractError, assert_exportable
+        from harness.m1_owncam_contract import M1ContractError, assert_exportable
         ok = self._judge()
         assert_exportable({**ok, 'input_contract': 'x'})
         with self.assertRaises(M1ContractError):
@@ -131,7 +131,7 @@ class PoseLimitTests(unittest.TestCase):
                          {'stale', 'std_xy', 'std_yaw', 'since_tag', 'since_look'})
 
     def test_source_label_is_owncam_and_stable(self):
-        from harness.m1_contract import require_m1_source
+        from harness.m1_owncam_contract import require_m1_source
         from harness.owncam_pose_source import calibration_label
         a = calibration_label({'b': 1, 'a': [1, 2]})
         self.assertEqual(a, calibration_label({'a': [1, 2], 'b': 1}))
