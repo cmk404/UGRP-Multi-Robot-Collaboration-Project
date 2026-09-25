@@ -1,5 +1,5 @@
 #!/bin/zsh
-# v8 pre-registered cohort: arm P 581-590, runner v8, diagnostic mode (gt_stub pose, NOT M1),
+# v8 pre-registered cohort: arm P 581-591, runner v8, diagnostic mode (gt_stub pose, NOT M1),
 # cargo_noslip_v1 (pending user decision), 2 lanes. Stop rule: any false OWN_RGB_PLACEMENT_IN_SLOT stops it.
 set -u
 WT=${V8_WT:-/Users/changmin/projects/ugrp-wt/zone-owncam-skill-v8-frozen}   # detached worktree at the freeze commit (no dev edits can dirty it)
@@ -29,6 +29,6 @@ sys.exit(0 if (e['skill_claim_in_slot'] and not e['place_in_slot_gt']) else 1)";
 
 echo "$(date -u +%FT%TZ) cohort v8 source=$SHA dirty=$(git status --porcelain | wc -l | tr -d ' ')" >> $LOG
 ( for s in 581 583 585 587 589; do run1 P $s; done ) &
-( for s in 582 584 586 588 590; do run1 P $s; done ) &
+( for s in 582 584 586 588 590 591; do run1 P $s; done ) &
 wait
 echo "$(date -u +%FT%TZ) cohort done" >> $LOG

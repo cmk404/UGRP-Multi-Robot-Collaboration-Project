@@ -56,6 +56,9 @@ SCENARIOS = {
     420: {'start': (-0.20, -0.85, 0.00), 'bay': 'W2', 'offset': (.05, .04), 'yaw_deg': 0., 'slot': 'B2'},
     421: {'start': (-0.30, -2.00, 0.10), 'bay': 'W1', 'offset': (-.06, .08), 'yaw_deg': -20., 'slot': 'A1'},
     422: {'start': (0.00, 0.40, -0.05), 'bay': 'W3', 'offset': (.08, -.05), 'yaw_deg': 2., 'slot': 'C2'},
+    # v7 cohort 570 layout (late guard stop -> re-plan -> fresh box skill in the lowered posture)
+    423: {'start': (2.55, -2.10, 0.15), 'bay': 'E1', 'offset': (.00, .06), 'yaw_deg': 0., 'slot': 'B1',
+          'parked': {'r2': (-.30, 0.)}},
     # test (pre-registered in experiments/2026-09-25-zone-owncam-skill/README.md before any v8 test run)
     581: {'start': (-0.25, -0.85, 0.00), 'bay': 'W2', 'offset': (.08, -.06), 'yaw_deg': 0., 'slot': 'B1'},
     582: {'start': (-0.20, -2.20, 0.05), 'bay': 'W1', 'offset': (-.05, .10), 'yaw_deg': 0., 'slot': 'A2'},
@@ -69,9 +72,12 @@ SCENARIOS = {
     # east regression checks
     589: {'start': (2.55, -2.30, 0.00), 'bay': 'E1', 'offset': (.06, .05), 'yaw_deg': 0., 'slot': 'B1'},
     590: {'start': (2.60, 0.30, 0.00), 'bay': 'E3', 'offset': (-.05, -.08), 'yaw_deg': -25., 'slot': 'C2'},
+    # re-plan posture check: a variant of the v7 570 layout (peer parked on the approach side)
+    591: {'start': (2.55, -2.05, 0.10), 'bay': 'E1', 'offset': (.03, .04), 'yaw_deg': 2., 'slot': 'C1',
+          'parked': {'r2': (-.32, .02)}},
 }
-DEV_SEEDS = (420, 421, 422)
-TEST_SEEDS = tuple(range(581, 591))
+DEV_SEEDS = (420, 421, 422, 423)
+TEST_SEEDS = tuple(range(581, 592))
 PARKING_IDS = {'r2': 'parking_P1', 'r3': 'parking_P2'}
 DEPENDENCIES = (
     'scripts/run_zone_owncam_skill_v8.py', 'scripts/run_zone_owncam_skill_v7.py', 'scripts/run_zone_owncam_skill_v6.py', 'scripts/run_zone_owncam_skill_v5.py', 'harness/m1_contract.py', 'harness/wrist_zone_skill.py',

@@ -16,7 +16,7 @@ sys.path.insert(0, str(HERE))
 import build_tensorboard_v5 as b5  # noqa: E402
 
 VIEW = b5.RAW / 'tensorboard-view-v8'
-V8_TEST_SEEDS = tuple(range(581, 591))
+V8_TEST_SEEDS = tuple(range(581, 592))
 V7_BASELINE = 'cohort-v7-57e2fd1'
 V7_TEST_SEEDS = tuple(range(561, 573))
 

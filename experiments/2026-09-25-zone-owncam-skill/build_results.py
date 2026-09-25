@@ -42,7 +42,7 @@ V6_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_st
 V7_TEST_SEEDS = tuple(range(561, 573))
 V7_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay, '
                 'top-edge face yaw, static peer keep-outs, peers parked next to the box, face re-plan after guard'}
-V8_TEST_SEEDS = tuple(range(581, 591))
+V8_TEST_SEEDS = tuple(range(581, 592))
 V8_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay incl. west pickup '
                 'floor + door crossing, frame-relative approach cyan gate'}
 MISSING = 'missing/infrastructure_failure'

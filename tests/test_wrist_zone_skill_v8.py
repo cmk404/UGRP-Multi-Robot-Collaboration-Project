@@ -93,3 +93,27 @@ def test_v8_keeps_the_v6_v7_api():
     for name in ('approach_point', 'reanchor_after_probe', 'decide', 'confirm_placement', 'summary', 'planner_discs'):
         assert callable(getattr(skill, name))
     assert skill.approach_point()['goal_xy_m'] == [round(.60 - .15 - .25, 4), -.85]
+
+
+def _obs(pulses):
+    return {'actuator_state': {'servo_pulses': {str(k): v for k, v in pulses.items()}}}
+
+
+def test_replan_raises_the_wrist_camera_before_the_fresh_box_skill(monkeypatch):
+    """v7 cohort 570: the fresh box skill started in the lowered grasp posture and never saw the box."""
+    order = v5.CoarseOrderSheet('cyan', 'E1', (3.55, -2.29), (.15, .25), 'B1', (4.6, -2.1))
+    skill = v8.WristZoneDeliveryV8(order, mode='diagnostic', robot_id='r1', static_keepouts=[],
+                                   static_bounds_m=(-1.05, 5.4, -3.15, 1.45))
+    est = v1.PoseEstimate(3.55, -2.73, math.pi / 2, 'test')
+    skill.replan = {'choice': {'approach_xy_m': [3.55, -2.73], 'heading_rad': math.pi / 2}, 'origin': (3.55, -2.73),
+                    'steps': 99, 'number': 1}
+    lowered = {1: 2000, 3: 500, 4: 2384, 5: 1320, 6: 1461}
+    skill.phase = 'replan_nav'
+    old_box = skill.box
+    action = skill._replan_nav(_obs(lowered), est)
+    assert action == {'kind': 'pose', 'pulses': dict(n7.SEARCH)} and skill.phase == 'replan_nav' and skill.box is old_box
+    action = skill._replan_nav(_obs(n7.SEARCH), est)
+    assert action['kind'] == 'wait' and skill.phase == 'grasp' and skill.box is not old_box
+    skill.phase = 'keepout_backoff'
+    assert skill._keepout_backoff(_obs(lowered), est) == {'kind': 'pose', 'pulses': dict(n7.SEARCH)}
+    assert skill.phase == 'replan_nav' and skill.summary()['replan_search_pose_commands'] == 2

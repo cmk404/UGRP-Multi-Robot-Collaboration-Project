@@ -27,6 +27,15 @@ below the gate are neutralised to grey before v6's edge estimator runs (grey,
 not black, so v6's vignette clip test is not triggered). No new fixed colour
 number is introduced for a particular floor; only the margin (35) and the
 supported range of ``observe_ground_box`` (65-150).
+
+Second fix (v7 cohort seed 570, evaluation-only diagnosis): after a keep-out
+guard stop late in the grasp the arm is still in the lowered grasp posture
+(own commands 3:500 / 4:2384). v7 starts the fresh box skill there, so the
+wrist camera looks at the floor under the gripper and never sees the box 0.44 m
+ahead (``GRASP_TARGET_NOT_VISIBLE``). v8 re-commands N7's SEARCH posture when the
+keep-out backoff ends (before the re-plan drive) and, if its own last command is
+still not SEARCH on arrival, once more before the fresh box skill starts. The
+check reads only the robot's own published servo commands.
 """
 from __future__ import annotations
 
@@ -37,6 +46,7 @@ import cv2
 import numpy as np
 
 from harness import visual_box_skill as n7
+from harness import wrist_zone_skill_v5 as v5
 from harness import wrist_zone_skill as v1
 from harness import wrist_zone_skill_v6 as v6
 from harness import wrist_zone_skill_v7 as v7
@@ -136,11 +146,47 @@ class WristOnlyBoxSkillV8(v6.WristOnlyBoxSkillV6):
             n7.observe_ground_box = original
 
 
+def _own_pose_is_search(obs) -> bool:
+    state = obs.get('actuator_state') if isinstance(obs, Mapping) else None
+    pulses = state.get('servo_pulses') if isinstance(state, Mapping) else None
+    if not isinstance(pulses, Mapping):
+        return False
+    own = {int(k): int(v) for k, v in pulses.items()}
+    return all(own.get(k) == v for k, v in n7.SEARCH.items())
+
+
 class WristZoneDeliveryV8(v7.WristZoneDeliveryV7):
     """v7 delivery with the floor-relative approach gate (same public API as v6/v7)."""
+
+    search_pose_commands = 0
+
+    def _search_pose(self, est, where):
+        self.search_pose_commands += 1
+        self._event('replan_search_pose', est, where=where)
+        return n7._pose(n7.SEARCH)
+
+    def _keepout_backoff(self, obs, est):
+        action = super()._keepout_backoff(obs, est)
+        if self.phase == 'replan_nav' and not _own_pose_is_search(obs):
+            return self._search_pose(est, 'backoff_done')    # raise the wrist camera before the re-plan drive
+        return action
+
+    def _replan_nav(self, obs, est):
+        # v7's _replan_nav with one change: on arrival, SEARCH posture first if the own command is not SEARCH.
+        choice = self.replan['choice']
+        action = self._navigate(est, tuple(choice['approach_xy_m']), float(choice['heading_rad']), carrying=False)
+        if action is not None:
+            return action
+        if not _own_pose_is_search(obs):
+            return self._search_pose(est, 'approach_reached')
+        self._event('replan_approach_reached', est, replan=self.replan['number'], choice=choice)
+        self.box = self._new_box()
+        self.phase = 'grasp'
+        return v5._wait(.1)
 
     def _new_box(self):
         return WristOnlyBoxSkillV8(robot_id=self.robot_id, cargo_id='small_box_01', **v1.BOX_SKILL_OPTIONS)
 
     def summary(self):
-        return {**super().summary(), 'profile': PROFILE, 'last_floor_gate': self.box.last_floor_gate}
+        return {**super().summary(), 'profile': PROFILE, 'last_floor_gate': self.box.last_floor_gate,
+                'replan_search_pose_commands': self.search_pose_commands}
