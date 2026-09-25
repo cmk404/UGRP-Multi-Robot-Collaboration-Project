@@ -20,7 +20,7 @@ from scripts.dispatch_replay import (KEY_ESCAPE, KEY_LEFT, KEY_Q, KEY_R, KEY_RIG
 
 
 def arena_view(bounds):
-    # 7.5 m frames the 2.3 m deep zone_open floor; deeper floors step back.
+    # 7.5 m frames a 2.3 m deep floor (retired zone_open, kept for replays); deeper floors step back.
     depth = bounds[3]-bounds[2]
     return {'lookat': [(bounds[0]+bounds[1])/2, (bounds[2]+bounds[3])/2, .1],
             'distance': 7.5 if depth <= 2.3 else round(7.5+.9*(depth-2.3), 2), 'azimuth': 90, 'elevation': -60}

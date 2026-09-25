@@ -25,7 +25,8 @@ from harness.three_robot_plan import ROBOTS, TeamAgreement  # noqa: E402
 from harness import zone_coordination as zc  # noqa: E402
 from harness import zone_solo as zs  # noqa: E402
 from harness.zone_perception import detect_all, label_pickup, observe  # noqa: E402
-from sim.zone_arena import actor_task, episode, goal_counts, top_views  # noqa: E402
+from sim.zone_arena import (DEFAULT_VARIANT, RETIRED_VARIANTS, VARIANTS, actor_task, episode,  # noqa: E402
+                            goal_counts, top_views)
 
 SCHEMA = 'ugrp.zone_dispatch_result.v1'
 # Dynamic mode: re-ask a stalled team (no job running, claims unresolved) at
@@ -495,7 +496,10 @@ def parser():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--goal', default=json.dumps({'A': {'red': 2}, 'B': {'cyan': 1}, 'C': {'green': 1, 'red': 1}}))
     p.add_argument('--extra-boxes', default='{}', help='spare boxes per colour, JSON')
-    p.add_argument('--variant', default='zone_open')
+    p.add_argument('--variant', default=DEFAULT_VARIANT, choices=VARIANTS,
+                   help='zone map; retired: ' + ', '.join(RETIRED_VARIANTS) + ' (needs --allow-retired-variant)')
+    p.add_argument('--allow-retired-variant', action='store_true',
+                   help='reproduction only: run a retired map (zone_open, Z1-Z3 records)')
     p.add_argument('--seed', type=int, default=11)
     p.add_argument('--coordination', choices=('plan_first', 'dynamic', 'independent'), default='dynamic',
                    help='independent = no communication: robots never see peer messages, claims or receipts')
@@ -517,6 +521,9 @@ def main(argv=None):
     args = parser().parse_args(argv)
     if args.fixture_plan and (args.mode != 'fixture' or args.coordination != 'plan_first'):
         raise SystemExit('--fixture-plan needs --mode fixture --coordination plan_first')
+    if args.variant in RETIRED_VARIANTS and not args.allow_retired_variant:
+        raise SystemExit(f'{args.variant} is retired (2026-09-25); use {DEFAULT_VARIANT} or another active map. '
+                         'Reproducing a Z1-Z3 record needs --allow-retired-variant.')
     result = run(args)
     return 0 if result.get('error') is None else 1
 

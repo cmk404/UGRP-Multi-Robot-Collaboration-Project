@@ -20,7 +20,8 @@ def _tops():
 
 
 def test_arena_keeps_the_approved_top_and_adds_one_identical_east_cctv():
-    static = za.authored_map()
+    # Retired zone_open geometry (kept byte-identical for Z1-Z3 reproduction).
+    static = za.authored_map('zone_open')
     west, east = static['top_cameras']
     from sim.research_dispatch_arena import FIXED_TOP
     assert west == FIXED_TOP and east['name'] == 'cctv_top_east'
@@ -36,11 +37,11 @@ def test_wide_arena_adds_identical_tops_that_cover_the_whole_floor():
     wide = za.authored_map('zone_wide')
     assert wide == json.loads((Path(za.MAP_DIR)/'zone_wide.json').read_text())
     cameras = wide['top_cameras']
-    assert cameras[:2] == za.authored_map()['top_cameras'] and cameras[0] == FIXED_TOP
+    assert cameras[:2] == za.authored_map('zone_open')['top_cameras'] and cameras[0] == FIXED_TOP
     same = lambda c: {k: v for k, v in c.items() if k not in ('name', 'position_m')}
     assert all(same(c) == same(FIXED_TOP) and c['position_m'][2] == FIXED_TOP['position_m'][2] for c in cameras)
     assert [v[0] for v in za.top_views(wide)] == ['cctv_top', 'cctv_top_north', 'cctv_top_east', 'cctv_top_north_east']
-    assert tuple(zc.DEFAULT_VIEWS) == za.top_views(za.authored_map())
+    assert tuple(zc.DEFAULT_VIEWS) == za.top_views(za.authored_map()) == za.top_views(wide)
     # Every floor point inside the walls is seen by at least one TOP (box-top height).
     half_y = (FIXED_TOP['position_m'][2]-.032)*math.tan(math.radians(FIXED_TOP['fov_y_deg'])/2)
     half_x = half_y*960/720
@@ -125,7 +126,8 @@ def test_zone_scene_reuses_the_standard_scene_path_without_touching_bundle_sourc
     from harness.rgb_execution_bundle import source_closure
     from sim.session_scenes import Scene
     from sim.zone_scene import ZoneScene, catalog
-    assert [r['id'] for r in catalog()] == ['zones/zone_open', 'zones/zone_wide'] and issubclass(ZoneScene, Scene)
+    assert [r['id'] for r in catalog()][0] == 'zones/zone_wide' and 'zones/zone_open' not in [r['id'] for r in catalog()]
+    assert issubclass(ZoneScene, Scene)
     scene = ZoneScene({'layout': 'zones/zone_open', 'seed': 11, 'params': {}, 'contact_profile': None, 'map_file': None,
                        'cargo_ids': None, 'robots': {}, 'objects': [], 'builder': None}, '.')
     assert scene.config['goal'] == za.goal_counts(za.DEFAULT_GOAL) and len(scene.inventory) == 5
@@ -152,7 +154,7 @@ def test_rgb_detection_matches_the_setup_within_two_centimetres():
 
 def test_pixel_to_floor_inverts_the_authored_projection():
     from harness.dispatch_skill_binding import pixel_from_map
-    static = {'top_camera': za.authored_map()['top_cameras'][0]}
+    static = {'top_camera': za.authored_map('zone_open')['top_cameras'][0]}
     u, v = pixel_from_map([.3, -1.7], static, (720, 960), height=.032)
     x, y = pixel_to_floor(u, v, static['top_camera'], (720, 960))
     assert abs(x-.3) < 1e-6 and abs(y+1.7) < 1e-6
@@ -212,7 +214,7 @@ def test_need_and_goal_use_the_rgb_view_and_the_referee_uses_poses_only():
     assert not zc.goal_met(goal, view)
     assert zc.goal_met(goal, {**view, 'zone_counts_seen': {'A': {'red': 2}, 'B': {'cyan': 1},
                                                            'C': {'green': 1, 'red': 1}}})
-    static = za.authored_map()
+    static = za.authored_map('zone_open')
     at = lambda z, dy=0: [*[static['regions']['zone_'+z]['center_m'][0], static['regions']['zone_'+z]['center_m'][1]+dy], .016]
     boxes = {'a': {'kind': 'red', 'xyz': at('A')}, 'b': {'kind': 'red', 'xyz': at('A', .2)},
              'c': {'kind': 'cyan', 'xyz': at('B')}, 'd': {'kind': 'green', 'xyz': at('C')},
@@ -331,7 +333,7 @@ def test_plan_prompt_requires_copying_the_accepted_plan_and_failed_jobs_free_the
     # Z1-G8-dyn: slots of stopped jobs were never returned ("zone C has no free slot").
     from scripts.run_zone_dispatch import Slots
     assert 'accept=true with\nplan=null is invalid' in zc._PLAN
-    slots = Slots(za.authored_map())
+    slots = Slots(za.authored_map('zone_open'))
     taken = [slots.take('C') for _ in range(3)]
     with pytest.raises(RuntimeError):
         slots.take('C')
@@ -358,7 +360,7 @@ def _teacher_team(robots, boxes, jobs):
     world = _FakeWorld(robots, {b: xy for b, xy in boxes.items()})
     port = SimpleNamespace(hold=lambda now: None, apply=lambda cmd, now: None)
     log = []
-    team = ZoneTeacherExecutor(world, {r: port for r in robots}, za.authored_map(),
+    team = ZoneTeacherExecutor(world, {r: port for r in robots}, za.authored_map('zone_open'),
                                {b: {'body_name': b} for b in boxes}, lambda *a, **k: log.append((a, k)))
     for rid, box in jobs.items():
         team.robots[rid].assign({'job_id': f'{rid}-1', 'box_body': box, 'slot_xy': (3., -2.)}, 0.)
@@ -383,11 +385,11 @@ def test_blocked_teacher_robots_break_a_mutual_block_by_priority():
     req = team.robots['r3'].yield_req
     assert req and req['by'] is team.robots['r1'] and team.robots['r1'].yield_req is None
     assert team.robots['r2'].yield_req is None
-    spot = retreat_point(robots['r3'], req['avoid'], za.authored_map()['bounds_m'],
+    spot = retreat_point(robots['r3'], req['avoid'], za.authored_map('zone_open')['bounds_m'],
                          team.discs_for(team.robots['r3']), clear=PEER_CLEARANCE_M+ROBOT_RADIUS_M+.05)
     assert spot is not None
     world.robots['r3'] = spot
-    assert plan_path(robots['r1'], team.robots['r1'].path_goal, za.authored_map()['bounds_m'],
+    assert plan_path(robots['r1'], team.robots['r1'].path_goal, za.authored_map('zone_open')['bounds_m'],
                      team.discs_for(team.robots['r1'])) is not None
 
 
@@ -399,7 +401,7 @@ def test_robots_that_met_head_on_never_plan_closer_to_each_other():
     world, team, _ = _teacher_team(robots, BOXES_Z2G8, {'r1': 'green-1', 'r2': 'red-1'})
     for rid, box, peer in (('r1', 'green-1', 'r2'), ('r2', 'red-1', 'r1')):
         goal = (BOXES_Z2G8[box][0]-GRASP_RADIUS_M-.10, BOXES_Z2G8[box][1])
-        path = plan_path(robots[rid], goal, za.authored_map()['bounds_m'], team.discs_for(team.robots[rid]))
+        path = plan_path(robots[rid], goal, za.authored_map('zone_open')['bounds_m'], team.discs_for(team.robots[rid]))
         now = math.dist(robots[rid], robots[peer])
         assert path and min(math.dist(q, robots[peer]) for q in path[1:]) >= now - 1e-6
 
@@ -467,3 +469,22 @@ def test_planner_backs_out_of_an_overlapped_box_margin_before_ploughing():
     path = plan_path((1.19, -.05), (1.60, -.60), bounds, [box])
     assert path and math.hypot(path[0][0]-1.27, path[0][1]+.05) >= BOX_CLEARANCE_M + .17
     assert all(math.hypot(x-1.27, y+.05) >= BOX_CLEARANCE_M + .17 - 1e-9 for x, y in path)
+
+
+def test_zone_open_is_retired_but_reproducible_on_request():
+    # 2026-09-25 user request: the small zone_open map is retired. New runs
+    # default to zone_wide and refuse zone_open; the map stays for Z1-Z3.
+    from scripts.run_zone_dispatch import main, parser
+    from sim.zone_scene import ZoneScene
+    assert za.DEFAULT_VARIANT == 'zone_wide' and za.RETIRED_VARIANTS == ('zone_open',)
+    assert parser().parse_args(['--output', 'x']).variant == 'zone_wide'
+    assert za.authored_map() == za.authored_map('zone_wide') and za.episode(goal=GOAL)['variant'] == 'zone_wide'
+    with pytest.raises(SystemExit, match='retired'):
+        main(['--output', 'unused', '--variant', 'zone_open', '--mode', 'fixture'])
+    with pytest.raises(SystemExit):
+        parser().parse_args(['--output', 'x', '--variant', 'zone_nowhere'])
+    args = parser().parse_args(['--output', 'x', '--variant', 'zone_open', '--allow-retired-variant'])
+    assert args.variant == 'zone_open' and args.allow_retired_variant
+    assert 'zones/zone_open' not in [r['id'] for r in __import__('sim.zone_scene', fromlist=['catalog']).catalog()]
+    assert ZoneScene.from_zone_config(za.episode('zone_open', 11, goal=GOAL)).config['variant'] == 'zone_open'
+    assert za.authored_map('zone_open') == json.loads((Path(za.MAP_DIR)/'zone_open.json').read_text())
