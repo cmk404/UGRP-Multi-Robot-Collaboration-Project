@@ -190,6 +190,342 @@
      "load": "{ 3.00 3.01 2.65 }"
     }
    ]
+  },
+  {
+   "run": "Y1-grasp",
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147180,
+    "completion_tokens": 3158,
+    "total_tokens": 150338
+   },
+   "wall_s": 426.20829766697716,
+   "control_end_sim_s": 218.60999999655854,
+   "recoveries": [
+    "regrasp",
+    "retry",
+    "retry",
+    "continue_others"
+   ],
+   "cargo": {
+    "beam": {
+     "inside_slot_at_end": false,
+     "released_supported_stable": false,
+     "max_lift_m": 0.07768081822808146,
+     "displacement_m": 0.0006026712425882999
+    },
+    "box": {
+     "inside_slot_at_end": true,
+     "released_supported_stable": true,
+     "max_lift_m": 0.06880076025123194,
+     "displacement_m": 2.0069548079531745
+    }
+   },
+   "regrasp_binding_applied": 217,
+   "regrasp_binding_frames": 220,
+   "coarse_anchor_applied": 146,
+   "coarse_anchor_decisions": 146,
+   "approaches": [
+    {
+     "ok": true,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw",
+      "forward",
+      "yaw",
+      "lateral",
+      "forward"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 11.325,
+       "orthogonal_residual": 17.481,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.9,
+       357.6
+      ],
+      "r3": [
+       217.2,
+       167.8
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.749,
+       "orthogonal_residual": 12.112,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.0,
+       357.4
+      ],
+      "r3": [
+       216.8,
+       167.9
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.473,
+       "orthogonal_residual": 12.512,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       226.7,
+       358.4
+      ],
+      "r3": [
+       223.6,
+       168.1
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 7.408,
+       "orthogonal_residual": 15.492,
+       "support_count": 164
+      }
+     ]
+    }
+   ],
+   "sha256": {
+    "result.json": "ac38321b8f988dc09d00b80ee4cac29923435435200bde9eb9b1b9e384cc08de",
+    "pair-decisions.json": "98fbebfe0fca0c0597195c89e2941926721771833d052113bc7c08bda15ea997",
+    "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f"
+   },
+   "loads": [
+    {
+     "run": "Y1-grasp",
+     "start_utc": "2026-09-25T06:42:51Z",
+     "load": "{ 3.23 3.18 2.80 }"
+    },
+    {
+     "run": "Y1-grasp",
+     "end_utc": "2026-09-25T06:49:58Z",
+     "exit": 1,
+     "load": "{ 2.80 3.00 2.84 }"
+    }
+   ]
+  },
+  {
+   "run": "Y2-grasp",
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147416,
+    "completion_tokens": 3188,
+    "total_tokens": 151225
+   },
+   "wall_s": 446.5576144589868,
+   "control_end_sim_s": 218.60999999655854,
+   "recoveries": [
+    "regrasp",
+    "retry",
+    "retry",
+    "continue_others"
+   ],
+   "cargo": {
+    "beam": {
+     "inside_slot_at_end": false,
+     "released_supported_stable": false,
+     "max_lift_m": 0.07768081822808146,
+     "displacement_m": 0.0006026712425882999
+    },
+    "box": {
+     "inside_slot_at_end": true,
+     "released_supported_stable": true,
+     "max_lift_m": 0.06880076025123194,
+     "displacement_m": 2.0069548079531745
+    }
+   },
+   "regrasp_binding_applied": 217,
+   "regrasp_binding_frames": 220,
+   "coarse_anchor_applied": 146,
+   "coarse_anchor_decisions": 146,
+   "approaches": [
+    {
+     "ok": true,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw",
+      "forward",
+      "yaw",
+      "lateral",
+      "forward"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 11.325,
+       "orthogonal_residual": 17.481,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.9,
+       357.6
+      ],
+      "r3": [
+       217.2,
+       167.8
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.749,
+       "orthogonal_residual": 12.112,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.0,
+       357.4
+      ],
+      "r3": [
+       216.8,
+       167.9
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.473,
+       "orthogonal_residual": 12.512,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       226.7,
+       358.4
+      ],
+      "r3": [
+       223.6,
+       168.1
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 7.408,
+       "orthogonal_residual": 15.492,
+       "support_count": 164
+      }
+     ]
+    }
+   ],
+   "sha256": {
+    "result.json": "9d482f078a35e6c00cc91dcbd1bf5022a13b2b8ce6dc0f946b79e0035c64cb3b",
+    "pair-decisions.json": "816cb517db5f09078233fa04e567dee5dc4ef09d627c6ac75bfcfe18a8a042eb",
+    "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f"
+   },
+   "loads": [
+    {
+     "run": "Y2-grasp",
+     "start_utc": "2026-09-25T06:49:58Z",
+     "load": "{ 2.80 3.00 2.84 }"
+    },
+    {
+     "run": "Y2-grasp",
+     "end_utc": "2026-09-25T06:57:25Z",
+     "exit": 1,
+     "load": "{ 4.27 3.33 2.98 }"
+    }
+   ]
   }
  ]
 }
