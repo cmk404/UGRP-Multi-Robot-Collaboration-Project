@@ -221,6 +221,26 @@ def test_need_and_goal_use_the_rgb_view_and_the_referee_uses_poses_only():
     assert ref['per_zone_exact'] == {'A': True, 'B': True, 'C': False} and not ref['goal_met']
 
 
+
+def test_a_box_released_by_an_active_job_is_not_counted_twice():
+    # ZW1-G5-dyn claim-3: r1 had put red-2 into zone A and was backing off
+    # (job still active); TOP saw it and the host also counted r1's claim.
+    goal = za.goal_counts(GOAL)
+    view = {**VIEW, 'zone_counts_seen': {'A': {'red': 1}, 'B': {'cyan': 1}, 'C': {'green': 1}}}
+    active = {'r1': {'box': 'red-2', 'zone': 'A', 'kind': 'red'}, 'r2': {'box': 'red-3', 'zone': 'C', 'kind': 'red'}}
+    finished = [{'zone': 'B', 'kind': 'cyan'}, {'zone': 'C', 'kind': 'green'}]
+    assert zc.remaining_need(goal, view, active) == {}  # the recorded double count
+    assert zc.remaining_need(goal, view, active, finished) == {'A': {'red': 1}}
+    out = zc.check_claims({'r3': {'box': 'red-1', 'zone': 'A'}}, goal=goal, labels=LABELS, view=view,
+                          active=active, finished=finished)
+    assert out['accepted'] == {'r3': {'box': 'red-1', 'zone': 'A', 'kind': 'red'}}
+    # Before the release is visible the active claim still counts.
+    before = {**view, 'zone_counts_seen': {'A': {}, 'B': {'cyan': 1}, 'C': {'green': 1}}}
+    assert zc.remaining_need(goal, before, active, finished) == {'A': {'red': 1}}
+    # A finished delivery that RGB no longer sees is not re-credited to active jobs.
+    assert zc.remaining_need(goal, before, active, finished + [{'zone': 'A', 'kind': 'red'}]) == {'A': {'red': 1}}
+
+
 def test_claim_reply_validation():
     ok = {'request_id': 'q', 'claim': {'box': 'red-1', 'zone': 'A'}, 'reason': 'r', 'message': 'm'}
     assert zc.validate_claim_reply(json.dumps(ok), 'q')['claim']['box'] == 'red-1'

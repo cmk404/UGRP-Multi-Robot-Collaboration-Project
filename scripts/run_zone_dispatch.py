@@ -251,8 +251,9 @@ def run(args):
                 waiting = [r for r in idle if r not in stats['done_robots']]
                 if waiting:
                     turn += 1
+                    delivered = [{'zone': f['zone'], 'kind': labels[f['box']]['kind']} for f in finished]
                     decided = dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs,
-                                            board, stats, turn, args)
+                                            board, stats, turn, args, delivered)
                     for rid, job in decided['accepted'].items():
                         assign(rid, job)
                     # Robots with no job (null claim, or refused after talking) wait
@@ -310,7 +311,7 @@ def run(args):
     return result
 
 
-def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board, stats, turn, args):
+def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board, stats, turn, args, delivered=None):
     """Idle robots claim one job each; collide -> the colliding robots talk (<=2 rounds)."""
     accepted, idle = {}, []
     askers, extra = list(waiting), {}
@@ -325,12 +326,12 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
             return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid],
                                           views=top_views(zone.config['static_map']))
         def fixture(rid, request_id, view=view, pending=pending, askers=tuple(askers)):
-            return _fixture_claim(rid, request_id, goal, labels, view, pending, askers)
+            return _fixture_claim(rid, request_id, goal, labels, view, pending, askers, delivered)
         replies = team.ask(askers, build, zc.validate_claim_reply, fixture,
                            phase=f'claim-{turn}-{attempt}', turn=turn, sim_time=zone.time())
         stats['claim_rounds'] += 1
         checked = zc.check_claims({r: (v['claim'] if v else None) for r, v in replies.items()},
-                                  goal=goal, labels=labels, view=view, active=pending)
+                                  goal=goal, labels=labels, view=view, active=pending, finished=delivered)
         accepted.update(checked['accepted'])
         idle += checked['idle']
         stats['collisions'] += len(checked['collisions'])
@@ -372,10 +373,10 @@ def _fixture_plan_reply(rid, request_id, context, goal, labels, plan_file=None):
             'plan': plan, 'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
 
 
-def _fixture_claim(rid, request_id, goal, labels, view, pending, askers=ROBOTS):
+def _fixture_claim(rid, request_id, goal, labels, view, pending, askers=ROBOTS, delivered=None):
     """Scripted protocol fixture (not visual reasoning): the i-th asking robot
     takes the i-th open need unit, so idle robots claim different boxes."""
-    need = zc.remaining_need(goal, view, pending)
+    need = zc.remaining_need(goal, view, pending, delivered)
     taken = {j['box'] for j in pending.values()}
     units = [(zone, kind) for zone, kinds in sorted(need.items())
              for kind in sorted(kinds) for _ in range(kinds[kind])]

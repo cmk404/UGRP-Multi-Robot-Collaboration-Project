@@ -156,19 +156,30 @@ def validate_claim_reply(raw, request_id):
     return value
 
 
-def remaining_need(goal, view, active):
-    """Goal minus zone counts seen in RGB minus active claims (never below zero)."""
+def remaining_need(goal, view, active, finished=None):
+    """Goal minus zone counts seen in RGB minus active claims (never below zero).
+
+    finished: {'zone', 'kind'} of jobs with a finished executor receipt (None
+    keeps the plain subtraction, for callers without receipts). A box
+    that is already visible in its zone while its job is still active (the
+    robot is releasing or backing off) must not be counted twice: boxes seen
+    beyond the finished deliveries are attributed to active jobs first
+    (ZW1-G5-dyn rejected a valid claim this way).
+    """
     need = {}
     for zone, kinds in goal.items():
         for kind, count in kinds.items():
             seen = view['zone_counts_seen'].get(zone, {}).get(kind, 0)
             claimed = sum(1 for job in active.values() if job['zone'] == zone and job['kind'] == kind)
+            if finished is not None:
+                delivered = sum(1 for job in finished if job['zone'] == zone and job['kind'] == kind)
+                claimed -= min(claimed, max(0, seen - delivered))
             if count - seen - claimed > 0:
                 need.setdefault(zone, {})[kind] = count - seen - claimed
     return need
 
 
-def check_claims(claims, *, goal, labels, view, active):
+def check_claims(claims, *, goal, labels, view, active, finished=None):
     """Accept independent claims that fit; report collisions and invalid claims.
 
     Host checks only; it never picks a box or zone for anyone. Returns
@@ -197,7 +208,7 @@ def check_claims(claims, *, goal, labels, view, active):
             invalid[rid] = f'{box} is already claimed by a peer'
             continue
         kind = labels[box]['kind']
-        need = remaining_need(goal, view, pending).get(claim['zone'], {}).get(kind, 0)
+        need = remaining_need(goal, view, pending, finished).get(claim['zone'], {}).get(kind, 0)
         if need <= 0:
             clash = sorted(r for r, j in pending.items() if j['zone'] == claim['zone'] and j['kind'] == kind
                            and r in claims)
