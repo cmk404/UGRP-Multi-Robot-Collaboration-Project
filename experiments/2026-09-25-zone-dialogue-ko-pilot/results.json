@@ -25,19 +25,20 @@
     "source_record": "ZC1 sha 759d84d 2026-09-25T02:06:08Z\nZC2 sha 7ccd6c3 2026-09-25T02:25:35Z"
   },
   "calls": {
-    "http_attempts": 88,
+    "http_attempts": 124,
     "by_kind": {
-      "single": 88
+      "single": 88,
+      "dialogue": 36
     },
     "retried_call_ids": [],
     "transport_errors": 0,
     "budget": 150,
     "tokens_total": {
-      "prompt_tokens": 589417,
-      "completion_tokens": 16148,
-      "total_tokens": 631448
+      "prompt_tokens": 837920,
+      "completion_tokens": 21201,
+      "total_tokens": 886236
     },
-    "calls_jsonl_sha256": "8177ed032f308c99660b8008d5cb3420b04c955285317b074ca17ec355c5cf7a"
+    "calls_jsonl_sha256": "c7c5052c78cf293d3938fd78f7d14279afa64e652ee964caabe7a2dd7d257e86"
   },
   "replay_control": {
     "wire_identical": 20,
@@ -448,24 +449,32 @@
       "reason_hangul_ratio_mean": 0.0,
       "acts": [
         [
-          "other",
-          9
+          "propose",
+          10
         ],
         [
           "claim",
           6
         ],
         [
-          "report",
-          3
+          "standby",
+          4
         ],
         [
-          "standby",
+          "agree",
+          4
+        ],
+        [
+          "report",
           3
         ],
         [
           "request",
           2
+        ],
+        [
+          "other",
+          1
         ],
         [
           "yield",
@@ -588,12 +597,8 @@
       "reason_hangul_ratio_mean": 0.04,
       "acts": [
         [
-          "other",
-          6
-        ],
-        [
-          "agree",
-          6
+          "claim",
+          9
         ],
         [
           "standby",
@@ -604,12 +609,16 @@
           5
         ],
         [
+          "agree",
+          4
+        ],
+        [
           "report",
           3
         ],
         [
-          "claim",
-          2
+          "propose",
+          3
         ],
         [
           "yield",
@@ -762,15 +771,11 @@
       "reason_hangul_ratio_mean": 0.8766,
       "acts": [
         [
-          "agree",
-          6
+          "claim",
+          8
         ],
         [
           "report",
-          5
-        ],
-        [
-          "claim",
           5
         ],
         [
@@ -778,16 +783,24 @@
           4
         ],
         [
-          "other",
-          3
+          "request",
+          4
         ],
         [
-          "request",
+          "agree",
+          4
+        ],
+        [
+          "propose",
           3
         ],
         [
           "yield",
-          2
+          1
+        ],
+        [
+          "other",
+          1
         ]
       ],
       "by_mode": {
@@ -1157,7 +1170,7 @@
       },
       "message": "r3: cyan-1 상자를 B 구역으로 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -1283,7 +1296,7 @@
       },
       "message": "r3: 집하 구역 남서쪽에 위치한 cyan-1 상자를 구역 B로 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -1482,7 +1495,7 @@
       },
       "message": "cyan-2를 Zone B로 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 0.6923,
@@ -1545,6 +1558,7 @@
       },
       "message": "red-1 배달 완료. Zone B에 필요한 cyan 상자를 위해 cyan-2를 배달하겠습니다.",
       "acts": [
+        "claim",
         "report"
       ],
       "message_lang": {
@@ -2073,7 +2087,7 @@
       },
       "message": "r3가 green-1을 C로 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -2330,7 +2344,7 @@
       },
       "message": "r1이 A 구역으로 red-3을 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -2537,7 +2551,7 @@
       },
       "message": "r3와의 충돌에서 규칙에 따라 r2가 cyan-1을 zone B로 운반하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 0.84,
@@ -2604,7 +2618,7 @@
       },
       "message": "cyan-1 충돌에 대해 robot_id가 더 낮은 r2가 cyan-1을 구역 B로 운반하겠습니다. r3는 다른 상자를 선택해 주세요.",
       "acts": [
-        "yield",
+        "claim",
         "request"
       ],
       "message_lang": {
@@ -3690,7 +3704,7 @@
       },
       "message": "zone C에 green-1을 전달하겠습니다.",
       "acts": [
-        "other"
+        "claim"
       ],
       "message_lang": {
         "hangul_ratio": 0.6923,
@@ -3861,7 +3875,8 @@
       "plan_valid": true,
       "message": "Plan looks great and balanced, accepting proposal.",
       "acts": [
-        "other"
+        "propose",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4078,7 +4093,8 @@
       "plan_valid": true,
       "message": "Accepted proposal. Ready to execute.",
       "acts": [
-        "other"
+        "propose",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4140,7 +4156,7 @@
       "plan_valid": true,
       "message": "Proposing balanced plan: r1 takes C (green, yellow), r2 takes A (2 red), r3 takes B (2 cyan).",
       "acts": [
-        "other"
+        "propose"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4200,8 +4216,8 @@
       "plan_valid": true,
       "message": "각 로봇당 2개씩 운반하는 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
       "acts": [
-        "request",
-        "agree"
+        "propose",
+        "request"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -4253,8 +4269,8 @@
       "plan_valid": true,
       "message": "r1이 전체 계획을 제안합니다. 목표에 맞춰 2개씩 배정했으니 확인 후 수락해 주세요.",
       "acts": [
-        "request",
-        "agree"
+        "propose",
+        "request"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -4346,7 +4362,7 @@
       "plan_valid": true,
       "message": "Proposing balanced plan: r1 takes C (green-1, yellow-1), r2 takes A (red-1, red-2), r3 takes B (cyan-1, cyan-2).",
       "acts": [
-        "other"
+        "propose"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4407,6 +4423,7 @@
       ],
       "message": "r3, please submit the proposal: r1: green-1, yellow-1 -> C; r2: red-1, red-2 -> A; r3: cyan-1, cyan-2 -> B.",
       "acts": [
+        "propose",
         "request"
       ],
       "message_lang": {
@@ -4510,7 +4527,8 @@
       ],
       "message": "r3, 논의된 대로 제안을 올려줘: r1은 green-1, yellow-1 -> C, r2는 red-1, red-2 -> A, r3은 cyan-1, cyan-2 -> B.",
       "acts": [
-        "other"
+        "propose",
+        "request"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -4615,7 +4633,8 @@
       "plan_valid": true,
       "message": "Accepting proposal v3. Ready to execute.",
       "acts": [
-        "other"
+        "propose",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4817,7 +4836,8 @@
       ],
       "message": "Waiting for r1's proposal. Suggesting 2 boxes each: r1 (red-1->A, cyan-1->B), r2 (red-2->A, cyan-2->B), r3 (green-1->C, yellow-1->C).",
       "acts": [
-        "other"
+        "propose",
+        "standby"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -4969,7 +4989,8 @@
       "plan_valid": true,
       "message": "Accepting proposed plan. Ready to execute.",
       "acts": [
-        "other"
+        "propose",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -5236,7 +5257,7 @@
       "plan_valid": true,
       "message": "Confirming my proposal: 2 boxes per robot, exactly meeting all zone goals.",
       "acts": [
-        "other"
+        "propose"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -5301,7 +5322,7 @@
       "plan_valid": true,
       "message": "Proposing balanced 2-job plan for all robots.",
       "acts": [
-        "other"
+        "propose"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -5356,8 +5377,8 @@
       "plan_valid": true,
       "message": "목표 완수를 위해 각자 2개씩 작업을 균등 분배한 계획을 제안합니다. 확인 후 동의해 주세요.",
       "acts": [
-        "request",
-        "agree"
+        "propose",
+        "request"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -5401,8 +5422,8 @@
       "plan_valid": true,
       "message": "각 로봇이 2개씩 운반하도록 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
       "acts": [
-        "request",
-        "agree"
+        "propose",
+        "request"
       ],
       "message_lang": {
         "hangul_ratio": 1.0,
@@ -5511,6 +5532,7 @@
       ],
       "message": "Standing by for r1 proposal. Total goal: A: 2 red, B: 2 cyan, C: 1 green, 1 yellow (6 jobs, 2 each).",
       "acts": [
+        "propose",
         "standby"
       ],
       "message_lang": {
@@ -5616,7 +5638,6 @@
       ],
       "message": "r1의 제안을 기다리고 있습니다. 북쪽에 green-1, yellow-1이 있어 r3가 C구역 운반을 맡기에 적합합니다.",
       "acts": [
-        "claim",
         "standby"
       ],
       "message_lang": {
@@ -5664,7 +5685,9 @@
       "plan_valid": true,
       "message": "Proposed balanced assignment: r1 takes red to A, r2 takes cyan to B, r3 takes green/yellow to C. Please accept.",
       "acts": [
-        "request"
+        "propose",
+        "request",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -5782,7 +5805,8 @@
       "plan_valid": true,
       "message": "Accepted proposal. Ready to deliver green-1 and yellow-1 to zone C.",
       "acts": [
-        "other"
+        "propose",
+        "agree"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -5845,6 +5869,7 @@
       "plan_valid": true,
       "message": "r1의 제안을 수락합니다. r3는 green-1과 yellow-1을 C로 운반하겠습니다.",
       "acts": [
+        "claim",
         "agree"
       ],
       "message_lang": {
@@ -5899,6 +5924,7 @@
       "plan_valid": true,
       "message": "r1의 제안을 수락합니다. 계획대로 green-1과 yellow-1을 구역 C로 운반하겠습니다.",
       "acts": [
+        "claim",
         "agree"
       ],
       "message_lang": {
@@ -6004,7 +6030,7 @@
       "plan_valid": true,
       "message": "Proposal: r1 takes northern boxes (green-1->C, cyan-3->B), r2 takes southern reds (red-1->A, red-2->A), r3 takes middle boxes (yellow-1->C, cyan-1->B).",
       "acts": [
-        "other"
+        "propose"
       ],
       "message_lang": {
         "hangul_ratio": 0.0,
@@ -6068,6 +6094,7 @@
       "plan_valid": true,
       "message": "내가 제안할게: r1 (green-1->C, cyan-3->B), r2 (red-3->A, cyan-1->B), r3 (yellow-1->C, red-1->A). 확인 부탁해.",
       "acts": [
+        "propose",
         "request"
       ],
       "message_lang": {
@@ -6188,6 +6215,2564 @@
       }
     }
   ],
-  "dialogues": [],
-  "manual_labels": null
+  "dialogues": [
+    {
+      "scenario": "M1",
+      "variant": "V2",
+      "run": "ZC2-s13-dynamic-graspfail",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 131,
+            "prompt_tokens": 6737,
+            "total_tokens": 6868
+          },
+          "message": "r1이 집하 구역 남서쪽에 가장 가까운 cyan-1을 구역 B로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 44,
+            "utf8_bytes": 94
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 54,
+            "utf8_bytes": 112
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 168,
+            "prompt_tokens": 6791,
+            "total_tokens": 6959
+          },
+          "message": "r1의 cyan-1 선택을 확인했습니다. 저는 green-1을 구역 C로 운반하겠습니다.",
+          "acts": [
+            "claim",
+            "agree"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 49,
+            "utf8_bytes": 95
+          },
+          "references_new_peer_utterance": true,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 74,
+            "utf8_bytes": 150
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ],
+            [
+              "r2",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 172,
+            "prompt_tokens": 6845,
+            "total_tokens": 7017
+          },
+          "message": "r1의 cyan-1, r2의 green-1 선택 확인했습니다. 저는 구역 A에 필요한 red 상자 중 red-1을 맡겠습니다.",
+          "acts": [
+            "claim",
+            "agree"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 70,
+            "utf8_bytes": 124
+          },
+          "references_new_peer_utterance": true,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 109,
+            "utf8_bytes": 177
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r2",
+              2
+            ],
+            [
+              "r3",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 154,
+            "prompt_tokens": 6908,
+            "total_tokens": 7062
+          },
+          "message": "동료들의 선택을 확인했습니다. 계획대로 r1은 cyan-1을 구역 B로 운반하겠습니다.",
+          "acts": [
+            "claim",
+            "agree"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 48,
+            "utf8_bytes": 106
+          },
+          "references_new_peer_utterance": true,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 86,
+            "utf8_bytes": 164
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r3",
+              3
+            ],
+            [
+              "r1",
+              4
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 165,
+            "prompt_tokens": 6963,
+            "total_tokens": 7128
+          },
+          "message": "합의된 대로 r2는 green-1을 구역 C로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 34,
+            "utf8_bytes": 68
+          },
+          "references_new_peer_utterance": true,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 78,
+            "utf8_bytes": 146
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [
+            [
+              "r1",
+              4
+            ],
+            [
+              "r2",
+              5
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 148,
+            "prompt_tokens": 7012,
+            "total_tokens": 7160
+          },
+          "message": "합의된 대로 r3은 예정대로 red-1을 구역 A로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 37,
+            "utf8_bytes": 79
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 81,
+            "utf8_bytes": 147
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 6,
+        "silences": 0,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 6,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": 1.0,
+        "korean_ge_0_9": 1.0,
+        "id_issues": [],
+        "turns_with_new_peer_input": 5,
+        "referenced_new_peer_input": 4,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r2": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r3": {
+            "box": "red-1",
+            "zone": "A"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r1": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r2": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r3": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "cyan-1",
+            "zone": "B"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r1": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [
+            {
+              "kind": "same_box",
+              "box": "cyan-1",
+              "robots": [
+                "r2",
+                "r3"
+              ]
+            }
+          ],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 41256,
+          "completion_tokens": 938,
+          "total_tokens": 42194
+        }
+      }
+    },
+    {
+      "scenario": "M1",
+      "variant": "V3",
+      "run": "ZC2-s13-dynamic-graspfail",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 165,
+            "prompt_tokens": 6864,
+            "total_tokens": 7029
+          },
+          "message": {
+            "act": "claim",
+            "confidence": 0.95,
+            "item": "cyan-1",
+            "observed_at": "TOP_SW",
+            "passage": null,
+            "reply_to": null,
+            "role": "carrier",
+            "zone": "B"
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 56,
+            "utf8_bytes": 114
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 166,
+            "prompt_tokens": 6949,
+            "total_tokens": 7510
+          },
+          "message": {
+            "act": "claim",
+            "confidence": 0.95,
+            "item": "green-1",
+            "observed_at": "TOP_SW",
+            "passage": null,
+            "reply_to": null,
+            "role": "carrier",
+            "zone": "C"
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 55,
+            "utf8_bytes": 105
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ],
+            [
+              "r2",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 181,
+            "prompt_tokens": 7035,
+            "total_tokens": 7216
+          },
+          "message": {
+            "act": "claim",
+            "confidence": 0.95,
+            "item": "red-1",
+            "observed_at": "TOP_NW",
+            "passage": null,
+            "reply_to": null,
+            "role": "carrier",
+            "zone": "A"
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 75,
+            "utf8_bytes": 131
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r2",
+              2
+            ],
+            [
+              "r3",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 129,
+            "prompt_tokens": 7120,
+            "total_tokens": 7249
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 93,
+            "utf8_bytes": 167
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r3",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 116,
+            "prompt_tokens": 7120,
+            "total_tokens": 7236
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 74,
+            "utf8_bytes": 134
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 109,
+            "prompt_tokens": 7120,
+            "total_tokens": 7229
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 60,
+            "utf8_bytes": 98
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 3,
+        "silences": 3,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 3,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": null,
+        "korean_ge_0_9": null,
+        "id_issues": [],
+        "turns_with_new_peer_input": 4,
+        "referenced_new_peer_input": 0,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r2": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r3": {
+            "box": "red-1",
+            "zone": "A"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r1": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r2": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r3": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "cyan-1",
+            "zone": "B"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r1": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [
+            {
+              "kind": "same_box",
+              "box": "cyan-1",
+              "robots": [
+                "r2",
+                "r3"
+              ]
+            }
+          ],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 42208,
+          "completion_tokens": 866,
+          "total_tokens": 43469
+        }
+      }
+    },
+    {
+      "scenario": "M2",
+      "variant": "V2",
+      "run": "ZC2-s12-dynamic-nominal",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r2",
+        "r3",
+        "r1"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 136,
+            "prompt_tokens": 6739,
+            "total_tokens": 7527
+          },
+          "message": "cyan-1을 구역 B로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 22,
+            "utf8_bytes": 44
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 46,
+            "utf8_bytes": 100
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [
+            [
+              "r2",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 129,
+            "prompt_tokens": 6780,
+            "total_tokens": 6909
+          },
+          "message": "green-1을 구역 C로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 23,
+            "utf8_bytes": 45
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 70,
+            "utf8_bytes": 134
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r2",
+              1
+            ],
+            [
+              "r3",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 129,
+            "prompt_tokens": 6822,
+            "total_tokens": 6951
+          },
+          "message": "red-1을 구역 A로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 21,
+            "utf8_bytes": 43
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 64,
+            "utf8_bytes": 108
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r3",
+              2
+            ],
+            [
+              "r1",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 118,
+            "prompt_tokens": 6863,
+            "total_tokens": 6981
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 83,
+            "utf8_bytes": 161
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r1",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 115,
+            "prompt_tokens": 6863,
+            "total_tokens": 6978
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 73,
+            "utf8_bytes": 137
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 97,
+            "prompt_tokens": 6863,
+            "total_tokens": 6960
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 0.8621,
+            "english_words": [
+              "turn"
+            ],
+            "id_issues": [],
+            "chars": 50,
+            "utf8_bytes": 100
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 3,
+        "silences": 3,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 3,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": 1.0,
+        "korean_ge_0_9": 1.0,
+        "id_issues": [],
+        "turns_with_new_peer_input": 4,
+        "referenced_new_peer_input": 0,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "green-1",
+            "zone": "C"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r2": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r3": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r1": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "green-1",
+            "zone": "C"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r2": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r3": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r1": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 40930,
+          "completion_tokens": 724,
+          "total_tokens": 42306
+        }
+      }
+    },
+    {
+      "scenario": "M3",
+      "variant": "V2",
+      "run": "ZC2-s14-dynamic-graspfail",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r3",
+        "r1",
+        "r2"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "yellow-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 146,
+            "prompt_tokens": 6732,
+            "total_tokens": 6878
+          },
+          "message": "r3: 바로 앞에 있는 yellow-1을 C 구역으로 옮기겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 37,
+            "utf8_bytes": 71
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 76,
+            "utf8_bytes": 134
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r3",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 159,
+            "prompt_tokens": 6779,
+            "total_tokens": 6938
+          },
+          "message": "r1: 시야 바로 앞에 있는 green-1을 C 구역으로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 40,
+            "utf8_bytes": 80
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 90,
+            "utf8_bytes": 158
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r3",
+              1
+            ],
+            [
+              "r1",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 154,
+            "prompt_tokens": 6829,
+            "total_tokens": 6983
+          },
+          "message": "r2: 제 시야 바로 앞에 있는 red-1을 A 구역으로 운반하겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 40,
+            "utf8_bytes": 82
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 95,
+            "utf8_bytes": 179
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "yellow-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r1",
+              2
+            ],
+            [
+              "r2",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 133,
+            "prompt_tokens": 6879,
+            "total_tokens": 7197
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 71,
+            "utf8_bytes": 129
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r2",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 103,
+            "prompt_tokens": 6879,
+            "total_tokens": 6982
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 62,
+            "utf8_bytes": 140
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 106,
+            "prompt_tokens": 6879,
+            "total_tokens": 6985
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 55,
+            "utf8_bytes": 127
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 3,
+        "silences": 3,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 3,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": 1.0,
+        "korean_ge_0_9": 1.0,
+        "id_issues": [],
+        "turns_with_new_peer_input": 4,
+        "referenced_new_peer_input": 0,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r2": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r3": {
+            "box": "yellow-1",
+            "zone": "C"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r1": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r2": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            },
+            "r3": {
+              "box": "yellow-1",
+              "zone": "C",
+              "kind": "yellow"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "yellow-1",
+            "zone": "C"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r2": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r1": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r3": {
+              "box": "yellow-1",
+              "zone": "C",
+              "kind": "yellow"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 40977,
+          "completion_tokens": 801,
+          "total_tokens": 41963
+        }
+      }
+    },
+    {
+      "scenario": "M3",
+      "variant": "V3",
+      "run": "ZC2-s14-dynamic-graspfail",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r3",
+        "r1",
+        "r2"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "yellow-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 169,
+            "prompt_tokens": 6859,
+            "total_tokens": 7028
+          },
+          "message": {
+            "act": "claim",
+            "item": "yellow-1",
+            "zone": "C",
+            "role": "carrier",
+            "passage": null,
+            "observed_at": "CURRENT OWN RGB",
+            "confidence": 0.95,
+            "reply_to": null
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 82,
+            "utf8_bytes": 136
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r3",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 215,
+            "prompt_tokens": 6944,
+            "total_tokens": 7159
+          },
+          "message": {
+            "act": "claim",
+            "item": "green-1",
+            "zone": "C",
+            "role": "carrier",
+            "passage": null,
+            "observed_at": "CURRENT OWN RGB",
+            "confidence": 0.95,
+            "reply_to": null
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 88,
+            "utf8_bytes": 138
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r3",
+              1
+            ],
+            [
+              "r1",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 181,
+            "prompt_tokens": 7030,
+            "total_tokens": 7211
+          },
+          "message": {
+            "act": "claim",
+            "confidence": 0.95,
+            "item": "red-1",
+            "observed_at": "CURRENT OWN RGB",
+            "passage": null,
+            "reply_to": null,
+            "role": "carrier",
+            "zone": "A"
+          },
+          "acts": [
+            "claim"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 81,
+            "utf8_bytes": 141
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "yellow-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r1",
+              2
+            ],
+            [
+              "r2",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 137,
+            "prompt_tokens": 7115,
+            "total_tokens": 7252
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 76,
+            "utf8_bytes": 138
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r2",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 119,
+            "prompt_tokens": 7115,
+            "total_tokens": 7234
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 78,
+            "utf8_bytes": 142
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 135,
+            "prompt_tokens": 7115,
+            "total_tokens": 7250
+          },
+          "message": null,
+          "acts": [
+            "silence"
+          ],
+          "reply_to": null,
+          "reply_to_matches_received": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 76,
+            "utf8_bytes": 128
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 3,
+        "silences": 3,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 3,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": null,
+        "korean_ge_0_9": null,
+        "id_issues": [],
+        "turns_with_new_peer_input": 4,
+        "referenced_new_peer_input": 0,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r2": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r3": {
+            "box": "yellow-1",
+            "zone": "C"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r1": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r2": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            },
+            "r3": {
+              "box": "yellow-1",
+              "zone": "C",
+              "kind": "yellow"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r2": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r3": {
+            "box": "yellow-1",
+            "zone": "C"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r2": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r1": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r3": {
+              "box": "yellow-1",
+              "zone": "C",
+              "kind": "yellow"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 42178,
+          "completion_tokens": 956,
+          "total_tokens": 43134
+        }
+      }
+    },
+    {
+      "scenario": "M4",
+      "variant": "V2",
+      "run": "ZC2-s13-dynamic-nominal",
+      "phase": "claim-1-0-1",
+      "order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "turns": [
+        {
+          "turn": 1,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [
+            "r2",
+            "r3"
+          ],
+          "delivered_to": [
+            "r2",
+            "r3"
+          ],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 120,
+            "prompt_tokens": 6737,
+            "total_tokens": 6857
+          },
+          "message": "r1이 cyan-1을 B 구역으로 옮기겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 26,
+            "utf8_bytes": 50
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 51,
+            "utf8_bytes": 105
+          }
+        },
+        {
+          "turn": 2,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [
+            "r1",
+            "r3"
+          ],
+          "delivered_to": [
+            "r1",
+            "r3"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 146,
+            "prompt_tokens": 6781,
+            "total_tokens": 6927
+          },
+          "message": "r2가 green-1을 C 구역으로 옮기겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 27,
+            "utf8_bytes": 51
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 56,
+            "utf8_bytes": 108
+          }
+        },
+        {
+          "turn": 3,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [
+            "r1",
+            "r2"
+          ],
+          "delivered_to": [
+            "r1",
+            "r2"
+          ],
+          "new_received": [
+            [
+              "r1",
+              1
+            ],
+            [
+              "r2",
+              2
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 172,
+            "prompt_tokens": 6826,
+            "total_tokens": 6998
+          },
+          "message": "r3이 red-1을 A 구역으로 옮기겠습니다.",
+          "acts": [
+            "claim"
+          ],
+          "lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 25,
+            "utf8_bytes": 49
+          },
+          "references_new_peer_utterance": false,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 90,
+            "utf8_bytes": 166
+          }
+        },
+        {
+          "turn": 4,
+          "robot_id": "r1",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r2",
+              2
+            ],
+            [
+              "r3",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 136,
+            "prompt_tokens": 6870,
+            "total_tokens": 7006
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 72,
+            "utf8_bytes": 126
+          }
+        },
+        {
+          "turn": 5,
+          "robot_id": "r2",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [
+            [
+              "r3",
+              3
+            ]
+          ],
+          "usage": {
+            "completion_tokens": 102,
+            "prompt_tokens": 6870,
+            "total_tokens": 6972
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 56,
+            "utf8_bytes": 128
+          }
+        },
+        {
+          "turn": 6,
+          "robot_id": "r3",
+          "valid": true,
+          "error": null,
+          "claim": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "recipients": [],
+          "delivered_to": [],
+          "new_received": [],
+          "usage": {
+            "completion_tokens": 92,
+            "prompt_tokens": 6870,
+            "total_tokens": 6962
+          },
+          "message": "",
+          "acts": [
+            "silence"
+          ],
+          "lang": {
+            "hangul_ratio": null,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 0,
+            "utf8_bytes": 0
+          },
+          "references_new_peer_utterance": null,
+          "reason_lang": {
+            "hangul_ratio": 1.0,
+            "english_words": [],
+            "id_issues": [],
+            "chars": 39,
+            "utf8_bytes": 87
+          }
+        }
+      ],
+      "summary": {
+        "valid_turns": 6,
+        "turns": 6,
+        "utterances": 3,
+        "silences": 3,
+        "robots_speaking": [
+          "r1",
+          "r2",
+          "r3"
+        ],
+        "broadcasts": 3,
+        "direct": 0,
+        "no_recipient": 0,
+        "hangul_ratio_mean": 1.0,
+        "korean_ge_0_9": 1.0,
+        "id_issues": [],
+        "turns_with_new_peer_input": 4,
+        "referenced_new_peer_input": 0,
+        "reply_to_matches": 0,
+        "claim_changes": 0,
+        "final_claims": {
+          "r1": {
+            "box": "cyan-1",
+            "zone": "B"
+          },
+          "r2": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r3": {
+            "box": "red-1",
+            "zone": "A"
+          }
+        },
+        "final_check": {
+          "accepted": {
+            "r1": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r2": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r3": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "recorded_round_claims": {
+          "r1": {
+            "box": "red-1",
+            "zone": "A"
+          },
+          "r2": {
+            "box": "green-1",
+            "zone": "C"
+          },
+          "r3": {
+            "box": "cyan-1",
+            "zone": "B"
+          }
+        },
+        "recorded_round_check": {
+          "accepted": {
+            "r3": {
+              "box": "cyan-1",
+              "zone": "B",
+              "kind": "cyan"
+            },
+            "r2": {
+              "box": "green-1",
+              "zone": "C",
+              "kind": "green"
+            },
+            "r1": {
+              "box": "red-1",
+              "zone": "A",
+              "kind": "red"
+            }
+          },
+          "collisions": [],
+          "invalid": {},
+          "idle": []
+        },
+        "tokens": {
+          "prompt_tokens": 40954,
+          "completion_tokens": 768,
+          "total_tokens": 41722
+        }
+      }
+    }
+  ],
+  "manual_labels": {
+    "labeller": "Claude (pilot author), not blind to variant; sample drawn with random.Random(20260925) from V1/V2 single-turn and V2 dialogue messages",
+    "n": 20,
+    "exact_match": 18,
+    "rows": [
+      {
+        "id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V1:0",
+        "message": "r3의 제안을 수락합니다. 계획대로 진행하겠습니다.",
+        "rule": [
+          "agree"
+        ],
+        "manual": [
+          "agree"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V2:0",
+        "message": "red-1 완료했습니다. 구역 A의 남은 red 상자로 red-2를 가져가겠습니다.",
+        "rule": [
+          "claim",
+          "report"
+        ],
+        "manual": [
+          "claim",
+          "report"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "dialogue:M3:V2:t1:r3",
+        "message": "r3: 바로 앞에 있는 yellow-1을 C 구역으로 옮기겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V2:0",
+        "message": "목표 완수를 위해 각자 2개씩 작업을 균등 분배한 계획을 제안합니다. 확인 후 동의해 주세요.",
+        "rule": [
+          "propose",
+          "request"
+        ],
+        "manual": [
+          "propose",
+          "request"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V1:0",
+        "message": "r3가 green-1을 C로 운반하겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V1:0",
+        "message": "제안된 계획을 수락합니다. r1, r2 모두 수락 후 작업을 시작합시다.",
+        "rule": [
+          "agree"
+        ],
+        "manual": [
+          "agree",
+          "request"
+        ],
+        "exact_match": false,
+        "note": "Suggests all accept before starting (request missed by rules)."
+      },
+      {
+        "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V1:0",
+        "message": "r1의 제안을 수락합니다. r3는 green-1과 yellow-1을 C로 운반하겠습니다.",
+        "rule": [
+          "agree",
+          "claim"
+        ],
+        "manual": [
+          "agree",
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "dialogue:M2:V2:t2:r3",
+        "message": "green-1을 구역 C로 운반하겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "dialogue:M1:V2:t3:r3",
+        "message": "r1의 cyan-1, r2의 green-1 선택 확인했습니다. 저는 구역 A에 필요한 red 상자 중 red-1을 맡겠습니다.",
+        "rule": [
+          "agree",
+          "claim"
+        ],
+        "manual": [
+          "agree",
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V2:0",
+        "message": "내가 제안자이므로 r1의 제안대로 계획을 확정하여 제출합니다. r1: green-1->C, cyan-3->B / r2: yellow-1->C, cyan-1->B / r3: red-1->A, red-2->A",
+        "rule": [
+          "other"
+        ],
+        "manual": [
+          "propose"
+        ],
+        "exact_match": false,
+        "note": "Proposer submits its own plan while saying it follows r1 proposal (content/claim mismatch; not checked further)."
+      },
+      {
+        "id": "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V2:0",
+        "message": "cyan-1 배달 완료 후 구역 B의 두 번째 cyan 상자로 cyan-3을 가져가겠습니다.",
+        "rule": [
+          "claim",
+          "report"
+        ],
+        "manual": [
+          "claim",
+          "report"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "dialogue:M2:V2:t3:r1",
+        "message": "red-1을 구역 A로 운반하겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V2:0",
+        "message": "r1의 제안을 확인하고 수락합니다. 각 구역의 목표 상자 수와 색상을 정확히 만족하며 균등하게 분배되었습니다.",
+        "rule": [
+          "agree"
+        ],
+        "manual": [
+          "agree"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s14-plan_first-nominal/r1/plan-2:V2:0",
+        "message": "r3, 논의된 대로 제안을 올려줘: r1은 green-1, yellow-1 -> C, r2는 red-1, red-2 -> A, r3은 cyan-1, cyan-2 -> B.",
+        "rule": [
+          "propose",
+          "request"
+        ],
+        "manual": [
+          "propose",
+          "request"
+        ],
+        "exact_match": true,
+        "note": "Informal register (올려줘) and asks r3 to propose a specific assignment."
+      },
+      {
+        "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V1:0",
+        "message": "모든 목표 작업이 완료되었습니다. 대기합니다.",
+        "rule": [
+          "report",
+          "standby"
+        ],
+        "manual": [
+          "report",
+          "standby"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V1:0",
+        "message": "각 로봇이 2개씩 운반하도록 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
+        "rule": [
+          "propose",
+          "request"
+        ],
+        "manual": [
+          "propose",
+          "request"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V1:0",
+        "message": "모든 목표가 완료되었거나 r1이 진행 중이므로 대기합니다.",
+        "rule": [
+          "report",
+          "standby"
+        ],
+        "manual": [
+          "report",
+          "standby"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V1:0",
+        "message": "r3: cyan-1 상자를 B 구역으로 운반하겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      },
+      {
+        "id": "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V1:0",
+        "message": "zone C에 green-1을 전달하겠습니다.",
+        "rule": [
+          "claim"
+        ],
+        "manual": [
+          "claim"
+        ],
+        "exact_match": true,
+        "note": "Code-switch: zone C."
+      },
+      {
+        "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V2:0",
+        "message": "r1의 제안을 수락합니다. 계획대로 green-1과 yellow-1을 구역 C로 운반하겠습니다.",
+        "rule": [
+          "agree",
+          "claim"
+        ],
+        "manual": [
+          "agree",
+          "claim"
+        ],
+        "exact_match": true,
+        "note": null
+      }
+    ]
+  }
 }
