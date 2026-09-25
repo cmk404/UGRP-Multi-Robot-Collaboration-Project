@@ -93,6 +93,16 @@
         "runner: the skill is constructed with robot_id = the episode's own robot id"
       ],
       "student_patch": {}
+    },
+    {
+      "id": "A4-dev-a4-s94-carry-to-preplace",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a4 (ea45e3d): m1devdiag-s94 (box yaw +15 deg) grasped with own-RGB face fits after one relook, the driver carried the box through the door (13 looks, 186 s, |yaw err| p90 1.0 deg, err/std p90 1.02, no contacts; the own pan-probe re-anchor passed after every loaded look while N7's strict test failed every time), but after the door the skill's own loaded mecanum navigation drifted in yaw (|err| p90 5.4 deg, max 11.2 deg; err/std p90 2.1) and the nav_loaded std_yaw gate (3 deg) stopped it for a look 19 times until SIM_LIMIT at 720 s (box still held, z 0.155 m). m1dev-s93 (axis-aligned) and m1devdiag-s95 (yaw -20 deg) ended SKILL_GRASP_TARGET_NOT_VISIBLE after v5 face squaring turned the chassis (s93 GT yaw to 27 deg): skill-side, reported on PR #181.",
+      "changes": [
+        "controller: the loaded carry leg (OwnCamDriverV2, east-facing mecanum pursuit, arrive tolerance 0.03 m) goes through the door to the skill's pre-place goal instead of stopping at the door exit; the skill's nav_preplace then only corrects the residual (place tolerance 0.012 m) after the pre-place look. Pose limits unchanged."
+      ],
+      "student_patch": {}
     }
   ]
 }

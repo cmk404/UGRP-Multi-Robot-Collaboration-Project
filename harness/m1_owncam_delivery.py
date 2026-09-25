@@ -10,8 +10,8 @@ Composition (read-only reuse):
 * pose: ``harness.owncam_pose_source.OwnCamPoseSource`` (one localizer for the
   whole episode) with ``PoseReport`` limits checked before acting (review #4);
 * unloaded legs (search viewpoints, pregrasp standoff) and the loaded carry leg
-  up to the door exit: ``OwnCamDriverV2`` pursuit + stop-and-look policy
-  sharing that localizer;
+  through the door to the skill's pre-place goal: ``OwnCamDriverV2`` pursuit +
+  stop-and-look policy sharing that localizer;
 * grasp, carry checks, re-seat, release and look-back: the wrist skill
   (``harness.wrist_zone_skill_v5`` in ``mode='m1'``, imported read-only; v4
   kept for the dev-a1 record); in the carry leg its navigation commands are
@@ -451,7 +451,11 @@ class M1OwnCamDelivery:
                 self.manipulated = False
                 return self._gate_look(now, 'post_manipulation', obs, loaded=True)
             if self.leg is None:
-                self._start_leg(self.exit_xy, loaded=True)
+                # The driver (loop v2 plant, validated carrying) goes through the door all the way to
+                # the skill's pre-place goal; the skill's own loaded mecanum navigation only corrects
+                # the residual (dev-a4 s94: after the door it drifted up to 11 deg in yaw and the
+                # nav_loaded yaw gate looked 19 times until the SIM limit).
+                self._start_leg(sk._preplace_goal(), loaded=True)
                 self.leg.state, self.leg.state_since = 'drive', now
             if est is not None and self.leg.state == 'drive' and obs['frame_id'] != self.last_skill_frame:
                 # Own-RGB carry check on each new frame while the arm is in the carry posture.
