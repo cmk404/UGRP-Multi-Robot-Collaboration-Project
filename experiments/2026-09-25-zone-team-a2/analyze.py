@@ -42,6 +42,10 @@ def metrics(run_dir, row):
     door_waits = {}
     for e in r.get('door_waits', []):
         door_waits[e['passage']] = round(door_waits.get(e['passage'], 0.) + e['wait_s'], 2)
+    gate_waits = {}
+    for e in r.get('door_gate_waits', []):
+        gate_waits[e['passage']] = round(gate_waits.get(e['passage'], 0.) + e['wait_s'], 2)
+    gate_limits = sum(1 for e in r.get('door_gate_waits', []) if e.get('reason') == 'limit')
     claims = ex.get('claims', [])
     outcomes = {}
     for c in claims:
@@ -55,7 +59,8 @@ def metrics(run_dir, row):
             'sim_end_s': r.get('sim_end_s'), 'llm_calls': r['llm_calls'], 'eq_active_max': r['eq_active_max'],
             'neq': r.get('neq'), 'items': items, 'claim_outcomes': outcomes,
             'team_formation_wait_s': formation, 'solo_station_wait_s_max': max(solo_waits, default=None),
-            'door_wait_s': door_waits, 'team_pauses': pauses,
+            'door_wait_s': door_waits, 'door_gate_wait_s': gate_waits, 'door_gate_limits': gate_limits,
+            'door_standoff_ticks': r.get('door_standoffs'), 'team_pauses': pauses,
             'team_pause_near_passage_s': round(sum(p.get('s', 0.) for p in pauses if p.get('near_passage')), 2),
             'failures': failures, 'grip_lost': [g for j in jobs for g in j.get('grip_lost', [])],
             'drops': sum(j.get('drops', 0) for j in jobs), 'slip_mm': slip,

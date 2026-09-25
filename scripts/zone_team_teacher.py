@@ -39,7 +39,7 @@ import math
 
 import numpy as np
 
-from harness.static_keepouts import polygons_overlap
+from harness.static_keepouts import inside_rect, polygons_overlap
 from harness.zone_goal_v2 import formation, landing_layout, required_carriers
 from harness.zone_team_formation import FormationPlan
 from harness.zone_team_footprint import TeamFootprint, circle, item_polygons, transform
@@ -70,6 +70,17 @@ ROBOT_DISC_M = .17
 # Solo carry: drive to the landing station backed off by this much, then align.
 LANDING_BACKOFF_M = .08
 SOLO_ALIGN_LIMIT_S = 20.
+# Single-lane entry gate (v2 only; A2 smoke 2026-09-25: two team members that
+# finish a carry together leave for the next shared item together and wedged
+# side by side inside a 0.5 m door, where neither could back out). A driving
+# robot inside a passage zone whose path enters the opening holds while another
+# robot stands in the opening, or while a moving robot is nearer the opening.
+# A held robot is still, so two robots never hold for each other. Physical
+# inputs only: peer positions and stillness, the static passage and the robot's
+# own path; never a peer's claim, job, goal or id. The hold is capped.
+GATE_PATH_M = 1.0
+GATE_LIMIT_S = 60.
+GATE_MOVING_S = 1.
 
 
 def _wrap(a):
@@ -126,12 +137,82 @@ class TeamRobot(TeacherRobot):
         self.flag = None             # (reason, detail) a solo carry leg could not finish
         self.landed = False
         self.landing = None          # {'pose', 'plan'} for a solo carry
+        self.gate = None             # (passage_id, since) while held at a single-lane entry
+        self.gate_passed = set()     # passages whose gate cap ran out on this leg
+        self.peer_moved = []         # [(xy, since)] peer positions for the stillness test
 
     def planning_rects(self):
         return tuple(self.rects) + tuple(self.dyn_rects)
 
     def _limit(self):
         return ROUTE_DRIVE_PHASE_LIMIT_S if self.rects else DRIVE_PHASE_LIMIT_S
+
+    def _set(self, phase, now, **detail):
+        super()._set(phase, now, **detail)
+        self.gate, self.gate_passed = None, set()
+
+    def _path_enters(self, core):
+        """Does the own planned path cross the opening within GATE_PATH_M?"""
+        prev, run = self.pose()[:2], 0.
+        for q in (self.path or ())[:40]:
+            seg = math.dist(prev, q[:2])
+            n = max(1, int(seg/.05))
+            if any(inside_rect((prev[0]+(q[0]-prev[0])*i/n, prev[1]+(q[1]-prev[1])*i/n), core) for i in range(n+1)):
+                return True
+            run += seg
+            prev = q[:2]
+            if run >= GATE_PATH_M:
+                break
+        return False
+
+    def _moving_peers(self, peers, now):
+        """Peers seen displaced by more than 2 cm within the last GATE_MOVING_S."""
+        seen, moving = [], {}
+        for p in peers:
+            old = next((e for e in self.peer_moved if math.dist(e[0], p) < .02), None)
+            entry = old or (p, now)
+            seen.append(entry)
+            moving[p] = now - entry[1] < GATE_MOVING_S
+        self.peer_moved = seen
+        return moving
+
+    def passage_gate(self, now, discs):
+        """True while this robot holds before a single-lane opening (see GATE_*)."""
+        x, y, _ = self.pose()
+        peers = [(d[0], d[1]) for d in discs if isinstance(d, PeerDisc)]
+        moving = self._moving_peers(peers, now)
+        for pid, core, zone in self.passages:
+            if pid in self.gate_passed or not inside_rect((x, y), zone) or inside_rect((x, y), core, grow=.10):
+                continue
+            if not self._path_enters(core):
+                continue
+            mine = math.dist((x, y), core[:2])
+            reason = None
+            for p in peers:
+                if inside_rect(p, core, grow=.10):
+                    reason = 'opening_occupied'
+                elif inside_rect(p, zone) and moving[p] and math.dist(p, core[:2]) < mine - .02:
+                    reason = 'nearer_robot_entering'
+                if reason:
+                    break
+            if reason is None:
+                continue
+            if self.gate is None or self.gate[0] != pid:
+                self.gate = (pid, now)
+                self.log('passage_gate', self.rid, now, passage=pid, reason=reason, own_phase=self.phase)
+            if now - self.gate[1] >= GATE_LIMIT_S:
+                self.gate_passed.add(pid)
+                self.log('passage_gate_end', self.rid, now, passage=pid, reason='limit',
+                         wait_s=round(now-self.gate[1], 2))
+                self.gate = None
+                return False
+            self.port.hold(now)
+            return True
+        if self.gate is not None:
+            self.log('passage_gate_end', self.rid, now, passage=self.gate[0], reason='clear',
+                     wait_s=round(now-self.gate[1], 2))
+            self.gate = None
+        return False
 
     def station_hold(self, station, now):
         """Straight fine approach to a station pose (base frame P control)."""
@@ -158,7 +239,10 @@ class TeamRobot(TeacherRobot):
                 return
             sx, sy, sa = self.station
             pre = (sx - self.backoff*math.cos(sa), sy - self.backoff*math.sin(sa))
-            if self._drive_to(pre, sa, now, discs_for(self, carrying=False), carrying=False,
+            discs = discs_for(self, carrying=False)
+            if self.passages and self.passage_gate(now, discs):
+                return
+            if self._drive_to(pre, sa, now, discs, carrying=False,
                               tol=STATION_DRIVE_TOL_M):
                 self._set('align_box', now)
         elif self.phase == 'align_box':
@@ -170,8 +254,10 @@ class TeamRobot(TeacherRobot):
                 return
             sx, sy, sa = self.landing['station']
             goal = (sx - LANDING_BACKOFF_M*math.cos(sa), sy - LANDING_BACKOFF_M*math.sin(sa))
-            if self._drive_to(goal, sa, now, discs_for(self, exclude=self.job['box_body'], carrying=True),
-                              carrying=True, tol=.04):
+            discs = discs_for(self, exclude=self.job['box_body'], carrying=True)
+            if self.passages and self.passage_gate(now, discs):
+                return
+            if self._drive_to(goal, sa, now, discs, carrying=True, tol=.04):
                 self._set('align_slot', now)
         elif self.phase == 'align_slot':
             if now - self.phase_started > SOLO_ALIGN_LIMIT_S:

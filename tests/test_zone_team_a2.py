@@ -290,3 +290,48 @@ def test_team_executor_never_touches_weld_or_equality():
         assert 'weld' not in src.replace('weld OFF', '').replace('No weld', '').replace('weld off', '').lower() \
             or 'activate' not in src
         assert 'eq_active[' not in src and 'eq_data' not in src
+
+
+def _gate_robot(pose, path):
+    from scripts.zone_team_teacher import TeamRobot
+    robot = TeamRobot.__new__(TeamRobot)
+    held, events = [], []
+    robot.rid, robot.phase = 'rX', 'to_box'
+    robot.passages = passage_zones(za.authored_map('zone_wide_two_doors'))
+    robot.pose = lambda: pose
+    robot.path = path
+    robot.port = SimpleNamespace(hold=lambda now: held.append(now))
+    robot.log = lambda ev, rid, now, **kw: events.append((ev, now, kw))
+    robot.gate, robot.gate_passed, robot.peer_moved = None, set(), []
+    return robot, held, events
+
+
+def test_single_lane_gate_holds_for_the_opening_and_a_nearer_moving_robot_only():
+    from scripts.zone_teacher import PeerDisc
+    # zone_wide_two_doors door_narrow: opening at x=2.2, y in [-0.2, 0.3]; going west.
+    path = [(2.1, .05), (1.5, -.5)]
+    robot, held, events = _gate_robot((2.55, .05, math.pi), path)
+    assert robot.passage_gate(0., []) is False                      # nobody near: go
+    in_door = [PeerDisc((2.21, .10, .14))]
+    assert robot.passage_gate(1., in_door) is True and held == [1.]
+    assert events[-1][0] == 'passage_gate' and events[-1][2]['reason'] == 'opening_occupied'
+    assert robot.passage_gate(2., []) is False and events[-1][2]['reason'] == 'clear'
+    # A nearer robot moving toward the opening goes first; a still one does not hold us.
+    robot, held, events = _gate_robot((2.60, .10, math.pi), path)
+    assert robot.passage_gate(0., [PeerDisc((2.45, .0, .14))]) is True
+    assert robot.passage_gate(.5, [PeerDisc((2.40, .0, .14))]) is True
+    assert robot.passage_gate(1., [PeerDisc((2.40, .0, .14))]) is True   # still < 1 s
+    assert robot.passage_gate(2.6, [PeerDisc((2.40, .0, .14))]) is False  # still: not entering
+    # The farther robot never holds the nearer one, and the hold is capped.
+    robot, held, events = _gate_robot((2.45, .0, math.pi), path)
+    assert robot.passage_gate(0., [PeerDisc((2.60, .10, .14))]) is False
+    robot, held, events = _gate_robot((2.55, .05, math.pi), path)
+    assert robot.passage_gate(0., in_door) is True
+    assert robot.passage_gate(61., in_door) is False and events[-1][2]['reason'] == 'limit'
+    assert robot.passage_gate(62., in_door) is False               # capped for this leg
+
+
+def test_single_lane_gate_ignores_paths_that_do_not_enter_the_opening():
+    from scripts.zone_teacher import PeerDisc
+    robot, held, events = _gate_robot((2.55, .05, math.pi), [(2.6, -.6)])
+    assert robot.passage_gate(0., [PeerDisc((2.21, .10, .14))]) is False and not held

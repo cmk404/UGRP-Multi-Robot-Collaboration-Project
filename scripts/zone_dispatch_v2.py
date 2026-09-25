@@ -310,6 +310,8 @@ def run_v2(args, goal):
         result['team_executor'] = ex.record()
         result['items'] = item_outcomes(result['referee_v2'], ex, items, labels)
         result['door_waits'] = [e for e in zone.events if e['event'] == 'passage_wait']
+        result['door_gate_waits'] = [e for e in zone.events if e['event'] == 'passage_gate_end']
+        result['door_standoffs'] = sum(1 for e in zone.events if e['event'] == 'passage_standoff')
         result['llm_calls'] = sum(1 for c in team.calls if c.get('model') != 'scripted-fixture-not-llm')
         result['usage'] = {k: sum((c.get('usage') or {}).get(k, 0) for c in team.calls)
                            for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')}
