@@ -73,6 +73,21 @@ def blockers(run_dir, r):
     return sorted(out, key=lambda b: (b['t'] is None, b['t'] or 0))
 
 
+def blocker_summary(blocks):
+    """Group repeated blockers: (kind, outcome, item/passage/job) -> count, first/last SIM time, robots."""
+    groups = {}
+    for b in blocks:
+        job = b.get('job')
+        key = (b['kind'], b.get('outcome') or '', b.get('item') or b.get('passage') or (job.split('@')[0] if job else ''))
+        g = groups.setdefault(key, {'kind': key[0], 'outcome': key[1] or None, 'target': key[2] or None, 'count': 0,
+                                    'first_t': b['t'], 'last_t': b['t'], 'robots': set(), 'cause': b['cause']})
+        g['count'] += 1
+        g['last_t'] = b['t']
+        if b.get('robot'):
+            g['robots'].add(b['robot'])
+    return [dict(g, robots=sorted(g['robots'])) for g in groups.values()]
+
+
 def ledger_checks(ex):
     """Double membership (a robot in two live jobs at once), once-per-item decrement, barrier history."""
     jobs = ex.get('jobs', [])
@@ -154,6 +169,7 @@ def metrics(run_dir, row):
                        for rt in ex.get('routes', [])],
             'injection': ex.get('injection'), 'robot_events': ex.get('robot_events', []),
             'blockers': blockers(run_dir, r), 'perception_profile': r.get('perception_profile'),
+            'blocker_summary': blocker_summary(blockers(run_dir, r)),
             'ledger_checks': ledger_checks(ex),
             'labels_vs_setup': labels_vs_setup(run_dir, r),
             'unconfirmed_beams_final': len((r.get('final_rgb_view') or {}).get('unconfirmed_beams', [])),
@@ -185,6 +201,8 @@ def main():
     rows = []
     for row_file in sorted((args.runs/'runs').glob('*.json')):
         row = json.loads(row_file.read_text())
+        if row.get('skipped'):
+            continue
         if (args.runs/row['run']/'result.json').is_file():
             rows.append(metrics(args.runs/row['run'], row))
     out = args.out or args.runs/'analysis.json'
@@ -192,6 +210,8 @@ def main():
     for m in rows:
         print(json.dumps({k: m[k] for k in ('run', 'phase', 'referee_v2_goal_met', 'control_end_sim_s',
                                              'eq_active_max', 'claim_outcomes', 'drops')}))
+        for g in m['blocker_summary']:
+            print('   ', json.dumps(g)[:300])
     if args.render:
         render = _renderer()
         args.media.mkdir(parents=True, exist_ok=True)
