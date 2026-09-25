@@ -38,6 +38,10 @@ from sim.zone_cargo import catalogue_record, instances  # noqa: E402
 START = (2.5, .2, 0.)
 SOLO_LEGS = [('move', 1.0)]
 TEAM_LEGS = [('move', .8), ('turn', math.pi/2), ('move', .5)]
+# 2026-09-25 slip follow-up: >= 3x the team route (1.3 m + one turn): 4.0 m
+# with two 90-degree turns, inside zone_wide with the trio footprint.
+LONG_START = (2.3, .6, 0.)
+LONG_LEGS = [('move', 1.5), ('turn', -math.pi/2), ('move', 1.0), ('turn', -math.pi/2), ('move', 1.5)]
 BASE_Z = .032355118817659255
 PROBES = {
     'solo_box': {'kind': 'cal_block', 'mass_kg': .030, 'roles': {'r1': 'west'}, 'legs': SOLO_LEGS,
@@ -47,6 +51,12 @@ PROBES = {
     'pair_beam': {'kind': 'long_beam', 'roles': {'r1': 'end_neg', 'r2': 'end_pos'}, 'legs': TEAM_LEGS},
     'pair_crate': {'kind': 'heavy_crate', 'roles': {'r1': 'west', 'r2': 'east'}, 'legs': TEAM_LEGS},
     'trio_frame': {'kind': 'tri_frame', 'roles': {'r1': 'v0', 'r2': 'v1', 'r3': 'v2'}, 'legs': TEAM_LEGS},
+    'pair_beam_long': {'kind': 'long_beam', 'roles': {'r1': 'end_neg', 'r2': 'end_pos'}, 'legs': LONG_LEGS,
+                       'start': LONG_START},
+    'pair_crate_long': {'kind': 'heavy_crate', 'roles': {'r1': 'west', 'r2': 'east'}, 'legs': LONG_LEGS,
+                        'start': LONG_START},
+    'trio_frame_long': {'kind': 'tri_frame', 'roles': {'r1': 'v0', 'r2': 'v1', 'r3': 'v2'}, 'legs': LONG_LEGS,
+                        'start': LONG_START},
     # "needs N" evidence: the same teacher with one robot fewer.
     # They attempt the carry even when the load is not lifted clear, to show
     # whether it can be moved at all (dragging on the floor is not a carry).
@@ -60,6 +70,65 @@ PROBES = {
 SWEEP_MASSES = (.03, .1, .2, .3, .4, .5, .6, .7, .8, 1.0, 1.2)
 
 
+def _cargo_pairs(root):
+    return [p for p in root.iter('pair') if p.get('geom2', '').startswith('cargo_') and '__' in p.get('geom2', '')]
+
+
+def _set_option(key, value):
+    def apply(root):
+        root.find('option').set(key, value)
+    return apply
+
+
+def _pair_attr(key, fn):
+    def apply(root):
+        for pair in _cargo_pairs(root):
+            pair.set(key, fn(pair.get(key)))
+    return apply
+
+
+def _gripper_kp(scale):
+    def apply(root):
+        for act in root.iter('position'):
+            if 'servo_gripper_' in (act.get('name') or ''):
+                act.set('kp', f"{float(act.get('kp'))*scale:.3f}")
+    return apply
+
+
+# Diagnosis only (2026-09-25 follow-up "remove the slip"): each variant changes
+# ONE factor relative to the selected scene profile, to find the creep source.
+# Pair-level variants touch only finger/cargo pairs; option-level ones are global.
+CONTACT_VARIANTS = {
+    'baseline': None,
+    'cone_pyramidal': _set_option('cone', 'pyramidal'),
+    'impratio_10': _set_option('impratio', '10'),
+    'noslip_10': _set_option('noslip_iterations', '10'),
+    'pair_condim_6': _pair_attr('condim', lambda v: '6'),
+    'pair_solimp_hard': _pair_attr('solimp', lambda v: '0.99 0.999 0.0015 0.5 2.0'),
+    'pair_solref_stiff': _pair_attr('solref', lambda v: '0.004 1.0'),
+    'pair_frictiondamp_x10': _pair_attr('solreffriction', lambda v: '0 -60000'),
+    'pair_friction_x2': _pair_attr('friction', lambda v: ' '.join(
+        str(float(x)*2) if i < 2 else x for i, x in enumerate(v.split()))),
+    'gripper_kp_x2': _gripper_kp(2.),
+    'noslip_4': _set_option('noslip_iterations', '4'),
+    'noslip_2': _set_option('noslip_iterations', '2'),
+    'pair_solimp_vhard': _pair_attr('solimp', lambda v: '0.999 0.9999 0.0015 0.5 2.0'),
+    'pair_frictiondamp_x2': _pair_attr('solreffriction', lambda v: '0 -12000'),
+}
+
+
+def contact_variant(name):
+    fn = CONTACT_VARIANTS[name]
+    if fn is None:
+        return None
+    def transform(xml):
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(xml)
+        fn(root)
+        return ET.tostring(root, encoding='unicode')
+    return transform
+
+
 def _git(*args):
     r = subprocess.run(['git', *args], cwd=ROOT, text=True, capture_output=True)
     return r.stdout.strip() if r.returncode == 0 else 'unavailable'
@@ -67,7 +136,8 @@ def _git(*args):
 
 class Probe:
     def __init__(self, name, spec, output, *, video=True, variant='zone_wide', seed=11,
-                 contact_profile='local_contact_fine', mass_kg=None, legs=None, hold_s=1.5):
+                 contact_profile='local_contact_fine', mass_kg=None, legs=None, hold_s=1.5,
+                 contact_variant_name='baseline'):
         import mujoco
         from sim.camera_robot_port import CameraRobotPort
         from sim.multi_masterpi_production import MultiMasterPiProductionV2
@@ -76,14 +146,19 @@ class Probe:
         self.name, self.spec, self.out = name, dict(spec), Path(output)
         self.out.mkdir(parents=True, exist_ok=False)
         mass = mass_kg if mass_kg is not None else spec.get('mass_kg')
-        item = {'item_id': 'probe', 'kind': spec['kind'], 'pose': list(START),
+        self.start = tuple(spec.get('start', START))
+        item = {'item_id': 'probe', 'kind': spec['kind'], 'pose': list(self.start),
                 **({'mass_kg': mass} if mass is not None else {})}
+        self.contact_profile_name = contact_profile
         self.scene = CargoZoneScene.from_cargo_config(variant, seed, cargo=[item], goal={'A': {'cyan': 1}},
                                                       contact_profile=contact_profile)
         self.inst = instances([item])[0]
+        self.contact_variant = contact_variant_name
+        extra = contact_variant(contact_variant_name)
+        transform = self.scene.transform if extra is None else (lambda xml: extra(self.scene.transform(xml)))
         self.world = MultiMasterPiProductionV2(
             seed=seed, width=320, height=240, render=False, warehouse_layout=self.scene.engine_layout,
-            warehouse_cargo_ids=None, xml_transform=self.scene.transform)
+            warehouse_cargo_ids=None, xml_transform=transform)
         self.scene.setup(self.world)
         m, d = self.world.model, self.world.data
         self.m, self.d, self.mj = m, d, mujoco
@@ -105,7 +180,7 @@ class Probe:
                                         carry_if_not_clear=bool(spec.get('attempt_carry')))
         self.legs = legs
         from scripts.cargo_formation_teacher import Reference
-        self.target = Reference(START, legs).poses[-1] if legs else START
+        self.target = Reference(self.start, legs).poses[-1] if legs else self.start
         # geometry for metrics
         self.cargo_geoms = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, self.inst.geom(p.name))
                             for p in self.inst.spec().parts if p.collision]
@@ -130,7 +205,7 @@ class Probe:
             self.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
             self.cam.distance = {1: .95, 2: 1.45, 3: 1.75}[len(self.roles)]
             self.cam.elevation, self.cam.azimuth = -32., 225.
-            self.cam.lookat[:] = [START[0], START[1], .03]
+            self.cam.lookat[:] = [self.start[0], self.start[1], .03]
             # H.264 through ffmpeg (as scripts/compose_recovery_comparison.py) so the file plays anywhere.
             self.writer = subprocess.Popen(
                 ['ffmpeg', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', '854x480', '-r', '20',
@@ -236,7 +311,7 @@ class Probe:
         img = cv2.cvtColor(self.renderer.render(), cv2.COLOR_RGB2BGR)
         lines = [f'{self.name}  SIM {now:6.1f}s  phase: {self.teacher.phase}',
                  f'{self.inst.kind} {self.inst.spec().mass_kg:.3f} kg  robots {",".join(self.roles)}  '
-                 f'weld OFF  GT teacher']
+                 f'weld OFF  GT teacher  contact {self.contact_profile_name}']
         banner = img[:8+22*len(lines)]
         banner[:] = (banner*.35).astype(np.uint8)
         for k, text in enumerate(lines):
@@ -293,12 +368,14 @@ class Probe:
         success = bool(placed and t.lifted_clear and not drops and self.stats['max_robot_tilt_deg'] < 10
                        and self.stats['eq_active_max'] == 0 and self.stats['floor_contact_samples_carry'] == 0)
         hold = [r for r in self.trace if r['phase'] == 'hold']
-        creep = {}
+        creep, hold_slip, hold_span = {}, {}, None
         if len(hold) > 10:
             a, b = hold[5], hold[-1]
             for rid in self.roles:
                 d = np.linalg.norm(np.subtract(b['grip_in_cargo_mm'][rid], a['grip_in_cargo_mm'][rid]))
                 creep[rid] = round(float(d)/max(b['t']-a['t'], 1e-6), 4)
+                hold_slip[rid] = round(float(d), 2)
+            hold_span = round(b['t']-a['t'], 2)
         mp4 = self.out/f'{self.name}.mp4'
         result = {
             'schema': 'ugrp.zone_cargo_probe.v1', 'probe': self.name, 'condition': 'GT teacher (not RGB/student)',
@@ -308,7 +385,12 @@ class Probe:
             'attempt_carry_when_not_clear': bool(self.spec.get('attempt_carry')),
             'legs': [list(l) for l in self.legs], 'target_pose': [round(v, 4) for v in self.target],
             'weld': 'off', 'eq_active_max': self.stats['eq_active_max'],
-            'contact_profile': self.scene.scene['contact_profile'], 'timestep_s': float(self.m.opt.timestep),
+            'contact_profile': self.contact_profile_name,
+            'contact_profile_record': self.scene.manifest.get('cargo_contact_profile'),
+            'timestep_s': float(self.m.opt.timestep),
+            'solver_options': {'cone': int(self.m.opt.cone), 'impratio': float(self.m.opt.impratio),
+                               'noslip_iterations': int(self.m.opt.noslip_iterations),
+                               'iterations': int(self.m.opt.iterations)},
             'success': success, 'teacher_outcome': t.outcome, 'lifted_clear': t.lifted_clear,
             'hold_min_z_m': t.detail.get('hold_min_z_m'), 'max_lift_min_z_m': round(self.stats['max_lift_z_m'], 4),
             'placement': {'pos_err_m': round(pos_err, 4), 'yaw_err_deg': round(yaw_err, 2),
@@ -317,7 +399,8 @@ class Probe:
             'max_cargo_tilt_deg': {k: round(v, 2) for k, v in self.stats['max_cargo_tilt_deg'].items()},
             'max_robot_tilt_deg': round(self.stats['max_robot_tilt_deg'], 2),
             'max_slip_mm': {k: round(v, 1) for k, v in self.stats['max_slip_mm'].items()},
-            'hold_creep_mm_per_s': creep,
+            'hold_creep_mm_per_s': creep, 'hold_slip_mm': hold_slip, 'hold_measured_s': hold_span,
+            'contact_variant': self.contact_variant,
             'drop_events': drops, 'floor_contact_samples_in_carry': self.stats['floor_contact_samples_carry'],
             'cargo_robot_body_contact_samples': self.stats['robot_body_contact_samples'],
             'cargo_robot_body_contact_geoms': self.body_contact_geoms,
@@ -339,12 +422,12 @@ class Probe:
         return result
 
 
-def sweep(output, masses=SWEEP_MASSES, hold_s=8.):
+def sweep(output, masses=SWEEP_MASSES, hold_s=8., contact_profile='local_contact_fine'):
     rows = []
     for mass in masses:
         probe = Probe(f'cal_{int(round(mass*1000)):04d}g', {'kind': 'cal_block', 'roles': {'r1': 'west'},
                       'legs': [('move', .5)]}, Path(output)/f'cal_{int(round(mass*1000)):04d}g',
-                      video=False, mass_kg=mass, hold_s=hold_s)
+                      video=False, mass_kg=mass, hold_s=hold_s, contact_profile=contact_profile)
         r = probe.run()
         rows.append({k: r[k] for k in ('mass_kg', 'success', 'teacher_outcome', 'lifted_clear', 'hold_min_z_m',
                                        'max_robot_tilt_deg', 'max_slip_mm', 'hold_creep_mm_per_s', 'max_cargo_tilt_deg',
@@ -354,7 +437,7 @@ def sweep(output, masses=SWEEP_MASSES, hold_s=8.):
     capacity = max(passing) if passing else None
     first_fail = min([r['mass_kg'] for r in rows if not r['success'] and r['mass_kg'] > (capacity or 0)],
                      default=None)
-    summary = {'schema': 'ugrp.zone_cargo_capacity.v1', 'rows': rows,
+    summary = {'schema': 'ugrp.zone_cargo_capacity.v1', 'rows': rows, 'contact_profile': contact_profile,
                'single_robot_capacity_kg': capacity, 'first_failing_mass_kg': first_fail,
                'hold_s': hold_s,
                'criterion': f'lift clear >= 12 mm for the {hold_s:g} s hold, carry 0.5 m, place within 5 cm, robot tilt < 10 deg, weld off'}
@@ -362,25 +445,98 @@ def sweep(output, masses=SWEEP_MASSES, hold_s=8.):
     return summary
 
 
+DRIVE_SCRIPT = (('forward', .10, 4.), ('stop', 0., 2.), ('left', .08, 4.), ('stop', 0., 2.),
+                ('turn', .12, 4.), ('stop', 0., 2.), ('forward', -.05, 3.), ('stop', 0., 2.))
+
+
+def drive_check(output, contact_variant_name='baseline', contact_profile='local_contact_fine'):
+    """Side-effect check: r1's response to a fixed mecanum command script, and
+    drift of the resting zone boxes, under a contact profile / variant."""
+    import mujoco
+    from sim.camera_robot_port import CameraRobotPort
+    from sim.multi_masterpi_production import MultiMasterPiProductionV2
+    from sim.zone_cargo_scene import CargoZoneScene
+    out = Path(output)
+    out.mkdir(parents=True, exist_ok=False)
+    load0 = os.getloadavg()[0]
+    scene = CargoZoneScene.from_cargo_config('zone_wide', 11, cargo=[], contact_profile=contact_profile)
+    extra = contact_variant(contact_variant_name)
+    transform = scene.transform if extra is None else (lambda xml: extra(scene.transform(xml)))
+    world = MultiMasterPiProductionV2(seed=11, width=64, height=48, render=False,
+                                      warehouse_layout=scene.engine_layout, warehouse_cargo_ids=None,
+                                      xml_transform=transform)
+    scene.setup(world)
+    m, d = world.model, world.data
+    world.robot('r1').set_base_pose_for_test((2.5, .2, BASE_Z), 0.)
+    mujoco.mj_forward(m, d)
+    port = CameraRobotPort(world, 'r1', allow_reverse=True, allow_mecanum=True)
+    boxes = {o['body_name']: d.body(o['body_name']).xpos.copy() for o in scene.config['setup_only']['objects'].values()}
+    dt = float(m.opt.timestep)
+    rows, segments = [], []
+    for kind, value, duration in DRIVE_SCRIPT:
+        t_end = d.time + duration
+        seg = []
+        while d.time < t_end - 1e-9:
+            now = float(d.time)
+            if kind != 'stop' and (not seg or now - seg[-1][0] >= .1 - 1e-9):
+                cmd = {'kind': 'mecanum', 'forward': 0., 'left': 0., 'turn': 0., 'duration_s': .15}
+                cmd[kind] = value
+                port.apply(cmd, now)
+                seg.append((now,))
+            port.tick(now)
+            world._physics_step_for(world.controllers['r1'])
+            if d.eq_active.any():
+                raise RuntimeError('equality constraint became active')
+        r = world.robot('r1')
+        xyz, yaw = r.base_xyz(), float(r.base_rpy()[2])
+        v = d.qvel[world.controllers['r1'].base_dadr:world.controllers['r1'].base_dadr+6]
+        segments.append({'segment': kind, 'command': value, 'end_t': round(float(d.time), 3),
+                         'pose': [round(float(xyz[0]), 5), round(float(xyz[1]), 5), round(yaw, 5)],
+                         'vel_xy_mps': [round(float(v[0]), 5), round(float(v[1]), 5)], 'yaw_rate': round(float(v[5]), 5)})
+    drift = max(float(np.linalg.norm(d.body(b).xpos - p0)) for b, p0 in boxes.items())
+    result = {'schema': 'ugrp.zone_cargo_drive_check.v1', 'contact_profile': contact_profile,
+              'contact_variant': contact_variant_name, 'script': [list(x) for x in DRIVE_SCRIPT],
+              'segments': segments, 'max_zone_box_drift_m': round(drift, 6),
+              'solver_options': {'cone': int(m.opt.cone), 'impratio': float(m.opt.impratio),
+                                 'noslip_iterations': int(m.opt.noslip_iterations)},
+              'scene_xml_sha256': hashlib.sha256(world.scene_xml.encode()).hexdigest(),
+              'git_sha': _git('rev-parse', 'HEAD'), 'git_dirty': bool(_git('status', '--porcelain')),
+              'load_avg_1m': {'start': round(load0, 2), 'end': round(os.getloadavg()[0], 2)}}
+    (out/'result.json').write_text(json.dumps(result, indent=2) + '\n')
+    return result
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument('--probe', choices=sorted(PROBES))
     p.add_argument('--sweep', choices=['cal_block'])
+    p.add_argument('--drive-check', action='store_true', help='side-effect check of the robot drive')
     p.add_argument('--masses', help='comma separated kg for --sweep')
     p.add_argument('--mass-kg', type=float, help='override the catalogue mass (diagnostic)')
-    p.add_argument('--hold-s', type=float, default=8., help='static hold for --sweep')
+    p.add_argument('--hold-s', type=float, default=None,
+                   help='static hold (default 8 s for --sweep, 1.5 s for --probe)')
+    p.add_argument('--static-hold', action='store_true', help='--probe: lift, hold, lower in place (no carry)')
+    p.add_argument('--contact-variant', choices=sorted(CONTACT_VARIANTS), default='baseline',
+                   help='diagnosis only: change one contact/solver factor')
+    p.add_argument('--contact-profile', default='local_contact_fine')
     p.add_argument('--no-video', action='store_true')
     p.add_argument('--output', required=True)
     a = p.parse_args(argv)
-    if bool(a.probe) == bool(a.sweep):
-        p.error('choose exactly one of --probe / --sweep')
+    if sum(map(bool, (a.probe, a.sweep, a.drive_check))) != 1:
+        p.error('choose exactly one of --probe / --sweep / --drive-check')
+    if a.drive_check:
+        print(json.dumps(drive_check(a.output, a.contact_variant, a.contact_profile), indent=2))
+        return 0
     if a.sweep:
         masses = tuple(float(v) for v in a.masses.split(',')) if a.masses else SWEEP_MASSES
         Path(a.output).mkdir(parents=True, exist_ok=False)
-        print(json.dumps(sweep(a.output, masses, a.hold_s), indent=2))
+        print(json.dumps(sweep(a.output, masses, 8. if a.hold_s is None else a.hold_s, a.contact_profile), indent=2))
         return 0
-    result = Probe(a.probe, PROBES[a.probe], a.output, video=not a.no_video, mass_kg=a.mass_kg).run()
+    result = Probe(a.probe, PROBES[a.probe], a.output, video=not a.no_video, mass_kg=a.mass_kg,
+                   legs=[] if a.static_hold else None, hold_s=1.5 if a.hold_s is None else a.hold_s,
+                   contact_variant_name=a.contact_variant, contact_profile=a.contact_profile).run()
     print(json.dumps({k: result[k] for k in ('probe', 'success', 'teacher_outcome', 'lifted_clear', 'placement',
+                                             'hold_slip_mm', 'hold_creep_mm_per_s',
                                              'max_cargo_tilt_deg', 'max_robot_tilt_deg', 'max_slip_mm',
                                              'sim_time_s', 'wall_s')}, indent=2))
     return 0
