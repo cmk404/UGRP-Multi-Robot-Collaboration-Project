@@ -91,7 +91,7 @@ def test_wide_rgb_detection_matches_the_setup_across_four_tops():
 def test_wide_teacher_paths_exist_from_every_spawn_to_every_box_and_slot():
     from scripts.zone_teacher import BOX_CLEARANCE_M, CARRY_RADIUS_M, GRASP_RADIUS_M, plan_path
     goal = {'A': {'red': 3}, 'B': {'cyan': 3}, 'C': {'green': 2, 'yellow': 1}}
-    for seed in (11, 12):
+    for seed in (11, 12, 13, 14):
         cfg = za.episode('zone_wide', seed, goal=goal, extra_boxes={'red': 1, 'cyan': 1, 'yellow': 1})
         static = cfg['static_map']
         boxes = {oid: o['position_m'][:2] for oid, o in cfg['setup_only']['objects'].items()}
@@ -408,3 +408,62 @@ def test_claim_prompt_breaks_an_all_yield_conflict_by_robot_id():
     # Z2-G8-dyn: r1 and r3 both yielded green-1 to each other three times.
     assert 'if you all yield nobody takes it' in ' '.join(zc._CLAIM.split())
     assert 'lowest robot_id' in zc._CLAIM
+
+
+def test_independent_robots_see_no_peer_information_and_are_not_arbitrated():
+    from harness import zone_solo as zs
+    cfg = za.episode('zone_wide', 12, goal=GOAL)
+    task = za.actor_task(cfg['static_map'], GOAL)
+    views = za.top_views(cfg['static_map'])
+    frame = {'own': b'o', **{v[2]: v[0].encode() for v in views}}
+    ctx = zs.solo_context('r1', labels=LABELS, view=VIEW, own_jobs=[{'box': 'red-1', 'status': 'issued'}])
+    assert set(ctx) == {'robot_id', 'box_labels', 'rgb_view', 'own_jobs'}  # no board, no messages
+    request = zs.build_solo_request('r1', request_id='q', task=task, frame=frame, ctx=ctx, views=views)
+    system = ' '.join(request['messages'][0]['content'].split())
+    assert 'NO COMMUNICATION' in system and '"message"' not in system.split('NO COMMUNICATION')[1]
+    assert len(request['images']) == 5
+    ok = {'request_id': 'q', 'claim': {'box': 'red-1', 'zone': 'A'}, 'reason': 'r'}
+    assert zs.validate_solo_reply('```json\n' + json.dumps(ok) + '\n```', 'q') == ok
+    for bad in ({**ok, 'message': 'hi'}, {**ok, 'claim': {'box': 'red-1', 'zone': None}}, {**ok, 'request_id': 'x'},
+                {**ok, 'claim': {'box': 'red-1', 'zone': 'D'}}):
+        with pytest.raises(ValueError):
+            zs.validate_solo_reply(json.dumps(bad), 'q')
+    goal = za.goal_counts(GOAL)
+    out = zs.check_solo_claims({'r1': {'box': 'red-1', 'zone': 'A'}, 'r2': {'box': 'red-1', 'zone': 'A'},
+                                'r3': {'box': 'cyan-1', 'zone': 'A'}}, goal=goal, labels=LABELS, view=VIEW)
+    assert set(out['accepted']) == {'r1', 'r2'} and out['same_box_accepted'] == ['red-1']
+    assert 'needs no more cyan' in out['invalid']['r3']
+    claims = {r: zs.fixture_solo_claim(r, 'q', goal, LABELS, VIEW)['claim'] for r in ('r1', 'r2', 'r3')}
+    assert len({c['box'] for c in claims.values()}) == 3
+
+
+def test_teacher_stops_the_second_robot_and_injected_grasps_stay_open():
+    from scripts.zone_teacher import CLOSED, OPEN, TeacherRobot
+    def robot(rid, phase, body, outcome=None):
+        r = TeacherRobot.__new__(TeacherRobot)
+        r.rid, r.phase, r.outcome, r.job = rid, phase, outcome, {'box_body': body}
+        return r
+    a, b = robot('r1', 'to_box', 'cargo_box_00'), robot('r2', 'lift', 'cargo_box_00')
+    team = {'r1': a, 'r2': b}
+    a.team = b.team = team
+    assert a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
+    b.phase, b.outcome = 'failed', 'grasp_failed_by_teacher'  # a failed grasp leaves the box free
+    assert not a._taken_by_peer('cargo_box_00')
+    b.phase = 'align_box'  # the peer already aligning wins over one still driving
+    assert a._taken_by_peer('cargo_box_00')
+    b.phase, a.assigned_at, b.assigned_at = 'to_box', 60.8, 47.3  # both driving: the earlier job keeps the box
+    assert a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
+    assert a._grip() == CLOSED
+    a.job['inject'] = 'grasp_stays_open'
+    assert a._grip() == OPEN
+
+
+def test_planner_backs_out_of_an_overlapped_box_margin_before_ploughing():
+    from scripts.zone_teacher import BOX_CLEARANCE_M, plan_path
+    # ZC1 gate: r2 at (1.19, -0.05) right behind the red-2 box its open gripper
+    # had pushed to (1.27, -0.05); the next target lies further east.
+    bounds = [-1.05, 5.40, -3.15, 1.45]
+    box = (1.27, -.05, BOX_CLEARANCE_M)
+    path = plan_path((1.19, -.05), (1.60, -.60), bounds, [box])
+    assert path and math.hypot(path[0][0]-1.27, path[0][1]+.05) >= BOX_CLEARANCE_M + .17
+    assert all(math.hypot(x-1.27, y+.05) >= BOX_CLEARANCE_M + .17 - 1e-9 for x, y in path)
