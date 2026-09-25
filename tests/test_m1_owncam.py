@@ -20,7 +20,7 @@ RUNTIME = (ROOT/'harness'/'m1_owncam_delivery.py', ROOT/'harness'/'m1_owncam_con
 ALLOWED = {'__future__', 'math', 'hashlib', 'json', 'base64', 'collections.abc', 'dataclasses', 'numpy',
            'harness', 'harness.m1_owncam_contract', 'harness.owncam_pose_source', 'harness.owncam_localizer',
            'harness.wall_tags', 'harness.owncam_drive', 'harness.owncam_drive_v2', 'harness.zone_color_boxes',
-           'harness.wrist_zone_skill'}
+           'harness.wrist_zone_skill', 'harness.wrist_zone_skill_v5'}
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'qpos', 'qvel', 'base_xyz', 'base_rpy', 'eval_only', 'gt_trajectory',
              'frames_eval', 'MjData', 'setup_only', 'position_m', 'GtStubPoseSource')
 
@@ -53,7 +53,7 @@ class BoundaryTests(unittest.TestCase):
     def test_controller_imports_with_mujoco_poisoned(self):
         code = ("import sys; sys.modules['mujoco'] = None\n"
                 "import harness.m1_owncam_delivery, harness.m1_owncam_contract, harness.owncam_pose_source\n"
-                "import harness.wrist_zone_skill_v4\n"
+                "import harness.wrist_zone_skill_v4, harness.wrist_zone_skill_v5\n"
                 "bad = [m for m in sys.modules if m.startswith(('sim.multi_masterpi', 'sim.zone_scene', "
                 "'scripts.zone_teacher', 'sim.session'))]\n"
                 "assert not bad, bad\n")
@@ -138,15 +138,86 @@ class PoseLimitTests(unittest.TestCase):
         require_m1_source(a)
 
 
+class M1LocalizerTests(unittest.TestCase):
+    """M1 calibration additions are optional: absent keys and the default profile keep loop v2 exactly."""
+
+    @staticmethod
+    def _params(name):
+        path = {'v2': ROOT/'experiments'/'2026-09-26-zone-owncam-loop-v2'/'calibration_loop_v2.json',
+                'm1': ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'calibration_m1_dev.json'}[name]
+        return json.loads(path.read_text())['params']
+
+    def _loc(self, name):
+        import numpy as np
+        from harness.owncam_localizer import OwnCamLocalizer
+        from sim.zone_landmarks import tagged_map
+        loc = OwnCamLocalizer(tagged_map('zone_wide_door_tags_v2'), self._params(name), seed=3)
+        loc.initialized = True
+        loc.px[:] = [0., -1., 0.]
+        loc.scale[:] = np.array([1.3, 1., 1.])
+        return loc
+
+    def _drive(self, loc):
+        loc.command({'t': 0., 'kind': 'drive', 'forward': .1, 'turn': .05, 'duration_s': .5})
+        loc.command({'t': .6, 'kind': 'hold'})
+        loc.predict_to(1.5)
+
+    def test_default_profile_is_loop_v2(self):
+        import numpy as np
+        a, b = self._loc('v2'), self._loc('m1')
+        for loc in (a, b):
+            self._drive(loc)
+        np.testing.assert_array_equal(a.px, b.px)
+
+    def test_fine_profile_lags_per_axis_and_ignores_slip_scale(self):
+        import numpy as np
+        loc = self._loc('m1')
+        loc.set_motion_profile(0., 'fine')
+        mp = loc.params['motion_profiles']['fine']
+        mp['noise_rel'], mp['noise_abs'] = [0., 0., 0.], [0., 0., 0.]
+        self._drive(loc)
+        g, tau = mp['gain'][0][0], mp['tau_axis_s'][0]
+        lag = lambda D: D - tau*(1 - math.exp(-D/tau)) + mp['tau_stop_s']*(1 - math.exp(-D/tau))
+        self.assertAlmostEqual(float(np.mean(loc.px[:, 0])), g*.1*lag(.5), delta=.003)   # scale 1.3 not applied
+        with self.assertRaises(KeyError):
+            loc.set_motion_profile(2., 'nope')
+
+    def test_kidnap_reset_needs_settled_consecutive_frames(self):
+        import numpy as np
+        loc = self._loc('m1')
+        loc.params['measurement']['max_range_m'] = None
+        tag = next(iter(loc.tags))
+        loc._loglik = lambda px, dets, pose: np.full(len(px), -9.)
+        loc._reset_from = lambda dets, pose, k: np.zeros((k, 3))
+        det = [{'id': tag, 'solutions': [1]}]
+        loc.command({'t': 1., 'kind': 'look', 'pan_pulse': 1500})
+        loc.update(1.0, det)                        # 0 s after an own servo command: not counted
+        loc.update(1.2, det)                        # 0.2 s: not settled
+        self.assertEqual(loc.stats['resets'], 0)
+        loc.update(1.35, det)                       # settled, 1st
+        self.assertEqual(loc.stats['resets'], 0)
+        loc.update(1.5, det)                        # settled, 2nd in a row -> reset
+        self.assertEqual(loc.stats.get('kidnap_resets'), 1)
+        v2 = self._loc('v2')
+        v2.params['measurement']['max_range_m'] = None
+        v2._loglik, v2._reset_from = loc._loglik, loc._reset_from
+        for t in (1.35, 1.5, 1.7, 1.9):
+            v2.update(t, det)
+        self.assertEqual(v2.stats['resets'], 0)     # loop v2 never resets on a single-tag floor
+
+
 class ControllerTests(unittest.TestCase):
-    def _ctl(self):
+    def _ctl(self, order_kind='own_rgb_bay'):
         from harness.m1_owncam_delivery import M1OwnCamDelivery
         from harness.wrist_zone_skill import PoseEstimate
         from harness.wrist_zone_skill_v4 import WristZoneDeliveryV4
+        from harness.wrist_zone_skill_v5 import WristZoneDeliveryV5
         from sim.zone_landmarks import tagged_map
-        cal = json.loads((ROOT/'experiments'/'2026-09-26-zone-owncam-loop-v2'/'calibration_loop_v2.json').read_text())
+        cal = json.loads((ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'calibration_m1_dev.json').read_text())
+        factory = ((lambda o: WristZoneDeliveryV5(o, mode='m1')) if order_kind == 'own_rgb_bay'
+                   else (lambda o: WristZoneDeliveryV4(o)))
         ctl = M1OwnCamDelivery(tagged_map('zone_wide_door_tags_v2'), cal['params'], box_kind='cyan', slot_id='A1',
-                               slot_xy=(4.6, 0.), skill_factory=lambda o: WristZoneDeliveryV4(o),
+                               slot_xy=(4.6, 0.), skill_factory=factory, order_kind=order_kind,
                                pose_estimate_cls=PoseEstimate, search_rows_y=(-2.45, -1.65, -.85, -.05, .75))
         ctl.on_command({'t': 0., 'kind': 'initial_servo_command',
                         'pulses': {'1': 2000, '3': 740, '4': 2320, '5': 1320, '6': 1500}})
@@ -169,6 +240,34 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(ctl.init_looks, MAX_GATE_LOOKS)
         self.assertTrue({970, 2030} <= pans)                      # the wide sweep ran
         self.assertIsNone(ctl.skill)
+
+    def test_v5_order_is_a_coarse_bay_from_own_search(self):
+        from harness.wrist_zone_skill_v5 import BAY_APPROACH_CLEARANCE_M, CoarseOrderSheet
+        ctl = self._ctl()
+        ctl.target_xy, ctl.pickup_source = (-.19, -2.48), 'own_rgb_search'
+        order = ctl._make_order()
+        self.assertIsInstance(order, CoarseOrderSheet)
+        self.assertEqual(order.pickup_bay_half_m, (.25, .25))
+        self.assertFalse(hasattr(order, 'pickup_xy_m'))
+        gx, gy = ctl._approach_goal(ctl.target_xy)
+        self.assertAlmostEqual(gx, -.19 - .25 - BAY_APPROACH_CLEARANCE_M)
+        self.assertEqual(ctl.skill_factory(order).mode, 'm1')
+        v4 = self._ctl('own_rgb_point')
+        v4.target_xy = (-.19, -2.48)
+        self.assertEqual(tuple(v4._make_order().pickup_xy_m), (-.19, -2.48))
+
+    def test_fine_profile_follows_skill_phase_and_forces_a_look(self):
+        ctl = self._ctl()
+        ctl._set_motion_profile(1., 'nav_pregrasp')
+        self.assertIsNone(ctl.pose.loc.motion_profile)
+        ctl._set_motion_profile(2., 'grasp')
+        self.assertEqual(ctl.pose.loc.motion_profile, 'fine')
+        self.assertTrue(ctl.manipulated)
+        ctl._set_motion_profile(3., 'reseat_release')
+        self.assertEqual(ctl.pose.loc.motion_profile, 'fine')
+        ctl._set_motion_profile(4., 'nav_preplace')
+        self.assertIsNone(ctl.pose.loc.motion_profile)
+        self.assertTrue(ctl.manipulated)                          # cleared only by the post-manipulation look
 
     def test_order_sheet_has_no_scenario_position(self):
         import inspect

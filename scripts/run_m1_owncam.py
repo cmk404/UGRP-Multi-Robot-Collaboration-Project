@@ -26,19 +26,22 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-SCHEMA = 'ugrp.m1_owncam_run.v1'
+SCHEMA = 'ugrp.m1_owncam_run.v2'
 FRAME_S = .2
 TICK_S = .1
 GT_S = .05
 SIM_LIMIT_S = 720.
 SLOT_HALF_M = .06
 ON_FLOOR_MAX_Z_M = .05
-SKILLS = {'v4': ('harness.wrist_zone_skill_v4', 'WristZoneDeliveryV4')}
+# skill -> (module, class, order kind, extra kwargs); v5 runs in its own M1 mode (it rejects non-owncam sources)
+SKILLS = {'v4': ('harness.wrist_zone_skill_v4', 'WristZoneDeliveryV4', 'own_rgb_point', {}),
+          'v5': ('harness.wrist_zone_skill_v5', 'WristZoneDeliveryV5', 'own_rgb_bay', {'mode': 'm1'})}
 RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_owncam_contract.py', 'harness/owncam_pose_source.py',
                  'harness/owncam_localizer.py', 'harness/owncam_drive.py', 'harness/owncam_drive_v2.py',
                  'harness/wall_tags.py', 'harness/map_goto.py', 'harness/zone_color_boxes.py',
                  'harness/wrist_zone_skill.py', 'harness/wrist_zone_skill_v2.py', 'harness/wrist_zone_skill_v3.py',
-                 'harness/wrist_zone_skill_v4.py', 'harness/visual_box_skill.py', 'scripts/run_m1_owncam.py')
+                 'harness/wrist_zone_skill_v4.py', 'harness/wrist_zone_skill_v5.py', 'harness/m1_contract.py',
+                 'harness/visual_box_skill.py', 'harness/visual_attachment.py', 'scripts/run_m1_owncam.py')
 
 
 def git(*args):
@@ -60,7 +63,7 @@ def run(spec, out, student):
     import cv2
     import mujoco
     import numpy as np
-    from harness import m1_owncam_contract
+    from harness import m1_contract, m1_owncam_contract
     from harness.m1_owncam_delivery import M1OwnCamDelivery
     from harness.map_goto import plan_path
     from harness.owncam_drive import LOADED_ENVELOPE
@@ -92,7 +95,7 @@ def run(spec, out, student):
     slot_xy = next(s['center_m'] for slots in static['zone_slots'].values() for s in slots if s['slot_id'] == spec['slot_id'])
     calibration_path = ROOT/student['calibration']
     calibration = json.loads(calibration_path.read_text())
-    module, name = SKILLS[student['skill']]
+    module, name, order_kind, skill_kwargs = SKILLS[student['skill']]
     skill_cls = getattr(importlib.import_module(module), name)
     rows_y = LAYOUTS['zone_wide']['pickup_rows_y']
 
@@ -105,8 +108,9 @@ def run(spec, out, student):
         return None if result is None else [tuple(p) for p in result['waypoints_m'][1:]]
 
     ctl = M1OwnCamDelivery(static, calibration['params'], box_kind='cyan', slot_id=spec['slot_id'], slot_xy=slot_xy,
-                           skill_factory=lambda order: skill_cls(order, planner=planner),
-                           pose_estimate_cls=PoseEstimate, search_rows_y=rows_y, robot_id=rid, seed=spec['seed'])
+                           skill_factory=lambda order: skill_cls(order, planner=planner, **skill_kwargs),
+                           pose_estimate_cls=PoseEstimate, search_rows_y=rows_y, robot_id=rid, seed=spec['seed'],
+                           order_kind=order_kind)
     ctl_ref['ctl'] = ctl
     commands = []
 
@@ -269,10 +273,19 @@ def run(spec, out, student):
         extra_checks={'look_back_pose_gate_ok': bool(gate) and not gate.get('violations')})
     target = summary['target_xy']
     box0 = objects[box]['position_m']
+    input_contract = ('own robot_cam JPEG + own issued commands + static tagged map v2 + fixed calibrations + '
+                      'order sheet (cyan, pickup area rows, destination slot); pickup point/bay from own RGB search; '
+                      'no pose stub; GT only in eval_only/')
+    # PR #181 outcome block (their contract) next to this runner's stricter M1 checks.
+    skill_summary = summary.get('skill_summary') or {}
+    outcome_block = m1_contract.outcome_fields(
+        mode='m1', pose_sources_seen=summary['pose_sources'], diagnostic_success=judged['diagnostic_success'],
+        input_contract={'text': input_contract}, cameras_seen=skill_summary.get('cameras_seen') or ['robot_cam'])
+    strict_m1 = bool(judged['m1_success'] and outcome_block['m1_success'])
     result = {'schema': SCHEMA, 'episode': spec['episode_id'], 'split': spec['split'], 'robot_id': rid,
-              'outcome': outcome, **judged,
-              'input_contract': 'own robot_cam JPEG + own issued commands + static tagged map v2 + fixed calibrations + '
-                                'order sheet (cyan, pickup area rows, destination slot); no pose stub; GT only in eval_only/',
+              'outcome': outcome, **outcome_block, **judged, 'm1_success': strict_m1, 'success': strict_m1,
+              'counts_as_m1': bool(judged['counts_as_m1'] and outcome_block['counts_as_m1']),
+              'input_contract': input_contract,
               'evaluation_only': {'gt_box_final_xyz': [round(bx, 4), round(by, 4), round(bz, 4)],
                                   'slot_xy': slot_xy, 'gt_box_in_slot': gt_in_slot,
                                   'search_target_error_m': None if target is None else
@@ -285,6 +298,7 @@ def run(spec, out, student):
               'lookback_gate': gate, 'controller': summary, 'phase_times': state['phase_times'],
               'commands': len(commands), 'frames': len(frames)}
     m1_owncam_contract.assert_exportable(result)
+    m1_contract.validate_outcome(result)
     jsonl(out/'inputs'/'commands.jsonl', commands)
     jsonl(out/'inputs'/'frames.jsonl', frames)
     jsonl(out/'controller_events.jsonl', ctl.events)
@@ -314,6 +328,21 @@ def run(spec, out, student):
     return result, manifest
 
 
+def effective_student(prereg_path: Path, prereg: dict) -> dict:
+    """The registered student block with the recorded amendments applied in order (never silently)."""
+    student = dict(prereg['student'])
+    amend_path = prereg_path.parent/'prereg_amendments.json'
+    applied = []
+    if amend_path.exists():
+        for a in json.loads(amend_path.read_text())['amendments']:
+            if a.get('student_patch'):
+                student.update(a['student_patch'])
+                applied.append(a['id'])
+        student['amendments_applied'] = applied
+        student['amendments_sha256'] = sha_bytes(amend_path.read_bytes())
+    return student
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     p.add_argument('--prereg', required=True)
@@ -321,11 +350,12 @@ def main(argv=None):
     p.add_argument('--output', required=True)
     args = p.parse_args(argv)
     prereg = json.loads(Path(args.prereg).read_text())
+    student = effective_student(Path(args.prereg), prereg)
     only = {s for s in args.only.split(',') if s}
     for spec in prereg['episodes']:
         if only and spec['episode_id'] not in only:
             continue
-        result, manifest = run(spec, Path(args.output)/spec['episode_id'], prereg['student'])
+        result, manifest = run(spec, Path(args.output)/spec['episode_id'], student)
         print(json.dumps({'episode': spec['episode_id'], 'outcome': result['outcome'], 'm1_success': result['m1_success'],
                           'failed': result['m1_failed_checks'], 'diagnostic_success': result['diagnostic_success'],
                           'false_success': result['false_success'], 'sim_s': result['sim_s'], 'looks': result['looks'],

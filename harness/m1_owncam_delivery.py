@@ -13,9 +13,17 @@ Composition (read-only reuse):
   up to the door exit: ``OwnCamDriverV2`` pursuit + stop-and-look policy
   sharing that localizer;
 * grasp, carry checks, re-seat, release and look-back: the wrist skill
-  (``harness.wrist_zone_skill_v4`` imported read-only); in the carry leg its
-  navigation commands are replaced by the driver's while its own-RGB carry
-  checks still run on every frame;
+  (``harness.wrist_zone_skill_v5`` in ``mode='m1'``, imported read-only; v4
+  kept for the dev-a1 record); in the carry leg its navigation commands are
+  replaced by the driver's while its own-RGB carry checks still run on every
+  frame. v5 gets a ``CoarseOrderSheet`` whose 0.5 m bay is centred on the
+  own-RGB search result (no scenario position);
+* dead reckoning in the skill's manipulation phases (arm lowered, no tags in
+  view) uses the ``fine`` motion profile, and the carry leg starts only after
+  a fresh own look (M1 dev s91: 0.8 m drift over a grasp);
+* after a loaded look the held box is re-anchored: N7's strict co-motion test
+  first, else an own pan probe (+60/-60/home PWM) with the skill's own
+  attachment comparison, the same evidence N7 uses after a lift;
 * M1 contract (``harness.m1_owncam_contract``): every observation is validated and
   every pose source must be the own-camera estimator.
 """
@@ -31,7 +39,7 @@ from harness.owncam_drive import CARRY_POSTURE, LOOK_P20, SEARCH_POSE, SETTLE_S,
 from harness.owncam_drive_v2 import OwnCamDriverV2
 from harness.owncam_pose_source import OwnCamPoseSource, PoseLimits, PoseReport, check_limits
 
-SCHEMA = 'ugrp.m1_owncam_delivery.v1'
+SCHEMA = 'ugrp.m1_owncam_delivery.v2'
 # Search: static viewpoints west of the pickup grid (east-facing), visited from the
 # row nearest the robot's first own estimate outward. A far_coarse cyan detection brings the robot to a closer view.
 SEARCH_VIEW_X_M = -.47                 # peers idle at the spawn column x = -0.85
@@ -52,6 +60,13 @@ LIMITS = {
 PREPLACE_LOOK_RADIUS_M = .35
 MAX_GATE_LOOKS = 3
 ARM_STEP_PWM = 60
+# Skill phases whose base motion uses the 'fine' motion profile (arm lowered at the box).
+FINE_PHASES = ('grasp', 'backoff')
+FINE_PHASE_PREFIXES = ('reseat',)
+PROBE_PAN_PWM = 60
+PROBE_SETTLE_S = .5
+ORDER_KINDS = ('own_rgb_point', 'own_rgb_bay')
+BAY_HALF_M = (.25, .25)               # v5 CoarseOrderSheet bay (>= 0.15 m: coarse by construction)
 
 
 class _LegDriver(OwnCamDriverV2):
@@ -75,9 +90,16 @@ class _LegDriver(OwnCamDriverV2):
 class M1OwnCamDelivery:
     def __init__(self, static_map: Mapping, params: Mapping, *, box_kind: str, slot_id: str,
                  slot_xy: Sequence[float], skill_factory, pose_estimate_cls, search_rows_y: Sequence[float],
-                 robot_id: str = 'r1', seed: int = 0):
+                 robot_id: str = 'r1', seed: int = 0, order_kind: str = 'own_rgb_bay'):
         if box_kind != 'cyan':
             raise ValueError('M1 v1 delivers the cyan box')
+        if order_kind not in ORDER_KINDS:
+            raise ValueError(f'order_kind must be one of {ORDER_KINDS}')
+        self.order_kind = order_kind
+        self.order_record = None
+        self.probe: dict | None = None
+        self.manipulated = False
+        self.motion_profile = None
         self.map = static_map
         self.static_keepouts = []
         self.params = params
@@ -280,7 +302,7 @@ class M1OwnCamDelivery:
             if near is not None and n_near >= NEAR_MIN_DETECTIONS:
                 self.target_xy, self.pickup_source = near, 'own_rgb_search'
                 self.phase = 'approach_leg'
-                self._start_leg((near[0] - PREGRASP_STANDOFF_M, near[1]), loaded=False)
+                self._start_leg(self._approach_goal(near), loaded=False)
             elif far is not None and not getattr(self, '_closer_done', False):
                 self._closer_done = True
                 self.phase = 'search_leg'
@@ -295,6 +317,25 @@ class M1OwnCamDelivery:
                 self._start_leg(self.viewpoints[self.view_index], loaded=False)
             return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}
         return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}   # next decision continues the phase
+
+    def _approach_goal(self, target):
+        if self.order_kind == 'own_rgb_bay':
+            from harness.wrist_zone_skill_v5 import BAY_APPROACH_CLEARANCE_M
+            return (target[0] - BAY_HALF_M[0] - BAY_APPROACH_CLEARANCE_M, target[1])
+        return (target[0] - PREGRASP_STANDOFF_M, target[1])
+
+    def _make_order(self):
+        tx, ty = (round(float(v), 4) for v in self.target_xy)
+        if self.order_kind == 'own_rgb_bay':
+            from harness.wrist_zone_skill_v5 import CoarseOrderSheet
+            order = CoarseOrderSheet(self.box_kind, 'own_rgb_search_bay', (tx, ty), BAY_HALF_M, self.slot_id, self.slot_xy)
+            self.order_record = {**order.record(), 'bay_source': 'own RGB search cluster centre (this run)'}
+        else:
+            from harness.wrist_zone_skill import OrderSheet
+            order = OrderSheet(self.box_kind, (tx, ty), self.slot_id, self.slot_xy)
+            self.order_record = {'kind': self.box_kind, 'pickup_xy_m': [tx, ty], 'slot_id': self.slot_id,
+                                 'pickup_source': 'own RGB search cluster centre (this run)'}
+        return order
 
     def _init(self, now):
         """Localize first (look sweeps), then order the search viewpoints from the own estimate."""
@@ -338,9 +379,7 @@ class M1OwnCamDelivery:
         if outcome != 'arrived':
             self.outcome = 'APPROACH_LEG_' + outcome
             return {'mode': 'done', 'outcome': self.outcome}
-        from harness.wrist_zone_skill import OrderSheet
-        order = OrderSheet(self.box_kind, tuple(self.target_xy), self.slot_id, self.slot_xy)
-        self.skill = self.skill_factory(order)
+        self.skill = self.skill_factory(self._make_order())
         self.leg = None
         self.phase = 'skill'
         self._event(now, 'skill_start', pickup_xy=[round(v, 4) for v in self.target_xy],
@@ -351,20 +390,26 @@ class M1OwnCamDelivery:
         obs = self.last_obs
         if obs is None or now - float(obs['sim_time']) > .25:
             return {'mode': 'capture'}                     # runner captures a fresh own frame first
-        report = self.pose.report(now)
         sk = self.skill
+        self._set_motion_profile(now, sk.phase)
+        report = self.pose.report(now)
         # Re-anchor the held box after an arm move made by this controller (looks),
         # once the arm is back in its carry pose (sweep restored / leg driving again).
         leg_busy = self.leg is not None and self.leg.state in ('look_arm', 'look_pan', 'posture_back')
+        if self.probe is not None:
+            return self._tick_probe(now, obs)
         if self.reanchor_needed and not leg_busy and obs['frame_id'] != self.last_skill_frame:
             self.last_skill_frame = obs['frame_id']
             check = sk.box.reanchor_after_posture(obs)
-            self.reanchor_needed = False
-            self._event(now, 'reanchor', attached=bool(check.get('attached')))
-            if not check.get('attached'):
-                self.outcome = 'CARRY_REANCHOR_UNCONFIRMED'
-                return {'mode': 'done', 'outcome': self.outcome}
-            return {'mode': 'capture'}
+            self._event(now, 'reanchor', method='n7_strict', attached=bool(check.get('attached')))
+            if check.get('attached'):
+                self.reanchor_needed = False
+                return {'mode': 'capture'}
+            pan0 = int(self.servo.get(6, 1500))
+            self.probe = {'pan0': pan0, 'ref': obs['image'], 'queue': [('left', pan0 + PROBE_PAN_PWM),
+                          ('right', pan0 - PROBE_PAN_PWM), ('home', pan0)], 'images': {}, 'since': now}
+            self._event(now, 'reanchor_probe_start', pan0=pan0)
+            return self._tick_probe(now, obs)
         phase = sk.phase
         in_carry_leg = phase == 'nav_preplace' and not self.carry_leg_done   # the leg driver owns looks there
         limits = None if in_carry_leg else {'nav_pregrasp': LIMITS['nav_unloaded'], 'nav_preplace': LIMITS['nav_loaded'],
@@ -398,6 +443,10 @@ class M1OwnCamDelivery:
         # Carry leg: the skill's carry checks run on every frame; its navigation is
         # replaced by the driver (heading east, stop-and-look) until the door exit.
         if phase == 'nav_preplace' and not self.carry_leg_done:
+            if self.leg is None and self.manipulated:
+                # Dead reckoning over the manipulation phases is not trusted: fresh own look first.
+                self.manipulated = False
+                return self._gate_look(now, 'post_manipulation', obs, loaded=True)
             if self.leg is None:
                 self._start_leg(self.exit_xy, loaded=True)
                 self.leg.state, self.leg.state_since = 'drive', now
@@ -424,11 +473,58 @@ class M1OwnCamDelivery:
                 return {'mode': 'done', 'outcome': self.outcome}
             self.reanchor_needed = True
             return {'mode': 'capture'}
+        if obs['frame_id'] == self.last_skill_frame:
+            return {'mode': 'capture'}                     # the skill decides once per own frame
+        self.last_skill_frame = obs['frame_id']
         action = sk.decide(obs, est)
         if action.get('kind') == 'finish':
             self.outcome = 'SKILL_' + action['reason']
             return {'mode': 'done', 'outcome': self.outcome}
         return {'mode': 'macro', 'action': action}
+
+    def _set_motion_profile(self, now, skill_phase):
+        fine = skill_phase in FINE_PHASES or str(skill_phase).startswith(FINE_PHASE_PREFIXES)
+        name = 'fine' if fine and 'fine' in self.params.get('motion_profiles', {}) else None
+        if fine:
+            self.manipulated = True
+        if name != self.motion_profile:
+            self.pose.set_motion_profile(now, name)
+            self._event(now, 'motion_profile', profile=name or 'default', skill_phase=skill_phase)
+            self.motion_profile = name
+
+    def _tick_probe(self, now, obs):
+        """Own pan probe in the carry posture: the held box must stay camera-relative (co-motion)."""
+        pr = self.probe
+        stage, target = pr['queue'][0]
+        steps = self._arm_steps({6: target})
+        if steps:
+            pr['since'] = now
+            return {'mode': 'tick', 'commands': [{'kind': 'hold'}] + steps}
+        if now - pr['since'] < PROBE_SETTLE_S or float(obs['sim_time']) < pr['since'] + .4:
+            return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}
+        pr['images'][stage] = obs['image']
+        pr['queue'].pop(0)
+        if pr['queue']:
+            pr['since'] = now
+            return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}
+        box = self.skill.box
+        im = pr['images']
+        checks = {'left_vs_ref': box._compare_attachment(pr['ref'], im['left'], camera_pan_delta_pwm=PROBE_PAN_PWM),
+                  'right_vs_left': box._compare_attachment(im['left'], im['right'], camera_pan_delta_pwm=-2*PROBE_PAN_PWM),
+                  'home_vs_right': box._compare_attachment(im['right'], im['home'], camera_pan_delta_pwm=PROBE_PAN_PWM)}
+        ok = all(c.get('attached') for c in checks.values())
+        self._event(now, 'reanchor', method='own_pan_probe', attached=ok,
+                    checks={k: {kk: v.get(kk) for kk in ('attached', 'reason', 'mask_iou') if kk in v} for k, v in checks.items()})
+        self.probe = None
+        self.last_skill_frame = obs['frame_id']
+        if not ok:
+            self.outcome = 'CARRY_REANCHOR_UNCONFIRMED'
+            return {'mode': 'done', 'outcome': self.outcome}
+        # Same anchor fields N7 sets after its own attachment probe (visual_box_skill / v3 begin_check_grip).
+        box._attachment_image = im['home']
+        box._carry_previous_image = im['home']
+        self.reanchor_needed = False
+        return {'mode': 'capture'}
 
     def _gate_look(self, now, reason, obs, *, loaded):
         pose = {int(k): int(v) for k, v in obs['actuator_state']['servo_pulses'].items()}
@@ -445,9 +541,11 @@ class M1OwnCamDelivery:
             self.face_fallback_used = any(
                 e.get('event') == 'grasp_attached' and str(e.get('face_normal_source', '')).startswith('static_map')
                 for e in self.skill.events)
+        skill_sources = set(getattr(self.skill, 'pose_sources', ()) or ())
         return {'schema': SCHEMA, 'outcome': self.outcome, 'phase': self.phase, 'looks': self.look_count,
-                'target_xy': self.target_xy, 'pickup_source': self.pickup_source,
-                'cyan_detections': len(self.cyan), 'pose_sources': sorted(self.pose_sources),
+                'target_xy': self.target_xy, 'pickup_source': self.pickup_source, 'order_kind': self.order_kind,
+                'order': self.order_record, 'localizer_stats': dict(self.pose.loc.stats),
+                'cyan_detections': len(self.cyan), 'pose_sources': sorted(self.pose_sources | skill_sources),
                 'face_fallback_used': self.face_fallback_used, 'lookback_gate': self.lookback_gate,
                 'carry_leg_done': self.carry_leg_done,
                 'skill_summary': self.skill.summary() if self.skill is not None and hasattr(self.skill, 'summary') else None,

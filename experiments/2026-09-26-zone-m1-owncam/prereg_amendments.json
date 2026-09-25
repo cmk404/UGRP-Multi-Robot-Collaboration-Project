@@ -1,0 +1,27 @@
+{
+  "schema": "ugrp.m1_owncam_prereg_amendments.v1",
+  "rule": "Amendments change only the student (source/calibration/skill) and only on dev evidence, BEFORE the test split is run. Seeds, primary metric, claim rule, stop/retry/exclusion rules of prereg.json are unchanged. The runner applies every student_patch in order and records the applied ids and this file's sha256 in each manifest.",
+  "amendments": [
+    {
+      "id": "A1-dev-a1-s91",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a1 m1dev-s91 (outputs/m1-owncam-20260926/dev-a1): CARRY_REANCHOR_UNCONFIRMED at 231 s. (1) Grasp phase (arm lowered, no tags): 29 own drive commands dead-reckoned with the navigation plant (gain 1.47, tau 0.3 s, particle slip scale 1.27) moved the estimate 0.95 m while GT moved 0.22 m (real plant: forward tau ~1.3 s); std stayed 0.07 m. (2) The loaded looks after the grasp saw tags but never re-localized: the loop v2 reset threshold (-12) is below the single-tag robust floor (-9). (3) N7's strict co-motion re-anchor rejected the held box after a loaded look (the box re-seated in the gripper; GT z 0.17 m, still held). (4) v4 used the static-map face-normal fallback (5 nudges), which this prereg counts as an M1 failure; PR #181 asked M1 to use v5 (no fallback, coarse bay order).",
+      "changes": [
+        "skill v4 -> wrist_zone_skill_v5 in mode='m1' (PR #181 source frozen at 4884226 for its own test cohort 541-548, merged read-only; v5's own cohort result is pending and is not pooled here)",
+        "order sheet for v5: CoarseOrderSheet whose 0.5 m bay (half 0.25 m) is centred on the own-RGB search cluster; still no scenario position (pickup_source=own_rgb_search); the approach leg ends at v5's bay approach point (bay west edge - 0.25 m)",
+        "calibration: calibration_m1_dev.json = loop v2 calibration + settled-frame kidnap reset (per-tag best log-likelihood < -8.5 on 2 consecutive tag frames >= 0.3 s after an own servo command) + motion profile 'fine' (forward tau 1.28 s gain 1.95, turn tau 0.05 s gain 0.95, stop tau 0.05 s, particle slip scales not applied; fit_fine_motion.py on dev s91 grasp commands)",
+        "controller: the 'fine' profile is selected while the skill is in grasp / backoff / reseat_*; the carry leg starts only after a fresh own look (post_manipulation); after a loaded look the held box is re-anchored by N7's strict test, else by an own pan probe (+60/-60/home PWM, the skill's own attachment comparison, same evidence as N7's post-lift probe)",
+        "module rename harness/m1_contract.py -> harness/m1_owncam_contract.py (same judge code; PR #181 owns harness/m1_contract.py). Results also carry PR #181's outcome_fields and pass its validate_outcome; success = m1_success = this prereg's strict checks AND #181's outcome block"
+      ],
+      "student_patch": {
+        "skill": "v5",
+        "skill_module": "harness/wrist_zone_skill_v5.py (PR #181 branch at 4884226, imported read-only, mode='m1')",
+        "order_kind": "own_rgb_bay",
+        "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+        "controller_schema": "ugrp.m1_owncam_delivery.v2"
+      },
+      "offline_check": "replay of dev-a1 s91 own inputs through the amended pose source: error during the grasp 3 cm (was up to 0.95 m), first loaded look 2.7 cm; normal-operation error unchanged (in-sample on s91; dev-a2 s91-s93 is the live check)"
+    }
+  ]
+}

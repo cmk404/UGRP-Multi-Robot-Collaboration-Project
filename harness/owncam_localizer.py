@@ -206,12 +206,15 @@ class OwnCamLocalizer:
             self.vel = self.vel + alpha*(target - self.vel)
             if self.initialized:
                 std = rel*np.abs(self.vel) + ab
-                v = self.vel[None, :]*self.scale + self.rng.normal(size=(self.n, 3))*std
+                # use_scale False (M1 'fine' profile): the per-particle slip scales track the
+                # navigation plant and do not transfer to the arm-lowered plant.
+                sc = self.scale if mp.get('use_scale', True) else 1.
+                v = self.vel[None, :]*sc + self.rng.normal(size=(self.n, 3))*std
                 c, s = np.cos(self.px[:, 2]), np.sin(self.px[:, 2])
                 self.px[:, 0] += (c*v[:, 0] - s*v[:, 1])*dt
                 self.px[:, 1] += (s*v[:, 0] + c*v[:, 1])*dt
                 self.px[:, 2] = wrap(self.px[:, 2] + v[:, 2]*dt)
-                if np.any(np.abs(self.vel) > 1e-6):
+                if np.any(np.abs(self.vel) > 1e-6) and mp.get('use_scale', True):
                     self.scale += self.rng.normal(size=(self.n, 3))*mp['scale_walk']*math.sqrt(dt)
                 self.logw += self._map_logprior(self.px)
             self.t += dt
