@@ -25,7 +25,7 @@ from typing import Any, Mapping
 import cv2
 import numpy as np
 
-from harness.owncam_view import base_rays
+from harness.owncam_view import base_rays, posture, valid_pixel_mask
 
 LIME_LO, LIME_HI = (36, 60, 40), (54, 255, 255)
 BAND_V_MAX = 60                    # black grip band
@@ -36,6 +36,31 @@ MIN_POINTS = 60
 RAY_STEP = 2
 ALIGN_TOL_M, ALIGN_TOL_RAD = .008, .035
 MIN_COMMAND = .035                 # smaller mecanum commands stall the chassis (zone skill dev 401)
+BORDER_PX = 14
+# Look postures by measured grip distance (dev 601: in SEARCH the near end leaves the valid
+# fisheye region below ~0.30 m; the inspection pose sees band and end at the 0.155 m station).
+LOOK_POSTURES = (
+    ('search', .33, {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}),
+    ('p45', .24, {**posture(.155, .14, -45.), 1: 2000}),
+    ('inspect', 0., {1: 2000, 3: 508, 4: 2432, 5: 1320, 6: 1500}),
+)
+
+
+def _inner_valid():
+    valid = valid_pixel_mask(1).astype(np.uint8)
+    return cv2.erode(valid, np.ones((2 * BORDER_PX + 1,) * 2, np.uint8)).astype(bool)
+
+
+_INNER = None
+
+
+def look_posture(grip_distance_m: float | None) -> tuple[str, dict[int, int]]:
+    if grip_distance_m is None:
+        return LOOK_POSTURES[0][0], LOOK_POSTURES[0][2]
+    for name, above, pose in LOOK_POSTURES:
+        if grip_distance_m >= above:
+            return name, pose
+    return LOOK_POSTURES[-1][0], LOOK_POSTURES[-1][2]
 
 
 def decode(image) -> np.ndarray:
@@ -81,8 +106,10 @@ def observe_beam(image, pose: Mapping[int | str, int | float]) -> dict[str, Any]
     grip = end + GRIP_INSET_M * u
     # The near end is only trustworthy if lime pixels there are not at the image border.
     near_px = along <= near + .01
-    h, w = mask.shape
-    clipped = bool(np.any((py[near_px] >= h - 12) | (px[near_px] <= 8) | (px[near_px] >= w - 9)))
+    global _INNER
+    if _INNER is None:
+        _INNER = _inner_valid()
+    clipped = bool(np.any(~_INNER[py[near_px], px[near_px]]))
     return {'visible': True, 'reason': 'END_CLIPPED' if clipped else 'BEAM_END_VISIBLE',
             'end_visible': not clipped, 'points': int(len(pts)),
             'axis_heading_rad': float(math.atan2(u[1], u[0])),

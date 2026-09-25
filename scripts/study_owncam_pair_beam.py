@@ -138,8 +138,20 @@ class PairStudent:
             handler(now, arm_idle)
 
     def _align_start(self, now, arm_idle):
-        self.arm.queue(SEARCH, now, duration=.8)
+        self.look_name, pose = ob.look_posture(None)
+        self.arm.queue(pose, now, duration=.8)
         self.set('align', now)
+
+    def _switch_look(self, distance, now):
+        name, pose = ob.look_posture(distance)
+        order = [n for n, _, _ in ob.LOOK_POSTURES]
+        if order.index(name) <= order.index(self.look_name):     # only nearer on distance (hysteresis)
+            return False
+        self.log(self.rid, 'look_posture', now, posture=name, grip_distance_m=round(distance, 3))
+        self.look_name = name
+        self.aligned_streak = 0
+        self.arm.queue(pose, now, duration=.6)
+        return True
 
     def _align(self, now, arm_idle):
         if not arm_idle or now < self.next_look:
@@ -156,7 +168,16 @@ class PairStudent:
             return self.drive({'forward': 0., 'left': 0., 'turn': .06, 'duration': .3}, now)
         if not beam['end_visible']:
             self.aligned_streak = 0
+            # End below the view: look from the next farther posture, or back up from the farthest.
+            order = [n for n, _, _ in ob.LOOK_POSTURES]
+            k = order.index(self.look_name)
+            if k > 0:
+                self.look_name = order[k - 1]
+                self.log(self.rid, 'look_posture', now, posture=self.look_name, reason='end_clipped')
+                return self.arm.queue(ob.LOOK_POSTURES[k - 1][2], now, duration=.6)
             return self.drive({'forward': -.04, 'left': 0., 'turn': 0., 'duration': .3}, now)
+        if self._switch_look(beam['grip_base_m'][0], now):
+            return
         cmd = ob.align_command(beam)
         if cmd is None:
             self.aligned_streak += 1
