@@ -264,6 +264,50 @@ def numeric_leaves(value, prefix=''):
         for i, v in enumerate(value): yield from numeric_leaves(v, f'{prefix}/{i}')
 
 
+OFFLINE_TAG = re.compile(r'offline/[a-z0-9_]+(?:/[a-z0-9_]+){0,3}')
+
+
+def offline_scalars(result):
+    """Read explicitly declared offline-evaluation numbers from a derived view.
+
+    The derived view, not this converter, decides which recorded numbers are
+    shown. Every value must already exist in the hashed original record, so the
+    declaration carries that record's path and SHA-256 and is rejected when the
+    original is missing or changed. These numbers are offline measurements, not
+    robot task success.
+    """
+    declared = obj(result.get('offline_scalars'))
+    if not declared: return {}, None
+    if result.get('derived_view_only') is not True:
+        raise ValueError('offline_scalars requires derived_view_only evidence')
+    scope = result.get('offline_scalar_scope')
+    if not isinstance(scope, str) or not scope.strip():
+        raise ValueError('offline_scalars requires offline_scalar_scope text')
+    origin = obj(result.get('offline_source'))
+    path, digest = origin.get('path'), origin.get('sha256')
+    if not isinstance(path, str) or not isinstance(digest, str) or not re.fullmatch(r'[0-9a-f]{64}', digest):
+        raise ValueError('offline_scalars requires offline_source path and sha256')
+    original = Path(path)
+    if original.is_symlink() or not original.is_file() or original.stat().st_size > MAX_BYTES:
+        raise ValueError(f'offline_source missing, linked, or oversized: {path}')
+    if sha(original.read_bytes()) != digest:
+        raise ValueError(f'offline_source changed since the derived view was built: {path}')
+    values = {}
+    for tag, value in declared.items():
+        if not OFFLINE_TAG.fullmatch(str(tag)):
+            raise ValueError('offline scalar tag must match offline/<name>: ' + str(tag))
+        if not finite(value):
+            raise ValueError('offline scalar must be a finite number: ' + str(tag))
+        values[str(tag)] = value
+    stat = original.stat()
+    provenance = {'scope': scope, 'tags': sorted(values),
+                  'original': {'path': str(original), 'sha256': digest,
+                               'size': stat.st_size, 'mtime_s': stat.st_mtime},
+                  'pointer': result.get('offline_source_pointer'),
+                  'limit': '원본 기록에 있는 오프라인 측정값입니다. 로봇 임무 성공이나 실행 시간이 아닙니다.'}
+    return values, provenance
+
+
 def sample_indices(length, maximum):
     if maximum <= 0 or length == 0: return set()
     if maximum == 1: return {length - 1}
@@ -524,6 +568,7 @@ def export_execution(src, w, result, max_images, coverage_audit=None):
     meta = {'family': family, 'policy': policy, 'case': result.get('case', cfg.get('variant')),
             'source_sha': result.get('source_sha'), 'scope': result.get('scope'), 'clock': result.get('clock'),
             'seed': result.get('seed', cfg.get('seed')), 'goal': result.get('goal'),
+            'condition': result.get('condition'),
             'spawn_offset': cfg.get('spawn_offset'), 'contact_profile': cfg.get('contact_profile'),
             'model_provenance': result.get('model_provenance'), 'plan_replay_sha256': result.get('plan_replay_sha256'),
             'limits': result.get('limits')}
@@ -656,6 +701,11 @@ def export_execution(src, w, result, max_images, coverage_audit=None):
         metrics['claims/operator_session_complete'] = int(result['operator_session_complete'])
     for name, val in obj(result.get('protocol')).items():
         if name in ('completed_task_claims', 'tasks', 'final_object_claims') and finite(val): metrics['claims/' + name] = val
+    offline, offline_provenance = offline_scalars(result)
+    if offline_provenance is not None:
+        metrics.update(offline)
+        meta['offline_scalars'] = offline_provenance
+        w.text('provenance/offline_scalars', offline_provenance)
     for k, v in metrics.items(): w.scalar(k, v)
     w.text('result/summary', {k: result.get(k) for k in ('success', 'physical_success', 'transport_success', 'stop_reason', 'error', 'phase', 'scope', 'clock', 'protocol_complete', 'protocol')})
     w.text('evaluation/referee_only', result.get('evaluation', result.get('final_evaluation', {})))
@@ -990,7 +1040,7 @@ def convert(source, output, *, max_images=8, media_port=6007, allow_synthetic=Fa
             'limits': '선택한 실행들의 개별 기록입니다. 성공률 집계·조건 동등성·실물 성능을 자동 주장하지 않습니다. 미기록 비용/시각은 0으로 채우지 않습니다.'})
         hp = {k: str(meta.get(k) if meta.get(k) is not None else 'unrecorded') for k in ('family', 'policy', 'case', 'source_sha', 'seed', 'outcome', 'clock', 'setup_sha256', 'run_id', 'condition')}
         hp['condition_fingerprint'] = stable_digest({k: meta.get(k) for k in ('family','case','source_sha','seed','scope','clock','goal','spawn_offset','contact_profile','setup_sha256','limits')})
-        w.hparams(hp, HP_METRICS)
+        w.hparams(hp, HP_METRICS + tuple(obj(meta.get('offline_scalars')).get('tags') or ()))
         manifest.update(metadata=meta, source_files=src.files, warnings=src.warnings, videos=videos, counts=w.counts)
         w.close()
         for relative, record in src.files.items():
