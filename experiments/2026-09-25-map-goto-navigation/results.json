@@ -1,0 +1,332 @@
+{
+  "schema": "ugrp.experiment.map_goto.v1",
+  "date": "2026-09-25",
+  "pr": 148,
+  "mode": "synchronous SIM, headless, --plan-replay fixture votes (no model calls)",
+  "common": {
+    "variant": "open",
+    "seed": 11,
+    "contact_profile": "local_contact_fine",
+    "dock": "dock_b",
+    "beam": [
+      "r1",
+      "r3"
+    ],
+    "beam_route": "north",
+    "box": "r2",
+    "planned_park": {
+      "xy_m": [
+        0.0,
+        -2.6
+      ]
+    },
+    "entry": "scripts/sim_cli.py dispatch --headless (efficient capture, auto-route-overlap -> serial by dependency)"
+  },
+  "runs": [
+    {
+      "run": "B-authored-beam-first",
+      "source_sha": "ace309d12c2a0ea4452ba2ab2036e077b1d7c9af",
+      "navigation": "authored",
+      "mission_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "beam_success": true,
+      "box_success": true,
+      "control_end_sim_s": 181.45999999743702,
+      "wall_s": 393.63763837501756,
+      "box_carry_decisions": 239,
+      "box_carry_sim_s": 47.65949999887302,
+      "box_carry_direct_cyan_fraction": 0.619,
+      "box_displacement_m": 2.0065452480592145,
+      "box_planned_waypoints_m": null,
+      "box_replans": null,
+      "park_steps": 0,
+      "park_destination": null,
+      "park_final_xy_m": null,
+      "park_done": null,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/authored-beam-first.json",
+      "execution": "authored path; source ace309d",
+      "loadavg_before": "{ 5.06 4.59 4.46 }",
+      "loadavg_after": "{ 3.46 4.00 4.22 }",
+      "driver_wall_s": 396,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/B-authored-beam-first",
+      "hashes": {
+        "result.json": "45951e724aaa42defb1c3aee9da7a6e0e1e3735b892f05cd2f0cb6df071c4e81",
+        "solo-decisions.json": "91c1c0948a3ba2fcdc5489eb8762607fd5bf7a6016ffc6035949f663c2c174a0",
+        "committed-plan.json": "7e2057d21f96f9fee9c82efcb7eafd3a410b0f041461f21fd516c8bf06b6ccef",
+        "referee-only.jsonl": "ffaad86801882a358ba78769fe5bf113e106cef6e406757e63814f41f454a338",
+        "execution.mp4": "7ececaa6d5e08271b465ebb0d93e28d2dec019023b9578794b8309332ed5e3db"
+      }
+    },
+    {
+      "run": "R2-beam-first",
+      "source_sha": "a19af8b02e43782c566d5a5a632a8c9868eac346",
+      "navigation": "planned",
+      "mission_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "beam_success": true,
+      "box_success": true,
+      "control_end_sim_s": 182.2599999974181,
+      "wall_s": 356.80526979098795,
+      "box_carry_decisions": 243,
+      "box_carry_sim_s": 48.460499998854075,
+      "box_carry_direct_cyan_fraction": 0.403,
+      "box_displacement_m": 1.9454089703964343,
+      "box_planned_waypoints_m": [
+        [
+          -0.16545144806288647,
+          -2.648105616432028
+        ],
+        [
+          0.14250000000000096,
+          -1.6925000000000052
+        ],
+        [
+          0.2925000000000011,
+          -1.5425000000000058
+        ],
+        [
+          1.8675000000000024,
+          -1.767500000000005
+        ],
+        [
+          2.0,
+          -2.66
+        ]
+      ],
+      "box_replans": 0,
+      "park_steps": 0,
+      "park_destination": null,
+      "park_final_xy_m": null,
+      "park_done": null,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/beam-first.json",
+      "execution": "v55 source a19af8b",
+      "loadavg_before": "{ 2.83 3.42 4.32 }",
+      "loadavg_after": "{ 6.14 4.46 4.44 }",
+      "driver_wall_s": 359,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/R2-beam-first",
+      "hashes": {
+        "result.json": "6acd8b704e25b92385b78cb7ee3c9b1656658eec30a5b6943ea723d57c6c58ec",
+        "solo-decisions.json": "8faf835978492abb91c57b90c3def659569b2fbc9ec771441d79f3e152871be4",
+        "committed-plan.json": "ac9e4115c94a9b5a3072d394f71e1998e33747514ef32e08431e43b6c291d59c",
+        "referee-only.jsonl": "9aa5875082ef9dd07c1efd8b6112ad1d20e2d620b3770e04a3bbb9d524bdd143",
+        "execution.mp4": "aba39364ece9813d51ad771b3393c88415b7ae0472165a042e90772f0521ad3e"
+      }
+    },
+    {
+      "run": "B-authored-box-first",
+      "source_sha": "ace309d12c2a0ea4452ba2ab2036e077b1d7c9af",
+      "navigation": "authored",
+      "mission_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "beam_success": true,
+      "box_success": true,
+      "control_end_sim_s": 216.05999999661884,
+      "wall_s": 416.3497803750215,
+      "box_carry_decisions": 242,
+      "box_carry_sim_s": 48.2602499988588,
+      "box_carry_direct_cyan_fraction": 0.62,
+      "box_displacement_m": 2.0067214861832032,
+      "box_planned_waypoints_m": null,
+      "box_replans": null,
+      "park_steps": 150,
+      "park_destination": null,
+      "park_final_xy_m": [
+        1.8982478923910575,
+        -2.0051030342705123
+      ],
+      "park_done": true,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/authored-box-first.json",
+      "execution": "authored path; source ace309d",
+      "loadavg_before": "{ 3.46 4.00 4.22 }",
+      "loadavg_after": "{ 3.25 3.86 4.12 }",
+      "driver_wall_s": 418,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/B-authored-box-first",
+      "hashes": {
+        "result.json": "455094c4af35a74d8f3c9ea8220647d705b5476a0c4a438280064dd907d15efb",
+        "solo-decisions.json": "636204688954012093077d0a3cf5742531e5a9cd823b9fe2b64637766250df5a",
+        "committed-plan.json": "fd31feb9dad190de5a1702764530ca1a3fb830bfbc772e25000dbf800e9393fe",
+        "referee-only.jsonl": "50a83c95a071d6b30600ddf583d631ced8612ca9d6a89d6c681898c404ab4576",
+        "execution.mp4": "528ac9801be87123ca23685dc4fd6cce28cba80adcb022c16fd9b9867fc04b4f"
+      }
+    },
+    {
+      "run": "R2-box-first",
+      "source_sha": "a19af8b02e43782c566d5a5a632a8c9868eac346",
+      "navigation": "planned",
+      "mission_success": true,
+      "protocol_complete": true,
+      "error": null,
+      "beam_success": true,
+      "box_success": true,
+      "control_end_sim_s": 199.2599999970161,
+      "wall_s": 386.1251778330188,
+      "box_carry_decisions": 133,
+      "box_carry_sim_s": 26.432999999374942,
+      "box_carry_direct_cyan_fraction": 0.992,
+      "box_displacement_m": 2.006152864466225,
+      "box_planned_waypoints_m": [
+        [
+          -0.16545144806288647,
+          -2.648105616432028
+        ],
+        [
+          2.0,
+          -2.66
+        ]
+      ],
+      "box_replans": 3,
+      "park_steps": 175,
+      "park_destination": {
+        "xy_m": [
+          0.0,
+          -2.6
+        ]
+      },
+      "park_final_xy_m": [
+        0.013564755058662059,
+        -2.5864551241122102
+      ],
+      "park_done": true,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/box-first.json",
+      "execution": "v55 source a19af8b",
+      "loadavg_before": "{ 6.14 4.46 4.44 }",
+      "loadavg_after": "{ 4.06 4.24 4.33 }",
+      "driver_wall_s": 388,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/R2-box-first",
+      "hashes": {
+        "result.json": "9c5b7d2dacd606bf172ef2ff812b0d3b0aac363f595f353f7082318ac4a8a2c1",
+        "solo-decisions.json": "8cf4b5b0cf542c18912b5ff8ef31e482d65b89baa2bffae2c7fbda045d8ecbc9",
+        "committed-plan.json": "c702ffdea2bb5dd82d13ea7834ee79cdffc288c93a911842fd9c1bfcad1fe2c7",
+        "referee-only.jsonl": "fb3b02d59df19f016e81461280ae5f05c0f770703327e6137ce30a8780f6d75a",
+        "execution.mp4": "09f073f56fe864fa11777a9da5a329baa470233b82626b1a5201ed2639912c6e"
+      }
+    },
+    {
+      "run": "R-beam-first",
+      "source_sha": "9fd4ed091893f673eeebb6a1f618f38d4e88b055",
+      "navigation": "planned",
+      "mission_success": false,
+      "protocol_complete": false,
+      "error": "ComponentExecutionError: solo_box: RuntimeError: solo RGB decision budget exhausted",
+      "beam_success": true,
+      "box_success": false,
+      "control_end_sim_s": 220.48399999651423,
+      "wall_s": 546.7491503749916,
+      "box_carry_decisions": 480,
+      "box_carry_sim_s": 95.91974999773181,
+      "box_carry_direct_cyan_fraction": 0.104,
+      "box_displacement_m": 1.942401002579434,
+      "box_planned_waypoints_m": [
+        [
+          -0.16545144806288647,
+          -2.648105616432028
+        ],
+        [
+          0.09250000000000091,
+          -2.292500000000003
+        ],
+        [
+          0.9675000000000017,
+          -1.767500000000005
+        ],
+        [
+          1.8675000000000024,
+          -1.7925000000000049
+        ],
+        [
+          2.0,
+          -2.66
+        ]
+      ],
+      "box_replans": 0,
+      "park_steps": 0,
+      "park_destination": null,
+      "park_final_xy_m": null,
+      "park_done": null,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/beam-first.json",
+      "execution": "unpublished v48 candidate 9fd4ed0",
+      "loadavg_before": "{ 10.40 13.08 9.23 }",
+      "loadavg_after": "{ 15.44 12.45 10.20 }",
+      "driver_wall_s": 550,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/R-beam-first",
+      "hashes": {
+        "result.json": "b92025bfc851ca1d1284c67ad7db5a86ca66bc15f3408643fbb930e407e14eb3",
+        "solo-decisions.json": "fed50455934812c458273c8fd368f7afa69c3ace4577fc8b21b009deb8968d58",
+        "committed-plan.json": "d7080a7f9b58f1ad2559cd8ac440611942a304c9e731ab05dd48432b1f4bbe9a",
+        "referee-only.jsonl": "e3c9c59b43f63edf5f2d562331f70538c4eb12340a8c17d632c4dc734eba4770",
+        "execution.mp4": "afe4a2056d7fc97cc7c6db317112066d4b8d7c4972c3bfebcddc878e7853487f"
+      }
+    },
+    {
+      "run": "R-box-first",
+      "source_sha": "9fd4ed091893f673eeebb6a1f618f38d4e88b055",
+      "navigation": "planned",
+      "mission_success": false,
+      "protocol_complete": false,
+      "error": "ComponentExecutionError: solo_box: RuntimeError: RGB park decision budget exhausted",
+      "beam_success": false,
+      "box_success": false,
+      "control_end_sim_s": 175.34099999758172,
+      "wall_s": 357.72771891599405,
+      "box_carry_decisions": 90,
+      "box_carry_sim_s": 17.82224999957856,
+      "box_carry_direct_cyan_fraction": 1.0,
+      "box_displacement_m": 1.910086864242297,
+      "box_planned_waypoints_m": [
+        [
+          -0.16545144806288647,
+          -2.648105616432028
+        ],
+        [
+          1.86,
+          -2.66
+        ]
+      ],
+      "box_replans": 0,
+      "park_steps": 401,
+      "park_destination": {
+        "xy_m": [
+          0.0,
+          -2.6
+        ]
+      },
+      "park_final_xy_m": [
+        0.013541145690179834,
+        -2.5962886487333297
+      ],
+      "park_done": false,
+      "llm_calls": 0,
+      "plan": "experiments/2026-09-25-map-goto-navigation/plans/box-first.json",
+      "execution": "unpublished v48 candidate 9fd4ed0",
+      "loadavg_before": "{ 15.44 12.45 10.20 }",
+      "loadavg_after": "{ 6.69 8.22 8.94 }",
+      "driver_wall_s": 360,
+      "raw_dir": "/Users/changmin/projects/ugrp/outputs/map-goto-20260925/R-box-first",
+      "hashes": {
+        "result.json": "03f783de898f48e8709c4664f2a0c453e3cd55c1c1c2e5f1df9b248a9e703d3b",
+        "solo-decisions.json": "b07ce4e5dfccc186d274262f8ca8e89f791b482de0d8c58728beb25ffa2dd125",
+        "committed-plan.json": "d8cb206af907a228cc924928b3522fdf942402546b439ddd809733b9ec40e6be",
+        "referee-only.jsonl": "128c2330e454395f393a20a4d92a8bd95d2d7dba2b78c5d9c3ee4407d42ff9c9",
+        "execution.mp4": "d85dec0d5c671b04edaf6f837997bb20ff5bb27f213a64c737116dba7429d3fd"
+      }
+    }
+  ],
+  "launch_failures": "outputs/map-goto-20260925/launch-failure-no-pythonpath/: first driver attempt missed PYTHONPATH; no simulation started",
+  "retired_candidate_bundle": {
+    "path": "experiments/2026-09-25-map-goto-navigation/retired-bundle/map-goto-candidate-v48.json",
+    "sha256": "5f6c100b953ab473e9f8e66076be996741663adab8dfcb7965b0f177eb5dacc8"
+  },
+  "tensorboard": {
+    "snapshot": "outputs/tensorboard/0925-map-goto",
+    "view_key": "map_goto_20260925"
+  },
+  "raw_storage": "local only in the primary checkout outputs/; not a remote backup"
+}

@@ -50,6 +50,35 @@ python scripts/ugrp_session.py run dispatch-e2e -- \
 `--planner llm`은 기존 개인 모델 프록시를 사용하고 비용이 발생할 수 있다. 최대 8라운드/24호출, 요청별 60초 한도다.
 출력 폴더를 재사용하면 시작 전에 거부한다.
 
+## 목적지 선택 + A* 이동 (`--navigation planned`, 선택)
+
+기본값(`authored`)에서는 모델이 dock과 north/south 통로를 고르고, 상자 로봇은 그 통로의
+저작 경유점을 0.2초씩 RGB로 따라간다. `--navigation planned`에서는 모델이 **어디로 갈지**만
+정하고 **어떻게 갈지**는 정적 지도 A*가 정한다.
+
+- 계획의 `box_job`은 `"route":"auto"`와 `"park"`를 가진다. `park`는 하역 뒤 빔이 아직 dock을
+  써야 할 때 상자 로봇이 기다릴 곳이며, `static_map.regions`의 이름(예: `"wait_west"`) 또는
+  `{"xy_m":[x,y]}`(`warehouse_xy_m`)이다. 빔은 합의한 north/south 통로를 그대로 쓴다.
+- 실행 전 가능성 검사가 현재 TOP RGB의 상자 위치에서 dock 슬롯까지 A* 경로(`harness/map_goto.py`)를
+  찾고, 경로가 지나는 자원 영역(게이트·apron)만 예약한다. 경로가 없거나 `park`가 게이트·apron·dock·빔
+  경로를 막으면 이유를 모델에 돌려 새 합의를 요구한다.
+- 운반 중에는 매 결정마다 RGB 화물 위치로 경로 이탈을 검사하고 8cm를 넘으면 다시 계획한다(최대 4회).
+  예약하지 않은 자원 영역은 지나가지 않는다. 대기 이동은 RGB 바퀴 형상 위치에서 A*로 계획한다.
+- 범위: 동기식 plan-first skills 실행기, 직렬 자원(`--route-overlap`·`--realtime-control`·
+  `--coordination dynamic`과 함께 쓰면 거절). 정답 좌표·접촉·성공 신호는 쓰지 않는다. 지도 경로는
+  물리 통과의 증거가 아니며, 실제 도착·하역은 기존 RGB 확인과 별도 평가로 판정한다.
+
+```sh
+# 저장 계획 재생(새 LLM 호출 없음)
+python scripts/ugrp_session.py run goto-replay -- .venv-sim-worker-mac/bin/mjpython scripts/sim_cli.py \
+  dispatch --headless --variant open --seed 11 --navigation planned \
+  --plan-replay experiments/2026-09-25-map-goto-navigation/plans/box-first.json --output outputs/goto-NEW
+# 실제 세 LLM이 목적지·대기 위치를 합의
+python scripts/ugrp_session.py run goto-live -- .venv-sim-worker-mac/bin/mjpython scripts/sim_cli.py \
+  dispatch --headless --variant open --seed 11 --navigation planned \
+  --task '서로 역할과 순서를 합의해서 beam과 box를 dock_b로 옮겨' --output outputs/goto-live-NEW
+```
+
 ## 경계와 연결 상태
 
 | 부분 | 상태 |

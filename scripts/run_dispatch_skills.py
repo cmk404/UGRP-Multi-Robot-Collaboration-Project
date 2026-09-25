@@ -23,12 +23,13 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from harness.camera_motion_identity import ImageMotionIdentity
-from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply
+from harness.dispatch_plan import build_dispatch_request, validate_dispatch_plan, validate_dispatch_reply, navigation_mode
 from harness.dispatch_skill_binding import SkillBindings, ImageRoute
 from harness.dispatch_skill_binding import (_CARRIER_RELINK_MAX_OCCLUDED_FRAMES,
     _CARRIER_RELINK_MAX_ELAPSED_S,_CARRIER_RELINK_MAX_MOTION_PX)
 from harness.dispatch_feasibility import negotiate_executable
 from harness.dispatch_yield import SoloYield,WheelObserver
+from harness.dispatch_goto import MapGoToYield
 from harness.dispatch_plan_guidance import PlanGuidance
 from harness.three_robot_plan import ROBOTS, TeamAgreement, images
 from harness.solo_box_transport import SoloBoxTransport, normalize_own_rgb
@@ -469,6 +470,13 @@ class SkillScene(DispatchScene):
         if not claim['valid']:raise RuntimeError('waiting robot identity unresolved')
         hint=np.array(claim['center'])*[frame.shape[1]-1,frame.shape[0]-1]
         return WheelObserver(self.bindings.static_map,hint).observe(top),{'source':'own_identity_probe','hint_px':hint.tolist()}
+    def _new_yield_policy(self,top):
+        if getattr(self.bindings,'navigation','authored')!='planned':
+            return SoloYield(self.bindings.static_map,self.solo.navigator.box_center)
+        # The models chose the park place; the feasibility verdict is reused.
+        planned=self.bindings.box_route or {}
+        return MapGoToYield(self.bindings.static_map,self.bindings.plan,self.solo.navigator.box_center,
+            top_jpeg=top,beam_center=self.bindings.planning_beam_center,destination=planned.get('park'))
     def _yield_tick(self,now):
         if self.bindings.settled('beam'):
             self.bindings.finish('box');return
@@ -484,7 +492,7 @@ class SkillScene(DispatchScene):
             self.solo_executor.submit(action,obs,'yield_fold',now);self.yield_folded=True
         else:
             if self.yield_policy is None:
-                self.yield_policy=SoloYield(self.bindings.static_map,self.solo.navigator.box_center)
+                self.yield_policy=self._new_yield_policy(top)
             action,evidence=self.yield_policy.decide(top)
             evidence['initial_cargo_center_px']=self.solo.navigator.box_center.tolist()
             self.raw(self.bindings.solo,action,'YIELD');self.solo_lease=now+action['duration_s']
@@ -1630,14 +1638,21 @@ def run(args):
                               overlap_start=getattr(args,'overlap_start','transit'))
         task['capability_scope']=guidance.capability_scope
         scene.guidance=guidance
+        navigation=getattr(args,'navigation','authored')
+        if navigation=='planned':
+            task['capability_scope']+=(' Planned navigation: you choose the dock and the box robot park place '
+                '(authored region name or xy_m); map A* plans the loaded box path and the park move. '
+                'The beam keeps its agreed corridor. Box and beam transport run one at a time.')
         write(args.output/'actor-mission.json',task)
         run_id=opaque_run_id()
         def planner(rid,**kwargs):
             return build_dispatch_request(rid,task=task,execution_pilot=True,identity_evidence=identity[rid],
-                                          guidance=guidance,**kwargs)
+                                          navigation=navigation,guidance=guidance,**kwargs)
         replay_plan=None
         if args.plan_replay:
             saved=json.loads(args.plan_replay.read_text())
+            if navigation_mode(saved['plan'])!=navigation:
+                raise ValueError('replayed plan was written for '+navigation_mode(saved['plan'])+' navigation')
             SkillBindings(saved,scene.config['static_map'])
             replay_plan=saved['plan']
             result['scope']='recorded-plan diagnostic with fixture votes; existing RGB physical skills, not fresh LLM E2E'
@@ -1647,8 +1662,8 @@ def run(args):
         team=ThreeRobotRuntime(args.output/'team',run_id=run_id,mode='fixture' if replay_plan else 'llm',
             plan_fixture=replay_plan,
             agreement=TeamAgreement(run_id,plan_validator=partial(validate_dispatch_plan,
-                required_dock=getattr(args,'required_dock',None))),request_builder=planner,
-            reply_validator=validate_dispatch_reply,request_timeout=args.timeout,max_tokens=1600,
+                required_dock=getattr(args,'required_dock',None),navigation=navigation)),request_builder=planner,
+            reply_validator=partial(validate_dispatch_reply,navigation=navigation),request_timeout=args.timeout,max_tokens=1600,
             roles_fixed_by_skill=False,planning_only=False,max_wall_s=args.max_wall_s,
             model=getattr(args,'model','gemini-3.8-flash'),
             idle_callback=scene.native_view.poll if scene.native_view else None)
@@ -1674,7 +1689,8 @@ def run(args):
         scene.bindings=SkillBindings(team.agreement.committed,scene.config['static_map'],
                                     route_overlap=getattr(args,'route_overlap',False),
                                     auto_route_overlap=getattr(args,'auto_route_overlap',False),
-                                    overlap_start=getattr(args,'overlap_start','transit'))
+                                    overlap_start=getattr(args,'overlap_start','transit'),
+                                    box_route=result['plan_feasibility'].get('planned_box_route'))
         result.update(plan_committed=True,plan=scene.bindings.plan,bindings=scene.bindings.capabilities(),
                       overlap_selection=scene.bindings.overlap_selection)
         write(args.output/'committed-plan.json',team.agreement.committed)
