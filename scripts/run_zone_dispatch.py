@@ -216,7 +216,7 @@ def run(args):
                 # Output-only record; robots only ever get the executor receipt.
                 result['injection'] = {'kind': inject, 'job_index': issued['count'], 'robot': rid,
                                        'box': job['box'], 'zone': job['zone'], 'sim_time_s': round(zone.time(), 2)}
-                zone._log('injected', rid, zone.time(), kind=inject, job=full['job_id'])
+                zone._log('injected', rid, zone.time(), failure=inject, job=full['job_id'])
             print(f"JOB {rid} {job['box']} -> {job['zone']} ({slot})" + (f' [inject {inject}]' if inject else ''),
                   flush=True)
             return True
@@ -237,6 +237,10 @@ def run(args):
                                          'box_taken_by_peer'):
                         slots.give_back(job['slot'])
                     solo['last_end'] = zone.time()
+                    if args.coordination == 'independent' and robot.outcome != 'placed_by_teacher':
+                        # Own evidence only: after its own job stopped, a robot
+                        # waits like after a null answer before it is asked again.
+                        solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
                     zone._log('job_end', rid, zone.time(), outcome=robot.outcome, box=job['box'], zone=job['zone'])
 
         if args.coordination == 'plan_first':
