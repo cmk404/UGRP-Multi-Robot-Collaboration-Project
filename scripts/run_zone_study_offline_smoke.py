@@ -59,7 +59,8 @@ def summarise(bundle) -> dict:
     summary = ev.summarise(trials)
     return {'conditions': {name: {k: row[k] for k in ('label_ko', 'is_reference', 'trials',
                                                       'successes', 'success_rate', 'end_reasons',
-                                                      'seeds', 'leader_ids', 'metrics', 'dialogue',
+                                                      'censored_trials', 'seeds', 'leader_ids',
+                                                      'metrics', 'dialogue',
                                                       'boundary_clean_trials',
                                                       'boundary_violation_trials')}
                           for name, row in summary['conditions'].items()},
