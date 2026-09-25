@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 
 from harness.three_robot_plan import ROBOTS, TeamAgreement  # noqa: E402
 from harness import zone_coordination as zc  # noqa: E402
+from harness import zone_solo as zs  # noqa: E402
 from harness.zone_perception import detect_all, label_pickup, observe  # noqa: E402
 from sim.zone_arena import actor_task, episode, goal_counts, top_views  # noqa: E402
 
@@ -30,6 +31,10 @@ SCHEMA = 'ugrp.zone_dispatch_result.v1'
 # Dynamic mode: re-ask a stalled team (no job running, claims unresolved) at
 # most this many times before ending the run as STALLED.
 STALL_TURNS = 2
+# Independent (no-communication) mode: a robot that answered null or gave an
+# invalid claim is asked again after this much SIM time. Its wake-up never
+# depends on a peer's event.
+SOLO_REASK_S = 10.
 
 
 def write(path, value):
@@ -167,7 +172,11 @@ def run(args):
     active, own_jobs, finished, failed = {}, {r: [] for r in ROBOTS}, [], []
     queues = {r: [] for r in ROBOTS}
     stats = {'claim_rounds': 0, 'collisions': 0, 'invalid_claims': 0, 'plan_turns': 0, 'done_robots': [],
-             'stalled_turns': 0}
+             'stalled_turns': 0, 'same_box_accepted': 0, 'slot_refusals': 0}
+    issued = {'count': 0}
+    result['injection'] = None
+    solo = {'next_ask': {r: 0. for r in ROBOTS}, 'last_ask': {r: -1. for r in ROBOTS},
+            'answer': {r: None for r in ROBOTS}, 'last_end': 0.}
     stalled = False
     try:
         zone.step(.5)
@@ -182,15 +191,35 @@ def run(args):
 
         def assign(rid, job):
             oid, body = resolve_label(zone, labels, job['box'])
+            if not slots.free[job['zone']]:
+                # Only reachable without a shared host check (independent mode):
+                # the executor refuses, and the robot gets that receipt.
+                stats['slot_refusals'] += 1
+                own_jobs[rid].append({'box': job['box'], 'zone': job['zone'], 'slot': None,
+                                      'status': 'executor refused: zone has no free slot',
+                                      'issued_at_sim_s': round(zone.time(), 2)})
+                zone._log('slot_refused', rid, zone.time(), box=job['box'], zone=job['zone'])
+                return False
             slot = slots.take(job['zone'])
+            issued['count'] += 1
+            inject = ('grasp_stays_open' if args.inject_grasp_failure
+                      and issued['count'] == args.inject_grasp_failure else None)
             full = {**job, 'kind': labels[job['box']]['kind'], 'object': oid, 'slot': slot,
                     'job_id': f"{rid}-{len(own_jobs[rid])+1}"}
             active[rid] = full
             own_jobs[rid].append({'box': job['box'], 'zone': job['zone'], 'slot': slot, 'status': 'issued',
                                   'issued_at_sim_s': round(zone.time(), 2)})
             zone.executor.robots[rid].assign({'job_id': full['job_id'], 'box_body': body,
-                                              'slot_xy': slots.xy[slot]}, zone.time())
-            print(f"JOB {rid} {job['box']} -> {job['zone']} ({slot})", flush=True)
+                                              'slot_xy': slots.xy[slot],
+                                              **({'inject': inject} if inject else {})}, zone.time())
+            if inject:
+                # Output-only record; robots only ever get the executor receipt.
+                result['injection'] = {'kind': inject, 'job_index': issued['count'], 'robot': rid,
+                                       'box': job['box'], 'zone': job['zone'], 'sim_time_s': round(zone.time(), 2)}
+                zone._log('injected', rid, zone.time(), failure=inject, job=full['job_id'])
+            print(f"JOB {rid} {job['box']} -> {job['zone']} ({slot})" + (f' [inject {inject}]' if inject else ''),
+                  flush=True)
+            return True
 
         def collect_done():
             for rid, robot in zone.executor.robots.items():
@@ -204,8 +233,14 @@ def run(args):
                               'sim_time_s': round(zone.time(), 2)}
                     own_jobs[rid][-1]['status'] = report['executor_receipt']
                     (finished if robot.outcome == 'placed_by_teacher' else failed).append(report)
-                    if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit'):
+                    if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit',
+                                         'box_taken_by_peer'):
                         slots.give_back(job['slot'])
+                    solo['last_end'] = zone.time()
+                    if args.coordination == 'independent' and robot.outcome != 'placed_by_teacher':
+                        # Own evidence only: after its own job stopped, a robot
+                        # waits like after a null answer before it is asked again.
+                        solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
                     zone._log('job_end', rid, zone.time(), outcome=robot.outcome, box=job['box'], zone=job['zone'])
 
         if args.coordination == 'plan_first':
@@ -246,6 +281,23 @@ def run(args):
                     if queues[rid]:
                         assign(rid, queues[rid].pop(0))
                 if not active and not any(queues.values()):
+                    break
+            elif args.coordination == 'independent':
+                due = [r for r in idle if solo['next_ask'][r] <= zone.time()]
+                if due:
+                    turn += 1
+                    decided = independent_round(zone, team, task, labels, goal, due, own_jobs, stats, turn)
+                    for rid in due:
+                        solo['last_ask'][rid] = zone.time()
+                        if rid in decided['accepted'] and assign(rid, decided['accepted'][rid]):
+                            solo['answer'][rid] = 'job'
+                        else:
+                            solo['answer'][rid] = 'null' if rid in decided['idle'] else 'invalid'
+                            solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
+                # Finished when nobody holds a job and every robot, asked after
+                # the last job ended, said that nothing useful remains for it.
+                if not active and all(solo['answer'][r] == 'null' and solo['last_ask'][r] >= solo['last_end']
+                                      for r in ROBOTS):
                     break
             else:
                 waiting = [r for r in idle if r not in stats['done_robots']]
@@ -350,6 +402,38 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
             'idle_all': not retry and set(waiting) - set(accepted) <= set(idle)}
 
 
+def independent_round(zone, team, task, labels, goal, askers, own_jobs, stats, turn):
+    """No communication: each idle robot claims alone; invalid claims get one retry."""
+    accepted, idle, reasons = {}, [], {}
+    ask = list(askers)
+    views = top_views(zone.config['static_map'])
+    for attempt in range(2):
+        frames, tops = zone.capture(f'solo-{turn}-{attempt}', robots=ask)
+        view = observe(tops, zone.config['static_map'], labels)
+        ctx = {r: zs.solo_context(r, labels=labels, view=view, own_jobs=own_jobs[r],
+                                  extra={'invalid_reason': reasons[r]} if r in reasons else None) for r in ask}
+        def build(rid, request_id, ctx=ctx, frames=frames):
+            return zs.build_solo_request(rid, request_id=request_id, task=task, frame=frames[rid],
+                                         ctx=ctx[rid], views=views)
+        def fixture(rid, request_id, view=view):
+            return zs.fixture_solo_claim(rid, request_id, goal, labels, view)
+        replies = team.ask(ask, build, zs.validate_solo_reply, fixture, phase=f'solo-{turn}-{attempt}',
+                           turn=turn, sim_time=zone.time(), recipients=[])
+        stats['claim_rounds'] += 1
+        checked = zs.check_solo_claims({r: (v['claim'] if v else None) for r, v in replies.items()},
+                                       goal=goal, labels=labels, view=view)
+        accepted.update(checked['accepted'])
+        idle += checked['idle']
+        stats['invalid_claims'] += len(checked['invalid'])
+        stats['same_box_accepted'] += len(checked['same_box_accepted'])
+        team.event('CLAIMS_CHECKED', zone.time(), turn=turn, attempt=attempt, mode='independent', **checked)
+        reasons = dict(checked['invalid'])
+        ask = sorted(reasons)
+        if not ask:
+            break
+    return {'accepted': accepted, 'idle': idle}
+
+
 def _fixture_plan_reply(rid, request_id, context, goal, labels, plan_file=None):
     proposal = context['proposal']
     if proposal:
@@ -399,7 +483,8 @@ def parser():
     p.add_argument('--extra-boxes', default='{}', help='spare boxes per colour, JSON')
     p.add_argument('--variant', default='zone_open')
     p.add_argument('--seed', type=int, default=11)
-    p.add_argument('--coordination', choices=('plan_first', 'dynamic'), default='dynamic')
+    p.add_argument('--coordination', choices=('plan_first', 'dynamic', 'independent'), default='dynamic',
+                   help='independent = no communication: robots never see peer messages, claims or receipts')
     p.add_argument('--mode', choices=('llm', 'fixture'), default='llm')
     p.add_argument('--model', default='gemini-3.8-flash')
     p.add_argument('--planning-rounds', type=int, default=8)
@@ -407,6 +492,8 @@ def parser():
     p.add_argument('--max-wall-s', type=float, default=3600.)
     p.add_argument('--contact-profile', default='local_contact_fine')
     p.add_argument('--record-replay', action='store_true')
+    p.add_argument('--inject-grasp-failure', type=int, default=0,
+                   help='diagnostic: the N-th issued job keeps its gripper open, so its grasp really fails (0 = off)')
     p.add_argument('--fixture-plan', help='diagnostic, fixture plan_first only: propose this recorded '
                    'committed-plan.json instead of the scripted split')
     return p

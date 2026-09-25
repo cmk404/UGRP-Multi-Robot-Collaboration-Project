@@ -1,5 +1,6 @@
 # 실험 인덱스
 
+- [2026-09-25 구역 통신 비교](2026-09-25-zone-communication/README.md): zone_wide G8+여분 2, 무통신(independent)·사전 합의(plan_first)·동적(dynamic) × 정상·파지 실패 주입 × seed 12–14 = 실LLM 18회(`7ccd6c3`, 교사 실행기). 성공 independent 0/3·1/3(6회 중 5회 과잉 배달), plan_first 3/3·0/3(실패 뒤 1개 부족), dynamic 3/3·3/3. ZC1은 교사 막힘으로 시작 조건에서 멈췄고 교사를 고쳐(`34ceefe`) ZC2로 다시 등록했다.
 - [2026-09-25 넓은 구역 경기장](2026-09-25-zone-wide-arena/README.md): `zones/zone_wide` 6.45 × 4.6 m, TOP 4대. 규칙 응답 3/3(`bc4a784`), 실LLM ZW1 4/4 목표 달성(`e4ccaf6`, 교사 실행기). 호스트가 내려놓는 중인 상자를 두 번 세는 결함을 찾아 고쳤다(`9412326`). 수정본 ZW2도 4/4 목표 달성(`f30c9f2`). 다만 ZW2에서 같은 상황이 다시 생기지 않아, 수정의 실제 LLM 검증은 아니다. 호출 수의 우열은 코호트마다 달랐다. `zone_open` v2는 바이트 그대로 유지.
 - [2026-09-25 목적지 선택 + 지도 A* 이동](2026-09-25-map-goto-navigation/README.md): `--navigation planned`(재생 v55, main 병합 뒤 v57, 다시 v59로 재등록). 저장 계획 재생 open/seed11에서 A* 2/2·기존 경로 2/2 성공(조건당 1회), 상자 먼저 운반 48.3→26.4 SIM초. 후보 v48 재생 2회 실패(카메라 직하 가림, 서쪽 진입 시차 방출, park 진동)와 수정 기록. 실제 LLM 실행·다른 지도는 미검증.
 - [2026-09-25 구역 배송 협업 벤치마크](2026-09-25-zone-dispatch/README.md): 교사 실행기 조건, plan_first vs dynamic × G5/G8 목표. Z3(e520a3a) 4/4 목표 달성, SIM 시간은 한쪽으로 기울지 않고 LLM 호출·토큰은 dynamic이 적음. Z1·Z2 벤치마크 결함(합의 프롬프트, 격자, 교사 교착, 양보 교착)과 수정 기록.
