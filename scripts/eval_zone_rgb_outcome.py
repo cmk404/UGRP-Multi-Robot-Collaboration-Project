@@ -460,9 +460,13 @@ def _matrix():
 def score(args):
     split = args.split
     root = Path(args.out)/split
-    rows = []
+    rows, skipped = [], []
     for jdir in sorted(p.parent for p in root.glob('*/*/inputs.json')):
         inputs0 = json.loads((jdir/'inputs.json').read_text())
+        if not inputs0['after']:
+            # The job ended after the run's last replay state: no after image exists.
+            skipped.append({'run': inputs0['run'], 'job_id': inputs0['job_id'], 'reason': 'no_after_frame'})
+            continue
         run_dir = OUTPUTS/inputs0['run']
         static = json.loads((run_dir/'episode-setup-only.json').read_text())['static_map']
         inputs, results = decide_job(jdir, static, args.profile)
@@ -489,6 +493,7 @@ def score(args):
                                   else 'not_seen') in labels['expected_safe_outcomes']}
                         if 'synthetic_case' in labels else {})})
     summary = summarize(rows)
+    summary['skipped_jobs'] = skipped
     if any('synthetic_case' in r for r in rows):
         cases = {}
         for r in rows:
