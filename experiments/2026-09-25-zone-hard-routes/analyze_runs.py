@@ -73,6 +73,33 @@ def contacts(run_dir):
     return out
 
 
+def drive_waits(run_dir, static):
+    """SIM seconds robots stood still (< 5 mm per 0.1 s) in a drive phase
+    (to_box, carry), overall and within 1.0 m of a single-lane passage."""
+    import mujoco
+    from harness.static_keepouts import passage_zones, rect_distance
+    from scripts.dispatch_replay import label_at, load
+    model, states, labels, _ = load(run_dir)
+    data = mujoco.MjData(model)
+    cores = [core for _, core, _ in passage_zones(static)]
+    times = states['time']
+    step = max(1, round((len(times)/max(times[-1]-times[0], 1e-9))/CONTACT_HZ))
+    prev, total, near = {}, 0., 0.
+    for index in range(0, len(times), step):
+        data.qpos[:] = states['qpos'][index]
+        mujoco.mj_forward(model, data)
+        phases = dict(part.split(':') for part in label_at(labels, index).split(' | ') if ':' in part)
+        for rid in ROBOTS:
+            xy = data.body(rid + '__robot').xpos[:2].copy()
+            if rid in prev and phases.get(rid) in ('to_box', 'carry') and math.dist(xy, prev[rid][0]) < .005:
+                dt = float(times[index]-prev[rid][1])
+                total += dt
+                if any(rect_distance(xy, c) <= 1. for c in cores):
+                    near += dt
+            prev[rid] = (xy, times[index])
+    return round(total, 1), round(near, 1)
+
+
 def metrics(run_dir, row):
     result = json.loads((run_dir/'result.json').read_text())
     events = json.loads((run_dir/'teacher-events.json').read_text())
@@ -104,7 +131,7 @@ def metrics(run_dir, row):
             | {'replay_manifest': sha(run_dir/'replay'/'replay.json')}}
 
 
-def render_mp4(run_dir, target, *, speed=4., width=1280, height=720, fps=30):
+def render_mp4(run_dir, target, *, speed=4., width=960, height=540, fps=30):
     import cv2
     import mujoco
     from scripts.dispatch_replay import frame_at, label_at, load
@@ -145,7 +172,7 @@ def render_top_down(run_dir, target):
     data = mujoco.MjData(model)
     data.qpos[:] = states['qpos'][0]
     mujoco.mj_forward(model, data)
-    renderer = mujoco.Renderer(model, 960, 1280)
+    renderer = mujoco.Renderer(model, 720, 960)
     cam = mujoco.MjvCamera()
     cam.type = mujoco.mjtCamera.mjCAMERA_FREE
     cam.lookat[:] = [2.175, -.85, 0.]
@@ -209,10 +236,13 @@ def robot_view_at_door(run_dir, target, door_xy):
         mujoco.mj_forward(model, data)
         for rid in ROBOTS:
             cam = model.camera(rid + '__robot_cam').id
-            xy = data.cam_xpos[cam][:2]
-            d = math.dist(xy, door_xy) + abs(float(xy[0]) - (door_xy[0]-.45))  # approaching, ~0.45 m west
+            x, y = (float(v) for v in data.cam_xpos[cam][:2])
             heading = float(-data.cam_xmat[cam].reshape(3, 3)[:, 2][0])
-            if heading > .7 and (best is None or d < best[0]):
+            # West of the door, on its axis, facing east (towards the opening).
+            if not (door_xy[0]-.8 <= x <= door_xy[0]-.2 and abs(y-door_xy[1]) <= .25 and heading > .9):
+                continue
+            d = abs(x-(door_xy[0]-.45)) + abs(y-door_xy[1])
+            if best is None or d < best[0]:
                 best = (d, index, rid)
     _, index, rid = best
     data.qpos[:] = states['qpos'][index]
@@ -243,6 +273,7 @@ def main():
             continue
         m = metrics(run_dir, row)
         m['contacts'] = contacts(run_dir)
+        m['drive_wait_s'], m['drive_wait_near_passage_s'] = drive_waits(run_dir, za.authored_map(row['variant']))
         rows.append(m)
         print(json.dumps({k: m[k] for k in ('run', 'goal_met_referee', 'teacher_path_blocked', 'passage_standoffs',
                                            'door_wait_s', 'makespan_sim_s')} | {'contacts': m['contacts']}), flush=True)

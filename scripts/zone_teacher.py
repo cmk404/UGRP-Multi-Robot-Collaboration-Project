@@ -29,6 +29,10 @@ PEER_CLEARANCE_M = .14
 # A drive phase (to the box, or carrying to the slot) that has not arrived
 # within this SIM time ends the job as teacher_path_blocked.
 DRIVE_PHASE_LIMIT_S = 120.
+# Maps with interior walls: trips detour through doors and corridors and may
+# queue at them (corr-G5-plan_first-s11: a carry to B through the corridor
+# queued 42 s and was stopped 1.3 m short of the slot at 120 s).
+ROUTE_DRIVE_PHASE_LIMIT_S = 240.
 # A drive goal inside another box's keep-out can never be reached (a box was
 # pushed onto the pregrasp or slot approach spot); stop after this long.
 GOAL_OCCUPIED_LIMIT_S = 10.
@@ -476,7 +480,8 @@ class TeacherRobot:
                 self.arm.queue(FOLDED, now)
             self._finish('teacher_path_blocked', now, goal_occupied=True)
             return
-        if self.phase in ('to_box', 'carry') and now - self.phase_started > DRIVE_PHASE_LIMIT_S:
+        if self.phase in ('to_box', 'carry') and now - self.phase_started > (
+                ROUTE_DRIVE_PHASE_LIMIT_S if self.rects else DRIVE_PHASE_LIMIT_S):
             if self.phase == 'carry':
                 self.arm.queue({1: OPEN}, now, duration=.3)
                 self.arm.queue(FOLDED, now)
