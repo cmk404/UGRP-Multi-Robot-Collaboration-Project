@@ -1,0 +1,3993 @@
+{
+ "schema": "ugrp.tensorboard_snapshot_verification.v1",
+ "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-perception-noslip",
+ "snapshot_id": "0926-zone-perception-noslip",
+ "collection_sha256": "cf80974191dda453ff4f2f9a0eac4a5816435f4649a291437e7f192425999e02",
+ "converter": "scripts/export_offline_audit.py → scripts/tensorboard_tools/offline_audit.py (추가 모듈, 기존 변환기 미수정)",
+ "builder": "scripts/build_perception_noslip_views.py",
+ "verifier": "scripts/verify_perception_noslip_snapshot.py",
+ "derived_views_local_only": "/Users/changmin/projects/ugrp-wt/kiro-tb-perc/outputs/tb-perception-noslip-20260926/derived",
+ "derived_index_sha256": "9adb01bd3c0c4871817f98b7b6082c618e04cf5e418bd0fd39aff129de082b85",
+ "sources": {
+  "perception": {
+   "pr": 193,
+   "branch": "kiro/zone-own-perception",
+   "records": "/Users/changmin/projects/ugrp-wt/kiro-own-perception/experiments/2026-09-26-zone-own-perception",
+   "raw": "/Users/changmin/projects/ugrp-wt/kiro-own-perception/outputs/2026-09-26-zone-own-perception",
+   "render_and_score_source_sha": "bc22129531fb2d49f75341d7027f4520b7f67035",
+   "score_summary_sha256": {
+    "dev": "820c371c83859151998a8c05907d19b4c117194b1eb2e32f820a7a1daa075bb9",
+    "test": "0f3a0f8d1da96af924ffca3da94fda271fcb2bfd62bc5236688db9a102953eed"
+   },
+   "raw_equals_committed_record": true
+  },
+  "noslip": {
+   "pr": 189,
+   "branch": "kiro/zone-noslip-audit",
+   "records": "/Users/changmin/projects/ugrp-wt/kiro-noslip-audit/experiments/2026-09-26-noslip-side-effects",
+   "raw": "/Users/changmin/projects/ugrp-wt/kiro-noslip-audit/outputs/noslip-audit/5578f09",
+   "run_source_sha": "995808812c262c72964c178921bcae17647a1ad0",
+   "results_sha256": "f1b080d7fe983c9aa62f03d4ed26615139045b745a0e53ee2a10617fdf336849",
+   "raw_files_hash_verified": 210,
+   "gates_total": 327,
+   "gates_failed": 3
+  }
+ },
+ "record_cross_checks": {
+  "total": 315,
+  "failed": [],
+  "checks": [
+   {
+    "check": "dev/confident_threshold",
+    "recorded": 0.65,
+    "expected": 0.65,
+    "ok": true
+   },
+   {
+    "check": "dev/primary_belief",
+    "recorded": "gt_stub_eval_only",
+    "expected": "gt_stub_eval_only",
+    "ok": true
+   },
+   {
+    "check": "dev/split_file_sha256",
+    "recorded": "8e37c71aadaa62c4d7d11c4a67e76e5ed709a9494af88183f7d5bd4e79625997",
+    "expected": "8e37c71aadaa62c4d7d11c4a67e76e5ed709a9494af88183f7d5bd4e79625997",
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/views",
+    "recorded": 24,
+    "expected": 24,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/unknown_rate",
+    "recorded": 0.3333,
+    "expected": 0.333,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/accuracy_of_all",
+    "recorded": 0.625,
+    "expected": 0.625,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/accuracy_of_decided",
+    "recorded": 0.9375,
+    "expected": 0.938,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/confident_errors",
+    "recorded": 1,
+    "expected": 1,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/observable_views",
+    "recorded": 16,
+    "expected": 16,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/observable_accuracy",
+    "recorded": 0.9375,
+    "expected": 0.938,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/observable_unknown_rate",
+    "recorded": null,
+    "expected": null,
+    "ok": true
+   },
+   {
+    "check": "dev/slot_item/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/unknown_rate",
+    "recorded": 0.3,
+    "expected": 0.3,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/accuracy_of_all",
+    "recorded": 0.7,
+    "expected": 0.7,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/observable_views",
+    "recorded": 16,
+    "expected": 16,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/observable_accuracy",
+    "recorded": 0.875,
+    "expected": 0.875,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/observable_unknown_rate",
+    "recorded": null,
+    "expected": null,
+    "ok": true
+   },
+   {
+    "check": "dev/holding_item/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/views",
+    "recorded": 24,
+    "expected": 24,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/unknown_rate",
+    "recorded": 0.2083,
+    "expected": 0.208,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/accuracy_of_all",
+    "recorded": 0.7917,
+    "expected": 0.792,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/observable_views",
+    "recorded": 17,
+    "expected": 17,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/observable_accuracy",
+    "recorded": 0.8824,
+    "expected": 0.882,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/observable_unknown_rate",
+    "recorded": null,
+    "expected": null,
+    "ok": true
+   },
+   {
+    "check": "dev/placed_in_slot/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/unknown_rate",
+    "recorded": 0.25,
+    "expected": 0.25,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/accuracy_of_all",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/observable_views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/observable_accuracy",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/observable_unknown_rate",
+    "recorded": null,
+    "expected": null,
+    "ok": true
+   },
+   {
+    "check": "dev/route_blockage/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/slot_item/accuracy_of_all",
+    "recorded": 0.5417,
+    "expected": 0.542,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/slot_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/holding_item/accuracy_of_all",
+    "recorded": 0.7,
+    "expected": 0.7,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/placed_in_slot/accuracy_of_all",
+    "recorded": 0.7083,
+    "expected": 0.708,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/placed_in_slot/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/route_blockage/accuracy_of_all",
+    "recorded": 0.7,
+    "expected": 0.7,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_30mm/route_blockage/confident_errors",
+    "recorded": 2,
+    "expected": 2,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/slot_item/accuracy_of_all",
+    "recorded": 0.2917,
+    "expected": 0.292,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/slot_item/confident_errors",
+    "recorded": 2,
+    "expected": 2,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/holding_item/accuracy_of_all",
+    "recorded": 0.7,
+    "expected": 0.7,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/placed_in_slot/accuracy_of_all",
+    "recorded": 0.375,
+    "expected": 0.375,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/placed_in_slot/confident_errors",
+    "recorded": 4,
+    "expected": 4,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/route_blockage/accuracy_of_all",
+    "recorded": 0.45,
+    "expected": 0.45,
+    "ok": true
+   },
+   {
+    "check": "dev/noise_60mm/route_blockage/confident_errors",
+    "recorded": 1,
+    "expected": 1,
+    "ok": true
+   },
+   {
+    "check": "test/confident_threshold",
+    "recorded": 0.65,
+    "expected": 0.65,
+    "ok": true
+   },
+   {
+    "check": "test/primary_belief",
+    "recorded": "gt_stub_eval_only",
+    "expected": "gt_stub_eval_only",
+    "ok": true
+   },
+   {
+    "check": "test/split_file_sha256",
+    "recorded": "8e37c71aadaa62c4d7d11c4a67e76e5ed709a9494af88183f7d5bd4e79625997",
+    "expected": "8e37c71aadaa62c4d7d11c4a67e76e5ed709a9494af88183f7d5bd4e79625997",
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/views",
+    "recorded": 24,
+    "expected": 24,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/unknown_rate",
+    "recorded": 0.4583,
+    "expected": 0.458,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/accuracy_of_all",
+    "recorded": 0.5417,
+    "expected": 0.542,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/observable_views",
+    "recorded": 15,
+    "expected": 15,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/observable_accuracy",
+    "recorded": 0.8667,
+    "expected": 0.867,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/observable_unknown_rate",
+    "recorded": 0.1333,
+    "expected": 0.133,
+    "ok": true
+   },
+   {
+    "check": "test/slot_item/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/unknown_rate",
+    "recorded": 0.4,
+    "expected": 0.4,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/accuracy_of_all",
+    "recorded": 0.6,
+    "expected": 0.6,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/observable_views",
+    "recorded": 16,
+    "expected": 16,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/observable_accuracy",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/observable_unknown_rate",
+    "recorded": 0.25,
+    "expected": 0.25,
+    "ok": true
+   },
+   {
+    "check": "test/holding_item/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/views",
+    "recorded": 24,
+    "expected": 24,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/unknown_rate",
+    "recorded": 0.3333,
+    "expected": 0.333,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/accuracy_of_all",
+    "recorded": 0.6667,
+    "expected": 0.667,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/observable_views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/observable_accuracy",
+    "recorded": 0.8,
+    "expected": 0.8,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/observable_unknown_rate",
+    "recorded": 0.2,
+    "expected": 0.2,
+    "ok": true
+   },
+   {
+    "check": "test/placed_in_slot/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/unknown_rate",
+    "recorded": 0.25,
+    "expected": 0.25,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/accuracy_of_all",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/accuracy_of_decided",
+    "recorded": 1.0,
+    "expected": 1.0,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/observable_views",
+    "recorded": 20,
+    "expected": 20,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/observable_accuracy",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/observable_unknown_rate",
+    "recorded": 0.25,
+    "expected": 0.25,
+    "ok": true
+   },
+   {
+    "check": "test/route_blockage/observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/slot_item/accuracy_of_all",
+    "recorded": 0.625,
+    "expected": 0.625,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/slot_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/holding_item/accuracy_of_all",
+    "recorded": 0.6,
+    "expected": 0.6,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/placed_in_slot/accuracy_of_all",
+    "recorded": 0.5417,
+    "expected": 0.542,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/placed_in_slot/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/route_blockage/accuracy_of_all",
+    "recorded": 0.75,
+    "expected": 0.75,
+    "ok": true
+   },
+   {
+    "check": "test/noise_30mm/route_blockage/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/slot_item/accuracy_of_all",
+    "recorded": 0.3333,
+    "expected": 0.333,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/slot_item/confident_errors",
+    "recorded": 1,
+    "expected": 1,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/holding_item/accuracy_of_all",
+    "recorded": 0.6,
+    "expected": 0.6,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/holding_item/confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/placed_in_slot/accuracy_of_all",
+    "recorded": 0.375,
+    "expected": 0.375,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/placed_in_slot/confident_errors",
+    "recorded": 5,
+    "expected": 5,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/route_blockage/accuracy_of_all",
+    "recorded": 0.5,
+    "expected": 0.5,
+    "ok": true
+   },
+   {
+    "check": "test/noise_60mm/route_blockage/confident_errors",
+    "recorded": 2,
+    "expected": 2,
+    "ok": true
+   },
+   {
+    "check": "test/gates_all_pass",
+    "recorded": true,
+    "expected": true,
+    "ok": true
+   },
+   {
+    "check": "test/placed_zone_B_yes",
+    "recorded": 4,
+    "expected": 4,
+    "ok": true
+   },
+   {
+    "check": "test/not_observable_confident_errors",
+    "recorded": 0,
+    "expected": 0,
+    "ok": true
+   },
+   {
+    "check": "noslip/runs",
+    "recorded": 42,
+    "expected": 42,
+    "ok": true
+   },
+   {
+    "check": "noslip/side_effect_detected",
+    "recorded": true,
+    "expected": true,
+    "ok": true
+   },
+   {
+    "check": "noslip/git_dirty",
+    "recorded": false,
+    "expected": false,
+    "ok": true
+   },
+   {
+    "check": "noslip/gates_total",
+    "recorded": 327,
+    "expected": 327,
+    "ok": true
+   },
+   {
+    "check": "noslip/gates_failed",
+    "recorded": 3,
+    "expected": 3,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/hold_slip_mm/r1",
+    "recorded": 3.8699,
+    "expected": 3.8699,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/hold_slip_mm/r1",
+    "recorded": 0.0064,
+    "expected": 0.0064,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/carry_slip_mm/r1",
+    "recorded": 0.6583,
+    "expected": 0.6583,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/carry_slip_mm/r1",
+    "recorded": 0.0014,
+    "expected": 0.0014,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/max_slip_mm/r1",
+    "recorded": 4.6292,
+    "expected": 4.6292,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/max_slip_mm/r1",
+    "recorded": 0.011,
+    "expected": 0.011,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/hold_finger_total_n/r1",
+    "recorded": 10.38,
+    "expected": 10.38,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/hold_finger_total_n/r1",
+    "recorded": 10.38,
+    "expected": 10.38,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/placement_err_mm",
+    "recorded": 3.754,
+    "expected": 3.754,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/placement_err_mm",
+    "recorded": 5.848,
+    "expected": 5.848,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/hold_slip_mm/r1",
+    "recorded": 70.0715,
+    "expected": 70.0715,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/hold_slip_mm/r1",
+    "recorded": 0.1274,
+    "expected": 0.1274,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/hold_finger_total_n/r1",
+    "recorded": 7.9857,
+    "expected": 7.9857,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/hold_finger_total_n/r1",
+    "recorded": 10.7228,
+    "expected": 10.7228,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/max_qvel_abs",
+    "recorded": 12.46174,
+    "expected": 12.46174,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/max_qvel_abs",
+    "recorded": 3.26305,
+    "expected": 3.26305,
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/hold_slip_mm/r1",
+    "recorded": 16.293,
+    "expected": 16.293,
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/hold_slip_mm/r2",
+    "recorded": 0.1661,
+    "expected": 0.1661,
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/carrier_spread_change_mm",
+    "recorded": 4.418,
+    "expected": 4.418,
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/carrier_spread_change_mm",
+    "recorded": 5.0281,
+    "expected": 5.028,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/max_penetration_mm",
+    "recorded": 0.26284,
+    "expected": 0.26284,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/max_penetration_mm",
+    "recorded": 0.26279,
+    "expected": 0.26279,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/along_wall_slide_mm",
+    "recorded": 309.391,
+    "expected": 309.391,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/along_wall_slide_mm",
+    "recorded": 309.391,
+    "expected": 309.391,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/escape_mm",
+    "recorded": 121.021,
+    "expected": 121.021,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/escape_mm",
+    "recorded": 121.0221,
+    "expected": 121.022,
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/wall_contact_samples",
+    "recorded": 235,
+    "expected": 235,
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/11/scene_xml",
+    "recorded": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "expected": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/11/scene_xml",
+    "recorded": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "expected": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/12/scene_xml",
+    "recorded": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "expected": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/12/scene_xml",
+    "recorded": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "expected": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/13/scene_xml",
+    "recorded": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "expected": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/13/scene_xml",
+    "recorded": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "expected": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/drive_commands/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/11/scene_xml",
+    "recorded": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "expected": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/11/scene_xml",
+    "recorded": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "expected": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/12/scene_xml",
+    "recorded": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "expected": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/12/scene_xml",
+    "recorded": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "expected": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/13/scene_xml",
+    "recorded": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "expected": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/13/scene_xml",
+    "recorded": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "expected": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/wall_push/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/11/scene_xml",
+    "recorded": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "expected": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/11/scene_xml",
+    "recorded": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "expected": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/12/scene_xml",
+    "recorded": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "expected": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/12/scene_xml",
+    "recorded": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "expected": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/13/scene_xml",
+    "recorded": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "expected": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/13/scene_xml",
+    "recorded": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "expected": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/arm_sweep/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/11/scene_xml",
+    "recorded": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "expected": "939ac3d6d1b249616efdc3692ad1031e6500e7c0ac88fb4c14668f1d80bfb947",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/11/scene_xml",
+    "recorded": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "expected": "446a3892f48a0711c08f9541335d32bef0376411e1c74175e988fcd11f96808f",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/12/scene_xml",
+    "recorded": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "expected": "cff29ed527007efb509ffd0d94dae274fcd266e841e0aeee79bf6670ef0c4f90",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/12/scene_xml",
+    "recorded": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "expected": "8f814425649fbba93514fff611dfd7c2d5cd260d801d4f946725f9fb5a21711c",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/13/scene_xml",
+    "recorded": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "expected": "3022508dc157ed1da5adc7c28399fbed6f657cf23692070d925669899b71db7b",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/13/scene_xml",
+    "recorded": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "expected": "803450e325b876662636f0bc139c6659fdfb80f4254c080e5077d49da58ab0c9",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/idle_settle/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/11/scene_xml",
+    "recorded": "91f657bc4243b75e25a1e4beffbb63c2a663d4728f8cd5e39e615f71e5ddbe1e",
+    "expected": "91f657bc4243b75e25a1e4beffbb63c2a663d4728f8cd5e39e615f71e5ddbe1e",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/11/scene_xml",
+    "recorded": "12db31121d958298c123ec23c52336c927061bf557bd36de193eeca13f91c1e7",
+    "expected": "12db31121d958298c123ec23c52336c927061bf557bd36de193eeca13f91c1e7",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/12/scene_xml",
+    "recorded": "c34472d2671f84ff68ad7480b8626871fe3e8366978314d9736a4e3fe1aaf01b",
+    "expected": "c34472d2671f84ff68ad7480b8626871fe3e8366978314d9736a4e3fe1aaf01b",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/12/scene_xml",
+    "recorded": "fe38f969ee82e86449f0e5f3c9f3fd4ef51f6bdaf49969cf11292bcb74616821",
+    "expected": "fe38f969ee82e86449f0e5f3c9f3fd4ef51f6bdaf49969cf11292bcb74616821",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/13/scene_xml",
+    "recorded": "5308b6ed8d0c84949861dee2eb96a9d9fb09f7aa67cf173424c39b4946d70154",
+    "expected": "5308b6ed8d0c84949861dee2eb96a9d9fb09f7aa67cf173424c39b4946d70154",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/13/scene_xml",
+    "recorded": "4fb2deb256aec950c291ed5b2ad3c98b183e0261791c751ab60ee9ce1d3fa2e3",
+    "expected": "4fb2deb256aec950c291ed5b2ad3c98b183e0261791c751ab60ee9ce1d3fa2e3",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_carry/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/11/scene_xml",
+    "recorded": "b6cec467cfa6bca59ef21bca71c728c7f38cad73150e3b70f384b58235e3aabd",
+    "expected": "b6cec467cfa6bca59ef21bca71c728c7f38cad73150e3b70f384b58235e3aabd",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/drop/first_zero_finger_hold_s",
+    "recorded": 89.45,
+    "expected": 89.45,
+    "ok": true
+   },
+   {
+    "check": "noslip/drop/floor_touch_hold_s",
+    "recorded": 89.5,
+    "expected": 89.5,
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/11/scene_xml",
+    "recorded": "ecc4ce694e95b4fad8946a193c2593e418aa8af801c7b87b6247e1551281daf8",
+    "expected": "ecc4ce694e95b4fad8946a193c2593e418aa8af801c7b87b6247e1551281daf8",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/12/scene_xml",
+    "recorded": "0490359abcdadffc591524f631284059ef3f44041085f896e93d351d584a89db",
+    "expected": "0490359abcdadffc591524f631284059ef3f44041085f896e93d351d584a89db",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/12/scene_xml",
+    "recorded": "36378fdfd184ef7d1c4051b3eef82bd074405a450b643545f9495dc5e713b1ce",
+    "expected": "36378fdfd184ef7d1c4051b3eef82bd074405a450b643545f9495dc5e713b1ce",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/13/scene_xml",
+    "recorded": "626b30c673255f92b05b3d42f1b26a3842d8870cd12992f25325806bcc0276c4",
+    "expected": "626b30c673255f92b05b3d42f1b26a3842d8870cd12992f25325806bcc0276c4",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/13/scene_xml",
+    "recorded": "2810fdbf23aba31e1f5ae409123df2c1fc87a9ba08405196b24a3d267dde9dad",
+    "expected": "2810fdbf23aba31e1f5ae409123df2c1fc87a9ba08405196b24a3d267dde9dad",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/solo_hold_load/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/11/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/11/scene_xml",
+    "recorded": "91ae1c8d8e9f9677970b64b596f2375aff74738dc969755f68c319b6be8036e5",
+    "expected": "91ae1c8d8e9f9677970b64b596f2375aff74738dc969755f68c319b6be8036e5",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/11/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/11/scene_xml",
+    "recorded": "334fed1f5825e7aa73a218b616017ca8992545ea49d8e7e1cd7f3435ae626ac6",
+    "expected": "334fed1f5825e7aa73a218b616017ca8992545ea49d8e7e1cd7f3435ae626ac6",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/11/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/11/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/12/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/12/scene_xml",
+    "recorded": "b12ab8973daa40e36c6ae5d7c6a8ac0af4d9b9428f67fae6c0cb211d0d116d89",
+    "expected": "b12ab8973daa40e36c6ae5d7c6a8ac0af4d9b9428f67fae6c0cb211d0d116d89",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/12/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/12/scene_xml",
+    "recorded": "bac5fb8a7fad4a8d1c2c21a03e11e194e28268727f2a738c36d5ab19f03acdf5",
+    "expected": "bac5fb8a7fad4a8d1c2c21a03e11e194e28268727f2a738c36d5ab19f03acdf5",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/12/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/12/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/13/applied",
+    "recorded": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 0,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/13/scene_xml",
+    "recorded": "3a9fc6c05cb134ce74564d18e71df5fb41d2a5f182caf89a05d4254d0208e54b",
+    "expected": "3a9fc6c05cb134ce74564d18e71df5fb41d2a5f182caf89a05d4254d0208e54b",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/local_contact_fine/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/13/applied",
+    "recorded": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "expected": {
+     "noslip_iterations": 10,
+     "timestep_s": 0.00025,
+     "impratio": 1.0,
+     "cone": 1,
+     "solver_iterations": 80
+    },
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/13/scene_xml",
+    "recorded": "971b65d3fddf538f00fd726b8881d9844e79ea62d09a4e01f989e8ed2668646d",
+    "expected": "971b65d3fddf538f00fd726b8881d9844e79ea62d09a4e01f989e8ed2668646d",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/13/weld",
+    "recorded": "off",
+    "expected": "off",
+    "ok": true
+   },
+   {
+    "check": "noslip/pair_beam_hold/cargo_noslip_v1/13/source_sha",
+    "recorded": "995808812c262c72964c178921bcae17647a1ad0",
+    "expected": "995808812c262c72964c178921bcae17647a1ad0",
+    "ok": true
+   }
+  ]
+ },
+ "known_record_differences": [
+  {
+   "where": "PR #189 README 6.6 표",
+   "field": "solo_hold_load/local_contact_fine/hold_creep_mm_per_min (전체 118 s)",
+   "readme": 40.7616,
+   "recorded": 40.76499,
+   "note": "results.json과 원본 result.json은 40.76499다. 이 스냅샷은 원본 값을 옮겼다."
+  },
+  {
+   "where": "PR #193 README test 총평",
+   "field": "게이트 범위 뷰 수 / 결정 뷰 수",
+   "readme": "84뷰 중 결정 51뷰",
+   "recorded": "88뷰 중 결정 56뷰",
+   "note": "test-summary.json의 판단별 n 합은 24+20+24+20=88, decided 합은 56이다. 오답 0은 일치한다."
+  }
+ ],
+ "export_attempts": [
+  {
+   "attempt": 1,
+   "exported": 83,
+   "failed": 6,
+   "reason": "구역 문자를 원본 그대로 쓴 태그 offline/case/placed_zone_A/views가 소문자만 허용한 태그 규칙에 걸려 placed_in_slot 6개 run이 실패했다",
+   "failed_runs": [
+    "pc-dev-placed-gt",
+    "pc-dev-placed-n30",
+    "pc-dev-placed-n60",
+    "pc-test-placed-gt",
+    "pc-test-placed-n30",
+    "pc-test-placed-n60"
+   ],
+   "action": "태그 규칙에 대문자를 허용하고(구역 문자·로봇 ID는 원본 그대로 둔다) 부분 스냅샷을 지운 뒤 89개 전체를 한 번에 다시 내보냈다. 부분 스냅샷의 collection.json은 outputs/tb-perception-noslip-20260926/attempts/attempt-1-collection.json에 남겼다"
+  },
+  {
+   "attempt": 2,
+   "exported": 89,
+   "failed": 0,
+   "reason": "전체 성공"
+  }
+ ],
+ "event_readback": {
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-perception-noslip",
+  "runs_in_index": 89,
+  "runs_exported": 89,
+  "runs_missing": [],
+  "runs_extra": [],
+  "failed_exports": [],
+  "scalars_checked": 8731,
+  "scalars_traced_to_original": 3807,
+  "series_points": 530910,
+  "runs_with_problems": [],
+  "all_complete": true,
+  "all_hparams": true,
+  "all_sources_unchanged": true,
+  "pass": true
+ },
+ "runs": [
+  {
+   "run": "ns-arm-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-arm-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 121,
+    "tags": {
+     "trace/wall_contacts": 121,
+     "trace/wall_penetration_mm": 121,
+     "trace/wall_normal_n": 121
+    },
+    "mismatches": [],
+    "sim_time_points": 121
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-audit",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 0,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-carry-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {
+    "rows": 3113,
+    "tags": {
+     "trace/wall_contacts": 3113,
+     "trace/wall_penetration_mm": 3113,
+     "trace/wall_normal_n": 3113,
+     "trace/cargo_min_z_m": 3113,
+     "trace/cargo_tilt_deg": 3113,
+     "trace/cargo_z_m": 3113,
+     "trace/finger_total_n/r1": 3113,
+     "trace/grip_in_cargo_z_mm/r1": 3113
+    },
+    "mismatches": [],
+    "sim_time_points": 3113
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-drive-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 37,
+   "series": {
+    "rows": 485,
+    "tags": {
+     "trace/wall_contacts": 485,
+     "trace/wall_penetration_mm": 485,
+     "trace/wall_normal_n": 485
+    },
+    "mismatches": [],
+    "sim_time_points": 485
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-idle-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 34,
+   "series": {
+    "rows": 401,
+    "tags": {
+     "trace/wall_contacts": 401,
+     "trace/wall_penetration_mm": 401,
+     "trace/wall_normal_n": 401
+    },
+    "mismatches": [],
+    "sim_time_points": 401
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-load10x-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 63,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-pair-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 70,
+   "series": {
+    "rows": 2713,
+    "tags": {
+     "trace/wall_contacts": 2713,
+     "trace/wall_penetration_mm": 2713,
+     "trace/wall_normal_n": 2713,
+     "trace/cargo_min_z_m": 2713,
+     "trace/cargo_tilt_deg": 2713,
+     "trace/cargo_z_m": 2713,
+     "trace/finger_total_n/r1": 2713,
+     "trace/grip_in_cargo_z_mm/r1": 2713,
+     "trace/finger_total_n/r2": 2713,
+     "trace/grip_in_cargo_z_mm/r2": 2713
+    },
+    "mismatches": [],
+    "sim_time_points": 2713
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-base-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-base-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-base-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-cmp-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-cmp-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-cmp-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 3,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-nos-s11",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-nos-s12",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "ns-wall-nos-s13",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 43,
+   "series": {
+    "rows": 545,
+    "tags": {
+     "trace/wall_contacts": 545,
+     "trace/wall_penetration_mm": 545,
+     "trace/wall_normal_n": 545
+    },
+    "mismatches": [],
+    "sim_time_points": 545
+   },
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-block-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 77,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-block-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 76,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-block-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 77,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-hold-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-hold-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-hold-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-placed-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-placed-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-placed-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-slot-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-slot-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-dev-slot-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-block-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 77,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-block-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 77,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-block-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 77,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-gates",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 0,
+   "series": {},
+   "texts": 9,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-hold-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-hold-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-hold-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 61,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-placed-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-placed-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-placed-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-slot-gt",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-slot-n30",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 67,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  },
+  {
+   "run": "pc-test-slot-n60",
+   "complete": true,
+   "scalar_mismatches": [],
+   "origin_mismatches": [],
+   "origin_checked": 68,
+   "series": {},
+   "texts": 8,
+   "hparam_session": true,
+   "source_files_ok": true
+  }
+ ],
+ "server": {
+  "endpoint": "http://127.0.0.1:6006",
+  "logdir": "/Users/changmin/projects/ugrp/outputs/tensorboard",
+  "launcher_pid": 9291,
+  "tensorboard_pid": 9293,
+  "owner": "changmin",
+  "started": "Tue Sep 22 13:58:01 2026",
+  "command": "scripts/run_tensorboard.py --logdir .../outputs/tensorboard --port 6006 --media-port 6009",
+  "started_by_this_task": false,
+  "restarted": false,
+  "total_runs_listed": 637,
+  "snapshot_runs_listed": 89,
+  "hparams_session_groups": 89,
+  "spot_checked_scalars_through_http": 13,
+  "spot_check_mismatches": 0,
+  "saved_links_opened": [
+   "perception_test",
+   "perception_dev",
+   "noslip_ab",
+   "noslip_gates",
+   "noslip_drop_trace",
+   "noslip_cohort"
+  ],
+  "hparams_experiment_columns": 9,
+  "hparams_experiment_metrics": 17,
+  "hparams_limit": "공용 HParams experiment 목록에는 split·judgment·belief·scenario·contact_profile·condition과 offline/*·gate/* 지표가 나오지 않는다. run마다 실제로 들어 있고 session_groups 89건에서 확인했다. 0925-zone-supplement가 기록한 것과 같은 제약이다"
+ },
+ "view_config": {
+  "file": "/Users/changmin/projects/ugrp/outputs/tensorboard-view.json",
+  "key_added": "zone_perception_noslip_20260926",
+  "other_keys_unchanged": true,
+  "keys_before": 75,
+  "keys_after": 76
+ },
+ "not_verified": [
+  "PR #193 게이트 G8(tests/test_zone_own_perception.py 20/20)은 그 기록의 주장을 옮겼을 뿐 이 작업이 다시 실행하지 않았다.",
+  "PR #193의 진행 중인 후속 코호트(outputs/2026-09-26-zone-own-perception-v2)는 미완이라 넣지 않았다.",
+  "두 PR은 아직 병합되지 않았다. 병합 시 실행 소스 SHA와 기록 경로가 바뀔 수 있다.",
+  "PR #183의 offline_scalars 변환기 변경이 병합되면 이 추가 모듈을 표준 변환기로 합쳐야 한다.",
+  "로봇 임무 성공·실물 MasterPi 성능은 이 스냅샷의 범위가 아니다."
+ ]
+}
