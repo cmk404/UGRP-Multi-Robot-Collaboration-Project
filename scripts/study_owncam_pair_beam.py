@@ -30,6 +30,17 @@ v2 (``owncam_pair_beam_v2``; v1 = commit 31d16b0, its cohort's source):
   holds its posture and backs up 3 cm (logged);
 * ``--status-channel on|off``: the CANDIDATE executor status channel
   (``harness.team_carry_status``, pending user approval) - off = v1 barrier-only.
+
+v3 (``owncam_pair_beam_v3``; v2 = commit 5efffcd, its cohort's source):
+* ``--hold-check lime_v1|fullframe_v3`` selects the carry/barrier hold check;
+  BOTH are computed and logged on every hold look. ``fullframe_v3``
+  (``harness.owncam_pair_hold_v3``) is the whole-view beam/band mask IoU against
+  the lift view (v2 seed 626 false drop alarm, see that module);
+* ``--inject-drop <robot>:<seconds>``: EXPERIMENTER action for the deliberate-drop
+  test -- that robot's gripper is opened (servo 1 -> open) the given time after its
+  carry started. It is not a controller decision and is recorded under
+  ``evaluation_only.drop_injection``; detection is judged only from the robot's
+  own view.
 """
 from __future__ import annotations
 
@@ -52,11 +63,12 @@ if str(ROOT) not in sys.path:
 
 from harness import owncam_pair_beam as ob  # noqa: E402
 from harness import owncam_pair_beam_v2 as ob2  # noqa: E402
+from harness import owncam_pair_hold_v3 as hv3  # noqa: E402
 from harness import team_carry_status as tcs  # noqa: E402
 from harness.pair_carry_sync import PairCarrySync  # noqa: E402
 
-SCHEMA = 'ugrp.owncam_pair_beam_study.v2'
-PROFILE = 'owncam_pair_beam_v2'
+SCHEMA = 'ugrp.owncam_pair_beam_study.v3'
+PROFILE = 'owncam_pair_beam_v3'
 BASE_Z = .032355118817659255
 ROLES = {'r1': 'end_neg', 'r2': 'end_pos'}
 SEARCH = {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}
@@ -103,10 +115,25 @@ SCENARIOS = {
     624: {'beam': (1.45, -0.70, -0.20), 'offsets': {'r1': (.29, .05, -.15), 'r2': (.33, -.04, .12)}},
     625: {'beam': (1.15, -0.30, 0.30), 'offsets': {'r1': (.27, .00, .00), 'r2': (.48, .04, -.10)}},
     626: {'beam': (1.00, -0.60, -0.40), 'offsets': {'r1': (.34, -.02, .14), 'r2': (.30, .05, .03)}},
+    # v3 test (pre-registered): hold-check fullframe_v3, status channel ON / OFF
+    631: {'beam': (1.05, -0.85, 0.35), 'offsets': {'r1': (.30, .04, -.10), 'r2': (.27, -.02, .08)}},
+    632: {'beam': (1.35, -0.55, -0.45), 'offsets': {'r1': (.33, -.03, .12), 'r2': (.29, .04, -.05)}},
+    633: {'beam': (0.95, -0.35, 0.00), 'offsets': {'r1': (.46, .02, .04), 'r2': (.27, -.04, -.06)}},
+    634: {'beam': (1.25, -1.05, 0.55), 'offsets': {'r1': (.28, .00, .15), 'r2': (.34, .03, .02)}},
+    635: {'beam': (1.40, -0.25, -0.15), 'offsets': {'r1': (.27, -.05, -.04), 'r2': (.47, .02, .10)}},
+    636: {'beam': (1.00, -0.65, -0.35), 'offsets': {'r1': (.34, -.02, .13), 'r2': (.30, .05, .04)}},
+    # v3 deliberate-drop test (pre-registered): experimenter opens one gripper 3 s into the carry
+    641: {'beam': (1.15, -0.75, 0.20), 'offsets': {'r1': (.30, .02, .05), 'r2': (.30, -.02, -.05)}, 'drop': 'r1:3.0'},
+    642: {'beam': (1.30, -0.45, -0.30), 'offsets': {'r1': (.28, -.03, -.08), 'r2': (.32, .03, .06)}, 'drop': 'r2:3.0'},
+    643: {'beam': (1.00, -0.95, 0.45), 'offsets': {'r1': (.33, .04, .10), 'r2': (.27, .00, -.10)}, 'drop': 'r1:6.0'},
+    644: {'beam': (1.20, -0.30, -0.55), 'offsets': {'r1': (.29, .00, -.12), 'r2': (.31, -.04, .09)}, 'drop': 'r2:6.0'},
 }
 DEV_SEEDS = (601, 602)
 TEST_SEEDS = (611, 612, 613, 614)            # v1 cohort 31d16b0; development seeds for v2
 V2_TEST_SEEDS = (621, 622, 623, 624, 625, 626)
+V3_TEST_SEEDS = (631, 632, 633, 634, 635, 636)
+V3_DROP_SEEDS = (641, 642, 643, 644)
+HOLD_CHECKS = ('lime_v1', 'fullframe_v3')
 POSTURE_COMMIT_SWITCHES = 4
 STATUS_OF = {'align_start': 'aligning', 'align': 'aligning', 'grasp': 'ready', 'wait_lift': 'ready',
              'lift': 'lift', 'wait_carry': 'lift', 'carry': 'carry', 'wait_lower': 'carry',
@@ -126,8 +153,12 @@ def sha_file(path):
 class PairStudent:
     """One robot's own-view controller. Holds no reference to the world or the partner."""
 
-    def __init__(self, rid, port, arm, sync_for, log, save=None, status=None):
+    def __init__(self, rid, port, arm, sync_for, log, save=None, status=None, hold_check='lime_v1'):
         self.rid, self.port, self.arm, self.sync_for, self.log = rid, port, arm, sync_for, log
+        if hold_check not in HOLD_CHECKS:
+            raise ValueError(f'hold_check must be one of {HOLD_CHECKS}')
+        self.hold_check = hold_check
+        self.anchor_full = None
         self.status = status                    # (StatusChannel, StatusPublisher) or None (channel off)
         self.switches_since_motion = 0
         self.posture_switches = 0
@@ -313,11 +344,23 @@ class PairStudent:
         if now >= self.next_look:
             self.next_look = now + LOOK_EVERY_S
             obs = self.look(now)
-            ratio = self.hold_ratio(obs)
-            self.report(key, obs, now, ready=ratio >= HOLD_MIN_RATIO, reason=f'hold_ratio={ratio:.2f}')
+            hold = self.hold_state(obs)
+            self.report(key, obs, now, ready=hold['ok'],
+                        reason=f"hold_ratio={hold['v1_ratio']:.2f}" + (f" iou={hold['v3_iou']:.2f}" if hold['v3_iou'] is not None else ''))
 
     def _signature(self, image):
         return ob2.co_motion_signature(image) if self.anchor_kind == 'co_motion_v2' else ob.held_signature(image)
+
+    def hold_state(self, obs):
+        """Both hold detectors on one own frame; ``ok`` follows the selected one (v1 ratio before the lift view)."""
+        ratio = self.hold_ratio(obs)
+        iou = hv3.hold_iou(self.anchor_full, obs['image']) if self.anchor_full is not None else None
+        if self.hold_check == 'fullframe_v3' and iou is not None:
+            ok = iou >= hv3.HOLD_MIN_IOU
+        else:
+            ok = ratio >= HOLD_MIN_RATIO
+        return {'ok': ok, 'v1_ratio': round(ratio, 3), 'v3_iou': None if iou is None else round(iou, 3),
+                'decided_by': 'fullframe_v3' if self.hold_check == 'fullframe_v3' and iou is not None else 'lime_v1'}
 
     def hold_ratio(self, obs):
         if self.anchor is None:
@@ -340,6 +383,7 @@ class PairStudent:
         if iou < HOLD_MIN_IOU:
             return self.fail('LOAD_NOT_HELD_AFTER_LIFT', now)
         self.anchor, self.anchor_kind = sig, 'lime_v1'                      # carry hold anchor (v1 lime)
+        self.anchor_full = hv3.hold_view_mask(obs['image'])                 # v3 whole-view anchor (same lift view)
         self.claims['lifted'] = {'held_iou': round(iou, 3), 'sim_time': now}
         self.set('wait_carry', now)
 
@@ -366,10 +410,11 @@ class PairStudent:
             obs = self.look(now)
             sig = ob.held_signature(obs['image'])
             iou = ob.signature_iou(self.anchor, sig)
-            ratio = self.hold_ratio(obs)
-            self.log(self.rid, 'carry_view', now, held_iou=round(iou, 3), hold_ratio=round(ratio, 3))
-            self.lost = self.lost + 1 if ratio < HOLD_MIN_RATIO else 0
-            if self.lost >= LOST_FRAMES:
+            hold = self.hold_state(obs)
+            self.log(self.rid, 'carry_view', now, held_iou=round(iou, 3), hold_ratio=hold['v1_ratio'],
+                     full_iou=hold['v3_iou'], hold_ok=hold['ok'], decided_by=hold['decided_by'])
+            self.lost = self.lost + 1 if not hold['ok'] else 0
+            if self.lost >= (hv3.LOST_FRAMES if hold['decided_by'] == 'fullframe_v3' else LOST_FRAMES):
                 self.port.hold(now)
                 self.sync_for('carry').hold(f'{self.rid}_load_changed', now)
                 return self.fail('LOAD_CHANGED_IN_CARRY', now)
@@ -439,7 +484,18 @@ def main():
     p.add_argument('--allow-dirty', action='store_true')
     p.add_argument('--status-channel', choices=('on', 'off'), required=True,
                    help='CANDIDATE executor status channel (pending user approval); off = barrier only')
+    p.add_argument('--hold-check', choices=HOLD_CHECKS, required=True,
+                   help='carry hold detector that decides (both are logged)')
+    p.add_argument('--inject-drop', default=None,
+                   help='EXPERIMENTER deliberate drop "<robot>:<seconds after its carry start>" (evaluation only)')
     a = p.parse_args()
+    injection = None
+    if a.inject_drop:
+        rid_inj, secs = a.inject_drop.split(':')
+        if rid_inj not in ROLES:
+            raise SystemExit('--inject-drop robot must be r1 or r2')
+        injection = {'robot': rid_inj, 'after_carry_start_s': float(secs), 'applied_at_s': None,
+                     'action': 'gripper servo 1 -> OPEN (experimenter, not a controller command)'}
     dirty = bool(git('status', '--porcelain'))
     if dirty and not a.allow_dirty:
         raise SystemExit('commit and freeze the source before a recorded run (or --allow-dirty)')
@@ -495,7 +551,8 @@ def main():
 
     channel = tcs.StatusChannel('beam-carry', tuple(ROLES)) if a.status_channel == 'on' else None
     students = {r: PairStudent(r, ports[r], arms[r], sync_for, log, save,
-                               (channel, tcs.StatusPublisher(channel, r)) if channel else None) for r in ROLES}
+                               (channel, tcs.StatusPublisher(channel, r)) if channel else None,
+                               hold_check=a.hold_check) for r in ROLES}
     # ---- labelled GT stub approach (condition stub_approach only) -------------------------
     stub_log = []
 
@@ -573,6 +630,11 @@ def main():
                             ports[rid].hold(now)
                         continue
                     st.tick(now)
+                if injection is not None and injection['applied_at_s'] is None:
+                    victim = students[injection['robot']]
+                    if victim.state == 'carry' and now - victim.state_t >= injection['after_carry_start_s']:
+                        ports[injection['robot']].apply({'kind': 'arm', 'servo_id': 1, 'pulse': OPEN}, now)
+                        injection['applied_at_s'] = round(now, 3)
                 if any(s.state == 'failed' for s in students.values()):
                     for rid, s in students.items():
                         ports[rid].hold(now)
@@ -618,6 +680,14 @@ def main():
     }
     grips = [e for e in events if e['event'] == 'grip_view']
     evaluation['completed_sequence'] = all(s == 'done' for s in reached.values())
+    evaluation['drop_injection'] = injection
+    if injection is not None and injection['applied_at_s'] is not None:
+        victim = students[injection['robot']]
+        fails = [e for e in events if e['robot'] == injection['robot'] and e['event'] == 'state'
+                 and e.get('state') == 'failed']
+        evaluation['drop_detected'] = bool(victim.failure == 'LOAD_CHANGED_IN_CARRY')
+        evaluation['drop_detection_latency_s'] = (round(fails[0]['sim_time_s'] - injection['applied_at_s'], 3)
+                                                  if fails and evaluation['drop_detected'] else None)
     evaluation['success_gt'] = bool(evaluation['completed_sequence'] and evaluation['lifted_clear_gt']
                                     and evaluation['on_floor_released'] and evaluation['final_error_m'] <= .10)
     result = {
@@ -626,8 +696,9 @@ def main():
         'contact_profile_note': 'cargo_noslip_v1 primary, PENDING the user decision on the profile',
         'weld': 'off', 'pose_source': ('gt_stub_eval_only (approach to pre-station only)'
                                        if a.condition == 'stub_approach' else 'none'),
-        'counts_as_m1': False, 'development_seed': a.seed not in V2_TEST_SEEDS,
-        'perception': ob2.PROFILE,
+        'counts_as_m1': False, 'development_seed': a.seed not in V3_TEST_SEEDS + V3_DROP_SEEDS,
+        'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE,
+                                                  'both_logged': True},
         'status_channel': {'enabled': a.status_channel == 'on', 'profile': tcs.PROFILE,
                            'status': 'CANDIDATE, pending user approval; executor states only, no free text, no GT',
                            'messages': len(channel.log) if channel else 0,
@@ -641,7 +712,8 @@ def main():
         'carry_odometry_calibration': {'scale': CARRY_ODOM_SCALE, 'source': CARRY_ODOM_SOURCE},
         'thresholds': {'grip_view_v2': {'min_dark': ob2.GRIP_MIN_DARK, 'min_bottom_beam': ob2.GRIP_MIN_BOTTOM_BEAM},
                        'grip_min_signature_v1_logged_only': GRIP_MIN_SIGNATURE, 'lift_min_iou': HOLD_MIN_IOU,
-                       'hold_min_ratio': HOLD_MIN_RATIO, 'lost_frames': LOST_FRAMES},
+                       'hold_min_ratio': HOLD_MIN_RATIO, 'lost_frames': LOST_FRAMES,
+                       'hold_v3_min_iou': hv3.HOLD_MIN_IOU, 'hold_v3_lost_frames': hv3.LOST_FRAMES},
         'final_states': reached, 'failures': {r: s.failure for r, s in students.items()},
         'claims': {r: s.claims for r, s in students.items()},
         'frames': {r: s.frames for r, s in students.items()}, 'commands': {r: s.commands for r, s in students.items()},
@@ -662,7 +734,9 @@ def main():
     (out / 'hashes.json').write_text(json.dumps({n: sha_file(out / n) for n in
                                                  ('result.json', 'events.jsonl', 'evaluation-only.jsonl', 'scene.xml')},
                                                 indent=1) + '\n')
-    print(json.dumps({'seed': a.seed, 'condition': a.condition, 'status_channel': a.status_channel, 'states': reached,
+    print(json.dumps({'seed': a.seed, 'condition': a.condition, 'status_channel': a.status_channel,
+                      'hold_check': a.hold_check, 'drop': injection, 'drop_detected': evaluation.get('drop_detected'),
+                      'drop_latency_s': evaluation.get('drop_detection_latency_s'), 'states': reached,
                       'failures': result['failures'], **{k: evaluation[k] for k in
                       ('success_gt', 'lifted_clear_gt', 'final_error_m', 'on_floor_released', 'max_tilt_deg_lifted')}}))
 

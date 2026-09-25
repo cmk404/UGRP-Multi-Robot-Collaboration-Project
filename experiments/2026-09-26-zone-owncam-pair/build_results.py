@@ -20,6 +20,9 @@ TB = Path('/Users/changmin/projects/ugrp/outputs/tensorboard')
 ARMS = {'O': ('own_only', (611, 612, 613, 614)), 'S': ('stub_approach', (611, 612))}
 V2_SEEDS = (621, 622, 623, 624, 625, 626)
 ARMS_V2 = {'ON': ('own_only', V2_SEEDS), 'OFF': ('own_only', V2_SEEDS)}   # --status-channel on / off
+V3_SEEDS = (631, 632, 633, 634, 635, 636)
+V3_DROP_SEEDS = (641, 642, 643, 644)
+ARMS_V3 = {'ON': ('own_only', V3_SEEDS + V3_DROP_SEEDS), 'OFF': ('own_only', V3_SEEDS + V3_DROP_SEEDS)}
 DEV = ('dev/601-own-7d97bab-calib', 'dev/602-own-dd70122')
 BARRIERS = ('lift', 'carry', 'lower', 'open')
 
@@ -55,7 +58,57 @@ def summarise(folder):
             'carry_odometry_calibration': r.get('carry_odometry_calibration'), 'thresholds': r.get('thresholds'),
             'contact_profile': r.get('contact_profile'), 'weld': r.get('weld'),
             'profile': r.get('profile'), 'perception': r.get('perception'),
-            'status_channel': r.get('status_channel'), 'posture': r.get('posture')}
+            'status_channel': r.get('status_channel'), 'posture': r.get('posture'),
+            'hold_check': r.get('hold_check'),
+            'min_full_iou': min((e['full_iou'] for e in carry if e.get('full_iou') is not None), default=None),
+            'shadow_v1_would_alarm': _shadow_v1(carry)}
+
+
+def _shadow_v1(carry):
+    """Logged-only v1 lime ratio: would it have raised LOAD_CHANGED (2 consecutive < 0.5 per robot)?"""
+    out = {}
+    for rid in ('r1', 'r2'):
+        streak, hit = 0, None
+        for e in carry:
+            if e['robot'] != rid or 'hold_ratio' not in e:
+                continue
+            streak = streak + 1 if e['hold_ratio'] < .5 else 0
+            if streak >= 2 and hit is None:
+                hit = e['sim_time_s']
+        out[rid] = hit
+    return out
+
+
+def gates_v3(runs):
+    out = {}
+    for arm in ARMS_V3:
+        carry = [x for x in runs if x['arm'] == arm and x['seed'] in V3_SEEDS]
+        drops = [x for x in runs if x['arm'] == arm and x['seed'] in V3_DROP_SEEDS]
+        g = gates_v2([{**x, 'arm': 'ON'} for x in carry])['ON'] if carry else {}
+        detected = [x for x in drops if x['evaluation_only'].get('drop_detected')]
+        lat = [x['evaluation_only'].get('drop_detection_latency_s') for x in detected]
+        placed = sum(bool(x['evaluation_only'].get('on_floor_released')) and x['evaluation_only']['final_error_m'] <= .10
+                     for x in carry)
+        out[arm] = {
+            'H1_false_drop_alarms': sum(x['false_load_alarm'] for x in carry), 'H1_pass': not any(x['false_load_alarm'] for x in carry),
+            'H2_drops_detected': f'{len(detected)}/{len(drops)}', 'H2_max_latency_s': max(lat, default=None),
+            'H2_pass': len(detected) == len(drops) == 4 and all(v is not None and v <= 2. for v in lat),
+            'H3_placed_within_0.10m': f'{placed}/{len(carry)}', 'H3_pass': placed >= 5,
+            'H4_aligned_gripped': g.get('G1_aligned_and_both_gripped'), 'H4_align_pass': g.get('G1_pass') and g.get('G2_pass'),
+            'H4_barrier_skew': g.get('G3_barrier_skew_le_0.2s'), 'H4_channel_rejected': g.get('G3_channel_rejected'),
+            'H5': all(x['evaluation_only'].get('weld_eq_active_max') == 0 and x['pose_source'] == 'none' for x in carry + drops),
+            'descriptive': {
+                'carry_failures': {x['seed']: x['failures'] for x in carry},
+                'drop_runs': {x['seed']: {'injection': x['evaluation_only'].get('drop_injection'),
+                                          'detected': x['evaluation_only'].get('drop_detected'),
+                                          'latency_s': x['evaluation_only'].get('drop_detection_latency_s'),
+                                          'final_states': x['final_states'], 'failures': x['failures']} for x in drops},
+                'min_full_iou_carry': {x['seed']: x['min_full_iou'] for x in carry},
+                'shadow_v1_would_alarm': {x['seed']: x['shadow_v1_would_alarm'] for x in carry + drops},
+                'sim_seconds': {x['seed']: x['sim_seconds'] for x in carry + drops},
+                'commands': {x['seed']: x['commands'] for x in carry + drops},
+                'final_error_m': {x['seed']: x['evaluation_only']['final_error_m'] for x in carry}}}
+    return out
 
 
 def gates_v2(runs):
@@ -116,7 +169,8 @@ def main():
     cohort = sys.argv[1]
     runs, missing = [], []
     v2 = cohort.startswith('cohort-v2-')
-    for arm, (condition, seeds) in (ARMS_V2 if v2 else ARMS).items():
+    v3 = cohort.startswith('cohort-v3-')
+    for arm, (condition, seeds) in (ARMS_V3 if v3 else ARMS_V2 if v2 else ARMS).items():
         for seed in seeds:
             folder = RAW / cohort / arm / str(seed)
             if (folder / 'result.json').exists():
@@ -130,11 +184,12 @@ def main():
            'raw_note': 'raw outputs are local (gitignored); not a remote backup', 'cohort': cohort,
            'cohort_log': {'path': str(log), 'sha256': sha(log)} if log.exists() else None,
            'runs': runs, 'missing': missing, 'report_blocked': bool(missing),
-           'gates': gates_v2(runs) if v2 else gates(runs),
+           'gates': gates_v3(runs) if v3 else gates_v2(runs) if v2 else gates(runs),
            'development_runs': [summarise(RAW / d) for d in (sorted(str(p.parent.relative_to(RAW)) for p in
-                                (RAW / 'dev-v2').glob('*/result.json')) if v2 else DEV)
+                                (RAW / ('dev-v3' if v3 else 'dev-v2')).glob('*/result.json')) if (v2 or v3) else DEV)
                                 if (RAW / d / 'result.json').exists()]}
-    (HERE / ('results-v2.json' if v2 else 'results.json')).write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
+    (HERE / ('results-v3.json' if v3 else 'results-v2.json' if v2 else 'results.json')).write_text(
+        json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     print(json.dumps(out['gates'], ensure_ascii=False))
     if '--tensorboard' in sys.argv:
         snapshot = sys.argv[sys.argv.index('--tensorboard') + 1]
@@ -145,7 +200,7 @@ def tensorboard(runs, dev, cohort, snapshot):
     view = RAW / 'tensorboard-view'
     names = {}
     for x in runs + [{'arm': 'dev', **d} for d in dev]:
-        tag = 'v2' if x.get('profile') == 'owncam_pair_beam_v2' else ''
+        tag = {'owncam_pair_beam_v2': 'v2', 'owncam_pair_beam_v3': 'v3'}.get(x.get('profile'), '')
         name = (f"pair{tag}{x['arm']}-s{x['seed']}" if x['arm'] != 'dev'
                 else f"pair{tag}dev-{Path(x['raw_dir']).name}")
         ev = x['evaluation_only']
@@ -160,12 +215,17 @@ def tensorboard(runs, dev, cohort, snapshot):
                    'stop_reason': json.dumps(x['failures']), 'scope': 'own-camera pair beam feasibility, open floor',
                    'policy': x.get('profile') or 'owncam_pair_beam_v1',
                    'case': f"pair {x['condition']}" + (f" status_channel={'on' if (x['status_channel'] or {}).get('enabled') else 'off'}"
-                                                        if x.get('status_channel') is not None else ''),
+                                                        if x.get('status_channel') is not None else '')
+                           + (' drop_test' if ev.get('drop_injection') else ''),
                    'config': {'contact_profile': x['contact_profile'], 'condition': x['condition'],
+                              'hold_check': (x.get('hold_check') or {}).get('selected', 'lime_v1'),
+                              'drop_injection': bool(ev.get('drop_injection')),
                               'status_channel': (x['status_channel'] or {}).get('enabled')},
                    'sim_s': x['sim_seconds'], 'wall_s': x['wall_seconds'],
                    'commands': sum((x['commands'] or {}).values()) if isinstance(x['commands'], dict) else x['commands'],
                    'model_calls': 0, 'evaluation': {**ev, 'barrier_go_skew_s': x['barrier_go_skew_s'],
+                                                   'min_full_iou': x.get('min_full_iou'),
+                                                   'shadow_v1_would_alarm': x.get('shadow_v1_would_alarm'),
                                                    'min_hold_ratio': x['min_hold_ratio'],
                                                    'min_held_iou': x['min_held_iou']},
                    'seed': x['seed'], 'source_sha': x['source_sha']}
