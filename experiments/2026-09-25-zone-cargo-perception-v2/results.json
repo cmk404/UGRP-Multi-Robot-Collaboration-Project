@@ -1,0 +1,4465 @@
+{
+ "schema": "ugrp.experiment_result.v1",
+ "experiment_id": "2026-09-25-zone-cargo-perception-v2",
+ "question": "Does top_cargo_v2 fix the two PR #168 review findings (distinct parallel beams merged into one; a box inside the tri_frame suppressed) without losing what top_cargo_v1 detects, on a fresh split?",
+ "scope": "Offline synchronous SIM renders of zones/zone_wide with cargo (weld OFF), teleport + 0.6 s settle, TOP RGB only. Detection only; not wired to a controller or prompt. Ground truth only in eval-labels/.",
+ "source": {
+  "v1": "harness/zone_cargo_perception.py (byte-identical to PR #168 merge 44b8132, sha256 57335d61... pinned by test)",
+  "v2": "harness/zone_cargo_perception_v2.py",
+  "evaluation": "scripts/eval_zone_cargo_perception.py (workflow zone-cargo-perception-eval 1.1.0, view plan v2 via --split-file)",
+  "frozen_source_sha": "330e856",
+  "first_v2_commit": "332a740 (before dev r2)"
+ },
+ "review": "PR #168 comment (Codex adversarial review, 2026-09-25): [high] _merge_beams can merge two separate parallel beams ~4.5 cm apart; [medium] box inside the tri_frame polygon is suppressed.",
+ "execution_bundle": "unchanged (no registry edits); new module outside the bundle source closure (tested)",
+ "split": {
+  "file": "experiments/2026-09-25-zone-cargo-perception-v2/split.json",
+  "dev_seeds": [
+   501,
+   502,
+   503,
+   504
+  ],
+  "test_seeds": [
+   601,
+   602,
+   603,
+   604,
+   605,
+   606,
+   607,
+   608,
+   609,
+   610,
+   611,
+   612
+  ],
+  "fixed_before_rendering": true,
+  "revision": "dev r2 before any test rendering (see split.json revisions)"
+ },
+ "views": {
+  "per_seed": {
+   "scatter": 2,
+   "paint": 2,
+   "near_robot": 2,
+   "formation": 2,
+   "adjacent": 1,
+   "straddle": 1,
+   "robots_on_paint": 1,
+   "parallel_beams": 2,
+   "box_in_frame": 2
+  },
+  "parallel_beams": "edge gap uniform 0.5-8 cm (centre lines 4.5-12 cm), along offset <= 10 cm; index 1 across a TOP seam",
+  "box_in_frame": "1-2 boxes <= 4.5 cm from the frame centre; index 1 also a box 4.5-6 cm from a bar centre-line outside"
+ },
+ "metric_definitions": {
+  "pair_resolved": "both beams of a parallel pair matched (merged level) with xy error < 3 cm",
+  "count_error_views": "views where the number of reported items of a class is below/above the number of visible items",
+  "others": "as in experiments/2026-09-25-zone-cargo-perception/results.json"
+ },
+ "environment": {
+  "python": ".venv-sim-worker-mac",
+  "agent_lock": "not taken (offline synchronous rendering); at most 2 concurrent processes (coordinator)"
+ },
+ "renders": {
+  "dev": {
+   "render_source_sha": "332a74008692c7e67334e67c5dd0a69cac6bcc0f",
+   "render_source_dirty": false,
+   "score_source_sha": "330e856e147a9935175ed1017f7a8c987288357e",
+   "score_source_dirty": false,
+   "split_file_sha256_at_render": "25ae5c8167f8b164685923232af5d9dca008dcde6e8c1f9e62195c9a9b5465d5",
+   "view_plan": "v2",
+   "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+   "views": 60,
+   "skipped_views": 0,
+   "render_wall_s": 87.5,
+   "render_load_average_1min": {
+    "start": 3.861328125,
+    "end": 5.24853515625
+   },
+   "score_load_average_1min": {
+    "start": 9.29736328125,
+    "end": 7.68310546875
+   }
+  },
+  "test": {
+   "render_source_sha": "330e856e147a9935175ed1017f7a8c987288357e",
+   "render_source_dirty": false,
+   "score_source_sha": "330e856e147a9935175ed1017f7a8c987288357e",
+   "score_source_dirty": false,
+   "split_file_sha256_at_render": "7c056bbe12dbc855b551a08f5a4408935f26bab07460925f2e4880513c5f3412",
+   "view_plan": "v2",
+   "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+   "views": 180,
+   "skipped_views": 0,
+   "render_wall_s": 343.5,
+   "render_load_average_1min": {
+    "start": 7.32958984375,
+    "end": 8.6728515625
+   },
+   "score_load_average_1min": {
+    "start": 10.22021484375,
+    "end": 10.072265625
+   }
+  }
+ },
+ "results": {
+  "dev": {
+   "top_cargo_v1": {
+    "merged": {
+     "frames": 60,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "robot": 2
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 60,
+       "undercount_views": 20,
+       "overcount_views": 0
+      },
+      "box_green": {
+       "views": 60,
+       "undercount_views": 5,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 60,
+       "undercount_views": 3,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 60,
+       "undercount_views": 20,
+       "overcount_views": 1
+      },
+      "can": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 60,
+       "undercount_views": 3,
+       "overcount_views": 1
+      },
+      "heavy_crate": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 142,
+        "positives": 165,
+        "rate": 0.8606
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 142,
+        "median": 0.0031,
+        "p90": 0.0055,
+        "max": 0.0094
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/11",
+        "box_in_frame": "14/22",
+        "formation": "19/22",
+        "near_robot": "21/22",
+        "paint": "22/22",
+        "parallel_beams": "18/22",
+        "robots_on_paint": "10/11",
+        "scatter": "20/22",
+        "straddle": "10/11"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 144,
+        "positives": 150,
+        "rate": 0.96
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 144,
+        "median": 0.0032,
+        "p90": 0.0063,
+        "max": 0.0082
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "10/10",
+        "box_in_frame": "14/20",
+        "formation": "20/20",
+        "near_robot": "20/20",
+        "paint": "20/20",
+        "parallel_beams": "20/20",
+        "robots_on_paint": "10/10",
+        "scatter": "20/20",
+        "straddle": "10/10"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 162,
+        "positives": 165,
+        "rate": 0.9818
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 162,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0083
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "11/11",
+        "box_in_frame": "19/22",
+        "formation": "22/22",
+        "near_robot": "22/22",
+        "paint": "22/22",
+        "parallel_beams": "22/22",
+        "robots_on_paint": "11/11",
+        "scatter": "22/22",
+        "straddle": "11/11"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 128,
+        "positives": 150,
+        "rate": 0.8533
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 128,
+        "median": 0.0041,
+        "p90": 0.0076,
+        "max": 0.0091
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "9/10",
+        "box_in_frame": "16/20",
+        "formation": "18/20",
+        "near_robot": "18/20",
+        "paint": "20/20",
+        "parallel_beams": "15/20",
+        "robots_on_paint": "8/10",
+        "scatter": "16/20",
+        "straddle": "8/10"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 119,
+        "positives": 120,
+        "rate": 0.9917
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 119,
+        "median": 0.0009,
+        "p90": 0.0153,
+        "max": 0.0238
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": {
+        "n": 119,
+        "median": 0.0009,
+        "p90": 0.0153,
+        "max": 0.0238
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "16/16",
+        "near_robot": "16/16",
+        "paint": "15/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "8/8",
+        "scatter": "16/16",
+        "straddle": "8/8"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 120,
+        "positives": 120,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 120,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0052
+       },
+       "yaw_error_deg_all": {
+        "n": 120,
+        "median": 1.006,
+        "p90": 3.396,
+        "max": 9.7443
+       },
+       "grip_error_m_all": {
+        "n": 120,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0052
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "16/16",
+        "near_robot": "16/16",
+        "paint": "16/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "8/8",
+        "scatter": "16/16",
+        "straddle": "8/8"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 95,
+        "positives": 99,
+        "rate": 0.9596
+       },
+       "partial_frame": {
+        "detected": 19,
+        "positives": 21,
+        "rate": 0.9048
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 114,
+        "median": 0.0014,
+        "p90": 0.005,
+        "max": 0.0086
+       },
+       "yaw_error_deg_all": {
+        "n": 114,
+        "median": 0.0974,
+        "p90": 0.2831,
+        "max": 0.6043
+       },
+       "grip_error_m_all": {
+        "n": 114,
+        "median": 0.0017,
+        "p90": 0.0057,
+        "max": 0.0092
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "7/7",
+        "box_in_frame": "15/15",
+        "formation": "14/14",
+        "near_robot": "14/14",
+        "paint": "15/15",
+        "parallel_beams": "6/10",
+        "robots_on_paint": "7/7",
+        "scatter": "14/14",
+        "straddle": "3/3"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 113,
+        "positives": 114,
+        "rate": 0.9912
+       },
+       "partial_frame": {
+        "detected": 6,
+        "positives": 6,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 119,
+        "median": 0.0005,
+        "p90": 0.0056,
+        "max": 0.0219
+       },
+       "yaw_error_deg_all": {
+        "n": 119,
+        "median": 0.1033,
+        "p90": 0.4564,
+        "max": 2.6198
+       },
+       "grip_error_m_all": {
+        "n": 119,
+        "median": 0.0008,
+        "p90": 0.0059,
+        "max": 0.0221
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "15/16",
+        "near_robot": "15/15",
+        "paint": "16/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "7/7",
+        "scatter": "16/16",
+        "straddle": "4/4"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 47,
+        "positives": 47,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 13,
+        "positives": 13,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 60,
+        "median": 0.0004,
+        "p90": 0.0013,
+        "max": 0.0017
+       },
+       "yaw_error_deg_all": {
+        "n": 60,
+        "median": 0.0611,
+        "p90": 0.1476,
+        "max": 0.3509
+       },
+       "grip_error_m_all": {
+        "n": 60,
+        "median": 0.0007,
+        "p90": 0.0016,
+        "max": 0.0025
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "3/3",
+        "box_in_frame": "8/8",
+        "formation": "6/6",
+        "near_robot": "7/7",
+        "paint": "7/7",
+        "parallel_beams": "6/6",
+        "robots_on_paint": "3/3",
+        "scatter": "7/7"
+       }
+      }
+     }
+    },
+    "targeted": {
+     "parallel_beam_pairs_both_found_within_3cm": {
+      "edge_gap_lt_3cm": {
+       "ok": 0,
+       "n": 3
+      },
+      "edge_gap_3_8cm": {
+       "ok": 5,
+       "n": 5
+      },
+      "across_seam": {
+       "ok": 2,
+       "n": 4
+      },
+      "same_view": {
+       "ok": 3,
+       "n": 4
+      }
+     },
+     "parallel_beam_pairs": [
+      {
+       "view_id": "zone_wide-s501-parallel_beams-0",
+       "edge_gap_m": 0.0403,
+       "along_offset_m": -0.03,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0024,
+        0.0029
+       ]
+      },
+      {
+       "view_id": "zone_wide-s501-parallel_beams-1",
+       "edge_gap_m": 0.0157,
+       "along_offset_m": -0.048,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s502-parallel_beams-0",
+       "edge_gap_m": 0.0585,
+       "along_offset_m": 0.06,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0014,
+        0.0018
+       ]
+      },
+      {
+       "view_id": "zone_wide-s502-parallel_beams-1",
+       "edge_gap_m": 0.0589,
+       "along_offset_m": -0.046,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0041,
+        0.001
+       ]
+      },
+      {
+       "view_id": "zone_wide-s503-parallel_beams-0",
+       "edge_gap_m": 0.0308,
+       "along_offset_m": 0.063,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0036,
+        0.0038
+       ]
+      },
+      {
+       "view_id": "zone_wide-s503-parallel_beams-1",
+       "edge_gap_m": 0.041,
+       "along_offset_m": 0.052,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0061,
+        0.0026
+       ]
+      },
+      {
+       "view_id": "zone_wide-s504-parallel_beams-0",
+       "edge_gap_m": 0.0119,
+       "along_offset_m": 0.008,
+       "across_seam": false,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s504-parallel_beams-1",
+       "edge_gap_m": 0.0176,
+       "along_offset_m": 0.069,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      }
+     ],
+     "boxes_inside_frame_detected": {
+      "ok": 0,
+      "n": 13
+     },
+     "boxes_just_outside_a_bar_detected": {
+      "ok": 3,
+      "n": 4
+     },
+     "extra_beam_reports": [
+      {
+       "view_id": "zone_wide-s502-formation-0",
+       "outcome": "fp_background",
+       "item": null,
+       "background": "robot",
+       "confidence": 0.249
+      }
+     ]
+    }
+   },
+   "top_cargo_v2": {
+    "merged": {
+     "frames": 60,
+     "false_positives_total": 1,
+     "false_positives_by_background": {
+      "robot": 1
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 60,
+       "undercount_views": 19,
+       "overcount_views": 0
+      },
+      "box_green": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 60,
+       "undercount_views": 20,
+       "overcount_views": 1
+      },
+      "can": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      },
+      "heavy_crate": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 146,
+        "positives": 165,
+        "rate": 0.8848
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 146,
+        "median": 0.0031,
+        "p90": 0.0055,
+        "max": 0.0094
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/11",
+        "box_in_frame": "18/22",
+        "formation": "19/22",
+        "near_robot": "21/22",
+        "paint": "22/22",
+        "parallel_beams": "18/22",
+        "robots_on_paint": "10/11",
+        "scatter": "20/22",
+        "straddle": "10/11"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 149,
+        "positives": 150,
+        "rate": 0.9933
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 149,
+        "median": 0.0031,
+        "p90": 0.0062,
+        "max": 0.0082
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "10/10",
+        "box_in_frame": "19/20",
+        "formation": "20/20",
+        "near_robot": "20/20",
+        "paint": "20/20",
+        "parallel_beams": "20/20",
+        "robots_on_paint": "10/10",
+        "scatter": "20/20",
+        "straddle": "10/10"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 165,
+        "positives": 165,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 165,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0083
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "11/11",
+        "box_in_frame": "22/22",
+        "formation": "22/22",
+        "near_robot": "22/22",
+        "paint": "22/22",
+        "parallel_beams": "22/22",
+        "robots_on_paint": "11/11",
+        "scatter": "22/22",
+        "straddle": "11/11"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 128,
+        "positives": 150,
+        "rate": 0.8533
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 128,
+        "median": 0.0041,
+        "p90": 0.0076,
+        "max": 0.0091
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "9/10",
+        "box_in_frame": "16/20",
+        "formation": "18/20",
+        "near_robot": "18/20",
+        "paint": "20/20",
+        "parallel_beams": "15/20",
+        "robots_on_paint": "8/10",
+        "scatter": "16/20",
+        "straddle": "8/10"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 119,
+        "positives": 120,
+        "rate": 0.9917
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 119,
+        "median": 0.0009,
+        "p90": 0.0153,
+        "max": 0.0238
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": {
+        "n": 119,
+        "median": 0.0009,
+        "p90": 0.0153,
+        "max": 0.0238
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "16/16",
+        "near_robot": "16/16",
+        "paint": "15/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "8/8",
+        "scatter": "16/16",
+        "straddle": "8/8"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 120,
+        "positives": 120,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 120,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0052
+       },
+       "yaw_error_deg_all": {
+        "n": 120,
+        "median": 1.006,
+        "p90": 3.396,
+        "max": 9.7443
+       },
+       "grip_error_m_all": {
+        "n": 120,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0052
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "16/16",
+        "near_robot": "16/16",
+        "paint": "16/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "8/8",
+        "scatter": "16/16",
+        "straddle": "8/8"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 99,
+        "positives": 99,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 21,
+        "positives": 21,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 120,
+        "median": 0.0014,
+        "p90": 0.0051,
+        "max": 0.0285
+       },
+       "yaw_error_deg_all": {
+        "n": 120,
+        "median": 0.0974,
+        "p90": 0.2845,
+        "max": 0.6043
+       },
+       "grip_error_m_all": {
+        "n": 120,
+        "median": 0.0017,
+        "p90": 0.0057,
+        "max": 0.0285
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "7/7",
+        "box_in_frame": "15/15",
+        "formation": "14/14",
+        "near_robot": "14/14",
+        "paint": "15/15",
+        "parallel_beams": "10/10",
+        "robots_on_paint": "7/7",
+        "scatter": "14/14",
+        "straddle": "3/3"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 113,
+        "positives": 114,
+        "rate": 0.9912
+       },
+       "partial_frame": {
+        "detected": 6,
+        "positives": 6,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 119,
+        "median": 0.0005,
+        "p90": 0.0056,
+        "max": 0.0219
+       },
+       "yaw_error_deg_all": {
+        "n": 119,
+        "median": 0.1033,
+        "p90": 0.4564,
+        "max": 2.6198
+       },
+       "grip_error_m_all": {
+        "n": 119,
+        "median": 0.0008,
+        "p90": 0.0059,
+        "max": 0.0221
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/8",
+        "box_in_frame": "16/16",
+        "formation": "15/16",
+        "near_robot": "15/15",
+        "paint": "16/16",
+        "parallel_beams": "16/16",
+        "robots_on_paint": "7/7",
+        "scatter": "16/16",
+        "straddle": "4/4"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 47,
+        "positives": 47,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 13,
+        "positives": 13,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 60,
+        "median": 0.0004,
+        "p90": 0.0013,
+        "max": 0.0017
+       },
+       "yaw_error_deg_all": {
+        "n": 60,
+        "median": 0.0611,
+        "p90": 0.1476,
+        "max": 0.3509
+       },
+       "grip_error_m_all": {
+        "n": 60,
+        "median": 0.0007,
+        "p90": 0.0016,
+        "max": 0.0025
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "3/3",
+        "box_in_frame": "8/8",
+        "formation": "6/6",
+        "near_robot": "7/7",
+        "paint": "7/7",
+        "parallel_beams": "6/6",
+        "robots_on_paint": "3/3",
+        "scatter": "7/7"
+       }
+      }
+     }
+    },
+    "targeted": {
+     "parallel_beam_pairs_both_found_within_3cm": {
+      "edge_gap_lt_3cm": {
+       "ok": 3,
+       "n": 3
+      },
+      "edge_gap_3_8cm": {
+       "ok": 5,
+       "n": 5
+      },
+      "across_seam": {
+       "ok": 4,
+       "n": 4
+      },
+      "same_view": {
+       "ok": 4,
+       "n": 4
+      }
+     },
+     "parallel_beam_pairs": [
+      {
+       "view_id": "zone_wide-s501-parallel_beams-0",
+       "edge_gap_m": 0.0403,
+       "along_offset_m": -0.03,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0024,
+        0.0029
+       ]
+      },
+      {
+       "view_id": "zone_wide-s501-parallel_beams-1",
+       "edge_gap_m": 0.0157,
+       "along_offset_m": -0.048,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0011,
+        0.0003
+       ]
+      },
+      {
+       "view_id": "zone_wide-s502-parallel_beams-0",
+       "edge_gap_m": 0.0585,
+       "along_offset_m": 0.06,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0014,
+        0.0018
+       ]
+      },
+      {
+       "view_id": "zone_wide-s502-parallel_beams-1",
+       "edge_gap_m": 0.0589,
+       "along_offset_m": -0.046,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0041,
+        0.001
+       ]
+      },
+      {
+       "view_id": "zone_wide-s503-parallel_beams-0",
+       "edge_gap_m": 0.0308,
+       "along_offset_m": 0.063,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0036,
+        0.0038
+       ]
+      },
+      {
+       "view_id": "zone_wide-s503-parallel_beams-1",
+       "edge_gap_m": 0.041,
+       "along_offset_m": 0.052,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0061,
+        0.0026
+       ]
+      },
+      {
+       "view_id": "zone_wide-s504-parallel_beams-0",
+       "edge_gap_m": 0.0119,
+       "along_offset_m": 0.008,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0015,
+        0.0011
+       ]
+      },
+      {
+       "view_id": "zone_wide-s504-parallel_beams-1",
+       "edge_gap_m": 0.0176,
+       "along_offset_m": 0.069,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0002,
+        0.0285
+       ]
+      }
+     ],
+     "boxes_inside_frame_detected": {
+      "ok": 12,
+      "n": 13
+     },
+     "boxes_just_outside_a_bar_detected": {
+      "ok": 3,
+      "n": 4
+     },
+     "extra_beam_reports": []
+    }
+   },
+   "top_zone_v2": {
+    "merged": {
+     "frames": 60,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "near_item": 1,
+      "robot": 1
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 60,
+       "undercount_views": 19,
+       "overcount_views": 0
+      },
+      "box_green": {
+       "views": 60,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 60,
+       "undercount_views": 0,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 60,
+       "undercount_views": 20,
+       "overcount_views": 1
+      },
+      "can": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "heavy_crate": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 146,
+        "positives": 165,
+        "rate": 0.8848
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 146,
+        "median": 0.0031,
+        "p90": 0.0055,
+        "max": 0.0094
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "8/11",
+        "box_in_frame": "18/22",
+        "formation": "19/22",
+        "near_robot": "21/22",
+        "paint": "22/22",
+        "parallel_beams": "18/22",
+        "robots_on_paint": "10/11",
+        "scatter": "20/22",
+        "straddle": "10/11"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 149,
+        "positives": 150,
+        "rate": 0.9933
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 149,
+        "median": 0.0031,
+        "p90": 0.0062,
+        "max": 0.0082
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "10/10",
+        "box_in_frame": "19/20",
+        "formation": "20/20",
+        "near_robot": "20/20",
+        "paint": "20/20",
+        "parallel_beams": "20/20",
+        "robots_on_paint": "10/10",
+        "scatter": "20/20",
+        "straddle": "10/10"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 165,
+        "positives": 165,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 165,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0083
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "11/11",
+        "box_in_frame": "22/22",
+        "formation": "22/22",
+        "near_robot": "22/22",
+        "paint": "22/22",
+        "parallel_beams": "22/22",
+        "robots_on_paint": "11/11",
+        "scatter": "22/22",
+        "straddle": "11/11"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 128,
+        "positives": 150,
+        "rate": 0.8533
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 128,
+        "median": 0.0041,
+        "p90": 0.0076,
+        "max": 0.0091
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 1,
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "9/10",
+        "box_in_frame": "16/20",
+        "formation": "18/20",
+        "near_robot": "18/20",
+        "paint": "20/20",
+        "parallel_beams": "15/20",
+        "robots_on_paint": "8/10",
+        "scatter": "16/20",
+        "straddle": "8/10"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 120,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/16",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/8",
+        "scatter": "0/16",
+        "straddle": "0/8"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 120,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/16",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/8",
+        "scatter": "0/16",
+        "straddle": "0/8"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 99,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 21,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/7",
+        "box_in_frame": "0/15",
+        "formation": "0/14",
+        "near_robot": "0/14",
+        "paint": "0/15",
+        "parallel_beams": "0/10",
+        "robots_on_paint": "0/7",
+        "scatter": "0/14",
+        "straddle": "0/3"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 114,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 6,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/15",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/7",
+        "scatter": "0/16",
+        "straddle": "0/4"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 47,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 13,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/3",
+        "box_in_frame": "0/8",
+        "formation": "0/6",
+        "near_robot": "0/7",
+        "paint": "0/7",
+        "parallel_beams": "0/6",
+        "robots_on_paint": "0/3",
+        "scatter": "0/7"
+       }
+      }
+     }
+    }
+   },
+   "zone_perception_v1": {
+    "merged": {
+     "frames": 60,
+     "false_positives_total": 5,
+     "false_positives_by_background": {
+      "robot": 5
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 60,
+       "undercount_views": 42,
+       "overcount_views": 1
+      },
+      "box_green": {
+       "views": 60,
+       "undercount_views": 19,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 60,
+       "undercount_views": 25,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 60,
+       "undercount_views": 30,
+       "overcount_views": 1
+      },
+      "can": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "heavy_crate": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 60,
+       "undercount_views": 60,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 120,
+        "positives": 165,
+        "rate": 0.7273
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 120,
+        "median": 0.0025,
+        "p90": 0.0077,
+        "max": 0.0269
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       },
+       "full_by_case": {
+        "adjacent": "7/11",
+        "box_in_frame": "16/22",
+        "formation": "18/22",
+        "near_robot": "18/22",
+        "paint": "16/22",
+        "parallel_beams": "16/22",
+        "robots_on_paint": "8/11",
+        "scatter": "13/22",
+        "straddle": "8/11"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 128,
+        "positives": 150,
+        "rate": 0.8533
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 128,
+        "median": 0.003,
+        "p90": 0.007,
+        "max": 0.0082
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "9/10",
+        "box_in_frame": "14/20",
+        "formation": "17/20",
+        "near_robot": "15/20",
+        "paint": "17/20",
+        "parallel_beams": "19/20",
+        "robots_on_paint": "10/10",
+        "scatter": "18/20",
+        "straddle": "9/10"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 139,
+        "positives": 165,
+        "rate": 0.8424
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 139,
+        "median": 0.0037,
+        "p90": 0.0076,
+        "max": 0.0213
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "10/11",
+        "box_in_frame": "18/22",
+        "formation": "19/22",
+        "near_robot": "18/22",
+        "paint": "17/22",
+        "parallel_beams": "18/22",
+        "robots_on_paint": "10/11",
+        "scatter": "19/22",
+        "straddle": "10/11"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 116,
+        "positives": 150,
+        "rate": 0.7733
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 116,
+        "median": 0.0024,
+        "p90": 0.0072,
+        "max": 0.0094
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 3
+       },
+       "full_by_case": {
+        "adjacent": "9/10",
+        "box_in_frame": "16/20",
+        "formation": "17/20",
+        "near_robot": "15/20",
+        "paint": "14/20",
+        "parallel_beams": "14/20",
+        "robots_on_paint": "8/10",
+        "scatter": "16/20",
+        "straddle": "7/10"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 120,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/16",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/8",
+        "scatter": "0/16",
+        "straddle": "0/8"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 120,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/16",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/8",
+        "scatter": "0/16",
+        "straddle": "0/8"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 99,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 21,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/7",
+        "box_in_frame": "0/15",
+        "formation": "0/14",
+        "near_robot": "0/14",
+        "paint": "0/15",
+        "parallel_beams": "0/10",
+        "robots_on_paint": "0/7",
+        "scatter": "0/14",
+        "straddle": "0/3"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 114,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 6,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/8",
+        "box_in_frame": "0/16",
+        "formation": "0/16",
+        "near_robot": "0/15",
+        "paint": "0/16",
+        "parallel_beams": "0/16",
+        "robots_on_paint": "0/7",
+        "scatter": "0/16",
+        "straddle": "0/4"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 47,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 13,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/3",
+        "box_in_frame": "0/8",
+        "formation": "0/6",
+        "near_robot": "0/7",
+        "paint": "0/7",
+        "parallel_beams": "0/6",
+        "robots_on_paint": "0/3",
+        "scatter": "0/7"
+       }
+      }
+     }
+    }
+   }
+  },
+  "test": {
+   "top_cargo_v1": {
+    "merged": {
+     "frames": 180,
+     "false_positives_total": 8,
+     "false_positives_by_background": {
+      "near_item": 2,
+      "robot": 6
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 1,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 180,
+       "undercount_views": 38,
+       "overcount_views": 1
+      },
+      "box_green": {
+       "views": 180,
+       "undercount_views": 33,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 180,
+       "undercount_views": 11,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 180,
+       "undercount_views": 40,
+       "overcount_views": 3
+      },
+      "can": {
+       "views": 180,
+       "undercount_views": 4,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 180,
+       "undercount_views": 0,
+       "overcount_views": 1
+      },
+      "long_beam": {
+       "views": 180,
+       "undercount_views": 6,
+       "overcount_views": 2
+      },
+      "heavy_crate": {
+       "views": 180,
+       "undercount_views": 4,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 180,
+       "undercount_views": 0,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 408,
+        "positives": 450,
+        "rate": 0.9067
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 408,
+        "median": 0.0029,
+        "p90": 0.0064,
+        "max": 0.0106
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "27/30",
+        "box_in_frame": "47/60",
+        "formation": "54/60",
+        "near_robot": "55/60",
+        "paint": "53/60",
+        "parallel_beams": "57/60",
+        "robots_on_paint": "28/30",
+        "scatter": "58/60",
+        "straddle": "29/30"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 387,
+        "positives": 420,
+        "rate": 0.9214
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 387,
+        "median": 0.0029,
+        "p90": 0.0061,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "28/28",
+        "box_in_frame": "47/56",
+        "formation": "56/56",
+        "near_robot": "52/56",
+        "paint": "55/56",
+        "parallel_beams": "51/56",
+        "robots_on_paint": "25/28",
+        "scatter": "49/56",
+        "straddle": "24/28"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 483,
+        "positives": 495,
+        "rate": 0.9758
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 483,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "33/33",
+        "box_in_frame": "55/66",
+        "formation": "66/66",
+        "near_robot": "65/66",
+        "paint": "66/66",
+        "parallel_beams": "66/66",
+        "robots_on_paint": "33/33",
+        "scatter": "66/66",
+        "straddle": "33/33"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 433,
+        "positives": 480,
+        "rate": 0.9021
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 433,
+        "median": 0.0028,
+        "p90": 0.0072,
+        "max": 0.01
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 2,
+        "robot": 3
+       },
+       "full_by_case": {
+        "adjacent": "30/32",
+        "box_in_frame": "52/64",
+        "formation": "60/64",
+        "near_robot": "59/64",
+        "paint": "60/64",
+        "parallel_beams": "57/64",
+        "robots_on_paint": "28/32",
+        "scatter": "58/64",
+        "straddle": "29/32"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 356,
+        "positives": 360,
+        "rate": 0.9889
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 356,
+        "median": 0.0011,
+        "p90": 0.0162,
+        "max": 0.0257
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": {
+        "n": 356,
+        "median": 0.0011,
+        "p90": 0.0162,
+        "max": 0.0257
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "23/24",
+        "box_in_frame": "48/48",
+        "formation": "47/48",
+        "near_robot": "48/48",
+        "paint": "48/48",
+        "parallel_beams": "47/48",
+        "robots_on_paint": "23/24",
+        "scatter": "48/48",
+        "straddle": "24/24"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 360,
+        "positives": 360,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 360,
+        "median": 0.001,
+        "p90": 0.0029,
+        "max": 0.0051
+       },
+       "yaw_error_deg_all": {
+        "n": 360,
+        "median": 1.0279,
+        "p90": 3.1552,
+        "max": 15.172
+       },
+       "grip_error_m_all": {
+        "n": 360,
+        "median": 0.001,
+        "p90": 0.0029,
+        "max": 0.0051
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {
+        "can": 1
+       },
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "24/24",
+        "box_in_frame": "48/48",
+        "formation": "48/48",
+        "near_robot": "48/48",
+        "paint": "48/48",
+        "parallel_beams": "48/48",
+        "robots_on_paint": "24/24",
+        "scatter": "48/48",
+        "straddle": "24/24"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 293,
+        "positives": 297,
+        "rate": 0.9865
+       },
+       "partial_frame": {
+        "detected": 56,
+        "positives": 63,
+        "rate": 0.8889
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 349,
+        "median": 0.0013,
+        "p90": 0.0053,
+        "max": 0.0424
+       },
+       "yaw_error_deg_all": {
+        "n": 349,
+        "median": 0.0731,
+        "p90": 0.3183,
+        "max": 9.8291
+       },
+       "grip_error_m_all": {
+        "n": 349,
+        "median": 0.0016,
+        "p90": 0.0063,
+        "max": 0.0859
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       },
+       "full_by_case": {
+        "adjacent": "21/21",
+        "box_in_frame": "42/42",
+        "formation": "47/47",
+        "near_robot": "40/40",
+        "paint": "43/43",
+        "parallel_beams": "26/30",
+        "robots_on_paint": "23/23",
+        "scatter": "43/43",
+        "straddle": "8/8"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 349,
+        "positives": 353,
+        "rate": 0.9887
+       },
+       "partial_frame": {
+        "detected": 7,
+        "positives": 7,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 356,
+        "median": 0.0005,
+        "p90": 0.0074,
+        "max": 0.0218
+       },
+       "yaw_error_deg_all": {
+        "n": 356,
+        "median": 0.1366,
+        "p90": 0.7986,
+        "max": 4.311
+       },
+       "grip_error_m_all": {
+        "n": 356,
+        "median": 0.0008,
+        "p90": 0.0077,
+        "max": 0.0232
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "23/23",
+        "box_in_frame": "46/46",
+        "formation": "48/48",
+        "near_robot": "46/48",
+        "paint": "48/48",
+        "parallel_beams": "47/48",
+        "robots_on_paint": "24/24",
+        "scatter": "46/47",
+        "straddle": "21/21"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 151,
+        "positives": 151,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 29,
+        "positives": 29,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 180,
+        "median": 0.0005,
+        "p90": 0.0015,
+        "max": 0.007
+       },
+       "yaw_error_deg_all": {
+        "n": 180,
+        "median": 0.056,
+        "p90": 0.2395,
+        "max": 2.1211
+       },
+       "grip_error_m_all": {
+        "n": 180,
+        "median": 0.0008,
+        "p90": 0.0022,
+        "max": 0.014
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "11/11",
+        "box_in_frame": "22/22",
+        "formation": "18/18",
+        "near_robot": "21/21",
+        "paint": "23/23",
+        "parallel_beams": "23/23",
+        "robots_on_paint": "11/11",
+        "scatter": "22/22"
+       }
+      }
+     }
+    },
+    "targeted": {
+     "parallel_beam_pairs_both_found_within_3cm": {
+      "edge_gap_lt_3cm": {
+       "ok": 5,
+       "n": 11
+      },
+      "edge_gap_3_8cm": {
+       "ok": 13,
+       "n": 13
+      },
+      "across_seam": {
+       "ok": 8,
+       "n": 12
+      },
+      "same_view": {
+       "ok": 10,
+       "n": 12
+      }
+     },
+     "parallel_beam_pairs": [
+      {
+       "view_id": "zone_wide-s601-parallel_beams-0",
+       "edge_gap_m": 0.0355,
+       "along_offset_m": -0.075,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.001,
+        0.0009
+       ]
+      },
+      {
+       "view_id": "zone_wide-s601-parallel_beams-1",
+       "edge_gap_m": 0.0337,
+       "along_offset_m": 0.065,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0008,
+        0.0048
+       ]
+      },
+      {
+       "view_id": "zone_wide-s602-parallel_beams-0",
+       "edge_gap_m": 0.0598,
+       "along_offset_m": 0.016,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0011,
+        0.0011
+       ]
+      },
+      {
+       "view_id": "zone_wide-s602-parallel_beams-1",
+       "edge_gap_m": 0.0088,
+       "along_offset_m": 0.079,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s603-parallel_beams-0",
+       "edge_gap_m": 0.0322,
+       "along_offset_m": -0.038,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0031,
+        0.0026
+       ]
+      },
+      {
+       "view_id": "zone_wide-s603-parallel_beams-1",
+       "edge_gap_m": 0.0215,
+       "along_offset_m": 0.062,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0036,
+        0.006
+       ]
+      },
+      {
+       "view_id": "zone_wide-s604-parallel_beams-0",
+       "edge_gap_m": 0.028,
+       "along_offset_m": -0.047,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0012,
+        0.0013
+       ]
+      },
+      {
+       "view_id": "zone_wide-s604-parallel_beams-1",
+       "edge_gap_m": 0.0504,
+       "along_offset_m": -0.049,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0045,
+        0.0034
+       ]
+      },
+      {
+       "view_id": "zone_wide-s605-parallel_beams-0",
+       "edge_gap_m": 0.0348,
+       "along_offset_m": 0.064,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.0002
+       ]
+      },
+      {
+       "view_id": "zone_wide-s605-parallel_beams-1",
+       "edge_gap_m": 0.0303,
+       "along_offset_m": -0.087,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0013,
+        0.0011
+       ]
+      },
+      {
+       "view_id": "zone_wide-s606-parallel_beams-0",
+       "edge_gap_m": 0.0502,
+       "along_offset_m": 0.086,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0049,
+        0.0053
+       ]
+      },
+      {
+       "view_id": "zone_wide-s606-parallel_beams-1",
+       "edge_gap_m": 0.0676,
+       "along_offset_m": -0.039,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.0007
+       ]
+      },
+      {
+       "view_id": "zone_wide-s607-parallel_beams-0",
+       "edge_gap_m": 0.0659,
+       "along_offset_m": -0.002,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0069,
+        0.0062
+       ]
+      },
+      {
+       "view_id": "zone_wide-s607-parallel_beams-1",
+       "edge_gap_m": 0.0097,
+       "along_offset_m": 0.074,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s608-parallel_beams-0",
+       "edge_gap_m": 0.0441,
+       "along_offset_m": -0.08,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0008,
+        0.0009
+       ]
+      },
+      {
+       "view_id": "zone_wide-s608-parallel_beams-1",
+       "edge_gap_m": 0.048,
+       "along_offset_m": -0.025,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.001
+       ]
+      },
+      {
+       "view_id": "zone_wide-s609-parallel_beams-0",
+       "edge_gap_m": 0.0267,
+       "along_offset_m": -0.066,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0007,
+        0.0012
+       ]
+      },
+      {
+       "view_id": "zone_wide-s609-parallel_beams-1",
+       "edge_gap_m": 0.0092,
+       "along_offset_m": -0.099,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        0.0424
+       ]
+      },
+      {
+       "view_id": "zone_wide-s610-parallel_beams-0",
+       "edge_gap_m": 0.0107,
+       "along_offset_m": 0.027,
+       "across_seam": false,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s610-parallel_beams-1",
+       "edge_gap_m": 0.027,
+       "along_offset_m": 0.017,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0017,
+        0.0012
+       ]
+      },
+      {
+       "view_id": "zone_wide-s611-parallel_beams-0",
+       "edge_gap_m": 0.0119,
+       "along_offset_m": -0.003,
+       "across_seam": false,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s611-parallel_beams-1",
+       "edge_gap_m": 0.0151,
+       "along_offset_m": 0.077,
+       "across_seam": true,
+       "both_found_within_3cm": false,
+       "xy_error_m": [
+        null,
+        null
+       ]
+      },
+      {
+       "view_id": "zone_wide-s612-parallel_beams-0",
+       "edge_gap_m": 0.0509,
+       "along_offset_m": 0.073,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.001,
+        0.0008
+       ]
+      },
+      {
+       "view_id": "zone_wide-s612-parallel_beams-1",
+       "edge_gap_m": 0.0268,
+       "along_offset_m": 0.091,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0024,
+        0.0013
+       ]
+      }
+     ],
+     "boxes_inside_frame_detected": {
+      "ok": 0,
+      "n": 40
+     },
+     "boxes_just_outside_a_bar_detected": {
+      "ok": 12,
+      "n": 12
+     },
+     "extra_beam_reports": [
+      {
+       "view_id": "zone_wide-s601-paint-1",
+       "outcome": "fp_background",
+       "item": null,
+       "background": "robot",
+       "confidence": 0.219
+      },
+      {
+       "view_id": "zone_wide-s612-box_in_frame-0",
+       "outcome": "fp_background",
+       "item": null,
+       "background": "robot",
+       "confidence": 0.219
+      }
+     ]
+    }
+   },
+   "top_cargo_v2": {
+    "merged": {
+     "frames": 180,
+     "false_positives_total": 7,
+     "false_positives_by_background": {
+      "near_item": 3,
+      "robot": 4
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 1,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 180,
+       "undercount_views": 31,
+       "overcount_views": 0
+      },
+      "box_green": {
+       "views": 180,
+       "undercount_views": 24,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 180,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 180,
+       "undercount_views": 32,
+       "overcount_views": 3
+      },
+      "can": {
+       "views": 180,
+       "undercount_views": 4,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 180,
+       "undercount_views": 0,
+       "overcount_views": 1
+      },
+      "long_beam": {
+       "views": 180,
+       "undercount_views": 0,
+       "overcount_views": 6
+      },
+      "heavy_crate": {
+       "views": 180,
+       "undercount_views": 4,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 180,
+       "undercount_views": 0,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 416,
+        "positives": 450,
+        "rate": 0.9244
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 416,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.0106
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "27/30",
+        "box_in_frame": "55/60",
+        "formation": "54/60",
+        "near_robot": "55/60",
+        "paint": "53/60",
+        "parallel_beams": "57/60",
+        "robots_on_paint": "28/30",
+        "scatter": "58/60",
+        "straddle": "29/30"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 396,
+        "positives": 420,
+        "rate": 0.9429
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 396,
+        "median": 0.0029,
+        "p90": 0.0061,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "28/28",
+        "box_in_frame": "56/56",
+        "formation": "56/56",
+        "near_robot": "52/56",
+        "paint": "55/56",
+        "parallel_beams": "51/56",
+        "robots_on_paint": "25/28",
+        "scatter": "49/56",
+        "straddle": "24/28"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 494,
+        "positives": 495,
+        "rate": 0.998
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 494,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "33/33",
+        "box_in_frame": "66/66",
+        "formation": "66/66",
+        "near_robot": "65/66",
+        "paint": "66/66",
+        "parallel_beams": "66/66",
+        "robots_on_paint": "33/33",
+        "scatter": "66/66",
+        "straddle": "33/33"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 442,
+        "positives": 480,
+        "rate": 0.9208
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 442,
+        "median": 0.0028,
+        "p90": 0.0072,
+        "max": 0.01
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 2,
+        "robot": 3
+       },
+       "full_by_case": {
+        "adjacent": "30/32",
+        "box_in_frame": "61/64",
+        "formation": "60/64",
+        "near_robot": "59/64",
+        "paint": "60/64",
+        "parallel_beams": "57/64",
+        "robots_on_paint": "28/32",
+        "scatter": "58/64",
+        "straddle": "29/32"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 356,
+        "positives": 360,
+        "rate": 0.9889
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 356,
+        "median": 0.0011,
+        "p90": 0.0162,
+        "max": 0.0257
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": {
+        "n": 356,
+        "median": 0.0011,
+        "p90": 0.0162,
+        "max": 0.0257
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "23/24",
+        "box_in_frame": "48/48",
+        "formation": "47/48",
+        "near_robot": "48/48",
+        "paint": "48/48",
+        "parallel_beams": "47/48",
+        "robots_on_paint": "23/24",
+        "scatter": "48/48",
+        "straddle": "24/24"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 360,
+        "positives": 360,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 360,
+        "median": 0.001,
+        "p90": 0.0029,
+        "max": 0.0051
+       },
+       "yaw_error_deg_all": {
+        "n": 360,
+        "median": 1.0279,
+        "p90": 3.1552,
+        "max": 15.172
+       },
+       "grip_error_m_all": {
+        "n": 360,
+        "median": 0.001,
+        "p90": 0.0029,
+        "max": 0.0051
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {
+        "can": 1
+       },
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "24/24",
+        "box_in_frame": "48/48",
+        "formation": "48/48",
+        "near_robot": "48/48",
+        "paint": "48/48",
+        "parallel_beams": "48/48",
+        "robots_on_paint": "24/24",
+        "scatter": "48/48",
+        "straddle": "24/24"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 297,
+        "positives": 297,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 63,
+        "positives": 63,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 360,
+        "median": 0.0013,
+        "p90": 0.0057,
+        "max": 0.0437
+       },
+       "yaw_error_deg_all": {
+        "n": 360,
+        "median": 0.0731,
+        "p90": 0.3181,
+        "max": 1.9927
+       },
+       "grip_error_m_all": {
+        "n": 360,
+        "median": 0.0017,
+        "p90": 0.0064,
+        "max": 0.0449
+       },
+       "duplicates": 4,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 1,
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "21/21",
+        "box_in_frame": "42/42",
+        "formation": "47/47",
+        "near_robot": "40/40",
+        "paint": "43/43",
+        "parallel_beams": "30/30",
+        "robots_on_paint": "23/23",
+        "scatter": "43/43",
+        "straddle": "8/8"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 349,
+        "positives": 353,
+        "rate": 0.9887
+       },
+       "partial_frame": {
+        "detected": 7,
+        "positives": 7,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 356,
+        "median": 0.0005,
+        "p90": 0.0074,
+        "max": 0.0218
+       },
+       "yaw_error_deg_all": {
+        "n": 356,
+        "median": 0.1366,
+        "p90": 0.7986,
+        "max": 4.311
+       },
+       "grip_error_m_all": {
+        "n": 356,
+        "median": 0.0008,
+        "p90": 0.0077,
+        "max": 0.0232
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "23/23",
+        "box_in_frame": "46/46",
+        "formation": "48/48",
+        "near_robot": "46/48",
+        "paint": "48/48",
+        "parallel_beams": "47/48",
+        "robots_on_paint": "24/24",
+        "scatter": "46/47",
+        "straddle": "21/21"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 151,
+        "positives": 151,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 29,
+        "positives": 29,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 180,
+        "median": 0.0005,
+        "p90": 0.0015,
+        "max": 0.007
+       },
+       "yaw_error_deg_all": {
+        "n": 180,
+        "median": 0.056,
+        "p90": 0.2395,
+        "max": 2.1211
+       },
+       "grip_error_m_all": {
+        "n": 180,
+        "median": 0.0008,
+        "p90": 0.0022,
+        "max": 0.014
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "11/11",
+        "box_in_frame": "22/22",
+        "formation": "18/18",
+        "near_robot": "21/21",
+        "paint": "23/23",
+        "parallel_beams": "23/23",
+        "robots_on_paint": "11/11",
+        "scatter": "22/22"
+       }
+      }
+     }
+    },
+    "targeted": {
+     "parallel_beam_pairs_both_found_within_3cm": {
+      "edge_gap_lt_3cm": {
+       "ok": 11,
+       "n": 11
+      },
+      "edge_gap_3_8cm": {
+       "ok": 13,
+       "n": 13
+      },
+      "across_seam": {
+       "ok": 12,
+       "n": 12
+      },
+      "same_view": {
+       "ok": 12,
+       "n": 12
+      }
+     },
+     "parallel_beam_pairs": [
+      {
+       "view_id": "zone_wide-s601-parallel_beams-0",
+       "edge_gap_m": 0.0355,
+       "along_offset_m": -0.075,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.001,
+        0.0009
+       ]
+      },
+      {
+       "view_id": "zone_wide-s601-parallel_beams-1",
+       "edge_gap_m": 0.0337,
+       "along_offset_m": 0.065,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0008,
+        0.0048
+       ]
+      },
+      {
+       "view_id": "zone_wide-s602-parallel_beams-0",
+       "edge_gap_m": 0.0598,
+       "along_offset_m": 0.016,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0011,
+        0.0011
+       ]
+      },
+      {
+       "view_id": "zone_wide-s602-parallel_beams-1",
+       "edge_gap_m": 0.0088,
+       "along_offset_m": 0.079,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0059,
+        0.0019
+       ]
+      },
+      {
+       "view_id": "zone_wide-s603-parallel_beams-0",
+       "edge_gap_m": 0.0322,
+       "along_offset_m": -0.038,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0031,
+        0.0026
+       ]
+      },
+      {
+       "view_id": "zone_wide-s603-parallel_beams-1",
+       "edge_gap_m": 0.0215,
+       "along_offset_m": 0.062,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0036,
+        0.006
+       ]
+      },
+      {
+       "view_id": "zone_wide-s604-parallel_beams-0",
+       "edge_gap_m": 0.028,
+       "along_offset_m": -0.047,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0012,
+        0.0013
+       ]
+      },
+      {
+       "view_id": "zone_wide-s604-parallel_beams-1",
+       "edge_gap_m": 0.0504,
+       "along_offset_m": -0.049,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0045,
+        0.0034
+       ]
+      },
+      {
+       "view_id": "zone_wide-s605-parallel_beams-0",
+       "edge_gap_m": 0.0348,
+       "along_offset_m": 0.064,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.0002
+       ]
+      },
+      {
+       "view_id": "zone_wide-s605-parallel_beams-1",
+       "edge_gap_m": 0.0303,
+       "along_offset_m": -0.087,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0013,
+        0.0011
+       ]
+      },
+      {
+       "view_id": "zone_wide-s606-parallel_beams-0",
+       "edge_gap_m": 0.0502,
+       "along_offset_m": 0.086,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0049,
+        0.0053
+       ]
+      },
+      {
+       "view_id": "zone_wide-s606-parallel_beams-1",
+       "edge_gap_m": 0.0676,
+       "along_offset_m": -0.039,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.0007
+       ]
+      },
+      {
+       "view_id": "zone_wide-s607-parallel_beams-0",
+       "edge_gap_m": 0.0659,
+       "along_offset_m": -0.002,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0069,
+        0.0062
+       ]
+      },
+      {
+       "view_id": "zone_wide-s607-parallel_beams-1",
+       "edge_gap_m": 0.0097,
+       "along_offset_m": 0.074,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0011,
+        0.0079
+       ]
+      },
+      {
+       "view_id": "zone_wide-s608-parallel_beams-0",
+       "edge_gap_m": 0.0441,
+       "along_offset_m": -0.08,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0008,
+        0.0009
+       ]
+      },
+      {
+       "view_id": "zone_wide-s608-parallel_beams-1",
+       "edge_gap_m": 0.048,
+       "along_offset_m": -0.025,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0009,
+        0.001
+       ]
+      },
+      {
+       "view_id": "zone_wide-s609-parallel_beams-0",
+       "edge_gap_m": 0.0267,
+       "along_offset_m": -0.066,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0007,
+        0.0012
+       ]
+      },
+      {
+       "view_id": "zone_wide-s609-parallel_beams-1",
+       "edge_gap_m": 0.0092,
+       "along_offset_m": -0.099,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0101,
+        0.0225
+       ]
+      },
+      {
+       "view_id": "zone_wide-s610-parallel_beams-0",
+       "edge_gap_m": 0.0107,
+       "along_offset_m": 0.027,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0011,
+        0.0009
+       ]
+      },
+      {
+       "view_id": "zone_wide-s610-parallel_beams-1",
+       "edge_gap_m": 0.027,
+       "along_offset_m": 0.017,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0017,
+        0.0012
+       ]
+      },
+      {
+       "view_id": "zone_wide-s611-parallel_beams-0",
+       "edge_gap_m": 0.0119,
+       "along_offset_m": -0.003,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0001,
+        0.0004
+       ]
+      },
+      {
+       "view_id": "zone_wide-s611-parallel_beams-1",
+       "edge_gap_m": 0.0151,
+       "along_offset_m": 0.077,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0047,
+        0.008
+       ]
+      },
+      {
+       "view_id": "zone_wide-s612-parallel_beams-0",
+       "edge_gap_m": 0.0509,
+       "along_offset_m": 0.073,
+       "across_seam": false,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.001,
+        0.0008
+       ]
+      },
+      {
+       "view_id": "zone_wide-s612-parallel_beams-1",
+       "edge_gap_m": 0.0268,
+       "along_offset_m": 0.091,
+       "across_seam": true,
+       "both_found_within_3cm": true,
+       "xy_error_m": [
+        0.0024,
+        0.0013
+       ]
+      }
+     ],
+     "boxes_inside_frame_detected": {
+      "ok": 37,
+      "n": 40
+     },
+     "boxes_just_outside_a_bar_detected": {
+      "ok": 12,
+      "n": 12
+     },
+     "extra_beam_reports": [
+      {
+       "view_id": "zone_wide-s607-robots_on_paint-0",
+       "outcome": "duplicate",
+       "item": "beam2",
+       "background": null,
+       "confidence": 0.473
+      },
+      {
+       "view_id": "zone_wide-s609-parallel_beams-1",
+       "outcome": "duplicate",
+       "item": "beam2",
+       "background": null,
+       "confidence": 0.411
+      },
+      {
+       "view_id": "zone_wide-s610-scatter-0",
+       "outcome": "duplicate",
+       "item": "beam2",
+       "background": null,
+       "confidence": 0.462
+      },
+      {
+       "view_id": "zone_wide-s610-paint-1",
+       "outcome": "fp_background",
+       "item": null,
+       "background": "near_item",
+       "confidence": 0.206
+      },
+      {
+       "view_id": "zone_wide-s611-straddle-0",
+       "outcome": "duplicate",
+       "item": "beam2",
+       "background": null,
+       "confidence": 0.214
+      },
+      {
+       "view_id": "zone_wide-s612-box_in_frame-0",
+       "outcome": "fp_background",
+       "item": null,
+       "background": "robot",
+       "confidence": 0.219
+      }
+     ]
+    }
+   },
+   "top_zone_v2": {
+    "merged": {
+     "frames": 180,
+     "false_positives_total": 6,
+     "false_positives_by_background": {
+      "near_item": 2,
+      "robot": 4
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 180,
+       "undercount_views": 31,
+       "overcount_views": 1
+      },
+      "box_green": {
+       "views": 180,
+       "undercount_views": 24,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 180,
+       "undercount_views": 1,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 180,
+       "undercount_views": 32,
+       "overcount_views": 3
+      },
+      "can": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "heavy_crate": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 416,
+        "positives": 450,
+        "rate": 0.9244
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 416,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.0106
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "27/30",
+        "box_in_frame": "55/60",
+        "formation": "54/60",
+        "near_robot": "55/60",
+        "paint": "53/60",
+        "parallel_beams": "57/60",
+        "robots_on_paint": "28/30",
+        "scatter": "58/60",
+        "straddle": "29/30"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 396,
+        "positives": 420,
+        "rate": 0.9429
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 396,
+        "median": 0.0029,
+        "p90": 0.0061,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "28/28",
+        "box_in_frame": "56/56",
+        "formation": "56/56",
+        "near_robot": "52/56",
+        "paint": "55/56",
+        "parallel_beams": "51/56",
+        "robots_on_paint": "25/28",
+        "scatter": "49/56",
+        "straddle": "24/28"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 494,
+        "positives": 495,
+        "rate": 0.998
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 494,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0089
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "33/33",
+        "box_in_frame": "66/66",
+        "formation": "66/66",
+        "near_robot": "65/66",
+        "paint": "66/66",
+        "parallel_beams": "66/66",
+        "robots_on_paint": "33/33",
+        "scatter": "66/66",
+        "straddle": "33/33"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 442,
+        "positives": 480,
+        "rate": 0.9208
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 442,
+        "median": 0.0028,
+        "p90": 0.0072,
+        "max": 0.01
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 2,
+        "robot": 3
+       },
+       "full_by_case": {
+        "adjacent": "30/32",
+        "box_in_frame": "61/64",
+        "formation": "60/64",
+        "near_robot": "59/64",
+        "paint": "60/64",
+        "parallel_beams": "57/64",
+        "robots_on_paint": "28/32",
+        "scatter": "58/64",
+        "straddle": "29/32"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 360,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/24",
+        "box_in_frame": "0/48",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/48",
+        "straddle": "0/24"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 360,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/24",
+        "box_in_frame": "0/48",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/48",
+        "straddle": "0/24"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 297,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 63,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/21",
+        "box_in_frame": "0/42",
+        "formation": "0/47",
+        "near_robot": "0/40",
+        "paint": "0/43",
+        "parallel_beams": "0/30",
+        "robots_on_paint": "0/23",
+        "scatter": "0/43",
+        "straddle": "0/8"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 353,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 7,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/23",
+        "box_in_frame": "0/46",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/47",
+        "straddle": "0/21"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 151,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 29,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/11",
+        "box_in_frame": "0/22",
+        "formation": "0/18",
+        "near_robot": "0/21",
+        "paint": "0/23",
+        "parallel_beams": "0/23",
+        "robots_on_paint": "0/11",
+        "scatter": "0/22"
+       }
+      }
+     }
+    }
+   },
+   "zone_perception_v1": {
+    "merged": {
+     "frames": 180,
+     "false_positives_total": 16,
+     "false_positives_by_background": {
+      "near_item": 2,
+      "robot": 14
+     },
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "count_error_views": {
+      "box_cyan": {
+       "views": 180,
+       "undercount_views": 85,
+       "overcount_views": 0
+      },
+      "box_green": {
+       "views": 180,
+       "undercount_views": 61,
+       "overcount_views": 0
+      },
+      "box_red": {
+       "views": 180,
+       "undercount_views": 81,
+       "overcount_views": 0
+      },
+      "box_yellow": {
+       "views": 180,
+       "undercount_views": 59,
+       "overcount_views": 6
+      },
+      "can": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "tile": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "long_beam": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "heavy_crate": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      },
+      "tri_frame": {
+       "views": 180,
+       "undercount_views": 180,
+       "overcount_views": 0
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 334,
+        "positives": 450,
+        "rate": 0.7422
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 334,
+        "median": 0.0022,
+        "p90": 0.0083,
+        "max": 0.0178
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "full_by_case": {
+        "adjacent": "25/30",
+        "box_in_frame": "48/60",
+        "formation": "46/60",
+        "near_robot": "42/60",
+        "paint": "40/60",
+        "parallel_beams": "45/60",
+        "robots_on_paint": "21/30",
+        "scatter": "42/60",
+        "straddle": "25/30"
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 356,
+        "positives": 420,
+        "rate": 0.8476
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 356,
+        "median": 0.0028,
+        "p90": 0.0063,
+        "max": 0.0091
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "25/28",
+        "box_in_frame": "51/56",
+        "formation": "49/56",
+        "near_robot": "48/56",
+        "paint": "49/56",
+        "parallel_beams": "45/56",
+        "robots_on_paint": "22/28",
+        "scatter": "44/56",
+        "straddle": "23/28"
+       }
+      },
+      "box_red": {
+       "full": {
+        "detected": 403,
+        "positives": 495,
+        "rate": 0.8141
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 403,
+        "median": 0.0029,
+        "p90": 0.0071,
+        "max": 0.0204
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "29/33",
+        "box_in_frame": "56/66",
+        "formation": "56/66",
+        "near_robot": "54/66",
+        "paint": "51/66",
+        "parallel_beams": "54/66",
+        "robots_on_paint": "25/33",
+        "scatter": "50/66",
+        "straddle": "28/33"
+       }
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 404,
+        "positives": 480,
+        "rate": 0.8417
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": {
+        "n": 404,
+        "median": 0.002,
+        "p90": 0.0056,
+        "max": 0.01
+       },
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 2,
+        "robot": 13
+       },
+       "full_by_case": {
+        "adjacent": "30/32",
+        "box_in_frame": "55/64",
+        "formation": "47/64",
+        "near_robot": "49/64",
+        "paint": "54/64",
+        "parallel_beams": "56/64",
+        "robots_on_paint": "28/32",
+        "scatter": "57/64",
+        "straddle": "28/32"
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 360,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/24",
+        "box_in_frame": "0/48",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/48",
+        "straddle": "0/24"
+       }
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 360,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/24",
+        "box_in_frame": "0/48",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/48",
+        "straddle": "0/24"
+       }
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 297,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 63,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/21",
+        "box_in_frame": "0/42",
+        "formation": "0/47",
+        "near_robot": "0/40",
+        "paint": "0/43",
+        "parallel_beams": "0/30",
+        "robots_on_paint": "0/23",
+        "scatter": "0/43",
+        "straddle": "0/8"
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 353,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 7,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/23",
+        "box_in_frame": "0/46",
+        "formation": "0/48",
+        "near_robot": "0/48",
+        "paint": "0/48",
+        "parallel_beams": "0/48",
+        "robots_on_paint": "0/24",
+        "scatter": "0/47",
+        "straddle": "0/21"
+       }
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 151,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 29,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_all": null,
+       "yaw_error_deg_all": null,
+       "grip_error_m_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "full_by_case": {
+        "adjacent": "0/11",
+        "box_in_frame": "0/22",
+        "formation": "0/18",
+        "near_robot": "0/21",
+        "paint": "0/23",
+        "parallel_beams": "0/23",
+        "robots_on_paint": "0/11",
+        "scatter": "0/22"
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "artifacts": {
+  "local_root": "outputs/zone-cargo-perception-v2-20260925",
+  "backup": "local only (gitignored outputs/); not a remote backup",
+  "sha256": {
+   "dev": {
+    "manifest.json": "a1534ac24526be8ea3f75ae250a81b9e9eadda74f0dab5c71080dd30581c0a0c",
+    "summary.json": "34c6eb7c315bcc7dcd3e07411cdbbc7e7e84d91edd2b1161dc479561528caa37",
+    "records-top_cargo_v1.jsonl": "6037583d6b0b719cb3fe21a662a1ff9a5e93ff4c2258fc768b792552bcb4192f",
+    "records-top_cargo_v2.jsonl": "63ac9f80a102d835f2d2e9a2d537822313a38450e5de325369810a42e03e39d6",
+    "records-top_zone_v2.jsonl": "c68154ece4c26b13daf8b2d2c4f74a9b59e5ae6d5dcbc525ae97fd200c9eb233",
+    "records-zone_perception_v1.jsonl": "3c3ccdc0bd12d712dbb5949fe73f4fadeb53c83b1f06212154233634f2e96e98"
+   },
+   "test": {
+    "manifest.json": "18b2122866dd54a6442b9db0b03794935a585daa1e26848eb6564e558a09d634",
+    "summary.json": "b0b21a3b7ad67daf7fd12d02d6cbacecd24f117bc59d8360fbcb69ef225e9b79",
+    "records-top_cargo_v1.jsonl": "b131ae51d7e19a21c8336f0323ed500d58a31e09c6e4dbe2c8b6fdd6b1d7d3ad",
+    "records-top_cargo_v2.jsonl": "c5fbd9d7b49dcab1ccb7225c8a2144cf05760906c112d85c0bcb52f8352cf21f",
+    "records-top_zone_v2.jsonl": "52a65ca4bf2676951c8d2cfdc67bf00b3b85142d1d278295b9aa83bb93a7751f",
+    "records-zone_perception_v1.jsonl": "5d6fa1ee499947ed7b9017e5b9f7b9365a70726559e95c7d25ea14234ee7f3cf"
+   }
+  }
+ }
+}
