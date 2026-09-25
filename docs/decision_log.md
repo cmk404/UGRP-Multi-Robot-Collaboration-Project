@@ -2722,3 +2722,48 @@ Claude 코디네이터가 여러 Codex/Claude 위임 작업을 진행하며 2026
   - (b) 카메라는 실물 로봇과 같게 둔다. MasterPi 팔 끝의 어안 카메라 하나뿐이다. 시뮬레이터 전용 `nav_cam`은 연구에서 로봇 입력으로 쓰지 않는다.
   - **첫 마일스톤 M1:** `zone_wide_door`에서 로봇 1대가 청록 상자 1개를 손목 카메라만으로 문 너머까지 배달한다. TOP은 채점과 영상에만 쓰고, weld는 OFF다. (`zone_wide_door`는 기록 시점에 main이 아니라 PR [#173](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/173) 브랜치에 있다.)
   - 근거 자료로 두 읽기 전용 조사 보고서를 보존했다. 하나는 [자기 카메라 역량·격차 목록](design/2026-09-25-own-camera-inventory-claude.md)이고, 다른 하나는 [오픈소스 재사용 조사](design/2026-09-25-own-camera-oss-survey-claude.md)다. 두 보고서 모두 "저장소에 자기 카메라만으로 지도 위 위치를 추정하는 실행기는 없다"고 확인했다.
+
+## 2026-09-26 — Kiro 서브에이전트 추가, 대화 연구 작업 패키지 착수, 자기 카메라 진행과 미끄러짐 판정
+
+이 절은 2026-09-26 사용자 지시와 그때까지의 작업 상태를 모은다. 아래 PR은 모두 **draft·미병합**이며, 병합은 사용자 확인·승인 뒤에만 한다. 개별 수치·검증 범위는 각 PR과 `experiments/` 기록을 따른다. 기준 `origin/main` `1cd9ea1`.
+
+### 1. 에이전트 구성: Kiro 추가
+
+- **사용자 결정:** Claude·Codex에 이어 **Kiro를 서브에이전트로 추가한다.** 원문: "kiro도 서브 에이전트로 써주라", "kiro 쓸 때는 opus 5 max!", "Kiro도 여러 개 써. claude랑 같이 쓰면 됨". 즉 Kiro 세션도 여러 개를 Claude와 함께 병렬로 돌린다.
+- **모델 설정:** Kiro는 `claude-opus-5`, effort `max`로 돈다. `~/.kiro/settings/cli.json`의 `chat.defaultModel` = `claude-opus-5`, `chat.modelDefaults.claude-opus-5.output_config.effort` = `max`로 고정했다.
+- **브랜치 접두사:** Kiro의 작업은 `kiro/`로 표시한다(Claude `claude/`, Codex `codex/`와 같은 구분). worktree는 `/Users/changmin/projects/ugrp-wt/<이름>`에 따로 둔다.
+- **규칙 등록:** `AGENTS.md`의 "여러 에이전트 동시 작업" 절에 Kiro를 3번째 에이전트로 넣는 변경은 **다른 세션의 PR [#182](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/182)** (draft, 미병합)가 소유한다. 이 로그는 그 PR을 참조하며 규칙 본문을 여기에 중복 기록하지 않는다. #182에는 잠금 `--owner kiro`, `kiro-plugin-cc` 호출 시 호출자 브랜치 안에서만 실행, 기본 체크아웃에서는 `--no-trust-all-tools`가 함께 들어 있다.
+
+### 2. 한국어 대화 연구 작업 패키지 착수 (Kiro draft PR)
+
+[Codex 통합 설계](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/180)(`docs/design/2026-09-25-zone-dialogue-study-design-codex.md`, PR #180에서 보존, 미병합) 9절의 병렬 작업 패키지를 Kiro 세션들이 나눠 시작했다. 설계 문서의 `r1` 고정 지휘자·별도 commander 주 조건·교사 실행기 전제는 2026-09-25/26 사용자 결정으로 대체했다(지휘자는 로봇 한 대가 겸하고 seed마다 r1/r2/r3 순환, 전지적 지휘자는 참고 상한, 실행은 자기 카메라만).
+
+| 패키지 | PR | 상태 | 범위 |
+|---|---|---|---|
+| A 연구 계약·입력 | [#187](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/187) | draft, 미병합 | 조건 registry(`no_comm`/`peer_ko`/`leader_ko`/`structured` + 참조 상한 `reference_R`), 입력 경계 검증기, 시나리오 설정 기반 주문서, 지도 도식·해시. 테스트 91건 통과. 독립 감사가 찾은 이름만 바꾼 평가 전용 자료 우회 12건을 닫힌 schema로 막고 회귀로 고정 |
+| B 자기 RGB 인식 | PR 미제출 | 작업 중(로컬) | `harness/zone_own_perception.py`·`zone_own_outcome.py`, `scripts/eval_zone_own_perception.py`, `experiments/2026-09-26-zone-own-perception/`가 worktree `ugrp-wt/kiro-own-perception`에 미커밋 상태다. 브랜치 `kiro/zone-own-perception`은 origin에 없다 |
+| C 프롬프트·통신 | [#184](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/184) | draft, 미병합 | 4조건 한국어 프롬프트와 통신 프로토콜(`harness/zone_study_protocol.py`, `zone_study_prompts_ko.py`). 오프라인 전용, SIM·모델 호출 없음 |
+| D SIM 비용·scheduler | [#186](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/186) | draft, 미병합 | `harness/zone_sim_cost.py`·`zone_event_scheduler.py`. 대화·추론이 SIM 시간을 쓰게 하는 결정론적 비용식과 가짜 시계 사건 큐. 테스트 71건 통과, wall 시간·API 완료 순서와 독립. **러너 미통합**이고 기본값은 전부 잠정(`provisional=True`, 이 프로젝트 모델의 측정값 아님) |
+| E 시나리오(설정) | [#190](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/190) | draft, 미병합 | 시나리오 6종 설정(`s1_normal_mixed`~`s6_novel_relation`)과 공개/비공개 분리 검증기. base가 main이 아니라 A(#187)다. 테스트 204건 통과(신규 82건). 장면 빌더·러너는 건드리지 않았고 물리 도달성·완주는 미검증 |
+| I 평가·결과 | [#185](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/185) | draft, 미병합 | `harness/zone_study_eval.py`·`scripts/zone_study_report.py`. 실패를 분모에 유지하는 `par_makespan_sim_s`, 대화 지표, 평가 역류 차단, TensorBoard 변환. 테스트 67건 통과 |
+| noslip 부작용 감사 | [#189](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/189) | draft, 미병합 | `cargo_noslip_v1`의 장면 전체 접촉 부작용 사전 등록 + 프로필 수준 A/B(7 시나리오 × 2 프로필 × 3 시드 = 42건). 테스트 30건 통과. **42건 실제 실행은 아직 안 했다** |
+| 보고서 초안 | [#191](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/191) | draft, 미병합 | `docs/report/` 7장 초안. 저장소에 이미 있는 근거만 인용하고 주장 종류를 `T` 교사 / `S` gt_stub 스킬 / `O` 오프라인 / `R` 실제 학생 성공으로 분리했다. **`R`은 아직 없다** |
+| 한국어 파일럿 후속 수정 | [#188](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/188) | draft, 미병합 | PR #172 리뷰 지적 3건(원시 wire 덮어쓰기, 과한 인과 주장, 행위 규칙의 언급 혼동) 수정. 테스트 61건 통과. 기존 결과·원시 자료는 변경하지 않았고 규칙 v2는 다음 실행에만 적용된다 |
+| TensorBoard 보완 | [#183](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/183) | draft, 미병합 | 스냅샷 없던 2026-09-25 기록 6개를 `outputs/tensorboard/0925-zone-supplement`(116 run)으로 변환. 813개 스칼라를 원본에서 독립 재계산해 불일치 0. 어떤 run도 자기 카메라 학생 운반 성공이 아니다 |
+
+- 러너 통합(G), 실행 메뉴·버전(H), 로봇 실행(F)은 착수하지 않았다. `scripts/run_ci_tests.py`와 `configs/simulation_workflows.json` 등록은 브랜치 간 충돌을 피해 통합 패키지로 넘겼다.
+- **아직 4조건으로 실행한 결과는 없다.** 위 통과 테스트는 계약·비용·지표 계층의 정확성만 확인한 것이며 통신 효과의 근거가 아니다.
+
+### 3. 자기 카메라 실행 진행 (M1)
+
+- **위치 추정 1단계 — PR [#177](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/177) 병합됨.** 벽 AprilTag 지도 버전 `*_tags_v1`, wrist 어안 PnP, 발행 명령 파티클 필터. 사전 등록 게이트는 **G1(정지 둘러보기 p90 < 5 cm/5°) 실패, G2(전체 p50) 통과, G3(전체 p90 < 10 cm/10°) 실패**다. 주 원인은 **상자를 든 수평 carry의 태그 가시율 0%**(교사 low carry도 0%)다. 사후(사전 등록 아님) look 모드만 보면 test p50 1.9 cm / p90 5.8 cm이고, 20° 숙인 carry는 가시율 97%였다(30°는 7%).
+- **폐루프 문 통과 2단계 — PR [#178](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/178) 진행 중**(draft, 미병합). `_tags_v2` 문기둥 태그판과 추정 기반 A* 주행·사전 등록 코호트(dev 31–33, test 41–43)까지 올렸고 dev/test 실행과 기록은 남았다.
+- **공용 자세 합의:** `CARRY_POSTURE = {1: 1500, 3: 777, 4: 2053, 5: 1646, 6: 1500}`, `LOOK_P20 = {3: 1072, 4: 2400, 5: 1482}`(#176 값, `harness/owncam_drive.py:35-36`). #178의 둘러보기 pan은 dev 수정으로 ±48°까지 넓혔고 이는 #176과 공유하지 않는다.
+- **wrist 스킬 격리 결과:** v1 사전 등록 시드 501–505에서 GT 슬롯 배치 **1/5**, v2 시드 511–520에서 **9/10**, v3 시드 521–530 주 조건 P(`cargo_noslip_v1`)에서 **9/10**(보조 조건 S `local_contact_fine`는 10/10). 시나리오가 달라 v1과 v2/v3의 직접 비교는 아니다. **세 코호트 모두 `pose_source=gt_stub_eval_only`이고 문 통과가 없어 M1이 아니다.** weld OFF, 벽 접촉 0. 기록은 [experiments/2026-09-25-zone-owncam-skill/README.md](../experiments/2026-09-25-zone-owncam-skill/README.md).
+
+### 4. 단독 운반 상자 미끄러짐: 시뮬레이터 수치 인공물로 판정
+
+- **판정(PR [#181](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/181), draft·미병합):** 청록 상자 단독 운반의 미끄러짐은 물리가 아니라 **soft 마찰 제약의 감쇠-only 기준(`solreffriction 0 -6000`)에서 오는 수치 인공물**이다. 파지력은 30 g 상자에 법선력 합 10.4 N(턱당 5.19 N)이고 필요한 마찰비는 0.029로 mu 3.4의 1% 미만이다. 진단 probe(`scripts/probe_zone_box_grip_hold.py`, GT 교사, weld OFF)에서 `local_contact_fine`는 **약 2 mm/min**(2.09 mm/min, 정지 중에도 같음), `cargo_noslip_v1`는 **약 0.016 mm/min**이었다. v2의 "약 60 s마다 재장착"은 이 creep이 anchor 경고에 닿는 시간이었고, 즉 인공물을 가리는 행동이었다. 실물 MasterPi 미끄러짐 자료는 없다(`validated:false`).
+- **보류 중인 사용자 결정 (아직 정하지 않았다):** `cargo_noslip_v1`을 **연구 전체의 접촉 프로필로 채택할지**가 미결이다. `noslip_iterations`는 전역 MuJoCo solver 옵션이라 같은 장면의 바퀴·팔·벽·쉬는 상자까지 모두 바뀐다. 채택 여부는 **noslip 부작용 감사(#189)의 A/B 42건 결과**를 보고 정한다. 기본값은 바꾸지 않았고 러너에 `--contact-profile {local_contact_fine, cargo_noslip_v1}` 선택만 추가했다. **이 절의 어떤 내용도 채택 결정으로 읽지 않는다.**
+
+**기록 범위:** 이 절은 사용자 결정과 각 PR이 보고한 상태만 옮긴다. 새 실험·시뮬레이션·모델 호출을 하지 않았고, 다른 에이전트의 결과를 이 기록의 증거로 합산하지 않는다.
