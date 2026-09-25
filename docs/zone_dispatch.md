@@ -30,6 +30,7 @@
 
 - 받음: 자기 RGB, `TOP_WEST`·`TOP_EAST` RGB(`zone_wide`는 TOP 네 장), 목표·작성 지도, TOP RGB 색 검출로 만든 상자 이름(색별로 서→동, 같은 열은 남→북; `red-1` 등)과 현재 RGB 추정(적재 구역에 남은 상자, 구역별 색 개수), 팀 게시판(진행 중인 동료 작업, 실행기 영수증), 자기 작업 이력, 동료 메시지.
 - 받지 않음: 시뮬레이터 위치, 심판 결과. 실행기 영수증은 "발행한 동작 순서를 끝냄/끝내지 못하고 멈춤"뿐이다(교사 내부의 정답 확인이 멈춤 여부에 쓰이므로 교사 조건 입력으로 기록한다).
+- 무통신(`independent`) 포함 조건별 채널, 누설·교란 판정: [R1 경계 감사](../experiments/2026-09-25-zone-comm-boundary-audit/README.md). 모델이 보는 자기 작업 기록에는 칸 id가 없고(2026-09-25), independent 요청 id는 자기 질문 횟수만 센다.
 
 ## 협업 방식
 
@@ -59,3 +60,19 @@
 `--record-replay`로 기록한 실행은 `.venv-sim/bin/python -m scripts.zone_replay <출력 폴더>`로 MuJoCo 창에서 다시 본다(관찰 전용, 넓은 경기장 화면).
 
 `--mode fixture`는 모델 없이 규칙 응답으로 절차만 확인한다(시각 판단 아님). 진단용 `--fixture-plan <committed-plan.json>`(fixture·plan_first 전용)은 기록된 합의 계획을 그대로 다시 실행한다. 결과 `result.json`: `physical_success_teacher_condition`(심판, 교사 조건), `goal_met_rgb`, `makespan_sim_s`, `llm_calls`, `usage`, `coordination_stats`(충돌·무효 선언·협상 턴), 로봇별 `jobs`. 원본 대화는 `team/`, 교사 사건은 `teacher-events.json`.
+
+## RGB 4색 상자 검출 (교사 교체 1단계, 2026-09-25)
+
+교사 실행기를 RGB 스킬로 바꾸는 첫 단계로, 로봇 자기 RGB와 TOP RGB에서 네 색 상자를 찾는 검출기와 오프라인 평가를 추가했다. 이동·파지·배치는 아직 교사 실행기이며, 이 검출기는 제어 경로에 연결되지 않았다.
+
+- `harness/zone_color_boxes.py`: 입력은 자기 RGB JPEG + 자기가 **발행한** 팔 펄스, TOP JPEG + 작성된 TOP 보정뿐이다. 시뮬레이터 자세·분할·접촉은 읽지 않는다. 색은 종류(kind)만 알려 주며 개별 상자 ID는 해독하지 않는다.
+  - 기본 프로필은 기존 동작 그대로다: 자기 RGB `own_production_v1`(청록은 `markerless_box._cyan_components` 자체, 1.2 m 이내 바닥 투영 적합), TOP `zone_perception_v1`(= `zone_perception.detect_boxes`, ZC1/ZC2가 쓴 경로). `markerless_box.py`·`zone_perception.py`는 바꾸지 않았다.
+  - 선택 프로필: `own_zone_v2`(구역 적재 바닥 파랑을 뺀 좁은 청록 범위, 1.2–4 m 원거리 거친 적합 `far_coarse`), `top_zone_v2`(회전 불변 `minAreaRect` 채움·종횡비, 3×3 닫기, 최소 50 px — 노랑 메카넘 롤러 오검출 억제). 임계값은 dev 분할에서만 정했다.
+- `scripts/eval_zone_color_detection.py` (`zone-color-eval` 작업 흐름): `render`는 표준 `ZoneScene`(`zones/zone_wide`)을 동기 SIM에서 만들고 로봇·상자를 다시 배치해 프레임(`frames/`)과 평가 전용 정답(`eval-labels/`: 자세·분할·가시 비율)을 따로 쓴다. `score`는 검출기를 `frames/`에만 돌리고 정답과 비교한다. 카메라·로봇 외관·상자 칠은 바꾸지 않는다. `dispatch/open`은 빔 혼동 확인용 부록이다(구역 장면에서는 빔이 보이지 않는다). `zone_open`은 퇴역 대상이라 평가하지 않는다.
+
+```bash
+.venv-sim/bin/python -m scripts.eval_zone_color_detection render --split dev --output outputs/zone-rgb-color/dev
+.venv-sim/bin/python -m scripts.eval_zone_color_detection score --frames outputs/zone-rgb-color/dev --output outputs/zone-rgb-color/dev-score
+```
+
+결과와 한계는 [실험 기록](../experiments/2026-09-25-zone-rgb-color/README.md)에 있다.

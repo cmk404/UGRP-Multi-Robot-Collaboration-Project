@@ -1,0 +1,342 @@
+{
+ "status": "DRAFT - not frozen. Needs the user budget decision before commit-as-preregistration.",
+ "basis": {
+  "source": "ZC2 18 live runs (zone_wide, G8+spare red1/cyan1, seeds 12-14, gemini-3.8-flash) + ZC2 gate fixtures",
+  "per_cell_measured": {
+   "independent/nominal": {
+    "input_tokens_mean": 156850.33,
+    "input_tokens_max": 171656,
+    "output_tokens_mean": 1955.67,
+    "llm_calls_mean": 24.67,
+    "driver_wall_s_mean": 241.0,
+    "driver_wall_s_max": 260.0
+   },
+   "independent/graspfail": {
+    "input_tokens_mean": 143396.33,
+    "input_tokens_max": 195912,
+    "output_tokens_mean": 1812.67,
+    "llm_calls_mean": 22.67,
+    "driver_wall_s_mean": 214.33,
+    "driver_wall_s_max": 270.0
+   },
+   "plan_first/nominal": {
+    "input_tokens_mean": 75415.67,
+    "input_tokens_max": 100422,
+    "output_tokens_mean": 2420.67,
+    "llm_calls_mean": 11.33,
+    "driver_wall_s_mean": 106.0,
+    "driver_wall_s_max": 113.0
+   },
+   "plan_first/graspfail": {
+    "input_tokens_mean": 48218.33,
+    "input_tokens_max": 59408,
+    "output_tokens_mean": 1703.33,
+    "llm_calls_mean": 7.33,
+    "driver_wall_s_mean": 89.0,
+    "driver_wall_s_max": 97.0
+   },
+   "dynamic/nominal": {
+    "input_tokens_mean": 75003,
+    "input_tokens_max": 79581,
+    "output_tokens_mean": 1079,
+    "llm_calls_mean": 11.67,
+    "driver_wall_s_mean": 130.33,
+    "driver_wall_s_max": 190.0
+   },
+   "dynamic/graspfail": {
+    "input_tokens_mean": 91272,
+    "input_tokens_max": 100168,
+    "output_tokens_mean": 1349,
+    "llm_calls_mean": 13.67,
+    "driver_wall_s_mean": 132.0,
+    "driver_wall_s_max": 142.0
+   }
+  },
+  "one_block_six_cells": {
+   "input_tokens_mean_sum": 590156,
+   "input_tokens_max_sum": 707147,
+   "output_tokens_mean_sum": 10320,
+   "driver_wall_s_mean_sum": 912.7,
+   "driver_wall_s_max_sum": 1072.0
+  },
+  "gate_fixture_wall_s_per_arena": 599.0,
+  "overhead_factor_unmeasured": 1.15,
+  "zone_open_assumption": "zone_open sends 3 TOP images per request instead of 5; zone_wide per-run tokens/wall are used as a conservative upper bound. independent mode has never run on zone_open, so a zone_open gate is required first.",
+  "price": {
+   "usd_per_million_input_tokens": null,
+   "usd_per_million_output_tokens": null,
+   "note": "provider billing unavailable in team.json (cost_usd null); fill in to convert"
+  },
+  "execution": "Mac, synchronous SIM, one run at a time, inside scripts/agent_lock.py (owner claude)"
+ },
+ "tiers": [
+  {
+   "tier": "small",
+   "n_per_cell_zone_wide": 6,
+   "n_per_cell_zone_open_optional": 0,
+   "live_llm_runs": 36,
+   "fixture_gate_runs": 6,
+   "input_tokens_estimate": 3540934,
+   "input_tokens_upper": 4242882,
+   "output_tokens_estimate": 61922,
+   "model_calls_estimate": 548,
+   "wall_hours_estimate": 1.9,
+   "wall_hours_upper": 2.2,
+   "wall_hours_if_every_run_hits_max_wall_s_3600": 36.0,
+   "zone_wide_power_and_precision": {
+    "P1": {
+     "ZC2 shrunk (Jeffreys posterior means, pooled)": {
+      "fisher_alpha0.025_power": 0.898,
+      "bayes_P>=0.975_assurance": 0.988
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.427,
+      "bayes_P>=0.975_assurance": 0.768
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.108,
+      "bayes_P>=0.975_assurance": 0.356
+     }
+    },
+    "P2": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 0.547,
+      "bayes_P>=0.975_assurance": 0.818
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.156,
+      "bayes_P>=0.975_assurance": 0.389
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.035,
+      "bayes_P>=0.975_assurance": 0.137
+     }
+    },
+    "S1": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 0.547,
+      "bayes_P>=0.975_assurance": 0.818
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.156,
+      "bayes_P>=0.975_assurance": 0.389
+     }
+    },
+    "per_cell_CP95_worst_half_width": 0.382,
+    "per_cell_CP95_half_width_if_all_success": 0.23,
+    "difference_newcombe95_worst_half_width": 0.442
+   },
+   "can_claim": [
+    "zone_wide, G8+spares, gemini-3.8-flash, teacher executor, new held-out seeds with balanced spawn permutations: P1 (dynamic vs independent, pooled scenarios) if the effect is ZC2-sized (Fisher alpha 0.025 power ~0.90)",
+    "P2 only as a Bayesian statement at the ZC2-sized effect (assurance ~0.82; Fisher power ~0.55)",
+    "descriptive SIM time / calls / tokens per cell with n=6"
+   ],
+   "cannot_claim": [
+    "conservative (0.8 vs 0.3) or moderate (0.8 vs 0.5) effects",
+    "per-cell rate CI half-width <= 0.20 (worst case ~0.38; ~0.23 even at 6/6)",
+    "any arena/goal/model generalisation; any RGB-skill or student success"
+   ],
+   "zone_wide_seeds": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1006,
+    1007
+   ],
+   "zone_open_seeds": []
+  },
+  {
+   "tier": "medium",
+   "n_per_cell_zone_wide": 12,
+   "n_per_cell_zone_open_optional": 0,
+   "live_llm_runs": 72,
+   "fixture_gate_runs": 6,
+   "input_tokens_estimate": 7081868,
+   "input_tokens_upper": 8485764,
+   "output_tokens_estimate": 123844,
+   "model_calls_estimate": 1096,
+   "wall_hours_estimate": 3.7,
+   "wall_hours_upper": 4.3,
+   "wall_hours_if_every_run_hits_max_wall_s_3600": 72.0,
+   "zone_wide_power_and_precision": {
+    "P1": {
+     "ZC2 shrunk (Jeffreys posterior means, pooled)": {
+      "fisher_alpha0.025_power": 1.0,
+      "bayes_P>=0.975_assurance": 1.0
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.88,
+      "bayes_P>=0.975_assurance": 0.964
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.379,
+      "bayes_P>=0.975_assurance": 0.597
+     }
+    },
+    "P2": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 0.93,
+      "bayes_P>=0.975_assurance": 0.993
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.427,
+      "bayes_P>=0.975_assurance": 0.768
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.108,
+      "bayes_P>=0.975_assurance": 0.356
+     }
+    },
+    "S1": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 0.93,
+      "bayes_P>=0.975_assurance": 0.993
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.427,
+      "bayes_P>=0.975_assurance": 0.768
+     }
+    },
+    "per_cell_CP95_worst_half_width": 0.289,
+    "per_cell_CP95_half_width_if_all_success": 0.132,
+    "difference_newcombe95_worst_half_width": 0.348
+   },
+   "can_claim": [
+    "P1 at the conservative effect 0.8 vs 0.3 (Fisher alpha 0.025 power ~0.88)",
+    "P2 at the ZC2-sized effect (power ~0.93); at 0.8 vs 0.3 only Bayesian assurance ~0.77",
+    "per-cell rate CI half-width <= 0.20 only when the cell is near 0 or 1 (0.13 at 12/12; worst ~0.29)",
+    "SIM-time and cost differences between conditions as descriptive paired estimates"
+   ],
+   "cannot_claim": [
+    "P2 at 0.8 vs 0.3 with 80% frequentist power; any moderate (0.8 vs 0.5) effect",
+    "worst-case per-cell half-width <= 0.20; difference CI half-width <= 0.20",
+    "arena/goal/model generalisation"
+   ],
+   "zone_wide_seeds": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1014
+   ],
+   "zone_open_seeds": []
+  },
+  {
+   "tier": "full",
+   "n_per_cell_zone_wide": 24,
+   "n_per_cell_zone_open_optional": 12,
+   "live_llm_runs": 216,
+   "fixture_gate_runs": 12,
+   "input_tokens_estimate": 21245604,
+   "input_tokens_upper": 25457292,
+   "output_tokens_estimate": 371532,
+   "model_calls_estimate": 3288,
+   "wall_hours_estimate": 10.9,
+   "wall_hours_upper": 12.7,
+   "wall_hours_if_every_run_hits_max_wall_s_3600": 216.0,
+   "zone_wide_power_and_precision": {
+    "P1": {
+     "ZC2 shrunk (Jeffreys posterior means, pooled)": {
+      "fisher_alpha0.025_power": 1.0,
+      "bayes_P>=0.975_assurance": 1.0
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.998,
+      "bayes_P>=0.975_assurance": 0.999
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.754,
+      "bayes_P>=0.975_assurance": 0.878
+     }
+    },
+    "P2": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 1.0,
+      "bayes_P>=0.975_assurance": 1.0
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.88,
+      "bayes_P>=0.975_assurance": 0.964
+     },
+     "moderate": {
+      "fisher_alpha0.025_power": 0.379,
+      "bayes_P>=0.975_assurance": 0.597
+     }
+    },
+    "S1": {
+     "ZC2 shrunk (Jeffreys posterior means)": {
+      "fisher_alpha0.025_power": 1.0,
+      "bayes_P>=0.975_assurance": 1.0
+     },
+     "conservative": {
+      "fisher_alpha0.025_power": 0.88,
+      "bayes_P>=0.975_assurance": 0.964
+     }
+    },
+    "per_cell_CP95_worst_half_width": 0.209,
+    "per_cell_CP95_half_width_if_all_success": 0.071,
+    "difference_newcombe95_worst_half_width": 0.263
+   },
+   "can_claim": [
+    "P1 and P2 at the conservative effect 0.8 vs 0.3 (Fisher alpha 0.025 power ~1.0 / ~0.88)",
+    "P1 at the moderate effect 0.8 vs 0.5 with Fisher power ~0.75 (Bayesian assurance ~0.88)",
+    "per-cell rate CI half-width <= 0.20 in the worst case by Wilson (Clopper-Pearson worst ~0.21)",
+    "optional zone_open replication (12/cell) reported as a separate table, never pooled with zone_wide"
+   ],
+   "cannot_claim": [
+    "per-cell half-width <= 0.15 in the worst case (needs 39 Wilson / 47 Clopper-Pearson per cell)",
+    "P2 at the moderate effect (needs ~52/cell)",
+    "difference CI half-width <= 0.20 (needs ~33-44/arm)",
+    "model or goal generalisation; student/RGB-skill success; real-time behaviour (synchronous SIM only)"
+   ],
+   "zone_wide_seeds": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1014,
+    1015,
+    1016,
+    1018,
+    1026,
+    1028,
+    1032,
+    1033,
+    1034,
+    1035,
+    1036,
+    1037,
+    1047
+   ],
+   "zone_open_seeds": [
+    2001,
+    2002,
+    2003,
+    2008,
+    2009,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2022,
+    2026
+   ]
+  }
+ ]
+}

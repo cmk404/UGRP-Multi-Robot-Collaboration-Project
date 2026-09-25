@@ -177,7 +177,7 @@ def run(args):
     issued = {'count': 0}
     result['injection'] = None
     solo = {'next_ask': {r: 0. for r in ROBOTS}, 'last_ask': {r: -1. for r in ROBOTS},
-            'answer': {r: None for r in ROBOTS}, 'last_end': 0.}
+            'answer': {r: None for r in ROBOTS}, 'last_end': 0., 'own_turns': {r: 0 for r in ROBOTS}}
     stalled = False
     try:
         zone.step(.5)
@@ -287,7 +287,8 @@ def run(args):
                 due = [r for r in idle if solo['next_ask'][r] <= zone.time()]
                 if due:
                     turn += 1
-                    decided = independent_round(zone, team, task, labels, goal, due, own_jobs, stats, turn)
+                    decided = independent_round(zone, team, task, labels, goal, due, own_jobs, stats, turn,
+                                                solo['own_turns'])
                     for rid in due:
                         solo['last_ask'][rid] = zone.time()
                         if rid in decided['accepted'] and assign(rid, decided['accepted'][rid]):
@@ -403,21 +404,34 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
             'idle_all': not retry and set(waiting) - set(accepted) <= set(idle)}
 
 
-def independent_round(zone, team, task, labels, goal, askers, own_jobs, stats, turn):
-    """No communication: each idle robot claims alone; invalid claims get one retry."""
+def independent_round(zone, team, task, labels, goal, askers, own_jobs, stats, turn, own_turns=None):
+    """No communication: each idle robot claims alone; invalid claims get one retry.
+
+    own_turns: {rid: count of this robot's own asks}. The robot's request_id
+    counts only its own asks; the runtime's default id would carry the global
+    round counter ``turn``, which rises whenever a peer is asked (R1 audit,
+    2026-09-25). ``turn`` stays in the output logs (RGB file names, rounds).
+    """
     accepted, idle, reasons = {}, [], {}
     ask = list(askers)
     views = top_views(zone.config['static_map'])
+    own_turns = {r: turn for r in ask} if own_turns is None else own_turns
+    for rid in ask:
+        own_turns[rid] = own_turns.get(rid, 0) + 1
+    def own_id(rid, attempt):
+        return f'{team.agreement.run_id}-{rid}-solo-{own_turns[rid]}-{attempt}'
     for attempt in range(2):
         frames, tops = zone.capture(f'solo-{turn}-{attempt}', robots=ask)
         view = observe(tops, zone.config['static_map'], labels)
         ctx = {r: zs.solo_context(r, labels=labels, view=view, own_jobs=own_jobs[r],
                                   extra={'invalid_reason': reasons[r]} if r in reasons else None) for r in ask}
-        def build(rid, request_id, ctx=ctx, frames=frames):
-            return zs.build_solo_request(rid, request_id=request_id, task=task, frame=frames[rid],
+        # The runtime uses the built request's own request_id for saving,
+        # sending and validating, so both closures replace the shared id.
+        def build(rid, _shared_id, ctx=ctx, frames=frames, attempt=attempt):
+            return zs.build_solo_request(rid, request_id=own_id(rid, attempt), task=task, frame=frames[rid],
                                          ctx=ctx[rid], views=views)
-        def fixture(rid, request_id, view=view):
-            return zs.fixture_solo_claim(rid, request_id, goal, labels, view)
+        def fixture(rid, _shared_id, view=view, attempt=attempt):
+            return zs.fixture_solo_claim(rid, own_id(rid, attempt), goal, labels, view)
         replies = team.ask(ask, build, zs.validate_solo_reply, fixture, phase=f'solo-{turn}-{attempt}',
                            turn=turn, sim_time=zone.time(), recipients=[])
         stats['claim_rounds'] += 1

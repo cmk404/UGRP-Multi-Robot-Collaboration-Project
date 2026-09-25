@@ -1,0 +1,1833 @@
+{
+ "schema": "ugrp.zone_comm_boundary_audit.v1",
+ "date": "2026-09-25",
+ "audit_base_main_sha": "3cbf4e435738ff9eb9dcf66a4c06dea33915ec95",
+ "audited_run_source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/zone-communication-20260925 (local only, not a remote backup)",
+ "sim_runs": "none (no controller or LLM runs); one render-only counterfactual on the ZC2-s14 scene (0.5 SIM s settle, then qpos edit + mj_forward)",
+ "load_average_1m_at_render": 3.44,
+ "tools": {
+  "request_audit": "experiments/2026-09-25-zone-comm-boundary-audit/audit_requests.py",
+  "render_counterfactual": "experiments/2026-09-25-zone-comm-boundary-audit/render_counterfactual.py"
+ },
+ "findings": [
+  {
+   "id": "L1",
+   "kind": "leak",
+   "severity": "high",
+   "title": "independent: teacher stops a robot because a peer merely intends the same box (earlier to_box job wins), at the assignment tick",
+   "evidence": [
+    "scripts/zone_teacher.py:250-263",
+    "scripts/zone_teacher.py:388-393",
+    "scripts/run_zone_dispatch.py:230-243",
+    "23/23 box_taken_by_peer stops at 0.0 s after assignment; peer phase to_box 22, grasp 1",
+    "ZC2-s14-independent-nominal r2-2..r2-4 (red-1, 60.8/71.8/82.8 s) stopped while r3 was still driving; r2 reason: \"I am right beside red-1\""
+   ],
+   "status": "not fixed (needs a SIM fixture gate); strict xfail test tests/test_zone_comm_boundary.py::test_a_peer_intent_alone_does_not_stop_a_robot",
+   "effect_on_zc2": "gives independent a first-come box lock (peer intent) it could not observe; does not create the over-delivery that failed independent, so the direction of ZC2 is not reversed, but independent is not a clean no-communication baseline and its SIM time / call counts include these stops"
+  },
+  {
+   "id": "L2",
+   "kind": "leak",
+   "severity": "low",
+   "title": "executor slot id from a pool shared by all robots appears in own_jobs (A3 = two other zone-A jobs)",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:129-145",
+    "scripts/run_zone_dispatch.py:203-211",
+    "harness/zone_coordination.py context (before fix)",
+    "independent: 36/69 own job entries carried a slot id encoding an active peer job in the same zone; no reply mentions a slot"
+   ],
+   "status": "fixed on this branch: harness/zone_coordination.py visible_own_jobs (box, zone, issued_at_sim_s, status) for all conditions",
+   "effect_on_zc2": "no sign the model used it; ZC2 not re-run"
+  },
+  {
+   "id": "L3",
+   "kind": "leak",
+   "severity": "low",
+   "title": "independent request_id carried the global round counter (rises whenever any robot is asked)",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:286-289 (turn)",
+    "scripts/run_zone_dispatch.py:420-421 (phase solo-{turn})",
+    "scripts/three_robot_runtime.py:141",
+    "independent: 87 turn gaps in request ids across 6 runs"
+   ],
+   "status": "fixed on this branch: per-robot own_turns in independent_round; counterfactual tests",
+   "effect_on_zc2": "weak side channel; ZC2 not re-run"
+  },
+  {
+   "id": "L4",
+   "kind": "leak (teacher condition)",
+   "severity": "medium",
+   "title": "executor receipts are decided from simulator truth (box z after lift, drop z, path planning on true poses, peer executor state) and reach own_jobs.status, the dynamic team_board and the wake-up rules",
+   "evidence": [
+    "scripts/zone_teacher.py:416-429 (lift z > .045, else retry / grasp_failed_by_teacher)",
+    "scripts/zone_teacher.py:433-434 (dropped_in_transit)",
+    "scripts/zone_teacher.py:376-387 (teacher_path_blocked)",
+    "scripts/zone_teacher.py:454-458 (placed_by_teacher only after those checks)",
+    "scripts/zone_teacher.py:244-248 (injection only keeps the gripper open)",
+    "scripts/run_zone_dispatch.py:224-245 (receipt text, board reports, wake-ups)",
+    "ZC2-s14-dynamic-graspfail: r1 lift checks box_z_m 0.0159 x3, failed at 31.6 s; r1 own RGB view at 31.8 s did not list green-1 in pickup"
+   ],
+   "status": "not fixed (needs an RGB completion check, R2 scope); disclosed as a teacher-condition input in docs/zone_dispatch.md:29",
+   "effect_on_zc2": "all conditions receive it; dynamic uses peers' stopped reports and event wake-ups, so dynamic graspfail 3/3 is conditional on a reliable failure notice"
+  },
+  {
+   "id": "L5",
+   "kind": "potential leak (not triggered)",
+   "severity": "low",
+   "title": "slot refusal receipt in independent reveals peers' zone reservations; 3 slots per zone also cap over-delivery at 3",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:193-202",
+    "maps/zones/zone_wide.json zone_slots 3/3/3",
+    "slot_refusals 0 in all 18 ZC2 runs"
+   ],
+   "status": "not fixed",
+   "effect_on_zc2": "none observed"
+  },
+  {
+   "id": "C1",
+   "kind": "confound",
+   "severity": "high",
+   "title": "dynamic differs from independent by far more than messages: host-maintained team_board (active peer claims = intents, finished/stopped reports), host arbitration of claims against peer claims, conflict notices, event wake-ups, plus broadcast messages",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:188-190",
+    "scripts/run_zone_dispatch.py:366-402",
+    "harness/zone_coordination.py:159-227",
+    "scripts/three_robot_runtime.py:164-172 (messages to every robot)",
+    "ZC2 dynamic: 1 collision, 0 invalid claims; reasons cite peers' current jobs (present in both board and messages); s14 recovery cites a message"
+   ],
+   "status": "not fixed (design); proposed ablations dynamic_board_only / dynamic_messages_only",
+   "effect_on_zc2": "ZC2 measures the coordination bundle, not explicit LLM messages alone"
+  },
+  {
+   "id": "C2",
+   "kind": "confound",
+   "severity": "medium",
+   "title": "prompt scaffolding differs beyond the channel: dynamic gets an explicit id tie-break convention and \"avoid peers' current paths\"; independent gets no no-communication convention although its own fixture uses one (robot i takes the i-th need unit); plan_first gets a proposer protocol and \"balance the work\"",
+   "evidence": [
+    "harness/zone_coordination.py:34-50 (_PLAN)",
+    "harness/zone_coordination.py:52-66 (_CLAIM)",
+    "harness/zone_solo.py:18-28 (_SOLO)",
+    "harness/zone_solo.py:96-112 (fixture convention)",
+    "shared prefix _COMMON identical: harness/zone_coordination.py:23-32"
+   ],
+   "status": "not fixed",
+   "effect_on_zc2": "tie-break fired in at most 1 ZC2 collision, so it cannot explain the 6/6 vs 1/6 gap; a no-communication convention for independent was never tried"
+  },
+  {
+   "id": "C3",
+   "kind": "confound",
+   "severity": "medium (time/cost), low (success)",
+   "title": "different wake/re-ask rules: independent polls every 10 SIM s after null/invalid/own stop; dynamic wakes idle robots when any job ends and re-asks a stalled team up to 2x; plan_first never re-asks",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:34-37",
+    "scripts/run_zone_dispatch.py:224-245",
+    "scripts/run_zone_dispatch.py:285-329",
+    "independent 73/142 replies were null polls, dynamic 34/75"
+   ],
+   "status": "not fixed",
+   "effect_on_zc2": "independent LLM-call and SIM-time figures are partly artefacts of the polling and L1 stops"
+  },
+  {
+   "id": "C4",
+   "kind": "confound",
+   "severity": "low",
+   "title": "grasp-fail injection hits the 2nd issued job globally, so robot and box differ per condition",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:204-206",
+    "s12: dynamic r3 green-1, independent r2 cyan-1, plan_first r2 cyan-1; s14: dynamic r1 green-1, independent r2 red-1, plan_first r2 red-1"
+   ],
+   "status": "not fixed",
+   "effect_on_zc2": "small; same rule for all conditions"
+  },
+  {
+   "id": "C5",
+   "kind": "confound",
+   "severity": "low",
+   "title": "retry budgets differ: independent 2 attempts per round, dynamic 3 (2 conflict rounds), plan_first 8 negotiation rounds",
+   "evidence": [
+    "scripts/run_zone_dispatch.py:366-402",
+    "scripts/run_zone_dispatch.py:405-434",
+    "scripts/run_zone_dispatch.py:249"
+   ],
+   "status": "not fixed",
+   "effect_on_zc2": "small"
+  },
+  {
+   "id": "K1",
+   "kind": "clean",
+   "severity": "-",
+   "title": "box_labels.rgb_floor_xy_m and rgb_view come from TOP JPEG colour blobs and the authored camera only",
+   "evidence": [
+    "harness/zone_perception.py:37-128",
+    "scripts/run_zone_dispatch.py:93-108,183-186,372,412",
+    "static_map has no box poses (tests/test_zone_comm_boundary.py::test_perception_never_receives_box_poses)",
+    "render counterfactual: box_00 true shift (+0.037,-0.023) -> RGB (+0.036,-0.025); box_03 (-0.051,+0.029) -> (-0.048,+0.030); unmoved boxes unchanged; error 0-9.4 mm",
+    "seed-14 render labels == all six ZC2-s14 box-labels.json"
+   ],
+   "status": "verified",
+   "effect_on_zc2": "grid-like values are the grid layout seen through RGB, not a snap"
+  },
+  {
+   "id": "K2",
+   "kind": "clean",
+   "severity": "-",
+   "title": "independent requests carry only request_id, robot_id, box_labels, rgb_view, own_jobs (+ own invalid_reason); replies have no message field and are delivered to nobody",
+   "evidence": [
+    "harness/zone_solo.py:33-46",
+    "harness/zone_solo.py:57-73",
+    "scripts/run_zone_dispatch.py:420-421 (recipients=[])",
+    "142/142 saved independent calls"
+   ],
+   "status": "verified",
+   "effect_on_zc2": "-"
+  },
+  {
+   "id": "K3",
+   "kind": "clean",
+   "severity": "-",
+   "title": "what was saved is what was sent; same model, max_tokens, temperature and image set in every condition",
+   "evidence": [
+    "274/274 ZC2 calls: wire system/user text/image labels/image bytes == saved request",
+    "gemini-3.8-flash, max_tokens 1400, temperature 0.2",
+    "scripts/run_zone_dispatch.py:169-170"
+   ],
+   "status": "verified",
+   "effect_on_zc2": "-"
+  },
+  {
+   "id": "K4",
+   "kind": "clean",
+   "severity": "-",
+   "title": "referee (simulator poses) is output only; run termination and goal_met_rgb use RGB and receipts only",
+   "evidence": [
+    "harness/zone_coordination.py:234-249",
+    "scripts/run_zone_dispatch.py:276-337 (loop)",
+    "scripts/run_zone_dispatch.py:341-347 (referee after control)"
+   ],
+   "status": "verified by code reading",
+   "effect_on_zc2": "-"
+  }
+ ],
+ "zc2_conclusion": {
+  "independent_over_delivery": "stands qualitatively; not caused by L1-L3 (these give independent more, not less, peer information)",
+  "dynamic_vs_independent": "stands as a comparison of the whole dynamic coordination bundle vs none; not attributable to explicit LLM messages alone (C1)",
+  "dynamic_graspfail_3_of_3": "stands as a teacher-condition result that relies on truth-derived failure receipts (L4)",
+  "plan_first_graspfail_0_of_3": "by design (no re-planning)",
+  "revalidation": "ZC1/ZC2 ran before the L2/L3 fixes and are not re-validated; L1/L4/C1-C5 are unchanged in the code"
+ },
+ "runs": [
+  {
+   "run": "ZC2-s12-dynamic-graspfail",
+   "coordination": "dynamic",
+   "seed": 12,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 13,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 13
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 7,
+   "request_id_turn_gaps_revealing_peer_rounds": 6,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s12-dynamic-nominal",
+   "coordination": "dynamic",
+   "seed": 12,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 12,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 12
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 5,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s12-independent-graspfail",
+   "coordination": "independent",
+   "seed": 12,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 23,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 23
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 9,
+   "own_jobs_total": 14,
+   "request_id_turn_gaps_revealing_peer_rounds": 12,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": [
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-1",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-2",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "yellow-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r1-2",
+     "peer": "r3",
+     "peer_phase": "to_box",
+     "robot": "r1"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-4",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-5",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "red-2",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-3",
+     "peer": "r2",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    },
+    {
+     "box": "red-2",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-4",
+     "peer": "r2",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    }
+   ]
+  },
+  {
+   "run": "ZC2-s12-independent-nominal",
+   "coordination": "independent",
+   "seed": 12,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 23,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 23
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 10,
+   "own_jobs_total": 15,
+   "request_id_turn_gaps_revealing_peer_rounds": 13,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": [
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-1",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-2",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "yellow-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r1-2",
+     "peer": "r3",
+     "peer_phase": "to_box",
+     "robot": "r1"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r1-3",
+     "peer": "r2",
+     "peer_phase": "to_box",
+     "robot": "r1"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r1-4",
+     "peer": "r2",
+     "peer_phase": "to_box",
+     "robot": "r1"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r1-5",
+     "peer": "r2",
+     "peer_phase": "to_box",
+     "robot": "r1"
+    },
+    {
+     "box": "red-2",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-3",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    },
+    {
+     "box": "red-2",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-4",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    }
+   ]
+  },
+  {
+   "run": "ZC2-s12-plan_first-graspfail",
+   "coordination": "plan_first",
+   "seed": 12,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 6,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 6
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s12-plan_first-nominal",
+   "coordination": "plan_first",
+   "seed": 12,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 13,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 13
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 1,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s13-dynamic-graspfail",
+   "coordination": "dynamic",
+   "seed": 13,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 15,
+   "body_keys": [
+    "box_labels",
+    "conflict",
+    "invalid_reason",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 15
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 7,
+   "request_id_turn_gaps_revealing_peer_rounds": 5,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s13-dynamic-nominal",
+   "coordination": "dynamic",
+   "seed": 13,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 10,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 10
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 5,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s13-independent-graspfail",
+   "coordination": "independent",
+   "seed": 13,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 14,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 14
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 7,
+   "request_id_turn_gaps_revealing_peer_rounds": 10,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s13-independent-nominal",
+   "coordination": "independent",
+   "seed": 13,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 27,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 27
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 6,
+   "own_jobs_total": 11,
+   "request_id_turn_gaps_revealing_peer_rounds": 17,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": [
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-1",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    },
+    {
+     "box": "cyan-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-2",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    },
+    {
+     "box": "cyan-2",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-4",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    }
+   ]
+  },
+  {
+   "run": "ZC2-s13-plan_first-graspfail",
+   "coordination": "plan_first",
+   "seed": 13,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 7,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 7
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 1,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s13-plan_first-nominal",
+   "coordination": "plan_first",
+   "seed": 13,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 6,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 6
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 1,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s14-dynamic-graspfail",
+   "coordination": "dynamic",
+   "seed": 14,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 13,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 13
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 2,
+   "own_jobs_total": 7,
+   "request_id_turn_gaps_revealing_peer_rounds": 6,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s14-dynamic-nominal",
+   "coordination": "dynamic",
+   "seed": 14,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 13,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "2d5ad5ece5db50b1": 13
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 2,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 5,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s14-independent-graspfail",
+   "coordination": "independent",
+   "seed": 14,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 31,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 31
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 3,
+   "own_jobs_total": 9,
+   "request_id_turn_gaps_revealing_peer_rounds": 23,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s14-independent-nominal",
+   "coordination": "independent",
+   "seed": 14,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 24,
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ],
+   "system_prompt_sha": {
+    "bfa2c74f037ec698": 24
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 8,
+   "own_jobs_total": 13,
+   "request_id_turn_gaps_revealing_peer_rounds": 12,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": [
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-2",
+     "peer": "r3",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-3",
+     "peer": "r3",
+     "peer_phase": "to_box",
+     "robot": "r2"
+    },
+    {
+     "box": "red-1",
+     "delay_after_assign_s": 0.0,
+     "job": "r2-4",
+     "peer": "r3",
+     "peer_phase": "grasp",
+     "robot": "r2"
+    },
+    {
+     "box": "cyan-3",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-3",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    },
+    {
+     "box": "cyan-3",
+     "delay_after_assign_s": 0.0,
+     "job": "r3-4",
+     "peer": "r1",
+     "peer_phase": "to_box",
+     "robot": "r3"
+    }
+   ]
+  },
+  {
+   "run": "ZC2-s14-plan_first-graspfail",
+   "coordination": "plan_first",
+   "seed": 14,
+   "inject": 2,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": false,
+   "calls": 9,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 9
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 1,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  },
+  {
+   "run": "ZC2-s14-plan_first-nominal",
+   "coordination": "plan_first",
+   "seed": 14,
+   "inject": 0,
+   "source_sha": "7ccd6c347d146513d47af94f14b51a9805feebc0",
+   "referee_goal_met": true,
+   "calls": 15,
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ],
+   "system_prompt_sha": {
+    "8195404dd3a8562e": 15
+   },
+   "max_tokens": [
+    1400
+   ],
+   "temperature": [
+    0.2
+   ],
+   "models": [
+    "gemini-3.8-flash"
+   ],
+   "own_slot_ids_encoding_active_peer_job": 0,
+   "own_jobs_total": 6,
+   "request_id_turn_gaps_revealing_peer_rounds": 0,
+   "wire_mismatches": 0,
+   "box_taken_by_peer": []
+  }
+ ],
+ "render_counterfactual": {
+  "labels": {
+   "cyan-1": {
+    "floor_xy_m": [
+     0.997,
+     -0.845
+    ],
+    "kind": "cyan"
+   },
+   "cyan-2": {
+    "floor_xy_m": [
+     1.6,
+     -2.449
+    ],
+    "kind": "cyan"
+   },
+   "cyan-3": {
+    "floor_xy_m": [
+     1.6,
+     0.748
+    ],
+    "kind": "cyan"
+   },
+   "green-1": {
+    "floor_xy_m": [
+     0.4,
+     0.747
+    ],
+    "kind": "green"
+   },
+   "red-1": {
+    "floor_xy_m": [
+     -0.198,
+     -2.448
+    ],
+    "kind": "red"
+   },
+   "red-2": {
+    "floor_xy_m": [
+     0.401,
+     -2.448
+    ],
+    "kind": "red"
+   },
+   "red-3": {
+    "floor_xy_m": [
+     0.4,
+     -1.65
+    ],
+    "kind": "red"
+   },
+   "yellow-1": {
+    "floor_xy_m": [
+     -0.195,
+     -0.858
+    ],
+    "kind": "yellow"
+   }
+  },
+  "layout_positions": {
+   "cargo_box_00": [
+    0.4,
+    -2.45
+   ],
+   "cargo_box_01": [
+    0.4,
+    0.75
+   ],
+   "cargo_box_02": [
+    1.6,
+    -2.45
+   ],
+   "cargo_box_03": [
+    1.0,
+    -0.85
+   ],
+   "cargo_box_04": [
+    -0.2,
+    -0.85
+   ],
+   "cargo_box_05": [
+    -0.2,
+    -2.45
+   ],
+   "cargo_box_06": [
+    1.6,
+    0.75
+   ],
+   "cargo_box_07": [
+    0.4,
+    -1.65
+   ]
+  },
+  "moves": {
+   "cargo_box_00": [
+    0.037,
+    -0.023
+   ],
+   "cargo_box_03": [
+    -0.051,
+    0.029
+   ]
+  },
+  "observe_after": {
+   "detections": 8,
+   "pickup_boxes_still_visible": [
+    "cyan-1",
+    "cyan-2",
+    "cyan-3",
+    "green-1",
+    "red-1",
+    "red-2",
+    "red-3",
+    "yellow-1"
+   ],
+   "source": "TOP RGB colour blobs and authored camera calibration; not simulator state",
+   "zone_counts_seen": {
+    "A": {},
+    "B": {},
+    "C": {}
+   }
+  },
+  "observe_before": {
+   "detections": 8,
+   "pickup_boxes_still_visible": [
+    "cyan-1",
+    "cyan-2",
+    "cyan-3",
+    "green-1",
+    "red-1",
+    "red-2",
+    "red-3",
+    "yellow-1"
+   ],
+   "source": "TOP RGB colour blobs and authored camera calibration; not simulator state",
+   "zone_counts_seen": {
+    "A": {},
+    "B": {},
+    "C": {}
+   }
+  },
+  "rows": [
+   {
+    "body": "cargo_box_00",
+    "kind": "red",
+    "rgb_after": {
+     "err_m": 0.0,
+     "rgb_xy": [
+      0.437,
+      -2.473
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.0022,
+     "rgb_xy": [
+      0.401,
+      -2.448
+     ]
+    },
+    "rgb_shift_m": [
+     0.036,
+     -0.025
+    ],
+    "true_after": [
+     0.437,
+     -2.473
+    ],
+    "true_before": [
+     0.4,
+     -2.45
+    ],
+    "true_shift_m": [
+     0.037,
+     -0.023
+    ]
+   },
+   {
+    "body": "cargo_box_01",
+    "kind": "green",
+    "rgb_after": {
+     "err_m": 0.003,
+     "rgb_xy": [
+      0.4,
+      0.747
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.003,
+     "rgb_xy": [
+      0.4,
+      0.747
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     0.4,
+     0.75
+    ],
+    "true_before": [
+     0.4,
+     0.75
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "body": "cargo_box_02",
+    "kind": "cyan",
+    "rgb_after": {
+     "err_m": 0.001,
+     "rgb_xy": [
+      1.6,
+      -2.449
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.001,
+     "rgb_xy": [
+      1.6,
+      -2.449
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     1.6,
+     -2.45
+    ],
+    "true_before": [
+     1.6,
+     -2.45
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "body": "cargo_box_03",
+    "kind": "cyan",
+    "rgb_after": {
+     "err_m": 0.006,
+     "rgb_xy": [
+      0.949,
+      -0.815
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.0058,
+     "rgb_xy": [
+      0.997,
+      -0.845
+     ]
+    },
+    "rgb_shift_m": [
+     -0.048,
+     0.03
+    ],
+    "true_after": [
+     0.949,
+     -0.821
+    ],
+    "true_before": [
+     1.0,
+     -0.85
+    ],
+    "true_shift_m": [
+     -0.051,
+     0.029
+    ]
+   },
+   {
+    "body": "cargo_box_04",
+    "kind": "yellow",
+    "rgb_after": {
+     "err_m": 0.0094,
+     "rgb_xy": [
+      -0.195,
+      -0.858
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.0094,
+     "rgb_xy": [
+      -0.195,
+      -0.858
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     -0.2,
+     -0.85
+    ],
+    "true_before": [
+     -0.2,
+     -0.85
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "body": "cargo_box_05",
+    "kind": "red",
+    "rgb_after": {
+     "err_m": 0.0028,
+     "rgb_xy": [
+      -0.198,
+      -2.448
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.0028,
+     "rgb_xy": [
+      -0.198,
+      -2.448
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     -0.2,
+     -2.45
+    ],
+    "true_before": [
+     -0.2,
+     -2.45
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "body": "cargo_box_06",
+    "kind": "cyan",
+    "rgb_after": {
+     "err_m": 0.002,
+     "rgb_xy": [
+      1.6,
+      0.748
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.002,
+     "rgb_xy": [
+      1.6,
+      0.748
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     1.6,
+     0.75
+    ],
+    "true_before": [
+     1.6,
+     0.75
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "body": "cargo_box_07",
+    "kind": "red",
+    "rgb_after": {
+     "err_m": 0.0,
+     "rgb_xy": [
+      0.4,
+      -1.65
+     ]
+    },
+    "rgb_before": {
+     "err_m": 0.0,
+     "rgb_xy": [
+      0.4,
+      -1.65
+     ]
+    },
+    "rgb_shift_m": [
+     0.0,
+     0.0
+    ],
+    "true_after": [
+     0.4,
+     -1.65
+    ],
+    "true_before": [
+     0.4,
+     -1.65
+    ],
+    "true_shift_m": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "seed": 14
+ },
+ "sampled_requests": [
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-1-0-1-request.json",
+   "request_sha256": "8ab2572e3114f8966c6b9cb541218216f5af7670a692d70c2a54ed21189720a7",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-001.json",
+   "wire_sha256": "4f6c73408e83e2dbae3f9343193c9d11b31d4f90333b3c968d7f7319ecdba586",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-4-0-4-request.json",
+   "request_sha256": "b4fd4e1d46f510b24b3dc29f68d51db227657fad051288bcae4aecf8631953ea",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-002.json",
+   "wire_sha256": "aae23cc5c2027dc8995ff63a91c8ba005da531425eac5df86d0cf7c202e49997",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-5-0-5-request.json",
+   "request_sha256": "bddfc21d4dea066e476f37a01b848f5910ee6303b6073bd9de841557ae46ec82",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-003.json",
+   "wire_sha256": "da4f3e7acf74486877a073f18823efa2f0fbb458d6c222d48c4ba34446d8860f",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-6-0-6-request.json",
+   "request_sha256": "cdddf2defa9deff5390f6aa8ccf97ea01fc1279443847235fc9dbea9ae74dd1e",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-004.json",
+   "wire_sha256": "b860825fd8d76b887029635ed42c34a4e1527937aca2a4c5c86a2665a69da235",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-7-0-7-request.json",
+   "request_sha256": "fff6ca53e3a387aecaf5a1b33b597bbae6061abb38a884bbc14a190ca6364f40",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-005.json",
+   "wire_sha256": "b83978239bc7cb715a4452c226c80ebaa645a3dd0c497538ea4553abaacc2dea",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r2/zone-7ccd6c34-305416-r2-solo-13-0-13-request.json",
+   "request_sha256": "c9119d44c9ea0f3aa99f2f5e77e5e69e8a3d7b44adf683602bb3d79bd12c1314",
+   "wire": "ZC2-s14-independent-nominal/team/r2/wire-007.json",
+   "wire_sha256": "c4efdc539c75c19639cff7e32106e7025b082545a5ad0706739d0eeb684d6500",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-graspfail/team/r1/zone-7ccd6c34-306331-r1-claim-2-0-2-request.json",
+   "request_sha256": "5a2be45dfc758ade0b19119d14d861a3146c947d1b1984272f04b16d9beb2f30",
+   "wire": "ZC2-s14-dynamic-graspfail/team/r1/wire-002.json",
+   "wire_sha256": "1fa316b4caa40d8c021e523b01acf7bd54115f98b7265b9acf5f08ebc114b5d9",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-graspfail/team/r3/zone-7ccd6c34-306331-r3-claim-3-0-3-request.json",
+   "request_sha256": "ae1baf7ca29de9217ff67a85105dbf16adb60423459ba62d70590ffe6e514240",
+   "wire": "ZC2-s14-dynamic-graspfail/team/r3/wire-002.json",
+   "wire_sha256": "c153d75646c7a9afe0a90e613ca80dd7e5fa1234fcee299a5bb50494871f2165",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s13-dynamic-graspfail/team/r3/zone-7ccd6c34-305290-r3-claim-7-0-7-request.json",
+   "request_sha256": "7e7a5079019cb443372f8f78217fda547bddc41c6a34663c305352f8d9459300",
+   "wire": "ZC2-s13-dynamic-graspfail/team/r3/wire-006.json",
+   "wire_sha256": "f1b346f7f1bc8ab3c3cb29a3a35cc8539994afad1779b17e7342898ad0a7e864",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r1/zone-7ccd6c34-305416-r1-solo-1-0-1-request.json",
+   "request_sha256": "88c0e4437d8056ead53bcfadfd81ce5d00371834667e2c2d803cc230654ae726",
+   "wire": "ZC2-s14-independent-nominal/team/r1/wire-001.json",
+   "wire_sha256": "ed9f9f23cb4f8a5ab09b9f2159c7206ea1025381765c62eef4902a3e3039ceb3",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-nominal/team/r3/zone-7ccd6c34-305416-r3-solo-1-0-1-request.json",
+   "request_sha256": "88d2cb0c344a63e8d9949bac73de65a04985f771436df8f5f9beea081f68e64c",
+   "wire": "ZC2-s14-independent-nominal/team/r3/wire-001.json",
+   "wire_sha256": "6dfed5043add45958707b9aec2cb7d874c896f4d8abd5f4134d17da42e73e6d1",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-graspfail/team/r1/zone-7ccd6c34-305977-r1-solo-1-0-1-request.json",
+   "request_sha256": "071850748f5fcf782c5a2412e7e96691e48ac2e940d8ceda2a66f91d2b245c0d",
+   "wire": "ZC2-s14-independent-graspfail/team/r1/wire-001.json",
+   "wire_sha256": "e1294fb60546a7523b1d480228fc0748378fe4721c6e9f9a81a023c5f1e71259",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-graspfail/team/r2/zone-7ccd6c34-305977-r2-solo-1-0-1-request.json",
+   "request_sha256": "e0d20e70137826c67b19d9933576e8fde7fac43cf0cf98e495c512e168d1e625",
+   "wire": "ZC2-s14-independent-graspfail/team/r2/wire-001.json",
+   "wire_sha256": "80c37e509482e2f73022244e69b34b72688e53eccc7045394feed9dbd84322e2",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-independent-graspfail/team/r3/zone-7ccd6c34-305977-r3-solo-1-0-1-request.json",
+   "request_sha256": "9b67eeb5cc2a89f916d2b6b8642f49c30bb2bc0f85263b3d5a8c1ac8175dbb5e",
+   "wire": "ZC2-s14-independent-graspfail/team/r3/wire-001.json",
+   "wire_sha256": "3cc69be6e07599263836ff0ad80a22989ff9ba9377c6a9ffebb1b5597a923a1a",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "request_id",
+    "rgb_view",
+    "robot_id"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-nominal/team/r1/zone-7ccd6c34-305676-r1-plan-0-request.json",
+   "request_sha256": "2eced2f403cf9a41f437f4a32bc9eee629cda56a564e3e89c64ce048c0624043",
+   "wire": "ZC2-s14-plan_first-nominal/team/r1/wire-001.json",
+   "wire_sha256": "74f16c39b3cb9e270ea8772f0e481f34fc6feed0659900381acdea023d589220",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-nominal/team/r2/zone-7ccd6c34-305676-r2-plan-0-request.json",
+   "request_sha256": "8b5080fc4cd195ad4623f5ffcb80e6c0066b95fca06a02a71da36b2564ef3805",
+   "wire": "ZC2-s14-plan_first-nominal/team/r2/wire-001.json",
+   "wire_sha256": "2cbef6e6afb7a8e2755265bd90809216d5d127683c94fc4d68e12f75cfc145e4",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-nominal/team/r3/zone-7ccd6c34-305676-r3-plan-0-request.json",
+   "request_sha256": "b409434216e896f0a2e572ddb7b040ece2597692928e64a7abb4b670b5461018",
+   "wire": "ZC2-s14-plan_first-nominal/team/r3/wire-001.json",
+   "wire_sha256": "e2bb9d485a337e567b45ea26ba66ff52751d0b9d6fbc540468ff0fccc28d2e4d",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-graspfail/team/r1/zone-7ccd6c34-306247-r1-plan-0-request.json",
+   "request_sha256": "5bc4d305a2011db16930fb676282a9b2a0956377cadc00a5c68cec854ebfbd7a",
+   "wire": "ZC2-s14-plan_first-graspfail/team/r1/wire-001.json",
+   "wire_sha256": "d5a4502e2353ba4f722b0e4242c0e9534e96d4361f218b2d67f57d2631f245fd",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-graspfail/team/r2/zone-7ccd6c34-306247-r2-plan-0-request.json",
+   "request_sha256": "0e0726bd0aab1bc7cbcb348e2e82512cf6cd4aea119e08f735d18dd1f9e47bad",
+   "wire": "ZC2-s14-plan_first-graspfail/team/r2/wire-001.json",
+   "wire_sha256": "3a5c4180b0372e9aa2c07c19c4f23b6612864c9ddd5296961368f71afc4c459c",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-plan_first-graspfail/team/r3/zone-7ccd6c34-306247-r3-plan-0-request.json",
+   "request_sha256": "398958eaa2aed1e247c4591caa7b82d8dcd046eeba2183f36e8acf57259e7ccf",
+   "wire": "ZC2-s14-plan_first-graspfail/team/r3/wire-001.json",
+   "wire_sha256": "d6d25f4cf0bd226cbec6dcf179332a324750ef2b336bb60f29c6d8ab7558ba2f",
+   "body_keys": [
+    "agreement",
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-nominal/team/r1/zone-7ccd6c34-305787-r1-claim-1-0-1-request.json",
+   "request_sha256": "02fdabc44f1a1d2da3b33d948c4b233e74e9c9840d981b6325367c3873fccef5",
+   "wire": "ZC2-s14-dynamic-nominal/team/r1/wire-001.json",
+   "wire_sha256": "7d867a9c54d53c8e268ce1fad3f36c33240894e69d797c0c71f37c302aad2bf9",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-nominal/team/r2/zone-7ccd6c34-305787-r2-claim-1-0-1-request.json",
+   "request_sha256": "966ca0c4053c707b15acad4221ebdf5429088c83687ff3a4e605b67e01f843a7",
+   "wire": "ZC2-s14-dynamic-nominal/team/r2/wire-001.json",
+   "wire_sha256": "75042498bc5a4713d10d4df1cbc65c417aea63290df7a5459dce7dfac2f4cf67",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-nominal/team/r3/zone-7ccd6c34-305787-r3-claim-1-0-1-request.json",
+   "request_sha256": "01d96d36be133e6966575af8ed4663486b2916a9674c1ffac897b9440e92c14f",
+   "wire": "ZC2-s14-dynamic-nominal/team/r3/wire-001.json",
+   "wire_sha256": "883e9eb152ec822b6cd00ecb123c776e36914deacea5f534262c3bdb4369dc97",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-graspfail/team/r1/zone-7ccd6c34-306331-r1-claim-1-0-1-request.json",
+   "request_sha256": "327b82a18cdcb093a01e3bc7a654a159affe0691a0ca50fe5c30512bebd0ba41",
+   "wire": "ZC2-s14-dynamic-graspfail/team/r1/wire-001.json",
+   "wire_sha256": "46743847d70507ae49b6496b668b2e10103e85268b90f2653a26d4dfcea0e504",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-graspfail/team/r2/zone-7ccd6c34-306331-r2-claim-1-0-1-request.json",
+   "request_sha256": "34be6a794d42cac4303a1b04e3e2135361bcf1233f936e9adde102bc43152cda",
+   "wire": "ZC2-s14-dynamic-graspfail/team/r2/wire-001.json",
+   "wire_sha256": "d073c7e8c3e6844a107c95cb85b437be88fe3477e00231478c60b6846f33a2a2",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  },
+  {
+   "request": "ZC2-s14-dynamic-graspfail/team/r3/zone-7ccd6c34-306331-r3-claim-1-0-1-request.json",
+   "request_sha256": "f0698d9168eef3d40d64ed163856c94fac143fe38e525f2303c57b5dc63929d0",
+   "wire": "ZC2-s14-dynamic-graspfail/team/r3/wire-001.json",
+   "wire_sha256": "6b41bc72421a2ef8b5ae9ead5ef43ea416e2caa5ebed3dd5b9bf10f2cbd81b94",
+   "body_keys": [
+    "box_labels",
+    "own_jobs",
+    "peer_messages",
+    "request_id",
+    "rgb_view",
+    "robot_id",
+    "team_board"
+   ]
+  }
+ ],
+ "cohort_request_files": {
+  "count": 818,
+  "manifest_sha256": "005b8ac8e565986c8eaf04ea5fb2019552b53be86ca859e2af5079ced6baae78",
+  "manifest_format": "sha256 two spaces relative path, sorted; ZC2-*/team/r*/*-request.json and wire-*.json (requests and responses)"
+ }
+}

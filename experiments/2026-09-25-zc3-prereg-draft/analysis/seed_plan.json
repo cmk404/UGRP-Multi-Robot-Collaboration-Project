@@ -1,0 +1,585 @@
+{
+ "status": "DRAFT proposal; freeze by committing the final protocol before any ZC3 run",
+ "rule": "Spawn permutation = robot IDs ordered by spawn row (south->north) from sim.zone_arena.episode (G8 + spare red1/cyan1). Seeds are scanned upward from a fixed start, skipping used seeds 11-14, and accepted while their permutation is below its quota so the 6 permutations appear equally often. Only setup RNG is evaluated; no outcome is looked at.",
+ "used_seeds_spawn_perm": {
+  "zone_wide": {
+   "11": "r2-r1-r3",
+   "12": "r1-r2-r3",
+   "13": "r3-r2-r1",
+   "14": "r2-r3-r1"
+  },
+  "zone_open": {
+   "11": "r2-r1-r3",
+   "12": "r1-r2-r3",
+   "13": "r1-r2-r3",
+   "14": "r1-r2-r3"
+  }
+ },
+ "development_seeds_zone_wide": {
+  "seeds": [
+   101,
+   102,
+   103,
+   104,
+   106,
+   107
+  ],
+  "perm_tally": {
+   "r1-r2-r3": 1,
+   "r1-r3-r2": 1,
+   "r2-r1-r3": 1,
+   "r2-r3-r1": 1,
+   "r3-r1-r2": 1,
+   "r3-r2-r1": 1
+  },
+  "use": "gate fixtures and any pilot/debug; never analysed as ZC3 results"
+ },
+ "heldout_seeds_zone_wide_ordered": {
+  "seeds": [
+   1001,
+   1002,
+   1003,
+   1004,
+   1006,
+   1007,
+   1008,
+   1009,
+   1010,
+   1011,
+   1012,
+   1014,
+   1015,
+   1016,
+   1018,
+   1026,
+   1028,
+   1032,
+   1033,
+   1034,
+   1035,
+   1036,
+   1037,
+   1047
+  ],
+  "perm_tally": {
+   "r1-r2-r3": 4,
+   "r1-r3-r2": 4,
+   "r2-r1-r3": 4,
+   "r2-r3-r1": 4,
+   "r3-r1-r2": 4,
+   "r3-r2-r1": 4
+  },
+  "use": "tier n uses the first n seeds of this list (prefix is balanced at n=6,12,18,24)"
+ },
+ "heldout_seeds_zone_open_optional": {
+  "seeds": [
+   2001,
+   2002,
+   2003,
+   2008,
+   2009,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2022,
+   2026
+  ],
+  "perm_tally": {
+   "r1-r2-r3": 2,
+   "r1-r3-r2": 2,
+   "r2-r1-r3": 2,
+   "r2-r3-r1": 2,
+   "r3-r1-r2": 2,
+   "r3-r2-r1": 2
+  }
+ },
+ "development_seeds_zone_open_optional": {
+  "seeds": [
+   201,
+   202,
+   203,
+   207,
+   210,
+   212
+  ],
+  "perm_tally": {
+   "r1-r2-r3": 1,
+   "r1-r3-r2": 1,
+   "r2-r1-r3": 1,
+   "r2-r3-r1": 1,
+   "r3-r1-r2": 1,
+   "r3-r2-r1": 1
+  }
+ },
+ "prefix_balance_zone_wide": {
+  "6": {
+   "r1-r2-r3": 1,
+   "r1-r3-r2": 1,
+   "r2-r1-r3": 1,
+   "r2-r3-r1": 1,
+   "r3-r1-r2": 1,
+   "r3-r2-r1": 1
+  },
+  "12": {
+   "r1-r2-r3": 2,
+   "r1-r3-r2": 2,
+   "r2-r1-r3": 2,
+   "r2-r3-r1": 2,
+   "r3-r1-r2": 2,
+   "r3-r2-r1": 2
+  },
+  "18": {
+   "r1-r2-r3": 3,
+   "r1-r3-r2": 3,
+   "r2-r1-r3": 3,
+   "r2-r3-r1": 3,
+   "r3-r1-r2": 3,
+   "r3-r2-r1": 3
+  },
+  "24": {
+   "r1-r2-r3": 4,
+   "r1-r3-r2": 4,
+   "r2-r1-r3": 4,
+   "r2-r3-r1": 4,
+   "r3-r1-r2": 4,
+   "r3-r2-r1": 4
+  }
+ },
+ "proposed_run_order_seed": 20260925,
+ "proposed_run_order_medium_example": [
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1001,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1004,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1012,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1011,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1009,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1014,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1006,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1008,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1002,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1010,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1003,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "independent",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "independent",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "dynamic",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "plan_first",
+   "scenario": "nominal"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "plan_first",
+   "scenario": "graspfail"
+  },
+  {
+   "arena": "zone_wide",
+   "seed": 1007,
+   "condition": "dynamic",
+   "scenario": "graspfail"
+  }
+ ]
+}
