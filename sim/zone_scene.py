@@ -12,7 +12,7 @@ import copy
 import hashlib
 
 from sim.session_scenes import ROOT, Scene
-from sim.zone_arena import DEFAULT_GOAL, LAYOUTS, MAP_DIR, VARIANTS, build_zone_xml, episode
+from sim.zone_arena import DEFAULT_GOAL, LAYOUTS, MAP_DIR, RETIRED_VARIANTS, VARIANTS, build_zone_xml, episode
 
 
 def mirror_box_contact_pairs(xml, bodies):
@@ -115,5 +115,7 @@ class ZoneScene(Scene):
 
 
 def catalog():
+    """Selectable zone scenes; retired variants stay resolvable for reproduction only."""
     return [{'id': 'zones/'+name, 'family': 'zones',
-             'scope': 'zone-goal coordination benchmark (ZoneScene); goal via scene params'} for name in VARIANTS]
+             'scope': 'zone-goal coordination benchmark (ZoneScene); goal via scene params'}
+            for name in VARIANTS if name not in RETIRED_VARIANTS]

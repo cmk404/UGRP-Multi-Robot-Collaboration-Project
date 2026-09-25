@@ -2,7 +2,7 @@
 
 A coordination benchmark scene. It widens the dispatch laboratory eastwards and
 keeps the approved TOP camera; CCTVs of the identical specification cover the
-rest (zone_open: one east; zone_wide: east plus a northern row of two). Box replicas keep the production cyan box shape, mass and
+rest (retired zone_open: one east; zone_wide: east plus a northern row of two). Box replicas keep the production cyan box shape, mass and
 friction; only the paint colour differs so robots can tell kinds apart in RGB.
 Setup poses and simulator IDs are setup-only and never reach the robots.
 """
@@ -21,6 +21,12 @@ from sim.research_dispatch_arena import FIXED_TOP, ROBOTS, digest
 SCHEMA = 'ugrp.zone_arena.v1'
 MAP_DIR = Path(__file__).resolve().parents[1] / 'maps' / 'zones'
 VARIANTS = ('zone_open', 'zone_wide')
+# 2026-09-25 user request ("옛날의 작은 맵은 없애주라"): the small zone_open floor
+# is retired. Its geometry and map file stay byte-identical so the Z1-Z3
+# records and replays can be reproduced; new runs refuse it unless the runner
+# is asked explicitly (scripts/run_zone_dispatch.py --allow-retired-variant).
+RETIRED_VARIANTS = ('zone_open',)
+DEFAULT_VARIANT = 'zone_wide'
 
 
 def _same_top(name, dx, dy):
@@ -52,7 +58,7 @@ PICKUP_COLUMNS_X = (-.20, .40, 1.00, 1.60)
 PICKUP_ROWS_Y = (-1.45, -2.05, -2.65)
 SPAWN_X = -.85
 SPAWN_ROWS_Y = (-1.35, -2.0, -2.65)
-# Per-variant geometry. zone_open is map v2 exactly as used by Z1-Z3.
+# Per-variant geometry. zone_open (retired) is map v2 exactly as used by Z1-Z3.
 # views: (camera, image label shown to robots, frame key, file suffix, role).
 LAYOUTS = {
     'zone_open': {
@@ -98,7 +104,7 @@ def top_views(static):
     return LAYOUTS[static['map_id']]['views']
 
 
-def build_authored_map(variant='zone_open'):
+def build_authored_map(variant=DEFAULT_VARIANT):
     """Author the static map (used once to write maps/zones/<variant>.json)."""
     spec = layout(variant)
     bounds = list(spec['bounds'])
@@ -127,7 +133,7 @@ def build_authored_map(variant='zone_open'):
             'approach_convention': 'boxes are grasped and placed with the robot facing east (+x)'}
 
 
-def authored_map(variant='zone_open'):
+def authored_map(variant=DEFAULT_VARIANT):
     """Static map the robots may know: the versioned JSON under maps/zones/."""
     layout(variant)
     value = json.loads((MAP_DIR/(variant+'.json')).read_text())
@@ -153,7 +159,7 @@ def goal_counts(goal):
     return {z: out[z] for z in sorted(out)}
 
 
-def episode(variant='zone_open', seed=11, *, goal, extra_boxes=None):
+def episode(variant=DEFAULT_VARIANT, seed=11, *, goal, extra_boxes=None):
     """Setup-only placement: enough boxes of each kind (plus optional spares)."""
     static = authored_map(variant)
     goal = goal_counts(goal)

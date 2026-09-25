@@ -66,9 +66,11 @@ Reply JSON only: {{"request_id": copied, "claim": {{"box": label or null,
 peers"}}. reason/message under 240 characters.'''
 
 
-# zone_open TOP views; other maps pass sim.zone_arena.top_views(static_map).
-DEFAULT_VIEWS = (('cctv_top', 'TOP_WEST', 'top_west', 'top-west', 'pickup'),
-                 ('cctv_top_east', 'TOP_EAST', 'top_east', 'top-east', 'zones'))
+# TOP views of the default map (zone_wide); runs pass sim.zone_arena.top_views(static_map).
+DEFAULT_VIEWS = (('cctv_top', 'TOP_SW', 'top_sw', 'top-sw', 'pickup, south'),
+                 ('cctv_top_north', 'TOP_NW', 'top_nw', 'top-nw', 'pickup, north'),
+                 ('cctv_top_east', 'TOP_SE', 'top_se', 'top-se', 'zones, south'),
+                 ('cctv_top_north_east', 'TOP_NE', 'top_ne', 'top-ne', 'zones, north'))
 
 
 def _images(frame, views):
