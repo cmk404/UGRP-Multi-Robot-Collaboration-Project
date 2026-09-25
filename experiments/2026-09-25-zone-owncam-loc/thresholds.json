@@ -1,0 +1,20 @@
+{
+  "schema": "ugrp.owncam_loc_thresholds.v1",
+  "fixed_at": "2026-09-25, before any localization result on dev or test",
+  "door_region": "GT base within |x - door_x| <= 0.6 m and |y - door_y| <= 0.5 m (evaluation-only selection)",
+  "rule": "a gate passes only if every selected frame is initialized and the quantile errors are below both limits; test is scored once with the parameters frozen after dev",
+  "gates": [
+    {"id": "G1_door_stop_look_p90", "modes": ["look_search", "look_level", "carry_level"], "door_region": true,
+     "stationary_look": true, "quantile": 90, "pos_m": 0.05, "yaw_deg": 5.0,
+     "meaning": "robot stopped near the door with a pan sweep: 90% of frames within 5 cm / 5 deg"},
+    {"id": "G2_door_drive_p50", "modes": ["look_search", "look_level", "carry_level"], "door_region": true,
+     "quantile": 50, "pos_m": 0.05, "yaw_deg": 5.0,
+     "meaning": "all frames (driving and stopped) near the door, median within 5 cm / 5 deg"},
+    {"id": "G3_door_drive_p90", "modes": ["look_search", "look_level", "carry_level"], "door_region": true,
+     "quantile": 90, "pos_m": 0.10, "yaw_deg": 10.0,
+     "meaning": "all frames near the door, 90% within 10 cm / 10 deg"},
+    {"id": "I1_teacher_carry_door_p50_info", "modes": ["teacher_carry"], "door_region": true,
+     "quantile": 50, "pos_m": 0.05, "yaw_deg": 5.0,
+     "meaning": "informational only (not an M1 gate): the teacher's low carry pose sees the floor"}
+  ]
+}

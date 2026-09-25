@@ -1,0 +1,601 @@
+{
+  "schema": "ugrp.owncam_loc_metrics.v1",
+  "episodes": [
+    "dev-tc-s11",
+    "dev-ls-s11",
+    "dev-ll-s11",
+    "dev-cl-s11",
+    "dev-tc-s12",
+    "dev-ls-s12",
+    "dev-ll-s12",
+    "dev-cl-s12"
+  ],
+  "thresholds_sha256": "9ed4211dcdbab14c35fc16d069bda0e3ff41190bfe4952aebc78f39762b6d5e8",
+  "gates": {
+    "G1_door_stop_look_p90": {
+      "id": "G1_door_stop_look_p90",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "stationary_look": true,
+      "quantile": 90,
+      "pos_m": 0.1598,
+      "yaw_deg": 3.066,
+      "meaning": "robot stopped near the door with a pan sweep: 90% of frames within 5 cm / 5 deg",
+      "frames": 92,
+      "uninitialized": 0,
+      "pass": false
+    },
+    "G2_door_drive_p50": {
+      "id": "G2_door_drive_p50",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "quantile": 50,
+      "pos_m": 0.0318,
+      "yaw_deg": 0.461,
+      "meaning": "all frames (driving and stopped) near the door, median within 5 cm / 5 deg",
+      "frames": 760,
+      "uninitialized": 0,
+      "pass": true
+    },
+    "G3_door_drive_p90": {
+      "id": "G3_door_drive_p90",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "quantile": 90,
+      "pos_m": 0.1646,
+      "yaw_deg": 4.367,
+      "meaning": "all frames near the door, 90% within 10 cm / 10 deg",
+      "frames": 760,
+      "uninitialized": 0,
+      "pass": false
+    },
+    "I1_teacher_carry_door_p50_info": {
+      "id": "I1_teacher_carry_door_p50_info",
+      "modes": [
+        "teacher_carry"
+      ],
+      "door_region": true,
+      "quantile": 50,
+      "pos_m": 0.2005,
+      "yaw_deg": 5.074,
+      "meaning": "informational only (not an M1 gate): the teacher's low carry pose sees the floor",
+      "frames": 85,
+      "uninitialized": 0,
+      "pass": false
+    }
+  },
+  "summary": {
+    "mode=carry_level": {
+      "frames": 816,
+      "initialized": 816,
+      "visible_rate": 0.216,
+      "pos_m": {
+        "p50": 0.0719,
+        "p90": 0.1962,
+        "max": 0.2154
+      },
+      "yaw_deg": {
+        "p50": 1.624,
+        "p90": 6.797,
+        "max": 9.053
+      }
+    },
+    "mode=look_level": {
+      "frames": 1289,
+      "initialized": 1289,
+      "visible_rate": 0.981,
+      "pos_m": {
+        "p50": 0.0208,
+        "p90": 0.0568,
+        "max": 0.2226
+      },
+      "yaw_deg": {
+        "p50": 0.287,
+        "p90": 0.878,
+        "max": 4.032
+      }
+    },
+    "mode=look_search": {
+      "frames": 1224,
+      "initialized": 1224,
+      "visible_rate": 0.918,
+      "pos_m": {
+        "p50": 0.0172,
+        "p90": 0.0559,
+        "max": 0.2719
+      },
+      "yaw_deg": {
+        "p50": 0.3,
+        "p90": 1.22,
+        "max": 5.146
+      }
+    },
+    "mode=teacher_carry": {
+      "frames": 573,
+      "initialized": 573,
+      "visible_rate": 0.304,
+      "pos_m": {
+        "p50": 0.0996,
+        "p90": 0.2734,
+        "max": 1.6938
+      },
+      "yaw_deg": {
+        "p50": 1.592,
+        "p90": 4.616,
+        "max": 31.044
+      }
+    },
+    "posture=arm_moving": {
+      "frames": 857,
+      "initialized": 857,
+      "visible_rate": 0.77,
+      "pos_m": {
+        "p50": 0.0199,
+        "p90": 0.1211,
+        "max": 0.2719
+      },
+      "yaw_deg": {
+        "p50": 0.368,
+        "p90": 2.596,
+        "max": 9.053
+      }
+    },
+    "posture=carry_level_c": {
+      "frames": 34,
+      "initialized": 34,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1215,
+        "p90": 0.206,
+        "max": 0.2117
+      },
+      "yaw_deg": {
+        "p50": 2.38,
+        "p90": 5.229,
+        "max": 6.071
+      }
+    },
+    "posture=carry_level_drive": {
+      "frames": 369,
+      "initialized": 369,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1052,
+        "p90": 0.1994,
+        "max": 0.2154
+      },
+      "yaw_deg": {
+        "p50": 2.137,
+        "p90": 7.615,
+        "max": 8.347
+      }
+    },
+    "posture=carry_level_l": {
+      "frames": 17,
+      "initialized": 17,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1229,
+        "p90": 0.2023,
+        "max": 0.2118
+      },
+      "yaw_deg": {
+        "p50": 5.635,
+        "p90": 8.009,
+        "max": 9.042
+      }
+    },
+    "posture=carry_level_r": {
+      "frames": 17,
+      "initialized": 17,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1234,
+        "p90": 0.2018,
+        "max": 0.2115
+      },
+      "yaw_deg": {
+        "p50": 2.587,
+        "p90": 3.881,
+        "max": 4.102
+      }
+    },
+    "posture=done": {
+      "frames": 2,
+      "initialized": 2,
+      "visible_rate": 1.0,
+      "pos_m": {
+        "p50": 0.0108,
+        "p90": 0.0131,
+        "max": 0.0137
+      },
+      "yaw_deg": {
+        "p50": 0.364,
+        "p90": 0.442,
+        "max": 0.461
+      }
+    },
+    "posture=grasp": {
+      "frames": 77,
+      "initialized": 77,
+      "visible_rate": 0.078,
+      "pos_m": {
+        "p50": 0.0166,
+        "p90": 0.0256,
+        "max": 0.0266
+      },
+      "yaw_deg": {
+        "p50": 0.256,
+        "p90": 1.047,
+        "max": 1.062
+      }
+    },
+    "posture=level_c": {
+      "frames": 74,
+      "initialized": 74,
+      "visible_rate": 1.0,
+      "pos_m": {
+        "p50": 0.02,
+        "p90": 0.0524,
+        "max": 0.1167
+      },
+      "yaw_deg": {
+        "p50": 0.238,
+        "p90": 0.912,
+        "max": 2.893
+      }
+    },
+    "posture=level_drive": {
+      "frames": 792,
+      "initialized": 792,
+      "visible_rate": 0.985,
+      "pos_m": {
+        "p50": 0.0218,
+        "p90": 0.0589,
+        "max": 0.2226
+      },
+      "yaw_deg": {
+        "p50": 0.305,
+        "p90": 0.87,
+        "max": 4.032
+      }
+    },
+    "posture=level_l": {
+      "frames": 37,
+      "initialized": 37,
+      "visible_rate": 0.946,
+      "pos_m": {
+        "p50": 0.0212,
+        "p90": 0.0584,
+        "max": 0.1134
+      },
+      "yaw_deg": {
+        "p50": 0.303,
+        "p90": 0.914,
+        "max": 1.596
+      }
+    },
+    "posture=level_r": {
+      "frames": 37,
+      "initialized": 37,
+      "visible_rate": 0.973,
+      "pos_m": {
+        "p50": 0.0113,
+        "p90": 0.0444,
+        "max": 0.0622
+      },
+      "yaw_deg": {
+        "p50": 0.134,
+        "p90": 0.715,
+        "max": 0.958
+      }
+    },
+    "posture=place": {
+      "frames": 72,
+      "initialized": 72,
+      "visible_rate": 0.625,
+      "pos_m": {
+        "p50": 0.0306,
+        "p90": 0.3813,
+        "max": 0.388
+      },
+      "yaw_deg": {
+        "p50": 1.409,
+        "p90": 3.937,
+        "max": 3.943
+      }
+    },
+    "posture=search_c": {
+      "frames": 74,
+      "initialized": 74,
+      "visible_rate": 0.892,
+      "pos_m": {
+        "p50": 0.0162,
+        "p90": 0.0529,
+        "max": 0.2086
+      },
+      "yaw_deg": {
+        "p50": 0.342,
+        "p90": 1.46,
+        "max": 3.92
+      }
+    },
+    "posture=search_drive": {
+      "frames": 1032,
+      "initialized": 1032,
+      "visible_rate": 0.935,
+      "pos_m": {
+        "p50": 0.026,
+        "p90": 0.0787,
+        "max": 1.6938
+      },
+      "yaw_deg": {
+        "p50": 0.434,
+        "p90": 1.618,
+        "max": 31.044
+      }
+    },
+    "posture=search_l": {
+      "frames": 37,
+      "initialized": 37,
+      "visible_rate": 0.946,
+      "pos_m": {
+        "p50": 0.0145,
+        "p90": 0.0327,
+        "max": 0.1133
+      },
+      "yaw_deg": {
+        "p50": 0.288,
+        "p90": 0.896,
+        "max": 1.637
+      }
+    },
+    "posture=search_r": {
+      "frames": 37,
+      "initialized": 37,
+      "visible_rate": 0.946,
+      "pos_m": {
+        "p50": 0.0089,
+        "p90": 0.0272,
+        "max": 0.0803
+      },
+      "yaw_deg": {
+        "p50": 0.188,
+        "p90": 0.676,
+        "max": 1.66
+      }
+    },
+    "posture=teacher_carry_drive": {
+      "frames": 337,
+      "initialized": 337,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1653,
+        "p90": 0.2811,
+        "max": 0.3981
+      },
+      "yaw_deg": {
+        "p50": 2.278,
+        "p90": 6.014,
+        "max": 7.037
+      }
+    },
+    "episode=dev-cl-s11": {
+      "frames": 511,
+      "initialized": 511,
+      "visible_rate": 0.205,
+      "pos_m": {
+        "p50": 0.1247,
+        "p90": 0.2029,
+        "max": 0.2154
+      },
+      "yaw_deg": {
+        "p50": 2.414,
+        "p90": 7.519,
+        "max": 9.053
+      }
+    },
+    "episode=dev-cl-s12": {
+      "frames": 305,
+      "initialized": 305,
+      "visible_rate": 0.233,
+      "pos_m": {
+        "p50": 0.0377,
+        "p90": 0.1238,
+        "max": 0.1681
+      },
+      "yaw_deg": {
+        "p50": 1.099,
+        "p90": 3.098,
+        "max": 4.104
+      }
+    },
+    "episode=dev-ll-s11": {
+      "frames": 686,
+      "initialized": 686,
+      "visible_rate": 0.981,
+      "pos_m": {
+        "p50": 0.0209,
+        "p90": 0.0703,
+        "max": 0.2226
+      },
+      "yaw_deg": {
+        "p50": 0.279,
+        "p90": 0.865,
+        "max": 4.032
+      }
+    },
+    "episode=dev-ll-s12": {
+      "frames": 603,
+      "initialized": 603,
+      "visible_rate": 0.982,
+      "pos_m": {
+        "p50": 0.0208,
+        "p90": 0.0545,
+        "max": 0.0749
+      },
+      "yaw_deg": {
+        "p50": 0.303,
+        "p90": 0.878,
+        "max": 2.403
+      }
+    },
+    "episode=dev-ls-s11": {
+      "frames": 518,
+      "initialized": 518,
+      "visible_rate": 0.95,
+      "pos_m": {
+        "p50": 0.0155,
+        "p90": 0.0524,
+        "max": 0.1776
+      },
+      "yaw_deg": {
+        "p50": 0.291,
+        "p90": 1.112,
+        "max": 3.665
+      }
+    },
+    "episode=dev-ls-s12": {
+      "frames": 706,
+      "initialized": 706,
+      "visible_rate": 0.895,
+      "pos_m": {
+        "p50": 0.019,
+        "p90": 0.0568,
+        "max": 0.2719
+      },
+      "yaw_deg": {
+        "p50": 0.308,
+        "p90": 1.295,
+        "max": 5.146
+      }
+    },
+    "episode=dev-tc-s11": {
+      "frames": 312,
+      "initialized": 312,
+      "visible_rate": 0.314,
+      "pos_m": {
+        "p50": 0.0506,
+        "p90": 0.3223,
+        "max": 0.3981
+      },
+      "yaw_deg": {
+        "p50": 2.193,
+        "p90": 6.119,
+        "max": 7.037
+      }
+    },
+    "episode=dev-tc-s12": {
+      "frames": 261,
+      "initialized": 261,
+      "visible_rate": 0.291,
+      "pos_m": {
+        "p50": 0.137,
+        "p90": 0.1936,
+        "max": 1.6938
+      },
+      "yaw_deg": {
+        "p50": 1.037,
+        "p90": 2.622,
+        "max": 31.044
+      }
+    },
+    "door_region&mode=carry_level": {
+      "frames": 176,
+      "initialized": 176,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.1598,
+        "p90": 0.2117,
+        "max": 0.2154
+      },
+      "yaw_deg": {
+        "p50": 3.95,
+        "p90": 7.654,
+        "max": 9.053
+      }
+    },
+    "door_region&mode=look_level": {
+      "frames": 304,
+      "initialized": 304,
+      "visible_rate": 0.931,
+      "pos_m": {
+        "p50": 0.0353,
+        "p90": 0.0728,
+        "max": 0.1282
+      },
+      "yaw_deg": {
+        "p50": 0.395,
+        "p90": 0.896,
+        "max": 1.398
+      }
+    },
+    "door_region&mode=look_search": {
+      "frames": 280,
+      "initialized": 280,
+      "visible_rate": 0.764,
+      "pos_m": {
+        "p50": 0.0215,
+        "p90": 0.0443,
+        "max": 0.0575
+      },
+      "yaw_deg": {
+        "p50": 0.268,
+        "p90": 0.798,
+        "max": 2.763
+      }
+    },
+    "door_region&mode=teacher_carry": {
+      "frames": 85,
+      "initialized": 85,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.2005,
+        "p90": 0.2826,
+        "max": 0.2845
+      },
+      "yaw_deg": {
+        "p50": 5.074,
+        "p90": 6.952,
+        "max": 7.037
+      }
+    },
+    "all": {
+      "frames": 3902,
+      "initialized": 3902,
+      "visible_rate": 0.702,
+      "pos_m": {
+        "p50": 0.0259,
+        "p90": 0.1626,
+        "max": 1.6938
+      },
+      "yaw_deg": {
+        "p50": 0.496,
+        "p90": 2.999,
+        "max": 31.044
+      }
+    }
+  },
+  "estimates_sha256": {
+    "dev-tc-s11": "06bc582ec0422ce4b5ac9d237110f74fc16646bdeb5d3da6af8c15cac51d4cef",
+    "dev-ls-s11": "f6018c8f1d700b6c577f95bddb36cd73ab58e30271df6f8d1d19189624b8b017",
+    "dev-ll-s11": "b245db0b5b33dd7db3f4a6e23ea9ee1fd7ad73bf930bb7c1d1510fe8f28aba17",
+    "dev-cl-s11": "0da2131b0016a8d898a04f6f9932fde6b539f0a0abca4b018b83b8e922750a05",
+    "dev-tc-s12": "edd5e593d47ed08ee263478b6718cf45a1ed2bdc9dcc7ffbd6f2d992837b8cac",
+    "dev-ls-s12": "81ac007d66fcc2c78adf251438590862723fe9af8d3f7e1db5e6826810ecec53",
+    "dev-ll-s12": "11233728ddaec37aa57f610210792028261e880e3874caee563e1cb576bf113b",
+    "dev-cl-s12": "5fc2afecca72d87ef67b5a52cf37b21e3d4a36497c2e8c9acda683db1838fa50"
+  }
+}

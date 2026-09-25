@@ -1,0 +1,116 @@
+{
+ "dev": {
+  "G1_door_stop_look_p90": {
+   "frames": 72,
+   "pos_m": 0.0537,
+   "yaw_deg": 0.824,
+   "pass": false
+  },
+  "G2_door_drive_p50": {
+   "frames": 584,
+   "pos_m": 0.0279,
+   "yaw_deg": 0.324,
+   "pass": true
+  },
+  "G3_door_drive_p90": {
+   "frames": 584,
+   "pos_m": 0.0552,
+   "yaw_deg": 0.876,
+   "pass": true
+  }
+ },
+ "dev_visibility": {
+  "search (drive+stops)": {
+   "frames": 1180,
+   "visible_rate": 0.933,
+   "mean_tags": 2.91
+  },
+  "level, no box": {
+   "frames": 940,
+   "visible_rate": 0.984,
+   "mean_tags": 3.35
+  },
+  "level carry with box": {
+   "frames": 437,
+   "visible_rate": 0.0,
+   "mean_tags": 0.0
+  },
+  "teacher low carry": {
+   "frames": 337,
+   "visible_rate": 0.0,
+   "mean_tags": 0.0
+  },
+  "grasp": {
+   "frames": 77,
+   "visible_rate": 0.078,
+   "mean_tags": 0.13
+  },
+  "place": {
+   "frames": 72,
+   "visible_rate": 0.625,
+   "mean_tags": 1.0
+  },
+  "arm moving": {
+   "frames": 857,
+   "visible_rate": 0.77,
+   "mean_tags": 2.57
+  }
+ },
+ "test": {
+  "G1_door_stop_look_p90": {
+   "frames": 84,
+   "pos_m": 0.0446,
+   "yaw_deg": 0.427,
+   "pass": true
+  },
+  "G2_door_drive_p50": {
+   "frames": 562,
+   "pos_m": 0.0192,
+   "yaw_deg": 0.187,
+   "pass": true
+  },
+  "G3_door_drive_p90": {
+   "frames": 562,
+   "pos_m": 0.0579,
+   "yaw_deg": 0.475,
+   "pass": true
+  }
+ },
+ "test_visibility": {
+  "search (drive+stops)": {
+   "frames": 1136,
+   "visible_rate": 0.922,
+   "mean_tags": 3.04
+  },
+  "level, no box": {
+   "frames": 961,
+   "visible_rate": 0.99,
+   "mean_tags": 3.39
+  },
+  "level carry with box": {
+   "frames": 402,
+   "visible_rate": 0.0,
+   "mean_tags": 0.0
+  },
+  "teacher low carry": {
+   "frames": 307,
+   "visible_rate": 0.0,
+   "mean_tags": 0.0
+  },
+  "grasp": {
+   "frames": 77,
+   "visible_rate": 0.039,
+   "mean_tags": 0.06
+  },
+  "place": {
+   "frames": 72,
+   "visible_rate": 0.611,
+   "mean_tags": 1.94
+  },
+  "arm moving": {
+   "frames": 902,
+   "visible_rate": 0.808,
+   "mean_tags": 2.75
+  }
+ }
+}
