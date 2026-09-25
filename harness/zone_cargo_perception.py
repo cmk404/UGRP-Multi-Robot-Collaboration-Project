@@ -488,25 +488,12 @@ def _frame(hsv, camera, shape):
     return out
 
 
-# A box counts as lying on a tri_frame only near the frame's bars (and vertex
-# lugs), not anywhere inside the open triangle (zone team A2, 2026-09-25: the
-# held-out test hid a box resting inside a frame).
-FRAME_BOX_SUPPRESS_M = FRAME_BAR_WIDTH_M/2 + .030
-
-
-def _on_cargo(row, u, v, camera, shape):
-    poly = np.asarray(row['footprint_px'], np.float32).reshape(-1, 1, 2)
-    dist = cv2.pointPolygonTest(poly, (u, v), True)
-    if row['kind'] == 'tri_frame':
-        return abs(dist) <= FRAME_BOX_SUPPRESS_M*_scale(camera, shape, TOP_Z_M['tri_frame'])
-    return dist >= -4
-
-
 def _box_rows(jpeg, camera, shape, cargo_rows):
     rows = []
+    polys = [np.asarray(r['footprint_px'], np.float32) for r in cargo_rows]
     for d in _zcb.detect_top(jpeg, camera, BOX_KINDS, profile=_zcb.TOP_PROFILE_ZONE):
         u, v = d['pixel'][0]*shape[1], d['pixel'][1]*shape[0]
-        on_cargo = any(_on_cargo(r, u, v, camera, shape) for r in cargo_rows)
+        on_cargo = any(cv2.pointPolygonTest(p.reshape(-1, 1, 2), (u, v), True) >= -4 for p in polys)
         rows.append({'kind': 'box', 'colour': d['kind'], 'floor_xy_m': d['floor_xy_m'], 'yaw_rad': None,
                      'yaw_symmetry_deg': None, 'confidence': 1.0, 'camera': camera['name'], 'pixel': d['pixel'],
                      'clipped': False, 'footprint_px': [], 'evidence': {'area_px': d['area_px'],
