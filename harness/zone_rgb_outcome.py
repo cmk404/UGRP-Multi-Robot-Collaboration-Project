@@ -98,6 +98,7 @@ CADENCE_S = 1.
 STABLE_TICKS = 2
 STABLE_M = .03
 DEADLINE_S = 180.          # teacher-free: SIM seconds after assignment
+CLOSE_GRACE_S = 4.        # keep observing this long after a job is closed
 RELEASES_AT_SOURCE = 3     # command-evidenced releases with the item still at the source
 RELEASE_SETTLE_S = 1.
 GRIPPER_SERVO = 1
@@ -542,6 +543,7 @@ class JobTracker:
         self.release_checks = {}   # release time -> item still tracked at the source after it (or None)
         self.decision = decide(job, [], assigned_at=self.assigned_at, now=self.assigned_at)
         self.keep_evidence = keep_evidence
+        self.closed_at = None
 
     def update(self, t, current_tops, *, commands=None, own_rgb=None, names=None):
         if self.decision['status'] == 'confirmed':
@@ -566,12 +568,21 @@ class JobTracker:
         at_source = sum(1 for v in self.release_checks.values() if v)
         self.decision = decide(self.job, self.history, assigned_at=self.assigned_at, now=t, commands=commands,
                                released_at_source=at_source, deadline_s=self.deadline_s)
+        if (self.decision['status'] != 'confirmed' and self.closed_at is not None
+                and t >= self.closed_at + CLOSE_GRACE_S):
+            self.finalize(t, commands=commands)
         return self.decision
 
     def close(self, t, *, commands=None):
-        """End the observation window (a carrier was issued its next job, so later
-        frames may show that job's work in the same area). Finalizes from the
-        observations so far; never turns into ``delivered`` unless already stable."""
+        """A carrier was issued its next job: observe CLOSE_GRACE_S more (the robot
+        moves off the item), then ``finalize``."""
+        if self.closed_at is None:
+            self.closed_at = round(float(t), 3)
+        return self.decision
+
+    def finalize(self, t, *, commands=None):
+        """Finalize from the observations so far; never turns into ``delivered``
+        unless that was already stable."""
         if self.decision['status'] != 'confirmed':
             at_source = sum(1 for v in self.release_checks.values() if v)
             if self.history:
@@ -581,7 +592,7 @@ class JobTracker:
                 self.decision = {'status': 'confirmed', 'outcome': 'not_seen', 'confidence': 0.,
                                  'rule': 'closed_before_first_tick', 'decided_at': round(float(t), 3),
                                  'evidence_images': [], 'flags': []}
-            self.decision['closed_at'] = round(float(t), 3)
+            self.decision['closed_at'] = self.closed_at if self.closed_at is not None else round(float(t), 3)
         return self.decision
 
 

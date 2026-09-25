@@ -220,13 +220,18 @@ def test_close_finalizes_without_turning_into_delivered():
     tr.update(1., BEFORE)
     tr.update(2., BEFORE)
     tr.update(3., BEFORE)
-    d = tr.close(3.5)
+    assert tr.close(3.5)['status'] == 'unconfirmed'
+    tr.update(4., BEFORE)
+    tr.update(5., BEFORE)
+    tr.update(6., BEFORE)
+    d = tr.update(7.5, BEFORE)          # grace (4 s) over
     assert d['status'] == 'confirmed' and d['rule'] == 'closed_still_at_source_tracked' and d['closed_at'] == 3.5
     # later frames (the next job filling the same slot) no longer change it
-    assert tr.update(4., DELIVERED)['outcome'] == 'still_at_source'
+    assert tr.update(8.5, DELIVERED)['outcome'] == 'still_at_source'
     tr2 = zro.JobTracker(JOB, REFERENCE, BEFORE, STATIC, assigned_at=0.)
     tr2.update(1., DELIVERED)
-    assert tr2.close(1.5)['outcome'] == 'not_seen'
+    tr2.close(1.5)
+    assert tr2.finalize(1.5)['outcome'] == 'not_seen'
 
 
 def test_issued_arm_and_releases_follow_the_command_log():

@@ -298,7 +298,7 @@ def track(args):
             t = round(k*zro.CADENCE_S, 6)
             k += 1
             for v in trackers.values():
-                if v.get('close_at') is not None and v['close_at'] < t and v['tracker'].decision['status'] != 'confirmed':
+                if v.get('close_at') is not None and v['close_at'] < t:
                     v['tracker'].close(v['close_at'], commands=commands)
             live = [v for v in trackers.values() if v['job']['assign_t'] < t
                     and v['tracker'].decision['status'] != 'confirmed']
