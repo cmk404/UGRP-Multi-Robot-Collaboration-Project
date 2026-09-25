@@ -1,0 +1,683 @@
+{
+ "experiment": "2026-09-25-r3-regrasp-pose",
+ "kind": "evaluation-only offline analysis of recorded runs (no new SIM physics, no control input)",
+ "analysed_runs": {
+  "Y1-grasp": {
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04"
+  },
+  "Y2-grasp": {
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04"
+  }
+ },
+ "prior_record": "experiments/2026-09-25-beam-regrasp-binding",
+ "analysis_base_sha": "3cbf4e435738ff9eb9dcf66a4c06dea33915ec95",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/beam-regrasp-20260925 (local only)",
+ "inputs": {
+  "stage_model_dir": "/Users/changmin/projects/ugrp-worktrees/team-recovery-fix/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+  "stage_model_sha256": {
+   "varied-start-skill.json": "b83998d21870d6b739756832ecb8d5a8be842094001bcfece4ab0b274ec47a5a",
+   "model-r1-forward.json": "a797697635f378a361f9e2c729ec227c17ae78386dc8f13bfec60662e9e2fb45",
+   "model-r1-lateral.json": "0e5e4290dd34ff8952329bb444f0f5cdf05beada42dfdb879916c25636ae8869",
+   "model-r1-yaw.json": "d9afb476728602f6f7f61d41d1104a01e5c5a05854dc5fead03b7753c3bfd374",
+   "model-r3-forward.json": "ec42470273b3506028ab58d460888c95c2132130854fca6c5e32a44698a1ad3d",
+   "model-r3-lateral.json": "bc95bd85afa6618863b89ecd72a3edf31b887c83875d4d50ade4cd6cc6c4ca9f",
+   "model-r3-yaw.json": "deff812844abd7b92217eda3a7bd6eeb3a3baaed9a77c09a558e06941c39b5f8"
+  },
+  "reference_top": "tests/fixtures/camera_goal_transport/reference-top.jpg",
+  "reference_top_sha256": "35e990136a3410ea514e0445f92a6886b07e2a463e8c3ee0804dd6f3ae8d091c",
+  "runs": {
+   "Y1-grasp": {
+    "input_sha256": {
+     "pair-decisions.json": "98fbebfe0fca0c0597195c89e2941926721771833d052113bc7c08bda15ea997",
+     "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f",
+     "result.json": "ac38321b8f988dc09d00b80ee4cac29923435435200bde9eb9b1b9e384cc08de",
+     "skill-bindings.json": "5aa920a51f32d36a794de036f23a6e0b34f43c9d0850ec8834ee7a021b9c4c96",
+     "committed-plan.json": "a266a2a6636e4e2ccb864ac12fad42e55ef8235ad7dad438742796cf6a04bcee"
+    },
+    "replay_manifest_files_ok": {
+     "model.mjb": true,
+     "states.npz": true,
+     "labels.json": true
+    },
+    "replay_frames": 6526
+   },
+   "Y2-grasp": {
+    "input_sha256": {
+     "pair-decisions.json": "816cb517db5f09078233fa04e567dee5dc4ef09d627c6ac75bfcfe18a8a042eb",
+     "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f",
+     "result.json": "9d482f078a35e6c00cc91dcbd1bf5022a13b2b8ce6dc0f946b79e0035c64cb3b",
+     "skill-bindings.json": "5aa920a51f32d36a794de036f23a6e0b34f43c9d0850ec8834ee7a021b9c4c96",
+     "committed-plan.json": "f3d28f2301a7c5c89c965800c85aa832724933796704585d77ebfa63e81e3ca9"
+    },
+    "replay_manifest_files_ok": {
+     "model.mjb": true,
+     "states.npz": true,
+     "labels.json": true
+    },
+    "replay_frames": 6526
+   }
+  }
+ },
+ "artifacts_sha256": {
+  "analyze_r3_pose.py": "5c8f457ea6891dc4754181001f30371af48ff6e95790cb43320042aa317dd337",
+  "analysis-output.json": "48ae69e7bf8d190093903244fde39f38845c46f4966dd3f5b2a7b5c43ea76fac",
+  "figure-r3-roi-masks.jpg": "98fd4435eb0855ced6921949e1105d1e44263cf9732e3a345e22c15ba5f70950"
+ },
+ "environment": {
+  "python": "/Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python",
+  "host": "Mac (primary)",
+  "load_avg_1m_before_after": [
+   4.62,
+   6.28
+  ],
+  "lock": "not required (no realtime physics, wall-time or training/inference timing)"
+ },
+ "attribution": {
+  "first_pass": "Codex (gpt-6-astra, xhigh, read-only analysis; no worktree/commit/comment due to sandbox)",
+  "independent_reproduction": "Claude, analyze_r3_pose.py; Codex numbers not used as evidence"
+ },
+ "slot_mapping": {
+  "verdict": "confirmed: model slot r3 = physical r1, model slot r1 = physical r3",
+  "evidence": {
+   "code_rule": "SkillBindings: upper, lower = participants; pair = {r1: lower, r3: upper}",
+   "code_rule_mapping": {
+    "r1": "r3",
+    "r3": "r1"
+   },
+   "skill_bindings_pair_model_slots": {
+    "r1": "r3",
+    "r3": "r1"
+   },
+   "image_binding_pair_binding_values": [
+    "{\"r1\": \"r3\", \"r3\": \"r1\"}"
+   ],
+   "coarse_receipt_physical_ids": [
+    "{\"r1\": \"r3\", \"r3\": \"r1\"}"
+   ],
+   "fine_call_own_rgb_file_suffix": [
+    [
+     "r1",
+     "r3.jpg"
+    ],
+    [
+     "r3",
+     "r1.jpg"
+    ]
+   ],
+   "geometric_check": {
+    "sim_time_s": 5.2000000000006095,
+    "replay_dt_s": -0.013750000000016804,
+    "coarse_wheel_center_px_by_slot": {
+     "r1": [
+      111.03108808290155,
+      356.65284974093265
+     ],
+     "r3": [
+      115.44399185336049,
+      145.26272912423624
+     ]
+    },
+    "projected_base_px_by_physical": {
+     "r1": [
+      117.52322442660966,
+      149.81368881161856
+     ],
+     "r3": [
+      117.48991438581862,
+      359.9999999174733
+     ]
+    },
+    "nearest_physical_by_image_row": {
+     "r1": "r3",
+     "r3": "r1"
+    }
+   },
+   "consistent": true
+  },
+  "same_in_Y2": true
+ },
+ "linkage_and_recompute": {
+  "Y1-grasp": {
+   "linkage": {
+    "linked_calls": 488,
+    "max_abs_replay_dt_s": 0.01675000000007998
+   },
+   "recompute": {
+    "calls": 488,
+    "unique_images": 732,
+    "image_sha256_ok": 732,
+    "decision_mismatches": [],
+    "max_abs_diagnostic_diff": {
+     "orthogonal_residual": 0.0,
+     "nearest_support_distance": 0.0,
+     "image_derived_error": 0.0
+    }
+   }
+  },
+  "Y2-grasp": {
+   "linkage": {
+    "linked_calls": 488,
+    "max_abs_replay_dt_s": 0.01675000000007998
+   },
+   "recompute": {
+    "calls": 488,
+    "unique_images": 732,
+    "image_sha256_ok": 732,
+    "decision_mismatches": [],
+    "max_abs_diagnostic_diff": {
+     "orthogonal_residual": 0.0,
+     "nearest_support_distance": 0.0,
+     "image_derived_error": 0.0
+    }
+   }
+  }
+ },
+ "replay_identical_Y1_Y2": true,
+ "codex_comparison": [
+  {
+   "item": "slot r3 = physical r1",
+   "codex": "yes",
+   "reproduced": "yes (5 independent sources)",
+   "status": "confirmed"
+  },
+  {
+   "item": "arm max abs diff (deg)",
+   "codex": [
+    1.6e-08,
+    5.3e-08,
+    0.00039
+   ],
+   "reproduced": [
+    1.5751897098189288e-08,
+    5.2799651132816064e-08,
+    0.0003864630522656398
+   ],
+   "status": "confirmed"
+  },
+  {
+   "item": "base distance (mm)",
+   "codex": [
+    3.27,
+    7.5,
+    0.8
+   ],
+   "reproduced": [
+    3.275,
+    7.496,
+    0.799
+   ],
+   "status": "confirmed"
+  },
+  {
+   "item": "gripper",
+   "codex": "effectively identical",
+   "reproduced": "max 7.4e-9 mm",
+   "status": "confirmed"
+  },
+  {
+   "item": "wheel angle diff (deg)",
+   "codex": "about 27-130",
+   "reproduced": "27-32 / 73-79 / 126-130",
+   "status": "confirmed"
+  },
+  {
+   "item": "decisions linked per run",
+   "codex": 488,
+   "reproduced": 488,
+   "status": "confirmed"
+  },
+  {
+   "item": "input image hashes",
+   "codex": 732,
+   "reproduced": "732/732",
+   "status": "confirmed"
+  },
+  {
+   "item": "replay time error",
+   "codex": "<=16.75 ms",
+   "reproduced": "<=16.75 ms",
+   "status": "confirmed"
+  },
+  {
+   "item": "residual recomputation",
+   "codex": "selected residuals",
+   "reproduced": "all 488 decisions, zero diagnostic difference",
+   "status": "confirmed (wider scope)"
+  },
+  {
+   "item": "Y1/Y2 replay identical",
+   "codex": "yes",
+   "reproduced": "yes (qpos arrays equal)",
+   "status": "confirmed"
+  },
+  {
+   "item": "first approach residual",
+   "codex": "lateral median 5.11; forward 4.13-4.28",
+   "reproduced": "lateral median 5.11 (n=45, max 6.12); forward median 4.28 (n=66), nearest frame 4.13",
+   "status": "confirmed"
+  },
+  {
+   "item": "verdict",
+   "codex": "H2 (distribution shift); position/wheel/shadow not separated",
+   "reproduced": "H2; direct cause separated: beam rest position shifted 0.59 mm after failed lift. Robot base, wheel and arm swaps do not restore support",
+   "status": "confirmed and refined"
+  }
+ ],
+ "failures": [
+  {
+   "reapproach": 1,
+   "stage": "lateral",
+   "model_slot": "r3",
+   "physical_robot": "r1",
+   "frame_F": 281,
+   "frame_G_nearest_first_approach": 91,
+   "recorded_residual": {
+    "G": 5.11,
+    "F": 12.112
+   },
+   "render_residual": {
+    "G": 5.11,
+    "F": 12.112
+   },
+   "render_fidelity_F_vs_recorded_raw_top": {
+    "mean_abs": 0.0,
+    "p99_abs": 0.0,
+    "max_abs": 0
+   },
+   "measured_difference_F_minus_G": {
+    "base_distance_mm": 3.275,
+    "heading_deg": 0.0117,
+    "arm_max_abs_deg": 1.5751897098189288e-08,
+    "gripper_max_abs_mm": 2.2525913880341922e-09,
+    "wheel_wrapped_deg": {
+     "wheel_fl_joint": -27.06,
+     "wheel_fr_joint": -32.12,
+     "wheel_rl_joint": -31.83,
+     "wheel_rr_joint": -28.77
+    }
+   },
+   "beam_pose_F_minus_G": {
+    "position_mm": [
+     -0.5865491897813491,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ],
+    "yaw_deg": -0.021137468064125642,
+    "first_replay_frame_to_F_position_mm": [
+     -0.5865491897813491,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ]
+   },
+   "counterfactual_residual": {
+    "wheels": {
+     "F_with_G": 11.709,
+     "G_with_F": 5.522
+    },
+    "base_pose": {
+     "F_with_G": 11.692,
+     "G_with_F": 5.739
+    },
+    "arm_gripper": {
+     "F_with_G": 12.112,
+     "G_with_F": 5.11
+    },
+    "robot_all": {
+     "F_with_G": 11.56,
+     "G_with_F": 6.502
+    },
+    "other_robots_all": {
+     "F_with_G": 12.112,
+     "G_with_F": 5.11
+    },
+    "beam": {
+     "F_with_G": 6.502,
+     "G_with_F": 11.56
+    },
+    "beam_position_only": {
+     "F_with_G": 6.502,
+     "G_with_F": 11.56
+    },
+    "beam_orientation_only": {
+     "F_with_G": 12.112,
+     "G_with_F": 5.11
+    }
+   },
+   "wheel_sweep_all_four_on_F": {
+    "min": 11.526,
+    "max": 12.392,
+    "passing_deltas_deg": [
+     150,
+     195,
+     240
+    ],
+    "step_deg": 15
+   },
+   "top_residual_features_F": [
+    [
+     "yellow_x2",
+     5.69
+    ],
+    [
+     "yellow_comp5_cy",
+     4.25
+    ],
+    [
+     "yellow_xy",
+     3.75
+    ],
+    [
+     "yellow_comp5_h",
+     -2.42
+    ],
+    [
+     "yellow_comp5_w",
+     2.32
+    ],
+    [
+     "yellow_comp5_cx",
+     2.16
+    ]
+   ],
+   "raw_top_beam_masks": {
+    "F": {
+     "hue24_length_px": 94.99998474121094,
+     "hue24_center_y_px": 277.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    },
+    "F-Gbeam": {
+     "hue24_length_px": 122.99998474121094,
+     "hue24_center_y_px": 263.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    }
+   }
+  },
+  {
+   "reapproach": 2,
+   "stage": "lateral",
+   "model_slot": "r3",
+   "physical_robot": "r1",
+   "frame_F": 323,
+   "frame_G_nearest_first_approach": 91,
+   "recorded_residual": {
+    "G": 5.11,
+    "F": 12.512
+   },
+   "render_residual": {
+    "G": 5.11,
+    "F": 12.512
+   },
+   "render_fidelity_F_vs_recorded_raw_top": {
+    "mean_abs": 0.0,
+    "p99_abs": 0.0,
+    "max_abs": 0
+   },
+   "measured_difference_F_minus_G": {
+    "base_distance_mm": 7.496,
+    "heading_deg": 0.0071,
+    "arm_max_abs_deg": 5.2799651132816064e-08,
+    "gripper_max_abs_mm": 7.406040216609141e-09,
+    "wheel_wrapped_deg": {
+     "wheel_fl_joint": -72.76,
+     "wheel_fr_joint": -78.87,
+     "wheel_rl_joint": -76.88,
+     "wheel_rr_joint": -75.0
+    }
+   },
+   "beam_pose_F_minus_G": {
+    "position_mm": [
+     -0.5865518533638703,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ],
+    "yaw_deg": -0.021137468064125642,
+    "first_replay_frame_to_F_position_mm": [
+     -0.5865518533638703,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ]
+   },
+   "counterfactual_residual": {
+    "wheels": {
+     "F_with_G": 12.707,
+     "G_with_F": 5.599
+    },
+    "base_pose": {
+     "F_with_G": 12.048,
+     "G_with_F": 6.255
+    },
+    "arm_gripper": {
+     "F_with_G": 12.512,
+     "G_with_F": 5.11
+    },
+    "robot_all": {
+     "F_with_G": 11.56,
+     "G_with_F": 6.151
+    },
+    "other_robots_all": {
+     "F_with_G": 12.512,
+     "G_with_F": 5.11
+    },
+    "beam": {
+     "F_with_G": 6.151,
+     "G_with_F": 11.56
+    },
+    "beam_position_only": {
+     "F_with_G": 6.151,
+     "G_with_F": 11.56
+    },
+    "beam_orientation_only": {
+     "F_with_G": 12.512,
+     "G_with_F": 5.11
+    }
+   },
+   "wheel_sweep_all_four_on_F": {
+    "min": 11.647,
+    "max": 12.681,
+    "passing_deltas_deg": [],
+    "step_deg": 15
+   },
+   "top_residual_features_F": [
+    [
+     "yellow_x2",
+     6.43
+    ],
+    [
+     "yellow_comp5_cy",
+     4.35
+    ],
+    [
+     "yellow_xy",
+     3.6
+    ],
+    [
+     "yellow_comp5_w",
+     2.53
+    ],
+    [
+     "yellow_y2",
+     2.25
+    ],
+    [
+     "yellow_comp5_h",
+     -2.23
+    ]
+   ],
+   "raw_top_beam_masks": {
+    "F": {
+     "hue24_length_px": 94.99998474121094,
+     "hue24_center_y_px": 277.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    },
+    "F-Gbeam": {
+     "hue24_length_px": 122.99998474121094,
+     "hue24_center_y_px": 263.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    }
+   }
+  },
+  {
+   "reapproach": 3,
+   "stage": "forward",
+   "model_slot": "r3",
+   "physical_robot": "r1",
+   "frame_F": 445,
+   "frame_G_nearest_first_approach": 171,
+   "recorded_residual": {
+    "G": 4.127,
+    "F": 15.492
+   },
+   "render_residual": {
+    "G": 4.15,
+    "F": 15.255
+   },
+   "render_fidelity_F_vs_recorded_raw_top": {
+    "mean_abs": 0.015907600308641974,
+    "p99_abs": 0.0,
+    "max_abs": 62
+   },
+   "measured_difference_F_minus_G": {
+    "base_distance_mm": 0.799,
+    "heading_deg": -0.054,
+    "arm_max_abs_deg": 0.0003864630522656398,
+    "gripper_max_abs_mm": 3.644562920943574e-09,
+    "wheel_wrapped_deg": {
+     "wheel_fl_joint": -128.34,
+     "wheel_fr_joint": -128.17,
+     "wheel_rl_joint": -125.56,
+     "wheel_rr_joint": -129.9
+    }
+   },
+   "beam_pose_F_minus_G": {
+    "position_mm": [
+     -0.5865568042729696,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ],
+    "yaw_deg": -0.021137468064125642,
+    "first_replay_frame_to_F_position_mm": [
+     -0.5865568042729696,
+     -0.1383875689764391,
+     4.644264139930243e-09
+    ]
+   },
+   "counterfactual_residual": {
+    "wheels": {
+     "F_with_G": 14.728,
+     "G_with_F": 5.663
+    },
+    "base_pose": {
+     "F_with_G": 23.261,
+     "G_with_F": 5.053
+    },
+    "arm_gripper": {
+     "F_with_G": 15.345,
+     "G_with_F": 4.256
+    },
+    "robot_all": {
+     "F_with_G": 14.396,
+     "G_with_F": 6.354
+    },
+    "other_robots_all": {
+     "F_with_G": 15.255,
+     "G_with_F": 4.15
+    },
+    "beam": {
+     "F_with_G": 6.354,
+     "G_with_F": 14.396
+    },
+    "beam_position_only": {
+     "F_with_G": 6.354,
+     "G_with_F": 14.396
+    },
+    "beam_orientation_only": {
+     "F_with_G": 15.255,
+     "G_with_F": 4.15
+    }
+   },
+   "wheel_sweep_all_four_on_F": {
+    "min": 7.67,
+    "max": 15.816,
+    "passing_deltas_deg": [
+     225,
+     255
+    ],
+    "step_deg": 15
+   },
+   "top_residual_features_F": [
+    [
+     "fg_comp2_w",
+     10.15
+    ],
+    [
+     "yellow_comp5_cy",
+     5.22
+    ],
+    [
+     "fg_comp2_cx",
+     -4.24
+    ],
+    [
+     "yellow_comp5_w",
+     3.33
+    ],
+    [
+     "fg_comp2_area",
+     3.02
+    ],
+    [
+     "fg_grid_r3c6",
+     2.5
+    ]
+   ],
+   "raw_top_beam_masks": {
+    "F": {
+     "hue24_length_px": 94.99998474121094,
+     "hue24_center_y_px": 277.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    },
+    "F-Gbeam": {
+     "hue24_length_px": 122.99998474121094,
+     "hue24_center_y_px": 263.5,
+     "hue35_length_px": 127.0,
+     "hue35_center_y_px": 261.5
+    }
+   }
+  }
+ ],
+ "first_approach_transient": {
+  "frame_id": 166,
+  "stage": "forward",
+  "model_slot": "r3",
+  "residual": 17.481,
+  "note": "passed after re-observation; beam at authored pose; not analysed"
+ },
+ "verdict": {
+  "H1_posture_non_return": "rejected (arm <=3.9e-4 deg, gripper ~0)",
+  "H2_distribution_shift": "supported",
+  "direct_cause": "beam rest position after the injected failed lift differs by (-0.59, -0.14) mm (~0.16 px on TOP); the geometry model background contains the beam at its authored pose, so the beam tip edge becomes a new yellow/foreground component in the slot-r3 ROI",
+  "counterfactual": "beam position alone restores 12.11->6.50, 12.51->6.15, 15.26->6.35 (limit 11.56); inverse test pushes first-approach frames to 11.56/11.56/14.40; beam orientation alone, robot wheels, base, arm and other robots do not restore",
+  "secondary": "wheel angle modulates residual (sweep 11.53-12.39, 11.65-12.68, 7.67-15.82)",
+  "also_explains": "v60 hue<=24 beam axis 95 px vs 123 px with beam at start pose (hue<=35 127 px unchanged)"
+ },
+ "scope": [
+  "one deterministic case (Y1 and Y2 identical); no rate claims",
+  "offline renders pixel-identical to recorded TOP for re-approach 1-2 on this host; other hosts/GL not checked",
+  "single-factor swaps on one F/G pair per failure; lighting/shadow not manipulated separately (beam swap includes its shadow)",
+  "no fix implemented; no model, code, limit or bundle change",
+  "TensorBoard not updated (offline diagnostic, per instruction)"
+ ],
+ "next_candidates_not_run": [
+  "make geometry features beam-edge invariant (exclude dilated current hue<=35 beam contour or beam-touching yellow components); new model version, retrain, model-release rules, re-verify first approach",
+  "augment teacher demos with beam rest-pose jitter (+-1 mm, +-0.1 deg, post lift-and-drop), wheel angle and base jitter; retrain under model-release rules; student input stays RGB",
+  "secondary: wheel-appearance invariance (wheel mask or stabilised component ranking)",
+  "validate offline first with counterfactual beam-jitter renders, then a new preregistered SIM run with a new bundle ID; do not widen the residual limit"
+ ]
+}
