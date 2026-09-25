@@ -14,6 +14,7 @@
 | 제어기 검증·결과 판정 | [연구 제어기 검증](research_controller_validation.md) | 회귀 실패 재현, 새 조건 비교, 원본 재검증과 제어기 채택 |
 | 실행 버전·이식 검증 | [실행 버전 관리](execution_versioning.md) | 성공 설정 재사용, 실행기 변경, 실제 적용값과 기준의 차이 확인 |
 | 실험 증거 | [실험 인덱스](../experiments/README.md) | 관련 ID의 설정·성공/실패·원본 확인 |
+| 연구 보고서 초안 | [보고서 장별 초안 (살아 있는 문서)](report/README.md) | 최종 보고서를 쓸 때. 연구 질문·설계·환경·실행기·결과·결정 이력·한계를 출처와 함께 정리 |
 | 구역 파이프라인 현황·설계 제안 | [E2E 현황(2026-09-25)](e2e_status_20260925.md), [설계 제안(Codex, docs/design/)](design/2026-09-25-zone-team-carry-codex.md), [PR 검토(Codex, 2026-09-25)](design/2026-09-25-zone-pr-review-codex.md), [자기 카메라 역량 목록](design/2026-09-25-own-camera-inventory-claude.md), [자기 카메라 오픈소스 조사](design/2026-09-25-own-camera-oss-survey-claude.md) | 구역 팀 운반·미등록 장애물·한국어 대화 단계별 완료/진행/미착수 확인 |
 | 실물 운영 | [네트워크](masterpi_network_runbook.md), [trace](real_trace_system.md), [물리 보정](masterpi_physics_calibration.md) | 실물 연결 시 현재 장치 상태와 함께 확인 |
 | 과거 기록 | [결정 이력](decision_log.md), [옛 아키텍처](current_architecture_todo.md), [이전 검증 요약](archive/validation_summary_20260917.md), [초기 연구 브리프](research_brief_20260813.md) | 변경 이유·과거 실험을 조사할 때 |
