@@ -1,6 +1,6 @@
 {
   "branch": "kiro/zone-study-core",
-  "code_sha": "cc0813064eda3fe3030a0f974c148a776fb17d6c",
+  "code_sha": "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c",
   "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. python3 scripts/ugrp_session.py run kiro-zone-study-offline-smoke -- python3 scripts/run_zone_study_offline_smoke.py --output outputs/zone-study-offline-smoke",
   "driver": "scripts/run_zone_study_offline_smoke.py",
   "loop": "harness/zone_study_offline.py",

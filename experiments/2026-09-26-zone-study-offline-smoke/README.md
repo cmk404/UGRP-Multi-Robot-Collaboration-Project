@@ -1,7 +1,7 @@
 # 2026-09-26 구역 대화 연구 no-LLM 오프라인 스모크 (저장 RGB + 가짜 시계)
 
 - **상태:** 완료. 30회 전부 통과(`results.json` `ok: true`).
-- **실행 소스:** `cc0813064eda3fe3030a0f974c148a776fb17d6c` (브랜치 `kiro/zone-study-core`, worktree `ugrp-wt/kiro-study-core`)
+- **실행 소스:** `d87e0f2bc179d00ad4c8de48e0559408d46d6a0c` (브랜치 `kiro/zone-study-core`, worktree `ugrp-wt/kiro-study-core`)
 - **실행기:** `scripts/run_zone_study_offline_smoke.py` → `harness/zone_study_offline.py`
 - **모델 호출 0회, 물리 0회, 시뮬레이터 import 0회.** 실제 LLM도 MuJoCo도 쓰지 않았다.
 
@@ -60,7 +60,7 @@
 
 ## 환경
 
-macOS 27.2 arm64, Python 3.12.13, CPU 8. 스레드 환경변수 `OMP_NUM_THREADS=OPENBLAS_NUM_THREADS=VECLIB_MAXIMUM_THREADS=MKL_NUM_THREADS=1`. 실행 시작 시 부하 평균 `22.79 / 14.67 / 15.48`(다른 작업과 공유하는 Mac이다). 이 경로는 물리·학습을 돌리지 않으므로 `scripts/agent_lock.py` 배타 잠금을 잡지 않았고, 대신 `scripts/ugrp_session.py run kiro-zone-study-offline-smoke`로 실행해 종료 시 프로세스 그룹을 정리했다. wall 시간은 결과에 쓰이지 않는다(호출 기록의 `wall_latency_s`는 전부 `null`).
+macOS 27.2 arm64, Python 3.12.13, CPU 8. 스레드 환경변수 `OMP_NUM_THREADS=OPENBLAS_NUM_THREADS=VECLIB_MAXIMUM_THREADS=MKL_NUM_THREADS=1`. 실행 시작 시 부하 평균 `11.71 / 13.95 / 15.08`(다른 작업과 공유하는 Mac이다). 이 경로는 물리·학습을 돌리지 않으므로 `scripts/agent_lock.py` 배타 잠금을 잡지 않았고, 대신 `scripts/ugrp_session.py run kiro-zone-study-offline-smoke`로 실행해 종료 시 프로세스 그룹을 정리했다. wall 시간은 결과에 쓰이지 않는다(호출 기록의 `wall_latency_s`는 전부 `null`).
 
 ## 알려진 제약과 다음 단계
 
