@@ -19,10 +19,19 @@ from harness.zone_event_scheduler import (CallPolicy, CallReply, EventScheduler,
 ACTORS = ('r1', 'r2', 'r3')
 
 
-def _reply(out=120, utt=0, action=None, messages=(), outcome='ok', tokens_in=8000, attempts=None):
+def _reply(out=120, utt=None, action=None, messages=(), outcome='ok', tokens_in=8000, attempts=None):
+    """One scripted reply.
+
+    2026-09-26 review finding 6: the BILLED utterance count must equal the number
+    of utterances the reply carries, so ``utt`` defaults to ``len(messages)`` and
+    a test that wants a mismatch has to state it explicitly.
+    """
+    messages = tuple(messages)
+    if utt is None:
+        utt = len(messages)
     return CallReply(attempts=attempts or (zc.Attempt(outcome=outcome, input_tokens=tokens_in,
                                                       output_tokens=out, utterances=utt),),
-                     action=action, messages=tuple(messages))
+                     action=action, messages=messages)
 
 
 def _scheduler(replies, *, params=None, policy=None, track=True, **kw):
@@ -49,7 +58,8 @@ def test_zero_cost_finishes_in_the_same_sim_instant():
 
 
 def test_positive_cost_moves_sim_time_and_physics_runs_through_the_wait():
-    sched = _scheduler({'r1': [_reply(out=120, utt=1, action='go A')]})
+    sched = _scheduler({'r1': [_reply(out=120, action='go A',
+                                      messages=[Message(sender='r1', recipients=('r2',), body='보고')])]})
     sched.trigger('r1', 'start')
     sched.run(until_s=100)
     call = sched.calls[0]
@@ -91,15 +101,17 @@ def test_action_and_messages_are_invisible_before_the_cost_is_paid():
 # Concurrency
 
 def test_concurrent_calls_overlap_instead_of_adding_up():
-    replies = {a: [_reply(out=120, utt=1)] for a in ACTORS}
+    # silent replies: the utterance term is billed against real messages now
+    # (review finding 6), and this test is about overlap, not about talking.
+    replies = {a: [_reply(out=120)] for a in ACTORS}
     sched = _scheduler(replies)
     for actor in ACTORS:
         sched.trigger(actor, 'start')
     sched.run(until_s=100)
     assert {c.actor for c in sched.calls} == set(ACTORS)
-    assert [c.cost.sim_s for c in sched.calls] == [pytest.approx(5.3)] * 3
-    assert sched.now() == pytest.approx(5.3)              # not 15.9
-    assert sum(sched.metrics[a]['thinking_sim_s'] for a in ACTORS) == pytest.approx(15.9)
+    assert [c.cost.sim_s for c in sched.calls] == [pytest.approx(5.0)] * 3
+    assert sched.now() == pytest.approx(5.0)              # not 15.0
+    assert sum(sched.metrics[a]['thinking_sim_s'] for a in ACTORS) == pytest.approx(15.0)
 
 
 def test_different_reply_lengths_finish_at_different_sim_times():
@@ -267,16 +279,16 @@ def test_delivering_to_an_unknown_actor_fails_loudly():
 # Errors, retries, timeouts
 
 def test_a_malformed_reply_pays_and_its_retry_is_a_separate_costed_call():
-    sched = _scheduler({'r1': [_reply(out=40, outcome='invalid'), _reply(out=120, utt=1, action='go A')]})
+    sched = _scheduler({'r1': [_reply(out=40, outcome='invalid'), _reply(out=120, action='go A')]})
     sched.trigger('r1', 'start')
     sched.run(until_s=100)
     first, retry = sched.calls
     assert first.cost.outcome == 'invalid' and first.cost.sim_s == pytest.approx(3.4)  # 1.0+1.6+0.8
     assert retry.trigger == 'retry' and retry.retry_of == first.call_id
     # the retry starts when the failed call finished (already past the 2 s minimum interval)
-    assert retry.started_sim_s == pytest.approx(3.4) and retry.finished_sim_s == pytest.approx(8.7)
+    assert retry.started_sim_s == pytest.approx(3.4) and retry.finished_sim_s == pytest.approx(8.4)
     assert sched.metrics['r1'] == {**sched.metrics['r1'], 'calls': 2, 'retries': 1, 'invalid': 1}
-    assert sched.metrics['r1']['thinking_sim_s'] == pytest.approx(8.7)
+    assert sched.metrics['r1']['thinking_sim_s'] == pytest.approx(8.4)
 
 
 def test_a_transport_error_costs_the_pre_registered_error_time():

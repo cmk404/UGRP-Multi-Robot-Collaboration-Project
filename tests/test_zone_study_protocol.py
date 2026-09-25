@@ -45,7 +45,11 @@ SCENARIO = {
     ],
 }
 JPEG = bytes([0xFF, 0xD8, 0xFF, 0xE0]) + b'kiro-test-wrist' * 4
-FRAME_SHA = 'd' * 64
+# 2026-09-26 review finding 1: an image is bound to the reference that declares
+# its digest, so a fixture ref must carry the digest of the REAL bytes.
+FRAME_SHA = pk.image_sha256(JPEG)
+MAP_PNG = bytes([0x89, 0x50, 0x4E, 0x47]) + b'kiro-test-map' * 4
+MAP_PNG_SHA = pk.image_sha256(MAP_PNG)
 KO_TEXT = 'order-1은 제가 end_neg 역할로 맡겠습니다. door_narrow가 좁아 door_wide로 돌아갑니다.'
 EN_TEXT = 'I will take order-1 as end_neg and go through the wide door instead.'
 _BUNDLE = None
@@ -92,6 +96,11 @@ def payload(condition='peer_ko', rid='r1', *, seed=None, request_id='req_1', sim
 def inputs(condition='peer_ko', rid='r1', *, seed=None, map_figure_jpeg=None, **kw):
     """A :class:`pk.StudyInputs` wrapping a real A payload."""
     data = payload(condition, rid, seed=seed, **kw)
+    if map_figure_jpeg is not None:
+        data['static_map'] = dict(data['static_map'])
+        data['static_map']['schematic_ref'] = {
+            'ref': f'map-{MAP_ID}-schematic', 'kind': 'map_schematic',
+            'png_sha256': pk.image_sha256(map_figure_jpeg)}
     if rid == zp.COMMANDER:
         return pk.StudyInputs(payload=data, robot_views={r: JPEG for r in ROBOTS},
                               map_figure_jpeg=map_figure_jpeg, seed=seed)
@@ -743,8 +752,8 @@ def test_condition_blocks_say_exactly_what_the_channel_allows():
     lead = pk.system_prompt('leader_ko', 'r2', seed=13)       # seed 13 -> leader r2
     follow = pk.system_prompt('leader_ko', 'r3', seed=13)
     assert 'leader는 당신입니다' in lead and 'follower끼리는 서로 말할 수 없으므로' in lead
-    assert 'leader는 r2입니다' in follow and '다른 follower를 recipients에 넣은 메시지는' in follow
-    assert 'r2에게만' in follow
+    assert 'leader는 r2입니다' in follow and '다른 follower를 넣은 메시지는' in follow
+    assert 'recipients에는 r2만 넣습니다' in follow
     structured = pk.system_prompt('structured', 'r1')
     assert '자유 문장 없이' in structured and ', '.join(zp.STRUCT_ACTS) in structured
     assert 'text, reason, note' in structured

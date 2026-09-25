@@ -101,7 +101,7 @@ def test_no_comm_sends_and_receives_nothing(library):
     # package A gives this condition no inbox key at all
     assert 'inbox' not in trial.allowlist()
     payload = trial.build_inputs('r1', sim_time_s=trial.scheduler.now(),
-                                request_id='req_probe').payload
+                                request_id='req_probe').payload_dict()
     assert 'inbox' not in payload and payload['channel']['can_receive_from'] == []
 
 
@@ -180,8 +180,11 @@ def test_every_request_payload_stays_inside_the_contract(condition, library):
     trial, result = trial_of(condition, library=library)
     actor = COMMANDER if condition == 'reference_R' else 'r1'
     bundled = trial.build_inputs(actor, sim_time_s=trial.scheduler.now(), request_id='req_probe')
-    payload = bundled.payload
+    payload = bundled.payload_dict()
     assert payload['schema'] == PAYLOAD_SCHEMA
+    # review finding 4: the deeply frozen view refuses mutation
+    with pytest.raises(TypeError):
+        bundled.payload['teacher_receipt'] = {'done': True}
     assert payload_violations(payload, seed=SEED) == []
     request = pk.build_request(bundled, window=trial.channel.window_context(
         actor, now_sim_s=trial.scheduler.now()) if trial.spec.channel_open else None)

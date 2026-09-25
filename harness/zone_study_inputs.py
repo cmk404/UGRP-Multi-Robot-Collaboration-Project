@@ -41,8 +41,8 @@ from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, COM
                                          PAYLOAD_SCHEMA, PROVENANCE_KEYS, ROBOTS, ROLE_NAMES, SHA256_HEX,
                                          ZONE_IDS, ContractViolation, Vocabulary, channel_section, condition,
                                          condition_manifest, forbidden_key_hits, free_text_report,
-                                         leader_for_seed, registry_sha256, role_of, validate_log_record,
-                                         validate_robot_payload)
+                                         leader_for_seed, registry_sha256, role_of, scenario_ref,
+                                         validate_log_record, validate_robot_payload)
 
 SCENARIO_SCHEMA = 'ugrp.zone_scenario.v1'
 # Item kinds, their physical team size and their grasp roles. Frozen here so the
@@ -89,10 +89,14 @@ def validate_scenario(scenario: Mapping, *, map_bundle: Mapping | None = None) -
         raise ContractViolation('scenario config must be an object')
     if scenario.get('schema') != SCENARIO_SCHEMA:
         raise ContractViolation(f'scenario schema must be {SCENARIO_SCHEMA}, got {scenario.get("schema")!r}')
+    # ``notes`` moved into the private ``eval`` section as ``design_notes_ko``:
+    # the descriptive note named the hidden event kind, its target and, in s6,
+    # the solution (2026-09-26 review finding 17).
     unknown = set(scenario) - {'schema', 'scenario_id', 'map_id', 'landmark_detail', 'seeds', 'orders',
-                               'eval', 'notes'}
+                               'eval'}
     if unknown:
-        raise ContractViolation(f'unknown scenario key(s): {sorted(unknown)}')
+        raise ContractViolation(f'unknown scenario key(s): {sorted(unknown)}; a descriptive note belongs '
+                                'in eval.design_notes_ko, which no robot receives')
     scenario_id = _token(scenario.get('scenario_id'), 'scenario_id')
     map_id = _token(scenario.get('map_id'), 'map_id')
     seeds = scenario.get('seeds')
@@ -125,8 +129,6 @@ def validate_scenario(scenario: Mapping, *, map_bundle: Mapping | None = None) -
     value = {'schema': SCENARIO_SCHEMA, 'scenario_id': scenario_id, 'map_id': map_id,
              'landmark_detail': scenario.get('landmark_detail', 'full'), 'seeds': [int(s) for s in seeds],
              'orders': normalized, 'eval': eval_section(scenario)}
-    if 'notes' in scenario:
-        value['notes'] = scenario['notes']
     return value
 
 
@@ -207,7 +209,10 @@ def _kind_table(orders: Sequence[Mapping]) -> dict:
 
 
 def _build_sheet(normalized: Mapping, map_ref: Mapping) -> dict:
-    sheet = {'schema': ORDER_SHEET_SCHEMA, 'scenario_id': normalized['scenario_id'],
+    # ``scenario_id`` of the ROBOT-FACING sheet is package A's opaque ref: the
+    # descriptive config id told the robot the hidden event kind before it could
+    # observe anything (2026-09-26 review finding 17).
+    sheet = {'schema': ORDER_SHEET_SCHEMA, 'scenario_id': scenario_ref(normalized['scenario_id']),
              'map_id': normalized['map_id'], 'map_file_sha256': map_ref['map_file_sha256'],
              'public_map_sha256': map_ref['public_map_sha256'],
              'orders': copy.deepcopy(list(normalized['orders'])),
@@ -244,6 +249,19 @@ class OrderSheetSource:
         return self._scenario['scenario_id']
 
     @property
+    def scenario_ref(self) -> str:
+        """The opaque reference the ROBOT sees (review finding 17)."""
+        return self._sheet['scenario_id']
+
+    @property
+    def pinned(self) -> dict:
+        """Digests of the frozen sources, for ``validate_robot_payload(pinned=...)``."""
+        return {'order_sheet_sha256': self.sha256, 'map_id': self._bundle_ref['map_id'],
+                'map_file_sha256': self._bundle_ref['map_file_sha256'],
+                'public_map_sha256': self._bundle_ref['public_map_sha256'],
+                'scenario_id': self.scenario_ref}
+
+    @property
     def seeds(self) -> tuple[int, ...]:
         return tuple(self._scenario['seeds'])
 
@@ -267,6 +285,7 @@ class OrderSheetSource:
     def manifest(self) -> dict:
         """What the run bundle records about the inputs (docs/execution_versioning.md)."""
         return {'scenario_schema': SCENARIO_SCHEMA, 'scenario_id': self.scenario_id,
+                'scenario_ref': self.scenario_ref,
                 'scenario_sha256': self.scenario_sha256, 'order_sheet_schema': ORDER_SHEET_SCHEMA,
                 'order_sheet_sha256': self.sha256, 'orders': len(self._sheet['orders']),
                 'seeds': list(self.seeds), 'leader_rotation': leader_rotation(self.seeds),

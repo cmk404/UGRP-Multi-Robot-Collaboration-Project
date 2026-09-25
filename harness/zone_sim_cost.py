@@ -407,6 +407,36 @@ def contract_call_record(record, *, run_id, condition_name, seed, request_id, ca
         decision_sources=list(decision_sources), payload_validated=payload_validated)
 
 
+def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_index, input_sha256,
+                        provenance, trigger_map=None, decision_sources=()):
+    """Package A call record of a call still OUTSTANDING at the horizon.
+
+    2026-09-26 review finding 16: such a call used to vanish from
+    ``self.calls``, so a condition that failed through long reasoning looked
+    cheap. The SIM time that elapsed until the horizon is recorded as the charged
+    cost, while the API resources it really used stay unknown: tokens are 0 and
+    ``cost_terms['censored']`` says the number is a lower bound, not a
+    measurement.
+    """
+    elapsed = _round(row['elapsed_sim_s'])
+    terms = {'alpha_s': 0., 'beta_s_per_token': 0., 'gamma_s_per_utterance': 0.,
+             'output_tokens': 0, 'utterances': 0, 'censored': True,
+             'elapsed_sim_s': elapsed, 'reason': row.get('reason', 'unfinished_at_horizon'),
+             'note': 'SIM time elapsed until the horizon; the API resources actually used are unknown'}
+    return call_log_record(
+        run_id=run_id, condition_name=condition_name, seed=seed, actor=row['actor'],
+        request_id=request_id, call_index=call_index,
+        trigger=contract_trigger(row['trigger'], mapping=trigger_map),
+        requested_at_sim_s=_round(row['started_sim_s']),
+        released_at_sim_s=_round(row['started_sim_s'] + elapsed),
+        cost_terms=terms, input_sha256=input_sha256,
+        input_tokens={'text': 0, 'image': 0, 'cached': 0}, output_tokens=0,
+        status='censored', provenance=provenance,
+        http_attempts=int(row.get('reserved_attempts', 1)), wall_latency_s=None,
+        action_id=None, message_ids=[], decision_sources=list(decision_sources),
+        payload_validated=True)
+
+
 def contract_message_records(records, *, run_id, condition_name, seed, envelopes, acts=None):
     """Package A ``ugrp.zone_study_message_log.v1`` records from the delivery edges.
 

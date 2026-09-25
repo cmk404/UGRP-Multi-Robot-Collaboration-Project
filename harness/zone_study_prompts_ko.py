@@ -27,12 +27,15 @@ from __future__ import annotations
 
 import base64
 import copy
+import hashlib
 import json
+import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from harness import zone_study_protocol as zp
-from harness.zone_study_contract import (ORDER_SHEET_SCHEMA, PAYLOAD_SCHEMA, ROLE_NAMES,
-                                         validate_robot_payload)
+from harness.zone_study_contract import (MAIN_CONDITIONS, ORDER_SHEET_SCHEMA, PAYLOAD_SCHEMA,
+                                         ROLE_NAMES, validate_robot_payload)
 from harness.zone_study_inputs import INPUT_PROFILE, payload_sha256, vocabulary
 
 PROMPT_VERSION = 'ugrp.zone_study_prompts_ko.v1'
@@ -47,6 +50,60 @@ FORBIDDEN_IMAGE_TOKENS = ('top', 'nav_cam', 'cctv')
 #: ``inbox`` — so it cannot widen the input boundary.
 WINDOW_KEY = 'dialogue_window'
 WINDOW_FIELDS = ('window_id', 'max_utterances', 'max_your_utterances', 'your_utterances_left', 'sent')
+#: Schema of the digest that covers the WHOLE final request (system text, user
+#: JSON and the actual image bytes), added for review finding 1.
+REQUEST_DIGEST_SCHEMA = 'ugrp.zone_study_request_digest.v1'
+
+
+class _Frozen(Mapping):
+    """Deeply immutable view of one validated payload (review finding 4).
+
+    ``frozen=True`` on the dataclass only stopped attribute rebinding: the
+    counterexample added ``teacher_receipt`` to the payload dict AFTER
+    validation and it reached the user JSON. Mutating this view raises, and
+    ``copy.deepcopy``/:func:`thaw` hand out a plain copy instead of the original.
+    """
+
+    __slots__ = ('_data',)
+
+    def __init__(self, data):
+        object.__setattr__(self, '_data', {k: freeze(v) for k, v in data.items()})
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self):
+        return len(self._data)
+
+    def __repr__(self):
+        return f'_Frozen({self._data!r})'
+
+    def __deepcopy__(self, memo):
+        return thaw(self)
+
+    def __copy__(self):
+        return thaw(self)
+
+
+def freeze(value):
+    """Deeply immutable copy: dict -> ``_Frozen``, list -> tuple, scalars as-is."""
+    if isinstance(value, Mapping):
+        return _Frozen(value)
+    if isinstance(value, (list, tuple)):
+        return tuple(freeze(item) for item in value)
+    return value
+
+
+def thaw(value):
+    """Plain JSON-serialisable copy of a frozen structure."""
+    if isinstance(value, Mapping):
+        return {k: thaw(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [thaw(item) for item in value]
+    return value
 
 
 @dataclass(frozen=True)
@@ -57,6 +114,19 @@ class StudyInputs:
     TOP frame, a ground-truth pose, a teacher receipt, a peer camera or a
     completion flag cannot reach a prompt. This class adds only the image bytes
     and the read-only views the prompt builder needs.
+
+    Two rules come from the 2026-09-26 review:
+
+    * **finding 1** — every image is bound to a VALIDATED reference: the sha256
+      of the actual bytes must equal the digest the payload declared for that
+      ref, and a map figure is only accepted against
+      ``static_map.schematic_ref.png_sha256``, i.e. an artefact of the frozen
+      map. So another camera's bytes can no longer be relabelled ``wrist_jpeg``.
+    * **finding 4** — the payload is deeply frozen, and ``build_request``
+      re-validates the thawed copy right before serialising it.
+
+    ``pinned`` optionally carries the digests of the frozen order sheet and map
+    bundle (``OrderSheetSource.pinned``).
     """
 
     payload: dict
@@ -64,36 +134,52 @@ class StudyInputs:
     map_figure_jpeg: bytes | None = None
     robot_views: dict | None = None
     seed: int | None = None
+    pinned: dict | None = None
 
     def __post_init__(self):
         set_ = object.__setattr__
-        if not isinstance(self.payload, dict) or self.payload.get('schema') != PAYLOAD_SCHEMA:
+        if not isinstance(self.payload, Mapping) or self.payload.get('schema') != PAYLOAD_SCHEMA:
             raise zp.ProtocolError(f'inputs.payload must carry schema {PAYLOAD_SCHEMA} '
                                    '(harness.zone_study_inputs.build_call_input)')
-        payload = copy.deepcopy(self.payload)
+        payload = thaw(self.payload)
         try:
-            validate_robot_payload(payload, seed=self.seed)
+            validate_robot_payload(payload, seed=self.seed, pinned=self.pinned)
         except Exception as exc:                    # ContractViolation and friends
             raise zp.ProtocolError(f'payload violates the package A contract: {exc}') from None
-        set_(self, 'payload', payload)
         commander = payload['robot_id'] == zp.COMMANDER
         if commander:
             if self.wrist_jpeg is not None:
                 raise zp.ProtocolError('the reference_R commander has no own wrist RGB')
-            refs = [r['ref'] for r in payload.get('team_rgb_refs', ())]
+            refs = {ref['ref'].split('-')[1]: ref for ref in payload.get('team_rgb_refs', ())}
             views = dict(self.robot_views or {})
-            if sorted(views) != sorted({ref.split('-')[1] for ref in refs}):
+            if sorted(views) != sorted(refs):
                 raise zp.ProtocolError('robot_views must match the team_rgb_refs of the payload')
-            set_(self, 'robot_views', {rid: _image_bytes(jpeg, f'robot_views[{rid}]')
+            set_(self, 'robot_views', {rid: _bound_bytes(jpeg, refs[rid], f'robot_views[{rid}]')
                                        for rid, jpeg in sorted(views.items())})
         else:
             if self.robot_views is not None:
                 raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
-            set_(self, 'wrist_jpeg', _image_bytes(self.wrist_jpeg, 'wrist_jpeg'))
+            own = list(payload.get('own_rgb_refs', ()))
+            if not own:
+                raise zp.ProtocolError('a wrist image needs the own_rgb_ref it was captured for')
+            set_(self, 'wrist_jpeg', _bound_bytes(self.wrist_jpeg, own[-1], 'wrist_jpeg'))
         if self.map_figure_jpeg is not None:
-            set_(self, 'map_figure_jpeg', _image_bytes(self.map_figure_jpeg, 'map_figure_jpeg'))
+            ref = (payload.get('static_map') or {}).get('schematic_ref')
+            if not isinstance(ref, Mapping):
+                raise zp.ProtocolError('a map figure is only allowed with static_map.schematic_ref, so the '
+                                       'figure is an artefact of the frozen map')
+            set_(self, 'map_figure_jpeg',
+                 _bound_bytes(self.map_figure_jpeg, {'ref': ref['ref'], 'sha256': ref['png_sha256']},
+                              'map_figure_jpeg'))
+        set_(self, 'payload', freeze(payload))
+        set_(self, '_payload_sha256', payload_sha256(payload))
+        set_(self, 'pinned', dict(self.pinned) if self.pinned else None)
 
     # -- A payload views ---------------------------------------------------
+    def payload_dict(self) -> dict:
+        """A plain, mutable copy. Mutating it cannot change this input."""
+        return thaw(self.payload)
+
     @property
     def condition(self) -> str:
         return self.payload['condition']
@@ -112,11 +198,11 @@ class StudyInputs:
 
     @property
     def static_map(self) -> dict:
-        return self.payload['static_map']
+        return thaw(self.payload['static_map'])
 
     @property
     def map_public(self) -> dict:
-        return self.payload['static_map']['public_map']
+        return thaw(self.payload['static_map']['public_map'])
 
     @property
     def map_sha256(self) -> str:
@@ -124,32 +210,33 @@ class StudyInputs:
 
     @property
     def order_sheet(self) -> dict:
-        return self.payload['order_sheet']
+        return thaw(self.payload['order_sheet'])
 
     @property
     def order_sheet_sha256(self) -> str:
-        return payload_sha256(self.payload['order_sheet'])
+        return payload_sha256(thaw(self.payload['order_sheet']))
 
     @property
     def payload_sha256(self) -> str:
-        return payload_sha256(self.payload)
+        """Digest of the validated payload, pinned at construction time."""
+        return self._payload_sha256
 
     @property
     def own_commands(self) -> tuple:
-        return tuple(self.payload.get('own_command_history', ()))
+        return tuple(thaw(self.payload.get('own_command_history', ())))
 
     @property
     def own_belief(self) -> dict:
-        return self.payload.get('self_belief', {})
+        return thaw(self.payload.get('self_belief', {}))
 
     @property
     def issued_orders(self) -> tuple:
-        return tuple(self.payload.get('issued_orders', ()))
+        return tuple(thaw(self.payload.get('issued_orders', ())))
 
     @property
     def inbox(self) -> tuple:
         """The messages the condition actually delivered (A envelopes)."""
-        return tuple(self.payload.get('inbox', ()))
+        return tuple(thaw(self.payload.get('inbox', ())))
 
     def order_ids(self) -> tuple:
         return tuple(o['order_id'] for o in self.order_sheet['orders'])
@@ -187,6 +274,27 @@ def _image_bytes(jpeg, where) -> bytes:
     return bytes(jpeg)
 
 
+def image_sha256(jpeg) -> str:
+    return hashlib.sha256(bytes(jpeg)).hexdigest()
+
+
+def _bound_bytes(jpeg, ref, where) -> bytes:
+    """Image bytes bound to the reference the payload declared (review finding 1).
+
+    The ref already passed A's shape checks (own wrist ref pattern, capture time
+    not after the call, sha256 hex), so comparing the digest of the ACTUAL bytes
+    is what stops another camera's frame from being relabelled.
+    """
+    data = _image_bytes(jpeg, where)
+    got = image_sha256(data)
+    want = ref.get('sha256') if isinstance(ref, Mapping) else None
+    if got != want:
+        raise zp.ProtocolError(f'{where}: the bytes hash to {got[:12]}… but the validated reference '
+                               f'{ref.get("ref") if isinstance(ref, Mapping) else ref!r} declares '
+                               f'{str(want)[:12]}…; an image must be the frame its reference names')
+    return data
+
+
 # --- Korean prompt text ---------------------------------------------------
 
 KO_ROLE_LINE = {
@@ -210,6 +318,16 @@ order_sheet의 물건을 지정된 destination_zone(A, B, C)으로 배송하십�
 명령을 보냈다는 사실을 실제 이동·파지·배달 성공으로 간주하지 마십시오.
 보이지 않거나 식별할 수 없으면 unknown으로 두십시오.'''
 
+#: Behaviour guidance that must be IDENTICAL in every condition and for every
+#: role (2026-09-26 review finding 18). It used to live only in the ``follower``
+#: channel block, so the leader condition got extra stop/refuse instructions and
+#: a longer prompt, which confounded the channel effect with a guidance effect.
+KO_BEHAVIOUR = '''행동 판단:
+자기 wrist RGB의 근거와 어긋나는 계획이나 지시는 따르지 말고 이유를 남기십시오.
+안전하지 않다고 판단하면 멈추고 그 이유를 보고하십시오.
+같은 자리에서 같은 명령을 반복하지 말고 관측을 먼저 갱신하십시오.
+각 로봇은 자기 행동을 스스로 결정합니다.'''
+
 KO_HEAD_COMMANDER = '''당신은 지휘자 commander입니다. 로봇 몸체가 없습니다.
 
 목표:
@@ -224,39 +342,65 @@ r1, r2, r3에게 작업을 지시하십시오. 안전하게 완료한 배송을 
 보이지 않거나 식별할 수 없으면 unknown으로 두십시오.
 이 조건은 주 비교 조건이 아니라 정보가 많은 중앙 제어의 참고 상한입니다.'''
 
-KO_CHANNEL = {
-    'no_comm': '''
-통신: 이 조건에는 메시지 채널이 없습니다. 보낼 수도, 받을 수도 없습니다.
-messages는 반드시 빈 배열이어야 하고 decision_sources에 message를 쓸 수 없습니다.''',
-    'peer_ko': '''
-통신: 필요하면 동료에게 한국어로 관측·의도·질문·요청·양보·정정을 전달하십시오.
-recipients에 받을 로봇 ID를 명시합니다. 지정되지 않은 로봇은 그 발화를 받지 못합니다.
-이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.
-각 로봇은 자기 행동을 스스로 결정합니다.''',
-    'leader': '''
-통신: 팀 배정을 한국어 메시지로 지시하고 보고를 확인하십시오.
-recipients에 받을 follower ID를 명시합니다. follower끼리는 서로 말할 수 없으므로,
-한 follower가 알아야 하는 정보는 당신이 그 follower에게 직접 전달해야 합니다.
-이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.
-action은 당신 자신의 행동만 지정합니다. 지시는 상대가 스스로 판단해 따릅니다.''',
-    'follower': '''
-통신: {leader}의 한국어 지시를 해석하십시오. 질문·거절·관측 보고·양보는 {leader}에게만
-보낼 수 있습니다. 다른 follower를 recipients에 넣은 메시지는 전달되지 않고 거절로 기록됩니다.
-이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.
-자기 wrist RGB의 근거와 어긋나는 지시는 되묻거나 거절할 수 있습니다.
-안전하지 않다고 판단하면 멈추고 그 이유를 보고하십시오.''',
-    'structured': '''
-통신: 메시지는 자유 문장 없이 고정 필드로만 씁니다. 필드는 {fields}입니다.
-act는 {acts} 중 하나입니다. state는 {states} 중 하나이거나 null,
-confidence는 {confidence} 중 하나이거나 null, observed_at_sim_s는 0 이상의 수이거나 null입니다.
-item, role, passage, location_ref는 static_map과 order_sheet에 있는 ID만 씁니다.
-text, reason, note 같은 자유 문자열 필드를 넣으면 메시지가 거절됩니다.
-recipients에 받을 로봇 ID를 명시합니다. 지정되지 않은 로봇은 그 발화를 받지 못합니다.
-이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.
-각 로봇은 자기 행동을 스스로 결정합니다.''',
-    'commander': '''
-통신: 로봇과 주고받는 메시지 채널은 없습니다. messages는 반드시 빈 배열이어야 합니다.
-지시는 messages가 아니라 action(kind "order")으로 내립니다.''',
+# --- channel blocks -------------------------------------------------------
+# One fixed 5-line template. Only the slot texts differ between conditions, so
+# the fixed instruction volume is the same and the measured difference is the
+# CHANNEL, not the amount of guidance (review finding 18).
+KO_CHANNEL_TEMPLATE = '''통신: {headline}
+표현: {form}
+수신자: {recipients}
+예산: {budget}
+분리: {separation}'''
+
+KO_CHANNEL_SLOTS = {
+    'no_comm': {
+        'headline': '이 조건에는 메시지 채널이 없습니다. 보낼 수도, 받을 수도 없습니다.',
+        'form': 'messages는 반드시 빈 배열 []이어야 합니다.',
+        'recipients': '지정할 수 있는 수신자가 없습니다.',
+        'budget': '이 조건의 발화 예산은 0입니다.',
+        'separation': 'decision_sources에 message를 쓸 수 없습니다.',
+    },
+    'peer_ko': {
+        'headline': '동료에게 한국어로 관측·의도·질문·요청·양보·정정을 전달할 수 있습니다.',
+        'form': '본문은 한국어 자유 문장 한 개입니다.',
+        'recipients': 'recipients에 받을 로봇 ID를 명시합니다. 지정되지 않은 로봇은 그 발화를 받지 못합니다.',
+        'budget': '이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.',
+        'separation': '메시지는 상대의 행동을 직접 바꾸지 않습니다.',
+    },
+    'leader': {
+        'headline': '팀 배정을 한국어 메시지로 지시하고 보고를 확인할 수 있습니다.',
+        'form': '본문은 한국어 자유 문장 한 개입니다.',
+        'recipients': 'recipients에 받을 follower ID를 명시합니다. follower끼리는 서로 말할 수 없으므로 '
+                      '한 follower가 알아야 하는 정보는 당신이 직접 전달해야 합니다.',
+        'budget': '이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.',
+        'separation': 'action은 당신 자신의 행동만 지정하고, 지시는 상대가 스스로 판단해 따릅니다.',
+    },
+    'follower': {
+        'headline': '{leader}의 한국어 지시를 해석하고 질문·거절·관측 보고·양보를 보낼 수 있습니다.',
+        'form': '본문은 한국어 자유 문장 한 개입니다.',
+        'recipients': 'recipients에는 {leader}만 넣습니다. 다른 follower를 넣은 메시지는 전달되지 않고 '
+                      '거절로 기록됩니다.',
+        'budget': '이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.',
+        'separation': '지시는 당신의 action을 자동으로 바꾸지 않습니다.',
+    },
+    'structured': {
+        'headline': '동료에게 고정 필드 메시지로 관측·의도·요청·양보·정정을 전달할 수 있습니다.',
+        'form': '본문은 자유 문장 없이 고정 필드 {fields}입니다. act는 {acts} 중 하나, '
+                'state는 {states} 중 하나이거나 null, confidence는 {confidence} 중 하나이거나 null, '
+                'observed_at_sim_s는 0 이상의 수이거나 null입니다. item, role, passage, location_ref는 '
+                'static_map과 order_sheet에 있는 ID만 씁니다. text, reason, note 같은 자유 문자열 필드를 '
+                '넣으면 메시지가 거절됩니다.',
+        'recipients': 'recipients에 받을 로봇 ID를 명시합니다. 지정되지 않은 로봇은 그 발화를 받지 못합니다.',
+        'budget': '이 대화 창에서 팀 전체 최대 {cap_window}발화, 당신은 최대 {cap_robot}발화입니다.',
+        'separation': '메시지는 상대의 행동을 직접 바꾸지 않습니다.',
+    },
+    'commander': {
+        'headline': '로봇과 주고받는 메시지 채널은 없습니다.',
+        'form': 'messages는 반드시 빈 배열 []이어야 합니다.',
+        'recipients': '지시는 messages가 아니라 action(kind "order")의 assignments로 내립니다.',
+        'budget': '이 조건의 발화 예산은 0입니다.',
+        'separation': '로봇은 당신의 지시만 실행합니다.',
+    },
 }
 
 KO_OUTPUT_HEAD = '''
@@ -313,44 +457,129 @@ JSON 키와 값(null, true, false), enum 값은 번역하거나 바꾸지 않고
 
 
 def _channel_block(condition, role, *, spec, leader=None):
-    caps = {'cap_window': spec.max_window_utterances, 'cap_robot': spec.max_robot_utterances}
-    if condition == 'no_comm':
-        return KO_CHANNEL['no_comm']
-    if condition == 'reference_R':
-        return KO_CHANNEL['commander']
-    if condition == 'structured':
-        return KO_CHANNEL['structured'].format(
-            fields=', '.join(zp.STRUCT_FIELDS), acts=', '.join(zp.STRUCT_ACTS),
-            states=', '.join(zp.STRUCT_STATES), confidence=', '.join(zp.CONFIDENCE), **caps)
-    if condition == 'peer_ko':
-        return KO_CHANNEL['peer_ko'].format(**caps)
-    return KO_CHANNEL[role].format(leader=leader, **caps)
+    """The ONLY part of the fixed prompt that differs between conditions."""
+    key = {'no_comm': 'no_comm', 'reference_R': 'commander', 'structured': 'structured',
+           'peer_ko': 'peer_ko'}.get(condition, role)
+    slots = KO_CHANNEL_SLOTS[key]
+    values = {'cap_window': spec.max_window_utterances, 'cap_robot': spec.max_robot_utterances,
+              'leader': leader, 'fields': ', '.join(zp.STRUCT_FIELDS), 'acts': ', '.join(zp.STRUCT_ACTS),
+              'states': ', '.join(zp.STRUCT_STATES), 'confidence': ', '.join(zp.CONFIDENCE)}
+    return KO_CHANNEL_TEMPLATE.format(**{name: text.format(**values) for name, text in slots.items()})
 
 
-def system_prompt(condition, rid, *, seed=None, leader=None, robots=zp.ROBOTS) -> str:
-    """Korean system prompt of one condition and actor. Literals stay literal."""
+def system_prompt(condition, rid, *, seed=None, leader=None, robots=zp.ROBOTS,
+                  allow_leader_override=False) -> str:
+    """Korean system prompt of one condition and actor. Literals stay literal.
+
+    Every block except the channel section is identical across the conditions
+    (review finding 18), so a condition difference is a CHANNEL difference and
+    not a difference in the amount of task, safety or behaviour guidance.
+    """
+    parts = prompt_parts(condition, rid, seed=seed, leader=leader, robots=robots,
+                         allow_leader_override=allow_leader_override)
+    return '\n\n'.join(parts[name] for name in PROMPT_BLOCKS)
+
+
+#: Assembly order of the system prompt. ``CHANNEL_BLOCKS`` is the only part a
+#: condition may change; ``COMMON_BLOCKS`` must be token-identical everywhere
+#: (review finding 18, checked by ``tests/test_zone_study_prompts_ko.py``).
+COMMON_BLOCKS = ('head', 'behaviour', 'output', 'action', 'sources', 'separation')
+CHANNEL_BLOCKS = ('channel', 'messages', 'language')
+PROMPT_BLOCKS = ('head', 'channel', 'behaviour', 'output', 'action', 'sources', 'messages',
+                 'separation', 'language')
+
+
+def prompt_parts(condition, rid, *, seed=None, leader=None, robots=zp.ROBOTS,
+                 allow_leader_override=False) -> dict:
+    """The system prompt as named blocks, so the fixed cost can be measured."""
     s = zp.spec(condition)
-    role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots)
-    lead = zp.leader_of(condition, seed=seed, leader=leader, robots=robots)
+    role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots,
+                      allow_override=allow_leader_override)
+    lead = zp.leader_of(condition, seed=seed, leader=leader, robots=robots,
+                        allow_override=allow_leader_override)
     if role == 'commander':
-        text = KO_HEAD_COMMANDER
+        head = KO_HEAD_COMMANDER
     else:
-        role_line = KO_ROLE_LINE[role].format(leader=lead)
-        text = KO_HEAD.format(rid=rid, role_line=role_line)
-    text += '\n' + _channel_block(condition, role, spec=s, leader=lead).lstrip('\n')
-    text += '\n' + KO_OUTPUT_HEAD.lstrip('\n')
-    text += KO_ACTION_COMMANDER if role == 'commander' else KO_ACTION_ROBOT
-    text += KO_SOURCES
+        head = KO_HEAD.format(rid=rid, role_line=KO_ROLE_LINE[role].format(leader=lead))
     if not s.channel_open:
-        text += KO_MESSAGES_NONE
-    elif s.channel_open and s.encoding == 'schema':
-        text += KO_MESSAGES_STRUCT
+        messages = KO_MESSAGES_NONE
+    elif s.encoding == 'schema':
+        messages = KO_MESSAGES_STRUCT
     else:
-        text += KO_MESSAGES_KO.replace('__CHARS__', str(zp.PROMPT_TEXT_CHARS))
-    text += '\n' + KO_SEPARATION.lstrip('\n')
-    text += '\n' + (KO_LANGUAGE_STRUCT if s.channel_open and s.encoding == 'schema'
-                     else KO_LANGUAGE).lstrip('\n')
-    return text
+        messages = KO_MESSAGES_KO.replace('__CHARS__', str(zp.PROMPT_TEXT_CHARS))
+    return {'head': head,
+            'channel': _channel_block(condition, role, spec=s, leader=lead),
+            'behaviour': KO_BEHAVIOUR,
+            'output': KO_OUTPUT_HEAD.strip('\n'),
+            'action': (KO_ACTION_COMMANDER if role == 'commander' else KO_ACTION_ROBOT).strip('\n'),
+            'sources': KO_SOURCES.strip('\n'),
+            'messages': messages.strip('\n'),
+            'separation': KO_SEPARATION.strip('\n'),
+            'language': (KO_LANGUAGE_STRUCT if s.channel_open and s.encoding == 'schema'
+                         else KO_LANGUAGE).strip('\n')}
+
+
+# --- frozen tokenizer for prompt-cost control (review finding 18) ----------
+
+#: Version of the deterministic local tokenizer. It is NOT a provider tokenizer:
+#: it is a frozen, reproducible proxy so the FIXED guidance cost can be compared
+#: across conditions offline, without a network call. A real cohort records the
+#: provider's own counts next to these.
+TOKENIZER_VERSION = 'ugrp.zone_study_tokens.v1'
+_TOKEN_SPLIT = re.compile(r'[A-Za-z0-9_]+|[가-힣]{1,2}|[^\sA-Za-z0-9_가-힣]')
+
+
+def count_tokens(text) -> int:
+    """Deterministic token count of one string (frozen proxy tokenizer).
+
+    Latin/number runs and punctuation are one token each; Korean is counted in
+    two-syllable chunks, which is the usual order of magnitude for Korean
+    sub-word vocabularies. Frozen with ``TOKENIZER_VERSION``.
+    """
+    if not isinstance(text, str):
+        raise zp.ProtocolError('count_tokens needs a string')
+    return len(_TOKEN_SPLIT.findall(text))
+
+
+def request_tokens(system, user, images=()) -> dict:
+    """Token counts of one final request, split into fixed and variable parts."""
+    return {'tokenizer': TOKENIZER_VERSION, 'system': count_tokens(system),
+            'user': count_tokens(user), 'images': len(list(images)),
+            'total_text': count_tokens(system) + count_tokens(user)}
+
+
+def prompt_token_report(*, seed=11, robots=zp.ROBOTS) -> dict:
+    """Fixed-prompt cost per condition and actor, split common vs channel.
+
+    Used to hold the FIXED guidance equal across conditions: the common blocks
+    must be token-identical for every main-condition robot and only the channel
+    section may differ (review finding 18).
+    """
+    rows = {}
+    for name in zp.CONDITIONS:
+        for rid in zp.actors(name, robots):
+            parts = prompt_parts(name, rid, seed=seed, robots=robots)
+            common = sum(count_tokens(parts[b]) for b in COMMON_BLOCKS)
+            channel = sum(count_tokens(parts[b]) for b in CHANNEL_BLOCKS)
+            text = system_prompt(name, rid, seed=seed, robots=robots)
+            rows[f'{name}:{rid}'] = {
+                'condition': name, 'actor': rid,
+                'role': zp.role_of(name, rid, seed=seed, robots=robots),
+                'chars': len(text), 'tokens': count_tokens(text),
+                'common_tokens': common, 'channel_tokens': channel,
+                'channel_chars': sum(len(parts[b]) for b in CHANNEL_BLOCKS),
+                'blocks': {b: count_tokens(parts[b]) for b in PROMPT_BLOCKS}}
+    main = [row for row in rows.values() if row['condition'] in MAIN_CONDITIONS]
+    return {'tokenizer': TOKENIZER_VERSION, 'seed': seed,
+            'common_blocks': list(COMMON_BLOCKS), 'channel_blocks': list(CHANNEL_BLOCKS),
+            # Measured control of the FIXED prompt cost: the common guidance must
+            # not differ at all (head excluded: that is the role sentence), and
+            # the residual difference is the channel section itself.
+            'common_token_spread': (max(r['common_tokens'] - r['blocks']['head'] for r in main)
+                                    - min(r['common_tokens'] - r['blocks']['head'] for r in main)),
+            'channel_token_spread': (max(r['channel_tokens'] for r in main)
+                                     - min(r['channel_tokens'] for r in main)),
+            'rows': rows}
 
 
 def _images(inputs):
@@ -375,7 +604,8 @@ def _uri(jpeg):
     return 'data:image/jpeg;base64,' + base64.b64encode(bytes(jpeg)).decode()
 
 
-def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robots=zp.ROBOTS) -> dict:
+def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robots=zp.ROBOTS,
+                  allow_leader_override=False) -> dict:
     """One model request: Korean system text, package A's payload JSON and images.
 
     ``inputs`` is a :class:`StudyInputs`, i.e. ONE validated A payload, so the
@@ -386,6 +616,18 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
     ``Transport.window_context(rid)`` so the stated budget is the transport's
     real one. This function never filters a channel itself and never receives
     host claims, reservations or another robot's state.
+
+    2026-09-26 review:
+
+    * finding 4 — the payload is re-validated here, right before it is
+      serialised, so a mutation after construction cannot reach the model.
+    * finding 9 — an explicit ``leader`` must agree with the seed rotation and
+      with the payload's ``leader_id`` unless the caller says it is a
+      diagnostic (``allow_leader_override``).
+    * finding 1 — ``request_sha256`` covers the WHOLE final request: system
+      text, user JSON and the digests of the actual image bytes.
+    * finding 18 — ``tokens`` reports the frozen-tokenizer cost of the fixed
+      guidance versus the variable part, per condition.
     """
     if not isinstance(inputs, StudyInputs):
         raise zp.ProtocolError('inputs must be a StudyInputs wrapping a validated package A payload '
@@ -393,7 +635,14 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
     condition, rid, request_id = inputs.condition, inputs.robot_id, inputs.request_id
     s = zp.spec(condition)
     seed = inputs.seed if seed is None else seed
-    role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots)
+    resolved = zp.leader_of(condition, seed=seed, leader=leader, robots=robots,
+                            allow_override=allow_leader_override)
+    payload_leader = inputs.payload.get('leader_id')
+    if payload_leader is not None and resolved != payload_leader:
+        raise zp.ProtocolError(f'the payload names leader {payload_leader!r} but this request would use '
+                               f'{resolved!r}: payload, prompt and transport must agree')
+    role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots,
+                      allow_override=allow_leader_override)
     window = dict(window or {})
     # ``received`` is package A's ``inbox``: drop a transport copy instead of
     # sending the same messages twice under two key names.
@@ -403,7 +652,15 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
         raise zp.ProtocolError(f'{condition} has no dialogue channel: sent and window must be empty')
     if not s.channel_open and inputs.inbox:
         raise zp.ProtocolError(f'{condition} delivers no message, so the payload carries no inbox')
-    body = copy.deepcopy(inputs.payload)
+    body = inputs.payload_dict()
+    # finding 4: the payload that is about to be serialised is validated again,
+    # and its digest must still be the one recorded at construction.
+    try:
+        validate_robot_payload(body, seed=seed, pinned=inputs.pinned)
+    except Exception as exc:
+        raise zp.ProtocolError(f'the payload changed after validation: {exc}') from None
+    if payload_sha256(body) != inputs.payload_sha256:
+        raise zp.ProtocolError('the payload changed after validation (digest mismatch)')
     if s.channel_open:
         cap_window = window.pop('max_utterances', s.max_window_utterances)
         cap_robot = window.pop('max_your_utterances', s.max_robot_utterances)
@@ -419,15 +676,67 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
         body[WINDOW_KEY] = {'window_id': window_id, 'max_utterances': cap_window,
                             'max_your_utterances': cap_robot, 'your_utterances_left': left,
                             'sent': issued}
-    return {'request_id': request_id, 'condition': condition, 'actor': rid, 'prompt_role': role,
-            'prompt_version': PROMPT_VERSION, 'protocol_version': zp.PROTOCOL_VERSION,
-            'payload_schema': PAYLOAD_SCHEMA, 'input_sha256': inputs.payload_sha256,
-            'input_profile_id': INPUT_PROFILE['profile_id'],
-            'messages': [{'role': 'system',
-                          'content': system_prompt(condition, rid, seed=seed, leader=leader, robots=robots)},
-                         {'role': 'user',
-                          'content': json.dumps(body, sort_keys=True, ensure_ascii=False)}],
-            'images': _images(inputs)}
+    system = system_prompt(condition, rid, seed=seed, leader=leader, robots=robots,
+                           allow_leader_override=allow_leader_override)
+    user = json.dumps(body, sort_keys=True, ensure_ascii=False)
+    images = _images(inputs)
+    request = {'request_id': request_id, 'condition': condition, 'actor': rid, 'prompt_role': role,
+               'prompt_version': PROMPT_VERSION, 'protocol_version': zp.PROTOCOL_VERSION,
+               'payload_schema': PAYLOAD_SCHEMA, 'input_sha256': inputs.payload_sha256,
+               'input_profile_id': INPUT_PROFILE['profile_id'],
+               'messages': [{'role': 'system', 'content': system},
+                            {'role': 'user', 'content': user}],
+               'images': images}
+    request['image_refs'] = image_manifest(inputs)
+    request['request_sha256'] = request_digest(system, user, images)
+    request['tokens'] = request_tokens(system, user, images)
+    return request
+
+
+def image_manifest(inputs) -> list:
+    """Which validated reference each attached image belongs to (review finding 1)."""
+    payload = inputs.payload
+    out = []
+    if inputs.robot_views is None:
+        own = list(payload.get('own_rgb_refs', ()))
+        if own:
+            ref = own[-1]
+            out.append({'label': IMAGE_OWN, 'ref': ref['ref'], 'sha256': ref['sha256'],
+                        'captured_at_sim_s': ref['captured_at_sim_s'],
+                        'bytes_sha256': image_sha256(inputs.wrist_jpeg)})
+    else:
+        refs = {r['ref'].split('-')[1]: r for r in payload.get('team_rgb_refs', ())}
+        for rid, jpeg in sorted(inputs.robot_views.items()):
+            ref = refs[rid]
+            out.append({'label': f'WRIST RGB {rid}', 'ref': ref['ref'], 'sha256': ref['sha256'],
+                        'captured_at_sim_s': ref['captured_at_sim_s'],
+                        'bytes_sha256': image_sha256(jpeg)})
+    if inputs.map_figure_jpeg is not None:
+        ref = payload['static_map']['schematic_ref']
+        out.append({'label': IMAGE_MAP, 'ref': ref['ref'], 'sha256': ref['png_sha256'],
+                    'captured_at_sim_s': None, 'bytes_sha256': image_sha256(inputs.map_figure_jpeg)})
+    return out
+
+
+def request_digest(system, user, images) -> str:
+    """Digest of the WHOLE final request (review finding 1).
+
+    ``input_sha256`` only covered the validated payload, so the dialogue window,
+    the system text and the actual image bytes were outside the archived hash.
+    The image bytes enter through their own sha256, which keeps the digest small
+    and still binds the exact frames.
+    """
+    value = {'schema': REQUEST_DIGEST_SCHEMA, 'system': system, 'user': user,
+             'images': [{'label': item['label'], 'bytes_sha256': image_sha256(_from_uri(item['image']))}
+                        for item in images]}
+    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def _from_uri(uri) -> bytes:
+    prefix = 'data:image/jpeg;base64,'
+    if not isinstance(uri, str) or not uri.startswith(prefix):
+        raise zp.ProtocolError('an image must be a base64 JPEG data URI')
+    return base64.b64decode(uri[len(prefix):])
 
 
 __all__ = ['PROMPT_VERSION', 'CONTRACT_PAYLOAD_SCHEMA', 'StudyInputs', 'system_prompt', 'build_request',

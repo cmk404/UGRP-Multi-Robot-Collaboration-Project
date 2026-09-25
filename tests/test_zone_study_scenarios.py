@@ -126,10 +126,28 @@ def test_public_part_carries_no_private_info(sid):
 def test_a_private_id_in_the_public_part_is_rejected():
     scenario = E.load('s2_unmapped_blockage')
     leaked = copy.deepcopy(scenario)
-    leaked['notes'] += ' door_narrow_blocked'
+    # ``notes`` is gone from the public part (review finding 17), so the leak is
+    # injected into the remaining public prose slot: an order id.
+    leaked['orders'][0]['order_id'] = 'door_narrow_blocked'
     report = E.validate(leaked, bundle=bundle(scenario))
     assert not report.ok
     assert any('door_narrow_blocked' in problem for problem in report.problems)
+
+
+def test_the_public_part_carries_no_design_note_or_descriptive_prose():
+    """Review finding 17: the public ``notes`` named the hidden event kind, its
+    target and, in s6, the solution. It now lives in the private section only."""
+    for scenario_id in E.scenario_ids():
+        scenario = E.load(scenario_id)
+        public, private = E.public_part(scenario), E.private_part(scenario)
+        assert 'notes' not in scenario and 'notes' not in public, scenario_id
+        assert private['design_notes_ko'], scenario_id
+        assert 'notes' not in E.PUBLIC_KEYS
+        report = E.validate(scenario, bundle=bundle(scenario))
+        assert report.ok, report.problems
+        revived = copy.deepcopy(scenario)
+        revived['notes'] = private['design_notes_ko']
+        assert not E.validate(revived, bundle=bundle(scenario)).ok, scenario_id
 
 
 def test_a_coordinate_in_the_public_part_is_rejected():

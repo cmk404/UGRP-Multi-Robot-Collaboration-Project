@@ -4,7 +4,6 @@
   "map_id": "zone_wide_corridor_tags_v1",
   "landmark_detail": "full",
   "seeds": [631, 632, 633],
-  "notes": "좁은 통로 대치. 동쪽 구역으로 가는 길은 폭 0.5 m 단일 차선 corridor_1 하나이며 중간의 bay_1이 유일한 대피소다. 통로와 대피소는 정적 지도에 있으므로 정보 비대칭은 없고, 양보 순서 협상만 남는다.",
   "orders": [
     {
       "order_id": "order-1",
@@ -46,6 +45,7 @@
   ],
   "eval": {
     "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "좁은 통로 대치. 동쪽 구역으로 가는 길은 폭 0.5 m 단일 차선 corridor_1 하나이며 중간의 bay_1이 유일한 대피소다. 통로와 대피소는 정적 지도에 있으므로 정보 비대칭은 없고, 양보 순서 협상만 남는다.",
     "tests_ko": "양보 협상: 단독 3건과 2대 빔 1건이 같은 단일 차선을 양방향으로 쓴다. 호스트가 후퇴할 로봇을 정하지 않으므로 대치·반복 양보·deadlock 수와 문 대기 idle 시간이 조건별로 비교된다. 정형 조건은 yield/accept 행위로 충분히 표현할 수 있어야 한다.",
     "notes_ko": "숨은 사건은 없다. 정답 기반 통로 중재(scripts/zone_teacher.py의 자동 후퇴 규칙)는 본실험에서 끄는 것이 전제이며, 그 스위치는 러너 통합 패키지가 담당한다. 빔 전체 편대(화물 0.6 m + 운반자 2대)가 0.5 m 차선과 bay_1을 실제로 통과하는지는 물리 검증 대상이다.",
     "setup": {

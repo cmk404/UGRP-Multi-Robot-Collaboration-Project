@@ -309,20 +309,36 @@ class ChannelTest(unittest.TestCase):
 
     def test_leader_hub_and_spoke_only(self):
         ok = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r2',
+            condition='leader_ko', seed=103, leader_id='r2',
             utterances=[utter('m-1', 'r2', ('r1',), text='r1, crate-2를 B로 배달하십시오.'),
                         utter('m-2', 'r1', ('r2',), text='알겠습니다.')])))
+        # seed 103 rotates the leader to r2, so these edges are legal; the
+        # mismatch case below shows the rotation audit (review finding 9).
         self.assertEqual(ok['violations'], [])
+        mismatch = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=101, leader_id='r2',
+            utterances=[utter('m-1', 'r2', ('r1',), text='r1, crate-2를 B로 배달하십시오.')])))
+        # seed 101 rotates the leader to r3, so the declared r2 is itself a
+        # design violation (review finding 9) even though every EDGE is legal.
+        self.assertEqual([v['kind'] for v in mismatch['violations']], ['leader_rotation_mismatch'])
+        rotated = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=101, leader_id='r3',
+            utterances=[utter('m-1', 'r3', ('r1',), text='r1, crate-2를 B로 배달하십시오.'),
+                        utter('m-2', 'r1', ('r3',), text='알겠습니다.')])))
+        self.assertEqual(rotated['violations'], [])
         bad = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r2',
-            utterances=[utter('m-3', 'r1', ('r3',), text='r3, 같이 갑시다.')])))
-        self.assertEqual(bad['violations'][0]['kind'], 'follower_to_follower')
+            condition='leader_ko', seed=101, leader_id='r3',
+            utterances=[utter('m-3', 'r1', ('r2',), text='r2, 같이 갑시다.')])))
+        self.assertEqual([v['kind'] for v in bad['violations']], ['follower_to_follower'])
 
-    def test_leader_broadcast_is_flagged(self):
-        bad = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r1',
+    def test_a_leader_broadcast_to_every_follower_is_allowed(self):
+        """Review finding 13: leader -> both followers satisfies every
+        hub-and-spoke edge of packages A and C, so it is not a violation."""
+        ok = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=102, leader_id='r1',
             utterances=[utter('m-1', 'r1', ('r2', 'r3'), text='모두 대기하십시오.')])))
-        self.assertEqual(bad['violations'][0]['kind'], 'leader_broadcast')
+        self.assertEqual(ok['violations'], [])
+        self.assertNotIn('leader_broadcast', [v['kind'] for v in ok['violations']])
 
     def test_structured_condition_rejects_free_text(self):
         bad = ev.channel_compliance(ev.parse_trial(trial(
@@ -685,7 +701,10 @@ class ReportTest(unittest.TestCase):
         out = report.build([self.trials], self.dir / 'report', resamples=100, now=0.0)
         self.assertEqual(out['boundary_clean_trials'], out['trials'] - 1)
         text = (self.dir / 'report' / 'summary.md').read_text()
-        self.assertIn('평가 자료가 로봇 입력으로 흘러간 시행이 있다', text)
+        self.assertIn('입력 경계 감사에 실패한 시행이 있다', text)
+        # review finding 14: every audit failure category is aggregated the same way
+        self.assertIn('시행 상태 집계', text)
+        self.assertEqual(out['boundary_violation_trials'], 1)
         self.assertIn('referee', text)
 
     def test_reference_trials_do_not_raise_the_main_leak_warning(self):

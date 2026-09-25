@@ -21,6 +21,7 @@ Reporting rules kept here on purpose:
 from __future__ import annotations
 
 import argparse
+import collections
 import hashlib
 import json
 import sys
@@ -135,27 +136,52 @@ def comparison_section(comparisons):
     return rows
 
 
-def boundary_section(summary):
+def _boundary_failure_totals(summary):
+    totals = collections.Counter()
+    for row in summary['per_trial']:
+        totals.update(ev.boundary_failures(row['boundary']))
+    return dict(totals)
+
+
+def boundary_section(summary, statuses=None, failures=None):
+    """Every audit failure, with the common ``boundary_status`` rule.
+
+    2026-09-26 review finding 14: this section only looked at input leaks,
+    forbidden grounds and channel violations, so a trial whose payload was never
+    validated (``payload_validated=False``) or that carried an unknown input key
+    produced the sentence "no problem" while its own ``boundary.clean`` was
+    already False.
+    """
     rows, main, reference = [], [], []
     for row in summary['per_trial']:
         b = row['boundary']
-        if not (b['input_leaks'] or b['forbidden_grounds'] or b['channel_violations']):
+        if ev.boundary_status(b) == 'clean':
             continue
         target = reference if b['condition'] == ev.REFERENCE_CONDITION else main
         target.append((row['efficiency']['trial_id'], b))
+    counts = statuses or summary.get('boundary_status_counts') or {}
     if not main:
-        rows.append('주 4조건의 모든 시행에서 금지 입력 key·금지 근거 인용·채널 위반이 없었다.')
+        rows.append('주 4조건의 모든 시행에서 금지 입력 key·미검증 payload·알 수 없는 입력 key·'
+                    '금지 근거 인용·채널 위반이 없었다.')
     else:
-        rows.append('| 시행 | 금지 입력 key | 금지 근거 | 채널 위반 |')
-        rows.append('|---|---|---|---:|')
+        rows.append('| 시행 | 상태 | 금지 입력 key | 미검증 payload | 알 수 없는 key | 금지 근거 | 채널 위반 |')
+        rows.append('|---|---|---|---:|---|---|---:|')
         for trial_id, b in main:
             keys = sorted({k for r in b['input_leaks'] for k in r['forbidden_input_keys']})
             grounds = sorted({g for r in b['forbidden_grounds'] for g in r['forbidden_grounds']})
-            rows.append(f'| {trial_id} | {", ".join(keys) or "—"} | '
+            odd = sorted({k for r in b['unknown_input_keys'] for k in r['unknown_input_keys']})
+            rows.append(f'| {trial_id} | {ev.boundary_status(b)} | {", ".join(keys) or "—"} | '
+                        f'{len(b["unvalidated_payloads"])} | {", ".join(odd) or "—"} | '
                         f'{", ".join(grounds) or "—"} | {len(b["channel_violations"])} |')
         rows.append('')
-        rows.append('**평가 자료가 로봇 입력으로 흘러간 시행이 있다. '
+        rows.append('**입력 경계 감사에 실패한 시행이 있다. '
                     '해당 코호트를 통신 효과 근거로 쓰지 않는다.**')
+    if counts:
+        rows.append('')
+        rows.append('시행 상태 집계: ' + ', '.join(f'{k} {v}' for k, v in sorted(counts.items())))
+    failures = failures or summary.get('boundary_failures') or {}
+    if failures:
+        rows.append('감사 실패 항목 합계: ' + ', '.join(f'{k} {v}' for k, v in sorted(failures.items())))
     if reference:
         keys = sorted({k for _, b in reference for r in b['input_leaks']
                        for k in r['forbidden_input_keys']})
@@ -214,7 +240,10 @@ def markdown(summary, comparisons, sources, generated_at):
         '',
         '## 4. 입력 경계 감사',
         '',
-        *boundary_section(summary),
+        *boundary_section(summary,
+                          statuses=dict(collections.Counter(ev.boundary_status(r['boundary'])
+                                                            for r in summary['per_trial'])),
+                          failures=_boundary_failure_totals(summary)),
         '',
         '## 5. 원본',
         '',
@@ -306,9 +335,17 @@ def build(paths, output, penalty_factor=ev.DEFAULT_PENALTY_FACTOR,
     if tb_events:
         events = write_events(scalars, tb_events, at)
         (output / 'tensorboard.json').write_text(json.dumps(events, ensure_ascii=False, indent=2))
+    statuses = collections.Counter(ev.boundary_status(r['boundary']) for r in summary['per_trial'])
+    failures = collections.Counter()
+    for row in summary['per_trial']:
+        failures.update(ev.boundary_failures(row['boundary']))
     return {'output': str(output), 'trials': len(trials), 'comparisons': len(comparisons),
             'runs': len(scalars['runs']), 'events': events,
-            'boundary_clean_trials': sum(r['boundary']['clean'] for r in summary['per_trial'])}
+            # review finding 14: one status rule for every consumer
+            'boundary_clean_trials': statuses['clean'],
+            'boundary_violation_trials': statuses['violation'],
+            'boundary_unverified_trials': statuses['unverified'],
+            'boundary_status_counts': dict(statuses), 'boundary_failures': dict(failures)}
 
 
 def main(argv=None):

@@ -4,7 +4,6 @@
   "map_id": "zone_wide_door_tags_v1",
   "landmark_detail": "full",
   "seeds": [641, 642, 643],
-  "notes": "물건 이동·낙하. 주문서의 initial_location은 설정 시점의 계획 정보이므로 갱신되지 않는다. 지정 개체 cyan_1은 실행 중 다른 slot으로 옮겨지고, 운반 중인 red 상자 하나는 떨어진다.",
   "orders": [
     {
       "order_id": "order-1",
@@ -37,6 +36,7 @@
   ],
   "eval": {
     "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "물건 이동·낙하. 주문서의 initial_location은 설정 시점의 계획 정보이므로 갱신되지 않는다. 지정 개체 cyan_1은 실행 중 다른 slot으로 옮겨지고, 운반 중인 red 상자 하나는 떨어진다.",
     "tests_ko": "오정보 비용과 정정: 빈 slot을 본 로봇이 그 사실을 전달하면 다른 로봇의 헛된 방문이 줄고, 낙하를 알리면 배송 완료 오주장을 정정할 수 있다. 정형 조건은 state=absent/suspected와 correct 행위로 표현 가능해야 하므로 ②−④ 차이가 작을 것으로 예상되는 대조 시나리오다.",
     "notes_ko": "cyan_1은 30 SIM초에 P1-1에서 P1-3으로 옮겨진다. 주문서는 끝까지 P1-1을 가리키며 갱신하지 않는다. red_1은 62.5 SIM초에 파지에서 놓여 그 자리에 남는다. 두 사건 모두 자기 카메라로만 관측되며 호스트가 알리지 않는다. 낙하 지점은 실행 시점의 물리 결과라 설정에 적지 않는다.",
     "setup": {

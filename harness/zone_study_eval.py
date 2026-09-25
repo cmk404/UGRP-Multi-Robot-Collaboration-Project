@@ -45,7 +45,8 @@ from pathlib import Path
 from harness import zone_dialogue_metrics as zm
 from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, CONDITIONS as A_CONDITIONS,
                                          MAIN_CONDITIONS as A_MAIN_CONDITIONS, MESSAGE_LOG_SCHEMA,
-                                         forbidden_key_hits, validate_log_record)
+                                         allowed_edges as A_allowed_edges, forbidden_key_hits,
+                                         leader_for_seed as A_leader_for_seed, validate_log_record)
 
 #: A-aligned trial envelope: ``calls``/``messages``/``actions`` are A log records.
 TRIAL_SCHEMA = 'ugrp.zone_study_trial.v1'
@@ -134,6 +135,7 @@ CLAIM_CUES = {
     'blocked': r'막혀|막힌|막았|차단|blocked',
     'absent': r'없습니다|없어|비었|비어 ?있|텅 ?비|absent|empty',
 }
+ZONES = ('A', 'B', 'C')
 ZONE_RE = re.compile(r'(?<![A-Za-z0-9_-])([ABC])(?![A-Za-z0-9_])')
 ITEM_RE = re.compile(r'(?<![A-Za-z0-9_])([a-z][a-z_]*-\d+)(?![0-9])')
 PASSAGE_RE = re.compile(r'(?<![A-Za-z0-9_])((?:door|corridor|passage)_[a-z0-9_]+)')
@@ -310,6 +312,92 @@ def _rows(container, key):
 
 
 # --------------------------------------------------------------------------- #
+# model cost: ONE aggregation source (2026-09-26 review finding 10)
+
+#: Call statuses that mean the call never finished inside the horizon. Their SIM
+#: cost is real but the API resources they used are unknown, so they are counted
+#: separately instead of as zero.
+CENSORED_STATUS = 'censored'
+
+
+def model_aggregate(trial):
+    """Model calls, HTTP attempts, tokens and SIM cost, derived from the LOG rows.
+
+    2026-09-26 review finding 10: ``efficiency_metrics`` read a separate
+    ``trial['model']`` summary, so a record with a perfectly good call log
+    reported 0 calls, 0 tokens and 0 thinking cost, and a wrong summary was never
+    compared with the log. The package A ``calls``/``messages`` rows are now the
+    single source; a summary that is ALSO present must agree with them.
+
+    Returns ``None`` when neither source exists, so a missing number stays
+    missing instead of silently becoming 0.
+    """
+    calls = _rows(trial, 'calls')
+    summary = trial.get('model') if isinstance(trial.get('model'), dict) else None
+    if not calls:
+        if summary is None:
+            return None
+        tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
+        cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
+        return {'source': 'summary', 'logical_calls': int(summary.get('logical_calls') or 0),
+                'http_attempts': int(summary.get('http_attempts') or 0),
+                'censored_calls': int(summary.get('censored_calls') or 0),
+                'tokens': {k: int(tokens.get(k) or 0) for k in ('input', 'output', 'image', 'cached')},
+                'think_sim_s': float(cost.get('think') or 0.0),
+                'talk_sim_s': float(cost.get('talk') or 0.0),
+                'delivery_sim_s': float(cost.get('delivery') or 0.0),
+                'wall_latency_ms': [float(v) for v in (summary.get('wall_latency_ms') or [])
+                                    if v is not None],
+                'mismatch': []}
+    censored = [c for c in calls if c.get('status') == CENSORED_STATUS]
+    done = [c for c in calls if c.get('status') != CENSORED_STATUS]
+    think = sum(float(c.get('sim_cost_s') or 0.0) for c in done)
+    talk = sum(float((c.get('cost_terms') or {}).get('gamma_s_per_utterance') or 0.0) for c in done)
+    delivery = sum(float(m.get('delivery_delay_s') or 0.0) for m in _rows(trial, 'messages'))
+    tokens = {
+        'input': sum(int((c.get('input_tokens') or {}).get('text') or 0) for c in done),
+        'output': sum(int(c.get('output_tokens') or 0) for c in done),
+        'image': sum(int((c.get('input_tokens') or {}).get('image') or 0) for c in done),
+        'cached': sum(int((c.get('input_tokens') or {}).get('cached') or 0) for c in done),
+    }
+    latencies = [float(c['wall_latency_s']) * 1000.0 for c in done if c.get('wall_latency_s') is not None]
+    out = {'source': 'calls', 'logical_calls': len(calls),
+           'completed_calls': len(done),
+           'http_attempts': sum(int(c.get('http_attempts') or 0) for c in done),
+           'censored_calls': len(censored),
+           'censored_elapsed_sim_s': round(sum(float(c.get('sim_cost_s') or 0.0) for c in censored), 6),
+           'tokens': tokens,
+           'think_sim_s': round(think, 6), 'talk_sim_s': round(talk, 6),
+           'delivery_sim_s': round(delivery, 6), 'wall_latency_ms': latencies, 'mismatch': []}
+    if summary is not None:
+        out['mismatch'] = _summary_mismatch(summary, out)
+        out['source'] = 'calls+summary'
+    return out
+
+
+def _summary_mismatch(summary, derived):
+    """Where a separate ``model`` summary disagrees with the call log."""
+    tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
+    cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
+    out = []
+    checks = [('logical_calls', summary.get('logical_calls'), derived['logical_calls']),
+              ('censored_calls', summary.get('censored_calls'), derived['censored_calls']),
+              ('http_attempts', summary.get('http_attempts'), derived['http_attempts']),
+              ('sim_cost_s.censored_elapsed', cost.get('censored_elapsed'),
+               derived['censored_elapsed_sim_s']),
+              ('tokens.input', tokens.get('input'), derived['tokens']['input']),
+              ('tokens.output', tokens.get('output'), derived['tokens']['output']),
+              ('sim_cost_s.think', cost.get('think'), derived['think_sim_s']),
+              ('sim_cost_s.talk', cost.get('talk'), derived['talk_sim_s'])]
+    for name, given, got in checks:
+        if given is None:
+            continue
+        if abs(float(given) - float(got)) > 1e-6:
+            out.append(f'{name}: summary {given} vs call log {got}')
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # input-boundary audit
 # --------------------------------------------------------------------------- #
 
@@ -364,11 +452,82 @@ def audit_input_boundary(trial):
                     '평가 로그·정답·TOP은 로봇 입력으로 되돌리지 않는다.'}
 
 
+#: Every audit list that makes a trial NOT clean. One tuple, so the trial report,
+#: the cohort summary and the text report cannot disagree (review finding 14).
+BOUNDARY_FAILURE_KEYS = ('input_leaks', 'unknown_input_keys', 'unvalidated_payloads',
+                         'forbidden_grounds', 'channel_violations')
+
+
+def boundary_failures(boundary):
+    """``{key: count}`` of every audit failure of one trial (0 entries dropped)."""
+    return {key: len(boundary.get(key) or ()) for key in BOUNDARY_FAILURE_KEYS
+            if boundary.get(key)}
+
+
+def boundary_status(boundary):
+    """``clean`` | ``violation`` | ``unverified`` — one rule for every consumer.
+
+    2026-09-26 review finding 14: the cohort summary counted only
+    ``input_leaks``/``forbidden_grounds``/``channel_violations``, so a trial with
+    ``payload_validated=False`` or an unknown input key was reported as having no
+    problem while its own ``boundary.clean`` was already False.
+    """
+    if boundary_failures(boundary):
+        return 'violation'
+    if boundary.get('clean'):
+        return 'clean'
+    return 'unverified'
+
+
+def _channel_edges(condition, leader, seed, robots):
+    """(allowed edges, rotation problem) of one trial.
+
+    The hub-and-spoke edges come from the DECLARED leader, and the declared
+    leader is separately checked against the seed rotation (review findings 9
+    and 13): a fixed leader across seeds is a design violation, not a per-message
+    channel violation.
+    """
+    spec = A_CONDITIONS[condition]
+    problem = None
+    if spec.leader_rotation and isinstance(seed, int) and not isinstance(seed, bool):
+        expected = A_leader_for_seed(condition, seed)
+        if leader and leader != expected:
+            problem = {'message_id': None, 'kind': 'leader_rotation_mismatch',
+                       'leader_id': leader, 'expected_leader': expected, 'seed': seed}
+    if spec.topology == 'none':
+        return frozenset(), problem
+    if spec.topology == 'mesh':
+        try:
+            return A_allowed_edges(condition), problem
+        except Exception:
+            return None, problem
+    if spec.topology == 'star':
+        hub = leader or (A_leader_for_seed(condition, seed)
+                         if isinstance(seed, int) and not isinstance(seed, bool) else None)
+        if hub is None:
+            return None, problem
+        team = tuple(robots) or tuple(A_CONDITIONS[condition].actors)
+        return frozenset([(hub, f) for f in team if f != hub]
+                         + [(f, hub) for f in team if f != hub]), problem
+    return None, problem
+
+
 def channel_compliance(trial):
-    """Per-condition channel rules: no_comm silence, hub-and-spoke, no free text."""
+    """Per-condition channel rules: no_comm silence, hub-and-spoke, no free text.
+
+    2026-09-26 review finding 13: a leader message addressed to BOTH followers
+    satisfies every hub-and-spoke edge of packages A and C, but this function
+    counted it as a ``leader_broadcast`` violation, which penalised the leader
+    condition for something the design allows. The check is now A's
+    ``allowed_edges`` per recipient, and no separate broadcast rule exists.
+    """
     condition, leader = trial['condition'], trial.get('leader_id')
     robots = list(trial.get('robots') or ())
+    seed = trial.get('seed')
+    edges, rotation_problem = _channel_edges(condition, leader, seed, robots)
     violations, sends = [], collections.Counter()
+    if rotation_problem:
+        violations.append(rotation_problem)
     for utt in _rows(trial, 'utterances'):
         sender = utt.get('sender')
         recipients = [r for r in (utt.get('recipients') or []) if r]
@@ -378,13 +537,6 @@ def channel_compliance(trial):
         if condition == 'no_comm':
             violations.append({'message_id': utt.get('message_id'), 'kind': 'no_comm_message'})
             continue
-        if condition == 'leader_ko':
-            if sender != leader and any(r != leader for r in recipients):
-                violations.append({'message_id': utt.get('message_id'), 'kind': 'follower_to_follower',
-                                   'sender': sender, 'recipients': recipients})
-            if sender == leader and len(recipients) > 1:
-                violations.append({'message_id': utt.get('message_id'), 'kind': 'leader_broadcast',
-                                   'recipients': recipients})
         if condition == 'structured':
             if encoding not in STRUCTURED_ENCODINGS:
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'non_structured_encoding',
@@ -401,31 +553,126 @@ def channel_compliance(trial):
             if robots and recipient not in robots and recipient != 'commander':
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'unknown_recipient',
                                    'recipient': recipient})
-    return {'violations': violations, 'sends_by_actor': dict(sends)}
+            elif edges is not None and (sender, recipient) not in edges:
+                kind = 'follower_to_follower' if condition == 'leader_ko' else 'edge_not_allowed'
+                violations.append({'message_id': utt.get('message_id'), 'kind': kind,
+                                   'sender': sender, 'recipient': recipient})
+    return {'violations': violations, 'sends_by_actor': dict(sends),
+            'edges': sorted(edges) if edges is not None else None}
 
 
 # --------------------------------------------------------------------------- #
 # efficiency
 # --------------------------------------------------------------------------- #
 
+def _orders(trial):
+    """Order rows with their identity, kind, destination and required count."""
+    out = []
+    for order in _rows(trial, 'orders'):
+        items = [i for i in (order.get('item_ids') or []) if i]
+        count = int(order.get('count') or len(items) or 0)
+        identity = order.get('identity') or ('specific_item' if items else 'kind_fungible')
+        out.append({'order_id': order.get('order_id'), 'kind': order.get('kind'),
+                    'zone': order.get('destination_zone'), 'count': max(count, len(items)),
+                    'item_ids': items, 'identity': identity})
+    return out
+
+
 def _ordered_items(trial):
     """Item ids the order sheet asked for; falls back to per-order counts."""
     ids, count = [], 0
-    for order in _rows(trial, 'orders'):
-        item_ids = [i for i in (order.get('item_ids') or []) if i]
-        ids.extend(item_ids)
-        count += int(order.get('count') or len(item_ids) or 0)
+    for order in _orders(trial):
+        ids.extend(order['item_ids'])
+        count += order['count']
     return ids, max(count, len(ids))
 
 
 def _destinations(trial):
     dest = {}
-    for order in _rows(trial, 'orders'):
-        zone = order.get('destination_zone')
-        for item in (order.get('item_ids') or []):
-            if item:
-                dest[item] = zone
+    for order in _orders(trial):
+        for item in order['item_ids']:
+            dest[item] = order['zone']
     return dest
+
+
+def _item_kind(row, orders):
+    """Kind of a delivered item: the row's own field, else the id prefix an order names."""
+    if isinstance(row.get('kind'), str) and row['kind']:
+        return row['kind']
+    item = row.get('item_id')
+    if not isinstance(item, str):
+        return None
+    kinds = {o['kind'] for o in orders if isinstance(o['kind'], str)}
+    for kind in sorted(kinds, key=len, reverse=True):
+        if item == kind or item.startswith(kind + '_') or item.startswith(kind + '-'):
+            return kind
+    return None
+
+
+def delivery_state(trial):
+    """Final delivery state per order, plus the misdelivery HISTORY.
+
+    2026-09-26 review finding 11:
+
+    * the FINAL state of an item counts, not its first referee row, so a
+      misdelivery that the team corrected is a delivery and the wrong drop stays
+      visible in ``misdeliveries``;
+    * a ``kind_fungible`` order has no item ids, so an item is matched by KIND
+      and zone up to the ordered count instead of being called misdelivered;
+    * only rows inside the trial window ``[t0, end]`` count, and a row whose
+      item/kind belongs to no order is ``surplus``, never a delivery.
+    """
+    orders = _orders(trial)
+    t0 = float(trial.get('t0_sim_s') or 0.0)
+    end = float(trial['end_sim_s'])
+    by_item = {i: o for o in orders for i in o['item_ids']}
+    rows = []
+    for row in _rows(_referee(trial), 'deliveries'):
+        when = row.get('sim_s')
+        when = float(when) if isinstance(when, (int, float)) and not isinstance(when, bool) else None
+        if when is not None and (when < t0 - 1e-9 or when > end + 1e-9):
+            rows.append({**row, 'sim_s': when, 'outside_window': True})
+            continue
+        rows.append({**row, 'sim_s': when, 'outside_window': False})
+    inside = [r for r in rows if not r['outside_window']]
+    # final state per item id: the LAST row wins (a correction overrides a mistake)
+    final = {}
+    for row in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0)):
+        if isinstance(row.get('item_id'), str):
+            final[row['item_id']] = row
+    delivered, misdelivered, surplus = {}, {}, []
+    fungible_used = collections.Counter()
+    for item, row in sorted(final.items()):
+        zone = row.get('zone')
+        order = by_item.get(item)
+        if order is None:
+            kind = _item_kind(row, orders)
+            candidates = [o for o in orders if o['identity'] == 'kind_fungible' and o['kind'] == kind]
+            order = next((o for o in candidates
+                          if fungible_used[o['order_id']] < o['count'] and o['zone'] == zone), None)
+            if order is None:
+                # a fungible order of this kind exists but the zone is wrong
+                order = next((o for o in candidates if fungible_used[o['order_id']] < o['count']), None)
+            if order is None:
+                surplus.append(item)
+                continue
+            fungible_used[order['order_id']] += 1
+        correct = order['zone'] == zone
+        (delivered if correct else misdelivered)[item] = {
+            'zone': zone, 'sim_s': row.get('sim_s'), 'order_id': order['order_id']}
+    history = [{'item_id': r.get('item_id'), 'zone': r.get('zone'), 'sim_s': r['sim_s']}
+               for r in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0))
+               if isinstance(r.get('item_id'), str)
+               and (by_item.get(r['item_id']) or {}).get('zone') not in (None, r.get('zone'))]
+    fulfilled = {}
+    for order in orders:
+        got = sum(1 for d in delivered.values() if d['order_id'] == order['order_id'])
+        fulfilled[order['order_id']] = {'ordered': order['count'], 'delivered': got,
+                                        'complete': got >= order['count']}
+    return {'delivered': delivered, 'misdelivered': misdelivered, 'surplus': surplus,
+            'misdelivery_history': history, 'by_order': fulfilled,
+            'outside_window': [r for r in rows if r['outside_window']],
+            'orders_complete': bool(orders) and all(v['complete'] for v in fulfilled.values())}
 
 
 def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
@@ -448,19 +695,9 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
     charged = elapsed if success else penalty_factor * horizon
 
     ordered_ids, ordered_count = _ordered_items(trial)
-    dest = _destinations(trial)
-    delivered, misdelivered, seen = {}, {}, set()
-    for row in _rows(referee, 'deliveries'):
-        item = row.get('item_id')
-        if not item or item in seen:
-            continue            # count each item once, first referee delivery wins
-        seen.add(item)
-        zone = row.get('zone')
-        correct = row.get('correct')
-        if correct is None:
-            correct = (dest.get(item) == zone) if item in dest else None
-        (delivered if correct else misdelivered)[item] = {'zone': zone, 'sim_s': row.get('sim_s')}
-    surplus = sorted(set(delivered) - set(ordered_ids)) if ordered_ids else []
+    state = delivery_state(trial)
+    delivered, misdelivered = state['delivered'], state['misdelivered']
+    surplus = state['surplus']
 
     idle_raw = trial.get('idle') if isinstance(trial.get('idle'), dict) else {}
     idle_by_reason = collections.Counter()
@@ -480,12 +717,16 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
     conflicts = _rows(referee, 'conflicts')
     deadlocks = _rows(referee, 'deadlocks')
     replans = _rows(trial, 'replans')
-    model = trial.get('model') if isinstance(trial.get('model'), dict) else {}
-    tokens = model.get('tokens') if isinstance(model.get('tokens'), dict) else {}
-    sim_cost = model.get('sim_cost_s') if isinstance(model.get('sim_cost_s'), dict) else {}
-    talk_cost = float(sim_cost.get('talk') or 0.0) + float(sim_cost.get('delivery') or 0.0)
-    think_cost = float(sim_cost.get('think') or 0.0)
-    latencies = [float(v) for v in (model.get('wall_latency_ms') or []) if v is not None]
+    model = model_aggregate(trial)
+    if model is not None and model['mismatch']:
+        raise TrialError(f'{trial["trial_id"]}: the model summary disagrees with the call log '
+                         f'({"; ".join(model["mismatch"])}); calls/messages are the only aggregation '
+                         'source (review finding 10)')
+    tokens = (model or {}).get('tokens') or {}
+    talk_cost = float((model or {}).get('talk_sim_s') or 0.0) + float((model or {}).get('delivery_sim_s')
+                                                                     or 0.0)
+    think_cost = float((model or {}).get('think_sim_s') or 0.0)
+    latencies = list((model or {}).get('wall_latency_ms') or [])
 
     return {
         'trial_id': trial['trial_id'], 'condition': trial['condition'],
@@ -504,6 +745,11 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'ordered_items': ordered_count,
         'delivered_items': len(delivered),
         'misdelivered_items': len(misdelivered),
+        'misdeliveries_recovered': sum(1 for row in state['misdelivery_history']
+                                       if row['item_id'] in delivered),
+        'deliveries_outside_window': len(state['outside_window']),
+        'orders_complete': state['orders_complete'],
+        'orders_by_id': state['by_order'],
         'surplus_items': len(surplus),
         'undelivered_items': max(ordered_count - len(delivered), 0),
         'delivery_rate': _ratio(len(delivered), ordered_count),
@@ -518,15 +764,18 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'deadlock_sim_s': round(sum(float(d.get('duration_s') or 0.0) for d in deadlocks), 4),
         'replans': len(replans),
         'replans_by_kind': dict(collections.Counter(r.get('kind', 'other') for r in replans)),
-        'model_calls': int(model.get('logical_calls') or 0),
-        'http_attempts': int(model.get('http_attempts') or 0),
-        'tokens_input': int(tokens.get('input') or 0),
-        'tokens_output': int(tokens.get('output') or 0),
-        'tokens_image': int(tokens.get('image') or 0),
-        'tokens_cached': int(tokens.get('cached') or 0),
-        'tokens_total': int(sum(int(tokens.get(k) or 0) for k in ('input', 'output', 'image'))),
-        'model_calls_per_delivered': round(int(model.get('logical_calls') or 0) / len(delivered), 4)
-                                     if delivered else None,
+        'model_calls': (model or {}).get('logical_calls'),
+        'model_calls_censored': (model or {}).get('censored_calls'),
+        'model_cost_source': (model or {}).get('source'),
+        'http_attempts': (model or {}).get('http_attempts'),
+        'tokens_input': tokens.get('input'),
+        'tokens_output': tokens.get('output'),
+        'tokens_image': tokens.get('image'),
+        'tokens_cached': tokens.get('cached'),
+        'tokens_total': (sum(int(tokens.get(k) or 0) for k in ('input', 'output', 'image'))
+                         if model is not None else None),
+        'model_calls_per_delivered': round((model or {}).get('logical_calls', 0) / len(delivered), 4)
+                                     if delivered and model is not None else None,
         'wall_latency_ms_mean': round(statistics.mean(latencies), 2) if latencies else None,
         'budget_http_attempts': budget.get('http_attempts'),
         'budget_exhausted': trial['end_reason'] == 'budget_exhausted',
@@ -635,13 +884,22 @@ def extract_claims(utterance, labels=()):
     An explicit ``claims`` list (Package A) wins. Otherwise rule-based cues plus
     literal ids give ``delivered/holding/blocked/absent`` claims, matching the
     literal-id policy of PR 172's metrics.
+
+    2026-09-26 review finding 12: the free-text ids were found with a
+    hyphen-number regex, so the real ids of package E (``cyan_1``, ``beam_1``)
+    were never matched and every Korean delivery claim became
+    ``unverifiable``; and the structured branch read a ``sender`` field that a
+    structured body does not have, so ``robot`` was ``None`` and a claim about
+    another robot's hold came out true. The DECLARED ids are now matched
+    directly and the envelope sender is passed in, so the same proposition gets
+    the same verdict in both encodings.
     """
     given = utterance.get('claims')
     if isinstance(given, list):
         return [dict(c) for c in given if isinstance(c, dict) and c.get('type') in CLAIM_KINDS]
     message = utterance.get('message')
     if utterance.get('encoding') in STRUCTURED_ENCODINGS and isinstance(message, dict):
-        return _structured_claims(message)
+        return _structured_claims(message, sender=utterance.get('sender'))
     text = utterance.get('text') or ''
     if not text.strip():
         return []
@@ -651,8 +909,26 @@ def extract_claims(utterance, labels=()):
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?。])\s+|\n+')
 
 
+def _declared_items(fragment, labels):
+    """Item/order ids of the run that literally appear in ``fragment``.
+
+    Declared ids win over the generic pattern: ``cyan_1`` and ``beam_1`` are real
+    E ids and do not match a ``kind-<number>`` shape (review finding 12). Zone
+    letters and passage ids are their OWN claim fields, so they are never items.
+    """
+    found = []
+    for label in sorted({l for l in labels if isinstance(l, str) and l}, key=len, reverse=True):
+        if label in ZONES or PASSAGE_RE.fullmatch(label):
+            continue
+        if re.search(r'(?<![A-Za-z0-9_-])' + re.escape(label) + r'(?![A-Za-z0-9_-])', fragment):
+            found.append(label)
+    return found
+
+
 def _ids(fragment, labels):
-    items = [m for m in ITEM_RE.findall(fragment) if not labels or m in labels]
+    items = _declared_items(fragment, labels)
+    if not labels:
+        items = list(dict.fromkeys(items + ITEM_RE.findall(fragment)))
     return items, ZONE_RE.findall(fragment), PASSAGE_RE.findall(fragment)
 
 
@@ -694,7 +970,13 @@ def _text_claims(text, utterance, labels):
     return claims
 
 
-def _structured_claims(message):
+def _structured_claims(message, *, sender=None):
+    """Claims of one structured body. ``sender`` comes from the ENVELOPE.
+
+    A structured body carries no ``sender`` field (package A's
+    ``STRUCTURED_FIELDS``), so reading one gave ``robot=None`` and a hold claim
+    was true for whichever robot held the item (review finding 12).
+    """
     act, state = message.get('act'), message.get('state')
     item, zone = message.get('item'), message.get('zone')
     if act not in ('inform', 'correct'):
@@ -702,7 +984,7 @@ def _structured_claims(message):
     if state == 'placed':
         return [{'type': 'delivered', 'item_id': item, 'zone': zone}]
     if state == 'held':
-        return [{'type': 'holding', 'item_id': item, 'robot': message.get('sender')}]
+        return [{'type': 'holding', 'item_id': item, 'robot': sender}]
     if state == 'blocked':
         return [{'type': 'blocked', 'passage': message.get('passage')}]
     if state == 'absent':
@@ -952,8 +1234,12 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
             'cohort_ordered_items': ordered,
             'cohort_delivery_rate': _ratio(delivered, ordered),
             'cohort_par_sim_s_per_delivered': round(charged / delivered, 4) if delivered else None,
-            'cohort_model_calls_per_delivered': round(
-                sum(e['model_calls'] for e in eff) / delivered, 4) if delivered else None,
+            # a missing cost source stays missing instead of becoming 0 (finding 10)
+            'cohort_model_calls': (None if any(e['model_calls'] is None for e in eff)
+                                   else sum(e['model_calls'] for e in eff)),
+            'cohort_model_calls_per_delivered': (
+                None if not delivered or any(e['model_calls'] is None for e in eff)
+                else round(sum(e['model_calls'] for e in eff) / delivered, 4)),
             'idle_by_reason': _sum_dicts(e['idle_by_reason'] for e in eff),
             'replans_by_kind': _sum_dicts(e['replans_by_kind'] for e in eff),
             'conflicts_by_kind': _sum_dicts(e['conflicts_by_kind'] for e in eff),
@@ -981,10 +1267,14 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
                     d['decision_influence']['changes_with_prior_inbound'] for d in dia),
                 'preceding_acts': _sum_dicts(d['decision_influence']['preceding_acts'] for d in dia),
             },
-            'boundary_clean_trials': sum(r['boundary']['clean'] for r in rows),
-            'boundary_violation_trials': sum(
-                bool(r['boundary']['input_leaks'] or r['boundary']['forbidden_grounds']
-                     or r['boundary']['channel_violations']) for r in rows),
+            'boundary_clean_trials': sum(boundary_status(r['boundary']) == 'clean' for r in rows),
+            'boundary_violation_trials': sum(boundary_status(r['boundary']) == 'violation'
+                                             for r in rows),
+            'boundary_unverified_trials': sum(boundary_status(r['boundary']) == 'unverified'
+                                              for r in rows),
+            'boundary_failures': _sum_dicts(boundary_failures(r['boundary']) for r in rows),
+            'boundary_status_counts': dict(collections.Counter(
+                boundary_status(r['boundary']) for r in rows)),
         }
     return {'penalty_factor': penalty_factor, 'lookback_s': lookback_s,
             'trials': len(per_trial), 'conditions': conditions, 'per_trial': per_trial,

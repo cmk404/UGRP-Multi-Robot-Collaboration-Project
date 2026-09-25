@@ -11,11 +11,16 @@ the cargo mass / carrier table and ``maps/zones/*.json`` is only ever read.
 Config layout -- the whole point is the public/private split:
 
 * **public part** (``public_part``): ``schema``, ``scenario_id``, ``map_id``,
-  ``landmark_detail``, ``seeds``, ``orders``, ``notes``. This is the part package
-  A turns into the order sheet a robot receives on every call. It names only the
+  ``landmark_detail``, ``seeds``, ``orders``. This is the part package A turns
+  into the order sheet a robot receives on every call. It names only the
   static map, the item kind/count, how many robots the item needs, the
   destination zone and the COARSE pickup bay slot an item was put at during
   setup. It carries no metric coordinate at all (``_public_numbers_are_ints``).
+  The DESCRIPTIVE design note moved to the private section as
+  ``design_notes_ko`` (2026-09-26 review finding 17): it named the hidden event
+  kind, its target and, in s6, the solution. The descriptive ``scenario_id``
+  also stays evaluation-side; the robot-facing order sheet carries package A's
+  opaque ``scenario_ref`` instead.
 * **private part** (``private_part``, the scenario's ``eval`` key): the setup the
   scene builder consumes (arena variant, contact profile, weld off, exact
   placement poses) plus the hidden events with their SIM-time triggers, the
@@ -80,8 +85,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SCENARIO_DIR = ROOT / 'configs' / 'zone_study_scenarios'
 PRIVATE_SCHEMA = 'ugrp.zone_study_scenario_private.v1'
 PRIVATE_KEY = 'eval'
-PUBLIC_KEYS = ('schema', 'scenario_id', 'map_id', 'landmark_detail', 'seeds', 'orders', 'notes')
-PRIVATE_KEYS = ('schema', 'setup', 'hidden_events', 'budget', 'tests_ko', 'notes_ko')
+PUBLIC_KEYS = ('schema', 'scenario_id', 'map_id', 'landmark_detail', 'seeds', 'orders')
+PRIVATE_KEYS = ('schema', 'setup', 'hidden_events', 'budget', 'tests_ko', 'notes_ko', 'design_notes_ko')
 SETUP_KEYS = ('arena_variant', 'map_file_sha256', 'contact_profile', 'weld', 'robot_spawns', 'placements')
 PLACEMENT_KEYS = ('item_id', 'kind', 'order_id', 'slot', 'pose_m', 'notes_ko')
 EVENT_KEYS = ('event_id', 'kind', 'trigger', 'target', 'discovery', 'notes_ko')

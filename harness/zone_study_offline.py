@@ -40,7 +40,8 @@ from pathlib import Path
 from harness import zone_study_prompts_ko as pk
 from harness import zone_study_protocol as zp
 from harness.zone_event_scheduler import CallPolicy, CallReply, EventScheduler, Message
-from harness.zone_sim_cost import Attempt, call_cost, contract_call_record, delivery_delay_s, params
+from harness.zone_sim_cost import (Attempt, call_cost, censored_call_record, contract_call_record,
+                                   delivery_delay_s, params)
 from harness.zone_study_contract import (COMMANDER, ROBOTS, ZONE_IDS, ContractViolation,
                                          condition as contract_condition, digest, leader_for_seed)
 from harness.zone_study_eval import TRIAL_SCHEMA
@@ -50,6 +51,10 @@ from harness.zone_study_inputs import (OrderSheetSource, action_log_record, beli
 from harness.zone_study_scenarios import bundle_for, load as load_scenario
 
 OFFLINE_VERSION = 'ugrp.zone_study_offline.v1'
+#: The single owner of the message bus: package C validates and mints the
+#: canonical envelope id, the SIM scheduler decides WHEN an inbox changes
+#: (2026-09-26 review finding 2).
+BUS_OWNER = 'sim_scheduler'
 EXECUTION_BUNDLE_ID = 'zone_study_offline_v1'
 FIXTURE_MODEL = 'none-fixture-v1'
 #: Stored wrist frames referenced by the payloads. Real robot frames with real
@@ -225,11 +230,13 @@ class TrialResult:
                  'referee': {},
                  'model': {'logical_calls': len(self.calls),
                            'http_attempts': self.cost['http_attempts'],
+                           'censored_calls': self.cost['censored_calls'],
                            'tokens': {'input': self.cost['input_tokens'],
                                       'output': self.cost['output_tokens'], 'image': 0, 'cached': 0},
                            'sim_cost_s': {'think': self.cost['think_sim_s'],
                                           'talk': self.cost['talk_sim_s'],
-                                          'delivery': self.cost['delivery_sim_s']},
+                                          'delivery': self.cost['delivery_sim_s'],
+                                          'censored_elapsed': self.cost['censored_elapsed_sim_s']},
                            'wall_latency_ms': []},
                  'provenance': dict(provenance_row or {})}
         if self.leader_id:
@@ -288,9 +295,12 @@ class OfflineTrial:
                                      provider=None, model_settings_sha256=None,
                                      prompt_template_sha256=digest(pk.PROMPT_VERSION),
                                      cost_profile_id=self.params.version)
-        # package C owns the channel; its delay is package D's delay by construction
+        # package C owns message VALIDATION and the canonical envelope id; the SIM
+        # scheduler owns DELIVERY, so there is exactly one inbox and one clock
+        # (2026-09-26 review finding 2).
         self.channel = zp.Transport(condition, seed=self.seed,
                                     vocabulary=self.source and _vocabulary(self.sheet, self.bundle),
+                                    delivery_owner=BUS_OWNER,
                                     delivery_delay_sim_s=delivery_delay_s(1, self.params))
         self.channel.open_window('w1', at_sim_s=0.)
         self.fixtures = {actor: FixtureActor(actor, condition, self.seed) for actor in self.actors}
@@ -298,9 +308,10 @@ class OfflineTrial:
         self.policy = policy or CallPolicy()
         self.scheduler = EventScheduler(self.transport, cost_params=self.params,
                                         policy=self.policy, actors=self.actors,
-                                        on_action=self._arm_idle_reask)
+                                        on_action=self._arm_idle_reask,
+                                        bus=self.channel, bus_owner=BUS_OWNER)
         self.calls, self.messages, self.actions, self.requests = [], [], [], []
-        self.envelopes, self.envelope_of = {}, {}
+        self.envelopes = {}
         self._history, self._issued = {actor: [] for actor in self.actors}, []
         self._call_index = {actor: 0 for actor in self.actors}
         self._observations = {actor: 0 for actor in self.actors}
@@ -338,7 +349,8 @@ class OfflineTrial:
                                    request_id=request_id, sim_time_s=sim_time_s,
                                    static_map=self.static_map, source=self.source,
                                    seed=self.seed, **kw)
-        return pk.StudyInputs(payload=payload, wrist_jpeg=wrist, robot_views=views, seed=self.seed)
+        return pk.StudyInputs(payload=payload, wrist_jpeg=wrist, robot_views=views, seed=self.seed,
+                              pinned=self.source.pinned)
 
     def run_call(self, call) -> CallReply:
         """Inputs -> prompt -> fixture reply -> validation -> relay -> costed attempts."""
@@ -352,8 +364,11 @@ class OfflineTrial:
         value = zp.validate_reply(raw, request_id=request_id, condition=self.condition, actor=actor,
                                   order_ids=bundled.order_ids(), item_ids=bundled.item_ids(),
                                   roles_by_order=bundled.roles_by_order(),
+                                  vocabulary=bundled.vocabulary(),
                                   passages=bundled.passages(), location_refs=bundled.location_refs(),
                                   robots=ROBOTS)
+        # Every utterance the model produced is billed, accepted or not
+        # (review finding 6).
         utterances = len(value['messages'])
         attempts = (Attempt(outcome='ok', input_tokens=FIXTURE_INPUT_TOKENS,
                             output_tokens=FIXTURE_OUTPUT_TOKENS_BASE
@@ -363,17 +378,21 @@ class OfflineTrial:
         release = round(call.started_sim_s + cost.sim_s, 6)
         receipts = zp.relay(self.channel, actor, value, at_sim_s=release) if value['messages'] else ()
         messages = []
-        for receipt in receipts:
+        for index, receipt in enumerate(receipts):
             if not receipt.accepted:
+                # billed, never delivered: the scheduler records the rejection
+                messages.append(Message(sender=actor,
+                                        recipients=tuple(value['messages'][index]['recipients']),
+                                        body=None, encoding=self.spec.encoding,
+                                        message_id=f'{call.call_id}-rejected-{index + 1}',
+                                        rejection=receipt.rejection or 'rejected'))
                 continue
             envelope = receipt.envelope
+            # ONE canonical id from package C all the way into the SIM log
             self.envelopes[envelope.message_id] = envelope.record()
-            # the scheduler numbers its own delivery rows; keep the link to the
-            # package C envelope, which is what the robot actually received
-            self.envelope_of[f'{call.call_id}-m{len(messages) + 1}'] = envelope.message_id
             messages.append(Message(sender=actor, recipients=tuple(envelope.recipients),
-                                    body=envelope.message_id,
-                                    encoding=self.spec.encoding))
+                                    body=envelope.message_id, encoding=self.spec.encoding,
+                                    message_id=envelope.message_id))
         self._record(call, bundled, value, release, cost, request)
         return CallReply(attempts=attempts, action=value['action'], messages=tuple(messages))
 
@@ -438,26 +457,38 @@ class OfflineTrial:
 
     def _collect(self):
         pending = getattr(self, '_pending', {})
+        rows = [(record.started_sim_s, record.actor, record.call_id, record, None)
+                for record in self.scheduler.calls]
+        rows += [(row['started_sim_s'], row['actor'], row['call_id'], None, row)
+                 for row in self.scheduler.censored]
+        rank = {actor: i for i, actor in enumerate(self.actors)}
         index = {actor: 0 for actor in self.actors}
-        for record in self.scheduler.calls:
-            extra = pending.get(record.call_id, {})
-            row = contract_call_record(
-                record, run_id=self.run_id, condition_name=self.condition, seed=self.seed,
-                request_id=extra.get('request_id', record.call_id),
-                call_index=index[record.actor],
-                input_sha256=extra.get('input_sha256', '0' * 64), provenance=self.provenance,
-                action_id=extra.get('action_id'),
-                message_ids=[m.message_id for m in self.scheduler.messages
-                             if m.call_id == record.call_id],
-                decision_sources=extra.get('decision_sources', ()))
+        for _, actor, call_id, record, censored in sorted(rows, key=lambda r: (r[0], rank[r[1]], r[2])):
+            extra = pending.get(call_id, {})
+            if record is not None:
+                row = contract_call_record(
+                    record, run_id=self.run_id, condition_name=self.condition, seed=self.seed,
+                    request_id=extra.get('request_id', call_id),
+                    call_index=index[actor],
+                    input_sha256=extra.get('input_sha256', '0' * 64), provenance=self.provenance,
+                    action_id=extra.get('action_id'),
+                    message_ids=[m.message_id for m in self.scheduler.messages
+                                 if m.call_id == call_id],
+                    decision_sources=extra.get('decision_sources', ()))
+            else:
+                # still in flight at the horizon: kept as censored, never dropped
+                row = censored_call_record(
+                    censored, run_id=self.run_id, condition_name=self.condition, seed=self.seed,
+                    request_id=extra.get('request_id', call_id), call_index=index[actor],
+                    input_sha256=extra.get('input_sha256', '0' * 64), provenance=self.provenance)
             self.calls.append(row)
-            index[record.actor] += 1
+            index[actor] += 1
         edges = {}
         for edge in self.scheduler.messages:
             edges.setdefault(edge.message_id, []).append(edge)
         for message_id in sorted(edges):
             group = sorted(edges[message_id], key=lambda e: e.recipient)
-            envelope = self.envelopes[self.envelope_of[message_id]]
+            envelope = self.envelopes[message_id]
             deliveries = [{'recipient': e.recipient, 'delivered_at_sim_s': round(e.delivered_sim_s, 6),
                            'status': 'delivered'} for e in group]
             earliest = min(d['delivered_at_sim_s'] for d in deliveries)
@@ -491,17 +522,28 @@ class OfflineTrial:
                 'inbox_agrees_with_scheduler': agrees}
 
     def cost_summary(self) -> dict:
-        think = sum(c['sim_cost_s'] for c in self.calls)
-        talk = sum(c['cost_terms']['gamma_s_per_utterance'] for c in self.calls)
+        # Censored calls carry the SIM time that elapsed until the horizon, which
+        # is NOT the charged thinking cost of a completed call, so the two are
+        # reported apart (review finding 16).
+        done = [c for c in self.calls if c['status'] != 'censored']
+        censored = [c for c in self.calls if c['status'] == 'censored']
+        think = sum(c['sim_cost_s'] for c in done)
+        talk = sum(c['cost_terms']['gamma_s_per_utterance'] for c in done)
         delivery = sum(m['delivery_delay_s'] for m in self.messages)
         return {'orders': [copy.deepcopy(o) for o in self.sheet['orders']],
-                'http_attempts': sum(c['http_attempts'] for c in self.calls),
-                'input_tokens': sum(c['input_tokens']['text'] for c in self.calls),
-                'output_tokens': sum(c['output_tokens'] for c in self.calls),
+                'http_attempts': sum(c['http_attempts'] for c in done),
+                'input_tokens': sum(c['input_tokens']['text'] for c in done),
+                'output_tokens': sum(c['output_tokens'] for c in done),
                 'think_sim_s': round(think, 6), 'talk_sim_s': round(talk, 6),
                 'delivery_sim_s': round(delivery, 6),
+                'censored_calls': len(censored),
+                'censored_elapsed_sim_s': round(sum(c['sim_cost_s'] for c in censored), 6),
+                'censored_http_attempts': sum(c['http_attempts'] for c in censored),
                 'thinking_sim_s': {actor: self.scheduler.metrics[actor]['thinking_sim_s']
                                    for actor in self.actors},
+                'attempt_budget': self.scheduler.budget.to_dict(),
+                'rejected_messages': len(self.scheduler.rejected_messages),
+                'discarded_calls': len(self.scheduler.discarded),
                 'params_version': self.params.version, 'params_digest': self.params.digest()}
 
     def literals(self) -> tuple:
@@ -579,15 +621,34 @@ def channel_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
 def cost_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
     """Cost accounting facts of one trial."""
     problems = []
-    charged = 0.
+    charged, censored_elapsed = 0., 0.
     for call in result.calls:
         span = round(call['released_at_sim_s'] - call['requested_at_sim_s'], 6)
         if abs(span - call['sim_cost_s']) > 1e-9:
             problems.append(f'{call["request_id"]}: released-requested != sim_cost_s')
+        if call['status'] == 'censored':
+            # a call still in flight at the horizon: SIM time elapsed, API
+            # resources unknown (review finding 16)
+            censored_elapsed += call['sim_cost_s']
+            if call['output_tokens'] or call['input_tokens']['text']:
+                problems.append(f'{call["request_id"]}: a censored call cannot report token usage')
+            if not call['cost_terms'].get('censored'):
+                problems.append(f'{call["request_id"]}: a censored call must be labelled in cost_terms')
+            continue
         charged += call['sim_cost_s']
     by_actor = sum(result.cost['thinking_sim_s'].values())
     if abs(round(charged, 6) - round(by_actor, 6)) > 1e-6:
         problems.append(f'charged {charged} != scheduler thinking {by_actor}')
+    budget = result.cost['attempt_budget']
+    used = sum(c['http_attempts'] for c in result.calls if c['status'] != 'censored')
+    if budget['used_total'] != used:
+        problems.append(f'attempt budget used {budget["used_total"]} != call log {used}')
+    if budget['total'] is not None and budget['used_total'] > budget['total']:
+        problems.append(f'HTTP attempts {budget["used_total"]} exceeded the reserved budget '
+                        f'{budget["total"]}')
+    for actor, count in budget['used'].items():
+        if budget['per_actor'] is not None and count > budget['per_actor']:
+            problems.append(f'{actor} used {count} HTTP attempts, over its {budget["per_actor"]} cap')
     expected_delay = delivery_delay_s(1, trial.params)
     for record in result.messages:
         want = delivery_delay_s(len(record['recipients']), trial.params)
@@ -597,8 +658,17 @@ def cost_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
         problems.append(f'{trial.condition} paid a talk cost without a channel')
     if trial.spec.channel_open and result.messages and not result.cost['talk_sim_s']:
         problems.append(f'{trial.condition} sent messages but paid no talk cost')
+    # review finding 6: every utterance the model produced is billed
+    billed = sum(int(c['cost_terms'].get('utterances') or 0) for c in result.calls)
+    produced = len(result.messages) + result.cost['rejected_messages']
+    if billed != produced:
+        problems.append(f'billed {billed} utterance(s) but the replies produced {produced}')
     return {'ok': not problems, 'problems': problems, 'charged_sim_s': round(charged, 6),
             'scheduler_thinking_sim_s': round(by_actor, 6),
+            'censored_calls': result.cost['censored_calls'],
+            'censored_elapsed_sim_s': round(censored_elapsed, 6),
+            'billed_utterances': billed, 'produced_utterances': produced,
+            'attempt_budget': budget,
             'talk_sim_s': result.cost['talk_sim_s'], 'delivery_sim_s': result.cost['delivery_sim_s'],
             'delivery_delay_s': expected_delay,
             'params_version': result.cost['params_version'],

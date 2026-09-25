@@ -4,7 +4,6 @@
   "map_id": "zone_wide_two_doors_tags_v1",
   "landmark_detail": "full",
   "seeds": [611, 612, 613],
-  "notes": "미등록 막힘. 정적 지도에는 door_narrow와 door_wide가 모두 열려 있다고 적혀 있고, 주문서도 끝까지 바뀌지 않는다. 실제 막힘은 비공개 사건이며 문 근처에서 자기 카메라로만 발견된다.",
   "orders": [
     {
       "order_id": "order-1",
@@ -37,6 +36,7 @@
   ],
   "eval": {
     "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "미등록 막힘. 정적 지도에는 door_narrow와 door_wide가 모두 열려 있다고 적혀 있고, 주문서도 끝까지 바뀌지 않는다. 실제 막힘은 비공개 사건이며 문 근처에서 자기 카메라로만 발견된다.",
     "tests_ko": "정보 이득: 먼저 door_narrow에 도착한 로봇만 막힘을 본다. 그 관측을 전달하면 나머지는 헛된 진입을 건너뛰고 door_wide로 우회할 수 있다. 무통신은 각자 직접 볼 때까지 우회하지 못한다.",
     "notes_ko": "막힘은 45 SIM초에 door_narrow 개구부를 가로막는 물체로 생긴다. 반대편(동쪽) 구역이나 pickup에서는 벽 뒤라 보이지 않는다는 것이 설계 의도이며, 실제 가시성은 장면 빌더 통합 뒤 자기 카메라 영상으로 따로 검증해야 한다. 경로 계획기에는 아직 관측하지 않은 이 물체를 넣지 않는다.",
     "setup": {
