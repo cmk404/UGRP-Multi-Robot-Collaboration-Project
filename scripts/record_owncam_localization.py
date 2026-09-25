@@ -319,6 +319,9 @@ def git(*args):
 def record(spec, out):
     started = time.time()
     load_start = os.getloadavg()
+    # Code identity at launch (the run imports its sources now).
+    code = {'sha': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain', '--', 'sim', 'harness',
+                                                                 'scripts', 'maps')), 'stamped': 'at launch'}
     rec = Recorder(spec, out)
     outcome = rec.run()
     root = rec.out
@@ -344,8 +347,7 @@ def record(spec, out):
         'image': {'camera': 'robot_cam', 'width': 640, 'height': 480, 'encoding': 'jpeg q90',
                   'geometry': 'raw fisheye (sim pinhole render remapped by raw_fisheye_remap)'},
         'split_note': 'robot inputs in inputs/, simulator truth in eval_only/ (evaluation/offline calibration only)',
-        'code': {'sha': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain', '--', 'sim', 'harness',
-                                                                      'scripts', 'maps'))},
+        'code': code,
         'env': {'python': platform.python_version(), 'platform': platform.platform(), 'mujoco': mujoco.__version__,
                 'opencv': cv2.__version__, 'numpy': numpy.__version__},
         'load_average': {'start': [round(v, 2) for v in load_start],
