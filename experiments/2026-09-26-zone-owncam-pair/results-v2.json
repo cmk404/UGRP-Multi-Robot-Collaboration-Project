@@ -1,0 +1,3892 @@
+{
+ "experiment_id": "2026-09-26-zone-owncam-pair",
+ "raw_root_local_only": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926",
+ "raw_note": "raw outputs are local (gitignored); not a remote backup",
+ "cohort": "cohort-v2-5efffcd",
+ "cohort_log": {
+  "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/cohort.log",
+  "sha256": "4f41fe4c81ecf4398e1100f5e5926903f5a0e2bc8979edadbf526068168aa9dd"
+ },
+ "runs": [
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/621",
+   "result_sha256": "8314f46f28fff3bb13e172163ad6abef21aba7ce470b0e31d28fe983a9927778",
+   "events_sha256": "71e1751187d93a0f321c4a0030af4f8245c66441460ac95f3f471dc3c3295c2f",
+   "seed": 621,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17287407385522882,
+       -0.002710562929316817
+      ],
+      "errors": [
+       0.010874073855228816,
+       -0.002710562929316817,
+       -0.022774148593696322
+      ],
+      "sim_time": 26.025000000033252
+     },
+     "gripped": {
+      "signature_fraction": 0.0052,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6139,
+       "bottom_beam_fraction": 0.1239,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 28.9250000000471
+     },
+     "lifted": {
+      "held_iou": 0.788,
+      "sim_time": 30.625000000055216
+     },
+     "route_done": {
+      "sim_time": 51.52500000015501
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 59.52500000019321,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17254262249406135,
+       0.005175764823138889
+      ],
+      "errors": [
+       0.010542622494061349,
+       0.005175764823138889,
+       0.022757753805447745
+      ],
+      "sim_time": 24.025000000023702
+     },
+     "gripped": {
+      "signature_fraction": 0.0534,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.609,
+       "bottom_beam_fraction": 0.1351,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.92500000003755
+     },
+     "lifted": {
+      "held_iou": 0.816,
+      "sim_time": 30.52500000005474
+     },
+     "route_done": {
+      "sim_time": 51.42500000015453
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 59.42500000019273,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010874073855228816,
+     -0.002710562929316817,
+     -0.022774148593696322
+    ],
+    "r2": [
+     0.010542622494061349,
+     0.005175764823138889,
+     0.022757753805447745
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.793,
+     -0.9938,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.7646,
+     -0.9912
+    ],
+    "final_error_m": 0.0285,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.54,
+    "max_pair_distance_dev_m": 0.03,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.98,
+   "min_held_iou": 0.141,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 256,
+    "r2": 251
+   },
+   "sim_seconds": 59.525,
+   "wall_seconds": 76.0,
+   "load_average_start": [
+    4.84,
+    4.59,
+    3.8
+   ],
+   "load_average_end": [
+    7.46,
+    5.55,
+    4.24
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 296,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/622",
+   "result_sha256": "8d05f9ac9944eedbdf53fff68296a010e823b483e0d7e164dd8868b5b8a18189",
+   "events_sha256": "41e2e68dadecb809296ac2377aca15c5a1066265c9576b2ce30d219b260061ad",
+   "seed": 622,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17339442326126517,
+       0.0033023347165649884
+      ],
+      "errors": [
+       0.011394423261265163,
+       0.0033023347165649884,
+       0.031718535161189595
+      ],
+      "sim_time": 23.625000000021792
+     },
+     "gripped": {
+      "signature_fraction": 0.066,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6076,
+       "bottom_beam_fraction": 0.1841,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.52500000003564
+     },
+     "lifted": {
+      "held_iou": 0.794,
+      "sim_time": 31.825000000060946
+     },
+     "route_done": {
+      "sim_time": 52.72500000016074
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.72500000019894,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17393479901977743,
+       -0.004300199012977419
+      ],
+      "errors": [
+       0.011934799019777426,
+       -0.004300199012977419,
+       -0.021742453469621666
+      ],
+      "sim_time": 27.225000000038982
+     },
+     "gripped": {
+      "signature_fraction": 0.0671,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6084,
+       "bottom_beam_fraction": 0.187,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 30.12500000005283
+     },
+     "lifted": {
+      "held_iou": 0.803,
+      "sim_time": 31.825000000060946
+     },
+     "route_done": {
+      "sim_time": 52.72500000016074
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.72500000019894,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011394423261265163,
+     0.0033023347165649884,
+     0.031718535161189595
+    ],
+    "r2": [
+     0.011934799019777426,
+     -0.004300199012977419,
+     -0.021742453469621666
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.6763,
+     0.1827,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.6827,
+     0.1509
+    ],
+    "final_error_m": 0.0324,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.25,
+    "max_pair_distance_dev_m": 0.0346,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.013,
+   "min_held_iou": 0.855,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 250,
+    "r2": 259
+   },
+   "sim_seconds": 60.725,
+   "wall_seconds": 82.6,
+   "load_average_start": [
+    7.46,
+    5.55,
+    4.24
+   ],
+   "load_average_end": [
+    7.11,
+    5.92,
+    4.5
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 302,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/623",
+   "result_sha256": "f232cc2e5b37ae5ee1b94cafdf1327c6b7f90d2bc815df055d78fdc54a2d6000",
+   "events_sha256": "d2a3c7485af8abb82662416be56649e3aee01c6d73a94ad0dc50bf59224d1628",
+   "seed": 623,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.1725915600862273,
+       0.0015978806802781295
+      ],
+      "errors": [
+       0.010591560086227303,
+       0.0015978806802781295,
+       0.009114233975397696
+      ],
+      "sim_time": 33.22500000006763
+     },
+     "gripped": {
+      "signature_fraction": 0.0048,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6068,
+       "bottom_beam_fraction": 0.1821,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 36.12500000008148
+     },
+     "lifted": {
+      "held_iou": 0.842,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17287914051505765,
+       0.0052276425388164795
+      ],
+      "errors": [
+       0.010879140515057645,
+       0.0052276425388164795,
+       0.033748203837256664
+      ],
+      "sim_time": 23.225000000019882
+     },
+     "gripped": {
+      "signature_fraction": 0.0581,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6101,
+       "bottom_beam_fraction": 0.1539,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.12500000003373
+     },
+     "lifted": {
+      "held_iou": 0.798,
+      "sim_time": 37.72500000008912
+     },
+     "route_done": {
+      "sim_time": 58.62500000018891
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.63175000015234,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010591560086227303,
+     0.0015978806802781295,
+     0.009114233975397696
+    ],
+    "r2": [
+     0.010879140515057645,
+     0.0052276425388164795,
+     0.033748203837256664
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.5426,
+     -0.6305,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.5171,
+     -0.6416
+    ],
+    "final_error_m": 0.0279,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.68,
+    "max_pair_distance_dev_m": 0.0301,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.863,
+   "min_held_iou": 0.05,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 273,
+    "r2": 249
+   },
+   "sim_seconds": 66.732,
+   "wall_seconds": 82.4,
+   "load_average_start": [
+    7.11,
+    5.92,
+    4.5
+   ],
+   "load_average_end": [
+    6.72,
+    6.14,
+    4.71
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 332,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/624",
+   "result_sha256": "6e47d115361c67d3e5c04248291ca173c7773a40e6349449635bf377d2d21945",
+   "events_sha256": "26d792c6cda5df6d574c05d81a7787f9ee7abd0d2099ac016e2033ed684dfc34",
+   "seed": 624,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.1725363956225103,
+       -0.007356961484070103
+      ],
+      "errors": [
+       0.010536395622510297,
+       -0.007356961484070103,
+       0.022982561549030008
+      ],
+      "sim_time": 24.825000000027522
+     },
+     "gripped": {
+      "signature_fraction": 0.0658,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6159,
+       "bottom_beam_fraction": 0.1788,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 27.72500000004137
+     },
+     "lifted": {
+      "held_iou": 0.748,
+      "sim_time": 31.425000000059036
+     },
+     "route_done": {
+      "sim_time": 52.32500000015883
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.32500000019703,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17270578037230647,
+       0.003810864324021033
+      ],
+      "errors": [
+       0.010705780372306462,
+       0.003810864324021033,
+       -0.01964195428702819
+      ],
+      "sim_time": 26.825000000037072
+     },
+     "gripped": {
+      "signature_fraction": 0.0975,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.5656,
+       "bottom_beam_fraction": 0.3304,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 29.72500000005092
+     },
+     "lifted": {
+      "held_iou": 0.882,
+      "sim_time": 31.425000000059036
+     },
+     "route_done": {
+      "sim_time": 52.32500000015883
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.32500000019703,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010536395622510297,
+     -0.007356961484070103,
+     0.022982561549030008
+    ],
+    "r2": [
+     0.010705780372306462,
+     0.003810864324021033,
+     -0.01964195428702819
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     2.1279,
+     -0.4977,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     2.0976,
+     -0.5252
+    ],
+    "final_error_m": 0.0409,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 1.53,
+    "max_pair_distance_dev_m": 0.0308,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.998,
+   "min_held_iou": 0.648,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 253,
+    "r2": 258
+   },
+   "sim_seconds": 60.325,
+   "wall_seconds": 86.0,
+   "load_average_start": [
+    6.72,
+    6.14,
+    4.71
+   ],
+   "load_average_end": [
+    8.49,
+    6.69,
+    5.04
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 300,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/625",
+   "result_sha256": "ab988c1a7890964bee5d16bf5750022eaefefb184b41898361cfa96e24d9b004",
+   "events_sha256": "b1b108e21255cadc0fc75c431f83d68a450fe873492569c0f9b6c80db4faba80",
+   "seed": 625,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17343196430643695,
+       -0.0037047253007831717
+      ],
+      "errors": [
+       0.011431964306436948,
+       -0.0037047253007831717,
+       0.012527450393063914
+      ],
+      "sim_time": 24.025000000023702
+     },
+     "gripped": {
+      "signature_fraction": 0.0177,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6134,
+       "bottom_beam_fraction": 0.1376,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.92500000003755
+     },
+     "lifted": {
+      "held_iou": 0.811,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17256746800406844,
+       -0.005326349950221623
+      ],
+      "errors": [
+       0.010567468004068437,
+       -0.005326349950221623,
+       0.019811192811423125
+      ],
+      "sim_time": 33.22500000006763
+     },
+     "gripped": {
+      "signature_fraction": 0.0704,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6125,
+       "bottom_beam_fraction": 0.2004,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 36.12500000008148
+     },
+     "lifted": {
+      "held_iou": 0.794,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011431964306436948,
+     -0.0037047253007831717,
+     0.012527450393063914
+    ],
+    "r2": [
+     0.010567468004068437,
+     -0.005326349950221623,
+     0.019811192811423125
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.6385,
+     0.1902,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.6345,
+     0.1639
+    ],
+    "final_error_m": 0.0266,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 1.03,
+    "max_pair_distance_dev_m": 0.0322,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.016,
+   "min_held_iou": 0.456,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 251,
+    "r2": 274
+   },
+   "sim_seconds": 66.732,
+   "wall_seconds": 104.6,
+   "load_average_start": [
+    8.21,
+    6.66,
+    5.04
+   ],
+   "load_average_end": [
+    7.49,
+    6.72,
+    5.23
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 332,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "ON",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/ON/626",
+   "result_sha256": "977934f5e796c249a22888035fbf5f5c24e859353a743a35ef571de8875613d9",
+   "events_sha256": "68c48547174d2eaad47998359066ab7d08847667d5eb6543ed9d1a86e9a89b3a",
+   "seed": 626,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "LOAD_CHANGED_IN_CARRY",
+    "r2": "PARTNER_ABORT"
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17223449455058437,
+       -0.006502873858044718
+      ],
+      "errors": [
+       0.010234494550584367,
+       -0.006502873858044718,
+       0.01771506889527183
+      ],
+      "sim_time": 32.42500000006381
+     },
+     "gripped": {
+      "signature_fraction": 0.0054,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6087,
+       "bottom_beam_fraction": 0.2486,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 35.32500000007766
+     },
+     "lifted": {
+      "held_iou": 0.863,
+      "sim_time": 37.025000000085775
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17286022750948524,
+       -0.006027753831391154
+      ],
+      "errors": [
+       0.010860227509485232,
+       -0.006027753831391154,
+       -0.027522471549294502
+      ],
+      "sim_time": 24.825000000027522
+     },
+     "gripped": {
+      "signature_fraction": 0.0542,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6165,
+       "bottom_beam_fraction": 0.1353,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 27.72500000004137
+     },
+     "lifted": {
+      "held_iou": 0.747,
+      "sim_time": 36.9250000000853
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010234494550584367,
+     -0.006502873858044718,
+     0.01771506889527183
+    ],
+    "r2": [
+     0.010860227509485232,
+     -0.006027753831391154,
+     -0.027522471549294502
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": null,
+    "open": null
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 11,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.0183,
+     -0.609,
+     0.0615
+    ],
+    "beam_final_tilt_deg": 0.58,
+    "planned_beam_xy": [
+     1.6695,
+     -0.5573
+    ],
+    "final_error_m": 0.6532,
+    "on_floor_released": false,
+    "max_tilt_deg_lifted": 0.81,
+    "max_pair_distance_dev_m": 0.0288,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      6.085789795768689,
+      6.072591457209038
+     ],
+     "r2": [
+      5.430205659790496,
+      5.446015097549001
+     ]
+    },
+    "completed_sequence": false,
+    "success_gt": false
+   },
+   "false_load_alarm": true,
+   "min_hold_ratio": 0.423,
+   "min_held_iou": 0.038,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 81,
+    "r2": 63
+   },
+   "sim_seconds": 38.325,
+   "wall_seconds": 53.0,
+   "load_average_start": [
+    7.53,
+    6.74,
+    5.25
+   ],
+   "load_average_end": [
+    9.29,
+    7.28,
+    5.53
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 190,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/621",
+   "result_sha256": "dde682a7c31bbabad43cdfd3f0ce35c2f3acacd440a7a0743b5ef1bb445690b7",
+   "events_sha256": "71e1751187d93a0f321c4a0030af4f8245c66441460ac95f3f471dc3c3295c2f",
+   "seed": 621,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17287407385522882,
+       -0.002710562929316817
+      ],
+      "errors": [
+       0.010874073855228816,
+       -0.002710562929316817,
+       -0.022774148593696322
+      ],
+      "sim_time": 26.025000000033252
+     },
+     "gripped": {
+      "signature_fraction": 0.0052,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6139,
+       "bottom_beam_fraction": 0.1239,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 28.9250000000471
+     },
+     "lifted": {
+      "held_iou": 0.788,
+      "sim_time": 30.625000000055216
+     },
+     "route_done": {
+      "sim_time": 51.52500000015501
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 59.52500000019321,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17254262249406135,
+       0.005175764823138889
+      ],
+      "errors": [
+       0.010542622494061349,
+       0.005175764823138889,
+       0.022757753805447745
+      ],
+      "sim_time": 24.025000000023702
+     },
+     "gripped": {
+      "signature_fraction": 0.0534,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.609,
+       "bottom_beam_fraction": 0.1351,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.92500000003755
+     },
+     "lifted": {
+      "held_iou": 0.816,
+      "sim_time": 30.52500000005474
+     },
+     "route_done": {
+      "sim_time": 51.42500000015453
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 59.42500000019273,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010874073855228816,
+     -0.002710562929316817,
+     -0.022774148593696322
+    ],
+    "r2": [
+     0.010542622494061349,
+     0.005175764823138889,
+     0.022757753805447745
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.793,
+     -0.9938,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.7646,
+     -0.9912
+    ],
+    "final_error_m": 0.0285,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.54,
+    "max_pair_distance_dev_m": 0.03,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.98,
+   "min_held_iou": 0.141,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 256,
+    "r2": 251
+   },
+   "sim_seconds": 59.525,
+   "wall_seconds": 75.9,
+   "load_average_start": [
+    4.84,
+    4.59,
+    3.8
+   ],
+   "load_average_end": [
+    7.46,
+    5.55,
+    4.24
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/622",
+   "result_sha256": "0c04d3d2d4664f108832d82c3c3fc70741343d48794fddec95c1024f98181e17",
+   "events_sha256": "41e2e68dadecb809296ac2377aca15c5a1066265c9576b2ce30d219b260061ad",
+   "seed": 622,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17339442326126517,
+       0.0033023347165649884
+      ],
+      "errors": [
+       0.011394423261265163,
+       0.0033023347165649884,
+       0.031718535161189595
+      ],
+      "sim_time": 23.625000000021792
+     },
+     "gripped": {
+      "signature_fraction": 0.066,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6076,
+       "bottom_beam_fraction": 0.1841,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.52500000003564
+     },
+     "lifted": {
+      "held_iou": 0.794,
+      "sim_time": 31.825000000060946
+     },
+     "route_done": {
+      "sim_time": 52.72500000016074
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.72500000019894,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17393479901977743,
+       -0.004300199012977419
+      ],
+      "errors": [
+       0.011934799019777426,
+       -0.004300199012977419,
+       -0.021742453469621666
+      ],
+      "sim_time": 27.225000000038982
+     },
+     "gripped": {
+      "signature_fraction": 0.0671,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6084,
+       "bottom_beam_fraction": 0.187,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 30.12500000005283
+     },
+     "lifted": {
+      "held_iou": 0.803,
+      "sim_time": 31.825000000060946
+     },
+     "route_done": {
+      "sim_time": 52.72500000016074
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.72500000019894,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011394423261265163,
+     0.0033023347165649884,
+     0.031718535161189595
+    ],
+    "r2": [
+     0.011934799019777426,
+     -0.004300199012977419,
+     -0.021742453469621666
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.6763,
+     0.1827,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.6827,
+     0.1509
+    ],
+    "final_error_m": 0.0324,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.25,
+    "max_pair_distance_dev_m": 0.0346,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.013,
+   "min_held_iou": 0.855,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 250,
+    "r2": 259
+   },
+   "sim_seconds": 60.725,
+   "wall_seconds": 82.7,
+   "load_average_start": [
+    7.46,
+    5.55,
+    4.24
+   ],
+   "load_average_end": [
+    7.11,
+    5.92,
+    4.5
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/623",
+   "result_sha256": "b8dab54dff3b3b119c0d1845acd03b6a0d8d097e991460295ffc86a17f408913",
+   "events_sha256": "d2a3c7485af8abb82662416be56649e3aee01c6d73a94ad0dc50bf59224d1628",
+   "seed": 623,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.1725915600862273,
+       0.0015978806802781295
+      ],
+      "errors": [
+       0.010591560086227303,
+       0.0015978806802781295,
+       0.009114233975397696
+      ],
+      "sim_time": 33.22500000006763
+     },
+     "gripped": {
+      "signature_fraction": 0.0048,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6068,
+       "bottom_beam_fraction": 0.1821,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 36.12500000008148
+     },
+     "lifted": {
+      "held_iou": 0.842,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17287914051505765,
+       0.0052276425388164795
+      ],
+      "errors": [
+       0.010879140515057645,
+       0.0052276425388164795,
+       0.033748203837256664
+      ],
+      "sim_time": 23.225000000019882
+     },
+     "gripped": {
+      "signature_fraction": 0.0581,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6101,
+       "bottom_beam_fraction": 0.1539,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.12500000003373
+     },
+     "lifted": {
+      "held_iou": 0.798,
+      "sim_time": 37.72500000008912
+     },
+     "route_done": {
+      "sim_time": 58.62500000018891
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.63175000015234,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010591560086227303,
+     0.0015978806802781295,
+     0.009114233975397696
+    ],
+    "r2": [
+     0.010879140515057645,
+     0.0052276425388164795,
+     0.033748203837256664
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.5426,
+     -0.6305,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.5171,
+     -0.6416
+    ],
+    "final_error_m": 0.0279,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.68,
+    "max_pair_distance_dev_m": 0.0301,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.863,
+   "min_held_iou": 0.05,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 273,
+    "r2": 249
+   },
+   "sim_seconds": 66.732,
+   "wall_seconds": 82.4,
+   "load_average_start": [
+    7.11,
+    5.92,
+    4.5
+   ],
+   "load_average_end": [
+    6.72,
+    6.14,
+    4.71
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/624",
+   "result_sha256": "a1272faaa3f7baf99b95333a8b49b2a15b546d1f4517e10665e3a565b2cf988d",
+   "events_sha256": "26d792c6cda5df6d574c05d81a7787f9ee7abd0d2099ac016e2033ed684dfc34",
+   "seed": 624,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.1725363956225103,
+       -0.007356961484070103
+      ],
+      "errors": [
+       0.010536395622510297,
+       -0.007356961484070103,
+       0.022982561549030008
+      ],
+      "sim_time": 24.825000000027522
+     },
+     "gripped": {
+      "signature_fraction": 0.0658,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6159,
+       "bottom_beam_fraction": 0.1788,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 27.72500000004137
+     },
+     "lifted": {
+      "held_iou": 0.748,
+      "sim_time": 31.425000000059036
+     },
+     "route_done": {
+      "sim_time": 52.32500000015883
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.32500000019703,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17270578037230647,
+       0.003810864324021033
+      ],
+      "errors": [
+       0.010705780372306462,
+       0.003810864324021033,
+       -0.01964195428702819
+      ],
+      "sim_time": 26.825000000037072
+     },
+     "gripped": {
+      "signature_fraction": 0.0975,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.5656,
+       "bottom_beam_fraction": 0.3304,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 29.72500000005092
+     },
+     "lifted": {
+      "held_iou": 0.882,
+      "sim_time": 31.425000000059036
+     },
+     "route_done": {
+      "sim_time": 52.32500000015883
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.32500000019703,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010536395622510297,
+     -0.007356961484070103,
+     0.022982561549030008
+    ],
+    "r2": [
+     0.010705780372306462,
+     0.003810864324021033,
+     -0.01964195428702819
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     2.1279,
+     -0.4977,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     2.0976,
+     -0.5252
+    ],
+    "final_error_m": 0.0409,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 1.53,
+    "max_pair_distance_dev_m": 0.0308,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.998,
+   "min_held_iou": 0.648,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 253,
+    "r2": 258
+   },
+   "sim_seconds": 60.325,
+   "wall_seconds": 85.9,
+   "load_average_start": [
+    6.72,
+    6.14,
+    4.71
+   ],
+   "load_average_end": [
+    8.49,
+    6.69,
+    5.04
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/625",
+   "result_sha256": "4599df87d9e2ed20a5afb95dbe48184aebe6adf402aeb00d6eadaf0e08a0de30",
+   "events_sha256": "b1b108e21255cadc0fc75c431f83d68a450fe873492569c0f9b6c80db4faba80",
+   "seed": 625,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17343196430643695,
+       -0.0037047253007831717
+      ],
+      "errors": [
+       0.011431964306436948,
+       -0.0037047253007831717,
+       0.012527450393063914
+      ],
+      "sim_time": 24.025000000023702
+     },
+     "gripped": {
+      "signature_fraction": 0.0177,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6134,
+       "bottom_beam_fraction": 0.1376,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.92500000003755
+     },
+     "lifted": {
+      "held_iou": 0.811,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17256746800406844,
+       -0.005326349950221623
+      ],
+      "errors": [
+       0.010567468004068437,
+       -0.005326349950221623,
+       0.019811192811423125
+      ],
+      "sim_time": 33.22500000006763
+     },
+     "gripped": {
+      "signature_fraction": 0.0704,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6125,
+       "bottom_beam_fraction": 0.2004,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 36.12500000008148
+     },
+     "lifted": {
+      "held_iou": 0.794,
+      "sim_time": 37.825000000089595
+     },
+     "route_done": {
+      "sim_time": 58.72500000018939
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 66.73200000014997,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011431964306436948,
+     -0.0037047253007831717,
+     0.012527450393063914
+    ],
+    "r2": [
+     0.010567468004068437,
+     -0.005326349950221623,
+     0.019811192811423125
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.0,
+    "open": 0.0
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 113,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.6385,
+     0.1902,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.6345,
+     0.1639
+    ],
+    "final_error_m": 0.0266,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 1.03,
+    "max_pair_distance_dev_m": 0.0322,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.016,
+   "min_held_iou": 0.456,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 251,
+    "r2": 274
+   },
+   "sim_seconds": 66.732,
+   "wall_seconds": 104.4,
+   "load_average_start": [
+    8.21,
+    6.66,
+    5.04
+   ],
+   "load_average_end": [
+    7.49,
+    6.72,
+    5.23
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "arm": "OFF",
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/cohort-v2-5efffcd/OFF/626",
+   "result_sha256": "f3287121ef4f10714311cc2b5fdb63ad38be7e2a379f0812734ee563aa80a918",
+   "events_sha256": "974fbd68437356d6c0bf4f9df914d2c6cbd8327e7e4165d46ab0cbd2566982d3",
+   "seed": 626,
+   "condition": "own_only",
+   "source_sha": "5efffcde1e13adb13a836ca74d4180ed4cc483fc",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "carry"
+   },
+   "failures": {
+    "r1": "LOAD_CHANGED_IN_CARRY",
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17223449455058437,
+       -0.006502873858044718
+      ],
+      "errors": [
+       0.010234494550584367,
+       -0.006502873858044718,
+       0.01771506889527183
+      ],
+      "sim_time": 32.42500000006381
+     },
+     "gripped": {
+      "signature_fraction": 0.0054,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6087,
+       "bottom_beam_fraction": 0.2486,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 35.32500000007766
+     },
+     "lifted": {
+      "held_iou": 0.863,
+      "sim_time": 37.025000000085775
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17286022750948524,
+       -0.006027753831391154
+      ],
+      "errors": [
+       0.010860227509485232,
+       -0.006027753831391154,
+       -0.027522471549294502
+      ],
+      "sim_time": 24.825000000027522
+     },
+     "gripped": {
+      "signature_fraction": 0.0542,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6165,
+       "bottom_beam_fraction": 0.1353,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 27.72500000004137
+     },
+     "lifted": {
+      "held_iou": 0.747,
+      "sim_time": 36.9250000000853
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.010234494550584367,
+     -0.006502873858044718,
+     0.01771506889527183
+    ],
+    "r2": [
+     0.010860227509485232,
+     -0.006027753831391154,
+     -0.027522471549294502
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": null,
+    "open": null
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 11,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.0183,
+     -0.609,
+     0.0615
+    ],
+    "beam_final_tilt_deg": 0.58,
+    "planned_beam_xy": [
+     1.6695,
+     -0.5573
+    ],
+    "final_error_m": 0.6532,
+    "on_floor_released": false,
+    "max_tilt_deg_lifted": 0.81,
+    "max_pair_distance_dev_m": 0.0288,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      6.085789795768689,
+      6.072591457209038
+     ],
+     "r2": [
+      5.430205659790496,
+      5.446015097549001
+     ]
+    },
+    "completed_sequence": false,
+    "success_gt": false
+   },
+   "false_load_alarm": true,
+   "min_hold_ratio": 0.423,
+   "min_held_iou": 0.038,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 81,
+    "r2": 64
+   },
+   "sim_seconds": 38.325,
+   "wall_seconds": 53.0,
+   "load_average_start": [
+    7.53,
+    6.74,
+    5.25
+   ],
+   "load_average_end": [
+    9.29,
+    7.28,
+    5.53
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  }
+ ],
+ "missing": [],
+ "report_blocked": false,
+ "gates": {
+  "ON": {
+   "G1_aligned_and_both_gripped": "6/6",
+   "G1_pass": true,
+   "G2_align_timeouts": 0,
+   "G2_max_posture_switches": 2,
+   "G2_commit_backoffs": 0,
+   "G2_pass": true,
+   "G3_barrier_skew_le_0.2s": true,
+   "G3_channel_rejected": 0,
+   "G4_placed_within_0.10m": "5/6",
+   "G4_pass": false,
+   "G5": true,
+   "descriptive": {
+    "failures": {
+     "621": {
+      "r1": null,
+      "r2": null
+     },
+     "622": {
+      "r1": null,
+      "r2": null
+     },
+     "623": {
+      "r1": null,
+      "r2": null
+     },
+     "624": {
+      "r1": null,
+      "r2": null
+     },
+     "625": {
+      "r1": null,
+      "r2": null
+     },
+     "626": {
+      "r1": "LOAD_CHANGED_IN_CARRY",
+      "r2": "PARTNER_ABORT"
+     }
+    },
+    "barrier_timeouts": 0,
+    "partner_aligning_waits": {
+     "621": {
+      "r1": 0,
+      "r2": 0
+     },
+     "622": {
+      "r1": 0,
+      "r2": 0
+     },
+     "623": {
+      "r1": 0,
+      "r2": 0
+     },
+     "624": {
+      "r1": 0,
+      "r2": 0
+     },
+     "625": {
+      "r1": 0,
+      "r2": 0
+     },
+     "626": {
+      "r1": 0,
+      "r2": 0
+     }
+    },
+    "sim_seconds": {
+     "621": 59.525,
+     "622": 60.725,
+     "623": 66.732,
+     "624": 60.325,
+     "625": 66.732,
+     "626": 38.325
+    },
+    "commands": {
+     "621": {
+      "r1": 256,
+      "r2": 251
+     },
+     "622": {
+      "r1": 250,
+      "r2": 259
+     },
+     "623": {
+      "r1": 273,
+      "r2": 249
+     },
+     "624": {
+      "r1": 253,
+      "r2": 258
+     },
+     "625": {
+      "r1": 251,
+      "r2": 274
+     },
+     "626": {
+      "r1": 81,
+      "r2": 63
+     }
+    },
+    "final_error_m": {
+     "621": 0.0285,
+     "622": 0.0324,
+     "623": 0.0279,
+     "624": 0.0409,
+     "625": 0.0266,
+     "626": 0.6532
+    }
+   }
+  },
+  "OFF": {
+   "G1_aligned_and_both_gripped": "6/6",
+   "G1_pass": true,
+   "G2_align_timeouts": 0,
+   "G2_max_posture_switches": 2,
+   "G2_commit_backoffs": 0,
+   "G2_pass": true,
+   "G3_barrier_skew_le_0.2s": true,
+   "G3_channel_rejected": 0,
+   "G4_placed_within_0.10m": "5/6",
+   "G4_pass": false,
+   "G5": true,
+   "descriptive": {
+    "failures": {
+     "621": {
+      "r1": null,
+      "r2": null
+     },
+     "622": {
+      "r1": null,
+      "r2": null
+     },
+     "623": {
+      "r1": null,
+      "r2": null
+     },
+     "624": {
+      "r1": null,
+      "r2": null
+     },
+     "625": {
+      "r1": null,
+      "r2": null
+     },
+     "626": {
+      "r1": "LOAD_CHANGED_IN_CARRY",
+      "r2": null
+     }
+    },
+    "barrier_timeouts": 0,
+    "partner_aligning_waits": {
+     "621": {
+      "r1": 0,
+      "r2": 0
+     },
+     "622": {
+      "r1": 0,
+      "r2": 0
+     },
+     "623": {
+      "r1": 0,
+      "r2": 0
+     },
+     "624": {
+      "r1": 0,
+      "r2": 0
+     },
+     "625": {
+      "r1": 0,
+      "r2": 0
+     },
+     "626": {
+      "r1": 0,
+      "r2": 0
+     }
+    },
+    "sim_seconds": {
+     "621": 59.525,
+     "622": 60.725,
+     "623": 66.732,
+     "624": 60.325,
+     "625": 66.732,
+     "626": 38.325
+    },
+    "commands": {
+     "621": {
+      "r1": 256,
+      "r2": 251
+     },
+     "622": {
+      "r1": 250,
+      "r2": 259
+     },
+     "623": {
+      "r1": 273,
+      "r2": 249
+     },
+     "624": {
+      "r1": 253,
+      "r2": 258
+     },
+     "625": {
+      "r1": 251,
+      "r2": 274
+     },
+     "626": {
+      "r1": 81,
+      "r2": 64
+     }
+    },
+    "final_error_m": {
+     "621": 0.0285,
+     "622": 0.0324,
+     "623": 0.0279,
+     "624": 0.0409,
+     "625": 0.0266,
+     "626": 0.6532
+    }
+   }
+  }
+ },
+ "development_runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/611-on-95923c1",
+   "result_sha256": "4127c35e0f978db7a28568c08d6c965d7681317d199c8e19bf19000bf7446831",
+   "events_sha256": "44ca87fd4b0009c23b6873478fcd9538d37e52dc756719ff83745315db503571",
+   "seed": 611,
+   "condition": "own_only",
+   "source_sha": "95923c109f2e5faa1168c0a786f526fe0e401d57",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.1731008631377474,
+       0.005281206398041237
+      ],
+      "errors": [
+       0.011100863137747385,
+       0.005281206398041237,
+       -0.006518046085508844
+      ],
+      "sim_time": 24.825000000027522
+     },
+     "gripped": {
+      "signature_fraction": 0.0467,
+      "sim_time": 27.72500000004137
+     },
+     "lifted": {
+      "held_iou": 0.639,
+      "sim_time": 29.425000000049486
+     },
+     "route_done": {
+      "sim_time": 50.32500000014928
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 58.32500000018748,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.17284526417147514,
+       0.0053924509602019536
+      ],
+      "errors": [
+       0.010845264171475133,
+       0.0053924509602019536,
+       0.033486892456955394
+      ],
+      "sim_time": 24.025000000023702
+     },
+     "gripped": {
+      "signature_fraction": 0.0609,
+      "sim_time": 26.92500000003755
+     },
+     "lifted": {
+      "held_iou": 0.83,
+      "sim_time": 29.32500000004901
+     },
+     "route_done": {
+      "sim_time": 50.2250000001488
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 58.225000000187,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011100863137747385,
+     0.005281206398041237,
+     -0.006518046085508844
+    ],
+    "r2": [
+     0.010845264171475133,
+     0.0053924509602019536,
+     0.033486892456955394
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.6877,
+     -1.0936,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.6619,
+     -1.0907
+    ],
+    "final_error_m": 0.026,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.6,
+    "max_pair_distance_dev_m": 0.032,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.021,
+   "min_held_iou": 0.809,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 253,
+    "r2": 251
+   },
+   "sim_seconds": 58.325,
+   "wall_seconds": 104.0,
+   "load_average_start": [
+    6.73,
+    6.45,
+    8.04
+   ],
+   "load_average_end": [
+    8.52,
+    7.34,
+    8.22
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_min_signature": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 290,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/612-off-a892890",
+   "result_sha256": "cf62be9ebe6aca609de34e8fcd5c6d3d3c1979d472e031875a9835ec718630c4",
+   "events_sha256": "2d0484d0e7f6af1c98c083d06dc8178ef92afc34be6318df78d1882cbbb59182",
+   "seed": 612,
+   "condition": "own_only",
+   "source_sha": "a8928900552152c5f9a1bde3373b49e381f0a275",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17347196759808756,
+       0.0007131228163485301
+      ],
+      "errors": [
+       0.011471967598087551,
+       0.0007131228163485301,
+       0.016667214899029847
+      ],
+      "sim_time": 27.225000000038982
+     },
+     "gripped": {
+      "signature_fraction": 0.0474,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6167,
+       "bottom_beam_fraction": 0.1345,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 30.12500000005283
+     },
+     "lifted": {
+      "held_iou": 0.678,
+      "sim_time": 31.825000000060946
+     },
+     "route_done": {
+      "sim_time": 52.72500000016074
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.72500000019894,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.1735482500243693,
+       -0.005283904398023788
+      ],
+      "errors": [
+       0.011548250024369294,
+       -0.005283904398023788,
+       -0.030344969400872984
+      ],
+      "sim_time": 23.225000000019882
+     },
+     "gripped": {
+      "signature_fraction": 0.0563,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6099,
+       "bottom_beam_fraction": 0.1444,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 26.12500000003373
+     },
+     "lifted": {
+      "held_iou": 0.826,
+      "sim_time": 31.72500000006047
+     },
+     "route_done": {
+      "sim_time": 52.62500000016026
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 60.62500000019846,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011471967598087551,
+     0.0007131228163485301,
+     0.016667214899029847
+    ],
+    "r2": [
+     0.011548250024369294,
+     -0.005283904398023788,
+     -0.030344969400872984
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.1,
+    "carry": 0.1,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 112,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.825,
+     0.2498,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.8284,
+     0.2132
+    ],
+    "final_error_m": 0.0367,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.54,
+    "max_pair_distance_dev_m": 0.0321,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 1.009,
+   "min_held_iou": 0.679,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 259,
+    "r2": 249
+   },
+   "sim_seconds": 60.725,
+   "wall_seconds": 100.4,
+   "load_average_start": [
+    7.86,
+    7.36,
+    8.12
+   ],
+   "load_average_end": [
+    8.09,
+    7.64,
+    8.15
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/613-off-0a5e5d9",
+   "result_sha256": "44075b0c8569e2ef9b267b4085b390a230053750a2671c15a5a15de77c28304f",
+   "events_sha256": "0a19c20628c6f0886917a3cb734dc36dbe61501223526a53b9e3b9868f94c5d3",
+   "seed": 613,
+   "condition": "own_only",
+   "source_sha": "0a5e5d9de90326a1b782bfb26e58b7cf5972a831",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17308405659742504,
+       0.0007608802759447395
+      ],
+      "errors": [
+       0.011084056597425035,
+       0.0007608802759447395,
+       0.0060760636073648
+      ],
+      "sim_time": 25.625000000031342
+     },
+     "gripped": {
+      "signature_fraction": 0.0047,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6077,
+       "bottom_beam_fraction": 0.1354,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 28.52500000004519
+     },
+     "lifted": {
+      "held_iou": 0.901,
+      "sim_time": 31.025000000057126
+     },
+     "route_done": {
+      "sim_time": 51.92500000015692
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 63.52500000021231,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.1724526995887078,
+       -0.0017380793164481277
+      ],
+      "errors": [
+       0.010452699588707787,
+       -0.0017380793164481277,
+       0.010500758465715885
+      ],
+      "sim_time": 26.425000000035162
+     },
+     "gripped": {
+      "signature_fraction": 0.0511,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6135,
+       "bottom_beam_fraction": 0.1193,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 29.32500000004901
+     },
+     "lifted": {
+      "held_iou": 0.758,
+      "sim_time": 31.025000000057126
+     },
+     "route_done": {
+      "sim_time": 51.92500000015692
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 63.42500000021183,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011084056597425035,
+     0.0007608802759447395,
+     0.0060760636073648
+    ],
+    "r2": [
+     0.010452699588707787,
+     -0.0017380793164481277,
+     0.010500758465715885
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 124,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.225,
+     0.0135,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.2258,
+     -0.0136
+    ],
+    "final_error_m": 0.0271,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.99,
+    "max_pair_distance_dev_m": 0.0307,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.603,
+   "min_held_iou": 0.372,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 254,
+    "r2": 257
+   },
+   "sim_seconds": 63.525,
+   "wall_seconds": 64.1,
+   "load_average_start": [
+    5.19,
+    3.82,
+    3.39
+   ],
+   "load_average_end": [
+    8.59,
+    5.02,
+    3.87
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": false,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 0,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/613-on-0a5e5d9",
+   "result_sha256": "1347142a87304dbf8c0c893690032934761a769356bfc433243b1128fe91af40",
+   "events_sha256": "0a19c20628c6f0886917a3cb734dc36dbe61501223526a53b9e3b9868f94c5d3",
+   "seed": 613,
+   "condition": "own_only",
+   "source_sha": "0a5e5d9de90326a1b782bfb26e58b7cf5972a831",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17308405659742504,
+       0.0007608802759447395
+      ],
+      "errors": [
+       0.011084056597425035,
+       0.0007608802759447395,
+       0.0060760636073648
+      ],
+      "sim_time": 25.625000000031342
+     },
+     "gripped": {
+      "signature_fraction": 0.0047,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6077,
+       "bottom_beam_fraction": 0.1354,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 28.52500000004519
+     },
+     "lifted": {
+      "held_iou": 0.901,
+      "sim_time": 31.025000000057126
+     },
+     "route_done": {
+      "sim_time": 51.92500000015692
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 63.52500000021231,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.1724526995887078,
+       -0.0017380793164481277
+      ],
+      "errors": [
+       0.010452699588707787,
+       -0.0017380793164481277,
+       0.010500758465715885
+      ],
+      "sim_time": 26.425000000035162
+     },
+     "gripped": {
+      "signature_fraction": 0.0511,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6135,
+       "bottom_beam_fraction": 0.1193,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 29.32500000004901
+     },
+     "lifted": {
+      "held_iou": 0.758,
+      "sim_time": 31.025000000057126
+     },
+     "route_done": {
+      "sim_time": 51.92500000015692
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 63.42500000021183,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011084056597425035,
+     0.0007608802759447395,
+     0.0060760636073648
+    ],
+    "r2": [
+     0.010452699588707787,
+     -0.0017380793164481277,
+     0.010500758465715885
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": 0.0,
+    "lower": 0.1,
+    "open": 0.1
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 124,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     1.225,
+     0.0135,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.0,
+    "planned_beam_xy": [
+     1.2258,
+     -0.0136
+    ],
+    "final_error_m": 0.0271,
+    "on_floor_released": true,
+    "max_tilt_deg_lifted": 0.99,
+    "max_pair_distance_dev_m": 0.0307,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      0.0,
+      0.0
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": true,
+    "success_gt": true
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": 0.603,
+   "min_held_iou": 0.372,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 254,
+    "r2": 257
+   },
+   "sim_seconds": 63.525,
+   "wall_seconds": 64.1,
+   "load_average_start": [
+    5.19,
+    3.82,
+    3.39
+   ],
+   "load_average_end": [
+    8.59,
+    5.02,
+    3.87
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 315,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/613-on-95923c1",
+   "result_sha256": "bf4ae21cab51bf1af7dc959245fd90b3c6a31f77078ad09cc2fae58dcfaaddb5",
+   "events_sha256": "d18f8f2a844c8f7f0463198067f88689c63e1c7226122313a387a53fd666fadb",
+   "seed": 613,
+   "condition": "own_only",
+   "source_sha": "95923c109f2e5faa1168c0a786f526fe0e401d57",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "GRIP_NOT_SEEN",
+    "r2": "PARTNER_ABORT"
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17308405659742504,
+       0.0007608802759447395
+      ],
+      "errors": [
+       0.011084056597425035,
+       0.0007608802759447395,
+       0.0060760636073648
+      ],
+      "sim_time": 25.625000000031342
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.1724526995887078,
+       -0.0017380793164481277
+      ],
+      "errors": [
+       0.010452699588707787,
+       -0.0017380793164481277,
+       0.010500758465715885
+      ],
+      "sim_time": 26.425000000035162
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011084056597425035,
+     0.0007608802759447395,
+     0.0060760636073648
+    ],
+    "r2": [
+     0.010452699588707787,
+     -0.0017380793164481277,
+     0.010500758465715885
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": null,
+    "carry": null,
+    "lower": null,
+    "open": null
+   },
+   "evaluation_only": {
+    "both_gripped_gt": false,
+    "both_gripped_lifted_samples": 0,
+    "lifted_clear_gt": false,
+    "beam_final_xyz": [
+     0.9,
+     -0.5999,
+     -0.0001
+    ],
+    "beam_final_tilt_deg": 0.07,
+    "planned_beam_xy": [
+     1.2258,
+     -0.0136
+    ],
+    "final_error_m": 0.6707,
+    "on_floor_released": false,
+    "max_tilt_deg_lifted": 0.0,
+    "max_pair_distance_dev_m": 0.0,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      5.889691360278721,
+      5.853840454498017
+     ],
+     "r2": [
+      0.0,
+      0.0
+     ]
+    },
+    "completed_sequence": false,
+    "success_gt": false
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": null,
+   "min_held_iou": null,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 53,
+    "r2": 56
+   },
+   "sim_seconds": 28.525,
+   "wall_seconds": 53.0,
+   "load_average_start": [
+    6.73,
+    6.45,
+    8.04
+   ],
+   "load_average_end": [
+    9.32,
+    7.24,
+    8.25
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_min_signature": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 140,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926/dev-v2/613-on-a892890",
+   "result_sha256": "4362e66c32a649bca5782edc6c09d30944507d0722739cf907f6ec7c7add5272",
+   "events_sha256": "7f8843c59b7b27eedbe36db8d7c636d3c9bafabfe51cd79609d0a99dae6f007d",
+   "seed": 613,
+   "condition": "own_only",
+   "source_sha": "a8928900552152c5f9a1bde3373b49e381f0a275",
+   "dirty_source": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "LOAD_NOT_HELD_AFTER_LIFT",
+    "r2": "PARTNER_ABORT"
+   },
+   "claims": {
+    "r1": {
+     "aligned": {
+      "grip_base_m": [
+       0.17308405659742504,
+       0.0007608802759447395
+      ],
+      "errors": [
+       0.011084056597425035,
+       0.0007608802759447395,
+       0.0060760636073648
+      ],
+      "sim_time": 25.625000000031342
+     },
+     "gripped": {
+      "signature_fraction": 0.0047,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6077,
+       "bottom_beam_fraction": 0.1354,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 28.52500000004519
+     }
+    },
+    "r2": {
+     "aligned": {
+      "grip_base_m": [
+       0.1724526995887078,
+       -0.0017380793164481277
+      ],
+      "errors": [
+       0.010452699588707787,
+       -0.0017380793164481277,
+       0.010500758465715885
+      ],
+      "sim_time": 26.425000000035162
+     },
+     "gripped": {
+      "signature_fraction": 0.0511,
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6135,
+       "bottom_beam_fraction": 0.1193,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "sim_time": 29.32500000004901
+     }
+    }
+   },
+   "aligned": {
+    "r1": true,
+    "r2": true
+   },
+   "align_errors": {
+    "r1": [
+     0.011084056597425035,
+     0.0007608802759447395,
+     0.0060760636073648
+    ],
+    "r2": [
+     0.010452699588707787,
+     -0.0017380793164481277,
+     0.010500758465715885
+    ]
+   },
+   "barrier_go_skew_s": {
+    "lift": 0.0,
+    "carry": null,
+    "lower": null,
+    "open": null
+   },
+   "evaluation_only": {
+    "both_gripped_gt": true,
+    "both_gripped_lifted_samples": 4,
+    "lifted_clear_gt": true,
+    "beam_final_xyz": [
+     0.9006,
+     -0.6,
+     0.0611
+    ],
+    "beam_final_tilt_deg": 0.23,
+    "planned_beam_xy": [
+     1.2258,
+     -0.0136
+    ],
+    "final_error_m": 0.6705,
+    "on_floor_released": false,
+    "max_tilt_deg_lifted": 0.23,
+    "max_pair_distance_dev_m": 0.0307,
+    "weld_eq_active_max": 0,
+    "final_finger_n": {
+     "r1": [
+      5.739636314171998,
+      5.735294339870606
+     ],
+     "r2": [
+      5.491219739444354,
+      5.497207972299483
+     ]
+    },
+    "completed_sequence": false,
+    "success_gt": false
+   },
+   "false_load_alarm": false,
+   "min_hold_ratio": null,
+   "min_held_iou": null,
+   "stub_approach": [],
+   "pose_source": "none",
+   "counts_as_m1": false,
+   "commands": {
+    "r1": 53,
+    "r2": 56
+   },
+   "sim_seconds": 31.025,
+   "wall_seconds": 53.4,
+   "load_average_start": [
+    7.86,
+    7.36,
+    8.12
+   ],
+   "load_average_end": [
+    8.26,
+    7.61,
+    8.17
+   ],
+   "carry_odometry_calibration": {
+    "scale": {
+     "axial": 0.772,
+     "lateral": 0.697
+    },
+    "source": "dev 601 calib run 7d97bab, evaluation-only GT beam travel (static calibration, not live)"
+   },
+   "thresholds": {
+    "grip_view_v2": {
+     "min_dark": 0.4,
+     "min_bottom_beam": 0.04
+    },
+    "grip_min_signature_v1_logged_only": 0.02,
+    "lift_min_iou": 0.45,
+    "hold_min_ratio": 0.5,
+    "lost_frames": 2
+   },
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "owncam_pair_beam_v2",
+   "perception": "owncam_pair_beam_perception_v2",
+   "status_channel": {
+    "enabled": true,
+    "profile": "team_carry_status_v1_candidate",
+    "status": "CANDIDATE, pending user approval; executor states only, no free text, no GT",
+    "messages": 152,
+    "rejected": [],
+    "partner_aligning_waits": {
+     "r1": 0,
+     "r2": 0
+    }
+   },
+   "posture": {
+    "r1": {
+     "switches": 2,
+     "commit_backoffs": 0
+    },
+    "r2": {
+     "switches": 2,
+     "commit_backoffs": 0
+    }
+   }
+  }
+ ]
+}
