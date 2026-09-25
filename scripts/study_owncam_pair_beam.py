@@ -19,6 +19,17 @@ never a success claim for the approach. Condition ``own_only``: robots start
 
 Truth (poses, finger forces, beam pose) is written only to
 ``evaluation-only.jsonl`` and the result's ``evaluation_only`` block.
+
+v2 (``owncam_pair_beam_v2``; v1 = commit 31d16b0, its cohort's source):
+* perception ``harness.owncam_pair_beam_v2``: the black grip band centre is the
+  grip measurement (v1 mistook the band for the beam end in SEARCH);
+* commit-to-posture rules: a clipped band means the grip is NEARER than the
+  view shows -> switch to the next nearer look posture (v1 went farther, which
+  caused the SEARCH<->p45 loop); visible readings only ever switch nearer; a
+  robot that switches posture ``POSTURE_COMMIT_SWITCHES`` times without moving
+  holds its posture and backs up 3 cm (logged);
+* ``--status-channel on|off``: the CANDIDATE executor status channel
+  (``harness.team_carry_status``, pending user approval) - off = v1 barrier-only.
 """
 from __future__ import annotations
 
@@ -40,10 +51,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from harness import owncam_pair_beam as ob  # noqa: E402
+from harness import owncam_pair_beam_v2 as ob2  # noqa: E402
+from harness import team_carry_status as tcs  # noqa: E402
 from harness.pair_carry_sync import PairCarrySync  # noqa: E402
 
-SCHEMA = 'ugrp.owncam_pair_beam_study.v1'
-PROFILE = 'owncam_pair_beam_v1'
+SCHEMA = 'ugrp.owncam_pair_beam_study.v2'
+PROFILE = 'owncam_pair_beam_v2'
 BASE_Z = .032355118817659255
 ROLES = {'r1': 'end_neg', 'r2': 'end_pos'}
 SEARCH = {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}
@@ -83,9 +96,22 @@ SCENARIOS = {
     612: {'beam': (1.30, -0.20, 0.20), 'offsets': {'r1': (.34, -.04, -.10), 'r2': (.26, .03, .12)}},
     613: {'beam': (0.90, -0.60, 0.60), 'offsets': {'r1': (.27, .00, .15), 'r2': (.32, .04, .00)}},
     614: {'beam': (1.50, -1.00, -0.50), 'offsets': {'r1': (.30, -.03, -.05), 'r2': (.35, .00, .10)}},
+    # v2 pre-registered cohort (experiments/2026-09-26-zone-owncam-pair/README.md, "v2 사전 등록")
+    621: {'beam': (1.10, -0.90, -0.60), 'offsets': {'r1': (.32, .04, .10), 'r2': (.28, -.03, -.08)}},
+    622: {'beam': (1.30, -0.40, 0.50), 'offsets': {'r1': (.26, -.05, -.12), 'r2': (.36, .02, .06)}},
+    623: {'beam': (0.95, -1.00, 0.10), 'offsets': {'r1': (.45, .03, .05), 'r2': (.26, .00, -.04)}},
+    624: {'beam': (1.45, -0.70, -0.20), 'offsets': {'r1': (.29, .05, -.15), 'r2': (.33, -.04, .12)}},
+    625: {'beam': (1.15, -0.30, 0.30), 'offsets': {'r1': (.27, .00, .00), 'r2': (.48, .04, -.10)}},
+    626: {'beam': (1.00, -0.60, -0.40), 'offsets': {'r1': (.34, -.02, .14), 'r2': (.30, .05, .03)}},
 }
 DEV_SEEDS = (601, 602)
-TEST_SEEDS = (611, 612, 613, 614)
+TEST_SEEDS = (611, 612, 613, 614)            # v1 cohort 31d16b0; development seeds for v2
+V2_TEST_SEEDS = (621, 622, 623, 624, 625, 626)
+POSTURE_COMMIT_SWITCHES = 4
+STATUS_OF = {'align_start': 'aligning', 'align': 'aligning', 'grasp': 'ready', 'wait_lift': 'ready',
+             'lift': 'lift', 'wait_carry': 'lift', 'carry': 'carry', 'wait_lower': 'carry',
+             'lower': 'put_down', 'wait_open': 'put_down', 'released': 'put_down', 'done': 'put_down',
+             'failed': 'abort'}
 STUB_START_M = .80
 
 
@@ -100,8 +126,13 @@ def sha_file(path):
 class PairStudent:
     """One robot's own-view controller. Holds no reference to the world or the partner."""
 
-    def __init__(self, rid, port, arm, sync_for, log, save=None):
+    def __init__(self, rid, port, arm, sync_for, log, save=None, status=None):
         self.rid, self.port, self.arm, self.sync_for, self.log = rid, port, arm, sync_for, log
+        self.status = status                    # (StatusChannel, StatusPublisher) or None (channel off)
+        self.switches_since_motion = 0
+        self.posture_switches = 0
+        self.posture_commits = 0
+        self.status_waits = 0
         self.save = save
         self.state, self.state_t = 'align_start', 0.
         self.next_look = 0.
@@ -125,6 +156,8 @@ class PairStudent:
     def fail(self, reason, now):
         self.failure = reason
         self.set('failed', now, reason=reason)
+        if self.status is not None:
+            self.status[1].tick('abort', now)
 
     def look(self, now):
         obs = self.port.capture()
@@ -145,31 +178,43 @@ class PairStudent:
         self.log(self.rid, 'barrier_report', now, barrier=key, ready=ready, accepted=ok, reason=reason)
 
     def drive(self, cmd, now):
+        self.switches_since_motion = 0
         self.commands += 1
         self.port.apply({'kind': 'mecanum', 'forward': cmd['forward'], 'left': cmd['left'], 'turn': cmd['turn'],
                          'duration_s': cmd['duration']}, now)
 
     # ---- phases -------------------------------------------------------------
     def tick(self, now):
+        if self.status is not None and self.state != 'failed':
+            channel, publisher = self.status
+            publisher.tick(STATUS_OF[self.state], now)
+            if any(v['state'] == 'abort' for v in channel.partner_view(self.rid, now).values()):
+                self.port.hold(now)
+                return self.fail('PARTNER_ABORT', now)
         arm_idle = now >= self.arm.until and not self.arm.events   # arms are ticked by the loop
         handler = getattr(self, '_' + self.state, None)
         if handler is not None:
             handler(now, arm_idle)
 
     def _align_start(self, now, arm_idle):
-        self.look_name, pose = ob.look_posture(None)
+        self.look_name, pose = ob2.look_posture(None)
         self.arm.queue(pose, now, duration=.8)
         self.set('align', now)
 
-    def _switch_look(self, distance, now):
-        name, pose = ob.look_posture(distance)
-        order = [n for n, _, _ in ob.LOOK_POSTURES]
-        if order.index(name) <= order.index(self.look_name):     # only nearer on distance (hysteresis)
-            return False
-        self.log(self.rid, 'look_posture', now, posture=name, grip_distance_m=round(distance, 3))
+    def _set_look(self, name, now, **why):
+        self.log(self.rid, 'look_posture', now, posture=name, **why)
         self.look_name = name
         self.aligned_streak = 0
-        self.arm.queue(pose, now, duration=.6)
+        self.posture_switches += 1
+        self.switches_since_motion += 1
+        self.arm.queue(ob2.pose_of(name), now, duration=.6)
+
+    def _switch_look(self, distance, now):
+        name, _pose = ob2.look_posture(distance)
+        order = ob2.order()
+        if order.index(name) <= order.index(self.look_name):     # only nearer on a visible reading
+            return False
+        self._set_look(name, now, grip_distance_m=round(distance, 3))
         return True
 
     def _align(self, now, arm_idle):
@@ -179,21 +224,27 @@ class PairStudent:
         if now - self.state_t > STATE_LIMIT_S['align']:
             return self.fail('ALIGN_TIMEOUT', now)
         obs = self.look(now)
-        beam = ob.observe_beam(obs['image'], self.pose_of(obs))
-        self.log(self.rid, 'beam_obs', now, **{k: v for k, v in beam.items() if k != 'provenance'})
+        beam = ob2.observe_beam(obs['image'], self.pose_of(obs))
+        self.log(self.rid, 'beam_obs', now, posture=self.look_name,
+                 **{k: v for k, v in beam.items() if k != 'provenance'})
+        order = ob2.order()
+        k = order.index(self.look_name)
+        if self.switches_since_motion >= POSTURE_COMMIT_SWITCHES:
+            # Commit: hold this posture and move the chassis instead of switching again.
+            self.posture_commits += 1
+            self.log(self.rid, 'posture_commit_backoff', now, posture=self.look_name)
+            return self.drive({'forward': -.05, 'left': 0., 'turn': 0., 'duration': .6}, now)
         if not beam['visible']:
-            # Own-view search: rotate slowly in place.
             self.aligned_streak = 0
+            if k > 0:                                             # lost in a near view: one step farther
+                return self._set_look(order[k - 1], now, reason='not_visible')
             return self.drive({'forward': 0., 'left': 0., 'turn': .06, 'duration': .3}, now)
         if not beam['end_visible']:
             self.aligned_streak = 0
-            # End below the view: look from the next farther posture, or back up from the farthest.
-            order = [n for n, _, _ in ob.LOOK_POSTURES]
-            k = order.index(self.look_name)
-            if k > 0:
-                self.look_name = order[k - 1]
-                self.log(self.rid, 'look_posture', now, posture=self.look_name, reason='end_clipped')
-                return self.arm.queue(ob.LOOK_POSTURES[k - 1][2], now, duration=.6)
+            # Band/end below the view: the grip is NEARER than this view shows -> nearer posture,
+            # or back up from the nearest posture.
+            if k < len(order) - 1:
+                return self._set_look(order[k + 1], now, reason=beam['reason'].lower())
             return self.drive({'forward': -.04, 'left': 0., 'turn': 0., 'duration': .3}, now)
         if self._switch_look(beam['grip_base_m'][0], now):
             return
@@ -240,7 +291,15 @@ class PairStudent:
         self.set('wait_lift', now)
 
     def _wait(self, key, nxt, now, on_go):
-        if now - self.state_t > STATE_LIMIT_S['wait_' + key]:
+        limit = STATE_LIMIT_S['wait_' + key]
+        waited = now - self.state_t
+        if self.status is not None:
+            verdict = tcs.wait_verdict(self.status[0].partner_view(self.rid, now), waited, limit)
+            if verdict['verdict'] == 'ABORT':
+                return self.fail(f'BARRIER_{key.upper()}_{verdict["why"].upper()}', now)
+            if verdict['why'] == 'partner_aligning' and waited > limit:
+                self.status_waits += 1
+        elif waited > limit:
             return self.fail(f'BARRIER_{key.upper()}_TIMEOUT', now)
         sync = self.sync_for(key)
         decision = sync.authorize(now)
@@ -333,7 +392,7 @@ class PairStudent:
             return
         self.port.hold(now)
         obs = self.look(now)
-        beam = ob.observe_beam(obs['image'], self.pose_of(obs))
+        beam = ob2.observe_beam(obs['image'], self.pose_of(obs))
         self.log(self.rid, 'verify_view', now, **{k: v for k, v in beam.items() if k != 'provenance'})
         self.claims['placed'] = {'beam_visible_on_floor_plane': bool(beam['visible']), 'sim_time': now,
                                  'scope': 'own view after release; no map target in the open-floor study'}
@@ -372,6 +431,8 @@ def main():
     p.add_argument('--contact-profile', choices=CONTACT_PROFILES, default='cargo_noslip_v1')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--allow-dirty', action='store_true')
+    p.add_argument('--status-channel', choices=('on', 'off'), required=True,
+                   help='CANDIDATE executor status channel (pending user approval); off = barrier only')
     a = p.parse_args()
     dirty = bool(git('status', '--porcelain'))
     if dirty and not a.allow_dirty:
@@ -426,7 +487,9 @@ def main():
         frame_index.append({'file': name, 'robot': rid, 'state': state, 'sim_time': obs['sim_time'],
                             'sha256': obs['sha256'], 'own_pose_commands': obs['actuator_state']['servo_pulses']})
 
-    students = {r: PairStudent(r, ports[r], arms[r], sync_for, log, save) for r in ROLES}
+    channel = tcs.StatusChannel('beam-carry', tuple(ROLES)) if a.status_channel == 'on' else None
+    students = {r: PairStudent(r, ports[r], arms[r], sync_for, log, save,
+                               (channel, tcs.StatusPublisher(channel, r)) if channel else None) for r in ROLES}
     # ---- labelled GT stub approach (condition stub_approach only) -------------------------
     stub_log = []
 
@@ -557,8 +620,17 @@ def main():
         'contact_profile_note': 'cargo_noslip_v1 primary, PENDING the user decision on the profile',
         'weld': 'off', 'pose_source': ('gt_stub_eval_only (approach to pre-station only)'
                                        if a.condition == 'stub_approach' else 'none'),
-        'counts_as_m1': False, 'development_seed': a.seed in DEV_SEEDS,
-        'controller_inputs': 'own robot_cam JPEG + own issued PWM + task sheet + PairCarrySync barrier (own frame ids)',
+        'counts_as_m1': False, 'development_seed': a.seed not in V2_TEST_SEEDS,
+        'perception': ob2.PROFILE,
+        'status_channel': {'enabled': a.status_channel == 'on', 'profile': tcs.PROFILE,
+                           'status': 'CANDIDATE, pending user approval; executor states only, no free text, no GT',
+                           'messages': len(channel.log) if channel else 0,
+                           'rejected': channel.rejected if channel else [],
+                           'partner_aligning_waits': {r: s.status_waits for r, s in students.items()}},
+        'posture': {r: {'switches': s.posture_switches, 'commit_backoffs': s.posture_commits}
+                    for r, s in students.items()},
+        'controller_inputs': ('own robot_cam JPEG + own issued PWM + task sheet + PairCarrySync barrier (own frame ids)'
+                              + (' + partner executor status (candidate channel)' if channel else '')),
         'task_sheet': {'legs': LEGS, 'speed_m_s': SPEED_M_S, 'roles': ROLES},
         'carry_odometry_calibration': {'scale': CARRY_ODOM_SCALE, 'source': CARRY_ODOM_SOURCE},
         'thresholds': {'grip_min_signature': GRIP_MIN_SIGNATURE, 'lift_min_iou': HOLD_MIN_IOU,
@@ -577,12 +649,13 @@ def main():
                                                   'VECLIB_MAXIMUM_THREADS', 'MKL_NUM_THREADS')},
     }
     (out / 'inputs.jsonl').write_text(''.join(json.dumps(f) + '\n' for f in frame_index))
+    (out / 'status-channel.jsonl').write_text(''.join(json.dumps(m) + '\n' for m in (channel.log if channel else [])))
     (out / 'events.jsonl').write_text(''.join(json.dumps(e, default=str) + '\n' for e in events))
     (out / 'result.json').write_text(json.dumps(result, indent=1, default=str) + '\n')
     (out / 'hashes.json').write_text(json.dumps({n: sha_file(out / n) for n in
                                                  ('result.json', 'events.jsonl', 'evaluation-only.jsonl', 'scene.xml')},
                                                 indent=1) + '\n')
-    print(json.dumps({'seed': a.seed, 'condition': a.condition, 'states': reached,
+    print(json.dumps({'seed': a.seed, 'condition': a.condition, 'status_channel': a.status_channel, 'states': reached,
                       'failures': result['failures'], **{k: evaluation[k] for k in
                       ('success_gt', 'lifted_clear_gt', 'final_error_m', 'on_floor_released', 'max_tilt_deg_lifted')}}))
 
