@@ -72,7 +72,8 @@ TARGET_TOL_M = .06
 RING_INNER_M, RING_OUTER_M = .045, .11
 PIXEL_DIFF = 28          # max-channel |after - before| counted as changed
 RING_CHANGED_MAX = .30   # more changed ring pixels than this: something covers the point
-IMAGE_MARGIN_PX = 12
+IMAGE_MARGIN_PX = 3
+RING_MIN_INSIDE = .5
 # Own RGB: a same-kind item this close to the robot base (near fit) or clipped
 # at the image border counts as "within reach".
 OWN_REACH_M = .50
@@ -171,15 +172,23 @@ def point_visibility(before_tops, after_tops, static_map, xy, *, decoded=None):
         u, v, scale = floor_to_pixel(xy[0], xy[1], camera, after.shape)
         h, w = after.shape[:2]
         r_out = RING_OUTER_M*scale
-        if not (IMAGE_MARGIN_PX + r_out <= u <= w-1-IMAGE_MARGIN_PX-r_out
-                and IMAGE_MARGIN_PX + r_out <= v <= h-1-IMAGE_MARGIN_PX-r_out):
-            continue
         x0, x1 = int(u-r_out)-1, int(u+r_out)+2
         y0, y1 = int(v-r_out)-1, int(v+r_out)+2
         yy, xx = np.mgrid[y0:y1, x0:x1]
         d = np.hypot(xx-u, yy-v)
-        ring = (d >= RING_INNER_M*scale) & (d <= r_out)
-        diff = np.abs(after[y0:y1, x0:x1].astype(np.int16) - before[y0:y1, x0:x1].astype(np.int16)).max(axis=2)
+        full = (d >= RING_INNER_M*scale) & (d <= r_out)
+        # Near an image edge only part of the ring is in view (the TOP overlap
+        # strips): use the part inside, if it is at least RING_MIN_INSIDE of it.
+        inside = ((xx >= IMAGE_MARGIN_PX) & (xx <= w-1-IMAGE_MARGIN_PX)
+                  & (yy >= IMAGE_MARGIN_PX) & (yy <= h-1-IMAGE_MARGIN_PX))
+        ring = full & inside
+        if ring.sum() < RING_MIN_INSIDE*full.sum():
+            continue
+        cx0, cy0 = max(x0, 0), max(y0, 0)
+        cx1, cy1 = min(x1, w), min(y1, h)
+        ring = ring[cy0-y0:cy1-y0, cx0-x0:cx1-x0]
+        diff = np.abs(after[cy0:cy1, cx0:cx1].astype(np.int16)
+                      - before[cy0:cy1, cx0:cx1].astype(np.int16)).max(axis=2)
         changed = float((diff[ring] > PIXEL_DIFF).mean())
         views.append({'camera': name, 'pixel': [round(u, 1), round(v, 1)], 'ring_changed': round(changed, 3),
                       'clear': changed <= RING_CHANGED_MAX})

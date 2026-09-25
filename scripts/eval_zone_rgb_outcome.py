@@ -476,12 +476,17 @@ def score(args):
                                     'gt': g['gt_class'], 'in_own_slot': g['in_own_slot'],
                                     'visible_px_max': max(g['visible_px'].values())}
                                    for r, g in zip(results, labels['after'])],
-                     'committed_index': idx, 'committed_outcome': committed['outcome'],
+                     'committed_index': idx,
+                     # Below the commit confidence nothing is committed: the job stays "not seen".
+                     'committed_outcome': (committed['outcome'] if committed['confidence'] >= zro.COMMIT_CONFIDENCE
+                                           else 'not_seen'),
+                     'final_uncommitted_outcome': committed['outcome'],
                      'committed_confidence': committed['confidence'],
                      'committed_evidence_images': committed['evidence']['images'],
                      **({'synthetic_case': labels['synthetic_case'],
                          'expected_safe_outcomes': labels['expected_safe_outcomes'],
-                         'safe': committed['outcome'] in labels['expected_safe_outcomes']}
+                         'safe': (committed['outcome'] if committed['confidence'] >= zro.COMMIT_CONFIDENCE
+                                  else 'not_seen') in labels['expected_safe_outcomes']}
                         if 'synthetic_case' in labels else {})})
     summary = summarize(rows)
     if any('synthetic_case' in r for r in rows):
