@@ -133,6 +133,7 @@ class PairStudent:
         self.posture_switches = 0
         self.posture_commits = 0
         self.status_waits = 0
+        self.anchor_kind = 'lime_v1'
         self.save = save
         self.state, self.state_t = 'align_start', 0.
         self.next_look = 0.
@@ -287,7 +288,8 @@ class PairStudent:
         self.log(self.rid, 'grip_view', now, signature_fraction=round(frac, 4), **view)
         if not view['seen']:
             return self.fail('GRIP_NOT_SEEN', now)
-        self.anchor = sig
+        self.anchor = ob2.co_motion_signature(obs['image'])      # v2: widened-hue anchor until the lift view
+        self.anchor_kind = 'co_motion_v2'
         self.claims['gripped'] = {'signature_fraction': round(frac, 4), 'grip_view': view, 'sim_time': now}
         self.set('wait_lift', now)
 
@@ -314,11 +316,14 @@ class PairStudent:
             ratio = self.hold_ratio(obs)
             self.report(key, obs, now, ready=ratio >= HOLD_MIN_RATIO, reason=f'hold_ratio={ratio:.2f}')
 
+    def _signature(self, image):
+        return ob2.co_motion_signature(image) if self.anchor_kind == 'co_motion_v2' else ob.held_signature(image)
+
     def hold_ratio(self, obs):
         if self.anchor is None:
             return 1.
         base = ob.signature_fraction(self.anchor)
-        return ob.signature_fraction(ob.held_signature(obs['image'])) / base if base > 0 else 0.
+        return ob.signature_fraction(self._signature(obs['image'])) / base if base > 0 else 0.
 
     def _wait_lift(self, now, arm_idle):
         def go(t):
@@ -329,12 +334,12 @@ class PairStudent:
         if not arm_idle:
             return
         obs = self.look(now)
+        iou = ob.signature_iou(self.anchor, self._signature(obs['image']))      # grasp -> lift co-motion (v2 hue)
         sig = ob.held_signature(obs['image'])
-        iou = ob.signature_iou(self.anchor, sig)
         self.log(self.rid, 'lift_view', now, held_iou=round(iou, 3), signature_fraction=round(ob.signature_fraction(sig), 4))
         if iou < HOLD_MIN_IOU:
             return self.fail('LOAD_NOT_HELD_AFTER_LIFT', now)
-        self.anchor = sig
+        self.anchor, self.anchor_kind = sig, 'lime_v1'                      # carry hold anchor (v1 lime)
         self.claims['lifted'] = {'held_iou': round(iou, 3), 'sim_time': now}
         self.set('wait_carry', now)
 

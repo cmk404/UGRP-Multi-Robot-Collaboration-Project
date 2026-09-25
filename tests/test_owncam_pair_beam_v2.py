@@ -167,3 +167,11 @@ def test_grip_view_sees_the_band_where_the_v1_lime_signature_missed():
 def test_grip_view_rejects_an_approach_view():
     image, _pose = _frame('p45_611_r1_00073.jpg')
     assert not ob2.grip_view(image)['seen']
+
+
+def test_grasp_to_lift_co_motion_uses_the_widened_hue():
+    from harness import owncam_pair_beam as v1
+    grip, _ = _frame('grip_613_r1_00059.jpg')
+    lift, _ = _frame('lift_613_r1_00063.jpg')
+    assert v1.signature_iou(v1.held_signature(grip), v1.held_signature(lift)) < .45     # v1: LOAD_NOT_HELD
+    assert v1.signature_iou(ob2.co_motion_signature(grip), ob2.co_motion_signature(lift)) > .8

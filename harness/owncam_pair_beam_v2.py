@@ -172,5 +172,19 @@ def grip_view(image) -> dict[str, Any]:
             'reason': 'BAND_BETWEEN_JAWS' if ok else 'GRIP_VIEW_NOT_BAND'}
 
 
-# Lift/carry keep v1's lime held signature: replaying the widened-hue signature on recorded carries
-# (dev 602, 611 v2, cohort 614) gave hold ratios down to 0.41 without slip, v1's stayed >= 0.99.
+# Grasp -> lift co-motion uses the widened beam hue: v1 lime IoU was 0.077 in dev 613 (a892890; GT
+# lifted, 5.7 N) because the grasp-range view is yellow; widened IoU 0.69-0.90 on all 11 recorded real
+# lifts. The CARRY hold check keeps v1's lime signature anchored on the lift view: replaying the
+# widened signature on recorded carries gave ratios down to 0.41 without slip, v1's stayed >= 0.99.
+
+
+def co_motion_signature(image) -> np.ndarray:
+    frame = v1.decode(image)
+    beam = beam_colour_mask(frame)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    band = (hsv[..., 2] <= BAND_V_MAX) & (hsv[..., 1] < BAND_S_MAX)
+    near = cv2.dilate(beam.astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
+    h = frame.shape[0]
+    sig = np.zeros(frame.shape[:2], bool)
+    sig[int(.4 * h):] = ((beam | band) & (beam | near))[int(.4 * h):]
+    return sig
