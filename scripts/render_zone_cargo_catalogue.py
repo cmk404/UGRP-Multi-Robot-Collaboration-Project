@@ -191,15 +191,17 @@ def main(argv=None):
         cam.distance, cam.elevation, cam.azimuth = dist, -35., 215.
         close.update_scene(d, camera=cam)
         img = cv2.cvtColor(close.render(), cv2.COLOR_RGB2BGR)
+        banner = img[:10+22*len(text)]
+        banner[:] = (banner*.35).astype(np.uint8)
         for k, line in enumerate(text):
-            cv2.putText(img, line, (8, 22+22*k), cv2.FONT_HERSHEY_SIMPLEX, .55, (255, 255, 255), 3, cv2.LINE_AA)
-            cv2.putText(img, line, (8, 22+22*k), cv2.FONT_HERSHEY_SIMPLEX, .55, (15, 15, 15), 1, cv2.LINE_AA)
+            cv2.putText(img, line, (8, 22+22*k), cv2.FONT_HERSHEY_SIMPLEX, .55, (255, 255, 255), 1, cv2.LINE_AA)
         tiles.append(img)
     grid = np.vstack([np.hstack(tiles[0:3]), np.hstack(tiles[3:6])])
     ne = cv2.cvtColor(top_imgs['TOP_NE'], cv2.COLOR_RGB2BGR)
     ne = cv2.resize(ne, (800, 600), interpolation=cv2.INTER_AREA)
+    ne[:38] = (ne[:38]*.35).astype(np.uint8)
     cv2.putText(ne, 'TOP_NE as robots receive it (960x720, shown scaled)', (10, 26), cv2.FONT_HERSHEY_SIMPLEX,
-                .6, (255, 255, 255), 2, cv2.LINE_AA)
+                .6, (255, 255, 255), 1, cv2.LINE_AA)
     sheet = np.hstack([grid, ne])
     header = np.full((44, sheet.shape[1], 3), 245, np.uint8)
     cv2.putText(header, f'UGRP zone cargo catalogue v{catalogue_record()["version"]}  '

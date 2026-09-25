@@ -125,15 +125,15 @@ class Probe:
         self.video = video
         self.renderer = None
         if video:
-            self.renderer = mujoco.Renderer(m, 360, 640)
+            self.renderer = mujoco.Renderer(m, 480, 854)
             self.cam = mujoco.MjvCamera()
             self.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
-            self.cam.distance = 1.5 if len(self.roles) < 3 else 1.9
+            self.cam.distance = {1: .95, 2: 1.45, 3: 1.75}[len(self.roles)]
             self.cam.elevation, self.cam.azimuth = -32., 225.
             self.cam.lookat[:] = [START[0], START[1], .03]
             # H.264 through ffmpeg (as scripts/compose_recovery_comparison.py) so the file plays anywhere.
             self.writer = subprocess.Popen(
-                ['ffmpeg', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', '640x360', '-r', '20',
+                ['ffmpeg', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', '854x480', '-r', '20',
                  '-i', '-', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '30', '-preset', 'medium',
                  str(self.out/f'{self.name}.mp4')], stdin=subprocess.PIPE)
         self.trace = []
@@ -237,9 +237,10 @@ class Probe:
         lines = [f'{self.name}  SIM {now:6.1f}s  phase: {self.teacher.phase}',
                  f'{self.inst.kind} {self.inst.spec().mass_kg:.3f} kg  robots {",".join(self.roles)}  '
                  f'weld OFF  GT teacher']
+        banner = img[:8+22*len(lines)]
+        banner[:] = (banner*.35).astype(np.uint8)
         for k, text in enumerate(lines):
-            cv2.putText(img, text, (10, 22+20*k), cv2.FONT_HERSHEY_SIMPLEX, .5, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.putText(img, text, (10, 22+20*k), cv2.FONT_HERSHEY_SIMPLEX, .5, (20, 20, 20), 1, cv2.LINE_AA)
+            cv2.putText(img, text, (10, 22+22*k), cv2.FONT_HERSHEY_SIMPLEX, .55, (255, 255, 255), 1, cv2.LINE_AA)
         self.writer.stdin.write(np.ascontiguousarray(img).tobytes())
 
     def run(self, limit_s=400.):
