@@ -531,6 +531,22 @@
         "--inventory"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-owncam-loc-record",
+      "purpose": "자기 카메라 위치 추정 데이터 기록(벽 태그 지도, 교사 주행, 평가 정답 분리)",
+      "entry": "scripts/record_owncam_localization.py",
+      "docs": "docs/zone_owncam_localization.md",
+      "requires": "local Mac/Linux offscreen rendering; privileged ground-truth TEACHER drives, never a student result; robot inputs and eval_only truth are written to separate files; synchronous SIM only",
+      "version": "1.0.0",
+      "runner": "scripts.record_owncam_localization",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--episodes"
+      ],
+      "output_kind": "directory"
     }
   ]
 }
