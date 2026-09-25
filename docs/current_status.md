@@ -2,7 +2,19 @@
 
 앞으로의 연구 우선순위와 완료 기준은 [연구 TODO (2026-09-22)](research_todo.md)를 따른다. 통신 효과가 주 질문이며 ACT·Jev·맵 확대는 관련 보조 과제로 구분한다. 아래 검증 수치는 각 기록 당시의 범위를 유지한다.
 
-기준: 2026-09-20, main `7855e1a`에 포함된 기록. 이 문서는 진입점이며 실험 결과는 연결된 보고서의 실행 SHA·조건에만 적용된다. 새 결과를 병합하면 이 문서와 README의 요약을 함께 갱신한다.
+기준: 2026-09-25, main `80df7f4`에 포함된 기록(아래 9/25 절). 그 아래 절은 적힌 날짜의 기록이다. 이 문서는 진입점이며 실험 결과는 연결된 보고서의 실행 SHA·조건에만 적용된다. 새 결과를 병합하면 이 문서와 README의 요약을 함께 갱신한다.
+
+## 협업 층 결과 — 2026-09-25 (main 포함)
+
+현재 사용자 방침에 따라 연구는 SIM 시간의 로봇 행동에 집중한다. 실시간 모드와 wall 시간·시뮬레이션 속도 개선은 다루지 않는다. 아래는 모두 조건마다 1회라 사례로만 읽는다.
+
+- [구역 배송 벤치마크](../experiments/2026-09-25-zone-dispatch/README.md)(`zones/zone_open`, 교사 실행기): 구역별 색 개수 목표로 plan_first와 dynamic을 비교했다. Z3에서 4/4 목표를 달성했고, 호출과 토큰은 dynamic이 적었다. 이동과 IK는 정답 좌표로 하는 교사 조건이며 RGB 스킬 성공이 아니다. 두 방식 모두 대화하므로, 무통신과 비교한 통신 효과는 아직 재지 않았다.
+- [동적 협업 실패 결정](../experiments/2026-09-25-dynamic-team-recovery/README.md)(v51/v56/v58): 실패 주입 11회에서 결정 대화는 모두 선택지 안에서 끝났다. 빔 파지 실패 뒤의 물리 복구는 미해결이다.
+- [계획 판단 기준](../experiments/2026-09-25-plan-guidance/README.md)(v45): 목표만 알려줘도 동시 실행을 5/5 골랐다.
+- [목적지 선택 + 지도 A*](../experiments/2026-09-25-map-goto-navigation/README.md)(PR #148, 기본 OFF v59): 저장 계획 재생에서 A* 2/2, 기존 경로 2/2 성공.
+- [계산 후 재생](../experiments/2026-09-25-post-run-replay/README.md): 재생 기록을 켜고 꺼도 명령과 평가가 같다.
+- 물리 A/B가 없는 기본 OFF 후보: v43(주행 중 영상 시야 복구), v46(정지 뒤 재관측), v53(두 로봇 접근 동시성), v30(빔 미세 정렬 이득). 각 실험 기록에 사전 고정 계약만 있다.
+- 병합 전: 넓은 구역 경기장 `zones/zone_wide`와 두 번 세기 수정(PR #155).
 
 ## 실행 환경 — 2026-09-22
 
@@ -17,7 +29,7 @@ Colab/Kaggle은 명시적으로 선택하는 배치 경로로 보존한다. 기�
 
 ## 실시간 출하 실행 후보 — 2026-09-23
 
-[실시간 출하 실행](realtime_dispatch.md)은 `dispatch --realtime-control`로 물리·관측·판단·MuJoCo 창을 분리하는 선택 경로다. 현재 저장 계획 open/seed11 조건에서 진단하며, 후보별 성공·실패와 고정 실행 소스는 [실험 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 둔다. 실시간 시계 복구, 명령 연속성, 화물 도착·하역은 각각 검증한다. 이 후보의 변경은 아직 main 병합 전이다.
+[실시간 출하 실행](realtime_dispatch.md)은 `dispatch --realtime-control`로 물리·관측·판단·MuJoCo 창을 분리하는 선택 경로다. 현재 저장 계획 open/seed11 조건에서 진단하며, 후보별 성공·실패와 고정 실행 소스는 [실험 기록](../experiments/2026-09-23-realtime-dispatch/README.md)에 둔다. 실시간 시계 복구, 명령 연속성, 화물 도착·하역은 각각 검증한다. 이 경로는 main에 있다. 현재 방침상 실시간 경로는 연구 대상이 아니다.
 
 ## ACT 학습·행동 개선 후보 — 2026-09-24
 
@@ -25,7 +37,7 @@ Colab/Kaggle은 명시적으로 선택하는 배치 경로로 보존한다. 기�
 
 ## PR #92의 연구 제어기 검증 — 2026-09-22
 
-[연구 제어기 검증 절차](research_controller_validation.md)에 따라 고정 소스 `f70bd9b`로 9/9회를 마쳤다. RGB 3/3, ACT+RGB 2/3, RGB 도착 확인을 붙인 ACT 0/3 성공이며, 지정된 세 회귀 조건에서는 RGB만 기본 제어기로 채택 가능하다. 공통 접근·파지 실패는 9회 모두 통과했고 남은 실패는 ACT 조기 종료 2회와 종료 신호 누락에 따른 행동 한도 소진 2회다. [최종 원본 감사·대시보드·영상 기록](../experiments/2026-09-22-research-controller-qualification/README.md)을 따른다. 모든 ACT 요청 4,552건의 입력 재구성, 9개 스냅샷·영상과 실제 TensorBoard 화면을 확인했다. 알려진 open-map 세 조건의 계획 재생 구성요소 검증이며, 새 지도 일반화·LLM 통신 효과는 입증하지 않는다. PR #92 승인·병합 전 변경이다.
+[연구 제어기 검증 절차](research_controller_validation.md)에 따라 고정 소스 `f70bd9b`로 9/9회를 마쳤다. RGB 3/3, ACT+RGB 2/3, RGB 도착 확인을 붙인 ACT 0/3 성공이며, 지정된 세 회귀 조건에서는 RGB만 기본 제어기로 채택 가능하다. 공통 접근·파지 실패는 9회 모두 통과했고 남은 실패는 ACT 조기 종료 2회와 종료 신호 누락에 따른 행동 한도 소진 2회다. [최종 원본 감사·대시보드·영상 기록](../experiments/2026-09-22-research-controller-qualification/README.md)을 따른다. 모든 ACT 요청 4,552건의 입력 재구성, 9개 스냅샷·영상과 실제 TensorBoard 화면을 확인했다. 알려진 open-map 세 조건의 계획 재생 구성요소 검증이며, 새 지도 일반화·LLM 통신 효과는 입증하지 않는다. PR #92는 2026-09-23 main에 병합됐다.
 
 ## 목적별로 읽기
 
@@ -33,6 +45,7 @@ Colab/Kaggle은 명시적으로 선택하는 배치 경로로 보존한다. 기�
 |---|---|---|
 | 로컬 시뮬레이션 구성·실행 | [로컬 시뮬레이션](local_simulation.md) | `scripts/open_simulation.command` — 설정 파일·저수준 Python API·MuJoCo 기본 창 |
 | 설치·테스트·PR | [CONTRIBUTING](../CONTRIBUTING.md), [Ubuntu 안내](ubuntu_quickstart.md) | `scripts/run_ci_tests.py`, `.github/workflows/tests.yml` |
+| 구역별 목표 협업 벤치마크(교사 실행기) | [구역 배송](zone_dispatch.md) | `scripts/run_zone_dispatch.py` |
 | 새 세 LLM 계획과 공동 출하 | [연구 환경·실행 예시](research_dispatch_arena.md), [후속 복구 결과](../experiments/dispatch-adaptive-recovery-20260917/README.md) | `scripts/run_dispatch_e2e.py`, `scripts/run_dispatch_skills.py`, `scripts/dispatch_pair_skill.py` |
 | 공동 운반 ACT 비교 | [ACT 운반 보고서](../experiments/2026-09-18-act-pair-carry/README.md), [레퍼런스 차이표](reference_alignment.md) | `scripts/run_carry_act_experiment.py` |
 | 로봇별 단계·허가·동기화 | [계약](task_stage_sync_contract.md), [연결 진단](task_stage_execution.md) | `harness/task_stage_sync.py`, `scripts/demo_task_stage_sync.py` |
