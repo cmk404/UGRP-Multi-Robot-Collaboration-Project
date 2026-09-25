@@ -1,0 +1,1445 @@
+{
+ "schema": "ugrp.owncam_loop_snapshot_verification.v1",
+ "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-owncam-loop",
+ "derived_index": "/Users/changmin/projects/ugrp/outputs/tb-owncam-loop-20260926/derived/index.json",
+ "derived_index_sha256": "578572180d524db9d6a6c9a26ec988925b319a22cc389eb410b9efb4b340fdc7",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925",
+ "collection": {
+  "exported": 22,
+  "failed": 0
+ },
+ "runs": [
+  {
+   "run": "dev-a1-box-s31",
+   "episode": "dev-box-s31",
+   "attempt": "dev-a1",
+   "split": "dev",
+   "carry": "box",
+   "seed": 31,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a1/dev-box-s31/result.json",
+   "origin_sha256": "2003a810d5dce8103c999925fa88c2254747f5bade2f63f3bbb7e1a1493b8276",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a1|box|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "155cb7119be417f1ffa2e0176cfc4611b8db08b1",
+    "condition_fingerprint": "f879837c2dbbddb242618728030bab8ddec2335e12809bf8216d749dcdf15126",
+    "outcome": "False"
+   },
+   "scalars": {
+    "result/sim_s": 140.10000610351562,
+    "result/wall_s": 430.5,
+    "result/commands": 2216.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 140.1,
+    "result/wall_s": 430.5,
+    "result/commands": 2216.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a1 box seed 31 spawn_y 0.55; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 155cb71 (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a1-nobox-s31",
+   "episode": "dev-nobox-s31",
+   "attempt": "dev-a1",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 31,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a1/dev-nobox-s31/result.json",
+   "origin_sha256": "ece3cf6224f44288d782060ca05364b681baf60fbb52e7fe6b490a9156bbd33f",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a1|nobox|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "155cb7119be417f1ffa2e0176cfc4611b8db08b1",
+    "condition_fingerprint": "816a10b59c1d18e183b2462e0ed246f9ce33aac155ce87e3f80e0879906eecac",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 60.20000076293945,
+    "result/wall_s": 154.8000030517578,
+    "result/commands": 807.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 60.2,
+    "result/wall_s": 154.8,
+    "result/commands": 807.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a1 nobox seed 31 spawn_y 0.55; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 155cb71 (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a2-box-s31",
+   "episode": "dev-box-s31",
+   "attempt": "dev-a2",
+   "split": "dev",
+   "carry": "box",
+   "seed": 31,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a2/dev-box-s31/result.json",
+   "origin_sha256": "f48025e93a51a99ea21979f4a2248f6de6ae572438732a824f1dd819670f9a5d",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a2|box|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "a5559e7bd62da3180ff75afd4c811f371c2148b1",
+    "condition_fingerprint": "dbceebd64635f7f9b365d0f6353ac850ba0829f5a54482895121b602c17f7737",
+    "outcome": "False"
+   },
+   "scalars": {
+    "result/sim_s": 101.19999694824219,
+    "result/wall_s": 282.0,
+    "result/commands": 1582.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 101.2,
+    "result/wall_s": 282.0,
+    "result/commands": 1582.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a2 box seed 31 spawn_y 0.55; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source a5559e7 (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a2-nobox-s32",
+   "episode": "dev-nobox-s32",
+   "attempt": "dev-a2",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 32,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a2/dev-nobox-s32/result.json",
+   "origin_sha256": "39a26b453015b6b8b6b7e2892f4de8ed6cccb34e625f222121f83dad2a2eb384",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a2|nobox|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "32",
+    "setup_sha256": "unrecorded",
+    "source_sha": "a5559e7bd62da3180ff75afd4c811f371c2148b1",
+    "condition_fingerprint": "0016b2d4d4afeb35fd9df3e3085126fe5f3f4378f63e881077552c9bed747d4c",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 68.69999694824219,
+    "result/wall_s": 177.5,
+    "result/commands": 892.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 68.7,
+    "result/wall_s": 177.5,
+    "result/commands": 892.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a2 nobox seed 32 spawn_y -0.85; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source a5559e7 (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-box-s31",
+   "episode": "dev-box-s31",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "box",
+   "seed": 31,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-box-s31/result.json",
+   "origin_sha256": "ea9fad78a8b38d447081017481278b4f6009f22a480bcca0582c3c6ace843d6b",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|box|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "39ec803e43ced8b96da2fd5d2460622b01e0302f04662994a7c890aaef4e1eab",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 116.5,
+    "result/wall_s": 367.70001220703125,
+    "result/commands": 1840.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 116.5,
+    "result/wall_s": 367.7,
+    "result/commands": 1840.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 box seed 31 spawn_y 0.55; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-box-s32",
+   "episode": "dev-box-s32",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "box",
+   "seed": 32,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-box-s32/result.json",
+   "origin_sha256": "d4ed899c64509d02bf56c732cd49de40c15ee24019f37cb802b5e9c710b002dd",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|box|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "32",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "11b1e5fe2e09f76af13bb1436f59afeb4897d88eef4ea3b09d558ae34577708e",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 154.89999389648438,
+    "result/wall_s": 449.0,
+    "result/commands": 2424.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 154.9,
+    "result/wall_s": 449.0,
+    "result/commands": 2424.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 box seed 32 spawn_y -0.85; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-box-s33",
+   "episode": "dev-box-s33",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "box",
+   "seed": 33,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-box-s33/result.json",
+   "origin_sha256": "b4c764a1c67f108d075a914f978d1724f4d9da6fdb4b68e869df754ecbf1a0c4",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|box|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "33",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "9a42e2a7462bee1210b7616bfdab557e51e35692003a38de892da316283cd0c5",
+    "outcome": "False"
+   },
+   "scalars": {
+    "result/sim_s": 240.10000610351562,
+    "result/wall_s": 606.7999877929688,
+    "result/commands": 3719.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 0.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 240.1,
+    "result/wall_s": 606.8,
+    "result/commands": 3719.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 0.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 box seed 33 spawn_y -2.25; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-nobox-s31",
+   "episode": "dev-nobox-s31",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 31,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-nobox-s31/result.json",
+   "origin_sha256": "7eb290b4f0a86570f7563c73d1017fd75faa3c083aaa4648dc79f4c22e135639",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|nobox|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "7ce66a8ac55afb9fdaae35fdb6261773c56288a3a1b5ec255f77c17ccdbbbc4f",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 76.30000305175781,
+    "result/wall_s": 175.5,
+    "result/commands": 1063.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 76.3,
+    "result/wall_s": 175.5,
+    "result/commands": 1063.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 nobox seed 31 spawn_y 0.55; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-nobox-s32",
+   "episode": "dev-nobox-s32",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 32,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-nobox-s32/result.json",
+   "origin_sha256": "33e9c743ec6bdfca93ad8810495ede5803b9f13db122ec49a64f05464ed84044",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|nobox|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "32",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "e17e56e8ceb938dacd79117e0da164c18b2283c99c4a83b677f6f641f59e59d7",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 84.69999694824219,
+    "result/wall_s": 196.1999969482422,
+    "result/commands": 1147.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 84.7,
+    "result/wall_s": 196.2,
+    "result/commands": 1147.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 nobox seed 32 spawn_y -0.85; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a3-nobox-s33",
+   "episode": "dev-nobox-s33",
+   "attempt": "dev-a3",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 33,
+   "cohort": "dev-amended",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a3/dev-nobox-s33/result.json",
+   "origin_sha256": "15989e3fe203b7ebce97f228002b05b656995733ed2d0914427538f28ab36cbd",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a3|nobox|dev-amended",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "33",
+    "setup_sha256": "unrecorded",
+    "source_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+    "condition_fingerprint": "7335d9a31a9c234e717479a4e70bb8e589269c73df08d6f0df3f8067312fdd23",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 102.19999694824219,
+    "result/wall_s": 252.6999969482422,
+    "result/commands": 1322.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 102.2,
+    "result/wall_s": 252.7,
+    "result/commands": 1322.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a3 nobox seed 33 spawn_y -2.25; dev-amended; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source d3466db (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-box-s31",
+   "episode": "dev-box-s31",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "box",
+   "seed": 31,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-box-s31/result.json",
+   "origin_sha256": "6e934a271a1bf1f9fd1f301c9121f8af9fb1775266060e3c1ff73a04221b8bd0",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|box|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "d3840c8021aacf600cb888b9e80a610775c6e3c9e50e9e0280074ad286fb31ac",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 75.30000305175781,
+    "result/wall_s": 239.60000610351562,
+    "result/commands": 1164.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 75.3,
+    "result/wall_s": 239.6,
+    "result/commands": 1164.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 box seed 31 spawn_y 0.55; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-box-s32",
+   "episode": "dev-box-s32",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "box",
+   "seed": 32,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-box-s32/result.json",
+   "origin_sha256": "41ebecf8794b7f6e722d71c4890d70f095144960014a438860bbfb325d844f0b",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|box|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "32",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "8e82b636e4f3ba9314bbe40ddd41451c3ca2ba90cd0d90ac8b2eb97e96cabeef",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 104.4000015258789,
+    "result/wall_s": 324.29998779296875,
+    "result/commands": 1589.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 104.4,
+    "result/wall_s": 324.3,
+    "result/commands": 1589.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 box seed 32 spawn_y -0.85; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-box-s33",
+   "episode": "dev-box-s33",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "box",
+   "seed": 33,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-box-s33/result.json",
+   "origin_sha256": "bc0ff26fda7e622eff7365ed06153d968f51e7a7ef6a739526c80fd2ac8a0300",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|box|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "33",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "bb7f3927850898881e06c072d8c715442179d7fb3f6a1c01b010bba6300f2861",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 187.5,
+    "result/wall_s": 508.5,
+    "result/commands": 2825.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 187.5,
+    "result/wall_s": 508.5,
+    "result/commands": 2825.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 box seed 33 spawn_y -2.25; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-nobox-s31",
+   "episode": "dev-nobox-s31",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 31,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-nobox-s31/result.json",
+   "origin_sha256": "2405db44757a5134192d8afb1c860fa3a0788a75b211927fc1848fc7d568d970",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|nobox|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "31",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "db5e87eb18393c3ca280955d3b7ffc6672a7339a45f446c8cd7de8243c26f9bf",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 76.5,
+    "result/wall_s": 187.8000030517578,
+    "result/commands": 1065.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 76.5,
+    "result/wall_s": 187.8,
+    "result/commands": 1065.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 nobox seed 31 spawn_y 0.55; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-nobox-s32",
+   "episode": "dev-nobox-s32",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 32,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-nobox-s32/result.json",
+   "origin_sha256": "892ee3c7bed7d1e6af2a2e16914555bb94766304bd9c88326fc21650a0d29ed0",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|nobox|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "32",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "fc525809d2cd653eb05f8847250c980395d2a1d41554481c9de4f15e73ebdcdf",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 83.0999984741211,
+    "result/wall_s": 201.8000030517578,
+    "result/commands": 1131.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 83.1,
+    "result/wall_s": 201.8,
+    "result/commands": 1131.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 nobox seed 32 spawn_y -0.85; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "dev-a4-nobox-s33",
+   "episode": "dev-nobox-s33",
+   "attempt": "dev-a4",
+   "split": "dev",
+   "carry": "nobox",
+   "seed": 33,
+   "cohort": "dev-frozen",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/dev-a4/dev-nobox-s33/result.json",
+   "origin_sha256": "c55ee0bff42f3bd68d815d259bebefbdc8a3840924f96e733c0ff171a0e92ab6",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "dev|dev-a4|nobox|dev-frozen",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "33",
+    "setup_sha256": "unrecorded",
+    "source_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+    "condition_fingerprint": "08087cfdc5847430cf9a568e56b9cb717d08cfe832ce8bb3a4f5365e90735460",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 120.4000015258789,
+    "result/wall_s": 300.5,
+    "result/commands": 1624.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 120.4,
+    "result/wall_s": 300.5,
+    "result/commands": 1624.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop dev dev-a4 nobox seed 33 spawn_y -2.25; dev-frozen; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 9361a8d (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-box-s41",
+   "episode": "test-box-s41",
+   "attempt": "test",
+   "split": "test",
+   "carry": "box",
+   "seed": 41,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-box-s41/result.json",
+   "origin_sha256": "3039e1eb9aa2bfef8dc5d1d32d777e61ee860eaf8aaa81b85d98f14d3466707d",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|box|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "41",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "4dea475a3bc14f0d04009f229fe626bcd70cb98ee9906ee2d223fec293738d48",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 74.0,
+    "result/wall_s": 217.39999389648438,
+    "result/commands": 1151.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 74.0,
+    "result/wall_s": 217.4,
+    "result/commands": 1151.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop test test box seed 41 spawn_y -0.85; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-box-s42",
+   "episode": "test-box-s42",
+   "attempt": "test",
+   "split": "test",
+   "carry": "box",
+   "seed": 42,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-box-s42/result.json",
+   "origin_sha256": "768d383fddf0721db259ae19ffae7e1fc551f37ec13c50993275fdfba873b251",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|box|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "42",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "31ee7fd7ae4c6baefc02ab221d46af4cf7258540438a2d9c29d7b5b9a8d46870",
+    "outcome": "False"
+   },
+   "scalars": {
+    "result/sim_s": 102.19999694824219,
+    "result/wall_s": 332.20001220703125,
+    "result/commands": 1565.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 102.2,
+    "result/wall_s": 332.2,
+    "result/commands": 1565.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop test test box seed 42 spawn_y -2.25; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-box-s43",
+   "episode": "test-box-s43",
+   "attempt": "test",
+   "split": "test",
+   "carry": "box",
+   "seed": 43,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-box-s43/result.json",
+   "origin_sha256": "1c3fc969ffff08cc15c013c6ad6ffe79e6660999616c443178454c74a23c5a21",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|box|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "43",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "ad6dad8d1ab251b31de6ff517472557981250d94cd1830d4cf44f94ce478d32e",
+    "outcome": "False"
+   },
+   "scalars": {
+    "result/sim_s": 240.10000610351562,
+    "result/wall_s": 647.2999877929688,
+    "result/commands": 3637.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 0.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 240.1,
+    "result/wall_s": 647.3,
+    "result/commands": 3637.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 0.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 0.0
+   },
+   "collection_condition": "owncam-loop test test box seed 43 spawn_y 0.55; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=CARRY_POSTURE(box held); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-nobox-s41",
+   "episode": "test-nobox-s41",
+   "attempt": "test",
+   "split": "test",
+   "carry": "nobox",
+   "seed": 41,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-nobox-s41/result.json",
+   "origin_sha256": "6ac2ab3bb4eed7863f10b498a521efc8a3466fa870316860717b19ee13b70c5c",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|nobox|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "41",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "d9aec1544ed9cba7172c7f42738c8d78169fdb199797b9198ef9115ee56970d8",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 85.0999984741211,
+    "result/wall_s": 183.39999389648438,
+    "result/commands": 1151.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 85.1,
+    "result/wall_s": 183.4,
+    "result/commands": 1151.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop test test nobox seed 41 spawn_y -0.85; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-nobox-s42",
+   "episode": "test-nobox-s42",
+   "attempt": "test",
+   "split": "test",
+   "carry": "nobox",
+   "seed": 42,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-nobox-s42/result.json",
+   "origin_sha256": "a2fc0cab3c1a9638a7399c72a58e2491ff9c1ae57b20a3fe8cd39e7cf1ec82a3",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|nobox|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "42",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "deda2c449e9d05551c5d2bff76f29ae009fd904cd59e5c5986f673e557820d9c",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 111.0999984741211,
+    "result/wall_s": 273.29998779296875,
+    "result/commands": 1471.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 111.1,
+    "result/wall_s": 273.3,
+    "result/commands": 1471.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop test test nobox seed 42 spawn_y -2.25; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  },
+  {
+   "run": "test-nobox-s43",
+   "episode": "test-nobox-s43",
+   "attempt": "test",
+   "split": "test",
+   "carry": "nobox",
+   "seed": 43,
+   "cohort": "test-preregistered",
+   "origin": "/Users/changmin/projects/ugrp/outputs/owncam-loop-20260925/test/test-nobox-s43/result.json",
+   "origin_sha256": "39013fcb283b84d583cebb1eb70c8f33332d64d2abc330dc0bbcfa018047bd0f",
+   "export_complete": true,
+   "export_warnings": [],
+   "exporter": {
+    "sha": "84899d6c628c312b0ff78f01d8e09559b12e0063",
+    "working_tree_dirty": false
+   },
+   "scalar_tags": [
+    "claims/protocol_complete",
+    "evaluation/reported_success",
+    "evaluation/robot_robot_contact_samples",
+    "result/commands",
+    "result/model_calls",
+    "result/sim_s",
+    "result/wall_s"
+   ],
+   "text_tags": [
+    "evaluation/referee_only",
+    "provenance/source",
+    "result/summary"
+   ],
+   "hparams": {
+    "family": "result-only",
+    "condition": "unrecorded",
+    "case": "test|nobox|test-preregistered",
+    "run_id": "unrecorded",
+    "clock": "sim(synchronous)+wall",
+    "policy": "owncam_drive(particle_filter+map_goto A*)|pose_source=own_wrist_fisheye_tags_v2+particle_filter",
+    "seed": "43",
+    "setup_sha256": "unrecorded",
+    "source_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+    "condition_fingerprint": "05eabd8c6d137742b1780dd0669b39d68147739217cdc02a34fceaaf237ea6d1",
+    "outcome": "True"
+   },
+   "scalars": {
+    "result/sim_s": 76.30000305175781,
+    "result/wall_s": 183.8000030517578,
+    "result/commands": 1063.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "expected_scalars": {
+    "result/sim_s": 76.3,
+    "result/wall_s": 183.8,
+    "result/commands": 1063.0,
+    "result/model_calls": 0.0,
+    "evaluation/reported_success": 1.0,
+    "evaluation/robot_robot_contact_samples": 0.0,
+    "claims/protocol_complete": 1.0
+   },
+   "collection_condition": "owncam-loop test test nobox seed 43 spawn_y 0.55; test-preregistered; map zone_wide_door_tags_v2 (sha fc20c915); pose_source=own_wrist_fisheye_tags_v2+particle_filter; carry=none(nobox); contact local_contact_fine; weld off; source 521ae7b (frozen 9361a8d); GT는 평가 전용"
+  }
+ ],
+ "mismatches": [],
+ "totals": {
+  "runs": 22,
+  "scalars_compared": 154,
+  "text_field_checks": 198,
+  "mismatches": 0
+ },
+ "server": {
+  "endpoint": "http://127.0.0.1:6006",
+  "total_runs_listed": 548,
+  "snapshot_runs_listed": 22,
+  "scalars_compared": 154,
+  "text_cards_served": 66,
+  "hparams_sessions": 22,
+  "mismatches": [],
+  "hparams_columns": [
+   "case",
+   "clock",
+   "condition_fingerprint",
+   "family",
+   "outcome",
+   "policy",
+   "seed",
+   "setup_sha256",
+   "source_sha"
+  ],
+  "hparams_metric_columns": [
+   "claims/completed_task_claims",
+   "claims/final_object_claims",
+   "claims/protocol_complete",
+   "claims/tasks",
+   "development/final_selection_score",
+   "evaluation/reported_success",
+   "evaluation/robot_robot_contact_samples",
+   "evaluation/simultaneous_loaded_motion_s",
+   "process/exit_code",
+   "result/commands",
+   "result/cost_usd",
+   "result/input_tokens",
+   "result/model_calls",
+   "result/output_tokens",
+   "result/sim_s",
+   "result/wall_s",
+   "training/final_loss"
+  ]
+ }
+}
