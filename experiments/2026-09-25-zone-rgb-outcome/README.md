@@ -73,11 +73,23 @@
 
 **test (LLM 30회, 작업 204개; 2개는 after 영상이 없어 제외)**
 
-| 정답 \ RGB (종료 시점 / 확정) | delivered | still_at_source | seen_elsewhere | not_seen |
+> 정정(리뷰 뒤): 처음 올린 표는 "종료 시점 / 확정"을 한 칸에 적고 행 합계를 종료 시점 정답으로 적었다. 그런데 확정 판정은 **확정 시점의 정답**과 비교한다. test의 한 작업(Z1-G8-dyn r1-1)은 종료 시점 정답이 elsewhere였고, 확정 시점(+2 s) 정답은 still_at_source였다. 그래서 확정 표의 still_at_source 행은 38이 아니라 **39**이고(`results.json`과 일치), elsewhere 행은 0이다. 두 표로 나눠 적는다.
+
+종료 시점 (+0 s, 정답도 +0 s)
+
+| 정답 \ RGB | delivered | still_at_source | seen_elsewhere | not_seen |
 |---|---|---|---|---|
-| delivered (165) | 164 / 164 | 0 / 0 | 1 / 1 | 0 / 0 |
-| still_at_source (38) | **0 / 0** | 33 / 38 | 0 / 0 | 5 / 0 |
-| elsewhere (1) | **0 / 0** | 0 / 0 | 0 / 0 | 1 / 0 |
+| delivered (165) | 164 | 0 | 1 | 0 |
+| still_at_source (38) | **0** | 33 | 0 | 5 |
+| elsewhere (1) | **0** | 0 | 0 | 1 |
+
+확정 (8초 안, 정답은 확정 시점)
+
+| 정답 \ RGB | delivered | still_at_source | seen_elsewhere | not_seen |
+|---|---|---|---|---|
+| delivered (165) | 164 | 0 | 1 | 0 |
+| still_at_source (39) | **0** | 39 | 0 | 0 |
+| elsewhere (0) | 0 | 0 | 0 | 0 |
 
 - 종료 시점 197/204, 확정 203/204.
 - **잘못된 delivered: 모든 확인 시점에서 0건.**
@@ -99,7 +111,7 @@
 - 종료 시점 143/151, 확정 149/151. 잘못된 delivered 0건.
 - `dropped_in_transit` 4건: seen_elsewhere 2, still_at_source 1(출발지 근처에서 떨어져 정답도 still), not_seen 1.
 
-**감지까지 걸린 시간** (러너가 작업 종료를 본 시각 기준, SIM 초, 첫 확정 정답까지)
+**감지까지 걸린 시간** (러너가 작업 종료를 본 시각 기준, SIM 초, 첫 확정 정답까지; 작업은 **종료 시점 정답**으로 묶음 — 그래서 still_at_source가 38이다)
 
 | | delivered | still_at_source | elsewhere |
 |---|---|---|---|
