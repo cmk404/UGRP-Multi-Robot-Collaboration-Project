@@ -36,6 +36,9 @@ V4_ARM_SEEDS = {'D': (531, 533), 'P': V4_TEST_SEEDS}
 V3_ARM_SEEDS = {'P': V3_TEST_SEEDS, 'S': V3_TEST_SEEDS}
 V5_TEST_SEEDS = tuple(range(541, 549))
 V5_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay'}
+V6_TEST_SEEDS = tuple(range(551, 561))
+V6_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay, '
+                'top-edge face yaw, static peer keep-outs'}
 MISSING = 'missing/infrastructure_failure'
 
 
@@ -194,6 +197,49 @@ def cohort_stats_v5(runs):
             'reasons': [r['reason'] for r in runs]}
 
 
+def face_error_eval(folder):
+    """Evaluation only: |own-RGB face yaw - true relative yaw| (mod 90) on every face-ready approach frame."""
+    import math
+    folder = Path(folder)
+    truth = {json.loads(l)['step']: json.loads(l) for l in (folder / 'evaluation-only.jsonl').open()}
+    errors = []
+    for line in (folder / 'control.jsonl').open():
+        c = json.loads(line)
+        fa = c.get('face_alignment') or {}
+        if c['box_skill_phase'] != 'approach' or not fa.get('ready'):
+            continue
+        t = truth[c['step']]
+        qw, _qx, _qy, qz = t['box_quat']
+        rel = math.degrees(2 * math.atan2(qz, qw) - t['base_yaw'])
+        errors.append(abs((fa['evidence']['yaw_mod90_deg'] - rel + 45.) % 90. - 45.))
+    return {'ready_frames': len(errors), 'max_err_deg': round(max(errors), 2) if errors else None,
+            'within_5deg': sum(e <= 5. for e in errors)}
+
+
+def cohort_stats_v6(runs):
+    stats = cohort_stats_v5(runs)
+    ev = [r['evaluation_only'] for r in runs]
+    summaries = [r['skill_summary'] or {} for r in runs]
+    stats.update({
+        'setup_yaw_deg': [r['scenario_setup_only']['box_yaw_deg'] for r in runs],
+        'axis_aligned_seeds': [r['seed'] for r in runs if abs(r['scenario_setup_only']['box_yaw_deg']) <= 2.],
+        'axis_aligned_diagnostic_success': sum(bool(r['diagnostic_success']) for r in runs
+                                               if abs(r['scenario_setup_only']['box_yaw_deg']) <= 2.),
+        'approach_side': [((s.get('approach_choice') or {}).get('side'), (s.get('approach_choice') or {}).get('candidate'))
+                          for s in summaries],
+        'approach_blocked': sum(bool((s.get('approach_choice') or {}).get('blocked')) for s in summaries),
+        'keepout_guard_stops': sum(int(s.get('keepout_guard_stops') or 0) for s in summaries),
+        'peer_contact_steps': [e.get('peer_contact_steps') for e in ev],
+        'face_estimator': sorted({str(s.get('face_estimator')) for s in summaries}),
+        'face_normal_source_at_grasp': [[(e.get('evidence') or {}).get('normal_source') for e in r['skill_summary']['face_evidence']]
+                                        for r in runs],
+        'face_error_eval_only': {r['seed']: face_error_eval(r['raw_dir']) for r in runs}})
+    fe = stats['face_error_eval_only'].values()
+    ready = sum(f['ready_frames'] for f in fe)
+    stats['face_ready_frames_within_5deg'] = f"{sum(f['within_5deg'] for f in fe)}/{ready}"
+    return stats
+
+
 def contact_sheet():
     import cv2
     import numpy as np
@@ -296,6 +342,17 @@ def main():
         log = folder / 'cohort.log'
         if log.exists():
             out['v5_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v6_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v6/*/result.json'))]
+    out['v6_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v6-*')):
+        for arm, condition in V6_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V6_TEST_SEEDS)
+            missing_all[f'v6:{folder.name}/{arm}'] = missing
+            out['v6_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v6(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v6_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
     out['missing_seeds'] = {k: v for k, v in missing_all.items() if v}
     blocked = bool(out['missing_seeds'])
     out['cohort_report_blocked'] = blocked
@@ -309,7 +366,7 @@ def main():
     for key, value in {**out['v3_cohorts'], **out['v4_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
-    for key, value in out['v5_cohorts'].items():
+    for key, value in {**out['v5_cohorts'], **out['v6_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
 
