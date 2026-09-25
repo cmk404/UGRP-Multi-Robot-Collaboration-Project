@@ -30,6 +30,7 @@ if str(ROOT) not in sys.path:
 
 from harness.wrist_zone_skill import PROFILE, OrderSheet, PoseEstimate, WristZoneDelivery  # noqa: E402
 from harness import wrist_zone_skill_v2 as v2  # noqa: E402
+from harness import wrist_zone_skill_v3 as v3  # noqa: E402
 
 SCHEMA = 'ugrp.zone_owncam_skill_run.v1'
 POSE_SOURCE = 'gt_stub_eval_only'
@@ -40,7 +41,13 @@ STEP_LIMIT = 900
 # v2 (pre-registered in the experiment README before its first recorded run)
 V2_SIM_LIMIT_S = 420.
 V2_STEP_LIMIT = 1300
-PROFILES = {'v1': PROFILE, 'v2': v2.PROFILE}
+# v3 (pre-registered in the experiment README before its first recorded run): same limits as v2
+V3_SIM_LIMIT_S = 420.
+V3_STEP_LIMIT = 1300
+PROFILES = {'v1': PROFILE, 'v2': v2.PROFILE, 'v3': v3.PROFILE}
+# Contact profiles selectable per run; always recorded. local_contact_fine is the zone default;
+# cargo_noslip_v1 (sim/zone_cargo_contact.py) is opt-in only and recorded with its hash.
+CONTACT_PROFILES = ('local_contact_fine', 'cargo_noslip_v1')
 # seed -> start pose (x, y, yaw) of r1, staging cell of the cyan box (order sheet), slot id.
 # 401-402 are DEVELOPMENT scenarios (tuning allowed, never reported as results);
 # 501-505 are the pre-registered test scenarios.
@@ -69,9 +76,24 @@ SCENARIOS = {
     518: {'start': (2.45, 0.50, 0.15), 'pickup_xy': (3.30, 0.30), 'slot': 'B2'},
     519: {'start': (3.60, 1.20, -0.10), 'pickup_xy': (4.05, 1.15), 'slot': 'C3'},
     520: {'start': (2.70, -1.00, 0.00), 'pickup_xy': (3.60, -0.70), 'slot': 'B3'},
+    # v3 development scenario (tuning allowed, labelled dev); v3 also replays 518/519 as dev
+    407: {'start': (2.55, 0.80, 0.05), 'pickup_xy': (3.40, 0.60), 'slot': 'B1'},
+    # v3 pre-registered test scenarios (fixed before the first v3 recorded run)
+    521: {'start': (2.55, -2.50, 0.00), 'pickup_xy': (3.40, -2.50), 'slot': 'B2'},
+    522: {'start': (2.60, 1.00, 0.00), 'pickup_xy': (3.50, 1.20), 'slot': 'B3'},
+    523: {'start': (3.50, -2.60, 0.10), 'pickup_xy': (4.00, -0.90), 'slot': 'C1'},
+    524: {'start': (2.50, -1.70, 0.00), 'pickup_xy': (3.60, -1.90), 'slot': 'A3'},
+    525: {'start': (3.20, 1.20, -0.10), 'pickup_xy': (3.90, 1.00), 'slot': 'C2'},
+    526: {'start': (2.45, 0.10, 0.05), 'pickup_xy': (3.55, 0.05), 'slot': 'B1'},
+    527: {'start': (3.60, -2.85, 0.00), 'pickup_xy': (4.10, -2.90), 'slot': 'A1'},
+    528: {'start': (2.70, -0.20, -0.05), 'pickup_xy': (3.70, -0.40), 'slot': 'A2'},
+    529: {'start': (3.00, -2.85, 0.10), 'pickup_xy': (3.80, -2.70), 'slot': 'C3'},
+    530: {'start': (2.60, 0.70, 0.10), 'pickup_xy': (3.45, 0.55), 'slot': 'B2'},
 }
 V2_DEV_SEEDS = (403, 404, 405, 406)
 V2_TEST_SEEDS = tuple(range(511, 521))
+V3_DEV_SEEDS = (407, 518, 519)
+V3_TEST_SEEDS = tuple(range(521, 531))
 
 
 def sha_file(path):
@@ -91,18 +113,24 @@ class GtStubPoseSource:
         return PoseEstimate(float(xyz[0]), float(xyz[1]), float(robot.base_rpy()[2]), self.label)
 
 
-def build(seed):
+def build(seed, contact_profile=CONTACT_PROFILE):
     import mujoco
     from sim.multi_masterpi_production import MultiMasterPiProductionV2
     from sim.zone_arena import episode
+    from sim.zone_cargo_contact import CARGO_PROFILES, apply, base_profile
     from sim.zone_scene import ZoneScene
     scenario = SCENARIOS[seed]
     config = episode(VARIANT, seed, goal={'B': {'cyan': 1}})
-    config['contact_solver_profile'] = CONTACT_PROFILE
+    if contact_profile not in CONTACT_PROFILES:
+        raise ValueError(f'contact profile: choose {CONTACT_PROFILES}')
+    config['contact_solver_profile'] = base_profile(contact_profile)
     definition = ZoneScene.from_zone_config(config)
+    transform = definition.transform
+    xml_transform = ((lambda xml: apply(transform(xml), contact_profile)) if contact_profile in CARGO_PROFILES
+                     else transform)
     world = MultiMasterPiProductionV2(seed=seed, width=640, height=480, render=True,
                                       warehouse_layout=definition.engine_layout, warehouse_cargo_ids=None,
-                                      xml_transform=definition.transform)
+                                      xml_transform=xml_transform)
     definition.setup(world)
     # Setup-only scenario override (recorded): the one cyan box and r1 go east of the divider.
     (oid, item), = config['setup_only']['objects'].items()
@@ -118,6 +146,11 @@ def build(seed):
                    if s['slot_id'] == scenario['slot'])
     order = OrderSheet('cyan', tuple(scenario['pickup_xy']), scenario['slot'], tuple(slot_xy))
     return world, definition, config, item['body_name'], order
+
+
+def _cargo_profile_record(name):
+    from sim.zone_cargo_contact import CARGO_PROFILES, profile_record
+    return profile_record(name) if name in CARGO_PROFILES else None
 
 
 def make_planner(static, order):
@@ -140,6 +173,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--allow-dirty', action='store_true', help='development only; recorded as dirty')
     parser.add_argument('--profile', choices=sorted(PROFILES), default='v1')
+    parser.add_argument('--contact-profile', choices=CONTACT_PROFILES, default=CONTACT_PROFILE,
+                        help='explicit, recorded contact profile (default: the zone local_contact_fine)')
     args = parser.parse_args()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
     if dirty and not args.allow_dirty:
@@ -152,13 +187,14 @@ def main():
     (out / 'inputs').mkdir()
     started = time.monotonic()
     load_start = [round(v, 2) for v in os.getloadavg()]
-    world, definition, config, box_body, order = build(args.seed)
+    world, definition, config, box_body, order = build(args.seed, args.contact_profile)
     (out / 'scene.xml').write_text(world.scene_xml)
     port = CameraRobotPort(world, 'r1', allow_reverse=True, allow_mecanum=True)
     pose_source = GtStubPoseSource(world, 'r1')
-    delivery = WristZoneDelivery if args.profile == 'v1' else v2.WristZoneDeliveryV2
+    delivery = {'v1': WristZoneDelivery, 'v2': v2.WristZoneDeliveryV2, 'v3': v3.WristZoneDeliveryV3}[args.profile]
     skill = delivery(order, planner=make_planner(config['static_map'], order))
-    sim_limit, step_limit = (SIM_LIMIT_S, STEP_LIMIT) if args.profile == 'v1' else (V2_SIM_LIMIT_S, V2_STEP_LIMIT)
+    sim_limit, step_limit = {'v1': (SIM_LIMIT_S, STEP_LIMIT), 'v2': (V2_SIM_LIMIT_S, V2_STEP_LIMIT),
+                             'v3': (V3_SIM_LIMIT_S, V3_STEP_LIMIT)}[args.profile]
     control = (out / 'control.jsonl').open('w')
     truth = (out / 'evaluation-only.jsonl').open('w')
     geoms = {i: mujoco.mj_id2name(world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '' for i in range(world.model.ngeom)}
@@ -279,9 +315,13 @@ def main():
     result = {
         'schema': SCHEMA, 'profile': PROFILES[args.profile], 'seed': args.seed, 'scenario': SCENARIOS[args.seed],
         'sim_limit_s': sim_limit, 'skill_summary': skill.summary() if hasattr(skill, 'summary') else None,
-        'variant': VARIANT, 'contact_solver_profile': CONTACT_PROFILE, 'weld': 'off',
+        'variant': VARIANT, 'contact_solver_profile': config['contact_solver_profile'],
+        'contact_profile_selected': args.contact_profile,
+        'cargo_contact_profile': _cargo_profile_record(args.contact_profile),
+        'solver_noslip_iterations': int(world.model.opt.noslip_iterations), 'weld': 'off',
         'pose_source': POSE_SOURCE, 'pose_sources_seen': sorted(skill.pose_sources),
-        'counts_as_m1': False, 'development_seed': args.seed in DEV_SEEDS + V2_DEV_SEEDS,
+        'counts_as_m1': False,
+        'development_seed': args.seed in DEV_SEEDS + V2_DEV_SEEDS or (args.profile == 'v3' and args.seed not in V3_TEST_SEEDS),
         'claim_scope': ('skill isolation on the open east section of zone_wide_door with a GT pose stub; '
                         'not M1, not own-camera localisation, no door crossing'),
         'controller_inputs': 'robot_cam JPEG + own issued PWM + pose estimate (gt_stub_eval_only) + static map + order sheet',
