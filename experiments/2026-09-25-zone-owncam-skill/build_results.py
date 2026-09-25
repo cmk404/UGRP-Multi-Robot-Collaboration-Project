@@ -209,7 +209,9 @@ def face_error_eval(folder):
     for line in (folder / 'control.jsonl').open():
         c = json.loads(line)
         fa = c.get('face_alignment') or {}
-        if c['box_skill_phase'] != 'approach' or not fa.get('ready'):
+        # only frames where the delivery is grasping: during v7 keepout_backoff / replan_nav the previous box
+        # skill's last (stale, unused) alignment is still logged
+        if c['phase'] != 'grasp' or c['box_skill_phase'] != 'approach' or not fa.get('ready'):
             continue
         t = truth[c['step']]
         qw, _qx, _qy, qz = t['box_quat']
