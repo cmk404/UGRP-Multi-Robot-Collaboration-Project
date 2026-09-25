@@ -1,0 +1,107 @@
+{
+  "schema": "ugrp.zone_color_eval_split.v1",
+  "fixed_at": "2026-09-25, before any held-out (test) rendering or scoring",
+  "rule": "Detector thresholds are chosen on 'dev' only. 'test' is rendered and scored once, after the detector source is committed; test failures are reported, not tuned away.",
+  "primary_scene": "zones/zone_wide only (coordinator notes 2026-09-25: ZC1/ZC2 run on zone_wide; zone_open is being retired and is not evaluated)",
+  "groups": {
+    "primary": [
+      "zones/zone_wide"
+    ],
+    "appendix_beam_confusion_only": [
+      "dispatch/open"
+    ]
+  },
+  "splits": {
+    "dev": [
+      {
+        "scene": "zones/zone_wide",
+        "seed": 101
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 102
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 103
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 104
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 105
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 106
+      },
+      {
+        "scene": "dispatch/open",
+        "seed": 171
+      },
+      {
+        "scene": "dispatch/open",
+        "seed": 172
+      }
+    ],
+    "test": [
+      {
+        "scene": "zones/zone_wide",
+        "seed": 201
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 202
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 203
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 204
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 205
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 206
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 207
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 208
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 209
+      },
+      {
+        "scene": "zones/zone_wide",
+        "seed": 210
+      },
+      {
+        "scene": "dispatch/open",
+        "seed": 271
+      },
+      {
+        "scene": "dispatch/open",
+        "seed": 272
+      },
+      {
+        "scene": "dispatch/open",
+        "seed": 273
+      }
+    ]
+  },
+  "revisions": [
+    "zone_open seeds removed from dev and test before any test rendering (coordinator note: zone_open retired); dev zone_open numbers were discarded"
+  ]
+}
