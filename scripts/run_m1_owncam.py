@@ -36,7 +36,9 @@ ON_FLOOR_MAX_Z_M = .05
 # skill -> (module, class, order kind, extra kwargs); v5 runs in its own M1 mode (it rejects non-owncam sources)
 SKILLS = {'v4': ('harness.wrist_zone_skill_v4', 'WristZoneDeliveryV4', 'own_rgb_point', {}),
           'v5': ('harness.wrist_zone_skill_v5', 'WristZoneDeliveryV5', 'own_rgb_bay', {'mode': 'm1'}),
-          'v6': ('harness.wrist_zone_skill_v6', 'WristZoneDeliveryV6', 'own_rgb_bay', {'mode': 'm1'})}
+          'v6': ('harness.wrist_zone_skill_v6', 'WristZoneDeliveryV6', 'own_rgb_bay', {'mode': 'm1'}),
+          'v9': ('harness.wrist_zone_skill_v9', 'WristZoneDeliveryV9', 'own_rgb_bay', {'mode': 'm1'})}
+STATIC_KEEPOUT_SKILLS = ('v6', 'v9')     # skills that take the static layout keep-outs (#181 v6+ API)
 CONTACT_PROFILES = ('local_contact_fine', 'cargo_noslip_v1')
 SPAWN_KEEPOUT_RADIUS_M = .17             # an idle MasterPi footprint (as the #181 v6 runner)
 # Evaluation-only retention rule (amendment A5, fixed before the test): skill phases in which the box
@@ -52,7 +54,9 @@ RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_owncam_contract.py
                  'harness/wall_tags.py', 'harness/map_goto.py', 'harness/zone_color_boxes.py',
                  'harness/wrist_zone_skill.py', 'harness/wrist_zone_skill_v2.py', 'harness/wrist_zone_skill_v3.py',
                  'harness/wrist_zone_skill_v4.py', 'harness/wrist_zone_skill_v5.py', 'harness/m1_contract.py',
-                 'harness/wrist_zone_skill_v6.py', 'harness/visual_box_skill.py', 'harness/visual_attachment.py',
+                 'harness/wrist_zone_skill_v6.py', 'harness/wrist_zone_skill_v7.py', 'harness/wrist_zone_skill_v8.py',
+                 'harness/wrist_zone_skill_v9.py', 'harness/owncam_view.py', 'harness/markerless_box.py',
+                 'harness/visual_box_skill.py', 'harness/visual_attachment.py',
                  'sim/zone_cargo_contact.py', 'sim/zone_landmarks.py', 'sim/zone_scene.py', 'sim/camera_robot_port.py',
                  'scripts/run_m1_owncam.py')
 
@@ -117,7 +121,7 @@ def run(spec, out, student):
                       'noslip_iterations': int(world.model.opt.noslip_iterations),
                       'timestep_s': float(world.model.opt.timestep),
                       'final_scene_xml_sha256': sha_bytes(world.scene_xml.encode()),
-                      'user_decision': 'pending (PR #181/#189); cargo_noslip_v1 is the primary condition'}
+                      'user_decision': 'pending user approval (PR #181/#189); cargo_noslip_v1 is the primary condition'}
     if profile == 'cargo_noslip_v1' and contact_record['noslip_iterations'] <= 0:
         raise RuntimeError('cargo_noslip_v1 requested but noslip_iterations is 0 in the built model')
     setup_diag = {}
@@ -144,7 +148,7 @@ def run(spec, out, student):
     skill_mod = importlib.import_module(module)
     skill_cls = getattr(skill_mod, name)
     keepout_records = []
-    if student['skill'] == 'v6':
+    if student['skill'] in STATIC_KEEPOUT_SKILLS:
         # Static layout only: every idle-spawn spot of the arena spec (#181 v6 contract), never a live pose.
         from sim.zone_arena import layout
         arena = layout(static['base_map']['map_id'])       # the tagged map's base layout (zone_wide_door)

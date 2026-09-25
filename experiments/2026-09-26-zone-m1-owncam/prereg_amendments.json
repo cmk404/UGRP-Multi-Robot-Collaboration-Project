@@ -132,6 +132,24 @@
         "controller_schema": "ugrp.m1_owncam_delivery.v3",
         "runner_schema": "ugrp.m1_owncam_run.v3"
       }
+    },
+    {
+      "id": "A6-skill-v9",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a6 (A5, v6, cargo_noslip_v1): s93 and s95 GRASP_TARGET_NOT_VISIBLE - N7's approach-stage cyan cut (min_saturation 65) on the pale-blue west pickup floor missed the box (s93) or detected floor (s95 frame 371 at (0.98, -0.32) m); dev-a6 s94 (other floor patch) completed with every A5 check. PR #181 skill v9 (frozen 04a5e3c): frame-relative floor saturation cut (v8, after Kiro B PR #193), fit-model-independent vertical error and close-range re-fit sweep (v9); their diagnostic cohort 601-610 (GT stub, not M1, not pooled) 10/10, west floor 8/8.",
+      "changes": [
+        "skill v6 -> wrist_zone_skill_v9 (drop-in API: mode='m1', robot_id, static_keepouts, static_bounds_m, approach_point(), reanchor_after_probe()); merged read-only at 04a5e3c, only new files (v7-v9 skill modules and their runners)",
+        "no other change: A5 conditions, controller, calibration, judge and test guard unchanged",
+        "contact profile stays cargo_noslip_v1, labelled PENDING USER APPROVAL (the user's decision on cargo_noslip_v1 is still open, PR #181 / #189)"
+      ],
+      "dev_check_rule": "registered here BEFORE the check: dev-a7 runs m1dev-s93 (axis-aligned) and m1devdiag-s95 (box yaw -20 deg) once each with v9 under A5 conditions; PASS = m1_success true for BOTH (every A5 check incl. retention, both-finger grasp, per-frame look-back gate, no exception, no wall contact). PASS -> freeze with make_frozen.py and run test 101-106 once with the guard; any FAIL -> stop and report, no freeze, no test.",
+      "student_patch": {
+        "skill": "v9",
+        "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only, mode='m1')",
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_status": "pending user approval"
+      }
     }
   ]
 }
