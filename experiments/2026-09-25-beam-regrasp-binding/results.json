@@ -1,0 +1,195 @@
+{
+ "experiment": "2026-09-25-beam-regrasp-binding",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/beam-regrasp-20260925 (local only)",
+ "claim_scope": "diagnostic single-failure checks; not a success rate",
+ "runs": [
+  {
+   "run": "X1-grasp",
+   "bundle": "rgb-standard-dispatch-v60",
+   "source_sha": "d57989c17dec794d1d28107ba9aa34198d33daf0",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 85887,
+    "completion_tokens": 1450,
+    "total_tokens": 91262
+   },
+   "wall_s": 376.24851450001006,
+   "cargo": null,
+   "control_end_sim_s": 200.25999999699246,
+   "regrasp_binding_applied": 127,
+   "regrasp_binding_frames": 130,
+   "approaches": [
+    {
+     "ok": true,
+     "last_stage": "forward",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       219.6,
+       370.3
+      ],
+      "r3": [
+       214.8,
+       180.2
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       221.6,
+       370.1
+      ],
+      "r3": [
+       221.5,
+       180.8
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.9,
+       370.0
+      ],
+      "r3": [
+       213.3,
+       180.8
+      ]
+     }
+    }
+   ],
+   "sha256": {
+    "result.json": "f7fc164ce21de4673c599cd61dc558344e624b1121c4670402ebe8015068e51e",
+    "pair-decisions.json": "c2524a3e69c3932e90b769aa42e37c3c51788844cd8315d403fd0b2a66bf98e7"
+   },
+   "loads": [
+    {
+     "run": "X1-grasp",
+     "start_utc": "2026-09-25T06:27:02Z",
+     "load": "{ 1.85 2.03 2.19 }"
+    },
+    {
+     "run": "X1-grasp",
+     "end_utc": "2026-09-25T06:33:19Z",
+     "exit": 1,
+     "load": "{ 2.13 2.33 2.27 }"
+    }
+   ]
+  },
+  {
+   "run": "X2-grasp",
+   "bundle": "rgb-standard-dispatch-v60",
+   "source_sha": "d57989c17dec794d1d28107ba9aa34198d33daf0",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 85856,
+    "completion_tokens": 1477,
+    "total_tokens": 89597
+   },
+   "wall_s": 375.0174442080024,
+   "cargo": null,
+   "control_end_sim_s": 200.25999999699246,
+   "regrasp_binding_applied": 127,
+   "regrasp_binding_frames": 130,
+   "approaches": [
+    {
+     "ok": true,
+     "last_stage": "forward",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       219.6,
+       370.3
+      ],
+      "r3": [
+       214.8,
+       180.2
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       221.6,
+       370.1
+      ],
+      "r3": [
+       221.5,
+       180.8
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.9,
+       370.0
+      ],
+      "r3": [
+       213.3,
+       180.8
+      ]
+     }
+    }
+   ],
+   "sha256": {
+    "result.json": "6b84ab96fa3531996ef1c32a0bc00d819f7021e4f0f796d9ac83d6bbcb555867",
+    "pair-decisions.json": "15f33d4e5bb9c733d841ceaa6d2e75c94485a0aea4825790e643cbf930bed73a"
+   },
+   "loads": [
+    {
+     "run": "X2-grasp",
+     "start_utc": "2026-09-25T06:33:19Z",
+     "load": "{ 2.13 2.33 2.27 }"
+    },
+    {
+     "run": "X2-grasp",
+     "end_utc": "2026-09-25T06:39:35Z",
+     "exit": 1,
+     "load": "{ 3.00 3.01 2.65 }"
+    }
+   ]
+  }
+ ]
+}

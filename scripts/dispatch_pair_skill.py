@@ -38,9 +38,9 @@ RECOVERY_BACKOFF_SLICES = 40
 # and the learned lateral model saw a moved floor (support distance ~1e3-1e4)
 # although the beam had not moved. When the hue<=24 shaft is truncated
 # against the hue<=35 shaft and the hue<=35 centre is where it was at the
-# failed grasp, the re-approach keeps that grasp's RGB translation.
-REGRASP_TRUNCATED_RATIO = .9
-REGRASP_STILL_PX = 2.
+# failed grasp, the re-approach keeps that grasp's RGB translation. The same
+# test also anchors the coarse target (v61, harness.dispatch_skill_binding).
+from harness.dispatch_skill_binding import REGRASP_TRUNCATED_RATIO, REGRASP_STILL_PX
 
 
 def regrasp_binding(raw_top, anchor):
@@ -1061,6 +1061,8 @@ class BoundPairSkill:
             self.grasp_translation=self.latest_translation
             raw=(self.last_capture or {}).get('r1',{}).get('raw_top_bytes')
             self.grasp_beam35_center=beam_feature(raw,hue_upper=35)['center'] if raw else None
+            ready_beam=getattr(self.coarse,'ready_beam24_center',None)
+            self.grasp_coarse_beam24=list(ready_beam) if ready_beam is not None else None
         self.phase=stage
         if stage=='grasp_close':
             frames,d=self.observe_and_compute('preclose-support',lambda frames:{
@@ -1260,7 +1262,7 @@ class BoundPairSkill:
         lost=[]
         for slot in self.coarse.centers:
             for _ in range(3):
-                decision=self.coarse.decide(raw,slot)
+                decision=self.coarse.decide(raw,slot,record_ready=False)
                 if not decision.get('wheel_center_px'):
                     lost.append(slot);break
                 self.coarse.centers[slot]=np.array(decision['wheel_center_px'])
@@ -1290,6 +1292,9 @@ class BoundPairSkill:
         if self.grasp_translation is not None and getattr(self,'grasp_beam35_center',None) is not None:
             self.regrasp_anchor={'translation_px':list(self.grasp_translation),
                                  'beam35_center':list(self.grasp_beam35_center)}
+            if self.coarse is not None and getattr(self,'grasp_coarse_beam24',None) is not None:
+                self.coarse.regrasp_anchor={'beam24_center':list(self.grasp_coarse_beam24),
+                                            'beam35_center':list(self.grasp_beam35_center)}
         self.set_down()
         self.replay([self.skill['initialization_replay'][0]],'regrasp_fold')
         self.previous_grasp_reports=getattr(self,'previous_grasp_reports',[])+[self.grasp_report]

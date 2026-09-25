@@ -28,6 +28,7 @@ TEST_PATTERNS = (
     "tests/test_dispatch_plan_guidance.py",
     "tests/test_dynamic_coordination.py",
     "tests/test_dispatch_regrasp_binding.py",
+    "tests/test_dispatch_regrasp_coarse.py",
     "tests/test_simulation_extensions.py",
     "tests/test_simulation_scenes.py",
     "tests/test_simulation_workflow_manager.py",
