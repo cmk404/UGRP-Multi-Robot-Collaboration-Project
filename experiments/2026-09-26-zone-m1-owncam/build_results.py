@@ -19,6 +19,7 @@ ATTEMPTS = {
     'dev-a2': '32c7069, amendment A1: skill v5 m1 mode, fine motion + kidnap reset, post-manipulation look, pan-probe re-anchor',
     'dev-a3': 'ce33ffd, amendment A2: bay half 0.15 m, rotated-box dev diagnostics (runner robot_id bug: non-r1 robots rejected)',
     'dev-a4': 'ea45e3d, amendment A3: skill gets the episode robot id',
+    'dev-a5': '6352fde, amendment A4: loaded carry leg through the door to the pre-place goal',
 }
 if (RAW/'test').exists():
     ATTEMPTS['test'] = 'test split, once, frozen source (see frozen_source.json)'
@@ -45,7 +46,7 @@ def row(attempt: str, run: Path) -> dict:
                    'search_found': any(x['event'] == 'skill_start' for x in ev),
                    'grasp_attached': any(x['event'] == 'grasp_attached' for x in sk),
                    'carry_leg_arrived': any(x['event'] == 'carry_leg_end' and x.get('outcome') == 'arrived' for x in ev),
-                   'released': any(x['event'] in ('released', 'release_done') for x in sk),
+                   'released': any(x['event'] == 'release_confirmed' for x in sk),
                    'look_back': any(x['event'] == 'look_back' for x in sk)},
         'search_target_error_m': e.get('search_target_error_m'), 'gt_box_final_xyz': e['gt_box_final_xyz'],
         'contacts': e['contacts'], 'max_eq_active': e['max_eq_active'], 'sim_s': r['sim_s'], 'looks': r['looks'],
