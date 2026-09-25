@@ -79,7 +79,10 @@ OWN_REACH_M = .50
 
 CONFIDENCE = {
     'delivered_source_empty': .95,
-    'delivered_source_occluded': .80,
+    # Colour cannot tell two boxes of one kind apart: with the source hidden, a
+    # same-kind box a peer put in the own area looks like a delivery (dev
+    # synthetic case). Below COMMIT_CONFIDENCE: re-check until the source shows.
+    'delivered_source_occluded': .50,
     'delivered_zone_count': .60,
     'still_at_source_tracked': .95,
     'still_at_source_near': .75,
@@ -260,10 +263,18 @@ def job_outcome(job, before_tops, after_tops, static_map, *, own_rgb=None, own_s
     src_vis = point_visibility(before_tops, after_tops, static_map, src, decoded=decoded)
     tgt_vis = (point_visibility(before_tops, after_tops, static_map, target['center_m'], decoded=decoded)
                if target is not None else None)
+    in_own_zone = [r for r in elsewhere if r in in_zone(elsewhere)]
+    if in_own_zone and (tgt_vis is None or not tgt_vis['visible']):
+        # A new same-kind item in the job's zone while the own area is hidden
+        # may be this item or a peer's delivery: not evidence either way.
+        elsewhere = [r for r in elsewhere if r not in in_own_zone]
+        flags_zone = ['new_same_kind_in_zone_while_target_hidden']
+    else:
+        flags_zone = ['new_same_kind_in_zone_outside_target'] if in_own_zone else []
     own = own_near(own_rgb, own_servo_pose, kind)
     source_empty_seen = src_vis['visible'] and not src_near
 
-    flags = []
+    flags = list(flags_zone)
     if others_near_before:
         flags.append('another_same_kind_item_near_source_before')
     if target is not None and tgt_before:

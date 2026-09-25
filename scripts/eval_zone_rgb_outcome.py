@@ -273,6 +273,129 @@ def render(args):
     (out_root/'frames-manifest.json').write_text(json.dumps(manifest, indent=1) + '\n')
 
 
+SYNTH_CASES = {
+    # case: (expected safe outcomes, description)
+    'drop_mid_route_visible': (('seen_elsewhere',), 'box on the floor half way to the target, robot stopped 0.45 m behind it'),
+    'drop_under_robot': (('seen_elsewhere', 'not_seen'), 'box half way, 0.13 m in front of the stopped robot (under its front)'),
+    'grasp_fail_robot_at_pregrasp': (('still_at_source',), 'box at source, robot at the pregrasp pose 0.255 m west'),
+    'grasp_fail_robot_over_source': (('still_at_source', 'not_seen'), 'box at source, robot 0.10 m west (chassis over it)'),
+    'placed_robot_over_target': (('delivered', 'not_seen'), 'box in its slot, robot 0.10 m west of the slot (chassis over it)'),
+    'placed_arm_over_target': (('delivered', 'not_seen'), 'box in its slot, robot at the release pose 0.235 m west'),
+    'wrong_zone': (('seen_elsewhere',), 'box in a slot of another zone, robot backed off'),
+    'wrong_kind_in_target_source_occluded': (('still_at_source', 'not_seen'),
+                                             'own box at source under the robot; a different-kind box in the own slot'),
+    'peer_same_kind_other_slot_source_occluded': (('still_at_source', 'not_seen'),
+                                                  'own box at source under the robot; a same-kind box in another slot of the zone'),
+    'peer_same_kind_own_slot_source_occluded': (('still_at_source', 'not_seen'),
+                                                'own box at source under the robot; a same-kind box in the OWN slot '
+                                                '(colour cannot tell boxes apart)'),
+}
+
+
+def _set_free(model, q, joint, xy, yaw=0., z=None):
+    adr = int(model.jnt_qposadr[model.joint(joint).id])
+    q[adr:adr+2] = xy
+    if z is not None:
+        q[adr+2] = z
+    q[adr+3:adr+7] = [math.cos(yaw/2), 0., 0., math.sin(yaw/2)]
+
+
+def synth(args):
+    split = json.loads(Path(args.split_file).read_text())
+    split_name = args.split.replace('synth-', '')
+    bases = split['synthetic'][f'{split_name}_base_runs']
+    out_root = Path(args.out)/args.split
+    manifest = {'schema': 'ugrp.zone_rgb_outcome.synth.v1', 'split': args.split, 'cases': {k: v[1] for k, v in SYNTH_CASES.items()},
+                'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+                'load_avg_start': load_avg(), 'method': 'render-only: qpos edit of a recorded replay state + mj_forward; no stepping',
+                'rendered': []}
+    from sim.zone_arena import top_views
+    for rel in bases:
+        run_dir = OUTPUTS/rel
+        episode = json.loads((run_dir/'episode-setup-only.json').read_text())
+        static, objects = episode['static_map'], episode['setup_only']['objects']
+        labels = json.loads((run_dir/'box-labels.json').read_text())
+        _, events, jobs = _jobs(run_dir)
+        views = top_views(static)
+        rp = Replay(run_dir)
+        placed = [j for j in jobs if j['teacher_outcome'] == 'placed_by_teacher'][:args.jobs_per_run]
+        for job in placed:
+            j, rid = job['job'], job['robot']
+            label = labels[j['box']]
+            rp.set(job['assign_t'])
+            oid = min(objects, key=lambda o: math.dist(rp.body_xyz(objects[o]['body_name'])[:2], label['floor_xy_m']))
+            body, kind = objects[oid]['body_name'], objects[oid]['kind']
+            src = rp.body_xyz(body)
+            before_jpegs = {cam: rp.top(cam) for cam, *_ in views}
+            base_q = rp.qpos[rp.index(job['end_t'])].copy()
+            tgt = zro.slot_target(static, j['slot'])['center_m']
+            mid = [(src[0]+tgt[0])/2, (src[1]+tgt[1])/2]
+            other_zone = next(z for z in static['zone_slots'] if z != j['zone'])
+            other_slot = static['zone_slots'][other_zone][0]['center_m']
+            same_zone_other = next(s['center_m'] for s in static['zone_slots'][j['zone']] if s['slot_id'] != j['slot'])
+            rjoint = f'{rid}__base_free'
+            others_same = [o for o in objects if o != oid and objects[o]['kind'] == kind]
+            others_diff = [o for o in objects if objects[o]['kind'] != kind]
+            for case in SYNTH_CASES:
+                q = base_q.copy()
+                box = objects[oid]['joint_name']
+                if case == 'drop_mid_route_visible':
+                    _set_free(rp.model, q, box, mid, z=.016); _set_free(rp.model, q, rjoint, [mid[0]-.45, mid[1]])
+                elif case == 'drop_under_robot':
+                    _set_free(rp.model, q, box, mid, z=.016); _set_free(rp.model, q, rjoint, [mid[0]-.13, mid[1]])
+                elif case == 'grasp_fail_robot_at_pregrasp':
+                    _set_free(rp.model, q, box, src[:2], z=.016); _set_free(rp.model, q, rjoint, [src[0]-.255, src[1]])
+                elif case == 'grasp_fail_robot_over_source':
+                    _set_free(rp.model, q, box, src[:2], z=.016); _set_free(rp.model, q, rjoint, [src[0]-.10, src[1]])
+                elif case == 'placed_robot_over_target':
+                    _set_free(rp.model, q, box, tgt, z=.016); _set_free(rp.model, q, rjoint, [tgt[0]-.10, tgt[1]])
+                elif case == 'placed_arm_over_target':
+                    _set_free(rp.model, q, box, tgt, z=.016); _set_free(rp.model, q, rjoint, [tgt[0]-.235, tgt[1]])
+                elif case == 'wrong_zone':
+                    _set_free(rp.model, q, box, other_slot, z=.016)
+                    _set_free(rp.model, q, rjoint, [other_slot[0]-.45, other_slot[1]])
+                else:
+                    pool = others_diff if case.startswith('wrong_kind') else others_same
+                    if not pool:
+                        continue
+                    _set_free(rp.model, q, box, src[:2], z=.016); _set_free(rp.model, q, rjoint, [src[0]-.10, src[1]])
+                    spot = same_zone_other if 'other_slot' in case else tgt
+                    _set_free(rp.model, q, objects[pool[0]]['joint_name'], spot, z=.016)
+                rp.set(qpos=q)
+                jdir = out_root/f"{rel.replace('/', '__')}__{job['job_id']}"/case
+                (jdir/'frames').mkdir(parents=True, exist_ok=True)
+                before, after = {}, {}
+                for cam, _, _, suffix, _ in views:
+                    (jdir/'frames'/f'before-{suffix}.jpg').write_bytes(before_jpegs[cam])
+                    before[cam] = f'before-{suffix}.jpg'
+                    (jdir/'frames'/f'after-00.0s-{suffix}.jpg').write_bytes(rp.top(cam))
+                    after[cam] = f'after-00.0s-{suffix}.jpg'
+                own = f'after-00.0s-own-{rid}.jpg'
+                (jdir/'frames'/own).write_bytes(rp.own(rid))
+                inputs = {'schema': 'ugrp.zone_rgb_outcome.inputs.v1', 'run': rel, 'robot': rid,
+                          'job_id': f"{job['job_id']}:{case}", 'item': j['box'], 'kind': label['kind'],
+                          'source_xy_m': label['floor_xy_m'], 'zone': j['zone'], 'target': zro.slot_target(static, j['slot']),
+                          'slot': j['slot'], 'before': {'sim_time_s': job['assign_t'], 'tops': before},
+                          'after': [{'delay_s': 0., 'sim_time_s': job['end_t'], 'tops': after, 'own': own,
+                                     'own_commanded_arm_pulses': FOLDED}]}
+                xyz = rp.body_xyz(body)
+                labels_eval = {'schema': 'ugrp.zone_rgb_outcome.eval_labels.v1', 'scope': 'evaluation only',
+                               'synthetic_case': case, 'expected_safe_outcomes': list(SYNTH_CASES[case][0]),
+                               'teacher_outcome': 'synthetic:'+case, 'injected': False, 'body': body,
+                               'after': [{'delay_s': 0., 'box_xyz': [round(v, 4) for v in xyz],
+                                          'gt_class': _gt_class(xyz, src, static['regions']['zone_'+j['zone']]),
+                                          'in_own_slot': zro.inside_rect(xyz[:2], *zro.slot_target(static, j['slot']).values()),
+                                          'visible_px': rp.visible_px([v[0] for v in views], body)}]}
+                (jdir/'inputs.json').write_text(json.dumps(inputs, indent=1) + '\n')
+                (jdir/'eval-labels.json').write_text(json.dumps(labels_eval, indent=1) + '\n')
+                manifest['rendered'].append(str(jdir.relative_to(out_root)))
+        rp.close()
+        print(f'{rel}: synth done, load {load_avg()}', flush=True)
+    manifest['load_avg_end'] = load_avg()
+    out_root.mkdir(parents=True, exist_ok=True)
+    (out_root/'synth-manifest.json').write_text(json.dumps(manifest, indent=1) + '\n')
+
+
 def validate(args):
     """Replay re-render vs the frames captured during control (TOP and own RGB)."""
     import cv2
@@ -355,8 +478,20 @@ def score(args):
                                    for r, g in zip(results, labels['after'])],
                      'committed_index': idx, 'committed_outcome': committed['outcome'],
                      'committed_confidence': committed['confidence'],
-                     'committed_evidence_images': committed['evidence']['images']})
+                     'committed_evidence_images': committed['evidence']['images'],
+                     **({'synthetic_case': labels['synthetic_case'],
+                         'expected_safe_outcomes': labels['expected_safe_outcomes'],
+                         'safe': committed['outcome'] in labels['expected_safe_outcomes']}
+                        if 'synthetic_case' in labels else {})})
     summary = summarize(rows)
+    if any('synthetic_case' in r for r in rows):
+        cases = {}
+        for r in rows:
+            c = cases.setdefault(r['synthetic_case'], {'n': 0, 'safe': 0, 'outcomes': {}})
+            c['n'] += 1
+            c['safe'] += r['safe']
+            c['outcomes'][r['committed_outcome']] = c['outcomes'].get(r['committed_outcome'], 0) + 1
+        summary['synthetic_cases'] = cases
     out = {'schema': 'ugrp.zone_rgb_outcome.score.v1', 'split': split, 'profile': args.profile,
            'module_sha256': sha(ROOT/'harness'/'zone_rgb_outcome.py'),
            'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
@@ -407,14 +542,18 @@ def summarize(rows):
 def parser():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest='cmd', required=True)
-    for name in ('render', 'score', 'validate'):
+    for name in ('render', 'synth', 'score', 'validate'):
         s = sub.add_parser(name)
         s.add_argument('--split-file', default=str(ROOT/'experiments'/'2026-09-25-zone-rgb-outcome'/'split.json'))
         s.add_argument('--out', default=str(DEFAULT_OUT))
-        if name != 'validate':
-            s.add_argument('--split', choices=('dev', 'test'), required=True)
         if name == 'render':
+            s.add_argument('--split', choices=('dev', 'test'), required=True)
             s.add_argument('--only', help='substring filter on run paths')
+        elif name == 'synth':
+            s.add_argument('--split', choices=('synth-dev', 'synth-test'), required=True)
+            s.add_argument('--jobs-per-run', type=int, default=2)
+        elif name == 'score':
+            s.add_argument('--split', choices=('dev', 'test', 'synth-dev', 'synth-test'), required=True)
         if name == 'score':
             s.add_argument('--profile', default=zro.TOP_PROFILE)
             s.add_argument('--name')
@@ -423,7 +562,7 @@ def parser():
 
 def main(argv=None):
     args = parser().parse_args(argv)
-    {'render': render, 'score': score, 'validate': validate}[args.cmd](args)
+    {'render': render, 'synth': synth, 'score': score, 'validate': validate}[args.cmd](args)
     return 0
 
 
