@@ -341,3 +341,26 @@ def test_yellow_rendered_beam_is_a_beam_and_frame_edges_are_not_beams():
     assert math.dist(beam['floor_xy_m'], pose[:2]) < .015
     # the yellow boxes profile sees box-coloured bits on the bar; the cargo profile hides none of real boxes here
     assert not [r for r in rows if r['kind'] == 'box']
+
+
+def test_box_inside_the_open_frame_stays_visible_and_a_box_on_a_bar_is_suppressed():
+    """Zone team A2 fix: only boxes on the frame's bars (or lugs) are 'on cargo';
+    a box resting inside the open triangle is a box (held-out test had one hidden)."""
+    frame = _floor()
+    pose = (.6, -1.6, .2)
+    _frame(frame, SW, pose)
+    _rect(frame, SW, (pose[0]+.013, pose[1], 0.), (.017, .020), .032, 'red')      # 13 mm from the frame centre
+    jpeg = _jpeg(frame)
+    rows = zc.detect_cargo_top(jpeg, SW)
+    assert _one(rows, 'tri_frame')
+    box = _one(rows, 'box')
+    assert box['colour'] == 'red' and math.dist(box['floor_xy_m'], (pose[0]+.013, pose[1])) < .02
+    # A box whose centre lies on a bar stays suppressed as before.
+    frame = _floor()
+    _frame(frame, SW, pose)
+    r, a = .2, pose[2]
+    mid = ((r*math.cos(0.)+r*math.cos(2*math.pi/3))/2, (r*math.sin(0.)+r*math.sin(2*math.pi/3))/2)
+    on_bar = (pose[0]+math.cos(a)*mid[0]-math.sin(a)*mid[1], pose[1]+math.sin(a)*mid[0]+math.cos(a)*mid[1])
+    _rect(frame, SW, (*on_bar, 0.), (.017, .020), .032, 'red')
+    rows = zc.detect_cargo_top(_jpeg(frame), SW)
+    assert not [r for r in rows if r['kind'] == 'box']
