@@ -42,7 +42,7 @@ def _shift_jpeg(jpeg, dx_px):
 def test_rgb_estimates_follow_the_top_image_not_a_layout():
     """Shift the TOP image content east by 10 px: every box estimate moves by the
     matching floor distance. Nothing but the JPEG and the authored camera enters."""
-    static = za.authored_map()
+    static = za.authored_map('zone_open')  # fixture images are zone_open TOPs
     tops = {'cctv_top': (FIX/'start-top-west.jpg').read_bytes(),
             'cctv_top_east': (FIX/'start-top-east.jpg').read_bytes()}
     camera = static['top_cameras'][0]
