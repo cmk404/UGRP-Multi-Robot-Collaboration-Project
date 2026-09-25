@@ -1,0 +1,5169 @@
+{
+ "schema": "ugrp.experiment_result.v1",
+ "experiment_id": "2026-09-25-zone-cargo-perception",
+ "question": "Can the TOP RGB detector recognise the catalogue cargo kinds (can, tile, long_beam, heavy_crate, tri_frame) among the four box colours, with kind, floor xy, yaw and confidence, without confusing boxes, floor paint or robots?",
+ "scope": "Offline, synchronous SIM renders of zones/zone_wide with cargo re-posed per view (teleport + 0.6 s settle). Detection only; not wired to any controller or prompt. Ground truth only in eval-labels/. Not a robot skill or delivery success.",
+ "source": {
+  "detector": "harness/zone_cargo_perception.py",
+  "evaluation": "scripts/eval_zone_cargo_perception.py",
+  "frozen_source_sha": "07a958d",
+  "branch": "claude/zone-cargo-perception",
+  "note": "dev frames were rendered at 078cb73 with the evaluation script uncommitted (render code identical to 07a958d); dev and test were scored at 07a958d; test was rendered and scored once at 07a958d on a clean tree"
+ },
+ "execution_bundle": "unchanged; no bundle registry touched, RUNNABLE_ID unchanged; new files are outside the bundle source closure (tested)",
+ "workflow": {
+  "id": "zone-cargo-perception-eval",
+  "version": "1.0.0"
+ },
+ "environment": {
+  "python": ".venv-sim-worker-mac",
+  "host": "Mac (shared with other agents; load averages recorded per step)",
+  "agent_lock": "not taken for offline synchronous rendering/scoring"
+ },
+ "split": {
+  "file": "experiments/2026-09-25-zone-cargo-perception/split.json",
+  "dev_seeds": [
+   301,
+   302,
+   303,
+   304,
+   305,
+   306
+  ],
+  "test_seeds": [
+   401,
+   402,
+   403,
+   404,
+   405,
+   406,
+   407,
+   408,
+   409,
+   410
+  ],
+  "fixed_before_test_render": true
+ },
+ "views": {
+  "per_seed": {
+   "scatter": 2,
+   "paint": 2,
+   "near_robot": 2,
+   "formation": 2,
+   "adjacent": 1,
+   "straddle": 1,
+   "robots_on_paint": 1
+  },
+  "cargo_per_scene": {
+   "can": 2,
+   "tile": 2,
+   "long_beam": 2,
+   "heavy_crate": 2,
+   "tri_frame": 1
+  },
+  "boxes_per_scene": "8 goal boxes + 0-4 spares (PR #163 EVAL_GOAL)",
+  "definitions": {
+   "paint": "cargo on zone paint (zone C twice as likely), 80% of cargo",
+   "near_robot": "a robot stands 0-6 cm outside an item footprint, arm folded or hovering",
+   "formation": "robots at the catalogue approach poses of a pair item (beam/crate) or the trio frame, arms hovering over the handles",
+   "adjacent": "boxes 3.5-8 cm from cans, tiles and crates",
+   "straddle": "items across the seams between TOP views",
+   "robots_on_paint": "robots standing on zone C/A/B and pickup paint"
+  }
+ },
+ "profiles": {
+  "top_cargo_v1": "new (opt-in): cargo kinds + boxes via top_zone_v2 minus box blobs on detected cargo",
+  "top_zone_v2": "PR #163 box profile, unchanged (reference)",
+  "zone_perception_v1": "main zone_perception.detect_boxes, unchanged (reference)"
+ },
+ "metric_definitions": {
+  "visibility": "per camera from segmentation: full = visible/projected >= 0.6 and not touching the image border; partial_frame = touches border; occluded = < 0.6; merged uses the best camera",
+  "camera_match": "detection pixel inside the item's visible convex hull (+4 px); same class preferred",
+  "merged_match": "floor distance <= 5 cm (box/can/tile), 8 cm (crate), 10 cm (beam/frame); same class first, then confusion, else duplicate/FP",
+  "xy_error": "estimated object origin vs true body origin (floor plane)",
+  "yaw_error": "modulo the kind's symmetry (tile/beam/crate 180 deg, frame 120 deg)",
+  "grip_error": "worst catalogue grip point error after best role assignment, grip points derived by grasp_handles() from the estimated pose",
+  "fp_background": "merged: robot (<=0.2 m of a robot), near_item (<=0.3 m of any item), zone paint region, floor"
+ },
+ "renders": {
+  "dev": {
+   "frames_dir": "outputs/zone-cargo-perception-20260925/dev-r1",
+   "render_source_sha": "078cb73a30dea25e6b6774f19981cddfb35c5b87",
+   "render_source_dirty": true,
+   "score_source_sha": "07a958dbb61d4a9cb85d7924205d27e409418bae",
+   "score_source_dirty": false,
+   "split_file_sha256": "b36e26da9b00df169f8eb3b3441ccd6c4c07fe1cd6393b8344d47eee278a827b",
+   "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+   "views": 66,
+   "skipped_views": 0,
+   "render_wall_s": 916.9,
+   "render_load_average_1min": {
+    "start": 225.42529296875,
+    "end": 277.248046875
+   },
+   "score_load_average_1min": {
+    "start": 11.70068359375,
+    "end": 10.96240234375
+   },
+   "scene_xml_sha256": [
+    "2d88ba23e498500234161dffdcbdf399b75581326f19d4d82a38f3e73736a37e",
+    "527b83ad0140e87fbe61cbc6525cf5b7ae29ab63b04cb6a7d8bb776ed162b73e",
+    "aaf35905e0ec38bec9f483f9e606f52604a4eb034dc1a6f26a9670cfa5f19b2e",
+    "af10cda85ee9dd23550d1d0857c8d68524ac5311894feed7a6458042cb414671",
+    "bac36f02b70ac55afa74e90c35399e4a5aa2102682e99b761ece336934267877",
+    "d5892b6357cf583a151fa8f6226aa0ab571b46bcd04b172ee3ce271c98bf3d26"
+   ]
+  },
+  "test": {
+   "frames_dir": "outputs/zone-cargo-perception-20260925/test-07a958d",
+   "render_source_sha": "07a958dbb61d4a9cb85d7924205d27e409418bae",
+   "render_source_dirty": false,
+   "score_source_sha": "07a958dbb61d4a9cb85d7924205d27e409418bae",
+   "score_source_dirty": true,
+   "split_file_sha256": "b36e26da9b00df169f8eb3b3441ccd6c4c07fe1cd6393b8344d47eee278a827b",
+   "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+   "views": 110,
+   "skipped_views": 0,
+   "render_wall_s": 209.5,
+   "render_load_average_1min": {
+    "start": 12.02294921875,
+    "end": 9.31103515625
+   },
+   "score_load_average_1min": {
+    "start": 9.2080078125,
+    "end": 8.7724609375
+   },
+   "scene_xml_sha256": [
+    "2c527c6c3cd058f204158a6151a9be09a04850bbc677b41750966251e4fd4e74",
+    "58081e6a902950e42672f45b1aa7d3f51dc54e9e8fe4a68c89a13d674cb8d2a5",
+    "707b911ec45fa97c8efac3e6d21eacc5e9422e44fad9afe7f31bec78b5a48533",
+    "751dd9298218ca2bd7933e829e83206244b2b520be829af7f3e5cfb420ee75f7",
+    "7cc1531daa07accdb8917207fc795902f8d07ab59562faba7249bc472c00d7f2",
+    "98202ec97eb7ac59e53643672409ac03a96047b744391298ddce00e6aa96ffb2",
+    "bc4bfb2a5c5263872ad48a290ff82e222062d73f1f38a684452fe52be969d0a3",
+    "c53f1a075c1609ba3f07b06b327382a1363c5a4b07960443e6989c692c62201e",
+    "ccfb481924ac812b40f0ee6340cf13f6a1aa045cddf39835a8bf236e8935ab39",
+    "cd340c49926a9f3e592ca5a3ac91f8c25fce879591b64daef7aa32843a9e3572"
+   ]
+  }
+ },
+ "results": {
+  "dev": {
+   "top_cargo_v1": {
+    "merged": {
+     "frames": 66,
+     "false_positives_total": 1,
+     "false_positives_by_background": {
+      "robot": 1
+     },
+     "false_positives_per_frame": 0.0152,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 129,
+       "missed": 14
+      },
+      "box_green": {
+       "box_green": 186,
+       "missed": 1
+      },
+      "box_red": {
+       "box_red": 175,
+       "missed": 1
+      },
+      "box_yellow": {
+       "box_yellow": 168,
+       "missed": 19
+      },
+      "can": {
+       "can": 131,
+       "missed": 1
+      },
+      "tile": {
+       "tile": 132
+      },
+      "long_beam": {
+       "long_beam": 132
+      },
+      "heavy_crate": {
+       "heavy_crate": 131,
+       "missed": 1
+      },
+      "tri_frame": {
+       "tri_frame": 66
+      },
+      "background": {
+       "box_yellow": 1
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 129,
+        "positives": 143,
+        "rate": 0.9021
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 129,
+        "median": 0.0032,
+        "p90": 0.0057,
+        "max": 0.008
+       },
+       "xy_error_m_all": {
+        "n": 129,
+        "median": 0.0032,
+        "p90": 0.0057,
+        "max": 0.008
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "12/13",
+        "formation": "20/26",
+        "near_robot": "23/26",
+        "paint": "26/26",
+        "robots_on_paint": "12/13",
+        "scatter": "24/26",
+        "straddle": "12/13"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 186,
+        "positives": 187,
+        "rate": 0.9947
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 186,
+        "median": 0.003,
+        "p90": 0.0063,
+        "max": 0.0091
+       },
+       "xy_error_m_all": {
+        "n": 186,
+        "median": 0.003,
+        "p90": 0.0063,
+        "max": 0.0091
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "17/17",
+        "formation": "33/34",
+        "near_robot": "34/34",
+        "paint": "34/34",
+        "robots_on_paint": "17/17",
+        "scatter": "34/34",
+        "straddle": "17/17"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 175,
+        "positives": 176,
+        "rate": 0.9943
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 175,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "xy_error_m_all": {
+        "n": 175,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "16/16",
+        "formation": "32/32",
+        "near_robot": "32/32",
+        "paint": "32/32",
+        "robots_on_paint": "16/16",
+        "scatter": "31/32",
+        "straddle": "16/16"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 168,
+        "positives": 187,
+        "rate": 0.8984
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 168,
+        "median": 0.0033,
+        "p90": 0.0085,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 168,
+        "median": 0.0033,
+        "p90": 0.0085,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "17/17",
+        "formation": "32/34",
+        "near_robot": "30/34",
+        "paint": "32/34",
+        "robots_on_paint": "14/17",
+        "scatter": "28/34",
+        "straddle": "15/17"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 131,
+        "positives": 132,
+        "rate": 0.9924
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 131,
+        "median": 0.001,
+        "p90": 0.0108,
+        "max": 0.0254
+       },
+       "xy_error_m_all": {
+        "n": 131,
+        "median": 0.001,
+        "p90": 0.0108,
+        "max": 0.0254
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 131,
+        "median": 0.001,
+        "p90": 0.0108,
+        "max": 0.0254
+       },
+       "grip_error_m_all": {
+        "n": 131,
+        "median": 0.001,
+        "p90": 0.0108,
+        "max": 0.0254
+       },
+       "full_by_case": {
+        "adjacent": "12/12",
+        "formation": "24/24",
+        "near_robot": "23/24",
+        "paint": "24/24",
+        "robots_on_paint": "12/12",
+        "scatter": "24/24",
+        "straddle": "12/12"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 132,
+        "positives": 132,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 132,
+        "median": 0.001,
+        "p90": 0.0027,
+        "max": 0.0053
+       },
+       "xy_error_m_all": {
+        "n": 132,
+        "median": 0.001,
+        "p90": 0.0027,
+        "max": 0.0053
+       },
+       "yaw_error_deg_full": {
+        "n": 132,
+        "median": 0.943,
+        "p90": 2.9262,
+        "max": 6.53
+       },
+       "yaw_error_deg_all": {
+        "n": 132,
+        "median": 0.943,
+        "p90": 2.9262,
+        "max": 6.53
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 132,
+        "median": 0.001,
+        "p90": 0.0027,
+        "max": 0.0053
+       },
+       "grip_error_m_all": {
+        "n": 132,
+        "median": 0.001,
+        "p90": 0.0027,
+        "max": 0.0053
+       },
+       "full_by_case": {
+        "adjacent": "12/12",
+        "formation": "24/24",
+        "near_robot": "24/24",
+        "paint": "24/24",
+        "robots_on_paint": "12/12",
+        "scatter": "24/24",
+        "straddle": "12/12"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 111,
+        "positives": 111,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 21,
+        "positives": 21,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 111,
+        "median": 0.0012,
+        "p90": 0.0043,
+        "max": 0.0102
+       },
+       "xy_error_m_all": {
+        "n": 132,
+        "median": 0.0012,
+        "p90": 0.0047,
+        "max": 0.0293
+       },
+       "yaw_error_deg_full": {
+        "n": 111,
+        "median": 0.086,
+        "p90": 0.2654,
+        "max": 0.6595
+       },
+       "yaw_error_deg_all": {
+        "n": 132,
+        "median": 0.0913,
+        "p90": 0.2954,
+        "max": 0.8865
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 111,
+        "median": 0.0017,
+        "p90": 0.0056,
+        "max": 0.0105
+       },
+       "grip_error_m_all": {
+        "n": 132,
+        "median": 0.0018,
+        "p90": 0.0059,
+        "max": 0.0293
+       },
+       "full_by_case": {
+        "adjacent": "12/12",
+        "formation": "21/21",
+        "near_robot": "22/22",
+        "paint": "20/20",
+        "robots_on_paint": "11/11",
+        "scatter": "21/21",
+        "straddle": "4/4"
+       },
+       "centre_modes": {
+        "both_ends": 99,
+        "merged_both_ends": 33
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 129,
+        "positives": 130,
+        "rate": 0.9923
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 2,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 129,
+        "median": 0.0005,
+        "p90": 0.0053,
+        "max": 0.0162
+       },
+       "xy_error_m_all": {
+        "n": 131,
+        "median": 0.0005,
+        "p90": 0.0052,
+        "max": 0.0162
+       },
+       "yaw_error_deg_full": {
+        "n": 129,
+        "median": 0.1195,
+        "p90": 0.568,
+        "max": 2.0659
+       },
+       "yaw_error_deg_all": {
+        "n": 131,
+        "median": 0.1195,
+        "p90": 0.5597,
+        "max": 2.0659
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 129,
+        "median": 0.0008,
+        "p90": 0.0063,
+        "max": 0.0163
+       },
+       "grip_error_m_all": {
+        "n": 131,
+        "median": 0.0008,
+        "p90": 0.0062,
+        "max": 0.0163
+       },
+       "full_by_case": {
+        "adjacent": "12/12",
+        "formation": "23/24",
+        "near_robot": "24/24",
+        "paint": "24/24",
+        "robots_on_paint": "12/12",
+        "scatter": "24/24",
+        "straddle": "10/10"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 54,
+        "positives": 54,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 12,
+        "positives": 12,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 54,
+        "median": 0.0006,
+        "p90": 0.0018,
+        "max": 0.0039
+       },
+       "xy_error_m_all": {
+        "n": 66,
+        "median": 0.0006,
+        "p90": 0.0022,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": {
+        "n": 54,
+        "median": 0.0425,
+        "p90": 0.1551,
+        "max": 0.3257
+       },
+       "yaw_error_deg_all": {
+        "n": 66,
+        "median": 0.0487,
+        "p90": 0.2121,
+        "max": 3.1613
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 54,
+        "median": 0.0007,
+        "p90": 0.0023,
+        "max": 0.0039
+       },
+       "grip_error_m_all": {
+        "n": 66,
+        "median": 0.0008,
+        "p90": 0.0027,
+        "max": 0.0219
+       },
+       "full_by_case": {
+        "adjacent": "5/5",
+        "formation": "10/10",
+        "near_robot": "10/10",
+        "paint": "11/11",
+        "robots_on_paint": "6/6",
+        "scatter": "11/11",
+        "straddle": "1/1"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 264,
+     "false_positives_total": 1,
+     "false_positives_by_background": {
+      "robot": 1
+     },
+     "false_positives_per_frame": 0.0038,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 146,
+       "missed": 15
+      },
+      "box_green": {
+       "box_green": 209,
+       "missed": 2
+      },
+      "box_red": {
+       "box_red": 189,
+       "missed": 2
+      },
+      "box_yellow": {
+       "box_yellow": 191,
+       "missed": 22
+      },
+      "can": {
+       "can": 146,
+       "missed": 4
+      },
+      "tile": {
+       "tile": 159,
+       "missed": 6
+      },
+      "long_beam": {
+       "long_beam": 169,
+       "missed": 11
+      },
+      "heavy_crate": {
+       "heavy_crate": 148,
+       "missed": 26
+      },
+      "tri_frame": {
+       "tri_frame": 73,
+       "missed": 13
+      },
+      "background": {
+       "box_yellow": 1
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 143,
+        "positives": 158,
+        "rate": 0.9051
+       },
+       "partial_frame": {
+        "detected": 3,
+        "positives": 3,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 143,
+        "median": 0.0036,
+        "p90": 0.006,
+        "max": 0.0083
+       },
+       "xy_error_m_all": {
+        "n": 146,
+        "median": 0.0036,
+        "p90": 0.0063,
+        "max": 0.0312
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_green": {
+       "full": {
+        "detected": 207,
+        "positives": 208,
+        "rate": 0.9952
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 207,
+        "median": 0.0036,
+        "p90": 0.0071,
+        "max": 0.0091
+       },
+       "xy_error_m_all": {
+        "n": 209,
+        "median": 0.0036,
+        "p90": 0.0071,
+        "max": 0.0211
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 187,
+        "positives": 188,
+        "rate": 0.9947
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 187,
+        "median": 0.0037,
+        "p90": 0.0068,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 189,
+        "median": 0.0037,
+        "p90": 0.0071,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 190,
+        "positives": 209,
+        "rate": 0.9091
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 4,
+        "rate": 0.25
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 190,
+        "median": 0.0034,
+        "p90": 0.0091,
+        "max": 0.01
+       },
+       "xy_error_m_all": {
+        "n": 191,
+        "median": 0.0034,
+        "p90": 0.0092,
+        "max": 0.01
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 140,
+        "positives": 141,
+        "rate": 0.9929
+       },
+       "partial_frame": {
+        "detected": 6,
+        "positives": 9,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 140,
+        "median": 0.0009,
+        "p90": 0.0111,
+        "max": 0.0254
+       },
+       "xy_error_m_all": {
+        "n": 146,
+        "median": 0.0009,
+        "p90": 0.0108,
+        "max": 0.0254
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 149,
+        "positives": 149,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 10,
+        "positives": 16,
+        "rate": 0.625
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 149,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0053
+       },
+       "xy_error_m_all": {
+        "n": 159,
+        "median": 0.0009,
+        "p90": 0.0034,
+        "max": 0.0201
+       },
+       "yaw_error_deg_full": {
+        "n": 149,
+        "median": 0.9399,
+        "p90": 2.91,
+        "max": 6.53
+       },
+       "yaw_error_deg_all": {
+        "n": 159,
+        "median": 0.9462,
+        "p90": 3.0101,
+        "max": 40.5922
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 111,
+        "positives": 111,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 58,
+        "positives": 69,
+        "rate": 0.8406
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 111,
+        "median": 0.0012,
+        "p90": 0.0043,
+        "max": 0.0085
+       },
+       "xy_error_m_all": {
+        "n": 169,
+        "median": 0.0022,
+        "p90": 0.0388,
+        "max": 0.0829
+       },
+       "yaw_error_deg_full": {
+        "n": 111,
+        "median": 0.086,
+        "p90": 0.2654,
+        "max": 0.6595
+       },
+       "yaw_error_deg_all": {
+        "n": 169,
+        "median": 0.1126,
+        "p90": 0.6603,
+        "max": 7.5383
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 129,
+        "positives": 130,
+        "rate": 0.9923
+       },
+       "partial_frame": {
+        "detected": 19,
+        "positives": 44,
+        "rate": 0.4318
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 129,
+        "median": 0.0005,
+        "p90": 0.0053,
+        "max": 0.0162
+       },
+       "xy_error_m_all": {
+        "n": 148,
+        "median": 0.0006,
+        "p90": 0.0139,
+        "max": 0.0453
+       },
+       "yaw_error_deg_full": {
+        "n": 129,
+        "median": 0.1195,
+        "p90": 0.568,
+        "max": 2.0659
+       },
+       "yaw_error_deg_all": {
+        "n": 148,
+        "median": 0.1414,
+        "p90": 1.0918,
+        "max": 89.5185
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 54,
+        "positives": 54,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 19,
+        "positives": 32,
+        "rate": 0.5938
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 54,
+        "median": 0.0006,
+        "p90": 0.0018,
+        "max": 0.0039
+       },
+       "xy_error_m_all": {
+        "n": 73,
+        "median": 0.0007,
+        "p90": 0.0037,
+        "max": 0.0743
+       },
+       "yaw_error_deg_full": {
+        "n": 54,
+        "median": 0.0425,
+        "p90": 0.1551,
+        "max": 0.3257
+       },
+       "yaw_error_deg_all": {
+        "n": 73,
+        "median": 0.0555,
+        "p90": 0.3229,
+        "max": 12.2576
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "top_zone_v2": {
+    "merged": {
+     "frames": 66,
+     "false_positives_total": 1,
+     "false_positives_by_background": {
+      "robot": 1
+     },
+     "false_positives_per_frame": 0.0152,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 129,
+       "missed": 14
+      },
+      "box_green": {
+       "box_green": 186,
+       "missed": 1
+      },
+      "box_red": {
+       "box_red": 175,
+       "missed": 1
+      },
+      "box_yellow": {
+       "box_yellow": 168,
+       "missed": 19
+      },
+      "can": {
+       "missed": 132
+      },
+      "tile": {
+       "missed": 132
+      },
+      "long_beam": {
+       "missed": 132
+      },
+      "heavy_crate": {
+       "missed": 132
+      },
+      "tri_frame": {
+       "missed": 66
+      },
+      "background": {
+       "box_yellow": 1
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 129,
+        "positives": 143,
+        "rate": 0.9021
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 129,
+        "median": 0.0032,
+        "p90": 0.0057,
+        "max": 0.008
+       },
+       "xy_error_m_all": {
+        "n": 129,
+        "median": 0.0032,
+        "p90": 0.0057,
+        "max": 0.008
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "12/13",
+        "formation": "20/26",
+        "near_robot": "23/26",
+        "paint": "26/26",
+        "robots_on_paint": "12/13",
+        "scatter": "24/26",
+        "straddle": "12/13"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 186,
+        "positives": 187,
+        "rate": 0.9947
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 186,
+        "median": 0.003,
+        "p90": 0.0063,
+        "max": 0.0091
+       },
+       "xy_error_m_all": {
+        "n": 186,
+        "median": 0.003,
+        "p90": 0.0063,
+        "max": 0.0091
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "17/17",
+        "formation": "33/34",
+        "near_robot": "34/34",
+        "paint": "34/34",
+        "robots_on_paint": "17/17",
+        "scatter": "34/34",
+        "straddle": "17/17"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 175,
+        "positives": 176,
+        "rate": 0.9943
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 175,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "xy_error_m_all": {
+        "n": 175,
+        "median": 0.0036,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "16/16",
+        "formation": "32/32",
+        "near_robot": "32/32",
+        "paint": "32/32",
+        "robots_on_paint": "16/16",
+        "scatter": "31/32",
+        "straddle": "16/16"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 168,
+        "positives": 187,
+        "rate": 0.8984
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 168,
+        "median": 0.0033,
+        "p90": 0.0085,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 168,
+        "median": 0.0033,
+        "p90": 0.0085,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "17/17",
+        "formation": "32/34",
+        "near_robot": "30/34",
+        "paint": "32/34",
+        "robots_on_paint": "14/17",
+        "scatter": "28/34",
+        "straddle": "15/17"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 132,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/12"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 132,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/12"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 111,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 21,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/21",
+        "near_robot": "0/22",
+        "paint": "0/20",
+        "robots_on_paint": "0/11",
+        "scatter": "0/21",
+        "straddle": "0/4"
+       },
+       "centre_modes": null
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 130,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 2,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/10"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 54,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 12,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/5",
+        "formation": "0/10",
+        "near_robot": "0/10",
+        "paint": "0/11",
+        "robots_on_paint": "0/6",
+        "scatter": "0/11",
+        "straddle": "0/1"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 264,
+     "false_positives_total": 1,
+     "false_positives_by_background": {
+      "robot": 1
+     },
+     "false_positives_per_frame": 0.0038,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 146,
+       "missed": 15
+      },
+      "box_green": {
+       "box_green": 209,
+       "missed": 2
+      },
+      "box_red": {
+       "box_red": 189,
+       "missed": 2
+      },
+      "box_yellow": {
+       "box_yellow": 191,
+       "missed": 22
+      },
+      "can": {
+       "missed": 150
+      },
+      "tile": {
+       "missed": 165
+      },
+      "long_beam": {
+       "missed": 180
+      },
+      "heavy_crate": {
+       "missed": 174
+      },
+      "tri_frame": {
+       "missed": 86
+      },
+      "background": {
+       "box_yellow": 1
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 143,
+        "positives": 158,
+        "rate": 0.9051
+       },
+       "partial_frame": {
+        "detected": 3,
+        "positives": 3,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 143,
+        "median": 0.0036,
+        "p90": 0.006,
+        "max": 0.0083
+       },
+       "xy_error_m_all": {
+        "n": 146,
+        "median": 0.0036,
+        "p90": 0.0063,
+        "max": 0.0312
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_green": {
+       "full": {
+        "detected": 207,
+        "positives": 208,
+        "rate": 0.9952
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 207,
+        "median": 0.0036,
+        "p90": 0.0071,
+        "max": 0.0091
+       },
+       "xy_error_m_all": {
+        "n": 209,
+        "median": 0.0036,
+        "p90": 0.0071,
+        "max": 0.0211
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 187,
+        "positives": 188,
+        "rate": 0.9947
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 187,
+        "median": 0.0037,
+        "p90": 0.0068,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 189,
+        "median": 0.0037,
+        "p90": 0.0071,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 190,
+        "positives": 209,
+        "rate": 0.9091
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 4,
+        "rate": 0.25
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 190,
+        "median": 0.0034,
+        "p90": 0.0091,
+        "max": 0.01
+       },
+       "xy_error_m_all": {
+        "n": 191,
+        "median": 0.0034,
+        "p90": 0.0092,
+        "max": 0.01
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 141,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 9,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 149,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 16,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 111,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 69,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 130,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 44,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 54,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 32,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "zone_perception_v1": {
+    "merged": {
+     "frames": 66,
+     "false_positives_total": 12,
+     "false_positives_by_background": {
+      "near_item": 1,
+      "robot": 11
+     },
+     "false_positives_per_frame": 0.1818,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 98,
+       "missed": 45
+      },
+      "box_green": {
+       "box_green": 165,
+       "missed": 22
+      },
+      "box_red": {
+       "box_red": 149,
+       "missed": 27
+      },
+      "box_yellow": {
+       "box_yellow": 152,
+       "missed": 35
+      },
+      "can": {
+       "missed": 132
+      },
+      "tile": {
+       "missed": 132
+      },
+      "long_beam": {
+       "missed": 132
+      },
+      "heavy_crate": {
+       "missed": 132
+      },
+      "tri_frame": {
+       "missed": 66
+      },
+      "background": {
+       "box_cyan": 1,
+       "box_yellow": 11
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 98,
+        "positives": 143,
+        "rate": 0.6853
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 98,
+        "median": 0.0021,
+        "p90": 0.0072,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 98,
+        "median": 0.0021,
+        "p90": 0.0072,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 1
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "11/13",
+        "formation": "14/26",
+        "near_robot": "20/26",
+        "paint": "17/26",
+        "robots_on_paint": "9/13",
+        "scatter": "19/26",
+        "straddle": "8/13"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 165,
+        "positives": 187,
+        "rate": 0.8824
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 165,
+        "median": 0.0028,
+        "p90": 0.0075,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 165,
+        "median": 0.0028,
+        "p90": 0.0075,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "14/17",
+        "formation": "25/34",
+        "near_robot": "29/34",
+        "paint": "31/34",
+        "robots_on_paint": "16/17",
+        "scatter": "33/34",
+        "straddle": "17/17"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 149,
+        "positives": 176,
+        "rate": 0.8466
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 149,
+        "median": 0.0033,
+        "p90": 0.0073,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 149,
+        "median": 0.0033,
+        "p90": 0.0073,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "14/16",
+        "formation": "26/32",
+        "near_robot": "26/32",
+        "paint": "28/32",
+        "robots_on_paint": "13/16",
+        "scatter": "27/32",
+        "straddle": "15/16"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 152,
+        "positives": 187,
+        "rate": 0.8128
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 152,
+        "median": 0.0021,
+        "p90": 0.0078,
+        "max": 0.0217
+       },
+       "xy_error_m_all": {
+        "n": 152,
+        "median": 0.0021,
+        "p90": 0.0078,
+        "max": 0.0217
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "near_item": 1,
+        "robot": 10
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "15/17",
+        "formation": "25/34",
+        "near_robot": "26/34",
+        "paint": "31/34",
+        "robots_on_paint": "13/17",
+        "scatter": "29/34",
+        "straddle": "13/17"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 132,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/12"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 132,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/12"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 111,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 21,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/21",
+        "near_robot": "0/22",
+        "paint": "0/20",
+        "robots_on_paint": "0/11",
+        "scatter": "0/21",
+        "straddle": "0/4"
+       },
+       "centre_modes": null
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 130,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 2,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/12",
+        "formation": "0/24",
+        "near_robot": "0/24",
+        "paint": "0/24",
+        "robots_on_paint": "0/12",
+        "scatter": "0/24",
+        "straddle": "0/10"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 54,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 12,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/5",
+        "formation": "0/10",
+        "near_robot": "0/10",
+        "paint": "0/11",
+        "robots_on_paint": "0/6",
+        "scatter": "0/11",
+        "straddle": "0/1"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 264,
+     "false_positives_total": 12,
+     "false_positives_by_background": {
+      "paint_pickup": 1,
+      "robot": 11
+     },
+     "false_positives_per_frame": 0.0455,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 1,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 107,
+       "missed": 54
+      },
+      "box_green": {
+       "box_green": 189,
+       "missed": 22
+      },
+      "box_red": {
+       "box_red": 162,
+       "missed": 29
+      },
+      "box_yellow": {
+       "box_yellow": 176,
+       "missed": 37
+      },
+      "can": {
+       "missed": 150
+      },
+      "tile": {
+       "missed": 165
+      },
+      "long_beam": {
+       "box_yellow": 1,
+       "missed": 180
+      },
+      "heavy_crate": {
+       "missed": 174
+      },
+      "tri_frame": {
+       "missed": 86
+      },
+      "background": {
+       "box_cyan": 1,
+       "box_yellow": 11
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 104,
+        "positives": 158,
+        "rate": 0.6582
+       },
+       "partial_frame": {
+        "detected": 3,
+        "positives": 3,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 104,
+        "median": 0.0026,
+        "p90": 0.0072,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 107,
+        "median": 0.0028,
+        "p90": 0.0074,
+        "max": 0.0313
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "paint_pickup": 1
+       }
+      },
+      "box_green": {
+       "full": {
+        "detected": 186,
+        "positives": 208,
+        "rate": 0.8942
+       },
+       "partial_frame": {
+        "detected": 3,
+        "positives": 3,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 186,
+        "median": 0.0032,
+        "p90": 0.0078,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 189,
+        "median": 0.0032,
+        "p90": 0.0078,
+        "max": 0.0211
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 160,
+        "positives": 188,
+        "rate": 0.8511
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 160,
+        "median": 0.0036,
+        "p90": 0.0076,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 162,
+        "median": 0.0036,
+        "p90": 0.0077,
+        "max": 0.0094
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 172,
+        "positives": 209,
+        "rate": 0.823
+       },
+       "partial_frame": {
+        "detected": 4,
+        "positives": 4,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 172,
+        "median": 0.0022,
+        "p90": 0.0078,
+        "max": 0.0108
+       },
+       "xy_error_m_all": {
+        "n": 176,
+        "median": 0.0022,
+        "p90": 0.0086,
+        "max": 0.0217
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {
+        "long_beam": 1
+       },
+       "fp_background": {
+        "robot": 11
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 141,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 9,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 149,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 16,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 111,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 69,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 130,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 44,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 54,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 32,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "top_cargo_v1_extras": {
+    "merged_cargo_confidence_bins": {
+     "0-0.5": {
+      "detections": 1,
+      "tp": 1
+     },
+     "0.5-0.8": {
+      "detections": 47,
+      "tp": 47
+     },
+     "0.8-1.0": {
+      "detections": 544,
+      "tp": 544
+     }
+    },
+    "cargo_best_view_visible_fraction_by_case": {
+     "adjacent": {
+      "n": 53,
+      "min_best_view_visible_fraction": 0.84,
+      "below_0.9": 25
+     },
+     "formation": {
+      "n": 103,
+      "min_best_view_visible_fraction": 0.783,
+      "below_0.9": 45
+     },
+     "near_robot": {
+      "n": 104,
+      "min_best_view_visible_fraction": 0.777,
+      "below_0.9": 43
+     },
+     "paint": {
+      "n": 103,
+      "min_best_view_visible_fraction": 0.807,
+      "below_0.9": 41
+     },
+     "robots_on_paint": {
+      "n": 53,
+      "min_best_view_visible_fraction": 0.831,
+      "below_0.9": 20
+     },
+     "scatter": {
+      "n": 104,
+      "min_best_view_visible_fraction": 0.804,
+      "below_0.9": 40
+     },
+     "straddle": {
+      "n": 39,
+      "min_best_view_visible_fraction": 0.852,
+      "below_0.9": 14
+     }
+    }
+   }
+  },
+  "test": {
+   "top_cargo_v1": {
+    "merged": {
+     "frames": 110,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "robot": 2
+     },
+     "false_positives_per_frame": 0.0182,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 259,
+       "missed": 27
+      },
+      "box_green": {
+       "box_green": 271,
+       "missed": 4
+      },
+      "box_red": {
+       "box_red": 253
+      },
+      "box_yellow": {
+       "box_yellow": 239,
+       "missed": 25
+      },
+      "can": {
+       "can": 216,
+       "missed": 4
+      },
+      "tile": {
+       "tile": 219,
+       "missed": 1
+      },
+      "long_beam": {
+       "long_beam": 220
+      },
+      "heavy_crate": {
+       "heavy_crate": 217,
+       "missed": 3
+      },
+      "tri_frame": {
+       "tri_frame": 110
+      },
+      "background": {
+       "box_yellow": 2
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 259,
+        "positives": 286,
+        "rate": 0.9056
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 259,
+        "median": 0.0029,
+        "p90": 0.006,
+        "max": 0.0268
+       },
+       "xy_error_m_all": {
+        "n": 259,
+        "median": 0.0029,
+        "p90": 0.006,
+        "max": 0.0268
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "23/26",
+        "formation": "46/52",
+        "near_robot": "50/52",
+        "paint": "48/52",
+        "robots_on_paint": "23/26",
+        "scatter": "46/52",
+        "straddle": "23/26"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 271,
+        "positives": 275,
+        "rate": 0.9855
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 271,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 271,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "25/25",
+        "formation": "49/50",
+        "near_robot": "48/50",
+        "paint": "50/50",
+        "robots_on_paint": "24/25",
+        "scatter": "50/50",
+        "straddle": "25/25"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 253,
+        "positives": 253,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 253,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0087
+       },
+       "xy_error_m_all": {
+        "n": 253,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0087
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "23/23",
+        "formation": "46/46",
+        "near_robot": "46/46",
+        "paint": "46/46",
+        "robots_on_paint": "23/23",
+        "scatter": "46/46",
+        "straddle": "23/23"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 239,
+        "positives": 264,
+        "rate": 0.9053
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 239,
+        "median": 0.003,
+        "p90": 0.0076,
+        "max": 0.0099
+       },
+       "xy_error_m_all": {
+        "n": 239,
+        "median": 0.003,
+        "p90": 0.0076,
+        "max": 0.0099
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "22/24",
+        "formation": "40/48",
+        "near_robot": "46/48",
+        "paint": "40/48",
+        "robots_on_paint": "23/24",
+        "scatter": "46/48",
+        "straddle": "22/24"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 216,
+        "positives": 220,
+        "rate": 0.9818
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 216,
+        "median": 0.001,
+        "p90": 0.0196,
+        "max": 0.0259
+       },
+       "xy_error_m_all": {
+        "n": 216,
+        "median": 0.001,
+        "p90": 0.0196,
+        "max": 0.0259
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 216,
+        "median": 0.001,
+        "p90": 0.0196,
+        "max": 0.0259
+       },
+       "grip_error_m_all": {
+        "n": 216,
+        "median": 0.001,
+        "p90": 0.0196,
+        "max": 0.0259
+       },
+       "full_by_case": {
+        "adjacent": "19/20",
+        "formation": "39/40",
+        "near_robot": "40/40",
+        "paint": "40/40",
+        "robots_on_paint": "20/20",
+        "scatter": "38/40",
+        "straddle": "20/20"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 219,
+        "positives": 219,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": {
+        "n": 219,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0054
+       },
+       "xy_error_m_all": {
+        "n": 219,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0054
+       },
+       "yaw_error_deg_full": {
+        "n": 219,
+        "median": 1.1934,
+        "p90": 3.6911,
+        "max": 9.7184
+       },
+       "yaw_error_deg_all": {
+        "n": 219,
+        "median": 1.1934,
+        "p90": 3.6911,
+        "max": 9.7184
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 219,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0054
+       },
+       "grip_error_m_all": {
+        "n": 219,
+        "median": 0.0009,
+        "p90": 0.0025,
+        "max": 0.0054
+       },
+       "full_by_case": {
+        "adjacent": "20/20",
+        "formation": "40/40",
+        "near_robot": "39/39",
+        "paint": "40/40",
+        "robots_on_paint": "20/20",
+        "scatter": "40/40",
+        "straddle": "20/20"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 184,
+        "positives": 184,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 36,
+        "positives": 36,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 184,
+        "median": 0.0013,
+        "p90": 0.0047,
+        "max": 0.0231
+       },
+       "xy_error_m_all": {
+        "n": 220,
+        "median": 0.0014,
+        "p90": 0.0057,
+        "max": 0.0245
+       },
+       "yaw_error_deg_full": {
+        "n": 184,
+        "median": 0.0807,
+        "p90": 0.2209,
+        "max": 1.1669
+       },
+       "yaw_error_deg_all": {
+        "n": 220,
+        "median": 0.0868,
+        "p90": 0.28,
+        "max": 1.1669
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 184,
+        "median": 0.0016,
+        "p90": 0.0061,
+        "max": 0.0231
+       },
+       "grip_error_m_all": {
+        "n": 220,
+        "median": 0.0017,
+        "p90": 0.0065,
+        "max": 0.0245
+       },
+       "full_by_case": {
+        "adjacent": "16/16",
+        "formation": "39/39",
+        "near_robot": "38/38",
+        "paint": "35/35",
+        "robots_on_paint": "15/15",
+        "scatter": "32/32",
+        "straddle": "9/9"
+       },
+       "centre_modes": {
+        "both_ends": 162,
+        "merged_both_ends": 58
+       }
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 209,
+        "positives": 212,
+        "rate": 0.9858
+       },
+       "partial_frame": {
+        "detected": 8,
+        "positives": 8,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 209,
+        "median": 0.0004,
+        "p90": 0.005,
+        "max": 0.0172
+       },
+       "xy_error_m_all": {
+        "n": 217,
+        "median": 0.0004,
+        "p90": 0.0053,
+        "max": 0.0172
+       },
+       "yaw_error_deg_full": {
+        "n": 209,
+        "median": 0.1087,
+        "p90": 0.6046,
+        "max": 2.4981
+       },
+       "yaw_error_deg_all": {
+        "n": 217,
+        "median": 0.1087,
+        "p90": 0.6032,
+        "max": 2.4981
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 209,
+        "median": 0.0007,
+        "p90": 0.0051,
+        "max": 0.018
+       },
+       "grip_error_m_all": {
+        "n": 217,
+        "median": 0.0008,
+        "p90": 0.0056,
+        "max": 0.018
+       },
+       "full_by_case": {
+        "adjacent": "19/20",
+        "formation": "39/39",
+        "near_robot": "39/40",
+        "paint": "40/40",
+        "robots_on_paint": "18/18",
+        "scatter": "40/40",
+        "straddle": "14/15"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 93,
+        "positives": 93,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 17,
+        "positives": 17,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 93,
+        "median": 0.0006,
+        "p90": 0.0018,
+        "max": 0.0056
+       },
+       "xy_error_m_all": {
+        "n": 110,
+        "median": 0.0007,
+        "p90": 0.0031,
+        "max": 0.0163
+       },
+       "yaw_error_deg_full": {
+        "n": 93,
+        "median": 0.0596,
+        "p90": 0.1641,
+        "max": 0.3439
+       },
+       "yaw_error_deg_all": {
+        "n": 110,
+        "median": 0.0636,
+        "p90": 0.1996,
+        "max": 4.8458
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": {
+        "n": 93,
+        "median": 0.0008,
+        "p90": 0.0022,
+        "max": 0.0056
+       },
+       "grip_error_m_all": {
+        "n": 110,
+        "median": 0.0009,
+        "p90": 0.0039,
+        "max": 0.0334
+       },
+       "full_by_case": {
+        "adjacent": "9/9",
+        "formation": "18/18",
+        "near_robot": "19/19",
+        "paint": "20/20",
+        "robots_on_paint": "9/9",
+        "scatter": "18/18"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 440,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "robot": 2
+     },
+     "false_positives_per_frame": 0.0045,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 286,
+       "missed": 34
+      },
+      "box_green": {
+       "box_green": 302,
+       "missed": 5
+      },
+      "box_red": {
+       "box_red": 280,
+       "missed": 2
+      },
+      "box_yellow": {
+       "box_yellow": 271,
+       "missed": 26
+      },
+      "can": {
+       "can": 237,
+       "missed": 12
+      },
+      "tile": {
+       "tile": 256,
+       "missed": 6
+      },
+      "long_beam": {
+       "long_beam": 280,
+       "missed": 26
+      },
+      "heavy_crate": {
+       "heavy_crate": 245,
+       "missed": 31
+      },
+      "tri_frame": {
+       "tri_frame": 122,
+       "missed": 24
+      },
+      "background": {
+       "box_yellow": 2
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 285,
+        "positives": 318,
+        "rate": 0.8962
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 2,
+        "rate": 0.5
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 285,
+        "median": 0.0031,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "xy_error_m_all": {
+        "n": 286,
+        "median": 0.0031,
+        "p90": 0.0068,
+        "max": 0.0268
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_green": {
+       "full": {
+        "detected": 300,
+        "positives": 304,
+        "rate": 0.9868
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 300,
+        "median": 0.003,
+        "p90": 0.007,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 302,
+        "median": 0.003,
+        "p90": 0.007,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 275,
+        "positives": 275,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 5,
+        "positives": 7,
+        "rate": 0.7143
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 275,
+        "median": 0.0042,
+        "p90": 0.0071,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 280,
+        "median": 0.0042,
+        "p90": 0.0073,
+        "max": 0.022
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 269,
+        "positives": 294,
+        "rate": 0.915
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 269,
+        "median": 0.0035,
+        "p90": 0.008,
+        "max": 0.0099
+       },
+       "xy_error_m_all": {
+        "n": 271,
+        "median": 0.0036,
+        "p90": 0.008,
+        "max": 0.0256
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 230,
+        "positives": 234,
+        "rate": 0.9829
+       },
+       "partial_frame": {
+        "detected": 7,
+        "positives": 15,
+        "rate": 0.4667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 230,
+        "median": 0.001,
+        "p90": 0.0204,
+        "max": 0.0285
+       },
+       "xy_error_m_all": {
+        "n": 237,
+        "median": 0.001,
+        "p90": 0.0205,
+        "max": 0.0285
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 239,
+        "positives": 239,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 17,
+        "positives": 22,
+        "rate": 0.7727
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": {
+        "n": 239,
+        "median": 0.0009,
+        "p90": 0.0026,
+        "max": 0.0054
+       },
+       "xy_error_m_all": {
+        "n": 256,
+        "median": 0.0009,
+        "p90": 0.0027,
+        "max": 0.0214
+       },
+       "yaw_error_deg_full": {
+        "n": 239,
+        "median": 1.1959,
+        "p90": 3.6528,
+        "max": 9.7184
+       },
+       "yaw_error_deg_all": {
+        "n": 256,
+        "median": 1.1947,
+        "p90": 3.7353,
+        "max": 74.9072
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 187,
+        "positives": 187,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 93,
+        "positives": 119,
+        "rate": 0.7815
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 187,
+        "median": 0.0013,
+        "p90": 0.0044,
+        "max": 0.0231
+       },
+       "xy_error_m_all": {
+        "n": 280,
+        "median": 0.0023,
+        "p90": 0.0374,
+        "max": 0.1616
+       },
+       "yaw_error_deg_full": {
+        "n": 187,
+        "median": 0.0795,
+        "p90": 0.2223,
+        "max": 0.593
+       },
+       "yaw_error_deg_all": {
+        "n": 280,
+        "median": 0.105,
+        "p90": 0.6604,
+        "max": 6.1099
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 209,
+        "positives": 212,
+        "rate": 0.9858
+       },
+       "partial_frame": {
+        "detected": 36,
+        "positives": 64,
+        "rate": 0.5625
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 209,
+        "median": 0.0004,
+        "p90": 0.005,
+        "max": 0.0172
+       },
+       "xy_error_m_all": {
+        "n": 245,
+        "median": 0.0005,
+        "p90": 0.0097,
+        "max": 0.0388
+       },
+       "yaw_error_deg_full": {
+        "n": 209,
+        "median": 0.1087,
+        "p90": 0.6046,
+        "max": 2.4981
+       },
+       "yaw_error_deg_all": {
+        "n": 245,
+        "median": 0.1181,
+        "p90": 0.6419,
+        "max": 89.98
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 93,
+        "positives": 93,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 29,
+        "positives": 53,
+        "rate": 0.5472
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 93,
+        "median": 0.0006,
+        "p90": 0.0018,
+        "max": 0.0056
+       },
+       "xy_error_m_all": {
+        "n": 122,
+        "median": 0.0007,
+        "p90": 0.0047,
+        "max": 0.0755
+       },
+       "yaw_error_deg_full": {
+        "n": 93,
+        "median": 0.0596,
+        "p90": 0.1641,
+        "max": 0.3439
+       },
+       "yaw_error_deg_all": {
+        "n": 122,
+        "median": 0.0699,
+        "p90": 0.9227,
+        "max": 11.6219
+       },
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "top_zone_v2": {
+    "merged": {
+     "frames": 110,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "robot": 2
+     },
+     "false_positives_per_frame": 0.0182,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 259,
+       "missed": 27
+      },
+      "box_green": {
+       "box_green": 272,
+       "missed": 3
+      },
+      "box_red": {
+       "box_red": 253
+      },
+      "box_yellow": {
+       "box_yellow": 239,
+       "missed": 25
+      },
+      "can": {
+       "missed": 220
+      },
+      "tile": {
+       "missed": 220
+      },
+      "long_beam": {
+       "missed": 220
+      },
+      "heavy_crate": {
+       "missed": 220
+      },
+      "tri_frame": {
+       "missed": 110
+      },
+      "background": {
+       "box_yellow": 2
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 259,
+        "positives": 286,
+        "rate": 0.9056
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 259,
+        "median": 0.0029,
+        "p90": 0.006,
+        "max": 0.0268
+       },
+       "xy_error_m_all": {
+        "n": 259,
+        "median": 0.0029,
+        "p90": 0.006,
+        "max": 0.0268
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "23/26",
+        "formation": "46/52",
+        "near_robot": "50/52",
+        "paint": "48/52",
+        "robots_on_paint": "23/26",
+        "scatter": "46/52",
+        "straddle": "23/26"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 272,
+        "positives": 275,
+        "rate": 0.9891
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 272,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 272,
+        "median": 0.0028,
+        "p90": 0.0064,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "25/25",
+        "formation": "49/50",
+        "near_robot": "48/50",
+        "paint": "50/50",
+        "robots_on_paint": "25/25",
+        "scatter": "50/50",
+        "straddle": "25/25"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 253,
+        "positives": 253,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 253,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0087
+       },
+       "xy_error_m_all": {
+        "n": 253,
+        "median": 0.0041,
+        "p90": 0.0067,
+        "max": 0.0087
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "23/23",
+        "formation": "46/46",
+        "near_robot": "46/46",
+        "paint": "46/46",
+        "robots_on_paint": "23/23",
+        "scatter": "46/46",
+        "straddle": "23/23"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 239,
+        "positives": 264,
+        "rate": 0.9053
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 239,
+        "median": 0.003,
+        "p90": 0.0076,
+        "max": 0.0099
+       },
+       "xy_error_m_all": {
+        "n": 239,
+        "median": 0.003,
+        "p90": 0.0076,
+        "max": 0.0099
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "22/24",
+        "formation": "40/48",
+        "near_robot": "46/48",
+        "paint": "40/48",
+        "robots_on_paint": "23/24",
+        "scatter": "46/48",
+        "straddle": "22/24"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 220,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/40",
+        "near_robot": "0/40",
+        "paint": "0/40",
+        "robots_on_paint": "0/20",
+        "scatter": "0/40",
+        "straddle": "0/20"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 219,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/40",
+        "near_robot": "0/39",
+        "paint": "0/40",
+        "robots_on_paint": "0/20",
+        "scatter": "0/40",
+        "straddle": "0/20"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 184,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 36,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/16",
+        "formation": "0/39",
+        "near_robot": "0/38",
+        "paint": "0/35",
+        "robots_on_paint": "0/15",
+        "scatter": "0/32",
+        "straddle": "0/9"
+       },
+       "centre_modes": null
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 212,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 8,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/39",
+        "near_robot": "0/40",
+        "paint": "0/40",
+        "robots_on_paint": "0/18",
+        "scatter": "0/40",
+        "straddle": "0/15"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 93,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 17,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/9",
+        "formation": "0/18",
+        "near_robot": "0/19",
+        "paint": "0/20",
+        "robots_on_paint": "0/9",
+        "scatter": "0/18"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 440,
+     "false_positives_total": 2,
+     "false_positives_by_background": {
+      "robot": 2
+     },
+     "false_positives_per_frame": 0.0045,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 286,
+       "missed": 34
+      },
+      "box_green": {
+       "box_green": 303,
+       "missed": 4
+      },
+      "box_red": {
+       "box_red": 280,
+       "missed": 2
+      },
+      "box_yellow": {
+       "box_yellow": 271,
+       "missed": 26
+      },
+      "can": {
+       "missed": 249
+      },
+      "tile": {
+       "missed": 262
+      },
+      "long_beam": {
+       "missed": 306
+      },
+      "heavy_crate": {
+       "missed": 276
+      },
+      "tri_frame": {
+       "missed": 146
+      },
+      "background": {
+       "box_yellow": 2
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 285,
+        "positives": 318,
+        "rate": 0.8962
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 2,
+        "rate": 0.5
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 285,
+        "median": 0.0031,
+        "p90": 0.0066,
+        "max": 0.0086
+       },
+       "xy_error_m_all": {
+        "n": 286,
+        "median": 0.0031,
+        "p90": 0.0068,
+        "max": 0.0268
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_green": {
+       "full": {
+        "detected": 301,
+        "positives": 304,
+        "rate": 0.9901
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 301,
+        "median": 0.0029,
+        "p90": 0.007,
+        "max": 0.011
+       },
+       "xy_error_m_all": {
+        "n": 303,
+        "median": 0.0029,
+        "p90": 0.007,
+        "max": 0.011
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 275,
+        "positives": 275,
+        "rate": 1.0
+       },
+       "partial_frame": {
+        "detected": 5,
+        "positives": 7,
+        "rate": 0.7143
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 275,
+        "median": 0.0042,
+        "p90": 0.0071,
+        "max": 0.0094
+       },
+       "xy_error_m_all": {
+        "n": 280,
+        "median": 0.0042,
+        "p90": 0.0073,
+        "max": 0.022
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 269,
+        "positives": 294,
+        "rate": 0.915
+       },
+       "partial_frame": {
+        "detected": 2,
+        "positives": 3,
+        "rate": 0.6667
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 269,
+        "median": 0.0035,
+        "p90": 0.008,
+        "max": 0.0099
+       },
+       "xy_error_m_all": {
+        "n": 271,
+        "median": 0.0036,
+        "p90": 0.008,
+        "max": 0.0256
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 2
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 234,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 15,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 239,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 22,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 187,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 119,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 212,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 64,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 93,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 53,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "zone_perception_v1": {
+    "merged": {
+     "frames": 110,
+     "false_positives_total": 11,
+     "false_positives_by_background": {
+      "robot": 11
+     },
+     "false_positives_per_frame": 0.1,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 215,
+       "missed": 71
+      },
+      "box_green": {
+       "box_green": 235,
+       "missed": 40
+      },
+      "box_red": {
+       "box_red": 213,
+       "missed": 40
+      },
+      "box_yellow": {
+       "box_yellow": 221,
+       "missed": 43
+      },
+      "can": {
+       "missed": 220
+      },
+      "tile": {
+       "missed": 220
+      },
+      "long_beam": {
+       "missed": 220
+      },
+      "heavy_crate": {
+       "missed": 220
+      },
+      "tri_frame": {
+       "missed": 110
+      },
+      "background": {
+       "box_yellow": 11
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 215,
+        "positives": 286,
+        "rate": 0.7517
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 215,
+        "median": 0.0017,
+        "p90": 0.007,
+        "max": 0.0254
+       },
+       "xy_error_m_all": {
+        "n": 215,
+        "median": 0.0017,
+        "p90": 0.007,
+        "max": 0.0254
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "24/26",
+        "formation": "37/52",
+        "near_robot": "42/52",
+        "paint": "43/52",
+        "robots_on_paint": "18/26",
+        "scatter": "34/52",
+        "straddle": "17/26"
+       },
+       "centre_modes": null
+      },
+      "box_green": {
+       "full": {
+        "detected": 235,
+        "positives": 275,
+        "rate": 0.8545
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 235,
+        "median": 0.0022,
+        "p90": 0.0065,
+        "max": 0.0266
+       },
+       "xy_error_m_all": {
+        "n": 235,
+        "median": 0.0022,
+        "p90": 0.0065,
+        "max": 0.0266
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "22/25",
+        "formation": "42/50",
+        "near_robot": "47/50",
+        "paint": "36/50",
+        "robots_on_paint": "24/25",
+        "scatter": "43/50",
+        "straddle": "21/25"
+       },
+       "centre_modes": null
+      },
+      "box_red": {
+       "full": {
+        "detected": 213,
+        "positives": 253,
+        "rate": 0.8419
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 213,
+        "median": 0.0036,
+        "p90": 0.0072,
+        "max": 0.01
+       },
+       "xy_error_m_all": {
+        "n": 213,
+        "median": 0.0036,
+        "p90": 0.0072,
+        "max": 0.01
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "19/23",
+        "formation": "36/46",
+        "near_robot": "41/46",
+        "paint": "39/46",
+        "robots_on_paint": "21/23",
+        "scatter": "37/46",
+        "straddle": "20/23"
+       },
+       "centre_modes": null
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 221,
+        "positives": 264,
+        "rate": 0.8371
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 221,
+        "median": 0.002,
+        "p90": 0.0072,
+        "max": 0.0104
+       },
+       "xy_error_m_all": {
+        "n": 221,
+        "median": 0.002,
+        "p90": 0.0072,
+        "max": 0.0104
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 11
+       },
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "20/24",
+        "formation": "37/48",
+        "near_robot": "41/48",
+        "paint": "38/48",
+        "robots_on_paint": "20/24",
+        "scatter": "43/48",
+        "straddle": "22/24"
+       },
+       "centre_modes": null
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 220,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/40",
+        "near_robot": "0/40",
+        "paint": "0/40",
+        "robots_on_paint": "0/20",
+        "scatter": "0/40",
+        "straddle": "0/20"
+       },
+       "centre_modes": null
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 219,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/40",
+        "near_robot": "0/39",
+        "paint": "0/40",
+        "robots_on_paint": "0/20",
+        "scatter": "0/40",
+        "straddle": "0/20"
+       },
+       "centre_modes": null
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 184,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 36,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/16",
+        "formation": "0/39",
+        "near_robot": "0/38",
+        "paint": "0/35",
+        "robots_on_paint": "0/15",
+        "scatter": "0/32",
+        "straddle": "0/9"
+       },
+       "centre_modes": null
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 212,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 8,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/20",
+        "formation": "0/39",
+        "near_robot": "0/40",
+        "paint": "0/40",
+        "robots_on_paint": "0/18",
+        "scatter": "0/40",
+        "straddle": "0/15"
+       },
+       "centre_modes": null
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 93,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 17,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {},
+       "grip_error_m_full": null,
+       "grip_error_m_all": null,
+       "full_by_case": {
+        "adjacent": "0/9",
+        "formation": "0/18",
+        "near_robot": "0/19",
+        "paint": "0/20",
+        "robots_on_paint": "0/9",
+        "scatter": "0/18"
+       },
+       "centre_modes": null
+      }
+     }
+    },
+    "camera": {
+     "frames": 440,
+     "false_positives_total": 11,
+     "false_positives_by_background": {
+      "robot": 11
+     },
+     "false_positives_per_frame": 0.025,
+     "box_cargo_confusion": {
+      "cargo_reported_as_box": 0,
+      "box_reported_as_cargo": 0,
+      "cargo_kind_swaps": 0,
+      "box_colour_swaps": 0
+     },
+     "confusion_matrix": {
+      "box_cyan": {
+       "box_cyan": 229,
+       "missed": 91
+      },
+      "box_green": {
+       "box_green": 264,
+       "missed": 43
+      },
+      "box_red": {
+       "box_red": 240,
+       "missed": 42
+      },
+      "box_yellow": {
+       "box_yellow": 245,
+       "missed": 52
+      },
+      "can": {
+       "missed": 249
+      },
+      "tile": {
+       "missed": 262
+      },
+      "long_beam": {
+       "missed": 306
+      },
+      "heavy_crate": {
+       "missed": 276
+      },
+      "tri_frame": {
+       "missed": 146
+      },
+      "background": {
+       "box_yellow": 11
+      }
+     },
+     "per_class": {
+      "box_cyan": {
+       "full": {
+        "detected": 228,
+        "positives": 318,
+        "rate": 0.717
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 2,
+        "rate": 0.5
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 228,
+        "median": 0.0017,
+        "p90": 0.0074,
+        "max": 0.013
+       },
+       "xy_error_m_all": {
+        "n": 229,
+        "median": 0.0017,
+        "p90": 0.0077,
+        "max": 0.0254
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_green": {
+       "full": {
+        "detected": 261,
+        "positives": 304,
+        "rate": 0.8586
+       },
+       "partial_frame": {
+        "detected": 3,
+        "positives": 3,
+        "rate": 1.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 261,
+        "median": 0.0025,
+        "p90": 0.0072,
+        "max": 0.0086
+       },
+       "xy_error_m_all": {
+        "n": 264,
+        "median": 0.0025,
+        "p90": 0.0072,
+        "max": 0.0266
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_red": {
+       "full": {
+        "detected": 234,
+        "positives": 275,
+        "rate": 0.8509
+       },
+       "partial_frame": {
+        "detected": 6,
+        "positives": 7,
+        "rate": 0.8571
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 234,
+        "median": 0.0039,
+        "p90": 0.0079,
+        "max": 0.0103
+       },
+       "xy_error_m_all": {
+        "n": 240,
+        "median": 0.004,
+        "p90": 0.0084,
+        "max": 0.022
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "box_yellow": {
+       "full": {
+        "detected": 244,
+        "positives": 294,
+        "rate": 0.8299
+       },
+       "partial_frame": {
+        "detected": 1,
+        "positives": 3,
+        "rate": 0.3333
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": {
+        "n": 244,
+        "median": 0.0022,
+        "p90": 0.0072,
+        "max": 0.0104
+       },
+       "xy_error_m_all": {
+        "n": 245,
+        "median": 0.0022,
+        "p90": 0.0073,
+        "max": 0.0261
+       },
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {
+        "robot": 11
+       }
+      },
+      "can": {
+       "full": {
+        "detected": 0,
+        "positives": 234,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 15,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tile": {
+       "full": {
+        "detected": 0,
+        "positives": 239,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 22,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 1,
+        "rate": 0.0
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "long_beam": {
+       "full": {
+        "detected": 0,
+        "positives": 187,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 119,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "heavy_crate": {
+       "full": {
+        "detected": 0,
+        "positives": 212,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 64,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      },
+      "tri_frame": {
+       "full": {
+        "detected": 0,
+        "positives": 93,
+        "rate": 0.0
+       },
+       "partial_frame": {
+        "detected": 0,
+        "positives": 53,
+        "rate": 0.0
+       },
+       "occluded": {
+        "detected": 0,
+        "positives": 0,
+        "rate": null
+       },
+       "xy_error_m_full": null,
+       "xy_error_m_all": null,
+       "yaw_error_deg_full": null,
+       "yaw_error_deg_all": null,
+       "duplicates": 0,
+       "confused_as_this_from": {},
+       "fp_background": {}
+      }
+     }
+    }
+   },
+   "top_cargo_v1_extras": {
+    "merged_cargo_confidence_bins": {
+     "0-0.5": {
+      "detections": 3,
+      "tp": 3
+     },
+     "0.5-0.8": {
+      "detections": 84,
+      "tp": 84
+     },
+     "0.8-1.0": {
+      "detections": 895,
+      "tp": 895
+     }
+    },
+    "cargo_best_view_visible_fraction_by_case": {
+     "adjacent": {
+      "n": 85,
+      "min_best_view_visible_fraction": 0.81,
+      "below_0.9": 37
+     },
+     "formation": {
+      "n": 176,
+      "min_best_view_visible_fraction": 0.78,
+      "below_0.9": 82
+     },
+     "near_robot": {
+      "n": 177,
+      "min_best_view_visible_fraction": 0.422,
+      "below_0.9": 70
+     },
+     "paint": {
+      "n": 175,
+      "min_best_view_visible_fraction": 0.811,
+      "below_0.9": 74
+     },
+     "robots_on_paint": {
+      "n": 82,
+      "min_best_view_visible_fraction": 0.825,
+      "below_0.9": 39
+     },
+     "scatter": {
+      "n": 170,
+      "min_best_view_visible_fraction": 0.811,
+      "below_0.9": 64
+     },
+     "straddle": {
+      "n": 64,
+      "min_best_view_visible_fraction": 0.827,
+      "below_0.9": 27
+     }
+    }
+   }
+  }
+ },
+ "artifacts": {
+  "local_root": "outputs/zone-cargo-perception-20260925",
+  "backup": "local only (gitignored outputs/); not a remote backup",
+  "sha256": {
+   "dev": {
+    "manifest.json": "44b953561815534cbf73b91a3a944ba12b6ccdb0d355cf1b277ef0775d85c6cf",
+    "summary.json": "a100c0a5c1e118fc81a39dde70540e1485bc605b00266e638832c2aa15225b95",
+    "records-top_cargo_v1.jsonl": "a88d29acb98fdf8ee1089f15f066cc383f9e727ad7caa0f5b7a2fa27f4e80930",
+    "records-top_zone_v2.jsonl": "37f35f50104671027f7f88868fb0f63e1aa511bd7a7a419621d354849b1b453e",
+    "records-zone_perception_v1.jsonl": "687073b1e8fd2d6e225ba8ab747507ea6a25f4555424213a14bfaff12f5d1cd9"
+   },
+   "test": {
+    "manifest.json": "bcaffb7d70d50bdcca6dd4b938fbdc867e437a8bf355bd98a514a0b4395ef095",
+    "summary.json": "e6835bb61a0ebc8616d38b13f7e8c3d7ff98383161286c25f99dadacd9ebed19",
+    "records-top_cargo_v1.jsonl": "c4e5d11775410ce03c4edbe6d45fb1c554989268fab3e2b0ad691d63cc8b7cd0",
+    "records-top_zone_v2.jsonl": "6f55e189c971d11918becac23936ea289d1d225997537b7c245783168d372a75",
+    "records-zone_perception_v1.jsonl": "64b163b170a0fafae6fde44775a030ca1c5c2fae18b1fc3db9c770ed119cb70e"
+   }
+  }
+ },
+ "tests": {
+  "unit": "tests/test_zone_cargo_perception.py 22 passed; with tests/test_zone_color_boxes.py and tests/test_zone_cargo.py 52 passed",
+  "ci": "scripts/run_ci_tests.py: 2295 passed, 9 skipped, 1 xfailed, 0 failed",
+  "workflow_manager": "27 workflows; plan samples for zone-cargo-probe/zone-cargo-catalogue restored after the stack merge"
+ },
+ "failure_modes": [
+  "can floor position biased +x by 2-2.6 cm in the washed-out west (colour mask covers ~60% of visible can pixels); test p90 19.6 mm",
+  "residual misses (can 4, crate 3 on test) all in the washed-out west/north-west near the cctv_top/cctv_top_north seam",
+  "a box inside the tri_frame triangle is suppressed as \"box on cargo\" (test: 1 green box); suppression should cover the frame bars only",
+  "beam centre bias up to ~24 mm when only one 12 mm lime end cap joins the span",
+  "tile yaw p90 3.7 deg, max 9.7 deg (17x11 px object)"
+ ],
+ "unverified": [
+  "heavy occlusion (best-view visible fraction < 0.6 only once on test)",
+  "merged beam one-end/partial centre modes (unit tests only)",
+  "lifted/moving cargo, same-colour items touching, other lighting or maps",
+  "confidence calibration (almost no false positives to calibrate against)",
+  "controller/prompt integration (not in scope)"
+ ]
+}
