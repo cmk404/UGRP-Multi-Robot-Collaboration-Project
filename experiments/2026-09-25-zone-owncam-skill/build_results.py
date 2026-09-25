@@ -259,6 +259,35 @@ def cohort_stats_v7(runs):
     return stats
 
 
+BOX_FALSE_POSITION_M = .25
+
+
+def box_detection_eval(folder):
+    """Evaluation only (v8 gate W3): own-RGB approach-stage box centre vs the true box centre in the base frame."""
+    import math
+    folder = Path(folder)
+    truth = {json.loads(l)['step']: json.loads(l) for l in (folder / 'evaluation-only.jsonl').open()}
+    errors, approach_frames = [], 0
+    for line in (folder / 'control.jsonl').open():
+        c = json.loads(line)
+        if c['phase'] != 'grasp' or c['box_skill_phase'] != 'approach':
+            continue
+        approach_frames += 1
+        box = c.get('box') or {}
+        if not box.get('visible'):
+            continue
+        t = truth[c['step']]
+        dx, dy = t['box_xyz'][0] - t['base_xyz'][0], t['box_xyz'][1] - t['base_xyz'][1]
+        cy, sy = math.cos(t['base_yaw']), math.sin(t['base_yaw'])
+        bx, by = cy * dx + sy * dy, -sy * dx + cy * dy
+        est = box['estimated_box_center_base_m']
+        errors.append(math.hypot(est[0] - bx, est[1] - by))
+    return {'approach_frames': approach_frames, 'detected_frames': len(errors),
+            'false_position_frames': sum(e > BOX_FALSE_POSITION_M for e in errors),
+            'max_err_m': round(max(errors), 3) if errors else None,
+            'p90_err_m': round(sorted(errors)[int(.9 * (len(errors) - 1))], 3) if errors else None}
+
+
 def cohort_stats_v8(runs):
     stats = cohort_stats_v7(runs)
     west = [r for r in runs if str(r['scenario_setup_only']['bay']).startswith('W')]
@@ -266,7 +295,8 @@ def cohort_stats_v8(runs):
                   'west_diagnostic_success': sum(bool(r['diagnostic_success']) for r in west),
                   'east_diagnostic_success': sum(bool(r['diagnostic_success']) for r in runs if r not in west),
                   'grasp_target_not_visible': [r['seed'] for r in runs if 'NOT_VISIBLE' in str(r['reason'])],
-                  'last_floor_gate': {r['seed']: (r['skill_summary'] or {}).get('last_floor_gate') for r in runs}})
+                  'last_floor_gate': {r['seed']: (r['skill_summary'] or {}).get('last_floor_gate') for r in runs},
+                  'box_detection': {r['seed']: box_detection_eval(r['raw_dir']) for r in runs}})
     return stats
 
 
