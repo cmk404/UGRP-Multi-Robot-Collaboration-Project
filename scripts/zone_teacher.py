@@ -36,6 +36,8 @@ DRIVE_PHASE_LIMIT_S = 120.
 YIELD_AFTER_S = 2.
 YIELD_LIMIT_S = 20.
 DRIVE_PHASES = ('to_box', 'carry')
+# A peer in these phases holds (or is closing on) the box.
+TAKEN_PHASES = ('grasp', 'lift', 'carry', 'align_slot', 'release', 'retract', 'back_off')
 
 
 def _wrap(angle):
@@ -196,6 +198,7 @@ class TeacherRobot:
         self.outcome = None
         self.blocked_since = None
         self.yield_req = None
+        self.team = {self.rid: self}  # the executor links all robots
 
     # --- ground truth (teacher only) ---
     def pose(self):
@@ -223,6 +226,22 @@ class TeacherRobot:
     @property
     def busy(self):
         return self.phase not in ('idle', 'done', 'failed')
+
+    def _grip(self):
+        """Diagnostic injection (output-only record): the gripper stays open, so
+        every grasp attempt of this job really fails and ends as
+        grasp_failed_by_teacher after the normal retries."""
+        return OPEN if self.job.get('inject') == 'grasp_stays_open' else CLOSED
+
+    def _taken_by_peer(self, body):
+        for other in self.team.values():
+            if other is self or not other.job or other.job['box_body'] != body:
+                continue
+            if other.phase in TAKEN_PHASES or other.outcome == 'placed_by_teacher':
+                return True
+            if other.phase == 'align_box' and self.phase == 'to_box':
+                return True
+        return False
 
     def _set(self, phase, now, **detail):
         self.phase, self.phase_started, self.path = phase, now, None
@@ -336,6 +355,13 @@ class TeacherRobot:
                 self.arm.queue(FOLDED, now)
             self._finish('teacher_path_blocked', now)
             return
+        if self.phase in ('to_box', 'align_box') and self._taken_by_peer(job['box_body']):
+            # No-communication runs can send two robots to one box: the one that
+            # arrives second stops (teacher truth decides; robots only get the
+            # "stopped before finishing" receipt).
+            self.port.hold(now)
+            self._finish('box_taken_by_peer', now)
+            return
         if self.phase == 'to_box':
             box = self.box_xyz(job['box_body'])
             goal = (box[0]-GRASP_RADIUS_M-.10, box[1])
@@ -350,12 +376,12 @@ class TeacherRobot:
                 self.arm.queue({**hover, 1: OPEN}, now)
                 for pose in path:
                     self.arm.queue(pose, now, duration=.12, settle=0.)
-                self.arm.queue({1: CLOSED}, now, duration=.5, settle=.4)
+                self.arm.queue({1: self._grip()}, now, duration=.5, settle=.4)
                 self._set('grasp', now)
         elif self.phase == 'grasp':
             if done:
                 hover, _ = self._grasp_targets(self.box_xyz(job['box_body'])[:2])
-                self.arm.queue({**hover, 1: CLOSED}, now, duration=.8, settle=.6)
+                self.arm.queue({**hover, 1: self._grip()}, now, duration=.8, settle=.6)
                 self._set('lift', now)
         elif self.phase == 'lift':
             if done:
@@ -410,6 +436,8 @@ class ZoneTeacherExecutor:
     def __init__(self, world, ports, static_map, objects, log):
         self.world, self.objects, self.log = world, objects, log
         self.robots = {rid: TeacherRobot(rid, world, port, static_map, log) for rid, port in ports.items()}
+        for robot in self.robots.values():
+            robot.team = self.robots
         self.next_tick = 0.
 
     def discs_for(self, robot, *, exclude=None, carrying=False, peers=True):
