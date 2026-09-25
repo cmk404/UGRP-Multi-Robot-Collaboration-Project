@@ -12,9 +12,10 @@ The robot drives on its own pose estimate only:
 * control: waypoint pursuit with mecanum commands, heading held east;
 * stop-and-look: stop, move the wrist to ``LOOK_P20`` and pan through
   ``WIDE_LOOK_PANS`` when the estimate is uncertain, when no tag has been seen for a
-  while, and once at each door checkpoint (1.5 m and 0.6 m before the door).
+  while (unloaded) or after ``LOADED_LOOK_EVERY_M`` of estimated travel (box held),
+  and once at each door checkpoint (1.5 m and 0.6 m before the door).
 
-Nothing here imports the simulator; ``tests/test_owncam_drive.py`` checks it.
+Nothing here imports the simulator; ``tests/test_owncam_localizer.py`` checks it.
 """
 from __future__ import annotations
 
@@ -52,6 +53,11 @@ DOOR_EXIT_M = .45
 LOOK_IF_STD_XY_M = .05
 LOOK_IF_STD_YAW_RAD = math.radians(3.)
 LOOK_IF_NO_TAG_S = 3.
+# Loaded (box held in CARRY_POSTURE) the drive view shows no tags by design, so
+# 'no tag for 3 s' fired every ~3 s of driving and looks took ~70% of the time
+# (dev-a3 dev-box-s33 hit the 240 s limit). Loaded, look again after this much
+# ESTIMATED travel since the last look instead (dev amendment 2026-09-26).
+LOADED_LOOK_EVERY_M = .35
 ARRIVE_TOL_M = .03
 MAX_LOOKS_WITHOUT_FIX = 3
 LOST_STD_XY_M = .15
@@ -86,6 +92,7 @@ class OwnCamDriver:
         self.last_estimate = self.loc.estimate()
         self.frames_seen = 0
         self.arrival_checked = False
+        self.last_look_xy = None
 
     # ---------------------------------------------------------- inputs
     def on_command(self, row: Mapping) -> None:
@@ -132,7 +139,12 @@ class OwnCamDriver:
             return 'not_initialized'
         if est['std_xy_m'] > LOOK_IF_STD_XY_M or est['std_yaw_rad'] > LOOK_IF_STD_YAW_RAD:
             return 'uncertain'
-        if est['since_tag_s'] is not None and est['since_tag_s'] > LOOK_IF_NO_TAG_S:
+        if self.loaded:
+            if self.last_look_xy is None:
+                self.last_look_xy = (est['x'], est['y'])
+            elif math.hypot(est['x'] - self.last_look_xy[0], est['y'] - self.last_look_xy[1]) > LOADED_LOOK_EVERY_M:
+                return 'travel'
+        elif est['since_tag_s'] is not None and est['since_tag_s'] > LOOK_IF_NO_TAG_S:
             return 'no_tag'
         if est['x'] < self.door[0]:
             d = math.hypot(self.door[0] - est['x'], self.door[1] - est['y'])
@@ -204,6 +216,8 @@ class OwnCamDriver:
             est = self.loc.estimate()
             fixed = est.get('initialized') and est['std_xy_m'] <= LOOK_IF_STD_XY_M
             self.looks_without_fix = 0 if fixed else self.looks_without_fix + 1
+            if est.get('initialized'):
+                self.last_look_xy = (est['x'], est['y'])
             self._event(now, 'look_done', fixed=bool(fixed), std_xy_m=est.get('std_xy_m'),
                         initialized=est.get('initialized'))
             if not est.get('initialized') and self.looks_without_fix >= MAX_LOOKS_WITHOUT_FIX:

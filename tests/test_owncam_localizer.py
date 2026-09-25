@@ -351,5 +351,34 @@ def write_synthetic_episode(ep):
     (ep/'eval_only'/'frames_gt.jsonl').write_text('{"trap": true}\n')
 
 
+class DriverLookTriggerTests(unittest.TestCase):
+    def _driver(self, loaded):
+        sys.path.insert(0, str(ROOT))
+        from harness.owncam_drive import OwnCamDriver
+        from sim.zone_landmarks import tagged_map
+        cal = json.loads((ROOT/'experiments'/'2026-09-25-zone-owncam-loop'/'calibration_loop.json').read_text())
+        d = OwnCamDriver(tagged_map('zone_wide_door_tags_v2'), cal['params'], loaded=loaded,
+                         goal_xy=(2.65, .05), door_xy=(2.2, .05))
+        d.checkpoints_done = {1.5, .6}
+        return d
+
+    @staticmethod
+    def _est(x, since_tag):
+        return {'initialized': True, 'x': x, 'y': -1., 'yaw': 0., 'std_xy_m': .02,
+                'std_yaw_rad': .01, 'since_tag_s': since_tag}
+
+    def test_loaded_looks_by_travel_not_by_missing_tags(self):
+        from harness.owncam_drive import LOADED_LOOK_EVERY_M
+        d = self._driver(loaded=True)
+        self.assertIsNone(d._needs_look(self._est(0., 30.), 0.))       # sets the reference
+        self.assertIsNone(d._needs_look(self._est(LOADED_LOOK_EVERY_M - .01, 30.), 1.))
+        self.assertEqual(d._needs_look(self._est(LOADED_LOOK_EVERY_M + .01, 0.), 2.), 'travel')
+
+    def test_unloaded_keeps_no_tag_trigger(self):
+        d = self._driver(loaded=False)
+        self.assertEqual(d._needs_look(self._est(0., 30.), 0.), 'no_tag')
+        self.assertIsNone(d._needs_look(self._est(2., 0.), 0.))
+
+
 if __name__ == '__main__':
     unittest.main()
