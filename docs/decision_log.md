@@ -2669,3 +2669,21 @@ No physical MasterPi command was issued for this architecture change. The REAL s
 - 옛 Linux/중복 Mac 가상환경 3개(삭제 전 약 1.21 GB), 사용하지 않는 구형 물리 엔진과 클라우드 배포 파일을 제거했다. 현재 Mac 워커, V2 기반 XML, 실물 코드, 회귀 fixture는 유지했다. `.venv-sim`은 현재 워커의 호환 링크로 통합했다.
 - 현재 운반 기본 회귀 188개+107개 세부 검사, 장면/공유 제어 48개, Bridge 35개 통과. 초기 장면의 물리 진행·NAV 렌더링을 직접 확인했으며 새 전체 운반 실험은 하지 않았다.
 - [정리 기록과 검증](simulation_cleanup_20260909.md), [클라우드 간략 이력](cloud_simulation.md), [삭제 소스 식별값](retired_sim_sources_20260909.json)에 보존했다. 코드 원문은 정리 전 Git 커밋으로 복원할 수 있다.
+
+## 2026-09-25 — 운영 모델·연구 단계·지도·화물·통신 감사·재파지 원인에 대한 사용자 결정 기록
+
+Claude 코디네이터가 여러 Codex/Claude 위임 작업을 진행하며 2026-09-25 중 사용자가 정한 방향과 결정을 한곳에 모은다. 개별 작업의 상세 결과는 각 PR·`experiments/` 기록을 따른다.
+
+- **운영 모델:** 메인 Claude 세션은 관리자·보고자 역할만 하고 작업은 위임한다. Codex는 한 번에 한 작업만, reasoning xhigh, 읽기 전용 분석으로 실행한다. Codex의 샌드박스는 git 쓰기와 GitHub 코멘트를 막으므로, Claude 서브에이전트가 Codex 결과를 검증·기록한다. Claude 서브에이전트는 각자 자기 worktree·브랜치에서 병렬로 실행하며, 호스트 부하 평균이 약 186까지 올라간 뒤로는 동시 프로세스를 2개로 제한한다. 병합은 사용자가 별도 대화에서 처리한다.
+- **연구 단계:** 통제된 반복 비교(ZC3)는 아직 이르다. 현재 단계는 최종 연구 환경을 만드는 단계다. PR [#160](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/160)(ZC3 사전등록 초안/예산)은 얼려두지 않은 초안 문서로만 남긴다.
+- **지도:** 기존 소형 `zone_open`은 새 실행에서 퇴역시킨다. 파일 자체는 Z1–Z3 재현용으로 남긴다. `zone_wide`([#155](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/155))가 기본 지도다. 더 어려운 경로(좁은 문, 두 문, 복도)를 추가한다(branch `claude/zone-hard-routes`).
+- **화물 다양성:** 단독은 can과 tile, 2인은 long_beam과 heavy_crate, 3인은 tri_frame([#164](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/164), 병합됨). 로봇 인원 수는 물리에서 나온다 — 단독 로봇 한계는 0.66 kg이고 0.68 kg에서 한 대가 넘어진다. Slip은 opt-in 접촉 프로필 `cargo_noslip_v1`(noslip_iterations 10)로 제거했다([#167](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/167)). weld는 전 구간 OFF다.
+- **통신 감사(병합 [#161](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/161)):** 상자 좌표 채널은 깨끗하다. 누설은 L1(교사가 동료 의도로 로봇을 멈춤, 심각도 높음), L4(영수증이 정답에서 나옴)다. 교란 C1: dynamic의 우위는 메시지만이 아니라 게시판·중재·깨우기를 포함한 조정 묶음 전체다. ZC2 결론은 이 범위 안에서만 유효하다. 상세는 [experiments/2026-09-25-zone-comm-boundary-audit/README.md](../experiments/2026-09-25-zone-comm-boundary-audit/README.md).
+- **빔 재파지:** 근본 원인은 빔이 들렸다 내려온 뒤 정지 위치가 0.59 mm 옮겨진 것이다. 실패 슬롯 "r3"는 물리적으로 r1이다(병합 [#162](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/162)). 이 원인은 현재 단계에서는 보류한다. 상세는 [experiments/2026-09-25-r3-regrasp-pose/README.md](../experiments/2026-09-25-r3-regrasp-pose/README.md).
+- **연구 목표 강조:** 핵심 질문은 자연어 대화가 효율에 영향을 주는가이므로, 로봇이 실제로 한국어로 대화해야 한다. ZC2는 메시지 129건 중 한국어가 0건이었다. 조건은 A 무통신 / B 정형 통신 / C 자유 한국어 / D 게시판 제거실험이다([docs/design/2026-09-25-zone-korean-dialogue-codex.md](design/2026-09-25-zone-korean-dialogue-codex.md) 참고).
+- **기록 규칙:** 이후 보고서 작성을 위해 모든 것을 GitHub에 남긴다 — 초기 초안 PR, 설계 문서, 이 로그를 포함한다.
+
+**보존한 자료:**
+- 세 Codex 설계 제안 원문을 그대로 `docs/design/`에 보존했다: [팀 운반](design/2026-09-25-zone-team-carry-codex.md), [미등록 장애물](design/2026-09-25-zone-unmapped-blockage-codex.md), [한국어 대화](design/2026-09-25-zone-korean-dialogue-codex.md). 각 문서는 제안 당시 상태와 이후 실제 진행 상황을 구분해 적었다.
+- 지도 비교 렌더 `docs/design/media/2026-09-25-zone-open-vs-wide.png`(같은 축척, 하향식, 왼쪽 = 퇴역한 `zone_open` 6.45×2.3 m, 오른쪽 = `zone_wide` 6.45×4.6 m, replay `model.mjb`인 Z3-G5-dyn과 ZC2-s13-dynamic-graspfail에서 렌더링). SHA-256: `d410af3107df3542ecffebb59d50bb243991718a34e151193b4176827fc62fb0`.
+- 파이프라인 단계별 현재 완료/진행/미착수 스냅샷은 [docs/e2e_status_20260925.md](e2e_status_20260925.md)에 별도로 남긴다.
