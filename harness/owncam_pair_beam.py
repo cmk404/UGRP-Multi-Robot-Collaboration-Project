@@ -31,11 +31,11 @@ LIME_LO, LIME_HI = (36, 60, 40), (54, 255, 255)
 BAND_V_MAX = 60                    # black grip band
 BEAM_TOP_Z_M = .032
 GRIP_INSET_M = .03                 # band centre from the beam end
-GRASP_RADIUS_M = .17               # alignment target; IK grasps at the measured grip point
+GRASP_RADIUS_M = .162              # alignment target inside the 14.5-18.0 cm IK envelope (with tol)
 MIN_POINTS = 60
 RAY_STEP = 2
 ALIGN_TOL_M, ALIGN_TOL_RAD = .008, .035
-ALIGN_TOL_X_M = .015
+ALIGN_TOL_X_M = .012
 MIN_COMMAND = .035                 # smaller mecanum commands stall the chassis (zone skill dev 401)
 BORDER_PX = 14
 # Look postures by measured grip distance (dev 601: in SEARCH the near end leaves the valid
