@@ -2,12 +2,19 @@
 
 Reads only local raw outputs (primary checkout outputs/, gitignored) and records
 their paths and SHA-256. Usage:
-  python experiments/2026-09-25-zone-owncam-skill/build_results.py
+  python experiments/2026-09-25-zone-owncam-skill/build_results.py [--allow-incomplete]
+
+Every cohort is read against its FULL pre-registered seed list (Codex review
+issue 8): a seed without result.json is recorded as
+``missing/infrastructure_failure`` and blocks the report (results.json is not
+written) unless --allow-incomplete, which writes it with
+``cohort_report_blocked: true``.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -25,6 +32,40 @@ V3_ARMS = {'P': 'cargo_noslip_v1', 'S': 'local_contact_fine'}   # cohort-v3-<sha
 V4_TEST_SEEDS = tuple(range(531, 541))
 V4_ZONE_C_SEEDS = (531, 532, 533, 534, 538, 540)
 V4_ARMS = {'D': 'cargo_noslip_v1 + drop injection at carry+15 s', 'P': 'cargo_noslip_v1'}
+V4_ARM_SEEDS = {'D': (531, 533), 'P': V4_TEST_SEEDS}
+V3_ARM_SEEDS = {'P': V3_TEST_SEEDS, 'S': V3_TEST_SEEDS}
+V5_TEST_SEEDS = tuple(range(541, 549))
+V5_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay'}
+MISSING = 'missing/infrastructure_failure'
+
+
+class CohortIncomplete(RuntimeError):
+    """A pre-registered seed has no result; the cohort report is blocked."""
+
+
+def collect_preregistered(load, seeds):
+    """Load every pre-registered seed; a missing one is recorded, never silently dropped."""
+    runs, missing = [], []
+    for seed in seeds:
+        run = load(seed)
+        if run is None:
+            missing.append({'seed': seed, 'status': MISSING})
+        else:
+            runs.append(run)
+    return runs, missing
+
+
+def require_complete(name, missing):
+    if missing:
+        raise CohortIncomplete(f'{name}: pre-registered seeds {[m["seed"] for m in missing]} are {MISSING}; '
+                               'the cohort report is blocked')
+
+
+def _loader(folder, summarise):
+    def load(seed):
+        path = folder / str(seed)
+        return summarise(path) if (path / 'result.json').exists() else None
+    return load
 
 
 def sha(path):
@@ -114,6 +155,45 @@ def cohort_stats(runs):
                               or r['reason'] == 'CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP']}
 
 
+def run_summary_v5(folder):
+    r = json.loads((folder / 'result.json').read_text())
+    keep = ('seed', 'development_seed', 'runner', 'profile', 'mode', 'counts_as_m1', 'm1_success', 'diagnostic_success',
+            'success', 'pose_source', 'pose_sources_seen', 'cameras_seen', 'input_contract', 'order',
+            'scenario_setup_only', 'source_sha_start', 'dirty_source_start', 'source_sha_end',
+            'source_changed_during_run', 'dependency_sha256_start', 'reason', 'steps', 'sim_seconds',
+            'phase_start_sim_s', 'placement_own_rgb', 'evaluation_only', 'skill_summary', 'contact_profile_selected',
+            'contact_profile_status', 'cargo_contact_profile', 'solver_noslip_iterations', 'wall_seconds',
+            'load_average_start', 'load_average_end')
+    return {'raw_dir': str(folder), **{k: r.get(k) for k in keep},
+            'artifact_sha256': json.loads((folder / 'hashes.json').read_text()),
+            'input_frames': len(list((folder / 'inputs').glob('*.jpg')))}
+
+
+def cohort_stats_v5(runs):
+    ev = [r['evaluation_only'] for r in runs]
+    return {'n': len(runs), 'mode': sorted({r['mode'] for r in runs}),
+            'counts_as_m1': sum(bool(r['counts_as_m1']) for r in runs),
+            'm1_success': sum(bool(r['m1_success']) for r in runs),
+            'diagnostic_success': sum(bool(r['diagnostic_success']) for r in runs),
+            'place_in_slot_gt': sum(e['place_in_slot_gt'] for e in ev),
+            'grasp_success_gt': sum(e['grasp_success_gt'] for e in ev),
+            'false_success': sum(e['skill_claim_in_slot'] and not e['place_in_slot_gt'] for e in ev),
+            'skill_claim_agrees_with_gt': sum(e['skill_claim_agrees_with_gt'] for e in ev),
+            'face_normal_sources': [e['face_normal_sources'] for e in ev],
+            'face_relooks': [(r['skill_summary'] or {}).get('face_relooks') for r in runs],
+            'rejected_observations': sum(len((r['skill_summary'] or {}).get('rejected_observations') or []) for r in runs),
+            'weld_eq_active_max': max((e['weld_eq_active_max'] for e in ev), default=None),
+            'cargo_wall_contact_steps': [e['contacts_per_physics_step']['cargo_wall']['steps'] for e in ev],
+            'r1_wall_contact_steps': [e['contacts_per_physics_step']['r1_wall']['steps'] for e in ev],
+            'max_wall_normal_force_n': max((max(e['contacts_per_physics_step']['cargo_wall']['max_normal_force_n'],
+                                                e['contacts_per_physics_step']['r1_wall']['max_normal_force_n'])
+                                            for e in ev), default=None),
+            'source_changed_during_run': [r['seed'] for r in runs if r['source_changed_during_run']],
+            'source_sha_start': sorted({r['source_sha_start'] for r in runs}),
+            'sim_seconds': [r['sim_seconds'] for r in runs], 'steps': [r['steps'] for r in runs],
+            'reasons': [r['reason'] for r in runs]}
+
+
 def contact_sheet():
     import cv2
     import numpy as np
@@ -137,7 +217,7 @@ def main():
     out = {'experiment_id': '2026-09-25-zone-owncam-skill', 'raw_root_local_only': str(RAW),
            'raw_note': 'raw outputs are local (gitignored); not a remote backup',
            'probes': {k: probe_summary(RAW / v) for k, v in PROBES.items() if (RAW / v / 'probe.json').exists()},
-           'cohort': [run_summary(RAW / COHORT / str(s)) for s in TEST_SEEDS if (RAW / COHORT / str(s) / 'result.json').exists()],
+           'cohort': collect_preregistered(_loader(RAW / COHORT, run_summary), TEST_SEEDS)[0],
            'development_runs': [run_summary(RAW / d) for d in DEV_RUNS if (RAW / d / 'result.json').exists()]}
     cohort = out['cohort']
     out['cohort_summary'] = {
@@ -149,7 +229,9 @@ def main():
         'weld_eq_active_max': max((r['evaluation_only']['weld_eq_active_max'] for r in cohort), default=None),
         'sim_seconds': [r['sim_seconds'] for r in cohort],
         'face_normal_sources': [r['face_normal_source'] for r in cohort]}
-    v2 = [run_summary(RAW / V2_COHORT / str(s)) for s in V2_TEST_SEEDS if (RAW / V2_COHORT / str(s) / 'result.json').exists()]
+    missing_all = {}
+    missing_all['v1:' + COHORT] = collect_preregistered(_loader(RAW / COHORT, run_summary), TEST_SEEDS)[1]
+    v2, missing_all['v2:' + V2_COHORT] = collect_preregistered(_loader(RAW / V2_COHORT, run_summary), V2_TEST_SEEDS)
     out['v2_cohort'] = v2
     out['v2_development_runs'] = [run_summary(RAW / d) for d in V2_DEV_RUNS if (RAW / d / 'result.json').exists()]
     out['v2_cohort_summary'] = {
@@ -169,11 +251,10 @@ def main():
     out['v3_cohorts'] = {}
     for folder in sorted(RAW.glob('cohort-v3-*')):
         for arm, profile in V3_ARMS.items():
-            runs = [run_summary(folder / arm / str(s)) for s in V3_TEST_SEEDS
-                    if (folder / arm / str(s) / 'result.json').exists()]
-            if runs:
-                out['v3_cohorts'][f'{folder.name}/{arm}'] = {
-                    'arm': arm, 'contact_profile': profile, 'runs': runs, 'summary': cohort_stats(runs)}
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary), V3_ARM_SEEDS[arm])
+            missing_all[f'v3:{folder.name}/{arm}'] = missing
+            out['v3_cohorts'][f'{folder.name}/{arm}'] = {
+                'arm': arm, 'contact_profile': profile, 'runs': runs, 'missing': missing, 'summary': cohort_stats(runs)}
         log = folder / 'cohort.log'
         if log.exists():
             out['v3_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
@@ -181,10 +262,8 @@ def main():
     out['v4_cohorts'] = {}
     for folder in sorted(RAW.glob('cohort-v4-*')):
         for arm, condition in V4_ARMS.items():
-            runs = [run_summary(folder / arm / str(s)) for s in V4_TEST_SEEDS
-                    if (folder / arm / str(s) / 'result.json').exists()]
-            if not runs:
-                continue
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary), V4_ARM_SEEDS[arm])
+            missing_all[f'v4:{folder.name}/{arm}'] = missing
             summary = cohort_stats(runs)
             summary['self_occluded_rejections'] = [(r['skill_summary'] or {}).get('self_occluded_rejections') for r in runs]
             summary['zone_c_placed'] = sum(r['evaluation_only']['place_in_slot_gt'] for r in runs if r['seed'] in V4_ZONE_C_SEEDS)
@@ -195,7 +274,8 @@ def main():
                 summary['drop_safety'] = [{'seed': r['seed'], 'reason': r['reason'], 'claim_in_slot': r['evaluation_only']['skill_claim_in_slot'],
                                            'box_final_z_m': r['evaluation_only']['box_final_xyz'][2],
                                            'fault_injection': r['fault_injection']} for r in runs]
-            out['v4_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs, 'summary': summary}
+            out['v4_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': summary}
         log = folder / 'cohort.log'
         if log.exists():
             out['v4_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
@@ -205,11 +285,31 @@ def main():
     cohort_log = RAW / COHORT / 'cohort.log'
     if cohort_log.exists():
         out['cohort_log'] = {'path': str(cohort_log), 'sha256': sha(cohort_log)}
+    out['v5_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v5/*/result.json'))]
+    out['v5_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v5-*')):
+        for arm, condition in V5_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V5_TEST_SEEDS)
+            missing_all[f'v5:{folder.name}/{arm}'] = missing
+            out['v5_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v5(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v5_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['missing_seeds'] = {k: v for k, v in missing_all.items() if v}
+    blocked = bool(out['missing_seeds'])
+    out['cohort_report_blocked'] = blocked
+    if blocked and '--allow-incomplete' not in sys.argv:
+        for name, missing in out['missing_seeds'].items():
+            require_complete(name, missing)
     (HERE / 'results.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     contact_sheet()
     print(json.dumps(out['cohort_summary'], ensure_ascii=False))
     print(json.dumps(out['v2_cohort_summary'], ensure_ascii=False))
     for key, value in {**out['v3_cohorts'], **out['v4_cohorts']}.items():
+        if key != 'logs':
+            print(key, json.dumps(value['summary'], ensure_ascii=False))
+    for key, value in out['v5_cohorts'].items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
 
