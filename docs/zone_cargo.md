@@ -57,4 +57,4 @@ scene = CargoZoneScene.from_cargo_config('zone_wide', 11, goal={'A': {'red': 1}}
 
 ## 아직 안 한 것
 
-구역 교사(`scripts/zone_teacher.py`)·구역 실행기·지도 연동, RGB 탐지기 지원, 벽·문이 있는 경로의 팀 운반. 제안은 실험 기록의 "다음 단계"를 본다.
+구역 교사(`scripts/zone_teacher.py`)·구역 실행기·지도 연동, 벽·문이 있는 경로의 팀 운반. TOP RGB 종류 인식은 [구역 화물 종류 인식](zone_cargo_perception.md)(선택 프로필 `top_cargo_v1`, 제어 미연결)에 있다. 제안은 실험 기록의 "다음 단계"를 본다.

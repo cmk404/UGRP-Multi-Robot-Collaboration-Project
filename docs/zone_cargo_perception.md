@@ -64,6 +64,9 @@ approach_base = floor_xy + R(yaw) · grasp.approach_base()[:2], heading = yaw + 
 
 ## 한계
 
+- held-out test(110장면) 요약: 완전 가시 화물 검출 can 98.2%·tile·beam·frame 100%·crate 98.6%, 종류 혼동 0, 칠·바닥 오검출 0. 수치와 실패는 [실험 기록](../experiments/2026-09-25-zone-cargo-perception/README.md)을 따른다.
+- **can 위치는 서쪽 과노출 영역에서 +x로 2–2.6 cm 치우친다**(p90 19.6 mm). 한쪽 집게 여유(약 11.5 mm)보다 크므로, can은 접근 전에 자기 RGB 근거리 관측으로 다시 맞춰야 한다.
+- 틀 삼각형 **안쪽**에 놓인 상자는 화물 위 상자로 보고 지워진다(test 1건). 틀 안쪽 상자는 이 프로필로는 보이지 않을 수 있다.
 - 한 시점 정지 영상이다. 들린 화물, 움직이는 중의 흐림, 기울어진 화물은 평가하지 않았다.
 - 같은 색 물체끼리 닿으면(예: can 두 개) 한 덩어리가 될 수 있다.
 - 빔의 먼 끝이 로봇에 가려지고 다른 끝도 경계에 잘리면 중심을 알 수 없다(`partial_midpoint`).
