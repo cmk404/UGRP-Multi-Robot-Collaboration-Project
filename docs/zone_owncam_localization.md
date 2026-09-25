@@ -64,7 +64,10 @@ M1(zone_wide_door에서 로봇 1대가 wrist 카메라만으로 청록 상자 1�
   - 차체 속도 = 이득 행렬 × 명령, 1차 지연 τ를 둔다.
   - 입자마다 느리게 변하는 미끄러짐 배율을 둔다.
   - 이득·τ·잡음은 **dev 교사 로그로 오프라인 보정**한다. 출처와 파일 해시는 보정 JSON에 남는다.
+  - 적재 상태(`LoadState`)는 자기 명령만으로 판정한다. 파지 높이에서 집게를 닫으라고 명령하면 적재, 여는 명령이 나오면 해제다. 적재 중에는 별도 운동 모델을 쓴다. dev 회전 이득은 적재 0.74, 무적재 1.49다.
 - 측정 모델: 태그 PnP의 방위각, 고도각, log 거리, 면 법선(두 IPPE 해 중 최소)이다.
+  - log 거리에는 dev에서 적합한 검출기 편향 `a + b·r`을 뺀다.
+  - 재표집 뒤에는 작은 roughening을 준다.
   - 태그마다 이상치 상한을 둔다.
   - 한 프레임의 태그들은 같은 FK 오차를 공유하므로 합친 로그우도를 태그 수로 완화한다(`tag_temper`).
 - 지도: 벽(로봇 여유 0.07 m 포함) 안이나 경계 밖에 있는 입자는 로그가중치를 −8 깎는다.
@@ -91,5 +94,11 @@ $PY scripts/eval_owncam_localization.py localize  --data outputs/owncam-loc/raw 
 $PY scripts/eval_owncam_localization.py score     --data outputs/owncam-loc/raw --episodes <ids> \
     --thresholds experiments/2026-09-25-zone-owncam-loc/thresholds.json --output metrics.json
 ```
+
+결과 요약(교사 주행 오프라인):
+- 둘러보기 자세의 test 문 근처 오차는 p50 1.9 cm / p90 5.8 cm다.
+- 상자를 든 수평 carry와 교사 low carry에서는 태그가 보이지 않아(가시율 0%) 사전 등록 게이트가 실패했다.
+- 사후 진단에서 20° 숙인 carry는 가시율 97%, 오차 p90 5.4 cm였다.
+- 자세한 내용은 실험 기록에 있다.
 
 기록은 동기 SIM 전용이며 weld OFF, `local_contact_fine`을 쓴다. 교사가 주행하므로 기록 자체는 학생 성공이 아니다.
