@@ -1,0 +1,3763 @@
+{
+ "schema": "ugrp.experiment_result.v1",
+ "experiment_id": "2026-09-25-zone-rgb-color",
+ "question": "Can the four zone box colours be detected from each robot own RGB and the zone_wide TOP RGB without ground truth (step 1 of replacing the zone teacher executor)?",
+ "source": {
+  "detector_and_eval_sha": "881b356",
+  "render_source_dirty": {
+   "dev": false,
+   "test": false
+  },
+  "render_source_sha": {
+   "dev": "881b3568598497939bdb20ee5279e149f6290a70",
+   "test": "881b3568598497939bdb20ee5279e149f6290a70"
+  },
+  "score_source_sha": {
+   "dev": "881b3568598497939bdb20ee5279e149f6290a70",
+   "test": "881b3568598497939bdb20ee5279e149f6290a70"
+  },
+  "score_source_dirty": {
+   "dev": false,
+   "test": false
+  },
+  "files_sha256": {
+   "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+   "scripts/eval_zone_color_detection.py": "cf0fcd8fc1afb1284ed09a2f18bcabe0f13bcf46f1385d0459b14c6db76f2b97",
+   "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+   "harness/zone_perception.py": "326f357df6a24f94305b6167baa541784fb2940e15b65caef8c08f2e49e89315",
+   "experiments/2026-09-25-zone-rgb-color/split.json": "1e9ae5e61151c83e4eb91018cba74e043e611dbf81392d3ba4c1aa6651c05c61"
+  }
+ },
+ "execution_bundle": {
+  "changed": false,
+  "reason": "no file in the rgb_execution_bundle source closure changed; new module is outside the closure; markerless_box.py hash equals the v61 pin",
+  "runnable_id_unchanged": "rgb-standard-dispatch-v61"
+ },
+ "workflow": {
+  "id": "zone-color-eval",
+  "version": "1.0.0",
+  "entry": "scripts/eval_zone_color_detection.py"
+ },
+ "environment": {
+  "python_env": ".venv-sim-worker-mac",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "clock": "synchronous SIM; render after 0.3 s servo move + 0.3 s settle",
+  "camera_size_px": [
+   960,
+   720
+  ],
+  "load_average_1min": {
+   "render_dev": {
+    "start": 5.46875,
+    "end": 6.3447265625
+   },
+   "render_test": {
+    "start": 6.31689453125,
+    "end": 4.56884765625
+   },
+   "score_dev": {
+    "start": 4.92333984375,
+    "end": 5.1376953125
+   },
+   "score_test": {
+    "start": 5.1376953125,
+    "end": 3.9541015625
+   }
+  },
+  "render_wall_s": {
+   "dev": 82.4,
+   "test": 152.5
+  },
+  "agent_lock": "not taken (offline synchronous rendering only, per task)"
+ },
+ "split": {
+  "file": "experiments/2026-09-25-zone-rgb-color/split.json",
+  "sha256": "1e9ae5e61151c83e4eb91018cba74e043e611dbf81392d3ba4c1aa6651c05c61",
+  "dev": [
+   "zones/zone_wide:101",
+   "zones/zone_wide:102",
+   "zones/zone_wide:103",
+   "zones/zone_wide:104",
+   "zones/zone_wide:105",
+   "zones/zone_wide:106",
+   "dispatch/open:171",
+   "dispatch/open:172"
+  ],
+  "test": [
+   "zones/zone_wide:201",
+   "zones/zone_wide:202",
+   "zones/zone_wide:203",
+   "zones/zone_wide:204",
+   "zones/zone_wide:205",
+   "zones/zone_wide:206",
+   "zones/zone_wide:207",
+   "zones/zone_wide:208",
+   "zones/zone_wide:209",
+   "zones/zone_wide:210",
+   "dispatch/open:271",
+   "dispatch/open:272",
+   "dispatch/open:273"
+  ],
+  "fixed_before_test": true,
+  "test_scored_once": true,
+  "revision_note": "zone_open seeds removed before any test rendering (coordinator: zone_open retired); dev zone_open numbers discarded"
+ },
+ "views": {
+  "dev": 90,
+  "test": 148,
+  "cases": [
+   "layout",
+   "approach(adjacent boxes p=0.6)",
+   "zones",
+   "edge",
+   "occluded(robot between)",
+   "under_gripper(arm hovering)",
+   "empty",
+   "dispatch_layout",
+   "dispatch_approach",
+   "dispatch_beam"
+  ]
+ },
+ "profiles": {
+  "baseline": {
+   "own": "own_production_v1",
+   "top": "zone_perception_v1",
+   "note": "existing behaviour; default"
+  },
+  "zone": {
+   "own": "own_zone_v2",
+   "top": "top_zone_v2",
+   "note": "opt-in; thresholds chosen on dev only"
+  }
+ },
+ "metric_definitions": {
+  "visibility": "from eval-only segmentation: full = visible/expected footprint >= 0.8 (own) or >= 0.6 (TOP, ~10 px boxes) and not touching the frame/fisheye border; partial_frame; occluded; boxes with < 90 px (own) or < 20 px (TOP) visible are not scored",
+  "tp": "detection centroid inside the GT box segmentation bbox (+4 px) of the same colour",
+  "fp_colour_confusion": "detection inside a GT box of another colour",
+  "fp_background": "detection on no box; category from segmentation (robot, floor_paint, wall, beam, floor)",
+  "top_merged": "zone_perception.detect_all merge over TOP views, matched within 5 cm on the floor",
+  "pixel_error_px": "TOP detection centroid vs projected GT box top centre",
+  "floor_error_m": "TOP floor estimate vs GT xy",
+  "base_error_m": "own-RGB floor-hypothesis centre vs GT in the robot base frame"
+ },
+ "results": {
+  "dev": {
+   "baseline": {
+    "appendix_beam_confusion_dispatch_open": {
+     "own": {
+      "frames": 36,
+      "false_positives_total": 1,
+      "false_positives_per_frame": 0.0278,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 5,
+         "positives": 6,
+         "rate": 0.8333
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 1
+        },
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 1,
+         "median": 0.0231,
+         "p90": 0.0231,
+         "max": 0.0231,
+         "mean": 0.0231
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 2,
+          "detected": 2
+         },
+         "0.6-1.2": {
+          "positives": 3,
+          "detected": 3
+         },
+         "1.2-2.0": {
+          "positives": 1,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 1,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 12,
+      "false_positives_total": 13,
+      "false_positives_per_frame": 1.0833,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 10,
+         "positives": 12,
+         "rate": 0.8333
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 12
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 10,
+         "median": 0.3451,
+         "p90": 0.798,
+         "max": 1.93,
+         "mean": 0.4895
+        },
+        "floor_error_m": {
+         "n": 10,
+         "median": 0.0012,
+         "p90": 0.0033,
+         "max": 0.0074,
+         "mean": 0.0018
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "robot": 1
+        },
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 12,
+      "false_positives_total": 13,
+      "false_positives_per_frame": 1.0833,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 10,
+         "positives": 12,
+         "rate": 0.8333
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 10,
+         "median": 0.0012,
+         "p90": 0.0033,
+         "max": 0.0074,
+         "mean": 0.0018
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": null
+       }
+      }
+     }
+    },
+    "primary_zone_wide": {
+     "own": {
+      "frames": 234,
+      "false_positives_total": 1,
+      "false_positives_per_frame": 0.0043,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 16,
+         "positives": 82,
+         "rate": 0.1951
+        },
+        "partial_frame": {
+         "detected": 3,
+         "positives": 16,
+         "rate": 0.1875
+        },
+        "occluded": {
+         "detected": 3,
+         "positives": 9,
+         "rate": 0.3333
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "wall": 1
+        },
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 11,
+         "median": 0.0178,
+         "p90": 0.0317,
+         "max": 0.0373,
+         "mean": 0.0187
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 28,
+          "detected": 14
+         },
+         "0.6-1.2": {
+          "positives": 6,
+          "detected": 2
+         },
+         "1.2-2.0": {
+          "positives": 20,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 28,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 1,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 34,
+         "positives": 94,
+         "rate": 0.3617
+        },
+        "partial_frame": {
+         "detected": 7,
+         "positives": 15,
+         "rate": 0.4667
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 9,
+         "rate": 0.1111
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 24,
+         "median": 0.0139,
+         "p90": 0.026,
+         "max": 0.0307,
+         "mean": 0.0161
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 29,
+          "detected": 26
+         },
+         "0.6-1.2": {
+          "positives": 9,
+          "detected": 8
+         },
+         "1.2-2.0": {
+          "positives": 30,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 26,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 33,
+         "positives": 76,
+         "rate": 0.4342
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 17,
+         "rate": 0.2941
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 5,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 19,
+         "median": 0.0163,
+         "p90": 0.02,
+         "max": 0.0215,
+         "mean": 0.0162
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 22,
+          "detected": 19
+         },
+         "0.6-1.2": {
+          "positives": 15,
+          "detected": 14
+         },
+         "1.2-2.0": {
+          "positives": 15,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 24,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 36,
+         "positives": 85,
+         "rate": 0.4235
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 15,
+         "rate": 0.3333
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 10,
+         "rate": 0.1
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 20,
+         "median": 0.0147,
+         "p90": 0.0214,
+         "max": 0.0286,
+         "mean": 0.0156
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 23,
+          "detected": 23
+         },
+         "0.6-1.2": {
+          "positives": 15,
+          "detected": 13
+         },
+         "1.2-2.0": {
+          "positives": 30,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 17,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 312,
+      "false_positives_total": 5,
+      "false_positives_per_frame": 0.016,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 159,
+         "positives": 199,
+         "rate": 0.799
+        },
+        "partial_frame": {
+         "detected": 4,
+         "positives": 7,
+         "rate": 0.5714
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 163,
+         "median": 0.7775,
+         "p90": 2.161,
+         "max": 5.9912,
+         "mean": 1.0754
+        },
+        "floor_error_m": {
+         "n": 163,
+         "median": 0.003,
+         "p90": 0.008,
+         "max": 0.0213,
+         "mean": 0.0039
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 203,
+         "positives": 223,
+         "rate": 0.9103
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 5,
+         "rate": 1.0
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 208,
+         "median": 0.7287,
+         "p90": 1.8299,
+         "max": 2.8341,
+         "mean": 0.8678
+        },
+        "floor_error_m": {
+         "n": 208,
+         "median": 0.0028,
+         "p90": 0.0066,
+         "max": 0.0106,
+         "mean": 0.0032
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 145,
+         "positives": 164,
+         "rate": 0.8841
+        },
+        "partial_frame": {
+         "detected": 4,
+         "positives": 4,
+         "rate": 1.0
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 150,
+         "median": 1.0346,
+         "p90": 2.4086,
+         "max": 7.433,
+         "mean": 1.2149
+        },
+        "floor_error_m": {
+         "n": 150,
+         "median": 0.0037,
+         "p90": 0.0089,
+         "max": 0.0266,
+         "mean": 0.0044
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 162,
+         "positives": 193,
+         "rate": 0.8394
+        },
+        "partial_frame": {
+         "detected": 2,
+         "positives": 6,
+         "rate": 0.3333
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "robot": 5
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 164,
+         "median": 0.5592,
+         "p90": 1.7933,
+         "max": 4.6573,
+         "mean": 0.7681
+        },
+        "floor_error_m": {
+         "n": 164,
+         "median": 0.0021,
+         "p90": 0.0064,
+         "max": 0.0163,
+         "mean": 0.0028
+        }
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 78,
+      "false_positives_total": 5,
+      "false_positives_per_frame": 0.0641,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 147,
+         "positives": 182,
+         "rate": 0.8077
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 147,
+         "median": 0.0028,
+         "p90": 0.0073,
+         "max": 0.0124,
+         "mean": 0.0036
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 187,
+         "positives": 207,
+         "rate": 0.9034
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 187,
+         "median": 0.0025,
+         "p90": 0.0055,
+         "max": 0.0089,
+         "mean": 0.0029
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 136,
+         "positives": 154,
+         "rate": 0.8831
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 137,
+         "median": 0.0034,
+         "p90": 0.0072,
+         "max": 0.01,
+         "mean": 0.0039
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 153,
+         "positives": 182,
+         "rate": 0.8407
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 153,
+         "median": 0.002,
+         "p90": 0.0066,
+         "max": 0.0163,
+         "mean": 0.0027
+        }
+       }
+      }
+     }
+    }
+   },
+   "zone": {
+    "appendix_beam_confusion_dispatch_open": {
+     "own": {
+      "frames": 36,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 6,
+         "positives": 6,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 2,
+         "positives": 2,
+         "rate": 1.0
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 2,
+         "median": 0.0196,
+         "p90": 0.0226,
+         "max": 0.0234,
+         "mean": 0.0196
+        },
+        "base_error_m_far_coarse": {
+         "n": 2,
+         "median": 0.1627,
+         "p90": 0.1756,
+         "max": 0.1789,
+         "mean": 0.1627
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 2,
+          "detected": 2
+         },
+         "0.6-1.2": {
+          "positives": 3,
+          "detected": 3
+         },
+         "1.2-2.0": {
+          "positives": 1,
+          "detected": 1
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 12,
+      "false_positives_total": 13,
+      "false_positives_per_frame": 1.0833,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 10,
+         "positives": 12,
+         "rate": 0.8333
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 1
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 10,
+         "median": 0.5718,
+         "p90": 1.4831,
+         "max": 1.6278,
+         "mean": 0.7177
+        },
+        "floor_error_m": {
+         "n": 10,
+         "median": 0.0022,
+         "p90": 0.0056,
+         "max": 0.0058,
+         "mean": 0.0026
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 12
+        },
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 12,
+      "false_positives_total": 13,
+      "false_positives_per_frame": 1.0833,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 10,
+         "positives": 12,
+         "rate": 0.8333
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 10,
+         "median": 0.0022,
+         "p90": 0.0056,
+         "max": 0.0058,
+         "mean": 0.0026
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": null
+       }
+      }
+     }
+    },
+    "primary_zone_wide": {
+     "own": {
+      "frames": 234,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 65,
+         "positives": 82,
+         "rate": 0.7927
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 16,
+         "rate": 0.3125
+        },
+        "occluded": {
+         "detected": 5,
+         "positives": 9,
+         "rate": 0.5556
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 19,
+         "median": 0.0161,
+         "p90": 0.0214,
+         "max": 0.0305,
+         "mean": 0.0163
+        },
+        "base_error_m_far_coarse": {
+         "n": 36,
+         "median": 0.4806,
+         "p90": 0.729,
+         "max": 0.8266,
+         "mean": 0.454
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 28,
+          "detected": 27
+         },
+         "0.6-1.2": {
+          "positives": 6,
+          "detected": 6
+         },
+         "1.2-2.0": {
+          "positives": 20,
+          "detected": 15
+         },
+         "2.0-9.0": {
+          "positives": 28,
+          "detected": 17
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 77,
+         "positives": 94,
+         "rate": 0.8191
+        },
+        "partial_frame": {
+         "detected": 8,
+         "positives": 15,
+         "rate": 0.5333
+        },
+        "occluded": {
+         "detected": 3,
+         "positives": 9,
+         "rate": 0.3333
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 24,
+         "median": 0.0139,
+         "p90": 0.026,
+         "max": 0.0307,
+         "mean": 0.0161
+        },
+        "base_error_m_far_coarse": {
+         "n": 46,
+         "median": 0.4028,
+         "p90": 0.9674,
+         "max": 1.0417,
+         "mean": 0.5046
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 29,
+          "detected": 26
+         },
+         "0.6-1.2": {
+          "positives": 9,
+          "detected": 9
+         },
+         "1.2-2.0": {
+          "positives": 30,
+          "detected": 23
+         },
+         "2.0-9.0": {
+          "positives": 26,
+          "detected": 19
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 58,
+         "positives": 76,
+         "rate": 0.7632
+        },
+        "partial_frame": {
+         "detected": 7,
+         "positives": 17,
+         "rate": 0.4118
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 5,
+         "rate": 0.2
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 19,
+         "median": 0.0163,
+         "p90": 0.02,
+         "max": 0.0215,
+         "mean": 0.0162
+        },
+        "base_error_m_far_coarse": {
+         "n": 28,
+         "median": 0.5361,
+         "p90": 0.7122,
+         "max": 0.9107,
+         "mean": 0.4789
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 22,
+          "detected": 19
+         },
+         "0.6-1.2": {
+          "positives": 15,
+          "detected": 15
+         },
+         "1.2-2.0": {
+          "positives": 15,
+          "detected": 10
+         },
+         "2.0-9.0": {
+          "positives": 24,
+          "detected": 14
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 72,
+         "positives": 85,
+         "rate": 0.8471
+        },
+        "partial_frame": {
+         "detected": 6,
+         "positives": 15,
+         "rate": 0.4
+        },
+        "occluded": {
+         "detected": 5,
+         "positives": 10,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 20,
+         "median": 0.0147,
+         "p90": 0.0214,
+         "max": 0.0286,
+         "mean": 0.0156
+        },
+        "base_error_m_far_coarse": {
+         "n": 41,
+         "median": 0.3476,
+         "p90": 0.8936,
+         "max": 1.1041,
+         "mean": 0.4444
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 23,
+          "detected": 23
+         },
+         "0.6-1.2": {
+          "positives": 15,
+          "detected": 13
+         },
+         "1.2-2.0": {
+          "positives": 30,
+          "detected": 24
+         },
+         "2.0-9.0": {
+          "positives": 17,
+          "detected": 12
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 312,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 182,
+         "positives": 199,
+         "rate": 0.9146
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 7,
+         "rate": 0.7143
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 187,
+         "median": 0.9802,
+         "p90": 1.8389,
+         "max": 5.419,
+         "mean": 1.0439
+        },
+        "floor_error_m": {
+         "n": 187,
+         "median": 0.0036,
+         "p90": 0.007,
+         "max": 0.0193,
+         "mean": 0.0038
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 223,
+         "positives": 223,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 4,
+         "positives": 5,
+         "rate": 0.8
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 227,
+         "median": 0.7991,
+         "p90": 1.799,
+         "max": 3.4708,
+         "mean": 0.9304
+        },
+        "floor_error_m": {
+         "n": 227,
+         "median": 0.003,
+         "p90": 0.0064,
+         "max": 0.0128,
+         "mean": 0.0034
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 164,
+         "positives": 164,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 3,
+         "positives": 4,
+         "rate": 0.75
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 168,
+         "median": 1.1061,
+         "p90": 2.1112,
+         "max": 3.5356,
+         "mean": 1.1186
+        },
+        "floor_error_m": {
+         "n": 168,
+         "median": 0.0041,
+         "p90": 0.0076,
+         "max": 0.0123,
+         "mean": 0.0041
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 178,
+         "positives": 193,
+         "rate": 0.9223
+        },
+        "partial_frame": {
+         "detected": 2,
+         "positives": 6,
+         "rate": 0.3333
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 180,
+         "median": 0.9222,
+         "p90": 1.9521,
+         "max": 4.8409,
+         "mean": 1.0702
+        },
+        "floor_error_m": {
+         "n": 180,
+         "median": 0.0032,
+         "p90": 0.007,
+         "max": 0.0175,
+         "mean": 0.0039
+        }
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 78,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 165,
+         "positives": 182,
+         "rate": 0.9066
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 165,
+         "median": 0.0033,
+         "p90": 0.006,
+         "max": 0.0081,
+         "mean": 0.0034
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 207,
+         "positives": 207,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 207,
+         "median": 0.0028,
+         "p90": 0.0061,
+         "max": 0.0086,
+         "mean": 0.0031
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 154,
+         "positives": 154,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 155,
+         "median": 0.0038,
+         "p90": 0.0066,
+         "max": 0.0086,
+         "mean": 0.0037
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 167,
+         "positives": 182,
+         "rate": 0.9176
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 167,
+         "median": 0.0031,
+         "p90": 0.0066,
+         "max": 0.0098,
+         "mean": 0.0037
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "test": {
+   "baseline": {
+    "appendix_beam_confusion_dispatch_open": {
+     "own": {
+      "frames": 54,
+      "false_positives_total": 1,
+      "false_positives_per_frame": 0.0185,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 7,
+         "positives": 13,
+         "rate": 0.5385
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "wall": 1
+        },
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 2,
+         "median": 0.0131,
+         "p90": 0.0132,
+         "max": 0.0133,
+         "mean": 0.0131
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 7,
+          "detected": 4
+         },
+         "0.6-1.2": {
+          "positives": 3,
+          "detected": 3
+         },
+         "1.2-2.0": {
+          "positives": 2,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 1,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 1,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 18,
+      "false_positives_total": 21,
+      "false_positives_per_frame": 1.1667,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 13,
+         "positives": 17,
+         "rate": 0.7647
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 18
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 13,
+         "median": 0.7927,
+         "p90": 1.6568,
+         "max": 2.1119,
+         "mean": 0.8626
+        },
+        "floor_error_m": {
+         "n": 13,
+         "median": 0.0031,
+         "p90": 0.0059,
+         "max": 0.0078,
+         "mean": 0.003
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "robot": 3
+        },
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 18,
+      "false_positives_total": 21,
+      "false_positives_per_frame": 1.1667,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 13,
+         "positives": 17,
+         "rate": 0.7647
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 13,
+         "median": 0.0031,
+         "p90": 0.0059,
+         "max": 0.0078,
+         "mean": 0.003
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": null
+       }
+      }
+     }
+    },
+    "primary_zone_wide": {
+     "own": {
+      "frames": 390,
+      "false_positives_total": 2,
+      "false_positives_per_frame": 0.0051,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 36,
+         "positives": 137,
+         "rate": 0.2628
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 26,
+         "rate": 0.1923
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 12,
+         "rate": 0.0833
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 2
+        },
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 23,
+         "median": 0.0161,
+         "p90": 0.0251,
+         "max": 0.0289,
+         "mean": 0.0171
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 31,
+          "detected": 23
+         },
+         "0.6-1.2": {
+          "positives": 18,
+          "detected": 13
+         },
+         "1.2-2.0": {
+          "positives": 42,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 46,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 2,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 62,
+         "positives": 191,
+         "rate": 0.3246
+        },
+        "partial_frame": {
+         "detected": 9,
+         "positives": 30,
+         "rate": 0.3
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 18,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 32,
+         "median": 0.0161,
+         "p90": 0.0215,
+         "max": 0.0233,
+         "mean": 0.0165
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 36,
+          "detected": 35
+         },
+         "0.6-1.2": {
+          "positives": 27,
+          "detected": 27
+         },
+         "1.2-2.0": {
+          "positives": 46,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 82,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 53,
+         "positives": 173,
+         "rate": 0.3064
+        },
+        "partial_frame": {
+         "detected": 5,
+         "positives": 18,
+         "rate": 0.2778
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 19,
+         "rate": 0.0526
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 36,
+         "median": 0.0154,
+         "p90": 0.0214,
+         "max": 0.027,
+         "mean": 0.0158
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 40,
+          "detected": 38
+         },
+         "0.6-1.2": {
+          "positives": 16,
+          "detected": 15
+         },
+         "1.2-2.0": {
+          "positives": 55,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 62,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 66,
+         "positives": 188,
+         "rate": 0.3511
+        },
+        "partial_frame": {
+         "detected": 9,
+         "positives": 29,
+         "rate": 0.3103
+        },
+        "occluded": {
+         "detected": 2,
+         "positives": 20,
+         "rate": 0.1
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 46,
+         "median": 0.018,
+         "p90": 0.024,
+         "max": 0.034,
+         "mean": 0.0181
+        },
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 50,
+          "detected": 48
+         },
+         "0.6-1.2": {
+          "positives": 22,
+          "detected": 18
+         },
+         "1.2-2.0": {
+          "positives": 55,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 61,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 520,
+      "false_positives_total": 15,
+      "false_positives_per_frame": 0.0288,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 223,
+         "positives": 305,
+         "rate": 0.7311
+        },
+        "partial_frame": {
+         "detected": 12,
+         "positives": 12,
+         "rate": 1.0
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 1
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 236,
+         "median": 0.6454,
+         "p90": 2.5781,
+         "max": 9.6973,
+         "mean": 1.1804
+        },
+        "floor_error_m": {
+         "n": 236,
+         "median": 0.0024,
+         "p90": 0.0093,
+         "max": 0.0349,
+         "mean": 0.0043
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 294,
+         "positives": 356,
+         "rate": 0.8258
+        },
+        "partial_frame": {
+         "detected": 9,
+         "positives": 11,
+         "rate": 0.8182
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 304,
+         "median": 0.81,
+         "p90": 2.0248,
+         "max": 6.6072,
+         "mean": 0.9933
+        },
+        "floor_error_m": {
+         "n": 304,
+         "median": 0.003,
+         "p90": 0.0076,
+         "max": 0.0239,
+         "mean": 0.0036
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 316,
+         "positives": 368,
+         "rate": 0.8587
+        },
+        "partial_frame": {
+         "detected": 8,
+         "positives": 9,
+         "rate": 0.8889
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 324,
+         "median": 1.1103,
+         "p90": 2.3899,
+         "max": 6.2403,
+         "mean": 1.2454
+        },
+        "floor_error_m": {
+         "n": 324,
+         "median": 0.0039,
+         "p90": 0.0085,
+         "max": 0.0225,
+         "mean": 0.0045
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 318,
+         "positives": 361,
+         "rate": 0.8809
+        },
+        "partial_frame": {
+         "detected": 9,
+         "positives": 13,
+         "rate": 0.6923
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "robot": 14
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 327,
+         "median": 0.6554,
+         "p90": 1.9601,
+         "max": 4.4385,
+         "mean": 0.8565
+        },
+        "floor_error_m": {
+         "n": 327,
+         "median": 0.0023,
+         "p90": 0.0073,
+         "max": 0.0155,
+         "mean": 0.0031
+        }
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 130,
+      "false_positives_total": 15,
+      "false_positives_per_frame": 0.1154,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 214,
+         "positives": 284,
+         "rate": 0.7535
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 2,
+         "rate": 0.5
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 215,
+         "median": 0.0022,
+         "p90": 0.0079,
+         "max": 0.026,
+         "mean": 0.0037
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 278,
+         "positives": 337,
+         "rate": 0.8249
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 1,
+         "positives": 1,
+         "rate": 1.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 279,
+         "median": 0.0028,
+         "p90": 0.0064,
+         "max": 0.0211,
+         "mean": 0.0033
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 289,
+         "positives": 336,
+         "rate": 0.8601
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 289,
+         "median": 0.0035,
+         "p90": 0.0079,
+         "max": 0.0207,
+         "mean": 0.0041
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 285,
+         "positives": 324,
+         "rate": 0.8796
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 285,
+         "median": 0.0022,
+         "p90": 0.0067,
+         "max": 0.0142,
+         "mean": 0.0029
+        }
+       }
+      }
+     }
+    }
+   },
+   "zone": {
+    "appendix_beam_confusion_dispatch_open": {
+     "own": {
+      "frames": 54,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 12,
+         "positives": 13,
+         "rate": 0.9231
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 5,
+         "median": 0.0152,
+         "p90": 0.0182,
+         "max": 0.0183,
+         "mean": 0.0159
+        },
+        "base_error_m_far_coarse": {
+         "n": 2,
+         "median": 0.2868,
+         "p90": 0.4111,
+         "max": 0.4422,
+         "mean": 0.2868
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 7,
+          "detected": 7
+         },
+         "0.6-1.2": {
+          "positives": 3,
+          "detected": 3
+         },
+         "1.2-2.0": {
+          "positives": 2,
+          "detected": 1
+         },
+         "2.0-9.0": {
+          "positives": 1,
+          "detected": 1
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": null,
+        "base_error_m_far_coarse": null,
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 0,
+          "detected": 0
+         },
+         "0.6-1.2": {
+          "positives": 0,
+          "detected": 0
+         },
+         "1.2-2.0": {
+          "positives": 0,
+          "detected": 0
+         },
+         "2.0-9.0": {
+          "positives": 0,
+          "detected": 0
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 18,
+      "false_positives_total": 19,
+      "false_positives_per_frame": 1.0556,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 13,
+         "positives": 17,
+         "rate": 0.7647
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 1
+        },
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 13,
+         "median": 1.3024,
+         "p90": 1.7115,
+         "max": 2.0524,
+         "mean": 1.194
+        },
+        "floor_error_m": {
+         "n": 13,
+         "median": 0.0044,
+         "p90": 0.0063,
+         "max": 0.0075,
+         "mean": 0.0044
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "floor_paint": 18
+        },
+        "duplicates": 0,
+        "pixel_error_px": null,
+        "floor_error_m": null
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 18,
+      "false_positives_total": 19,
+      "false_positives_per_frame": 1.0556,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 13,
+         "positives": 17,
+         "rate": 0.7647
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 13,
+         "median": 0.0044,
+         "p90": 0.0063,
+         "max": 0.0075,
+         "mean": 0.0044
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "red": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": null
+       },
+       "yellow": {
+        "full": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {
+         "None": 0
+        },
+        "duplicates": 0,
+        "floor_error_m": null
+       }
+      }
+     }
+    },
+    "primary_zone_wide": {
+     "own": {
+      "frames": 390,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 110,
+         "positives": 137,
+         "rate": 0.8029
+        },
+        "partial_frame": {
+         "detected": 10,
+         "positives": 26,
+         "rate": 0.3846
+        },
+        "occluded": {
+         "detected": 5,
+         "positives": 12,
+         "rate": 0.4167
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 33,
+         "median": 0.0164,
+         "p90": 0.0266,
+         "max": 0.0286,
+         "mean": 0.0177
+        },
+        "base_error_m_far_coarse": {
+         "n": 67,
+         "median": 0.3825,
+         "p90": 0.7108,
+         "max": 1.0046,
+         "mean": 0.4094
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 31,
+          "detected": 31
+         },
+         "0.6-1.2": {
+          "positives": 18,
+          "detected": 18
+         },
+         "1.2-2.0": {
+          "positives": 42,
+          "detected": 34
+         },
+         "2.0-9.0": {
+          "positives": 46,
+          "detected": 27
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 151,
+         "positives": 191,
+         "rate": 0.7906
+        },
+        "partial_frame": {
+         "detected": 11,
+         "positives": 30,
+         "rate": 0.3667
+        },
+        "occluded": {
+         "detected": 8,
+         "positives": 18,
+         "rate": 0.4444
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 32,
+         "median": 0.0161,
+         "p90": 0.0215,
+         "max": 0.0233,
+         "mean": 0.0165
+        },
+        "base_error_m_far_coarse": {
+         "n": 99,
+         "median": 0.5038,
+         "p90": 0.8246,
+         "max": 1.1809,
+         "mean": 0.5257
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 36,
+          "detected": 35
+         },
+         "0.6-1.2": {
+          "positives": 27,
+          "detected": 27
+         },
+         "1.2-2.0": {
+          "positives": 46,
+          "detected": 37
+         },
+         "2.0-9.0": {
+          "positives": 82,
+          "detected": 52
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 128,
+         "positives": 173,
+         "rate": 0.7399
+        },
+        "partial_frame": {
+         "detected": 8,
+         "positives": 18,
+         "rate": 0.4444
+        },
+        "occluded": {
+         "detected": 7,
+         "positives": 19,
+         "rate": 0.3684
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 36,
+         "median": 0.0154,
+         "p90": 0.0214,
+         "max": 0.027,
+         "mean": 0.0158
+        },
+        "base_error_m_far_coarse": {
+         "n": 84,
+         "median": 0.3832,
+         "p90": 0.7604,
+         "max": 1.0078,
+         "mean": 0.4354
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 40,
+          "detected": 38
+         },
+         "0.6-1.2": {
+          "positives": 16,
+          "detected": 15
+         },
+         "1.2-2.0": {
+          "positives": 55,
+          "detected": 44
+         },
+         "2.0-9.0": {
+          "positives": 62,
+          "detected": 31
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 150,
+         "positives": 188,
+         "rate": 0.7979
+        },
+        "partial_frame": {
+         "detected": 12,
+         "positives": 29,
+         "rate": 0.4138
+        },
+        "occluded": {
+         "detected": 6,
+         "positives": 20,
+         "rate": 0.3
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "base_error_m_within_0p5m": {
+         "n": 46,
+         "median": 0.018,
+         "p90": 0.024,
+         "max": 0.034,
+         "mean": 0.0181
+        },
+        "base_error_m_far_coarse": {
+         "n": 91,
+         "median": 0.3723,
+         "p90": 0.7872,
+         "max": 1.0589,
+         "mean": 0.4495
+        },
+        "full_by_range_m": {
+         "0-0.6": {
+          "positives": 50,
+          "detected": 48
+         },
+         "0.6-1.2": {
+          "positives": 22,
+          "detected": 22
+         },
+         "1.2-2.0": {
+          "positives": 55,
+          "detected": 48
+         },
+         "2.0-9.0": {
+          "positives": 61,
+          "detected": 32
+         }
+        },
+        "fp_by_range_class": {
+         "near": 0,
+         "far_coarse": 0
+        }
+       }
+      }
+     },
+     "top": {
+      "frames": 520,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 271,
+         "positives": 305,
+         "rate": 0.8885
+        },
+        "partial_frame": {
+         "detected": 7,
+         "positives": 12,
+         "rate": 0.5833
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 278,
+         "median": 0.8393,
+         "p90": 1.8622,
+         "max": 6.891,
+         "mean": 1.0379
+        },
+        "floor_error_m": {
+         "n": 278,
+         "median": 0.0031,
+         "p90": 0.007,
+         "max": 0.0244,
+         "mean": 0.0037
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 351,
+         "positives": 356,
+         "rate": 0.986
+        },
+        "partial_frame": {
+         "detected": 8,
+         "positives": 11,
+         "rate": 0.7273
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 359,
+         "median": 0.8889,
+         "p90": 1.8495,
+         "max": 6.5177,
+         "mean": 1.0072
+        },
+        "floor_error_m": {
+         "n": 359,
+         "median": 0.0031,
+         "p90": 0.0066,
+         "max": 0.0229,
+         "mean": 0.0036
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 368,
+         "positives": 368,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 6,
+         "positives": 9,
+         "rate": 0.6667
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 374,
+         "median": 1.1312,
+         "p90": 2.0796,
+         "max": 5.5074,
+         "mean": 1.189
+        },
+        "floor_error_m": {
+         "n": 374,
+         "median": 0.0041,
+         "p90": 0.0076,
+         "max": 0.0201,
+         "mean": 0.0043
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 343,
+         "positives": 361,
+         "rate": 0.9501
+        },
+        "partial_frame": {
+         "detected": 9,
+         "positives": 13,
+         "rate": 0.6923
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "pixel_error_px": {
+         "n": 352,
+         "median": 1.0505,
+         "p90": 2.2966,
+         "max": 5.8387,
+         "mean": 1.1929
+        },
+        "floor_error_m": {
+         "n": 352,
+         "median": 0.0037,
+         "p90": 0.0083,
+         "max": 0.0209,
+         "mean": 0.0043
+        }
+       }
+      }
+     },
+     "top_merged": {
+      "frames": 130,
+      "false_positives_total": 0,
+      "false_positives_per_frame": 0.0,
+      "per_kind": {
+       "cyan": {
+        "full": {
+         "detected": 251,
+         "positives": 284,
+         "rate": 0.8838
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 251,
+         "median": 0.0028,
+         "p90": 0.0063,
+         "max": 0.01,
+         "mean": 0.0032
+        }
+       },
+       "green": {
+        "full": {
+         "detected": 332,
+         "positives": 337,
+         "rate": 0.9852
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 1,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 332,
+         "median": 0.0029,
+         "p90": 0.0061,
+         "max": 0.009,
+         "mean": 0.0033
+        }
+       },
+       "red": {
+        "full": {
+         "detected": 336,
+         "positives": 336,
+         "rate": 1.0
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 2,
+         "rate": 0.0
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 336,
+         "median": 0.0036,
+         "p90": 0.007,
+         "max": 0.0089,
+         "mean": 0.0039
+        }
+       },
+       "yellow": {
+        "full": {
+         "detected": 309,
+         "positives": 324,
+         "rate": 0.9537
+        },
+        "partial_frame": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "occluded": {
+         "detected": 0,
+         "positives": 0,
+         "rate": null
+        },
+        "fp_colour_confusion": {},
+        "fp_background": {},
+        "duplicates": 0,
+        "floor_error_m": {
+         "n": 309,
+         "median": 0.0034,
+         "p90": 0.0075,
+         "max": 0.0102,
+         "mean": 0.0039
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "artifacts": {
+  "location": "/Users/changmin/projects/ugrp/outputs/zone-rgb-color-20260925 (local only, gitignored; not a remote backup)",
+  "hashes": {
+   "dev-881b356": {
+    "files": 1369,
+    "bytes": 40146647,
+    "tree_sha256": "0f61bea0ec6ce34c3b902127f87d02eeca3589bc08425495bb9b2bd6f358f99d",
+    "manifest.json": "940f4972244f54d80f06b249092c77222bdb83ccc2dd251a7d654b2aa01d941a"
+   },
+   "test-881b356": {
+    "files": 2261,
+    "bytes": 66637898,
+    "tree_sha256": "620f9d876ab6b465fe769c61993642c44b12e01666d90b9697161ee4d2967467",
+    "manifest.json": "4799edf98fb93dfe61d726d96bcc81c27783c07ad10d2c99e07694699be0114e"
+   },
+   "dev-881b356-score": {
+    "files": 3,
+    "bytes": 1968864,
+    "tree_sha256": "9869ce626df7846493ea817fd7c60b4635832de15aad5f83d9a07d5e83e01fe4",
+    "summary.json": "784d04ef629091334cf32354cd3ecec2aae1c987812a77b0bb0d402401f76248",
+    "records-baseline.jsonl": "9486b1165de1e638ca80e61e1dc2d436c13687af378ab3736fd80c5eaae5b128",
+    "records-zone.jsonl": "527eb02e3591b9280e12d72c8ee50f8947fa3de66feecf61e4beba3e50f6f6b6"
+   },
+   "test-881b356-score": {
+    "files": 3,
+    "bytes": 3520730,
+    "tree_sha256": "3b33a326e01c46b052f4392f6988b1d8ff31bf6c78a9e9f127e89a223ca5e299",
+    "summary.json": "b66122a33adf9803bb455eae2a033f50e796467ab43a5af65d86ed431a6f3f56",
+    "records-baseline.jsonl": "4bb1c02030405a042850fcdfdc9f86900a25dd41127c8b6e359ade916ccbf7a7",
+    "records-zone.jsonl": "4a93547cffed7c82c621a40eba95f1ae4c48fa4365784d6a81c26df1d297a3b6"
+   }
+  },
+  "dev_tuning_trail": [
+   "dev-r1 (render at uncommitted source; identical frames to dev-881b356)",
+   "dev-r1-score1..3"
+  ],
+  "test_fixture_origin": "tests/fixtures/zone_color/*.png are 40x40 crops of dev-r1 zone_wide seed 101 cctv_top"
+ },
+ "scope_and_limitations": [
+  "Offline perception only: nothing is connected to control; motion/grasp/place in zone runs is still the teacher executor. Not an RGB-skill or delivery success.",
+  "Synthetic re-posing (teleport + 0.3 s settle), fixed lighting, fixed paint, one camera resolution (960x720); no motion blur, no held box, no real-camera noise.",
+  "Own-RGB positions use the commanded arm pose; far_coarse (>1.2 m) range is biased long (~+21%, median +0.4 m) while bearing is accurate (dev median 0.17 deg).",
+  "Colour gives kind only; boxes of one colour are not individually identified.",
+  "dispatch/open is a beam-confusion appendix only; top_zone_v2 is not meant for the dispatch map (yellow apron paint FPs).",
+  "zone_open not evaluated (retired). zone_wide only."
+ ]
+}
