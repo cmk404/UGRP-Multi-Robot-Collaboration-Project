@@ -183,9 +183,9 @@ raise SystemExit(3 if a.fail else 0)
         self.assertEqual(row["status"], "launcher_failed")
         self.assertEqual(row["exit_code"], 2)
 
-    def test_catalog_has_twenty_four_selectable_workflows_and_distinct_adapters(self):
+    def test_catalog_has_twenty_six_selectable_workflows_and_distinct_adapters(self):
         data, digest = wm.catalog(PROJECT)
-        self.assertEqual(len(data["workflows"]), 24)
+        self.assertEqual(len(data["workflows"]), 26)
         self.assertEqual(len(digest), 64)
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "dispatch-skills")["runner"], "scripts.run_dispatch_e2e")
         self.assertEqual(next(r for r in data["workflows"] if r["id"] == "communication")["output_kind"]["prepare"], "file")

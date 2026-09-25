@@ -1,0 +1,3165 @@
+{
+  "schema": "ugrp.experiment.zone_cargo_catalogue.v1",
+  "date": "2026-09-25",
+  "source_sha": [
+    "d81514a75ffac086e285f9885aa89c6858a0d009"
+  ],
+  "git_dirty_any": false,
+  "condition": "ground-truth TEACHER (poses, IK, contact forces); synchronous SIM; weld OFF; not an RGB/student result",
+  "scene": {
+    "variant": "zone_wide",
+    "seed": 11,
+    "contact_profile": "local_contact_fine",
+    "start_pose": [
+      2.5,
+      0.2,
+      0.0
+    ]
+  },
+  "catalogue": {
+    "schema": "ugrp.zone_cargo.v1",
+    "version": 1,
+    "grasp_convention": {
+      "radius_m": 0.155,
+      "grasp_z_m": 0.024,
+      "handle_width_m": 0.04,
+      "handle_height_m": 0.032
+    },
+    "kinds": {
+      "can": {
+        "kind": "can",
+        "label": "metal can",
+        "tier": "solo",
+        "required_carriers": 1,
+        "mass_kg": 0.08,
+        "colour": "violet",
+        "rgba": ".52 .22 .92 1",
+        "parts": [
+          {
+            "name": "shell",
+            "shape": "cylinder",
+            "center": [
+              0.0,
+              0.0,
+              0.025
+            ],
+            "size": [
+              0.019,
+              0.025
+            ],
+            "yaw": 0.0,
+            "rgba": ".52 .22 .92 1",
+            "collision": true,
+            "role": "body"
+          }
+        ],
+        "grasps": [
+          {
+            "role": "any",
+            "grip_xyz": [
+              0.0,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 0.0,
+            "geom": "shell",
+            "approach_base_xyyaw": [
+              -0.155,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "formations": [
+          [
+            "any"
+          ]
+        ],
+        "landing_half_extents_m": [
+          0.019,
+          0.019
+        ],
+        "landing_yaw_symmetry_deg": 0.0,
+        "physics_basis": "80 g, well inside one gripper payload; round, so any approach heading works",
+        "shape": "small disc from TOP (38 mm)",
+        "markings": "none",
+        "notes": "",
+        "extra": {},
+        "mass_properties": {
+          "mass_kg": 0.08,
+          "com_m": [
+            0.0,
+            0.0,
+            0.025
+          ],
+          "inertia_kgm2": [
+            [
+              2.3887e-05,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.3887e-05,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.444e-05
+            ]
+          ]
+        },
+        "bounding_box_m": [
+          0.038,
+          0.038,
+          0.05
+        ],
+        "visual": {
+          "colour": "violet",
+          "rgba": ".52 .22 .92 1",
+          "shape": "small disc from TOP (38 mm)",
+          "markings": "none",
+          "top_footprint_mm": [
+            38,
+            38
+          ],
+          "top_footprint_px": [
+            10.5,
+            10.5
+          ],
+          "aspect": 1.0,
+          "unlit_hsv_opencv": [
+            132,
+            194,
+            235
+          ]
+        },
+        "contact": {
+          "material": "production box (friction 1.2 0.2 0.01)",
+          "finger_pairs": "mirrored dispatch_box_geom pairs under the scene contact profile",
+          "weld": "none"
+        }
+      },
+      "tile": {
+        "kind": "tile",
+        "label": "low tile",
+        "tier": "solo",
+        "required_carriers": 1,
+        "mass_kg": 0.025,
+        "colour": "magenta",
+        "rgba": ".86 .16 .58 1",
+        "parts": [
+          {
+            "name": "slab",
+            "shape": "box",
+            "center": [
+              0.0,
+              0.0,
+              0.006
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.006
+            ],
+            "yaw": 0.0,
+            "rgba": ".86 .16 .58 1",
+            "collision": true,
+            "role": "body"
+          }
+        ],
+        "grasps": [
+          {
+            "role": "west",
+            "grip_xyz": [
+              0.0,
+              0.0,
+              0.007
+            ],
+            "approach_yaw": 0.0,
+            "geom": "slab",
+            "approach_base_xyyaw": [
+              -0.155,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "role": "east",
+            "grip_xyz": [
+              0.0,
+              0.0,
+              0.007
+            ],
+            "approach_yaw": 3.141592653589793,
+            "geom": "slab",
+            "approach_base_xyyaw": [
+              0.155,
+              -0.0,
+              3.141592653589793
+            ]
+          }
+        ],
+        "formations": [
+          [
+            "west"
+          ],
+          [
+            "east"
+          ]
+        ],
+        "landing_half_extents_m": [
+          0.03,
+          0.02
+        ],
+        "landing_yaw_symmetry_deg": 180.0,
+        "physics_basis": "25 g, low (12 mm): grasped 7 mm above the floor",
+        "shape": "small 60x40 mm rectangle, flat",
+        "markings": "none",
+        "notes": "",
+        "extra": {},
+        "mass_properties": {
+          "mass_kg": 0.025,
+          "com_m": [
+            0.0,
+            0.0,
+            0.006
+          ],
+          "inertia_kgm2": [
+            [
+              3.633e-06,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              7.8e-06,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0833e-05
+            ]
+          ]
+        },
+        "bounding_box_m": [
+          0.06,
+          0.04,
+          0.012
+        ],
+        "visual": {
+          "colour": "magenta",
+          "rgba": ".86 .16 .58 1",
+          "shape": "small 60x40 mm rectangle, flat",
+          "markings": "none",
+          "top_footprint_mm": [
+            60,
+            40
+          ],
+          "top_footprint_px": [
+            16.6,
+            11.1
+          ],
+          "aspect": 1.5,
+          "unlit_hsv_opencv": [
+            161,
+            208,
+            219
+          ]
+        },
+        "contact": {
+          "material": "production box (friction 1.2 0.2 0.01)",
+          "finger_pairs": "mirrored dispatch_box_geom pairs under the scene contact profile",
+          "weld": "none"
+        }
+      },
+      "long_beam": {
+        "kind": "long_beam",
+        "label": "long beam",
+        "tier": "pair",
+        "required_carriers": 2,
+        "mass_kg": 0.3,
+        "colour": "lime",
+        "rgba": ".55 .78 .12 1",
+        "parts": [
+          {
+            "name": "bar",
+            "shape": "box",
+            "center": [
+              0.0,
+              0.0,
+              0.016
+            ],
+            "size": [
+              0.3,
+              0.02,
+              0.016
+            ],
+            "yaw": 0.0,
+            "rgba": ".55 .78 .12 1",
+            "collision": true,
+            "role": "handle"
+          },
+          {
+            "name": "band_neg",
+            "shape": "box",
+            "center": [
+              -0.27,
+              0.0,
+              0.032600000000000004
+            ],
+            "size": [
+              0.018,
+              0.0205,
+              0.0006
+            ],
+            "yaw": 0.0,
+            "rgba": ".06 .06 .06 1",
+            "collision": false,
+            "role": "marker"
+          },
+          {
+            "name": "band_pos",
+            "shape": "box",
+            "center": [
+              0.27,
+              0.0,
+              0.032600000000000004
+            ],
+            "size": [
+              0.018,
+              0.0205,
+              0.0006
+            ],
+            "yaw": 0.0,
+            "rgba": ".06 .06 .06 1",
+            "collision": false,
+            "role": "marker"
+          }
+        ],
+        "grasps": [
+          {
+            "role": "end_neg",
+            "grip_xyz": [
+              -0.27,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 0.0,
+            "geom": "bar",
+            "approach_base_xyyaw": [
+              -0.425,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "role": "end_pos",
+            "grip_xyz": [
+              0.27,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 3.141592653589793,
+            "geom": "bar",
+            "approach_base_xyyaw": [
+              0.425,
+              -0.0,
+              3.141592653589793
+            ]
+          }
+        ],
+        "formations": [
+          [
+            "end_neg",
+            "end_pos"
+          ]
+        ],
+        "landing_half_extents_m": [
+          0.3,
+          0.02
+        ],
+        "landing_yaw_symmetry_deg": 180.0,
+        "physics_basis": "0.60 m: grasp only from the long axis (jaws close across the reach, no wrist roll) within 0.09 m of an end; single-end lift tips the beam about the far end",
+        "shape": "long bar, aspect 15:1 (600x40 mm)",
+        "markings": "black grip bands 36 mm wide at both ends",
+        "notes": "",
+        "extra": {},
+        "mass_properties": {
+          "mass_kg": 0.3,
+          "com_m": [
+            0.0,
+            0.0,
+            0.016
+          ],
+          "inertia_kgm2": [
+            [
+              6.56e-05,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0090256,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.00904
+            ]
+          ]
+        },
+        "bounding_box_m": [
+          0.6,
+          0.04,
+          0.032
+        ],
+        "visual": {
+          "colour": "lime",
+          "rgba": ".55 .78 .12 1",
+          "shape": "long bar, aspect 15:1 (600x40 mm)",
+          "markings": "black grip bands 36 mm wide at both ends",
+          "top_footprint_mm": [
+            600,
+            40
+          ],
+          "top_footprint_px": [
+            166.0,
+            11.1
+          ],
+          "aspect": 15.0,
+          "unlit_hsv_opencv": [
+            40,
+            216,
+            199
+          ]
+        },
+        "contact": {
+          "material": "production box (friction 1.2 0.2 0.01)",
+          "finger_pairs": "mirrored dispatch_box_geom pairs under the scene contact profile",
+          "weld": "none"
+        }
+      },
+      "heavy_crate": {
+        "kind": "heavy_crate",
+        "label": "heavy crate",
+        "tier": "pair",
+        "required_carriers": 2,
+        "mass_kg": 0.9,
+        "colour": "pink",
+        "rgba": "1.0 .58 .72 1",
+        "parts": [
+          {
+            "name": "box",
+            "shape": "box",
+            "center": [
+              0.0,
+              0.0,
+              0.03
+            ],
+            "size": [
+              0.07,
+              0.05,
+              0.03
+            ],
+            "yaw": 0.0,
+            "rgba": "1.0 .58 .72 1",
+            "collision": true,
+            "role": "body"
+          },
+          {
+            "name": "lug_west",
+            "shape": "box",
+            "center": [
+              -0.09,
+              0.0,
+              0.023
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.023
+            ],
+            "yaw": 0.0,
+            "rgba": ".06 .06 .06 1",
+            "collision": true,
+            "role": "handle"
+          },
+          {
+            "name": "lug_east",
+            "shape": "box",
+            "center": [
+              0.09,
+              0.0,
+              0.023
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.023
+            ],
+            "yaw": 0.0,
+            "rgba": ".06 .06 .06 1",
+            "collision": true,
+            "role": "handle"
+          }
+        ],
+        "grasps": [
+          {
+            "role": "west",
+            "grip_xyz": [
+              -0.1,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 0.0,
+            "geom": "lug_west",
+            "approach_base_xyyaw": [
+              -0.255,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "role": "east",
+            "grip_xyz": [
+              0.1,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 3.141592653589793,
+            "geom": "lug_east",
+            "approach_base_xyyaw": [
+              0.255,
+              -0.0,
+              3.141592653589793
+            ]
+          }
+        ],
+        "formations": [
+          [
+            "west",
+            "east"
+          ]
+        ],
+        "landing_half_extents_m": [
+          0.12,
+          0.05
+        ],
+        "landing_yaw_symmetry_deg": 180.0,
+        "physics_basis": "mass above one robot measured lift capacity; body wider than the jaw opening",
+        "shape": "rectangle 140x100 mm with two black end lugs (240x100 mm overall, aspect 2.4)",
+        "markings": "black lugs at both short ends",
+        "notes": "",
+        "extra": {},
+        "mass_properties": {
+          "mass_kg": 0.9,
+          "com_m": [
+            0.0,
+            0.0,
+            0.028543
+          ],
+          "inertia_kgm2": [
+            [
+              0.000872971,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.002991704,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.003356471
+            ]
+          ]
+        },
+        "bounding_box_m": [
+          0.24,
+          0.1,
+          0.06
+        ],
+        "visual": {
+          "colour": "pink",
+          "rgba": "1.0 .58 .72 1",
+          "shape": "rectangle 140x100 mm with two black end lugs (240x100 mm overall, aspect 2.4)",
+          "markings": "black lugs at both short ends",
+          "top_footprint_mm": [
+            240,
+            100
+          ],
+          "top_footprint_px": [
+            66.4,
+            27.7
+          ],
+          "aspect": 2.4,
+          "unlit_hsv_opencv": [
+            169,
+            107,
+            255
+          ]
+        },
+        "contact": {
+          "material": "production box (friction 1.2 0.2 0.01)",
+          "finger_pairs": "mirrored dispatch_box_geom pairs under the scene contact profile",
+          "weld": "none"
+        }
+      },
+      "tri_frame": {
+        "kind": "tri_frame",
+        "label": "triangular frame",
+        "tier": "trio",
+        "required_carriers": 3,
+        "mass_kg": 1.5,
+        "colour": "cream",
+        "rgba": ".95 .88 .66 1",
+        "parts": [
+          {
+            "name": "edge0",
+            "shape": "box",
+            "center": [
+              0.05000000000000002,
+              0.08660254037844388,
+              0.012
+            ],
+            "size": [
+              0.18520508075688774,
+              0.015,
+              0.012
+            ],
+            "yaw": 2.6179938779914944,
+            "rgba": ".95 .88 .66 1",
+            "collision": true,
+            "role": "body"
+          },
+          {
+            "name": "edge1",
+            "shape": "box",
+            "center": [
+              -0.10000000000000003,
+              4.163336342344337e-17,
+              0.012
+            ],
+            "size": [
+              0.18520508075688774,
+              0.015,
+              0.012
+            ],
+            "yaw": -1.570796326794897,
+            "rgba": ".95 .88 .66 1",
+            "collision": true,
+            "role": "body"
+          },
+          {
+            "name": "edge2",
+            "shape": "box",
+            "center": [
+              0.04999999999999996,
+              -0.08660254037844384,
+              0.012
+            ],
+            "size": [
+              0.18520508075688777,
+              0.015,
+              0.012
+            ],
+            "yaw": 0.5235987755982986,
+            "rgba": ".95 .88 .66 1",
+            "collision": true,
+            "role": "body"
+          },
+          {
+            "name": "lug0",
+            "shape": "box",
+            "center": [
+              0.21999999999999997,
+              0.0,
+              0.023
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.023
+            ],
+            "yaw": 0.0,
+            "rgba": ".06 .06 .06 1",
+            "collision": true,
+            "role": "handle"
+          },
+          {
+            "name": "lug1",
+            "shape": "box",
+            "center": [
+              -0.10999999999999996,
+              0.1905255888325765,
+              0.023
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.023
+            ],
+            "yaw": 2.0943951023931953,
+            "rgba": ".06 .06 .06 1",
+            "collision": true,
+            "role": "handle"
+          },
+          {
+            "name": "lug2",
+            "shape": "box",
+            "center": [
+              -0.11000000000000008,
+              -0.19052558883257642,
+              0.023
+            ],
+            "size": [
+              0.03,
+              0.02,
+              0.023
+            ],
+            "yaw": 4.1887902047863905,
+            "rgba": ".06 .06 .06 1",
+            "collision": true,
+            "role": "handle"
+          }
+        ],
+        "grasps": [
+          {
+            "role": "v0",
+            "grip_xyz": [
+              0.23,
+              0.0,
+              0.024
+            ],
+            "approach_yaw": 3.141592653589793,
+            "geom": "lug0",
+            "approach_base_xyyaw": [
+              0.385,
+              -0.0,
+              3.141592653589793
+            ]
+          },
+          {
+            "role": "v1",
+            "grip_xyz": [
+              -0.115,
+              0.199186,
+              0.024
+            ],
+            "approach_yaw": 5.235987755982988,
+            "geom": "lug1",
+            "approach_base_xyyaw": [
+              -0.1925,
+              0.33342,
+              5.235987755982988
+            ]
+          },
+          {
+            "role": "v2",
+            "grip_xyz": [
+              -0.115,
+              -0.199186,
+              0.024
+            ],
+            "approach_yaw": 7.330382858376184,
+            "geom": "lug2",
+            "approach_base_xyyaw": [
+              -0.1925,
+              -0.33342,
+              7.330382858376184
+            ]
+          }
+        ],
+        "formations": [
+          [
+            "v0",
+            "v1",
+            "v2"
+          ]
+        ],
+        "landing_half_extents_m": [
+          0.27,
+          0.27
+        ],
+        "landing_yaw_symmetry_deg": 120.0,
+        "physics_basis": "three vertex lugs; mass above what two robots lift clear, and a two-lug hold leaves the third vertex on the floor",
+        "shape": "open triangle outline (side 0.35 m) with a black lug at each vertex",
+        "markings": "black vertex lugs",
+        "notes": "",
+        "extra": {
+          "vertex_radius_m": 0.2
+        },
+        "mass_properties": {
+          "mass_kg": 1.5,
+          "com_m": [
+            -0.0,
+            0.0,
+            0.01522
+          ],
+          "inertia_kgm2": [
+            [
+              0.022297186,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.022297186,
+              -0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.044262498
+            ]
+          ]
+        },
+        "bounding_box_m": [
+          0.3923,
+          0.453,
+          0.046
+        ],
+        "visual": {
+          "colour": "cream",
+          "rgba": ".95 .88 .66 1",
+          "shape": "open triangle outline (side 0.35 m) with a black lug at each vertex",
+          "markings": "black vertex lugs",
+          "top_footprint_mm": [
+            392,
+            453
+          ],
+          "top_footprint_px": [
+            108.5,
+            125.3
+          ],
+          "aspect": 1.15,
+          "unlit_hsv_opencv": [
+            23,
+            78,
+            242
+          ]
+        },
+        "contact": {
+          "material": "production box (friction 1.2 0.2 0.01)",
+          "finger_pairs": "mirrored dispatch_box_geom pairs under the scene contact profile",
+          "weld": "none"
+        }
+      }
+    },
+    "existing_solo": {
+      "box": {
+        "label": "dispatch box (existing, 4 paints)",
+        "mass_kg": 0.03,
+        "dims_m": [
+          0.034,
+          0.04,
+          0.032
+        ],
+        "required_carriers": 1,
+        "source": "sim.zone_arena"
+      }
+    },
+    "sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a"
+  },
+  "existing_solo": {
+    "box": {
+      "label": "dispatch box (existing, 4 paints)",
+      "mass_kg": 0.03,
+      "dims_m": [
+        0.034,
+        0.04,
+        0.032
+      ],
+      "required_carriers": 1,
+      "source": "sim.zone_arena"
+    }
+  },
+  "capacity_sweep": {
+    "schema": "ugrp.zone_cargo_capacity.v1",
+    "rows": [
+      {
+        "mass_kg": 0.03,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0671,
+        "max_robot_tilt_deg": 0.04,
+        "max_slip_mm": {
+          "r1": 0.6
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.0376
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 6.37,
+          "hold": 6.21,
+          "carry": 6.24
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 11.19,
+          "end": 10.37
+        }
+      },
+      {
+        "mass_kg": 0.1,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0633,
+        "max_robot_tilt_deg": 0.06,
+        "max_slip_mm": {
+          "r1": 1.9
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.1003
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 4.51,
+          "hold": 4.42,
+          "carry": 4.61
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 10.37,
+          "end": 13.84
+        }
+      },
+      {
+        "mass_kg": 0.2,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0581,
+        "max_robot_tilt_deg": 0.09,
+        "max_slip_mm": {
+          "r1": 3.6
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.188
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 4.08,
+          "hold": 2.21,
+          "carry": 2.85
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 13.84,
+          "end": 14.58
+        }
+      },
+      {
+        "mass_kg": 0.3,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0533,
+        "max_robot_tilt_deg": 0.11,
+        "max_slip_mm": {
+          "r1": 5.4
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.276
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 5.8,
+          "hold": 0.58,
+          "carry": 1.71
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 14.77,
+          "end": 13.39
+        }
+      },
+      {
+        "mass_kg": 0.4,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0481,
+        "max_robot_tilt_deg": 0.14,
+        "max_slip_mm": {
+          "r1": 7.1
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.3634
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 7.45,
+          "hold": 2.4,
+          "carry": 1.17
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 13.39,
+          "end": 16.08
+        }
+      },
+      {
+        "mass_kg": 0.5,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0431,
+        "max_robot_tilt_deg": 0.16,
+        "max_slip_mm": {
+          "r1": 8.9
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.4513
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 8.89,
+          "hold": 4.35,
+          "carry": 2.44
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 15.51,
+          "end": 13.36
+        }
+      },
+      {
+        "mass_kg": 0.6,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0384,
+        "max_robot_tilt_deg": 0.18,
+        "max_slip_mm": {
+          "r1": 10.7
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.5527
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 10.14,
+          "hold": 6.05,
+          "carry": 3.47
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 13.36,
+          "end": 12.06
+        }
+      },
+      {
+        "mass_kg": 0.62,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0375,
+        "max_robot_tilt_deg": 0.22,
+        "max_slip_mm": {
+          "r1": 11.0
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.5652
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 10.43,
+          "hold": 6.36,
+          "carry": 3.65
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 12.06,
+          "end": 11.88
+        }
+      },
+      {
+        "mass_kg": 0.64,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0366,
+        "max_robot_tilt_deg": 0.3,
+        "max_slip_mm": {
+          "r1": 11.4
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.5902
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 10.84,
+          "hold": 6.69,
+          "carry": 3.83
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 11.88,
+          "end": 12.98
+        }
+      },
+      {
+        "mass_kg": 0.66,
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "hold_min_z_m": 0.0357,
+        "max_robot_tilt_deg": 1.44,
+        "max_slip_mm": {
+          "r1": 11.7
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.6036
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 11.41,
+          "hold": 6.8,
+          "carry": 4.0
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 34.5,
+        "load_avg_1m": {
+          "start": 12.98,
+          "end": 12.24
+        }
+      },
+      {
+        "mass_kg": 0.68,
+        "success": false,
+        "teacher_outcome": "not_lifted_clear",
+        "lifted_clear": false,
+        "hold_min_z_m": -0.0001,
+        "max_robot_tilt_deg": 39.66,
+        "max_slip_mm": {
+          "r1": 2.2
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.2134
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 30.29,
+          "hold": 26.14
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 24.5,
+        "load_avg_1m": {
+          "start": 12.24,
+          "end": 11.99
+        }
+      },
+      {
+        "mass_kg": 0.7,
+        "success": false,
+        "teacher_outcome": "not_lifted_clear",
+        "lifted_clear": false,
+        "hold_min_z_m": -0.0001,
+        "max_robot_tilt_deg": 35.78,
+        "max_slip_mm": {
+          "r1": 2.2
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.2005
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 29.84,
+          "hold": 25.13
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 24.5,
+        "load_avg_1m": {
+          "start": 11.99,
+          "end": 11.32
+        }
+      },
+      {
+        "mass_kg": 0.8,
+        "success": false,
+        "teacher_outcome": "not_lifted_clear",
+        "lifted_clear": false,
+        "hold_min_z_m": -0.0001,
+        "max_robot_tilt_deg": 34.09,
+        "max_slip_mm": {
+          "r1": 2.2
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.2145
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 26.18,
+          "hold": 24.53
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 24.5,
+        "load_avg_1m": {
+          "start": 11.32,
+          "end": 11.76
+        }
+      },
+      {
+        "mass_kg": 1.0,
+        "success": false,
+        "teacher_outcome": "not_lifted_clear",
+        "lifted_clear": false,
+        "hold_min_z_m": -0.0001,
+        "max_robot_tilt_deg": 35.15,
+        "max_slip_mm": {
+          "r1": 2.4
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.2341
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 24.49,
+          "hold": 23.08
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 24.5,
+        "load_avg_1m": {
+          "start": 11.76,
+          "end": 10.44
+        }
+      },
+      {
+        "mass_kg": 1.2,
+        "success": false,
+        "teacher_outcome": "not_lifted_clear",
+        "lifted_clear": false,
+        "hold_min_z_m": -0.0001,
+        "max_robot_tilt_deg": 35.36,
+        "max_slip_mm": {
+          "r1": 2.4
+        },
+        "hold_creep_mm_per_s": {
+          "r1": 0.2378
+        },
+        "max_cargo_tilt_deg": {
+          "lift": 23.49,
+          "hold": 21.81
+        },
+        "servo_saturated_samples": {},
+        "sim_time_s": 24.5,
+        "load_avg_1m": {
+          "start": 10.44,
+          "end": 9.98
+        }
+      }
+    ],
+    "single_robot_capacity_kg": 0.66,
+    "first_failing_mass_kg": 0.68,
+    "hold_s": 8.0,
+    "criterion": "lift clear >= 12 mm for the 8 s hold, carry 0.5 m, place within 5 cm, robot tilt < 10 deg, weld off"
+  },
+  "probes": {
+    "solo_box": {
+      "probe": "solo_box",
+      "kind": "cal_block",
+      "mass_kg": 0.03,
+      "robots": {
+        "r1": "west"
+      },
+      "required_carriers_claim": 1,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0674,
+      "max_lift_min_z_m": 0.0675,
+      "placement": {
+        "pos_err_m": 0.006,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 6.37,
+        "hold": 6.2,
+        "carry": 6.25
+      },
+      "max_robot_tilt_deg": 0.04,
+      "max_slip_mm": {
+        "r1": 0.8
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0676
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.19,
+            "max_total_n": 10.38,
+            "mean_total_n": 10.38
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.19,
+            "max_total_n": 10.38,
+            "mean_total_n": 10.38
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.19,
+            "max_total_n": 10.38,
+            "mean_total_n": 10.38
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.19,
+          5.19
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0284,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 20.0,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 38.0,
+      "wall_s": 42.0,
+      "load_avg_1m": {
+        "start": 6.94,
+        "end": 8.68
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.0674,
+        "finish_track_err_m": 0.0053
+      },
+      "scene_xml_sha256": "430d39c380a2a36e606ce7d1fe3e06b4925adf16e2eae2355997ea11751849e9",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          1.0
+        ]
+      ],
+      "target_pose": [
+        3.5,
+        0.2,
+        0.0
+      ],
+      "video": "media/solo_box.mp4"
+    },
+    "solo_can": {
+      "probe": "solo_can",
+      "kind": "can",
+      "mass_kg": 0.08,
+      "robots": {
+        "r1": "any"
+      },
+      "required_carriers_claim": 1,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0648,
+      "max_lift_min_z_m": 0.065,
+      "placement": {
+        "pos_err_m": 0.0088,
+        "yaw_err_deg": 0.04,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 5.09,
+        "hold": 4.94,
+        "carry": 4.91
+      },
+      "max_robot_tilt_deg": 0.05,
+      "max_slip_mm": {
+        "r1": 1.8
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.1351
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 4.34,
+            "max_total_n": 8.69,
+            "mean_total_n": 8.68
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 4.34,
+            "max_total_n": 8.68,
+            "mean_total_n": 8.68
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 4.33,
+            "max_total_n": 8.68,
+            "mean_total_n": 8.68
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          4.34,
+          4.34
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0284,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 20.0,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 38.0,
+      "wall_s": 42.6,
+      "load_avg_1m": {
+        "start": 8.39,
+        "end": 7.32
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.0648,
+        "finish_track_err_m": 0.0055
+      },
+      "scene_xml_sha256": "8f6236b3ecfe9072eeec52ce7f93d20c8d7f2fd9b5e8fbab05d776246ccb2154",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          1.0
+        ]
+      ],
+      "target_pose": [
+        3.5,
+        0.2,
+        0.0
+      ],
+      "video": "media/solo_can.mp4"
+    },
+    "solo_tile": {
+      "probe": "solo_tile",
+      "kind": "tile",
+      "mass_kg": 0.025,
+      "robots": {
+        "r1": "west"
+      },
+      "required_carriers_claim": 1,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0741,
+      "max_lift_min_z_m": 0.0744,
+      "placement": {
+        "pos_err_m": 0.0087,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 6.27,
+        "hold": 4.39,
+        "carry": 4.29
+      },
+      "max_robot_tilt_deg": 0.44,
+      "max_slip_mm": {
+        "r1": 0.7
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0676
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.29,
+            "max_total_n": 10.58,
+            "mean_total_n": 10.58
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.29,
+            "max_total_n": 10.58,
+            "mean_total_n": 10.58
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.15,
+            "max_total_n": 10.58,
+            "mean_total_n": 10.49
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.29,
+          5.29
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.028,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 20.0,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 38.0,
+      "wall_s": 40.5,
+      "load_avg_1m": {
+        "start": 7.32,
+        "end": 7.58
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.0741,
+        "finish_track_err_m": 0.0053
+      },
+      "scene_xml_sha256": "e0cc4f160e07178ecc6fe04c98c2adb742be8e034599c094bbd92e80e8daaead",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          1.0
+        ]
+      ],
+      "target_pose": [
+        3.5,
+        0.2,
+        0.0
+      ],
+      "video": "media/solo_tile.mp4"
+    },
+    "pair_beam": {
+      "probe": "pair_beam",
+      "kind": "long_beam",
+      "mass_kg": 0.3,
+      "robots": {
+        "r1": "end_neg",
+        "r2": "end_pos"
+      },
+      "required_carriers_claim": 2,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0619,
+      "max_lift_min_z_m": 0.0622,
+      "placement": {
+        "pos_err_m": 0.0044,
+        "yaw_err_deg": 0.01,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 0.0,
+        "hold": 0.0,
+        "carry": 0.0
+      },
+      "max_robot_tilt_deg": 0.08,
+      "max_slip_mm": {
+        "r1": 5.1,
+        "r2": 5.1
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.1351,
+        "r2": 0.1351
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          },
+          "r2": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          },
+          "r2": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.35,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          },
+          "r2": {
+            "min_finger_n": 5.35,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.36,
+          5.36
+        ],
+        "r2": [
+          5.36,
+          5.36
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0423,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 34.3,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 52.3,
+      "wall_s": 65.6,
+      "load_avg_1m": {
+        "start": 7.58,
+        "end": 7.88
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.0619,
+        "finish_track_err_m": 0.0091
+      },
+      "scene_xml_sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/pair_beam.mp4"
+    },
+    "pair_crate": {
+      "probe": "pair_crate",
+      "kind": "heavy_crate",
+      "mass_kg": 0.9,
+      "robots": {
+        "r1": "west",
+        "r2": "east"
+      },
+      "required_carriers_claim": 2,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0489,
+      "max_lift_min_z_m": 0.0504,
+      "placement": {
+        "pos_err_m": 0.0045,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 0.0,
+        "hold": 0.0,
+        "carry": 0.01
+      },
+      "max_robot_tilt_deg": 1.75,
+      "max_slip_mm": {
+        "r1": 15.2,
+        "r2": 15.2
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.4054,
+        "r2": 0.4054
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          },
+          "r2": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          },
+          "r2": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.35,
+            "max_total_n": 10.99,
+            "mean_total_n": 10.78
+          },
+          "r2": {
+            "min_finger_n": 5.35,
+            "max_total_n": 10.99,
+            "mean_total_n": 10.78
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.38,
+          5.38
+        ],
+        "r2": [
+          5.38,
+          5.38
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0414,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 35.0,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 53.0,
+      "wall_s": 61.3,
+      "load_avg_1m": {
+        "start": 7.88,
+        "end": 6.17
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.0489,
+        "finish_track_err_m": 0.0175
+      },
+      "scene_xml_sha256": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/pair_crate.mp4"
+    },
+    "trio_frame": {
+      "probe": "trio_frame",
+      "kind": "tri_frame",
+      "mass_kg": 1.5,
+      "robots": {
+        "r1": "v0",
+        "r2": "v1",
+        "r3": "v2"
+      },
+      "required_carriers_claim": 3,
+      "expect": "success",
+      "attempt_carry_when_not_clear": false,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.047,
+      "max_lift_min_z_m": 0.049,
+      "placement": {
+        "pos_err_m": 0.0007,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 0.0,
+        "hold": 0.0,
+        "carry": 0.01
+      },
+      "max_robot_tilt_deg": 1.94,
+      "max_slip_mm": {
+        "r1": 17.5,
+        "r2": 17.5,
+        "r3": 17.5
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.473,
+        "r2": 0.473,
+        "r3": 0.473
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          },
+          "r2": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          },
+          "r3": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          },
+          "r2": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          },
+          "r3": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.76,
+            "mean_total_n": 10.76
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.37,
+            "max_total_n": 10.99,
+            "mean_total_n": 10.78
+          },
+          "r2": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.99,
+            "mean_total_n": 10.78
+          },
+          "r3": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.99,
+            "mean_total_n": 10.78
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.38,
+          5.38
+        ],
+        "r2": [
+          5.38,
+          5.38
+        ],
+        "r3": [
+          5.38,
+          5.38
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0425,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 36.3,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.5
+      },
+      "sim_time_s": 54.3,
+      "wall_s": 81.6,
+      "load_avg_1m": {
+        "start": 6.17,
+        "end": 6.67
+      },
+      "failure_detail": {
+        "hold_min_z_m": 0.047,
+        "finish_track_err_m": 0.0171
+      },
+      "scene_xml_sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/trio_frame.mp4"
+    },
+    "solo_beam": {
+      "probe": "solo_beam",
+      "kind": "long_beam",
+      "mass_kg": 0.3,
+      "robots": {
+        "r1": "end_neg"
+      },
+      "required_carriers_claim": 2,
+      "expect": "fail",
+      "attempt_carry_when_not_clear": true,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": false,
+      "teacher_outcome": "carry_timeout",
+      "lifted_clear": false,
+      "hold_min_z_m": -0.0001,
+      "max_lift_min_z_m": 0.0,
+      "placement": {
+        "pos_err_m": 0.924,
+        "yaw_err_deg": 90.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 5.62,
+        "hold": 6.05,
+        "carry": 6.19
+      },
+      "max_robot_tilt_deg": 0.14,
+      "max_slip_mm": {
+        "r1": 19.6
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.1511
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 6580,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 10.72,
+            "mean_total_n": 10.72
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.36,
+          5.36
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0449,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 131.6,
+        "lower": 1.7,
+        "release": 1.0,
+        "retract": 2.3,
+        "back_off": 2.6,
+        "settle": 1.6
+      },
+      "sim_time_s": 150.0,
+      "wall_s": 149.6,
+      "load_avg_1m": {
+        "start": 6.46,
+        "end": 7.45
+      },
+      "failure_detail": {
+        "hold_min_z_m": -0.0001,
+        "not_lifted_clear": true
+      },
+      "scene_xml_sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/solo_beam.mp4"
+    },
+    "solo_crate": {
+      "probe": "solo_crate",
+      "kind": "heavy_crate",
+      "mass_kg": 0.9,
+      "robots": {
+        "r1": "west"
+      },
+      "required_carriers_claim": 2,
+      "expect": "fail",
+      "attempt_carry_when_not_clear": true,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": false,
+      "teacher_outcome": "grip_lost_in_transit",
+      "lifted_clear": false,
+      "hold_min_z_m": -0.0001,
+      "max_lift_min_z_m": 0.0,
+      "placement": {
+        "pos_err_m": 0.9385,
+        "yaw_err_deg": 90.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 10.54,
+        "hold": 11.62,
+        "carry": 12.11
+      },
+      "max_robot_tilt_deg": 6.95,
+      "max_slip_mm": {
+        "r1": 91.6
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.4919
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 4360,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.38,
+            "max_total_n": 10.75,
+            "mean_total_n": 10.75
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 0.0,
+            "max_total_n": 10.98,
+            "mean_total_n": 10.7
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.38,
+          5.38
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0497,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 87.2,
+        "lower": 1.7,
+        "release": 1.0,
+        "retract": 2.3,
+        "back_off": 2.6,
+        "settle": 1.6
+      },
+      "sim_time_s": 105.6,
+      "wall_s": 122.5,
+      "load_avg_1m": {
+        "start": 7.49,
+        "end": 9.71
+      },
+      "failure_detail": {
+        "hold_min_z_m": -0.0001,
+        "not_lifted_clear": true,
+        "robots": [
+          "r1"
+        ]
+      },
+      "scene_xml_sha256": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/solo_crate.mp4"
+    },
+    "duo_frame": {
+      "probe": "duo_frame",
+      "kind": "tri_frame",
+      "mass_kg": 1.5,
+      "robots": {
+        "r1": "v0",
+        "r2": "v1"
+      },
+      "required_carriers_claim": 3,
+      "expect": "fail",
+      "attempt_carry_when_not_clear": true,
+      "weld": "off",
+      "eq_active_max": 0,
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "success": false,
+      "teacher_outcome": "grip_lost_in_transit",
+      "lifted_clear": false,
+      "hold_min_z_m": -0.0001,
+      "max_lift_min_z_m": 0.0,
+      "placement": {
+        "pos_err_m": 0.9363,
+        "yaw_err_deg": 27.73,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      },
+      "max_cargo_tilt_deg": {
+        "lift": 7.17,
+        "hold": 7.17,
+        "carry": 7.03
+      },
+      "max_robot_tilt_deg": 4.19,
+      "max_slip_mm": {
+        "r1": 36.7,
+        "r2": 86.9
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.7463,
+        "r2": 0.7463
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 2375,
+      "cargo_robot_body_contact_samples": 0,
+      "cargo_robot_body_contact_geoms": {},
+      "finger_forces": {
+        "lift": {
+          "r1": {
+            "min_finger_n": 5.36,
+            "max_total_n": 13.41,
+            "mean_total_n": 12.1
+          },
+          "r2": {
+            "min_finger_n": 5.36,
+            "max_total_n": 13.41,
+            "mean_total_n": 12.1
+          }
+        },
+        "hold": {
+          "r1": {
+            "min_finger_n": 5.97,
+            "max_total_n": 12.66,
+            "mean_total_n": 12.61
+          },
+          "r2": {
+            "min_finger_n": 5.97,
+            "max_total_n": 12.66,
+            "mean_total_n": 12.61
+          }
+        },
+        "carry": {
+          "r1": {
+            "min_finger_n": 4.0,
+            "max_total_n": 12.56,
+            "mean_total_n": 10.68
+          },
+          "r2": {
+            "min_finger_n": 0.0,
+            "max_total_n": 12.55,
+            "mean_total_n": 10.11
+          }
+        }
+      },
+      "grasp_forces_n": {
+        "r1": [
+          5.38,
+          5.38
+        ],
+        "r2": [
+          5.38,
+          5.38
+        ]
+      },
+      "servo_saturated_samples": {},
+      "max_track_err_m": 0.0444,
+      "phase_sim_s": {
+        "approach": 3.1,
+        "grasp": 2.9,
+        "verify": 0.1,
+        "lift": 1.5,
+        "hold": 1.6,
+        "carry": 47.5,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.3,
+        "back_off": 2.5,
+        "settle": 1.6
+      },
+      "sim_time_s": 65.6,
+      "wall_s": 97.3,
+      "load_avg_1m": {
+        "start": 10.06,
+        "end": 11.21
+      },
+      "failure_detail": {
+        "hold_min_z_m": -0.0001,
+        "not_lifted_clear": true,
+        "robots": [
+          "r2"
+        ]
+      },
+      "scene_xml_sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "d81514a75ffac086e285f9885aa89c6858a0d009",
+      "git_dirty": false,
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "video": "media/duo_frame.mp4"
+    }
+  },
+  "colour_check": {
+    "schema": "ugrp.zone_cargo_colour_check.v1",
+    "resolution": [
+      960,
+      720
+    ],
+    "median_rgb": {
+      "box_cyan": [
+        54.0,
+        143.0,
+        153.0
+      ],
+      "box_green": [
+        76.0,
+        164.0,
+        85.0
+      ],
+      "box_red": [
+        255.0,
+        89.0,
+        79.0
+      ],
+      "box_yellow": [
+        183.0,
+        159.0,
+        42.0
+      ],
+      "can": [
+        103.0,
+        47.0,
+        178.0
+      ],
+      "floor": [
+        54.0,
+        59.0,
+        64.0
+      ],
+      "heavy_crate": [
+        247.0,
+        150.0,
+        182.0
+      ],
+      "long_beam": [
+        126.0,
+        163.0,
+        56.0
+      ],
+      "paint_A": [
+        114.0,
+        76.0,
+        50.0
+      ],
+      "paint_B": [
+        54.0,
+        72.0,
+        118.0
+      ],
+      "paint_C": [
+        113.0,
+        54.0,
+        135.0
+      ],
+      "paint_pickup": [
+        122.0,
+        163.0,
+        178.0
+      ],
+      "tile": [
+        172.0,
+        45.0,
+        121.0
+      ],
+      "tri_frame": [
+        230.0,
+        217.0,
+        176.0
+      ]
+    },
+    "visible_pixels": {
+      "box_cyan": {
+        "count": 163,
+        "view": "TOP_SW"
+      },
+      "box_green": {
+        "count": 129,
+        "view": "TOP_SW"
+      },
+      "box_red": {
+        "count": 151,
+        "view": "TOP_NW"
+      },
+      "box_yellow": {
+        "count": 151,
+        "view": "TOP_SW"
+      },
+      "can": {
+        "count": 174,
+        "view": "TOP_NE"
+      },
+      "floor": {
+        "count": 539771,
+        "view": "TOP_SE"
+      },
+      "heavy_crate": {
+        "count": 1702,
+        "view": "TOP_NE"
+      },
+      "long_beam": {
+        "count": 2350,
+        "view": "TOP_NE"
+      },
+      "paint_A": {
+        "count": 61329,
+        "view": "TOP_NE"
+      },
+      "paint_B": {
+        "count": 61329,
+        "view": "TOP_SE"
+      },
+      "paint_C": {
+        "count": 36998,
+        "view": "TOP_SE"
+      },
+      "paint_pickup": {
+        "count": 369946,
+        "view": "TOP_NW"
+      },
+      "tile": {
+        "count": 204,
+        "view": "TOP_NE"
+      },
+      "tri_frame": {
+        "count": 2966,
+        "view": "TOP_NE"
+      }
+    },
+    "lab": {
+      "box_cyan": [
+        54.9,
+        -23.0,
+        -13.0
+      ],
+      "box_green": [
+        60.8,
+        -43.0,
+        33.0
+      ],
+      "box_red": [
+        60.8,
+        62.0,
+        40.0
+      ],
+      "box_yellow": [
+        65.9,
+        -3.0,
+        60.0
+      ],
+      "can": [
+        34.1,
+        51.0,
+        -60.0
+      ],
+      "floor": [
+        24.7,
+        -1.0,
+        -4.0
+      ],
+      "heavy_crate": [
+        72.9,
+        40.0,
+        -1.0
+      ],
+      "long_beam": [
+        62.4,
+        -29.0,
+        50.0
+      ],
+      "paint_A": [
+        36.1,
+        13.0,
+        22.0
+      ],
+      "paint_B": [
+        31.4,
+        7.0,
+        -29.0
+      ],
+      "paint_C": [
+        33.7,
+        40.0,
+        -35.0
+      ],
+      "paint_pickup": [
+        64.7,
+        -10.0,
+        -12.0
+      ],
+      "tile": [
+        41.2,
+        57.0,
+        -13.0
+      ],
+      "tri_frame": [
+        86.7,
+        -2.0,
+        22.0
+      ]
+    },
+    "closest_pairs": [
+      {
+        "a": "long_beam",
+        "b": "box_green",
+        "dE76": 22.1
+      },
+      {
+        "a": "can",
+        "b": "paint_C",
+        "dE76": 27.3
+      },
+      {
+        "a": "long_beam",
+        "b": "box_yellow",
+        "dE76": 28.1
+      },
+      {
+        "a": "tile",
+        "b": "paint_C",
+        "dE76": 28.8
+      },
+      {
+        "a": "heavy_crate",
+        "b": "tile",
+        "dE76": 38.0
+      },
+      {
+        "a": "tri_frame",
+        "b": "paint_pickup",
+        "dE76": 41.3
+      },
+      {
+        "a": "tri_frame",
+        "b": "box_yellow",
+        "dE76": 43.3
+      },
+      {
+        "a": "long_beam",
+        "b": "tri_frame",
+        "dE76": 45.9
+      },
+      {
+        "a": "can",
+        "b": "tile",
+        "dE76": 47.9
+      },
+      {
+        "a": "heavy_crate",
+        "b": "box_red",
+        "dE76": 48.1
+      },
+      {
+        "a": "tri_frame",
+        "b": "box_green",
+        "dE76": 49.7
+      },
+      {
+        "a": "heavy_crate",
+        "b": "tri_frame",
+        "dE76": 49.8
+      }
+    ],
+    "min_dE76_cargo_vs_all": {
+      "a": "long_beam",
+      "b": "box_green",
+      "dE76": 22.1
+    },
+    "box_class_hsv_overlap": {
+      "zone_perception_v1 (main)": {
+        "can": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "tile": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "long_beam": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "heavy_crate": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "tri_frame": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        }
+      },
+      "top_zone_v2 (PR #163 snapshot)": {
+        "can": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "tile": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "long_beam": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "heavy_crate": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        },
+        "tri_frame": {
+          "cyan": 0.0,
+          "red": 0.0,
+          "green": 0.0,
+          "yellow": 0.0
+        }
+      }
+    },
+    "robot_pixels_total": 9796,
+    "robot_pixels_within_dE15": {
+      "can": 0,
+      "heavy_crate": 0,
+      "long_beam": 0,
+      "tile": 0,
+      "tri_frame": 16
+    },
+    "note": "median colour of the brighter half of segmented pixels in the TOP render (evaluation only); shape and size differ as well, and the robots receive only RGB"
+  },
+  "driver_log": [
+    "start 2026-09-25T08:19:19Z sha d81514a load { 7.02 6.46 5.68 }",
+    "catalogue exit 0 load { 7.02 6.46 5.68 }",
+    "solo_box exit 0 load { 8.68 7.01 5.92 }",
+    "solo_can exit 0 load { 7.32 6.88 5.93 }",
+    "solo_tile exit 0 load { 7.58 7.04 6.04 }",
+    "pair_beam exit 0 load { 7.88 7.36 6.24 }",
+    "pair_crate exit 0 load { 6.17 6.94 6.16 }",
+    "trio_frame exit 0 load { 6.67 6.90 6.21 }",
+    "solo_beam exit 0 load { 7.49 7.01 6.35 }",
+    "solo_crate exit 0 load { 9.71 8.36 7.00 }",
+    "duo_frame exit 0 load { 11.21 9.95 7.83 }",
+    "sweep exit 0 load { 9.98 11.35 9.45 }",
+    "end 2026-09-25T08:37:42Z"
+  ],
+  "raw_root_local_only": "/Users/changmin/projects/ugrp-worktrees/zone-cargo/outputs/zone-cargo/final-d81514a",
+  "raw_files": {
+    "solo_box/events.json": {
+      "sha256": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+      "bytes": 840
+    },
+    "solo_box/result.json": {
+      "sha256": "59775cde2e2f9a7fdddeb8176fa48c6863188f9cdae813ea63e89add8eba730d",
+      "bytes": 2499
+    },
+    "solo_box/scene.xml": {
+      "sha256": "430d39c380a2a36e606ce7d1fe3e06b4925adf16e2eae2355997ea11751849e9",
+      "bytes": 116777
+    },
+    "solo_box/solo_box.mp4": {
+      "sha256": "6917a69d161483672eaf1a2b4ca10172fa18ad27a20d9658acfbe0ee95e277d5",
+      "bytes": 139343
+    },
+    "solo_box/trace.jsonl": {
+      "sha256": "33c8df14f05859d9c9a5fc04cbb51eb697d04f7370fa648dfa897d0b004ad930",
+      "bytes": 567174
+    },
+    "solo_can/events.json": {
+      "sha256": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+      "bytes": 840
+    },
+    "solo_can/result.json": {
+      "sha256": "9e1f73ba83c6a608af3942ea5ed28b780aca29efebf8eba69cd01d290cab1045",
+      "bytes": 2417
+    },
+    "solo_can/scene.xml": {
+      "sha256": "8f6236b3ecfe9072eeec52ce7f93d20c8d7f2fd9b5e8fbab05d776246ccb2154",
+      "bytes": 116773
+    },
+    "solo_can/solo_can.mp4": {
+      "sha256": "c3fd3417443a20d84c278f38a31ae59998c47e4eea057fb93d7f1c4cbbd94ba2",
+      "bytes": 139195
+    },
+    "solo_can/trace.jsonl": {
+      "sha256": "61d65caecb63f14acd81eaf74d0e6f83e4727eff8cc4648f65d5add295b4ca16",
+      "bytes": 571369
+    },
+    "solo_tile/events.json": {
+      "sha256": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+      "bytes": 840
+    },
+    "solo_tile/result.json": {
+      "sha256": "7f07dd701b5d6035ffff6494f742b8145df221835fb2d19ee0918077eaa4e735",
+      "bytes": 2427
+    },
+    "solo_tile/scene.xml": {
+      "sha256": "e0cc4f160e07178ecc6fe04c98c2adb742be8e034599c094bbd92e80e8daaead",
+      "bytes": 116770
+    },
+    "solo_tile/solo_tile.mp4": {
+      "sha256": "9524a98585e5993c2d5c3091ab2af922e8b5d7cb466b00b3841606fa5045a544",
+      "bytes": 142147
+    },
+    "solo_tile/trace.jsonl": {
+      "sha256": "5c8eaf4ecc7d843a2fbe71418598691527d57b89d9cbfe015bded784110c9c76",
+      "bytes": 569442
+    },
+    "pair_beam/events.json": {
+      "sha256": "536fb37c74adcc575a2142ae0f782ea60826f0895b23cfde246a98bdc0aa7cf9",
+      "bytes": 840
+    },
+    "pair_beam/pair_beam.mp4": {
+      "sha256": "449b31eaec5e080b9eddf87e5fc6a8fb2946884613186a3dc3c7f0b05c3e5f8f",
+      "bytes": 226891
+    },
+    "pair_beam/result.json": {
+      "sha256": "d1d682fa64f05fe25550c4df6c72107ef0adf8e7b95fc7057aaba47649ae65f7",
+      "bytes": 2959
+    },
+    "pair_beam/scene.xml": {
+      "sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "bytes": 117130
+    },
+    "pair_beam/trace.jsonl": {
+      "sha256": "89bf814700af5f1e54ae4c2cd0e9a95878ea5b06582c40bca6a4aed2471811e3",
+      "bytes": 946006
+    },
+    "pair_crate/events.json": {
+      "sha256": "72eb0b2a775909ebe0eac73eddb717110a3f8a90aa8cf02cda5e1a3fda46146e",
+      "bytes": 840
+    },
+    "pair_crate/pair_crate.mp4": {
+      "sha256": "8ff8743f2f854de9a00276dd40bdc7d2692c65d6968a0c25d3091658e3bff93b",
+      "bytes": 217441
+    },
+    "pair_crate/result.json": {
+      "sha256": "c762689b7ccee36de85227977dd1aac68cecaeb8dc49b17cab9e7fbe257a2218",
+      "bytes": 2956
+    },
+    "pair_crate/scene.xml": {
+      "sha256": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+      "bytes": 120012
+    },
+    "pair_crate/trace.jsonl": {
+      "sha256": "95f0413fcb74521bb880b62062da563f6dffe0d40be7861c6ce4342cbe1daaee",
+      "bytes": 951790
+    },
+    "trio_frame/events.json": {
+      "sha256": "3f2b0eb2b28afaa3beae47c63ea1bfec936e321490ae8621912f1aaee84aa305",
+      "bytes": 840
+    },
+    "trio_frame/result.json": {
+      "sha256": "106f22b49edbb831ab1013d6dc0e645ec1b797fe0956ee3ed66ba5a045bfffae",
+      "bytes": 3375
+    },
+    "trio_frame/scene.xml": {
+      "sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "bytes": 124953
+    },
+    "trio_frame/trace.jsonl": {
+      "sha256": "f95b4a22f07e771341d881de99678dfe50775da698b319d436af7b5bf5a52565",
+      "bytes": 1147333
+    },
+    "trio_frame/trio_frame.mp4": {
+      "sha256": "754fa1a55b5f0bd24165730b07cdb4980447ef2fdc33d07b622f21fac49cf1ab",
+      "bytes": 248565
+    },
+    "solo_beam/events.json": {
+      "sha256": "4262e2d4aa861377d8fc069cd869fb8f8aa92c76f697d790d641d965ef06b0b3",
+      "bytes": 1045
+    },
+    "solo_beam/result.json": {
+      "sha256": "bae12d1d466ad27d8a4fd6bd56d8c960a49e952272302a9dcae7e9f3692165ec",
+      "bytes": 2521
+    },
+    "solo_beam/scene.xml": {
+      "sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "bytes": 117130
+    },
+    "solo_beam/solo_beam.mp4": {
+      "sha256": "1885882bd255e08fe2a71c8cd9fe9bcc7ed5bb3b7c6bd51aa778d73c91ddfa16",
+      "bytes": 208750
+    },
+    "solo_beam/trace.jsonl": {
+      "sha256": "0911ebf4104dd7bcd3bd1fc66c8a17011e52547df60df54580170a3dfacc7bb4",
+      "bytes": 2334981
+    },
+    "solo_crate/events.json": {
+      "sha256": "c8f1a78fb1af74f9e54ec7b8a5c1eaa1ca8c4e9181f2adb59a6feefc2543b05e",
+      "bytes": 1082
+    },
+    "solo_crate/result.json": {
+      "sha256": "0ce658ccc431da6e1d36ebc1dea4ebe4511cae269277c13917e3902732db5745",
+      "bytes": 2561
+    },
+    "solo_crate/scene.xml": {
+      "sha256": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+      "bytes": 120012
+    },
+    "solo_crate/solo_crate.mp4": {
+      "sha256": "be7a9e5ce88e638ece894273672f07650ccf12fac0de60be7791c0dd516bd32b",
+      "bytes": 164268
+    },
+    "solo_crate/trace.jsonl": {
+      "sha256": "f1119e64a4f7313e9631c41f047770085307241ce274a9b9cfe15bcf52cd5404",
+      "bytes": 1632954
+    },
+    "duo_frame/duo_frame.mp4": {
+      "sha256": "c2cf63f473a100d4e065fdc77fb74b9e7cb5501980d125e075b6bd370eade79c",
+      "bytes": 168182
+    },
+    "duo_frame/events.json": {
+      "sha256": "aa091297638d0e29d724cc7870b4f577749b31b6566c5dad7e6e2dfce07ee36a",
+      "bytes": 1079
+    },
+    "duo_frame/result.json": {
+      "sha256": "d86b7d9dcd5ed5ddec9302c189e56e326a1c37659d258730cbc0a23777d439d1",
+      "bytes": 2982
+    },
+    "duo_frame/scene.xml": {
+      "sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "bytes": 124953
+    },
+    "duo_frame/trace.jsonl": {
+      "sha256": "9c45438abeaca31761b27c4c8d14fb2456e8ecb3c57eeeb57b2a28568248641a",
+      "bytes": 1205159
+    },
+    "sweep/cal_0030g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0030g/result.json": {
+      "sha256": "215d0ca01273763435768fc90fcad0ffaeb70b12a8c306228470b022e35407f4",
+      "bytes": 2423
+    },
+    "sweep/cal_0100g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0100g/result.json": {
+      "sha256": "61db90011f6968f9e34a83c2832f75b8f4774383a1185f37882ec6c4ccb30bf8",
+      "bytes": 2422
+    },
+    "sweep/cal_0200g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0200g/result.json": {
+      "sha256": "b28d6f4ec7fe2ccae7abb835df893b849f6f15033a5b73cf8241037bfc921f9c",
+      "bytes": 2415
+    },
+    "sweep/cal_0300g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0300g/result.json": {
+      "sha256": "d8dc88c93054dcf43fd526170103f2f735405e067b421ff359de8073455285d5",
+      "bytes": 2420
+    },
+    "sweep/cal_0400g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0400g/result.json": {
+      "sha256": "1596ce0a2e469b461edf59bda466b12ccdb04e81dbe90272924374fbd141dfb2",
+      "bytes": 2420
+    },
+    "sweep/cal_0500g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0500g/result.json": {
+      "sha256": "b62fd65ba2643d0c699dba2ba1eef3f565f6fc5c729e233cbfedb6639e382f8b",
+      "bytes": 2422
+    },
+    "sweep/cal_0600g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0600g/result.json": {
+      "sha256": "735b970b2e41ed9baf949c9ffad3f98348372bcc7d658674a346a81a10da174b",
+      "bytes": 2424
+    },
+    "sweep/cal_0620g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0620g/result.json": {
+      "sha256": "5b3a2c6d95b47bd3e9e7af06a2350172242d7d0bf3a2644a916c1ca4a9873d0c",
+      "bytes": 2425
+    },
+    "sweep/cal_0640g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0640g/result.json": {
+      "sha256": "452925a238041d9111c5ecf091588432f94e99019591a1102e3d4c5aaee01ba8",
+      "bytes": 2424
+    },
+    "sweep/cal_0660g/events.json": {
+      "sha256": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+      "bytes": 841
+    },
+    "sweep/cal_0660g/result.json": {
+      "sha256": "c755d603396c313e473ec5ff54abd1f4de63519c8834c639cc641491ddef1ba5",
+      "bytes": 2423
+    },
+    "sweep/cal_0680g/events.json": {
+      "sha256": "2b75316188bcf59019b6875a12ca7cf0328d2cf4163b20af8d0d35a37fecf6e8",
+      "bytes": 885
+    },
+    "sweep/cal_0680g/result.json": {
+      "sha256": "17d87e9779e5c2dae7bdba44a73d18f68f3d69861b92e0fd0dedbed7d798ca39",
+      "bytes": 2219
+    },
+    "sweep/cal_0700g/events.json": {
+      "sha256": "2b75316188bcf59019b6875a12ca7cf0328d2cf4163b20af8d0d35a37fecf6e8",
+      "bytes": 885
+    },
+    "sweep/cal_0700g/result.json": {
+      "sha256": "46afa5e6db2db00fdfa5e5751f6a0d4d6944627a5750a4fa1af62e0ea62ec84d",
+      "bytes": 2218
+    },
+    "sweep/cal_0800g/events.json": {
+      "sha256": "2b75316188bcf59019b6875a12ca7cf0328d2cf4163b20af8d0d35a37fecf6e8",
+      "bytes": 885
+    },
+    "sweep/cal_0800g/result.json": {
+      "sha256": "49ec3bc73eb6443755ca4ce333178fa934fc408454325928935a5c6f2f016350",
+      "bytes": 2217
+    },
+    "sweep/cal_1000g/events.json": {
+      "sha256": "2b75316188bcf59019b6875a12ca7cf0328d2cf4163b20af8d0d35a37fecf6e8",
+      "bytes": 885
+    },
+    "sweep/cal_1000g/result.json": {
+      "sha256": "7ba6559b625ff4c71fe7a610f3d8252ca70faf0add2686f3df34feb5d61a79d3",
+      "bytes": 2215
+    },
+    "sweep/cal_1200g/events.json": {
+      "sha256": "2b75316188bcf59019b6875a12ca7cf0328d2cf4163b20af8d0d35a37fecf6e8",
+      "bytes": 885
+    },
+    "sweep/cal_1200g/result.json": {
+      "sha256": "2b26c2e8a1fff03edf26318b878c8d1276d92255b4b52aae2baaa14dc17c08bc",
+      "bytes": 2214
+    },
+    "sweep/capacity.json": {
+      "sha256": "7c7a0a5f30a85185d7448a447df4c529d0022476a07d68b4cfd85542a76031a3",
+      "bytes": 8456
+    },
+    "catalogue/catalogue.json": {
+      "sha256": "e78c8b00bc2b3161d542ebb0be2920f4ff7fa809ce55eec4c2277203b8f70d21",
+      "bytes": 20826
+    },
+    "catalogue/catalogue.png": {
+      "sha256": "9e2a35683303af35e84302132479b12b9face967b903bbaa19297df6a66257ec",
+      "bytes": 424321
+    },
+    "catalogue/colour_check.json": {
+      "sha256": "ed6af9ed419a6a00de86714ec221276d8f2524f17c9866c4de15f6305ad2dcc1",
+      "bytes": 5458
+    },
+    "catalogue/top-TOP_NE.png": {
+      "sha256": "5c2742519a8d412050571b05873272509122411ca8ddcb7f3dd8d460abc4fd15",
+      "bytes": 211083
+    },
+    "catalogue/top-TOP_NW.png": {
+      "sha256": "73d62b59373c2835086c50d07ba86a2ee251f0cd54c184dc8ba46f72acb93210",
+      "bytes": 394131
+    },
+    "catalogue/top-TOP_SE.png": {
+      "sha256": "9eb71795b7b086303212e474520dd0ffe48e479e6511fef14e5449baa6c3b4e9",
+      "bytes": 206144
+    },
+    "catalogue/top-TOP_SW.png": {
+      "sha256": "71c58804f90bb5c16490938151aa039080c27972a117ced6b761040b1356ac47",
+      "bytes": 275222
+    }
+  },
+  "media": [
+    "catalogue-top-ne.png",
+    "catalogue.png",
+    "duo_frame.mp4",
+    "pair_beam.mp4",
+    "pair_crate.mp4",
+    "solo_beam.mp4",
+    "solo_box.mp4",
+    "solo_can.mp4",
+    "solo_crate.mp4",
+    "solo_tile.mp4",
+    "trio_frame.mp4"
+  ],
+  "scope": [
+    "1 run per probe (deterministic synchronous SIM); no seeds/positions varied",
+    "open floor patch of zone_wide; no walls, doors, other cargo or zone teacher integration",
+    "teacher uses ground truth; nothing here is an RGB/student capability",
+    "masses are relative to the SIM MasterPi model, not the real robot"
+  ]
+}
