@@ -1,0 +1,73 @@
+{
+  "schema": "ugrp.zone_rgb_outcome.split.v1",
+  "fixed_at": "2026-09-25, before any test-split scoring",
+  "rule": "recorded runs: dev = scripted-fixture runs (gate, gate2, dev-fixture-*, diag-plan-replay); test = LLM runs (ZC2-*, Z1-Z3). Synthetic renders: dev base states from dev runs, test base states from test runs.",
+  "root": "outputs/ (primary checkout, local only)",
+  "dev_runs": [
+    "zone-communication-20260925/gate-dynamic-graspfail",
+    "zone-communication-20260925/gate-dynamic-nominal",
+    "zone-communication-20260925/gate-independent-graspfail",
+    "zone-communication-20260925/gate-independent-nominal",
+    "zone-communication-20260925/gate-plan_first-graspfail",
+    "zone-communication-20260925/gate-plan_first-nominal",
+    "zone-communication-20260925/gate2-dynamic-graspfail",
+    "zone-communication-20260925/gate2-dynamic-nominal",
+    "zone-communication-20260925/gate2-independent-graspfail",
+    "zone-communication-20260925/gate2-independent-nominal",
+    "zone-communication-20260925/gate2-plan_first-graspfail",
+    "zone-communication-20260925/gate2-plan_first-nominal",
+    "zone-dispatch-20260925/dev-fixture-1",
+    "zone-dispatch-20260925/dev-fixture-2",
+    "zone-dispatch-20260925/dev-fixture-3",
+    "zone-dispatch-20260925/dev-fixture-4",
+    "zone-dispatch-20260925/dev-fixture-5",
+    "zone-dispatch-20260925/dev-fixture-6-planfirst",
+    "zone-dispatch-20260925/dev-fixture-7",
+    "zone-dispatch-20260925/dev-fixture-8",
+    "zone-dispatch-20260925/dev-fixture-9",
+    "zone-dispatch-20260925/diag-plan-replay"
+  ],
+  "test_runs": [
+    "zone-communication-20260925/ZC2-s12-dynamic-graspfail",
+    "zone-communication-20260925/ZC2-s12-dynamic-nominal",
+    "zone-communication-20260925/ZC2-s12-independent-graspfail",
+    "zone-communication-20260925/ZC2-s12-independent-nominal",
+    "zone-communication-20260925/ZC2-s12-plan_first-graspfail",
+    "zone-communication-20260925/ZC2-s12-plan_first-nominal",
+    "zone-communication-20260925/ZC2-s13-dynamic-graspfail",
+    "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+    "zone-communication-20260925/ZC2-s13-independent-graspfail",
+    "zone-communication-20260925/ZC2-s13-independent-nominal",
+    "zone-communication-20260925/ZC2-s13-plan_first-graspfail",
+    "zone-communication-20260925/ZC2-s13-plan_first-nominal",
+    "zone-communication-20260925/ZC2-s14-dynamic-graspfail",
+    "zone-communication-20260925/ZC2-s14-dynamic-nominal",
+    "zone-communication-20260925/ZC2-s14-independent-graspfail",
+    "zone-communication-20260925/ZC2-s14-independent-nominal",
+    "zone-communication-20260925/ZC2-s14-plan_first-graspfail",
+    "zone-communication-20260925/ZC2-s14-plan_first-nominal",
+    "zone-dispatch-20260925/Z1-G5-dyn",
+    "zone-dispatch-20260925/Z1-G5-plan",
+    "zone-dispatch-20260925/Z1-G8-dyn",
+    "zone-dispatch-20260925/Z1-G8-plan",
+    "zone-dispatch-20260925/Z2-G5-dyn",
+    "zone-dispatch-20260925/Z2-G5-plan",
+    "zone-dispatch-20260925/Z2-G8-dyn",
+    "zone-dispatch-20260925/Z2-G8-plan",
+    "zone-dispatch-20260925/Z3-G5-dyn",
+    "zone-dispatch-20260925/Z3-G5-plan",
+    "zone-dispatch-20260925/Z3-G8-dyn",
+    "zone-dispatch-20260925/Z3-G8-plan"
+  ],
+  "synthetic": {
+    "dev_base_runs": [
+      "zone-communication-20260925/gate-dynamic-nominal",
+      "zone-dispatch-20260925/dev-fixture-7"
+    ],
+    "test_base_runs": [
+      "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+      "zone-dispatch-20260925/Z3-G8-dyn"
+    ]
+  },
+  "thresholds_from": "dev only; test is scored once with the frozen module SHA"
+}
