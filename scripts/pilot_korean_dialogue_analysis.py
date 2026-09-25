@@ -5,6 +5,14 @@ present) and writes <exp>/results.json. Validity uses the zone runner's own
 validators at this checkout (validate_claim_reply / validate_plan_reply /
 plan_validator / check_claims); nothing is fed back into any request.
 These are language and format measurements, NOT task-efficiency evidence.
+
+Schema history:
+  ...results.v1  the 2026-09-25 record. Dialogue acts from act rules v1.
+  ...results.v2  2026-09-26 review fix. Acts from rules v2 (word boundaries,
+                 negation, act vs mention) with the v1 labels kept alongside,
+                 and window `episode` carried through. The committed
+                 experiments/2026-09-25-zone-dialogue-ko-pilot/results.json was
+                 NOT regenerated; it stays the v1 record of that run.
 """
 from __future__ import annotations
 
@@ -18,6 +26,9 @@ from harness import zone_coordination as zc
 from harness import zone_dialogue_ko as zk
 from harness import zone_dialogue_metrics as zm
 from harness.three_robot_plan import digest, parse, validate_plan_reply
+
+SCHEMA = 'ugrp.zone_dialogue_ko_pilot.results.v2'
+ACT_RULES = 'v2'                 # rules that produce the reported `acts`
 
 # Identifier-like names (underscore) are literal references; plain English words
 # such as zone/box/claim written in prose count as code-switching, not literals.
@@ -40,11 +51,18 @@ def rate(num, den):
 
 
 def final_rows(calls, kind):
+    """Newest row per call_id. A resumed run appends a new row (and a new raw file)."""
     rows = {}
     for c in calls:
         if c['kind'] == kind:
-            rows[c['call_id']] = c        # later attempts overwrite earlier ones
+            rows[c['call_id']] = c        # later rows (retry or resumed re-call) win
     return rows
+
+
+def acts_of(text):
+    """Free-text acts under both rule versions; `acts` is the reported v2 label."""
+    return {'acts': zm.dialogue_acts(text, ACT_RULES), 'acts_rules': ACT_RULES,
+            'acts_rules_v1': zm.dialogue_acts(text, 'v1')}
 
 
 def attempts_by_id(calls):
@@ -121,9 +139,10 @@ def evaluate_single(row, point, source):
     if variant == 'V3':
         out['message_struct'] = True
         out['acts'] = zm.struct_acts(message) if isinstance(message, (dict, type(None))) else ['invalid']
+        out['acts_rules'] = 'structured'      # V3 enum has no propose/standby: not comparable to free text
     else:
         text = message if isinstance(message, str) else ''
-        out['acts'] = zm.dialogue_acts(text)
+        out.update(acts_of(text))
         out['message_lang'] = language(text, names)
     reason = value.get('reason') if isinstance(value, dict) else None
     out['reason'] = reason
@@ -217,6 +236,10 @@ def summarize(rows, points, v0_index):
         entry['reason_hangul_ratio_mean'] = mean([r['reason_lang']['hangul_ratio'] for r in sel
                                                   if r.get('reason_lang')])
         entry['acts'] = collections.Counter(a for r in sel for a in r.get('acts', [])).most_common()
+        entry['acts_rules'] = 'structured' if variant == 'V3' else ACT_RULES
+        if variant != 'V3':
+            entry['acts_rules_v1'] = collections.Counter(a for r in sel
+                                                         for a in r.get('acts_rules_v1', [])).most_common()
         entry['by_mode'] = {mode: {'n': sum(1 for r in sel if r['mode'] == mode),
                                    'schema_ok': rate(sum(1 for r in sel if r['mode'] == mode and r.get('schema_ok')),
                                                      sum(1 for r in sel if r['mode'] == mode)),
@@ -267,13 +290,15 @@ def evaluate_dialogues(dialogues, calls, source):
             msg = reply['message'] if reply else None
             new_in = [u for u in t['received_before'] if u['turn'] > last_seen[t['robot_id']]]
             last_seen[t['robot_id']] = t['turn']
-            entry = {'turn': t['turn'], 'robot_id': t['robot_id'], 'valid': t['valid'], 'error': t['error'],
+            entry = {'turn': t['turn'], 'robot_id': t['robot_id'], 'call_id': t['call_id'],
+                     'valid': t['valid'], 'error': t['error'],
                      'claim': reply['claim'] if reply else None, 'recipients': reply['recipients'] if reply else None,
                      'delivered_to': t['delivered_to'], 'new_received': [(u['from_robot'], u['turn']) for u in new_in],
                      'usage': row.get('usage')}
             if d['variant'] == 'V3':
                 entry['message'] = msg
                 entry['acts'] = zm.struct_acts(msg) if reply else ['invalid']
+                entry['acts_rules'] = 'structured'
                 rt = msg.get('reply_to') if isinstance(msg, dict) else None
                 entry['reply_to'] = rt
                 entry['reply_to_matches_received'] = bool(rt) and any(
@@ -281,7 +306,7 @@ def evaluate_dialogues(dialogues, calls, source):
             else:
                 text = msg if isinstance(msg, str) else ''
                 entry['message'] = text
-                entry['acts'] = zm.dialogue_acts(text) if reply else ['invalid']
+                entry.update(acts_of(text) if reply else {'acts': ['invalid'], 'acts_rules': ACT_RULES})
                 entry['lang'] = language(text, list(labels))
                 entry['references_new_peer_utterance'] = (
                     any(zm.references(text, u['message'], u['from_robot'], labels) for u in new_in)
@@ -302,7 +327,8 @@ def evaluate_dialogues(dialogues, calls, source):
         ratios = [x['lang']['hangul_ratio'] for x in spoke if x.get('lang') and x['lang']['hangul_ratio'] is not None]
         answered = [x for x in turns if x['new_received']]
         out.append({
-            'scenario': d['scenario'], 'variant': d['variant'], 'run': d['run'], 'phase': d['phase'],
+            'scenario': d['scenario'], 'variant': d['variant'], 'episode': d.get('episode', 1),
+            'complete': d.get('complete', True), 'run': d['run'], 'phase': d['phase'],
             'order': d['order'], 'turns': turns,
             'summary': {
                 'valid_turns': sum(1 for x in turns if x['valid']), 'turns': len(turns),
@@ -326,7 +352,11 @@ def evaluate_dialogues(dialogues, calls, source):
     return out
 
 
-def analyze(exp: Path, source: Path):
+def analyze(exp: Path, source: Path, out: Path | None = None):
+    out_path = Path(out) if out else exp/'results.json'
+    if out_path.exists():
+        raise SystemExit(f'{out_path} already exists; pass a new --out so the recorded results stay intact '
+                         f'(this writer produces {SCHEMA})')
     sample = json.loads((exp/'sample.json').read_text())
     points = sample['points']
     calls = [json.loads(l) for l in (exp/'calls.jsonl').read_text().splitlines() if l.strip()]
@@ -359,15 +389,26 @@ def analyze(exp: Path, source: Path):
     manual = json.loads((exp/'manual_labels.json').read_text()) if (exp/'manual_labels.json').exists() else None
     usage_all = [c['usage'] for c in calls if c.get('usage')]
     result = {
-        'schema': 'ugrp.zone_dialogue_ko_pilot.results.v1',
+        'schema': SCHEMA,
         'scope': ('OFFLINE re-asks of recorded ZC2 decision points; evaluation-only language/format metrics. '
                   'NOT task-efficiency evidence: no SIM ran, no decision was executed, and changed decisions '
                   'were not tested physically.'),
+        'act_rules': {'reported': ACT_RULES, 'also_recorded': 'v1',
+                      'free_text_only_acts': list(zm.ACTS_FREE_TEXT_ONLY),
+                      'structured_enum': list(zm.STRUCTURED_ACTS),
+                      'note': ('v1 labelled the ...results.v1 record of this run; V3 structured acts have no '
+                               'propose/standby, so V3 and free-text act counts are not directly comparable.')},
         'source': sample['summary'],
         'calls': {'http_attempts': len(calls), 'by_kind': collections.Counter(c['kind'] for c in calls),
                   'retried_call_ids': [k for k, v in attempts.items() if v > 1],
                   'transport_errors': sum(1 for c in calls if c.get('error')),
                   'budget': 150,
+                  'raw_records': {'rows': sum(1 for c in calls if c['wire']['raw_path']),
+                                  'distinct_raw_paths': len({c['wire']['raw_path'] for c in calls
+                                                             if c['wire']['raw_path']}),
+                                  'reused_raw_paths': sorted(
+                                      p for p, n in collections.Counter(c['wire']['raw_path'] for c in calls
+                                                                        if c['wire']['raw_path']).items() if n > 1)},
                   'tokens_total': {k: sum(u.get(k, 0) for u in usage_all)
                                    for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')},
                   'calls_jsonl_sha256': sha((exp/'calls.jsonl').read_bytes())},
@@ -385,5 +426,5 @@ def analyze(exp: Path, source: Path):
         'dialogues': dialogues,
         'manual_labels': manual,
     }
-    (exp/'results.json').write_text(json.dumps(result, ensure_ascii=False, indent=2, default=list) + '\n')
+    (out_path).write_text(json.dumps(result, ensure_ascii=False, indent=2, default=list) + '\n')
     print(json.dumps({k: result[k] for k in ('calls', 'replay_control')}, ensure_ascii=False, default=list)[:3000])

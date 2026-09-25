@@ -1,0 +1,1940 @@
+{
+  "schema": "ugrp.zone_dialogue_ko_pilot.act_rules_check.v1",
+  "scope": "EVALUATION-ONLY relabelling of recorded messages. No model call, no SIM, and no change to the recorded results/raw files. Language and act-format measurements only.",
+  "source": {
+    "experiment": "experiments/2026-09-25-zone-dialogue-ko-pilot",
+    "results": "experiments/2026-09-25-zone-dialogue-ko-pilot/results.json",
+    "results_schema": "ugrp.zone_dialogue_ko_pilot.results.v1",
+    "results_sha256": "41cf47d8a9ccfe66501b8dd2f6ac79168f87547691fbc76424f414a4690a36ab",
+    "free_text_messages": 83
+  },
+  "rules": {
+    "reported": "v2",
+    "versions": [
+      "v1",
+      "v2"
+    ],
+    "v1_sha256": "0862089d55929de8a638cb531b4c8e814fe776de3755f591e74044bcd8506cfa",
+    "v2_sha256": "96fbcd2f6d80ad27211a65d25022976bc3979e122273e972d9fabd9dcc3806cc",
+    "definitions": {
+      "claim": "화자가 특정 상자·작업을 자기 것으로 가져간다는 의지 표명. 남을 배정하는 서술(r2 takes A)은 제외.",
+      "propose": "배정안을 제시·제출·확정 제출하는 발화. 남의 제안을 언급·수락만 하는 발화는 제외.",
+      "yield": "자기 몫·후보를 상대에게 넘기는 발화.",
+      "request": "상대의 행동을 요구·권유하는 발화(청유형 포함).",
+      "agree": "상대의 제안·선택을 받아들이는 발화. 부정형(동의하지 않음, disagree)은 제외.",
+      "refuse": "거절·불가 표명. 부정형 동의도 여기에 들어간다.",
+      "question": "질문 형식의 발화.",
+      "report": "이미 일어난 완료·도착·중단 보고. 예정·조건부(완료하면)는 제외.",
+      "inform_obstacle": "통행 방해·장애물 관찰 보고.",
+      "correct": "앞선 발화·정보를 정정하는 발화.",
+      "standby": "할 일이 없거나 기다린다는 표명."
+    },
+    "free_text_only_acts": [
+      "propose",
+      "standby"
+    ],
+    "structured_enum": [
+      "claim",
+      "request",
+      "inform_obstacle",
+      "report",
+      "agree",
+      "yield",
+      "question",
+      "correct",
+      "refuse"
+    ],
+    "design_note": "v2 = word boundaries on Latin cues + suppression spans for negation and for mentions of a peer act. Written from the review findings, not fitted to the manual labels; the `please accept` suppression is the one rule added after seeing the English sample. Remaining disagreements stay as rule_misses."
+  },
+  "label_changes": {
+    "messages": 83,
+    "changed_v1_to_v2": 9,
+    "rows": [
+      {
+        "call_id": "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V0:0",
+        "message": "Standing by for r1 proposal. Total goal: A: 2 red, B: 2 cyan, C: 1 green, 1 yellow (6 jobs, 2 each).",
+        "v1": [
+          "propose",
+          "standby"
+        ],
+        "v2": [
+          "standby"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V0:0",
+        "message": "Accepted proposal. Ready to deliver green-1 and yellow-1 to zone C.",
+        "v1": [
+          "propose",
+          "agree"
+        ],
+        "v2": [
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:0",
+        "message": "Plan looks great and balanced, accepting proposal.",
+        "v1": [
+          "propose",
+          "agree"
+        ],
+        "v2": [
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:1",
+        "message": "Accepted proposal. Ready to execute.",
+        "v1": [
+          "propose",
+          "agree"
+        ],
+        "v2": [
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V0:0",
+        "message": "Accepting proposal v3. Ready to execute.",
+        "v1": [
+          "propose",
+          "agree"
+        ],
+        "v2": [
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V1:0",
+        "message": "제안된 계획을 수락합니다. r1, r2 모두 수락 후 작업을 시작합시다.",
+        "v1": [
+          "agree"
+        ],
+        "v2": [
+          "request",
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:1",
+        "message": "Proposed balanced assignment: r1 takes red to A, r2 takes cyan to B, r3 takes green/yellow to C. Please accept.",
+        "v1": [
+          "propose",
+          "request",
+          "agree"
+        ],
+        "v2": [
+          "propose",
+          "request"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V1:0",
+        "message": "제안된 계획을 수락합니다. 각 로봇 2개씩 작업을 진행합시다.",
+        "v1": [
+          "agree"
+        ],
+        "v2": [
+          "request",
+          "agree"
+        ]
+      },
+      {
+        "call_id": "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V2:0",
+        "message": "내가 제안자이므로 r1의 제안대로 계획을 확정하여 제출합니다. r1: green-1->C, cyan-3->B / r2: yellow-1->C, cyan-1->B / r3: red-1->A, red-2->A",
+        "v1": [
+          "other"
+        ],
+        "v2": [
+          "propose"
+        ]
+      }
+    ],
+    "acts_v1": [
+      [
+        "claim",
+        41
+      ],
+      [
+        "propose",
+        20
+      ],
+      [
+        "agree",
+        17
+      ],
+      [
+        "standby",
+        13
+      ],
+      [
+        "request",
+        13
+      ],
+      [
+        "report",
+        12
+      ],
+      [
+        "yield",
+        4
+      ],
+      [
+        "other",
+        2
+      ]
+    ],
+    "acts_v2": [
+      [
+        "claim",
+        41
+      ],
+      [
+        "agree",
+        16
+      ],
+      [
+        "propose",
+        16
+      ],
+      [
+        "request",
+        15
+      ],
+      [
+        "standby",
+        13
+      ],
+      [
+        "report",
+        12
+      ],
+      [
+        "yield",
+        4
+      ],
+      [
+        "other",
+        1
+      ]
+    ]
+  },
+  "manual_checks": [
+    {
+      "file": "experiments/2026-09-25-zone-dialogue-ko-pilot/manual_labels.json",
+      "sha256": "adeb9a2a69a89906274dfba732e3e19315355faa30b450842d6cfe388e65d3b5",
+      "labeller": "Claude (pilot author), not blind to variant; sample drawn with random.Random(20260925) from V1/V2 single-turn and V2 dialogue messages",
+      "n": 20,
+      "exact_match": {
+        "v1": 18,
+        "v2": 20
+      },
+      "rule_misses": [],
+      "rows": [
+        {
+          "id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V1:0",
+          "message": "r3의 제안을 수락합니다. 계획대로 진행하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree"
+          ],
+          "rule_v1": [
+            "agree"
+          ],
+          "rule_v2": [
+            "agree"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V2:0",
+          "message": "red-1 완료했습니다. 구역 A의 남은 red 상자로 red-2를 가져가겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim",
+            "report"
+          ],
+          "rule_v1": [
+            "claim",
+            "report"
+          ],
+          "rule_v2": [
+            "claim",
+            "report"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "dialogue:M3:V2:t1:r3",
+          "message": "r3: 바로 앞에 있는 yellow-1을 C 구역으로 옮기겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V2:0",
+          "message": "목표 완수를 위해 각자 2개씩 작업을 균등 분배한 계획을 제안합니다. 확인 후 동의해 주세요.",
+          "message_matches_record": true,
+          "manual": [
+            "propose",
+            "request"
+          ],
+          "rule_v1": [
+            "propose",
+            "request"
+          ],
+          "rule_v2": [
+            "propose",
+            "request"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V1:0",
+          "message": "r3가 green-1을 C로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V1:0",
+          "message": "제안된 계획을 수락합니다. r1, r2 모두 수락 후 작업을 시작합시다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree",
+            "request"
+          ],
+          "rule_v1": [
+            "agree"
+          ],
+          "rule_v2": [
+            "agree",
+            "request"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V1:0",
+          "message": "r1의 제안을 수락합니다. r3는 green-1과 yellow-1을 C로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree",
+            "claim"
+          ],
+          "rule_v1": [
+            "agree",
+            "claim"
+          ],
+          "rule_v2": [
+            "agree",
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "dialogue:M2:V2:t2:r3",
+          "message": "green-1을 구역 C로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "dialogue:M1:V2:t3:r3",
+          "message": "r1의 cyan-1, r2의 green-1 선택 확인했습니다. 저는 구역 A에 필요한 red 상자 중 red-1을 맡겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree",
+            "claim"
+          ],
+          "rule_v1": [
+            "agree",
+            "claim"
+          ],
+          "rule_v2": [
+            "agree",
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V2:0",
+          "message": "내가 제안자이므로 r1의 제안대로 계획을 확정하여 제출합니다. r1: green-1->C, cyan-3->B / r2: yellow-1->C, cyan-1->B / r3: red-1->A, red-2->A",
+          "message_matches_record": true,
+          "manual": [
+            "propose"
+          ],
+          "rule_v1": [
+            "other"
+          ],
+          "rule_v2": [
+            "propose"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V2:0",
+          "message": "cyan-1 배달 완료 후 구역 B의 두 번째 cyan 상자로 cyan-3을 가져가겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim",
+            "report"
+          ],
+          "rule_v1": [
+            "claim",
+            "report"
+          ],
+          "rule_v2": [
+            "claim",
+            "report"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "dialogue:M2:V2:t3:r1",
+          "message": "red-1을 구역 A로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V2:0",
+          "message": "r1의 제안을 확인하고 수락합니다. 각 구역의 목표 상자 수와 색상을 정확히 만족하며 균등하게 분배되었습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree"
+          ],
+          "rule_v1": [
+            "agree"
+          ],
+          "rule_v2": [
+            "agree"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-plan_first-nominal/r1/plan-2:V2:0",
+          "message": "r3, 논의된 대로 제안을 올려줘: r1은 green-1, yellow-1 -> C, r2는 red-1, red-2 -> A, r3은 cyan-1, cyan-2 -> B.",
+          "message_matches_record": true,
+          "manual": [
+            "propose",
+            "request"
+          ],
+          "rule_v1": [
+            "propose",
+            "request"
+          ],
+          "rule_v2": [
+            "propose",
+            "request"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V1:0",
+          "message": "모든 목표 작업이 완료되었습니다. 대기합니다.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "report",
+            "standby"
+          ],
+          "rule_v2": [
+            "report",
+            "standby"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V1:0",
+          "message": "각 로봇이 2개씩 운반하도록 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
+          "message_matches_record": true,
+          "manual": [
+            "propose",
+            "request"
+          ],
+          "rule_v1": [
+            "propose",
+            "request"
+          ],
+          "rule_v2": [
+            "propose",
+            "request"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V1:0",
+          "message": "모든 목표가 완료되었거나 r1이 진행 중이므로 대기합니다.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "report",
+            "standby"
+          ],
+          "rule_v2": [
+            "report",
+            "standby"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V1:0",
+          "message": "r3: cyan-1 상자를 B 구역으로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V1:0",
+          "message": "zone C에 green-1을 전달하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V2:0",
+          "message": "r1의 제안을 수락합니다. 계획대로 green-1과 yellow-1을 구역 C로 운반하겠습니다.",
+          "message_matches_record": true,
+          "manual": [
+            "agree",
+            "claim"
+          ],
+          "rule_v1": [
+            "agree",
+            "claim"
+          ],
+          "rule_v2": [
+            "agree",
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        }
+      ]
+    },
+    {
+      "file": "experiments/2026-09-25-zone-dialogue-ko-pilot/manual_labels_en.json",
+      "sha256": "a504cfcaf3ede435d0e41f9fc36f878a780a96eb85a62367a2789096ca2c0a56",
+      "labeller": "Kiro (review follow-up), not blind to variant or to the rule output; single labeller, no adjudication",
+      "n": 12,
+      "exact_match": {
+        "v1": 6,
+        "v2": 10
+      },
+      "rule_misses": [
+        {
+          "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V0:0",
+          "message": "All goals have been achieved. Standing by.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "standby"
+          ],
+          "rule_v2": [
+            "standby"
+          ],
+          "exact_v1": false,
+          "exact_v2": false,
+          "rule_v2_missed": [
+            "report"
+          ],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V0:0",
+          "message": "All goals are complete or being completed by r1. Standing by.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "standby"
+          ],
+          "rule_v2": [
+            "standby"
+          ],
+          "exact_v1": false,
+          "exact_v2": false,
+          "rule_v2_missed": [
+            "report"
+          ],
+          "rule_v2_extra": []
+        }
+      ],
+      "rows": [
+        {
+          "id": "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V0:0",
+          "message": "cyan-1 delivered to B. Claiming cyan-2 for B to complete cyan goal.",
+          "message_matches_record": true,
+          "manual": [
+            "claim",
+            "report"
+          ],
+          "rule_v1": [
+            "claim",
+            "report"
+          ],
+          "rule_v2": [
+            "claim",
+            "report"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V0:0",
+          "message": "All goals have been achieved. Standing by.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "standby"
+          ],
+          "rule_v2": [
+            "standby"
+          ],
+          "exact_v1": false,
+          "exact_v2": false,
+          "rule_v2_missed": [
+            "report"
+          ],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V0:0",
+          "message": "r3 claiming green-1 to C",
+          "message_matches_record": true,
+          "manual": [
+            "claim"
+          ],
+          "rule_v1": [
+            "claim"
+          ],
+          "rule_v2": [
+            "claim"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V0:0",
+          "message": "Standing by for r1 proposal. Total goal: A: 2 red, B: 2 cyan, C: 1 green, 1 yellow (6 jobs, 2 each).",
+          "message_matches_record": true,
+          "manual": [
+            "standby"
+          ],
+          "rule_v1": [
+            "propose",
+            "standby"
+          ],
+          "rule_v2": [
+            "standby"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:0",
+          "message": "Plan looks great and balanced, accepting proposal.",
+          "message_matches_record": true,
+          "manual": [
+            "agree"
+          ],
+          "rule_v1": [
+            "agree",
+            "propose"
+          ],
+          "rule_v2": [
+            "agree"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V0:0",
+          "message": "Accepting proposal v3. Ready to execute.",
+          "message_matches_record": true,
+          "manual": [
+            "agree"
+          ],
+          "rule_v1": [
+            "agree",
+            "propose"
+          ],
+          "rule_v2": [
+            "agree"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V0:1",
+          "message": "Yielding cyan-1 to r2. I will take green-1 to Zone C.",
+          "message_matches_record": true,
+          "manual": [
+            "claim",
+            "yield"
+          ],
+          "rule_v1": [
+            "claim",
+            "yield"
+          ],
+          "rule_v2": [
+            "claim",
+            "yield"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:0",
+          "message": "Proposing balanced 2-job plan for all robots.",
+          "message_matches_record": true,
+          "manual": [
+            "propose"
+          ],
+          "rule_v1": [
+            "propose"
+          ],
+          "rule_v2": [
+            "propose"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:1",
+          "message": "Proposed balanced assignment: r1 takes red to A, r2 takes cyan to B, r3 takes green/yellow to C. Please accept.",
+          "message_matches_record": true,
+          "manual": [
+            "propose",
+            "request"
+          ],
+          "rule_v1": [
+            "agree",
+            "propose",
+            "request"
+          ],
+          "rule_v2": [
+            "propose",
+            "request"
+          ],
+          "exact_v1": false,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V0:1",
+          "message": "Confirming my proposal: 2 boxes per robot, exactly meeting all zone goals.",
+          "message_matches_record": true,
+          "manual": [
+            "propose"
+          ],
+          "rule_v1": [
+            "propose"
+          ],
+          "rule_v2": [
+            "propose"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V0:0",
+          "message": "All goals are complete or being completed by r1. Standing by.",
+          "message_matches_record": true,
+          "manual": [
+            "report",
+            "standby"
+          ],
+          "rule_v1": [
+            "standby"
+          ],
+          "rule_v2": [
+            "standby"
+          ],
+          "exact_v1": false,
+          "exact_v2": false,
+          "rule_v2_missed": [
+            "report"
+          ],
+          "rule_v2_extra": []
+        },
+        {
+          "id": "single:ZC2-s14-plan_first-nominal/r1/plan-0:V0:1",
+          "message": "Proposing balanced plan: r1 takes C (green-1, yellow-1), r2 takes A (red-1, red-2), r3 takes B (cyan-1, cyan-2).",
+          "message_matches_record": true,
+          "manual": [
+            "propose"
+          ],
+          "rule_v1": [
+            "propose"
+          ],
+          "rule_v2": [
+            "propose"
+          ],
+          "exact_v1": true,
+          "exact_v2": true,
+          "rule_v2_missed": [],
+          "rule_v2_extra": []
+        }
+      ]
+    }
+  ],
+  "relabelled": {
+    "dialogue:M1:V2:t1:r1": {
+      "message": "r1이 집하 구역 남서쪽에 가장 가까운 cyan-1을 구역 B로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M1:V2:t2:r2": {
+      "message": "r1의 cyan-1 선택을 확인했습니다. 저는 green-1을 구역 C로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim",
+        "agree"
+      ],
+      "acts_v2": [
+        "claim",
+        "agree"
+      ]
+    },
+    "dialogue:M1:V2:t3:r3": {
+      "message": "r1의 cyan-1, r2의 green-1 선택 확인했습니다. 저는 구역 A에 필요한 red 상자 중 red-1을 맡겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim",
+        "agree"
+      ],
+      "acts_v2": [
+        "claim",
+        "agree"
+      ]
+    },
+    "dialogue:M1:V2:t4:r1": {
+      "message": "동료들의 선택을 확인했습니다. 계획대로 r1은 cyan-1을 구역 B로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim",
+        "agree"
+      ],
+      "acts_v2": [
+        "claim",
+        "agree"
+      ]
+    },
+    "dialogue:M1:V2:t5:r2": {
+      "message": "합의된 대로 r2는 green-1을 구역 C로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M1:V2:t6:r3": {
+      "message": "합의된 대로 r3은 예정대로 red-1을 구역 A로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M1",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M2:V2:t1:r2": {
+      "message": "cyan-1을 구역 B로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M2",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M2:V2:t2:r3": {
+      "message": "green-1을 구역 C로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M2",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M2:V2:t3:r1": {
+      "message": "red-1을 구역 A로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M2",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M3:V2:t1:r3": {
+      "message": "r3: 바로 앞에 있는 yellow-1을 C 구역으로 옮기겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M3",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M3:V2:t2:r1": {
+      "message": "r1: 시야 바로 앞에 있는 green-1을 C 구역으로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M3",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M3:V2:t3:r2": {
+      "message": "r2: 제 시야 바로 앞에 있는 red-1을 A 구역으로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M3",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M4:V2:t1:r1": {
+      "message": "r1이 cyan-1을 B 구역으로 옮기겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M4",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M4:V2:t2:r2": {
+      "message": "r2가 green-1을 C 구역으로 옮기겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M4",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "dialogue:M4:V2:t3:r3": {
+      "message": "r3이 red-1을 A 구역으로 옮기겠습니다.",
+      "variant": "V2",
+      "kind": "dialogue",
+      "scenario": "M4",
+      "episode": 1,
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V0:0": {
+      "message": "cyan-1 delivered to B. Claiming cyan-2 for B to complete cyan goal.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V1:0": {
+      "message": "cyan-1 배달 완료. B 구역을 위해 cyan-2를 가져가겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V2:0": {
+      "message": "cyan-1 배달 완료 후 구역 B의 두 번째 cyan 상자로 cyan-3을 가져가겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V0:0": {
+      "message": "All goals have been achieved. Standing by.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V1:0": {
+      "message": "모든 목표 작업이 완료되었습니다. 대기합니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "report",
+        "standby"
+      ],
+      "acts_v2": [
+        "report",
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V2:0": {
+      "message": "모든 목표 구역(A, B, C)의 필요 상자가 모두 배치 완료되었습니다. 대기합니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "report",
+        "standby"
+      ],
+      "acts_v2": [
+        "report",
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V0:0": {
+      "message": "r3 claiming green-1 to C",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V1:0": {
+      "message": "r3가 green-1을 C로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V2:0": {
+      "message": "yellow-1을 구역 C로 운반하겠습니다. r1, r2는 각각 구역 A, B 목표 상자를 맡아주세요.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V0:0": {
+      "message": "Standing by for r1 proposal. Total goal: A: 2 red, B: 2 cyan, C: 1 green, 1 yellow (6 jobs, 2 each).",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V1:0": {
+      "message": "r1의 제안을 기다리고 있습니다. 목표: A에 red 2개, B에 cyan 2개, C에 green 1개와 yellow 1개 운반.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V2:0": {
+      "message": "r1의 제안을 기다리고 있습니다. 북쪽에 green-1, yellow-1이 있어 r3가 C구역 운반을 맡기에 적합합니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V0:0": {
+      "message": "Accepted proposal. Ready to deliver green-1 and yellow-1 to zone C.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V1:0": {
+      "message": "r1의 제안을 수락합니다. r3는 green-1과 yellow-1을 C로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "agree"
+      ],
+      "acts_v2": [
+        "claim",
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-graspfail/r3/plan-1:V2:0": {
+      "message": "r1의 제안을 수락합니다. 계획대로 green-1과 yellow-1을 구역 C로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "agree"
+      ],
+      "acts_v2": [
+        "claim",
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:0": {
+      "message": "Plan looks great and balanced, accepting proposal.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:1": {
+      "message": "Accepted proposal. Ready to execute.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r1/plan-3:V1:0": {
+      "message": "r3의 제안을 수락합니다. 계획대로 진행하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r1/plan-3:V2:0": {
+      "message": "r3의 제안을 수락합니다. 계획대로 배달을 시작하겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r3/plan-3:V0:0": {
+      "message": "Accepting proposal v3. Ready to execute.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r3/plan-3:V1:0": {
+      "message": "제안된 계획을 수락합니다. r1, r2 모두 수락 후 작업을 시작합시다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "request",
+        "agree"
+      ]
+    },
+    "single:ZC2-s12-plan_first-nominal/r3/plan-3:V2:0": {
+      "message": "r3로서 제안된 계획을 수락합니다. 모든 목표 조건과 작업 분담이 완벽합니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r2/claim-1-1-1:V0:0": {
+      "message": "Keeping cyan-1 for Zone B by tiebreak; r3 please take another box.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "request"
+      ],
+      "acts_v2": [
+        "claim",
+        "request"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r2/claim-1-1-1:V0:1": {
+      "message": "Keeping cyan-1 for Zone B per tie-break rule (r2 < r3). Please pick another box, r3.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "request"
+      ],
+      "acts_v2": [
+        "request"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r2/claim-1-1-1:V1:0": {
+      "message": "r3와의 충돌에서 규칙에 따라 r2가 cyan-1을 zone B로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r2/claim-1-1-1:V2:0": {
+      "message": "cyan-1 충돌에 대해 robot_id가 더 낮은 r2가 cyan-1을 구역 B로 운반하겠습니다. r3는 다른 상자를 선택해 주세요.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "request"
+      ],
+      "acts_v2": [
+        "claim",
+        "request"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V0:0": {
+      "message": "Yielding cyan-1 to r2. Claiming green-1 for Zone C.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "yield"
+      ],
+      "acts_v2": [
+        "claim",
+        "yield"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V0:1": {
+      "message": "Yielding cyan-1 to r2. I will take green-1 to Zone C.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "yield"
+      ],
+      "acts_v2": [
+        "claim",
+        "yield"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V1:0": {
+      "message": "r2가 cyan-1을 가져가도록 양보하고, 저는 green-1을 zone C로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "yield"
+      ],
+      "acts_v2": [
+        "claim",
+        "yield"
+      ]
+    },
+    "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V2:0": {
+      "message": "r2에게 cyan-1을 양보하고 구역 B를 위해 cyan-2를 가져가겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "yield"
+      ],
+      "acts_v2": [
+        "claim",
+        "yield"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V0:0": {
+      "message": "Delivering red-3 to Zone A to complete red requirements.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "other"
+      ],
+      "acts_v2": [
+        "other"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V1:0": {
+      "message": "r1이 A 구역으로 red-3을 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r1/claim-3-0-3:V2:0": {
+      "message": "red-1 완료했습니다. 구역 A의 남은 red 상자로 red-2를 가져가겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V0:0": {
+      "message": "I am claiming cyan-1 to deliver to zone B.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V0:1": {
+      "message": "Claiming cyan-1 to Zone B.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V1:0": {
+      "message": "r3: cyan-1 상자를 B 구역으로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-dynamic-nominal/r3/claim-1-0-1:V2:0": {
+      "message": "r3: 집하 구역 남서쪽에 위치한 cyan-1 상자를 구역 B로 운반하겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:0": {
+      "message": "Proposing balanced 2-job plan for all robots.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:1": {
+      "message": "Proposed balanced assignment: r1 takes red to A, r2 takes cyan to B, r3 takes green/yellow to C. Please accept.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request",
+        "agree"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V1:0": {
+      "message": "각 로봇이 2개씩 운반하도록 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V2:0": {
+      "message": "목표 완수를 위해 각자 2개씩 작업을 균등 분배한 계획을 제안합니다. 확인 후 동의해 주세요.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V0:0": {
+      "message": "Accepting proposed plan. Ready to execute.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "agree"
+      ],
+      "acts_v2": [
+        "propose",
+        "agree"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V0:1": {
+      "message": "Confirming my proposal: 2 boxes per robot, exactly meeting all zone goals.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V1:0": {
+      "message": "제안된 계획을 수락합니다. 각 로봇 2개씩 작업을 진행합시다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "request",
+        "agree"
+      ]
+    },
+    "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V2:0": {
+      "message": "r1의 제안을 확인하고 수락합니다. 각 구역의 목표 상자 수와 색상을 정확히 만족하며 균등하게 분배되었습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "agree"
+      ],
+      "acts_v2": [
+        "agree"
+      ]
+    },
+    "single:ZC2-s13-plan_first-nominal/r3/plan-0:V0:0": {
+      "message": "Waiting for r1's proposal. Suggesting 2 boxes each: r1 (red-1->A, cyan-1->B), r2 (red-2->A, cyan-2->B), r3 (green-1->C, yellow-1->C).",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "standby"
+      ],
+      "acts_v2": [
+        "propose",
+        "standby"
+      ]
+    },
+    "single:ZC2-s13-plan_first-nominal/r3/plan-0:V1:0": {
+      "message": "r1의 제안을 기다리고 있습니다. 목표에 맞춰 작업을 2개씩 균등하게 배분해 주세요.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "request",
+        "standby"
+      ],
+      "acts_v2": [
+        "request",
+        "standby"
+      ]
+    },
+    "single:ZC2-s13-plan_first-nominal/r3/plan-0:V2:0": {
+      "message": "r1의 계획 제안을 대기 중입니다. 목표는 A에 red 2개, B에 cyan 2개, C에 green 1개와 yellow 1개입니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V0:0": {
+      "message": "All goals are complete or being completed by r1. Standing by.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V1:0": {
+      "message": "모든 목표가 완료되었거나 r1이 진행 중이므로 대기합니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "report",
+        "standby"
+      ],
+      "acts_v2": [
+        "report",
+        "standby"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V2:0": {
+      "message": "구역 A의 마지막 필요한 상자는 r1이 운반 중이므로 대기합니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "standby"
+      ],
+      "acts_v2": [
+        "standby"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V0:0": {
+      "message": "Picking up green-1 for zone C since r1 stopped.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "report"
+      ],
+      "acts_v2": [
+        "report"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V1:0": {
+      "message": "zone C에 green-1을 전달하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s14-dynamic-graspfail/r3/claim-3-0-3:V2:0": {
+      "message": "구역 C에 yellow-1 배달을 완료했습니다. 중단된 green-1을 가져와 구역 C의 목표를 완료하겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "report"
+      ],
+      "acts_v2": [
+        "report"
+      ]
+    },
+    "single:ZC2-s14-dynamic-nominal/r2/claim-4-0-4:V0:0": {
+      "message": "Delivered red-1 to A. Claiming cyan-2 for Zone B.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s14-dynamic-nominal/r2/claim-4-0-4:V0:1": {
+      "message": "Delivered red-1 to A. Claiming cyan-2 for Zone B.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s14-dynamic-nominal/r2/claim-4-0-4:V1:0": {
+      "message": "cyan-2를 Zone B로 운반하겠습니다.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "claim"
+      ],
+      "acts_v2": [
+        "claim"
+      ]
+    },
+    "single:ZC2-s14-dynamic-nominal/r2/claim-4-0-4:V2:0": {
+      "message": "red-1 배달 완료. Zone B에 필요한 cyan 상자를 위해 cyan-2를 배달하겠습니다.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "claim",
+        "report"
+      ],
+      "acts_v2": [
+        "claim",
+        "report"
+      ]
+    },
+    "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V0:0": {
+      "message": "Proposal: r1 takes northern boxes (green-1->C, cyan-3->B), r2 takes southern reds (red-1->A, red-2->A), r3 takes middle boxes (yellow-1->C, cyan-1->B).",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V1:0": {
+      "message": "내가 제안할게: r1 (green-1->C, cyan-3->B), r2 (red-3->A, cyan-1->B), r3 (yellow-1->C, red-1->A). 확인 부탁해.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s14-plan_first-graspfail/r2/plan-1:V2:0": {
+      "message": "내가 제안자이므로 r1의 제안대로 계획을 확정하여 제출합니다. r1: green-1->C, cyan-3->B / r2: yellow-1->C, cyan-1->B / r3: red-1->A, red-2->A",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "other"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-0:V0:0": {
+      "message": "Proposing balanced plan: r1 takes C (green, yellow), r2 takes A (2 red), r3 takes B (2 cyan).",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-0:V0:1": {
+      "message": "Proposing balanced plan: r1 takes C (green-1, yellow-1), r2 takes A (red-1, red-2), r3 takes B (cyan-1, cyan-2).",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose"
+      ],
+      "acts_v2": [
+        "propose"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-0:V1:0": {
+      "message": "각 로봇당 2개씩 운반하는 초기 계획을 제안합니다. 확인 후 동의해 주세요.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-0:V2:0": {
+      "message": "r1이 전체 계획을 제안합니다. 목표에 맞춰 2개씩 배정했으니 확인 후 수락해 주세요.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-2:V0:0": {
+      "message": "r3, please submit the proposal: r1: green-1, yellow-1 -> C; r2: red-1, red-2 -> A; r3: cyan-1, cyan-2 -> B.",
+      "variant": "V0",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-2:V1:0": {
+      "message": "r3의 제안을 기다리고 있습니다. r1에게 green-1, yellow-1 -> C 배정을 제안해주세요.",
+      "variant": "V1",
+      "kind": "single",
+      "acts_v1": [
+        "request",
+        "standby"
+      ],
+      "acts_v2": [
+        "request",
+        "standby"
+      ]
+    },
+    "single:ZC2-s14-plan_first-nominal/r1/plan-2:V2:0": {
+      "message": "r3, 논의된 대로 제안을 올려줘: r1은 green-1, yellow-1 -> C, r2는 red-1, red-2 -> A, r3은 cyan-1, cyan-2 -> B.",
+      "variant": "V2",
+      "kind": "single",
+      "acts_v1": [
+        "propose",
+        "request"
+      ],
+      "acts_v2": [
+        "propose",
+        "request"
+      ]
+    }
+  }
+}
