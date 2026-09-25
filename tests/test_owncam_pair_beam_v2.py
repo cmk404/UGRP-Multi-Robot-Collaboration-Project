@@ -154,3 +154,16 @@ def test_partner_abort_on_the_channel_stops_the_robot():
                 'sent_at_s': 1.}, 1.)
     st.tick(1.1)
     assert st.state == 'failed' and st.failure == 'PARTNER_ABORT' and ch.latest['r1'].state == 'abort'
+
+
+def test_grip_view_sees_the_band_where_the_v1_lime_signature_missed():
+    from harness import owncam_pair_beam as v1
+    image, _pose = _frame('grip_613_r1_00059.jpg')
+    assert v1.signature_fraction(v1.held_signature(image)) < .02          # v1 check failed (GRIP_NOT_SEEN)
+    view = ob2.grip_view(image)
+    assert view['seen'] and view['dark_fraction'] > .5
+
+
+def test_grip_view_rejects_an_approach_view():
+    image, _pose = _frame('p45_611_r1_00073.jpg')
+    assert not ob2.grip_view(image)['seen']

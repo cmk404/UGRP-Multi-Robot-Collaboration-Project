@@ -129,3 +129,48 @@ def observe_beam(image, pose: Mapping[int | str, int | float]) -> dict[str, Any]
                     'provenance': base['provenance'] + '+black_grip_band_centre'}
     reason = 'NO_BAND_END_ESTIMATE' if base['end_visible'] else base['reason']
     return {**result, 'reason': reason, 'grip_source': 'end_plus_inset_v1'}
+
+
+# ---------------- grip / hold views (v2) ----------------
+# dev 613 (v2 run 95923c1): at grasp range the beam top renders yellow (hue ~30, outside the v1 lime
+# band 36-54), so the v1 lime-based grip signature was 0.0047 while GT fingers held 5.9 N. Grip views
+# recorded at the band centre: dark band 0.60-0.96 of the valid view, beam colour in the bottom third
+# 0.067-0.144 (13 grip views, dev + cohort 31d16b0).
+BEAM_HUE = (25, 54)
+BEAM_S_MIN, BEAM_V_MIN = 100, 120
+GRIP_MIN_DARK = .40
+GRIP_MIN_BOTTOM_BEAM = .04
+_VALID = None
+
+
+def _valid():
+    global _VALID
+    if _VALID is None:
+        from harness.owncam_view import valid_pixel_mask
+        _VALID = valid_pixel_mask(1).astype(bool)
+    return _VALID
+
+
+def beam_colour_mask(frame: np.ndarray) -> np.ndarray:
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    return ((hsv[..., 0] >= BEAM_HUE[0]) & (hsv[..., 0] <= BEAM_HUE[1]) & (hsv[..., 1] >= BEAM_S_MIN)
+            & (hsv[..., 2] >= BEAM_V_MIN))
+
+
+def grip_view(image) -> dict[str, Any]:
+    """Grasp-height own view: the band fills the view and beam colour is between the jaws."""
+    frame = v1.decode(image)
+    valid = _valid()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    dark = (hsv[..., 2] <= BAND_V_MAX) & (hsv[..., 1] < BAND_S_MAX) & valid
+    beam = beam_colour_mask(frame) & valid
+    h = frame.shape[0]
+    dark_frac = float(dark.sum() / valid.sum())
+    bottom = float(beam[2 * h // 3:].sum() / max(valid[2 * h // 3:].sum(), 1))
+    ok = dark_frac >= GRIP_MIN_DARK and bottom >= GRIP_MIN_BOTTOM_BEAM
+    return {'seen': ok, 'dark_fraction': round(dark_frac, 4), 'bottom_beam_fraction': round(bottom, 4),
+            'reason': 'BAND_BETWEEN_JAWS' if ok else 'GRIP_VIEW_NOT_BAND'}
+
+
+# Lift/carry keep v1's lime held signature: replaying the widened-hue signature on recorded carries
+# (dev 602, 611 v2, cohort 614) gave hold ratios down to 0.41 without slip, v1's stayed >= 0.99.

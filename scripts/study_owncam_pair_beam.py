@@ -283,11 +283,12 @@ class PairStudent:
         obs = self.look(now)
         sig = ob.held_signature(obs['image'])
         frac = ob.signature_fraction(sig)
-        self.log(self.rid, 'grip_view', now, signature_fraction=round(frac, 4))
-        if frac < GRIP_MIN_SIGNATURE:
+        view = ob2.grip_view(obs['image'])          # v2: band between the jaws (v1 lime signature missed dev 613)
+        self.log(self.rid, 'grip_view', now, signature_fraction=round(frac, 4), **view)
+        if not view['seen']:
             return self.fail('GRIP_NOT_SEEN', now)
         self.anchor = sig
-        self.claims['gripped'] = {'signature_fraction': round(frac, 4), 'sim_time': now}
+        self.claims['gripped'] = {'signature_fraction': round(frac, 4), 'grip_view': view, 'sim_time': now}
         self.set('wait_lift', now)
 
     def _wait(self, key, nxt, now, on_go):
@@ -633,7 +634,8 @@ def main():
                               + (' + partner executor status (candidate channel)' if channel else '')),
         'task_sheet': {'legs': LEGS, 'speed_m_s': SPEED_M_S, 'roles': ROLES},
         'carry_odometry_calibration': {'scale': CARRY_ODOM_SCALE, 'source': CARRY_ODOM_SOURCE},
-        'thresholds': {'grip_min_signature': GRIP_MIN_SIGNATURE, 'lift_min_iou': HOLD_MIN_IOU,
+        'thresholds': {'grip_view_v2': {'min_dark': ob2.GRIP_MIN_DARK, 'min_bottom_beam': ob2.GRIP_MIN_BOTTOM_BEAM},
+                       'grip_min_signature_v1_logged_only': GRIP_MIN_SIGNATURE, 'lift_min_iou': HOLD_MIN_IOU,
                        'hold_min_ratio': HOLD_MIN_RATIO, 'lost_frames': LOST_FRAMES},
         'final_states': reached, 'failures': {r: s.failure for r, s in students.items()},
         'claims': {r: s.claims for r, s in students.items()},
