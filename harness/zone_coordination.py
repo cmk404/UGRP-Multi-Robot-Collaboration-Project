@@ -81,11 +81,22 @@ def _image_text(views):
     return 'CURRENT OWN RGB, ' + ', '.join(names[:-1]) + ' and ' + names[-1]
 
 
+# Fields of a robot's own job record that its model may read: the command it
+# issued (box, zone), when, and the executor receipt. The executor's slot id is
+# left out: slots come from one pool shared by all robots, so "A3" tells the
+# robot that two other jobs hold zone-A slots (R1 audit, 2026-09-25).
+OWN_JOB_KEYS = ('box', 'zone', 'issued_at_sim_s', 'status')
+
+
+def visible_own_jobs(own_jobs, last=8):
+    return [{k: copy.deepcopy(job[k]) for k in OWN_JOB_KEYS if k in job} for job in list(own_jobs)[-last:]]
+
+
 def context(rid, *, task, labels, view, board, own_jobs, inbox, extra=None):
     value = {'robot_id': rid, 'box_labels': {k: {'kind': v['kind'], 'rgb_floor_xy_m': v['floor_xy_m']}
                                              for k, v in labels.items()},
              'rgb_view': copy.deepcopy(view), 'team_board': copy.deepcopy(board),
-             'own_jobs': copy.deepcopy(list(own_jobs)[-8:]), 'peer_messages': copy.deepcopy(list(inbox)[-8:])}
+             'own_jobs': visible_own_jobs(own_jobs), 'peer_messages': copy.deepcopy(list(inbox)[-8:])}
     value.update(extra or {})
     return value
 
@@ -250,4 +261,5 @@ def referee(goal, static_map, box_positions):
 
 
 __all__ = ['build_plan_request', 'build_claim_request', 'plan_validator', 'validate_claim_reply',
-           'check_claims', 'remaining_need', 'goal_met', 'referee', 'context', 'digest']
+           'check_claims', 'remaining_need', 'goal_met', 'referee', 'context', 'digest', 'visible_own_jobs',
+           'OWN_JOB_KEYS']

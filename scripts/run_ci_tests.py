@@ -55,7 +55,7 @@ TEST_PATTERNS = (
     "tests/test_multi_object_plan.py",
     "tests/test_multi_object_scene.py",
     "tests/test_multi_object_execution.py",
-    "tests/test_zone_dispatch.py",
+    "tests/test_zone_dispatch.py", "tests/test_zone_comm_boundary.py",
     "tests/test_rgb_execution*.py",
     "tests/test_rgb_communication*.py",
     "tests/test_act_map_suite.py",
