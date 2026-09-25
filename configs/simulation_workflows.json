@@ -195,6 +195,33 @@
       }
     },
     {
+      "id": "zone-cargo-perception-eval",
+      "purpose": "구역 화물 종류 인식(TOP RGB 색+모양, 자세) 오프라인 평가",
+      "entry": "scripts/eval_zone_cargo_perception.py",
+      "docs": "docs/zone_cargo_perception.md",
+      "requires": "committed split file; synchronous SIM rendering only; ground truth is written to eval-labels/ for scoring and never reaches a detector",
+      "version": "1.0.0",
+      "runner": "scripts.eval_zone_cargo_perception",
+      "output_flag": {
+        "render": "--output",
+        "score": "--output"
+      },
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": {
+        "render": [
+          "--split"
+        ],
+        "score": [
+          "--frames"
+        ]
+      },
+      "output_kind": {
+        "render": "directory",
+        "score": "directory"
+      }
+    },
+    {
       "id": "navigation",
       "purpose": "정적 지도·RGB 단독 주행",
       "entry": "scripts/run_known_map_navigation.py",
