@@ -29,6 +29,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from harness.wrist_zone_skill import PROFILE, OrderSheet, PoseEstimate, WristZoneDelivery  # noqa: E402
+from harness import wrist_zone_skill_v2 as v2  # noqa: E402
 
 SCHEMA = 'ugrp.zone_owncam_skill_run.v1'
 POSE_SOURCE = 'gt_stub_eval_only'
@@ -36,6 +37,10 @@ VARIANT = 'zone_wide_door'
 CONTACT_PROFILE = 'local_contact_fine'
 SIM_LIMIT_S = 300.
 STEP_LIMIT = 900
+# v2 (pre-registered in the experiment README before its first recorded run)
+V2_SIM_LIMIT_S = 420.
+V2_STEP_LIMIT = 1300
+PROFILES = {'v1': PROFILE, 'v2': v2.PROFILE}
 # seed -> start pose (x, y, yaw) of r1, staging cell of the cyan box (order sheet), slot id.
 # 401-402 are DEVELOPMENT scenarios (tuning allowed, never reported as results);
 # 501-505 are the pre-registered test scenarios.
@@ -48,7 +53,25 @@ SCENARIOS = {
     503: {'start': (3.40, -1.00, -0.10), 'pickup_xy': (3.90, -0.85), 'slot': 'A1'},
     504: {'start': (2.50, -2.00, -0.15), 'pickup_xy': (3.70, -2.00), 'slot': 'C3'},
     505: {'start': (3.00, 1.00, 0.20), 'pickup_xy': (3.80, 0.30), 'slot': 'B2'},
+    # v2 development scenarios (tuning allowed, labelled dev, never reported as v2 results)
+    403: {'start': (2.55, -2.60, 0.00), 'pickup_xy': (3.35, -2.55), 'slot': 'B3'},
+    404: {'start': (2.55, 0.95, 0.05), 'pickup_xy': (3.45, 0.95), 'slot': 'A2'},
+    405: {'start': (3.00, 1.00, 0.10), 'pickup_xy': (3.75, 0.40), 'slot': 'B1'},
+    406: {'start': (2.50, -2.00, -0.10), 'pickup_xy': (3.65, -1.95), 'slot': 'C2'},
+    # v2 pre-registered test scenarios (fixed before the first v2 recorded run)
+    511: {'start': (2.55, -2.70, 0.00), 'pickup_xy': (3.25, -2.70), 'slot': 'B3'},
+    512: {'start': (2.60, 1.10, 0.05), 'pickup_xy': (3.35, 1.10), 'slot': 'A1'},
+    513: {'start': (3.30, -1.40, -0.05), 'pickup_xy': (3.95, -1.40), 'slot': 'A3'},
+    514: {'start': (2.55, -1.95, 0.10), 'pickup_xy': (3.60, -2.30), 'slot': 'C2'},
+    515: {'start': (3.10, 0.70, 0.00), 'pickup_xy': (3.85, 0.95), 'slot': 'B1'},
+    516: {'start': (2.50, -0.20, -0.10), 'pickup_xy': (3.55, -0.10), 'slot': 'C1'},
+    517: {'start': (3.50, -2.80, 0.00), 'pickup_xy': (4.00, -2.90), 'slot': 'A2'},
+    518: {'start': (2.45, 0.50, 0.15), 'pickup_xy': (3.30, 0.30), 'slot': 'B2'},
+    519: {'start': (3.60, 1.20, -0.10), 'pickup_xy': (4.05, 1.15), 'slot': 'C3'},
+    520: {'start': (2.70, -1.00, 0.00), 'pickup_xy': (3.60, -0.70), 'slot': 'B3'},
 }
+V2_DEV_SEEDS = (403, 404, 405, 406)
+V2_TEST_SEEDS = tuple(range(511, 521))
 
 
 def sha_file(path):
@@ -116,6 +139,7 @@ def main():
     parser.add_argument('--seed', type=int, choices=sorted(SCENARIOS), required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--allow-dirty', action='store_true', help='development only; recorded as dirty')
+    parser.add_argument('--profile', choices=sorted(PROFILES), default='v1')
     args = parser.parse_args()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
     if dirty and not args.allow_dirty:
@@ -132,7 +156,9 @@ def main():
     (out / 'scene.xml').write_text(world.scene_xml)
     port = CameraRobotPort(world, 'r1', allow_reverse=True, allow_mecanum=True)
     pose_source = GtStubPoseSource(world, 'r1')
-    skill = WristZoneDelivery(order, planner=make_planner(config['static_map'], order))
+    delivery = WristZoneDelivery if args.profile == 'v1' else v2.WristZoneDeliveryV2
+    skill = delivery(order, planner=make_planner(config['static_map'], order))
+    sim_limit, step_limit = (SIM_LIMIT_S, STEP_LIMIT) if args.profile == 'v1' else (V2_SIM_LIMIT_S, V2_STEP_LIMIT)
     control = (out / 'control.jsonl').open('w')
     truth = (out / 'evaluation-only.jsonl').open('w')
     geoms = {i: mujoco.mj_id2name(world.model, mujoco.mjtObj.mjOBJ_GEOM, i) or '' for i in range(world.model.ngeom)}
@@ -192,8 +218,8 @@ def main():
     reason, index = 'STEP_LIMIT', 0
     phase_times = {}
     try:
-        for index in range(STEP_LIMIT):
-            if float(world.data.time) > SIM_LIMIT_S:
+        for index in range(step_limit):
+            if float(world.data.time) > sim_limit:
                 reason = 'SIM_LIMIT'
                 break
             obs = port.capture()          # robot_cam only
@@ -251,10 +277,11 @@ def main():
         'skill_claim_agrees_with_gt': (reason == 'OWN_RGB_PLACEMENT_IN_SLOT') == bool(in_slot and on_floor),
     }
     result = {
-        'schema': SCHEMA, 'profile': PROFILE, 'seed': args.seed, 'scenario': SCENARIOS[args.seed],
+        'schema': SCHEMA, 'profile': PROFILES[args.profile], 'seed': args.seed, 'scenario': SCENARIOS[args.seed],
+        'sim_limit_s': sim_limit, 'skill_summary': skill.summary() if hasattr(skill, 'summary') else None,
         'variant': VARIANT, 'contact_solver_profile': CONTACT_PROFILE, 'weld': 'off',
         'pose_source': POSE_SOURCE, 'pose_sources_seen': sorted(skill.pose_sources),
-        'counts_as_m1': False, 'development_seed': args.seed in DEV_SEEDS,
+        'counts_as_m1': False, 'development_seed': args.seed in DEV_SEEDS + V2_DEV_SEEDS,
         'claim_scope': ('skill isolation on the open east section of zone_wide_door with a GT pose stub; '
                         'not M1, not own-camera localisation, no door crossing'),
         'controller_inputs': 'robot_cam JPEG + own issued PWM + pose estimate (gt_stub_eval_only) + static map + order sheet',
