@@ -153,3 +153,31 @@ def test_formation_reference_and_world_grasps():
     grasps = zc.world_grasps(inst)
     assert grasps['west']['grip_xyz'][:2] == pytest.approx((1., 1.9))
     assert grasps['west']['base_xyyaw'] == pytest.approx(compose((1., 2., math.pi/2), inst.spec().grasps[0].approach_base()))
+
+
+def test_cargo_noslip_profile_is_opt_in_versioned_and_changes_only_the_solver_option():
+    pytest.importorskip('mujoco')
+    import xml.etree.ElementTree as ET
+    from sim.zone_cargo_contact import CARGO_PROFILES, base_profile, profile_record
+    from sim.zone_cargo_scene import CargoZoneScene
+    record = profile_record('cargo_noslip_v1')
+    assert record == profile_record('cargo_noslip_v1') and len(record['sha256']) == 64
+    assert base_profile('cargo_noslip_v1') == 'local_contact_fine' and base_profile('local_contact_fine') == 'local_contact_fine'
+    items = [{'item_id': 'c', 'kind': 'heavy_crate', 'pose': [2.5, .2, 0.]}]
+    plain = CargoZoneScene.from_cargo_config('zone_wide', 11, cargo=items)
+    noslip = CargoZoneScene.from_cargo_config('zone_wide', 11, cargo=items, contact_profile='cargo_noslip_v1')
+    a, b = _scene_xml(plain), _scene_xml(noslip)
+    assert a.model.opt.noslip_iterations == 0 and b.model.opt.noslip_iterations == 10
+    assert noslip.manifest['cargo_contact_profile']['sha256'] == record['sha256']
+    ra, rb = ET.fromstring(a.scene_xml), ET.fromstring(b.scene_xml)
+    rb.find('option').attrib.pop('noslip_iterations')
+    assert ET.tostring(ra) == ET.tostring(rb)          # nothing else differs: pairs, bodies, weld OFF
+    assert not b.data.eq_active.any()
+    with pytest.raises(ValueError):
+        CargoZoneScene.from_cargo_config('zone_wide', 11, cargo=items, contact_profile='glue')
+    assert set(CARGO_PROFILES) == {'cargo_noslip_v1'}
+
+
+def test_dispatch_contact_profiles_are_unchanged():
+    from sim.dispatch_contact_profile import PROFILES
+    assert PROFILES == ('legacy', 'global_noslip', 'local_contact', 'local_contact_fine')

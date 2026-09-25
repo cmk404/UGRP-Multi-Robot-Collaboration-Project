@@ -1,0 +1,11 @@
+{
+  "schema": "ugrp.zone_cargo_perception_split.v1",
+  "fixed_at": "2026-09-25, before any held-out (test) rendering or scoring",
+  "rule": "Detector thresholds are chosen on 'dev' only. 'test' is rendered and scored once, after the detector and evaluation source is committed; test failures are reported, not tuned away.",
+  "scene": "zones/zone_wide with the catalogue cargo set (sim.zone_cargo v1: can x2, tile x2, long_beam x2, heavy_crate x2, tri_frame x1) mixed with the four box colours",
+  "seed_namespace": "disjoint from PR #163 (zone_color_eval dev 101-106 / test 201-210)",
+  "splits": {
+    "dev": [301, 302, 303, 304, 305, 306],
+    "test": [401, 402, 403, 404, 405, 406, 407, 408, 409, 410]
+  }
+}

@@ -48,13 +48,27 @@ scene = CargoZoneScene.from_cargo_config('zone_wide', 11, goal={'A': {'red': 1}}
 .venv-sim/bin/python -m scripts.render_zone_cargo_catalogue --output outputs/zone-cargo/catalogue
 ```
 
-검사 목록: `solo_box`·`solo_can`·`solo_tile`(1 m 운반), `pair_beam`·`pair_crate`·`trio_frame`(0.8 m → 90° 회전 → 0.5 m), 한 대 적은 `solo_beam`·`solo_crate`·`duo_frame`(들기 후 운반 시도).
+검사 목록: `solo_box`·`solo_can`·`solo_tile`(1 m 운반), `pair_beam`·`pair_crate`·`trio_frame`(0.8 m → 90° 회전 → 0.5 m), 긴 경로 `*_long`(4.0 m, 90° 회전 두 번), 한 대 적은 `solo_beam`·`solo_crate`·`duo_frame`(들기 후 운반 시도). `--static-hold --hold-s 60`은 제자리 버티기, `--drive-check`는 구동 부작용 검사다.
+
+## 접촉 profile과 미끄러짐
+
+- `local_contact_fine`의 마찰은 감쇠형(`solreffriction 0 -6000`)이라, 들고 있는 동안 물체가 집게 사이로 천천히 내려간다. 수치적 soft-contact creep이며, 약 0.9–1.2 mm/s·kg를 측정했다.
+- 화물 장면은 opt-in profile **`cargo_noslip_v1`**(`sim/zone_cargo_contact.py`)을 고를 수 있다. `local_contact_fine`에 MuJoCo `noslip_iterations 10`만 더한 것이다. 60초 정지 미끄러짐은 0.51 mm 이하, 4 m 운반은 1.2 mm 이하였다. 마찰 계수·손가락 힘·관절 한계는 같고 weld도 OFF다. 전역 옵션이지만 구동 응답과 쉬는 상자에 차이가 없음을 측정했다.
+- 원인 분리와 합격 검사는 실험 기록 8절에 있다.
+
+```python
+CargoZoneScene.from_cargo_config('zone_wide', 11, cargo=[...], contact_profile='cargo_noslip_v1')
+```
+
+```bash
+.venv-sim/bin/python -m scripts.probe_zone_cargo --probe trio_frame_long --contact-profile cargo_noslip_v1 --output outputs/zone-cargo/tri-long
+.venv-sim/bin/python -m scripts.probe_zone_cargo --probe pair_crate --static-hold --hold-s 60 --contact-profile cargo_noslip_v1 --output outputs/zone-cargo/hold
+```
 
 ## 알려진 물리 한계
 
-- `local_contact_fine`의 마찰은 감쇠형(`solreffriction 0 -6000`)이라 들고 있는 동안 물체가 집게 사이로 천천히 내려간다(약 0.9 mm/s·kg, 측정). 무거운 물건은 운반 시간이 길수록 미끄러짐이 커진다. 접촉 설정은 바꾸지 않았고, 결과에 미끄러짐을 함께 기록한다.
 - 뒤로 가는 로봇의 명령 한계(forward ≥ −0.05)가 팀 속도를 제한한다.
 
 ## 아직 안 한 것
 
-구역 교사(`scripts/zone_teacher.py`)·구역 실행기·지도 연동, RGB 탐지기 지원, 벽·문이 있는 경로의 팀 운반. 제안은 실험 기록의 "다음 단계"를 본다.
+구역 교사(`scripts/zone_teacher.py`)·구역 실행기·지도 연동, 벽·문이 있는 경로의 팀 운반. TOP RGB 종류 인식은 [구역 화물 종류 인식](zone_cargo_perception.md)(선택 프로필 `top_cargo_v1`, 제어 미연결)에 있다. 제안은 실험 기록의 "다음 단계"를 본다.
