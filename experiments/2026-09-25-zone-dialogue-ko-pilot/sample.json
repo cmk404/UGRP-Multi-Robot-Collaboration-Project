@@ -1,0 +1,1037 @@
+{
+  "summary": {
+    "n_candidates": 129,
+    "n_chosen": 20,
+    "seed": 20260925,
+    "tie_break_in_originals": {
+      "claim": [
+        true
+      ],
+      "plan": [
+        false
+      ]
+    },
+    "settings_in_originals": [
+      "{\"max_tokens\": 1400, \"model\": \"gemini-3.8-flash\", \"reasoning_effort\": \"none\", \"temperature\": 0.2}"
+    ],
+    "original_invalid": [
+      "ZC2-s12-plan_first-nominal/r2/plan-1",
+      "ZC2-s13-plan_first-graspfail/r1/plan-0",
+      "ZC2-s14-dynamic-nominal/r3/claim-2-0-2"
+    ],
+    "source_root": "/Users/changmin/projects/ugrp/outputs/zone-communication-20260925",
+    "source_record": "ZC1 sha 759d84d 2026-09-25T02:06:08Z\nZC2 sha 7ccd6c3 2026-09-25T02:25:35Z"
+  },
+  "points": [
+    {
+      "point_id": "ZC2-s13-dynamic-nominal/r3/claim-1-0-1",
+      "run": "ZC2-s13-dynamic-nominal",
+      "seed": "s13",
+      "coordination": "dynamic",
+      "fault": "nominal",
+      "robot_id": "r3",
+      "mode": "claim",
+      "sub": "initial",
+      "tie_break_in_original": true,
+      "request": "ZC2-s13-dynamic-nominal/team/r3/zone-7ccd6c34-304959-r3-claim-1-0-1-request.json",
+      "request_sha256": "b37f62aa1285a39e461b5ed5fe83d65de19d821229917799dd8ba47a7aab8cb9",
+      "decision": "ZC2-s13-dynamic-nominal/team/r3/zone-7ccd6c34-304959-r3-claim-1-0-1-decision.json",
+      "decision_sha256": "0c9bff0554b90adb6b07c682cedcf93eaaf1fc29b19302df4fbab73e36403925",
+      "original_reply": {
+        "claim": {
+          "box": "cyan-1",
+          "zone": "B"
+        },
+        "message": "I will deliver cyan-1 to zone B.",
+        "reason": "cyan-1 is right in front of me in the south pickup area; zone B needs 2 cyan.",
+        "request_id": "zone-7ccd6c34-304959-r3-claim-1-0-1"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6322,
+        "completion_tokens": 95,
+        "total_tokens": 6701
+      },
+      "wire": "ZC2-s13-dynamic-nominal/team/r3/wire-001.json",
+      "wire_sha256": "5cf4070cfa28962fb77d6b3aa651e40109167a48c71a8e6d43f70f6fbba118e3",
+      "wire_response_sha256": "a3d1a03d293df95cd995418eba92d7275202143e77625f7bb5188794bcc49f58",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/nominal",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s14-dynamic-nominal/r2/claim-4-0-4",
+      "run": "ZC2-s14-dynamic-nominal",
+      "seed": "s14",
+      "coordination": "dynamic",
+      "fault": "nominal",
+      "robot_id": "r2",
+      "mode": "claim",
+      "sub": "later",
+      "tie_break_in_original": true,
+      "request": "ZC2-s14-dynamic-nominal/team/r2/zone-7ccd6c34-305787-r2-claim-4-0-4-request.json",
+      "request_sha256": "873dd322e043e9be4ac9c8dd87eeb5a44143aab50248532ceca58c45b6e18928",
+      "decision": "ZC2-s14-dynamic-nominal/team/r2/zone-7ccd6c34-305787-r2-claim-4-0-4-decision.json",
+      "decision_sha256": "8d973c07550904a44ff9d520cccd11bee6a3b90a43df9a8d23eac596846c3f2c",
+      "original_reply": {
+        "claim": {
+          "box": "cyan-2",
+          "zone": "B"
+        },
+        "message": "Delivered red-1 to Zone A. Claiming cyan-2 for Zone B.",
+        "reason": "Zone B needs two cyan boxes; r3 is carrying cyan-1, so I will take cyan-2.",
+        "request_id": "zone-7ccd6c34-305787-r2-claim-4-0-4"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6655,
+        "completion_tokens": 104,
+        "total_tokens": 7020
+      },
+      "wire": "ZC2-s14-dynamic-nominal/team/r2/wire-002.json",
+      "wire_sha256": "f16200a8dfdc851730b51395996be3a2d2c0ed37bb47c82a024304c89efb4da7",
+      "wire_response_sha256": "e23843b680f65cc997fe883eb374b9bbb72f3413b0d97af0b124a23868783dd9",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/nominal",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s12-dynamic-nominal/r1/claim-7-0-7",
+      "run": "ZC2-s12-dynamic-nominal",
+      "seed": "s12",
+      "coordination": "dynamic",
+      "fault": "nominal",
+      "robot_id": "r1",
+      "mode": "claim",
+      "sub": "later_idle",
+      "tie_break_in_original": true,
+      "request": "ZC2-s12-dynamic-nominal/team/r1/zone-7ccd6c34-304070-r1-claim-7-0-7-request.json",
+      "request_sha256": "49e85b06855b6ed6735ebe91385aa22d4e32afdc5ab6af824ce1f99cca2741ba",
+      "decision": "ZC2-s12-dynamic-nominal/team/r1/zone-7ccd6c34-304070-r1-claim-7-0-7-decision.json",
+      "decision_sha256": "9c80cc0b05642e159f8c13ae27a3dade723d074e7e6a54d46f28a3823bc1082f",
+      "original_reply": {
+        "claim": {
+          "box": null,
+          "zone": null
+        },
+        "message": "All goals have been successfully fulfilled. Standing by.",
+        "reason": "All required boxes for zones A, B, and C are delivered.",
+        "request_id": "zone-7ccd6c34-304070-r1-claim-7-0-7"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6897,
+        "completion_tokens": 83,
+        "total_tokens": 7087
+      },
+      "wire": "ZC2-s12-dynamic-nominal/team/r1/wire-003.json",
+      "wire_sha256": "72a6f237bdd3b95e696b3f4bce5ac2641e33cb03746972f371b30aa85947d2da",
+      "wire_response_sha256": "c405318c7c9793b40755a853620aca82383d72c7955206dd1122fc6c3a4f12bb",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s12-dynamic-nominal/r3/claim-1-0-1",
+      "run": "ZC2-s12-dynamic-nominal",
+      "seed": "s12",
+      "coordination": "dynamic",
+      "fault": "nominal",
+      "robot_id": "r3",
+      "mode": "claim",
+      "sub": "initial",
+      "tie_break_in_original": true,
+      "request": "ZC2-s12-dynamic-nominal/team/r3/zone-7ccd6c34-304070-r3-claim-1-0-1-request.json",
+      "request_sha256": "82125c819f3710ea2de8c4ff381c2a583ef21ff9012a8d30945a97d9a7786ea9",
+      "decision": "ZC2-s12-dynamic-nominal/team/r3/zone-7ccd6c34-304070-r3-claim-1-0-1-decision.json",
+      "decision_sha256": "f6f2784e294bc19eddef37be6cc05dcb1f889e11732cca582a20f8e7981bca96",
+      "original_reply": {
+        "claim": {
+          "box": "green-1",
+          "zone": "C"
+        },
+        "message": "Claiming green-1 for zone C.",
+        "reason": "green-1 is right in front of me in the north; zone C needs 1 green.",
+        "request_id": "zone-7ccd6c34-304070-r3-claim-1-0-1"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6324,
+        "completion_tokens": 92,
+        "total_tokens": 6969
+      },
+      "wire": "ZC2-s12-dynamic-nominal/team/r3/wire-001.json",
+      "wire_sha256": "d0ce972cf455a20773c4a64d8becee69cf20e84812966bda263fffb37cb1a922",
+      "wire_response_sha256": "5ab22f0b901f4f13bc93c6d9803844da5ce903c764f77b696f4ad53d5961681d",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s13-dynamic-nominal/r1/claim-3-0-3",
+      "run": "ZC2-s13-dynamic-nominal",
+      "seed": "s13",
+      "coordination": "dynamic",
+      "fault": "nominal",
+      "robot_id": "r1",
+      "mode": "claim",
+      "sub": "later",
+      "tie_break_in_original": true,
+      "request": "ZC2-s13-dynamic-nominal/team/r1/zone-7ccd6c34-304959-r1-claim-3-0-3-request.json",
+      "request_sha256": "eab2bc8ddaa2c073c83a19daa3033fe737835b0bd22e51f3016874f4e15cea41",
+      "decision": "ZC2-s13-dynamic-nominal/team/r1/zone-7ccd6c34-304959-r1-claim-3-0-3-decision.json",
+      "decision_sha256": "9bdd10528633a73e26305861f6420f68a61870cf32632d44b5bf4e3ba1ca6d39",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-304959-r1-claim-3-0-3",
+        "claim": {
+          "box": "red-3",
+          "zone": "A"
+        },
+        "reason": "Zone A needs 1 more red box. red-3 is available in pickup and unclaimed.",
+        "message": "Delivered red-1 to Zone A. Claiming red-3 to complete Zone A."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6582,
+        "completion_tokens": 120,
+        "total_tokens": 6702
+      },
+      "wire": "ZC2-s13-dynamic-nominal/team/r1/wire-002.json",
+      "wire_sha256": "4987bcf889e3feffcb2ae39a86343dc573af99893983052c1dc74ba6c355372d",
+      "wire_response_sha256": "0bcaf026e99e9b2c6d9da9f3141c9e0cb3ff32690ea9a480d64260b7fdc8f23f",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s13-dynamic-graspfail/r2/claim-1-1-1",
+      "run": "ZC2-s13-dynamic-graspfail",
+      "seed": "s13",
+      "coordination": "dynamic",
+      "fault": "graspfail",
+      "robot_id": "r2",
+      "mode": "claim",
+      "sub": "conflict",
+      "tie_break_in_original": true,
+      "request": "ZC2-s13-dynamic-graspfail/team/r2/zone-7ccd6c34-305290-r2-claim-1-1-1-request.json",
+      "request_sha256": "40540c80e718edf5e8d214c2cc0917ed73f74cf938baa5183501995d5f7d08a4",
+      "decision": "ZC2-s13-dynamic-graspfail/team/r2/zone-7ccd6c34-305290-r2-claim-1-1-1-decision.json",
+      "decision_sha256": "3f795c0cd11e5467655737093fff32a4c67f950861ab0f19b1116677aacf54a0",
+      "original_reply": {
+        "claim": {
+          "box": "cyan-1",
+          "zone": "B"
+        },
+        "message": "Resolving conflict by robot_id (r2 < r3): I keep cyan-1 for Zone B. r3, please pick another box.",
+        "reason": "Lowest robot_id keeps conflicting box cyan-1 for Zone B.",
+        "request_id": "zone-7ccd6c34-305290-r2-claim-1-1-1"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6433,
+        "completion_tokens": 108,
+        "total_tokens": 6717
+      },
+      "wire": "ZC2-s13-dynamic-graspfail/team/r2/wire-002.json",
+      "wire_sha256": "04ecadd5e8b3b834611dc5ef35f2be345d3850c71f25b18512352d8072df454c",
+      "wire_response_sha256": "340ca0ff2dff47d61747926d3071ca4f22c09cc332b6d257366ee713e99c8f1c",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/graspfail",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s13-dynamic-graspfail/r3/claim-1-1-1",
+      "run": "ZC2-s13-dynamic-graspfail",
+      "seed": "s13",
+      "coordination": "dynamic",
+      "fault": "graspfail",
+      "robot_id": "r3",
+      "mode": "claim",
+      "sub": "conflict",
+      "tie_break_in_original": true,
+      "request": "ZC2-s13-dynamic-graspfail/team/r3/zone-7ccd6c34-305290-r3-claim-1-1-1-request.json",
+      "request_sha256": "4022863ac3cef45fddf74e5cd1a63e30741d258b8512f2f0e67bcdde9cdd106b",
+      "decision": "ZC2-s13-dynamic-graspfail/team/r3/zone-7ccd6c34-305290-r3-claim-1-1-1-decision.json",
+      "decision_sha256": "91c8cde395f6edd52c234171f28d9b28170ba7e4c51e8815954f2cafa1a90547",
+      "original_reply": {
+        "claim": {
+          "box": "green-1",
+          "zone": "C"
+        },
+        "message": "Yielding cyan-1 to r2. Claiming green-1 for Zone C.",
+        "reason": "Conflict resolved by ID tiebreaker; r2 keeps cyan-1. Taking green-1 for C.",
+        "request_id": "zone-7ccd6c34-305290-r3-claim-1-1-1"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6433,
+        "completion_tokens": 102,
+        "total_tokens": 6971
+      },
+      "wire": "ZC2-s13-dynamic-graspfail/team/r3/wire-002.json",
+      "wire_sha256": "0a1c5c041a89083adf6a5533c99e69767f4fa0f853b587b3923359fae47eb078",
+      "wire_response_sha256": "e63c7efd9ae419916a17f08e9ba8f58669c8cd8bbf4165c9979b61dc89304d17",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/graspfail",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s12-dynamic-graspfail/r2/claim-3-0-3",
+      "run": "ZC2-s12-dynamic-graspfail",
+      "seed": "s12",
+      "coordination": "dynamic",
+      "fault": "graspfail",
+      "robot_id": "r2",
+      "mode": "claim",
+      "sub": "post_stop",
+      "tie_break_in_original": true,
+      "request": "ZC2-s12-dynamic-graspfail/team/r2/zone-7ccd6c34-304496-r2-claim-3-0-3-request.json",
+      "request_sha256": "809484362a1ef7a9fe7a0aceadef000dafa39a8e6bfb5286c189409ef1bd8173",
+      "decision": "ZC2-s12-dynamic-graspfail/team/r2/zone-7ccd6c34-304496-r2-claim-3-0-3-decision.json",
+      "decision_sha256": "778fc64a1db039034757f0af83e856039df332de12ff978307cbfdd3b637825e",
+      "original_reply": {
+        "claim": {
+          "box": "cyan-2",
+          "zone": "B"
+        },
+        "message": "cyan-1 delivered to B. Claiming cyan-2 for Zone B.",
+        "reason": "Zone B needs 1 more cyan to meet the goal of 2.",
+        "request_id": "zone-7ccd6c34-304496-r2-claim-3-0-3"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6579,
+        "completion_tokens": 94,
+        "total_tokens": 7038
+      },
+      "wire": "ZC2-s12-dynamic-graspfail/team/r2/wire-002.json",
+      "wire_sha256": "1594b4e72500573f7a7e928f6fdd3dc42f8ba6925b452cbf0f4169d99a96292a",
+      "wire_response_sha256": "e31c69bd709b7d1af4b3e21707f710bc7aad037ecda3c4f146dd81b3daf28c44",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/graspfail",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s14-dynamic-graspfail/r2/claim-7-0-7",
+      "run": "ZC2-s14-dynamic-graspfail",
+      "seed": "s14",
+      "coordination": "dynamic",
+      "fault": "graspfail",
+      "robot_id": "r2",
+      "mode": "claim",
+      "sub": "post_stop_idle",
+      "tie_break_in_original": true,
+      "request": "ZC2-s14-dynamic-graspfail/team/r2/zone-7ccd6c34-306331-r2-claim-7-0-7-request.json",
+      "request_sha256": "bda28b5ea214d0eaf4938df6c033f1d5635dcbd2a11fffb8df775308813ad01a",
+      "decision": "ZC2-s14-dynamic-graspfail/team/r2/zone-7ccd6c34-306331-r2-claim-7-0-7-decision.json",
+      "decision_sha256": "665165662b5731afa444f24785405022135856c1118238b4ca7708297e8f94c7",
+      "original_reply": {
+        "claim": {
+          "box": null,
+          "zone": null
+        },
+        "message": "Standing by. Zones B and C are satisfied, and r1 is delivering the final red box to Zone A.",
+        "reason": "All goal requirements are either fulfilled or currently being delivered by r1.",
+        "request_id": "zone-7ccd6c34-306331-r2-claim-7-0-7"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6887,
+        "completion_tokens": 96,
+        "total_tokens": 7127
+      },
+      "wire": "ZC2-s14-dynamic-graspfail/team/r2/wire-003.json",
+      "wire_sha256": "bf153c859135ec19e5891a76a2325d324b058bacd9fbcd41a306ada7013d74b2",
+      "wire_response_sha256": "e348d5cecdbef0e41e8ee14170f72b9fbeabc69ede633858823159e3e2660a49",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/graspfail",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s14-dynamic-graspfail/r3/claim-3-0-3",
+      "run": "ZC2-s14-dynamic-graspfail",
+      "seed": "s14",
+      "coordination": "dynamic",
+      "fault": "graspfail",
+      "robot_id": "r3",
+      "mode": "claim",
+      "sub": "post_stop",
+      "tie_break_in_original": true,
+      "request": "ZC2-s14-dynamic-graspfail/team/r3/zone-7ccd6c34-306331-r3-claim-3-0-3-request.json",
+      "request_sha256": "ae1baf7ca29de9217ff67a85105dbf16adb60423459ba62d70590ffe6e514240",
+      "decision": "ZC2-s14-dynamic-graspfail/team/r3/zone-7ccd6c34-306331-r3-claim-3-0-3-decision.json",
+      "decision_sha256": "16382b559fd6d04ca3d472c79f3e469ce31536cd1ebb2aaaf0a49ed4051b249d",
+      "original_reply": {
+        "claim": {
+          "box": "green-1",
+          "zone": "C"
+        },
+        "message": "Claiming green-1 for zone C since r1 switched to cyan-3.",
+        "reason": "Zone C still requires green-1; r1 and r2 are handling zone B.",
+        "request_id": "zone-7ccd6c34-306331-r3-claim-3-0-3"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6562,
+        "completion_tokens": 98,
+        "total_tokens": 7014
+      },
+      "wire": "ZC2-s14-dynamic-graspfail/team/r3/wire-002.json",
+      "wire_sha256": "c153d75646c7a9afe0a90e613ca80dd7e5fa1234fcee299a5bb50494871f2165",
+      "wire_response_sha256": "a4cd22f11f0312ee40464e39c2cc9971720f28fbff45ec7000329eb32b740d3b",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "dynamic/graspfail",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s12-plan_first-nominal/r1/plan-3",
+      "run": "ZC2-s12-plan_first-nominal",
+      "seed": "s12",
+      "coordination": "plan_first",
+      "fault": "nominal",
+      "robot_id": "r1",
+      "mode": "plan",
+      "sub": "ack",
+      "tie_break_in_original": false,
+      "request": "ZC2-s12-plan_first-nominal/team/r1/zone-7ccd6c34-303957-r1-plan-3-request.json",
+      "request_sha256": "d51f104e2aeaad62f1b8b3682085c7286df0f42f7640970391fae04ed0c7c3a2",
+      "decision": "ZC2-s12-plan_first-nominal/team/r1/zone-7ccd6c34-303957-r1-plan-3-decision.json",
+      "decision_sha256": "27f7b958e7505021b5f8e3564dfe31e24b1e50e7fb9a380658e009763dd4cbf1",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-303957-r1-plan-3",
+        "proposal_id": "zone-7ccd6c34-303957-plan-v3",
+        "plan_hash": "472199c97785d9fd2563237671ab9fb8475b4471d0992360a23de05caaf59d48",
+        "accept": true,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              }
+            ],
+            "r2": [
+              {
+                "box": "red-2",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-2",
+                "zone": "B"
+              }
+            ],
+            "r3": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              }
+            ]
+          }
+        },
+        "reason": "Plan satisfies all zone colour goals and balances deliveries equally.",
+        "message": "Accepted proposal. Ready to start execution."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 7022,
+        "completion_tokens": 295,
+        "total_tokens": 7606
+      },
+      "wire": "ZC2-s12-plan_first-nominal/team/r1/wire-004.json",
+      "wire_sha256": "458bad30e08cbb71b7a3a9ce74940c87510532d434d8d490716bd2966dad131a",
+      "wire_response_sha256": "42df0169ec85eed12142f5d2647b358e4858e70e32cfa9bea17784d72aa41059",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/nominal",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s14-plan_first-nominal/r1/plan-0",
+      "run": "ZC2-s14-plan_first-nominal",
+      "seed": "s14",
+      "coordination": "plan_first",
+      "fault": "nominal",
+      "robot_id": "r1",
+      "mode": "plan",
+      "sub": "proposer",
+      "tie_break_in_original": false,
+      "request": "ZC2-s14-plan_first-nominal/team/r1/zone-7ccd6c34-305676-r1-plan-0-request.json",
+      "request_sha256": "2eced2f403cf9a41f437f4a32bc9eee629cda56a564e3e89c64ce048c0624043",
+      "decision": "ZC2-s14-plan_first-nominal/team/r1/zone-7ccd6c34-305676-r1-plan-0-decision.json",
+      "decision_sha256": "9890c7f9895b58e1f6fa6a62ab4a8eb037771ffbf6e604dba4a2260efd9cbe58",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-305676-r1-plan-0",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": false,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              }
+            ],
+            "r2": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "red-2",
+                "zone": "A"
+              }
+            ],
+            "r3": [
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              },
+              {
+                "box": "cyan-2",
+                "zone": "B"
+              }
+            ]
+          }
+        },
+        "reason": "Initial balanced plan proposal fulfilling all zone goals",
+        "message": "Proposing balanced plan: r1 takes green-1, yellow-1 to C; r2 takes red-1, red-2 to A; r3 takes cyan-1, cyan-2 to B."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6399,
+        "completion_tokens": 273,
+        "total_tokens": 7103
+      },
+      "wire": "ZC2-s14-plan_first-nominal/team/r1/wire-001.json",
+      "wire_sha256": "74f16c39b3cb9e270ea8772f0e481f34fc6feed0659900381acdea023d589220",
+      "wire_response_sha256": "c5bc9350ab3fdebc50854b865cd83785d0fca66da35f097f6a64cacd42879cd1",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/nominal",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s14-plan_first-nominal/r1/plan-2",
+      "run": "ZC2-s14-plan_first-nominal",
+      "seed": "s14",
+      "coordination": "plan_first",
+      "fault": "nominal",
+      "robot_id": "r1",
+      "mode": "plan",
+      "sub": "waiting",
+      "tie_break_in_original": false,
+      "request": "ZC2-s14-plan_first-nominal/team/r1/zone-7ccd6c34-305676-r1-plan-2-request.json",
+      "request_sha256": "70c6316e772c270e5d6554e3c5d8c44cb080f4208ac16b64701170399e321c63",
+      "decision": "ZC2-s14-plan_first-nominal/team/r1/zone-7ccd6c34-305676-r1-plan-2-decision.json",
+      "decision_sha256": "9eef72631bb7227a1d79ee89d4b9f12880caf34b221827053e5c7b5a5f177c23",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-305676-r1-plan-2",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": false,
+        "plan": null,
+        "reason": "Waiting for r3 (designated proposer) to submit proposal.",
+        "message": "r3 is the designated proposer. r3, please propose: r1: green-1, yellow-1 to C; r2: red-1, red-2 to A; r3: cyan-1, cyan-2 to B."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6643,
+        "completion_tokens": 147,
+        "total_tokens": 6903
+      },
+      "wire": "ZC2-s14-plan_first-nominal/team/r1/wire-003.json",
+      "wire_sha256": "9fbff77de2565c7b28ba95dce69bd93dc842dfb99d378ba0414729f035d449f7",
+      "wire_response_sha256": "22658bc61cacef05570ad23014b250e52fe113b6ac2dc459ffeabf65779c23c8",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s12-plan_first-nominal/r3/plan-3",
+      "run": "ZC2-s12-plan_first-nominal",
+      "seed": "s12",
+      "coordination": "plan_first",
+      "fault": "nominal",
+      "robot_id": "r3",
+      "mode": "plan",
+      "sub": "ack",
+      "tie_break_in_original": false,
+      "request": "ZC2-s12-plan_first-nominal/team/r3/zone-7ccd6c34-303957-r3-plan-3-request.json",
+      "request_sha256": "0f7ebc910e6b4e230a5bb443d2611c34836a6e01e2c2a8797ae24c85cf41902e",
+      "decision": "ZC2-s12-plan_first-nominal/team/r3/zone-7ccd6c34-303957-r3-plan-3-decision.json",
+      "decision_sha256": "5bfa555ddd7f758801f74f8962a6a99b9b047cc4c32ef911e87dca9a25c5da9f",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-303957-r3-plan-3",
+        "proposal_id": "zone-7ccd6c34-303957-plan-v3",
+        "plan_hash": "472199c97785d9fd2563237671ab9fb8475b4471d0992360a23de05caaf59d48",
+        "accept": true,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              }
+            ],
+            "r2": [
+              {
+                "box": "red-2",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-2",
+                "zone": "B"
+              }
+            ],
+            "r3": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              }
+            ]
+          }
+        },
+        "reason": "Proposal matches goals exactly with 2 tasks per robot.",
+        "message": "Accepted proposal. Ready to start."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 7034,
+        "completion_tokens": 295,
+        "total_tokens": 7737
+      },
+      "wire": "ZC2-s12-plan_first-nominal/team/r3/wire-004.json",
+      "wire_sha256": "826c5d159666794b76edddccf4ded8bf71fffdbdf37a6f0fc4bd759a50ec92c8",
+      "wire_response_sha256": "d56b60bfdf847498f2ac1d43d15877b5b06a3dab99119301bd2d48e6436771b8",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s13-plan_first-nominal/r3/plan-0",
+      "run": "ZC2-s13-plan_first-nominal",
+      "seed": "s13",
+      "coordination": "plan_first",
+      "fault": "nominal",
+      "robot_id": "r3",
+      "mode": "plan",
+      "sub": "waiting",
+      "tie_break_in_original": false,
+      "request": "ZC2-s13-plan_first-nominal/team/r3/zone-7ccd6c34-304865-r3-plan-0-request.json",
+      "request_sha256": "d0da273ae628b3e3465b47c166ef76e9b7fd3ae7bc8a0991a4fec1e372d2775b",
+      "decision": "ZC2-s13-plan_first-nominal/team/r3/zone-7ccd6c34-304865-r3-plan-0-decision.json",
+      "decision_sha256": "d8899ec2e8ecc73ff51e361046cd30a991548f434fee036b637f76acd7ed5bf3",
+      "original_reply": {
+        "accept": false,
+        "message": "Waiting for r1 proposal. Total 6 boxes needed: 2 red to A, 2 cyan to B, 1 green and 1 yellow to C. Recommend 2 boxes per robot.",
+        "plan": null,
+        "plan_hash": null,
+        "proposal_id": null,
+        "reason": "r1 is proposer",
+        "request_id": "zone-7ccd6c34-304865-r3-plan-0"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6404,
+        "completion_tokens": 112,
+        "total_tokens": 6736
+      },
+      "wire": "ZC2-s13-plan_first-nominal/team/r3/wire-001.json",
+      "wire_sha256": "ff7eb66fbad4b47318d957062df5da1e702fa6d1215e89f716a76d01ca550c0c",
+      "wire_response_sha256": "2d6f3a14fee89afac8651534251d7f86873e90ed9a6c4fd12ed51263cf13095e",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/nominal",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s13-plan_first-graspfail/r1/plan-1",
+      "run": "ZC2-s13-plan_first-graspfail",
+      "seed": "s13",
+      "coordination": "plan_first",
+      "fault": "graspfail",
+      "robot_id": "r1",
+      "mode": "plan",
+      "sub": "ack",
+      "tie_break_in_original": false,
+      "request": "ZC2-s13-plan_first-graspfail/team/r1/zone-7ccd6c34-305193-r1-plan-1-request.json",
+      "request_sha256": "cdb8a259153007a114bdd8444ab172aa296677f171b8c6ad38308b8a1e9e2f35",
+      "decision": "ZC2-s13-plan_first-graspfail/team/r1/zone-7ccd6c34-305193-r1-plan-1-decision.json",
+      "decision_sha256": "42721991f96ed480e573020a7c2c124e401614703ae413a067096593f476299f",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-305193-r1-plan-1",
+        "proposal_id": "zone-7ccd6c34-305193-plan-v1",
+        "plan_hash": "472199c97785d9fd2563237671ab9fb8475b4471d0992360a23de05caaf59d48",
+        "accept": true,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              }
+            ],
+            "r2": [
+              {
+                "box": "red-2",
+                "zone": "A"
+              },
+              {
+                "box": "cyan-2",
+                "zone": "B"
+              }
+            ],
+            "r3": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              }
+            ]
+          }
+        },
+        "reason": "Balanced 2-box plan meeting all zone requirements exactly.",
+        "message": "Accepting proposal v1. Ready to proceed."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6747,
+        "completion_tokens": 299,
+        "total_tokens": 7424
+      },
+      "wire": "ZC2-s13-plan_first-graspfail/team/r1/wire-003.json",
+      "wire_sha256": "e07b256ad46bc34c2ac0be1b19a353aeaab6204b530973ba3818d5fd463cb82b",
+      "wire_response_sha256": "6f881de6e6c35f2957eff75b60b175fe5ce8c0306a7ed036390e44d7549b285e",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/graspfail",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s13-plan_first-graspfail/r1/plan-0",
+      "run": "ZC2-s13-plan_first-graspfail",
+      "seed": "s13",
+      "coordination": "plan_first",
+      "fault": "graspfail",
+      "robot_id": "r1",
+      "mode": "plan",
+      "sub": "proposer",
+      "tie_break_in_original": false,
+      "request": "ZC2-s13-plan_first-graspfail/team/r1/zone-7ccd6c34-305193-r1-plan-0-request.json",
+      "request_sha256": "dbcf7dc67e176d97a3d14b93b23abcdebadddb885223d870c578fbd5f070c709",
+      "decision": "ZC2-s13-plan_first-graspfail/team/r1/zone-7ccd6c34-305193-r1-plan-0-decision.json",
+      "decision_sha256": "b978454b2611669c0b81ad742ac75707bf52528e93aacc75d44e1d1c2f268047",
+      "original_reply": null,
+      "original_error": "ValueError: stale proposal/version/hash",
+      "original_usage": {
+        "prompt_tokens": 6404,
+        "completion_tokens": 278,
+        "total_tokens": 7000
+      },
+      "wire": "ZC2-s13-plan_first-graspfail/team/r1/wire-001.json",
+      "wire_sha256": "3cae2bf6c52eb04d659bc300b5444db0c9040ff8bd912408ad92b15382e1ff74",
+      "wire_response_sha256": "3f049d8cc358c6d03b4f68f7c95e18d88d209f95d971bccee21e419c5c7b821d",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/graspfail",
+      "v0_repeat": true
+    },
+    {
+      "point_id": "ZC2-s12-plan_first-graspfail/r3/plan-0",
+      "run": "ZC2-s12-plan_first-graspfail",
+      "seed": "s12",
+      "coordination": "plan_first",
+      "fault": "graspfail",
+      "robot_id": "r3",
+      "mode": "plan",
+      "sub": "waiting",
+      "tie_break_in_original": false,
+      "request": "ZC2-s12-plan_first-graspfail/team/r3/zone-7ccd6c34-304410-r3-plan-0-request.json",
+      "request_sha256": "fb2a9be2108b4a5311689fb2f5064378c6e1405724aac945e156ab56128f3d84",
+      "decision": "ZC2-s12-plan_first-graspfail/team/r3/zone-7ccd6c34-304410-r3-plan-0-decision.json",
+      "decision_sha256": "a0a767838c356a4b4a5039d4876f200618d58e7d756cc76571ad7fa0ada35412",
+      "original_reply": {
+        "accept": false,
+        "message": "Standing by for r1 proposal. Total 6 boxes needed: 2 red -> A, 2 cyan -> B, 1 green + 1 yellow -> C. 2 tasks each.",
+        "plan": null,
+        "plan_hash": null,
+        "proposal_id": null,
+        "reason": "Awaiting proposal from designated proposer r1.",
+        "request_id": "zone-7ccd6c34-304410-r3-plan-0"
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6406,
+        "completion_tokens": 115,
+        "total_tokens": 6521
+      },
+      "wire": "ZC2-s12-plan_first-graspfail/team/r3/wire-001.json",
+      "wire_sha256": "a4c52cb6e053c3a70543ac23ce2635e1fe7ef79105fc756fffb58d308577482f",
+      "wire_response_sha256": "58c0029fb6cc3c0d03b9664e91f537df20915c5c6bf9513d90739baa05bd5bb9",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/graspfail",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s12-plan_first-graspfail/r3/plan-1",
+      "run": "ZC2-s12-plan_first-graspfail",
+      "seed": "s12",
+      "coordination": "plan_first",
+      "fault": "graspfail",
+      "robot_id": "r3",
+      "mode": "plan",
+      "sub": "ack",
+      "tie_break_in_original": false,
+      "request": "ZC2-s12-plan_first-graspfail/team/r3/zone-7ccd6c34-304410-r3-plan-1-request.json",
+      "request_sha256": "d19aaf58cc3bac5645b2d4aa79e807d65b5268178839fefca5387e7d68a8f382",
+      "decision": "ZC2-s12-plan_first-graspfail/team/r3/zone-7ccd6c34-304410-r3-plan-1-decision.json",
+      "decision_sha256": "e4dc585bdc63018eeb1043ab9c48f6e73085c4448c451042dfb6b7d423265e69",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-304410-r3-plan-1",
+        "proposal_id": "zone-7ccd6c34-304410-plan-v1",
+        "plan_hash": "0af7694d21c6a788f1efdf23d1b6ad98300671fbb7e9dd040c8455bd125a7045",
+        "accept": true,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "red-2",
+                "zone": "A"
+              }
+            ],
+            "r2": [
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              },
+              {
+                "box": "cyan-3",
+                "zone": "B"
+              }
+            ],
+            "r3": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              }
+            ]
+          }
+        },
+        "reason": "Plan satisfies all goals accurately and balances tasks evenly.",
+        "message": "Accepted proposal. Ready to carry green-1 then yellow-1 to zone C."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6728,
+        "completion_tokens": 324,
+        "total_tokens": 7527
+      },
+      "wire": "ZC2-s12-plan_first-graspfail/team/r3/wire-002.json",
+      "wire_sha256": "c45d7dfdb1fa0a8e9e3b23d99868a15b42369946619175a5e67bf08385a3dc26",
+      "wire_response_sha256": "dec6d187ef3ccf655134fd6217548aa43a6af872a1e0ac8f9ce3a830fe9d5cbc",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/graspfail",
+      "v0_repeat": false
+    },
+    {
+      "point_id": "ZC2-s14-plan_first-graspfail/r2/plan-1",
+      "run": "ZC2-s14-plan_first-graspfail",
+      "seed": "s14",
+      "coordination": "plan_first",
+      "fault": "graspfail",
+      "robot_id": "r2",
+      "mode": "plan",
+      "sub": "proposer",
+      "tie_break_in_original": false,
+      "request": "ZC2-s14-plan_first-graspfail/team/r2/zone-7ccd6c34-306247-r2-plan-1-request.json",
+      "request_sha256": "068901ff39addd33b0be0af4aeb5d6ace317ac7cca4d113b440650e04dfdd740",
+      "decision": "ZC2-s14-plan_first-graspfail/team/r2/zone-7ccd6c34-306247-r2-plan-1-decision.json",
+      "decision_sha256": "1add015ccf0547386dc326ebbbf4237218c2dc309a638d93c714d06565e7de40",
+      "original_reply": {
+        "request_id": "zone-7ccd6c34-306247-r2-plan-1",
+        "proposal_id": null,
+        "plan_hash": null,
+        "accept": true,
+        "plan": {
+          "assignments": {
+            "r1": [
+              {
+                "box": "green-1",
+                "zone": "C"
+              },
+              {
+                "box": "cyan-3",
+                "zone": "B"
+              }
+            ],
+            "r2": [
+              {
+                "box": "red-1",
+                "zone": "A"
+              },
+              {
+                "box": "red-2",
+                "zone": "A"
+              }
+            ],
+            "r3": [
+              {
+                "box": "yellow-1",
+                "zone": "C"
+              },
+              {
+                "box": "cyan-1",
+                "zone": "B"
+              }
+            ]
+          }
+        },
+        "reason": "proposing balanced plan based on initial robot positions",
+        "message": "Proposing: r1 (green-1->C, cyan-3->B), r2 (red-1->A, red-2->A), r3 (yellow-1->C, cyan-1->B)."
+      },
+      "original_error": null,
+      "original_usage": {
+        "prompt_tokens": 6522,
+        "completion_tokens": 278,
+        "total_tokens": 7892
+      },
+      "wire": "ZC2-s14-plan_first-graspfail/team/r2/wire-002.json",
+      "wire_sha256": "81132f56b543247a3475ed59908d90f365e835fa171a1dd2d70471db73c323d8",
+      "wire_response_sha256": "00e1b721b49092e4031e44c48bc7e3b540d12a0a90d54413a8b4890d5549b802",
+      "settings": {
+        "model": "gemini-3.8-flash",
+        "temperature": 0.2,
+        "max_tokens": 1400,
+        "reasoning_effort": "none"
+      },
+      "stratum": "plan_first/graspfail",
+      "v0_repeat": false
+    }
+  ]
+}
