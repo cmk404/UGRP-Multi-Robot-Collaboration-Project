@@ -168,3 +168,55 @@ def test_metrics_dialogue_acts():
     assert m.references('r3, 알겠습니다.', 'cyan-1 가져갈게요', 'r3', LABELS)
     assert m.references('cyan-1은 양보합니다', 'cyan-1 가져갈게요', 'r3', LABELS)
     assert not m.references('green-1을 맡겠습니다', 'cyan-1 가져갈게요', 'r3', LABELS)
+
+
+def test_act_rule_versions_are_explicit():
+    assert m.ACT_RULES_VERSIONS == ('v1', 'v2') and m.ACT_RULES_VERSION == 'v2'
+    assert m.ACT_RULES is m.ACT_RULES_V1                      # frozen rules that labelled results.v1
+    assert set(m.ACT_RULES_V1) == set(m.ACT_RULES_V2) == set(m.ACT_LABELS) == set(m.ACT_DEFINITIONS)
+    with pytest.raises(ValueError):
+        m.dialogue_acts('아무 말', rules='v3')
+
+
+def test_structured_and_free_text_act_vocabularies_are_consistent():
+    assert m.STRUCTURED_ACTS == z.ACTS                        # V3 schema enum, not edited by the metrics
+    assert set(m.STRUCTURED_ACTS) < set(m.ACT_LABELS)
+    assert tuple(sorted(set(m.ACT_LABELS) - set(m.STRUCTURED_ACTS))) == tuple(sorted(m.ACTS_FREE_TEXT_ONLY))
+    assert m.struct_acts(None) == ['silence'] and m.struct_acts('free text') == ['invalid']
+    assert m.struct_acts({'act': 'yield'}) == ['yield'] and m.struct_acts({'act': 'chat'}) == ['other']
+
+
+@pytest.mark.parametrize('text,expected', [
+    # a mention of someone else's act is not the act (v1 called these `propose`)
+    ('Accepted proposal. Ready to execute.', ['agree']),
+    ('Plan looks great and balanced, accepting proposal.', ['agree']),
+    ("Standing by for r1's proposal.", ['standby']),
+    ('r1의 제안을 수락합니다.', ['agree']),
+    # proposing, including submitting one's own proposal
+    ('Proposing balanced plan: r1 takes C, r2 takes A.', ['propose']),
+    ('Confirming my proposal: 2 boxes per robot.', ['propose']),
+    ('r1의 제안대로 계획을 확정하여 제출합니다.', ['propose']),
+    # negation
+    ('I disagree with that plan.', ['refuse']),
+    ('I do not agree with r1.', ['refuse']),
+    ('r1의 제안에 동의하지 않습니다.', ['refuse']),
+    ('아직 완료하지 않았습니다.', ['other']),
+    # asking a peer to accept is a request, not agreement
+    ('계획을 올립니다. 확인 후 동의해 주세요.', ['propose', 'request']),
+    # own claim vs a third-person assignment
+    ('I will take red-1 to zone A.', ['claim']),
+    ('cyan-1 is claimed by r2, so I take green-1.', ['claim']),
+    ('red-1 배달 완료했습니다.', ['report']),
+])
+def test_act_rules_v2_separates_act_from_mention_and_negation(text, expected):
+    assert m.dialogue_acts(text) == expected
+
+
+@pytest.mark.parametrize('text,v1', [
+    ('Accepted proposal. Ready to execute.', ['propose', 'agree']),
+    ("Standing by for r1's proposal.", ['propose', 'standby']),
+    ('I disagree with that plan.', ['agree']),
+])
+def test_act_rules_v1_still_reproduces_the_recorded_labels(text, v1):
+    assert m.dialogue_acts(text, rules='v1') == v1
+

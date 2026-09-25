@@ -14,6 +14,13 @@ scripts/three_robot_runtime.py) and simulates short multi-turn windows.
 Every call is appended to calls.jsonl as it returns: full prompt text, image
 hashes, exact HTTP response body, usage, and pointers to the local raw wire.
 A hard budget (--max-calls, default 150) counts every HTTP attempt.
+
+Raw records are append-only (review fix, 2026-09-26): every HTTP attempt gets
+its own raw wire/response file, created with O_EXCL. A resumed run never
+rewrites or deletes an existing raw file. An interrupted dialogue window is not
+replayed under the old call ids either: it restarts as a new *episode*
+(``dialogue:<id>:<variant>:e2:t1:r1``) and each turn is checkpointed to
+dialogues-partial.json, so the earlier episode's wire bodies stay addressable.
 """
 from __future__ import annotations
 
@@ -77,6 +84,42 @@ def append_call(exp, row):
     with LOCK:
         with (exp/'calls.jsonl').open('a') as fh:
             fh.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + '\n')
+
+
+# ------------------------------------------------- append-only raw wire files
+
+RAW_OCCURRENCE_LIMIT = 50
+
+
+def raw_stem(call_id, attempt, occurrence):
+    """Raw file stem. occurrence 0 keeps the original naming of the recorded run."""
+    safe = call_id.replace('/', '__').replace(':', '_')
+    return f'{safe}-a{attempt}' + ('' if occurrence == 0 else f'-x{occurrence}')
+
+
+def reserve_raw(call_id, attempt):
+    """Pick raw wire/response paths that do not exist yet.
+
+    A resumed run must never overwrite the raw request/response of an earlier
+    attempt, so the first free occurrence index is used instead.
+    """
+    RAW.mkdir(parents=True, exist_ok=True)
+    for occurrence in range(RAW_OCCURRENCE_LIMIT):
+        stem = raw_stem(call_id, attempt, occurrence)
+        wire, resp = RAW/f'{stem}-wire.json', RAW/f'{stem}-response.json'
+        if not wire.exists() and not resp.exists():
+            return wire, resp, occurrence
+    raise SystemExit(f'{call_id} attempt {attempt}: {RAW_OCCURRENCE_LIMIT} raw records already exist; '
+                     'refusing to overwrite them')
+
+
+def write_raw(path, data):
+    """Create a raw record exclusively; an existing file is an error, never overwritten."""
+    try:
+        with path.open('xb') as fh:
+            fh.write(data)
+    except FileExistsError as exc:
+        raise SystemExit(f'refusing to overwrite existing raw record {path}') from exc
 
 
 class Budget:
@@ -178,27 +221,26 @@ def cmd_select(args):
 def call_model(request, call_id, settings, budget, meta):
     """One audited call through the zone runner's client; one retry on a retryable transport error."""
     RAW.mkdir(parents=True, exist_ok=True)
-    safe = call_id.replace('/', '__').replace(':', '_')
     for attempt in range(2):
+        wire_path, resp_path, occurrence = reserve_raw(call_id, attempt)
         n = budget.take()
-        wire_path = RAW/f'{safe}-a{attempt}-wire.json'
-        resp_path = RAW/f'{safe}-a{attempt}-response.json'
         captured = {}
 
         def audited_open(req, *, timeout):
             captured['body'] = req.data
-            wire_path.write_bytes(req.data)
+            write_raw(wire_path, req.data)
             with urlopen(req, timeout=timeout) as response:
                 data = response.read()
             captured['response'] = data
-            resp_path.write_bytes(data)
+            write_raw(resp_path, data)
             return io.BytesIO(data)
 
         client = GeminiProxyCompleter(model=settings['model'], max_tokens=settings['max_tokens'],
                                       temperature=settings['temperature'],
                                       reasoning_effort=settings['reasoning_effort'], timeout=60.,
                                       http_open=audited_open)
-        row = {'call_id': call_id, 'attempt': attempt, 'budget_index': n, 'started_utc': now(), **meta,
+        row = {'call_id': call_id, 'attempt': attempt, 'raw_occurrence': occurrence, 'budget_index': n,
+               'started_utc': now(), **meta,
                'settings': settings,
                'request': {'request_id': request['request_id'],
                            'messages': request['messages'],
@@ -251,6 +293,10 @@ def cmd_single(args):
             jobs.append((zk.build_variant(req, variant), call_id, p, variant, rep))
     planned = budget.used + len(jobs)
     print(f'single: {len(jobs)} calls to make; budget after = {planned}/{args.max_calls}', flush=True)
+    retried = sorted({c['call_id'] for c in calls} & {j[1] for j in jobs})
+    if retried:
+        print(f'  {len(retried)} unfinished call id(s) will be called again under a new raw record; '
+              f'existing raw files are kept: {retried[:5]}', flush=True)
     if planned > args.max_calls:
         raise SystemExit('planned single-turn calls exceed the budget; stopping to ask first')
     if args.dry_run:
@@ -294,7 +340,24 @@ def parse_window_reply(raw, request_id, structured, image_labels):
         return None, f'{type(exc).__name__}: {exc}'
 
 
-def run_window(scenario, variant, budget):
+def window_call_id(scenario_id, variant, episode, turn, rid):
+    """Call id of one window turn. Episode 1 keeps the ids of the recorded run."""
+    tag = '' if episode == 1 else f':e{episode}'
+    return f'dialogue:{scenario_id}:{variant}{tag}:t{turn}:{rid}'
+
+
+def window_episode(calls, scenario_id, variant):
+    """Next episode for a window: rows without 'episode' are the first episode.
+
+    An interrupted window is never replayed under the call ids it already used,
+    so its raw wire/response files stay exactly as recorded.
+    """
+    used = {int(c.get('episode', 1)) for c in calls if c.get('kind') == 'dialogue'
+            and c.get('scenario') == scenario_id and c.get('variant') == variant}
+    return max(used) + 1 if used else 1
+
+
+def run_window(scenario, variant, budget, episode=1, checkpoint=None):
     requests, settings = {}, None
     for rid in zk.ROBOTS:
         path = next((SOURCE/scenario['run']/'team'/rid).glob(f"zone-*-{rid}-{scenario['phase']}-request.json"))
@@ -310,14 +373,24 @@ def run_window(scenario, variant, budget):
     last_claim = {r: None for r in zk.ROBOTS}
     turns = []
     structured = variant == 'V3'
+
+    def record(complete):
+        out = {'scenario': scenario['id'], 'variant': variant, 'episode': episode, 'run': scenario['run'],
+               'phase': scenario['phase'], 'order': list(scenario['order']), 'settings': settings,
+               'tie_break_in_window': False, 'final_claims': last_claim, 'turns': turns}
+        if not complete:
+            out['complete'] = False
+        return out
+
     for t in range(1, WINDOW['max_turns'] + 1):
         rid = scenario['order'][(t - 1) % 3]
         path, req = requests[rid]
         request = zk.dialogue_request(req, window=WINDOW, received=inbox[rid], sent=sent[rid], turn=t,
                                       variant=variant)
         labels = [i['label'] for i in req['images']]
-        call_id = f"dialogue:{scenario['id']}:{variant}:t{t}:{rid}"
-        meta = {'kind': 'dialogue', 'scenario': scenario['id'], 'variant': variant, 'turn': t, 'robot_id': rid,
+        call_id = window_call_id(scenario['id'], variant, episode, t, rid)
+        meta = {'kind': 'dialogue', 'scenario': scenario['id'], 'variant': variant, 'episode': episode,
+                'turn': t, 'robot_id': rid,
                 'source_request': str(path.relative_to(SOURCE)), 'source_request_sha256': sha(path.read_bytes()),
                 'received_before': copy.deepcopy(inbox[rid])}
         row = call_model(request, call_id, settings, budget, meta)
@@ -338,27 +411,46 @@ def run_window(scenario, variant, budget):
         turns.append({'turn': t, 'robot_id': rid, 'call_id': call_id, 'valid': value is not None,
                       'error': error, 'reply': value, 'delivered_to': delivered,
                       'received_before': meta['received_before'], 'usage': row.get('usage')})
+        if checkpoint is not None:          # turn-level checkpoint: an interrupt loses no turn
+            checkpoint(record(complete=False))
         print(call_id, 'valid' if value else error, 'to', delivered, flush=True)
-    return {'scenario': scenario['id'], 'variant': variant, 'run': scenario['run'], 'phase': scenario['phase'],
-            'order': list(scenario['order']), 'settings': settings, 'tie_break_in_window': False,
-            'final_claims': last_claim, 'turns': turns}
+    return record(complete=True)
+
+
+def save_partial(path, record):
+    """Keep the newest state of each (scenario, variant, episode); earlier episodes stay."""
+    with LOCK:
+        done = json.loads(path.read_text()) if path.exists() else []
+        key = (record['scenario'], record['variant'], record['episode'])
+        done = [d for d in done if (d['scenario'], d['variant'], d.get('episode', 1)) != key]
+        done.append(record)
+        path.write_text(json.dumps(done, ensure_ascii=False, indent=2) + '\n')
 
 
 def cmd_dialogue(args):
     calls = load_calls(EXP)
     budget = Budget(len(calls), args.max_calls)
     out_path = EXP/'dialogues.json'
+    partial_path = EXP/'dialogues-partial.json'
     done = json.loads(out_path.read_text()) if out_path.exists() else []
     have = {(d['scenario'], d['variant']) for d in done}
     todo = [(s, v) for s in SCENARIOS for v in s['variants'] if (s['id'], v) not in have]
+    episodes = {(s['id'], v): window_episode(calls, s['id'], v) for s, v in todo}
     planned = budget.used + WINDOW['max_turns'] * len(todo)
     print(f'dialogue: {len(todo)} windows; budget after = {planned}/{args.max_calls}', flush=True)
+    for (sid, v), ep in sorted(episodes.items()):
+        if ep > 1:
+            print(f'  {sid}/{v}: earlier episode(s) interrupted; running episode {ep} with new call ids '
+                  '(existing raw records are kept)', flush=True)
     if planned > args.max_calls:
         raise SystemExit('planned dialogue calls exceed the budget; stopping to ask first')
     if args.dry_run:
         return
     for s, v in todo:           # windows are sequential by construction
-        done.append(run_window(s, v, budget))
+        episode = episodes[(s['id'], v)]
+        done.append(run_window(s, v, budget, episode=episode,
+                               checkpoint=lambda record: save_partial(partial_path, record)))
+        save_partial(partial_path, done[-1])
         out_path.write_text(json.dumps(done, ensure_ascii=False, indent=2) + '\n')
 
 
@@ -366,11 +458,13 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('command', choices=('select', 'single', 'dialogue', 'analyze'))
     ap.add_argument('--max-calls', type=int, default=150)
+    ap.add_argument('--out', type=Path, default=None,
+                    help='analyze: results file to write; an existing file is never overwritten')
     ap.add_argument('--dry-run', action='store_true')
     args = ap.parse_args()
     if args.command == 'analyze':
         from scripts.pilot_korean_dialogue_analysis import analyze
-        analyze(EXP, SOURCE)
+        analyze(EXP, SOURCE, out=args.out)
         return
     {'select': cmd_select, 'single': cmd_single, 'dialogue': cmd_dialogue}[args.command](args)
 
