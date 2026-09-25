@@ -1,7 +1,7 @@
 """Zone-goal delivery benchmark: LLM coordination over a TEACHER motion executor.
 
 Robots (one independent LLM client each) decide who moves which box to which
-zone, from own RGB + two TOP RGB images, RGB-derived labels/counts, own jobs
+zone, from own RGB + the map's TOP RGB images, RGB-derived labels/counts, own jobs
 and peer messages. A ground-truth teacher executes the motions with the real
 gripper (weld OFF). Results are teacher-executor conditions: they measure the
 coordination (calls, conflicts, allocation, makespan), not RGB-skill success.
@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
 from harness.three_robot_plan import ROBOTS, TeamAgreement  # noqa: E402
 from harness import zone_coordination as zc  # noqa: E402
 from harness.zone_perception import detect_all, label_pickup, observe  # noqa: E402
-from sim.zone_arena import actor_task, episode, goal_counts  # noqa: E402
+from sim.zone_arena import actor_task, episode, goal_counts, top_views  # noqa: E402
 
 SCHEMA = 'ugrp.zone_dispatch_result.v1'
 # Dynamic mode: re-ask a stalled team (no job running, claims unresolved) at
@@ -86,19 +86,20 @@ class ZoneRun:
                 self.replay.sample(' | '.join(f'{r}:{t.phase}' for r, t in self.executor.robots.items()))
 
     def tops(self):
-        return {'cctv_top': self.world.render_team_jpeg(camera='cctv_top', quality=95),
-                'cctv_top_east': self.world.render_team_jpeg(camera='cctv_top_east', quality=95)}
+        return {view[0]: self.world.render_team_jpeg(camera=view[0], quality=95)
+                for view in top_views(self.config['static_map'])}
 
     def capture(self, label, robots=ROBOTS):
         self.count += 1
         tops = self.tops()
-        (self.out/'rgb'/f'{self.count:03d}-{label}-top-west.jpg').write_bytes(tops['cctv_top'])
-        (self.out/'rgb'/f'{self.count:03d}-{label}-top-east.jpg').write_bytes(tops['cctv_top_east'])
+        views = top_views(self.config['static_map'])
+        for camera, _, _, suffix, _ in views:
+            (self.out/'rgb'/f'{self.count:03d}-{label}-{suffix}.jpg').write_bytes(tops[camera])
         frames = {}
         for rid in robots:
             own = self.world.render_jpeg(robot_id=rid, camera='robot_cam', quality=90)
             (self.out/'rgb'/f'{self.count:03d}-{label}-{rid}.jpg').write_bytes(own)
-            frames[rid] = {'own': own, 'top_west': tops['cctv_top'], 'top_east': tops['cctv_top_east']}
+            frames[rid] = {'own': own, **{key: tops[camera] for camera, _, key, _, _ in views}}
         return frames, tops
 
     def box_positions(self):
@@ -217,7 +218,8 @@ def run(args):
                 context = agreement.context()
                 def build(rid, request_id, ctx=ctx, context=context, frames=frames):
                     return zc.build_plan_request(rid, request_id=request_id, task=task, frame=frames[rid],
-                                                 agreement=context, ctx=ctx[rid])
+                                                 agreement=context, ctx=ctx[rid],
+                                                 views=top_views(config['static_map']))
                 def fixture(rid, request_id, context=context):
                     return _fixture_plan_reply(rid, request_id, context, goal, labels, args.fixture_plan)
                 from harness.three_robot_plan import validate_plan_reply
@@ -249,8 +251,9 @@ def run(args):
                 waiting = [r for r in idle if r not in stats['done_robots']]
                 if waiting:
                     turn += 1
+                    delivered = [{'zone': f['zone'], 'kind': labels[f['box']]['kind']} for f in finished]
                     decided = dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs,
-                                            board, stats, turn, args)
+                                            board, stats, turn, args, delivered)
                     for rid, job in decided['accepted'].items():
                         assign(rid, job)
                     # Robots with no job (null claim, or refused after talking) wait
@@ -308,7 +311,7 @@ def run(args):
     return result
 
 
-def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board, stats, turn, args):
+def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board, stats, turn, args, delivered=None):
     """Idle robots claim one job each; collide -> the colliding robots talk (<=2 rounds)."""
     accepted, idle = {}, []
     askers, extra = list(waiting), {}
@@ -320,14 +323,15 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
                    'active': {k: {'box': j['box'], 'zone': j['zone']} for k, j in pending.items()}},
                    own_jobs=own_jobs[r], inbox=team.inbox[r], extra=extra.get(r)) for r in askers}
         def build(rid, request_id, ctx=ctx, frames=frames):
-            return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid])
+            return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid],
+                                          views=top_views(zone.config['static_map']))
         def fixture(rid, request_id, view=view, pending=pending, askers=tuple(askers)):
-            return _fixture_claim(rid, request_id, goal, labels, view, pending, askers)
+            return _fixture_claim(rid, request_id, goal, labels, view, pending, askers, delivered)
         replies = team.ask(askers, build, zc.validate_claim_reply, fixture,
                            phase=f'claim-{turn}-{attempt}', turn=turn, sim_time=zone.time())
         stats['claim_rounds'] += 1
         checked = zc.check_claims({r: (v['claim'] if v else None) for r, v in replies.items()},
-                                  goal=goal, labels=labels, view=view, active=pending)
+                                  goal=goal, labels=labels, view=view, active=pending, finished=delivered)
         accepted.update(checked['accepted'])
         idle += checked['idle']
         stats['collisions'] += len(checked['collisions'])
@@ -369,10 +373,10 @@ def _fixture_plan_reply(rid, request_id, context, goal, labels, plan_file=None):
             'plan': plan, 'reason': 'scripted protocol fixture, not visual reasoning', 'message': ''}
 
 
-def _fixture_claim(rid, request_id, goal, labels, view, pending, askers=ROBOTS):
+def _fixture_claim(rid, request_id, goal, labels, view, pending, askers=ROBOTS, delivered=None):
     """Scripted protocol fixture (not visual reasoning): the i-th asking robot
     takes the i-th open need unit, so idle robots claim different boxes."""
-    need = zc.remaining_need(goal, view, pending)
+    need = zc.remaining_need(goal, view, pending, delivered)
     taken = {j['box'] for j in pending.values()}
     units = [(zone, kind) for zone, kinds in sorted(need.items())
              for kind in sorted(kinds) for _ in range(kinds[kind])]

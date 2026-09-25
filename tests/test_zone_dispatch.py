@@ -30,6 +30,81 @@ def test_arena_keeps_the_approved_top_and_adds_one_identical_east_cctv():
     assert set(static['zone_slots']) == {'A', 'B', 'C'} and all(len(s) == 3 for s in static['zone_slots'].values())
 
 
+
+def test_wide_arena_adds_identical_tops_that_cover_the_whole_floor():
+    from sim.research_dispatch_arena import FIXED_TOP
+    wide = za.authored_map('zone_wide')
+    assert wide == json.loads((Path(za.MAP_DIR)/'zone_wide.json').read_text())
+    cameras = wide['top_cameras']
+    assert cameras[:2] == za.authored_map()['top_cameras'] and cameras[0] == FIXED_TOP
+    same = lambda c: {k: v for k, v in c.items() if k not in ('name', 'position_m')}
+    assert all(same(c) == same(FIXED_TOP) and c['position_m'][2] == FIXED_TOP['position_m'][2] for c in cameras)
+    assert [v[0] for v in za.top_views(wide)] == ['cctv_top', 'cctv_top_north', 'cctv_top_east', 'cctv_top_north_east']
+    assert tuple(zc.DEFAULT_VIEWS) == za.top_views(za.authored_map())
+    # Every floor point inside the walls is seen by at least one TOP (box-top height).
+    half_y = (FIXED_TOP['position_m'][2]-.032)*math.tan(math.radians(FIXED_TOP['fov_y_deg'])/2)
+    half_x = half_y*960/720
+    x0, x1, y0, y1 = wide['bounds_m']
+    for i in range(41):
+        for j in range(41):
+            x, y = x0+(x1-x0)*i/40, y0+(y1-y0)*j/40
+            assert any(abs(x-c['position_m'][0]) <= half_x and abs(y-c['position_m'][1]) <= half_y for c in cameras)
+    zones = [wide['regions']['zone_'+z] for z in 'ABC']
+    assert all(r['half_extents_m'] == [.30, .70] for r in zones)
+    assert all(_inside_bounds(s['center_m'], wide['bounds_m'], .3) for slots in wide['zone_slots'].values() for s in slots)
+    cfg = za.episode('zone_wide', 11, goal=GOAL, extra_boxes={'red': 5, 'cyan': 3, 'yellow': 4, 'green': 3})
+    assert len(cfg['setup_only']['objects']) == 20
+    task = za.actor_task(cfg['static_map'], GOAL)
+    assert 'TOP_NW' in task['cameras'] and 'position_m' not in json.dumps(task)
+
+
+def _inside_bounds(xy, bounds, margin):
+    return bounds[0]+margin <= xy[0] <= bounds[1]-margin and bounds[2]+margin <= xy[1] <= bounds[3]-margin
+
+
+def test_wide_prompt_names_all_four_top_images():
+    cfg = za.episode('zone_wide', 12, goal=GOAL)
+    task = za.actor_task(cfg['static_map'], GOAL)
+    views = za.top_views(cfg['static_map'])
+    frame = {'own': b'o', **{v[2]: v[0].encode() for v in views}}
+    ctx = zc.context('r1', task=task, labels={}, view={}, board={}, own_jobs=[], inbox=[])
+    request = zc.build_claim_request('r1', request_id='q', task=task, frame=frame, ctx=ctx, views=views)
+    assert [i['label'] for i in request['images']] == ['CURRENT OWN RGB', 'TOP_SW', 'TOP_NW', 'TOP_SE', 'TOP_NE']
+    assert ('images: CURRENT OWN RGB, TOP_SW (pickup, south), TOP_NW (pickup, north), TOP_SE (zones, south) '
+            'and TOP_NE (zones, north). box_labels') in ' '.join(request['messages'][0]['content'].split())
+
+
+def test_wide_rgb_detection_matches_the_setup_across_four_tops():
+    goal = {'A': {'red': 2}, 'B': {'cyan': 2}, 'C': {'green': 1, 'yellow': 1}}
+    cfg = za.episode('zone_wide', 12, goal=goal, extra_boxes={'red': 1, 'cyan': 1})
+    tops = {c['name']: (FIX/f"wide-{c['name']}.jpg").read_bytes() for c in cfg['static_map']['top_cameras']}
+    found = detect_all(tops, cfg['static_map'])
+    truth = [(o['kind'], o['position_m'][:2]) for o in cfg['setup_only']['objects'].values()]
+    assert len(found) == len(truth) == 8  # boxes in the overlap are kept once
+    for kind, xy in truth:  # evaluation only: setup is never controller input
+        assert any(d['kind'] == kind and math.dist(d['floor_xy_m'], xy) < .02 for d in found)
+    assert {d['camera'] for d in found} >= {'cctv_top', 'cctv_top_north'}
+    labels = label_pickup(found, cfg['static_map'])
+    assert observe(tops, cfg['static_map'], labels)['pickup_boxes_still_visible'] == sorted(labels)
+
+
+def test_wide_teacher_paths_exist_from_every_spawn_to_every_box_and_slot():
+    from scripts.zone_teacher import BOX_CLEARANCE_M, CARRY_RADIUS_M, GRASP_RADIUS_M, plan_path
+    goal = {'A': {'red': 3}, 'B': {'cyan': 3}, 'C': {'green': 2, 'yellow': 1}}
+    for seed in (11, 12):
+        cfg = za.episode('zone_wide', seed, goal=goal, extra_boxes={'red': 1, 'cyan': 1, 'yellow': 1})
+        static = cfg['static_map']
+        boxes = {oid: o['position_m'][:2] for oid, o in cfg['setup_only']['objects'].items()}
+        slots = [s['center_m'] for zone in static['zone_slots'].values() for s in zone]
+        for oid, (bx, by) in boxes.items():
+            others = [(x, y, BOX_CLEARANCE_M) for k, (x, y) in boxes.items() if k != oid]
+            pregrasp = (bx-GRASP_RADIUS_M-.10, by)  # the teacher's to_box goal
+            for spawn in cfg['setup_only']['spawns'].values():
+                assert plan_path(tuple(spawn[:2]), pregrasp, static['bounds_m'], others + [(bx, by, BOX_CLEARANCE_M)])
+            for sx, sy in slots:
+                assert plan_path(pregrasp, (sx-GRASP_RADIUS_M-.08, sy), static['bounds_m'], others, radius=CARRY_RADIUS_M)
+
+
 def test_goal_validation_and_episode_supply():
     assert za.goal_counts({'B': {'cyan': 1}, 'A': {'red': 2}}) == {'A': {'red': 2}, 'B': {'cyan': 1}}
     for bad in ({}, {'D': {'red': 1}}, {'A': {'blue': 1}}, {'A': {'red': 0}}, {'A': {'red': 4}},
@@ -50,7 +125,7 @@ def test_zone_scene_reuses_the_standard_scene_path_without_touching_bundle_sourc
     from harness.rgb_execution_bundle import source_closure
     from sim.session_scenes import Scene
     from sim.zone_scene import ZoneScene, catalog
-    assert [r['id'] for r in catalog()] == ['zones/zone_open'] and issubclass(ZoneScene, Scene)
+    assert [r['id'] for r in catalog()] == ['zones/zone_open', 'zones/zone_wide'] and issubclass(ZoneScene, Scene)
     scene = ZoneScene({'layout': 'zones/zone_open', 'seed': 11, 'params': {}, 'contact_profile': None, 'map_file': None,
                        'cargo_ids': None, 'robots': {}, 'objects': [], 'builder': None}, '.')
     assert scene.config['goal'] == za.goal_counts(za.DEFAULT_GOAL) and len(scene.inventory) == 5
@@ -144,6 +219,26 @@ def test_need_and_goal_use_the_rgb_view_and_the_referee_uses_poses_only():
              'e': {'kind': 'red', 'xyz': [*at('C')[:2], .08]}}
     ref = zc.referee(goal, static, boxes)
     assert ref['per_zone_exact'] == {'A': True, 'B': True, 'C': False} and not ref['goal_met']
+
+
+
+def test_a_box_released_by_an_active_job_is_not_counted_twice():
+    # ZW1-G5-dyn claim-3: r1 had put red-2 into zone A and was backing off
+    # (job still active); TOP saw it and the host also counted r1's claim.
+    goal = za.goal_counts(GOAL)
+    view = {**VIEW, 'zone_counts_seen': {'A': {'red': 1}, 'B': {'cyan': 1}, 'C': {'green': 1}}}
+    active = {'r1': {'box': 'red-2', 'zone': 'A', 'kind': 'red'}, 'r2': {'box': 'red-3', 'zone': 'C', 'kind': 'red'}}
+    finished = [{'zone': 'B', 'kind': 'cyan'}, {'zone': 'C', 'kind': 'green'}]
+    assert zc.remaining_need(goal, view, active) == {}  # the recorded double count
+    assert zc.remaining_need(goal, view, active, finished) == {'A': {'red': 1}}
+    out = zc.check_claims({'r3': {'box': 'red-1', 'zone': 'A'}}, goal=goal, labels=LABELS, view=view,
+                          active=active, finished=finished)
+    assert out['accepted'] == {'r3': {'box': 'red-1', 'zone': 'A', 'kind': 'red'}}
+    # Before the release is visible the active claim still counts.
+    before = {**view, 'zone_counts_seen': {'A': {}, 'B': {'cyan': 1}, 'C': {'green': 1}}}
+    assert zc.remaining_need(goal, before, active, finished) == {'A': {'red': 1}}
+    # A finished delivery that RGB no longer sees is not re-credited to active jobs.
+    assert zc.remaining_need(goal, before, active, finished + [{'zone': 'A', 'kind': 'red'}]) == {'A': {'red': 1}}
 
 
 def test_claim_reply_validation():

@@ -1,6 +1,6 @@
 """TOP-RGB box detection for the zone benchmark (controller-side perception).
 
-Everything here is computed from the two fixed TOP JPEGs and the authored
+Everything here is computed from the fixed TOP JPEGs and the authored
 camera calibration. No simulator pose is read. Box labels are fixed from the
 first TOP frames by a stated convention: per colour, west to east, then south
 to north ("red-1" is the west-most red box). Later frames re-identify pickup
@@ -67,12 +67,14 @@ def detect_boxes(jpeg, camera, kinds):
 
 
 def detect_all(tops, static_map):
-    """Both TOPs; a box seen twice in the overlap keeps the view nearer its centre."""
+    """All TOPs; a box seen twice in an overlap keeps the view nearer its centre."""
     kinds = static_map['box_kinds']
     rows = []
     for camera in static_map['top_cameras']:
         for row in detect_boxes(tops[camera['name']], camera, kinds):
-            row['_centre_offset'] = abs(row['pixel'][0]-.5)
+            # Same-row views share the image y, so this orders zone_open's
+            # east-west overlap exactly as the former |x - .5| key did.
+            row['_centre_offset'] = math.hypot(row['pixel'][0]-.5, row['pixel'][1]-.5)
             rows.append(row)
     rows.sort(key=lambda r: r['_centre_offset'])
     kept = []

@@ -12,10 +12,7 @@ import copy
 import hashlib
 
 from sim.session_scenes import ROOT, Scene
-from sim.zone_arena import DEFAULT_GOAL, EAST_TOP, MAP_DIR, VARIANTS, build_zone_xml, episode
-
-OBSERVER_POSITION_M = (2.2, -6.6, 4.6)
-OBSERVER_TARGET_M = (2.2, -2., .03)
+from sim.zone_arena import DEFAULT_GOAL, LAYOUTS, MAP_DIR, VARIANTS, build_zone_xml, episode
 
 
 def mirror_box_contact_pairs(xml, bodies):
@@ -71,8 +68,12 @@ class ZoneScene(Scene):
 
     def _verify_camera(self):
         from sim.research_dispatch_arena import FIXED_TOP
-        if self.config['static_map']['top_cameras'] != [FIXED_TOP, EAST_TOP]:
-            raise ValueError('zone scene must keep the approved TOP plus one identical east CCTV')
+        cameras = self.config['static_map']['top_cameras']
+        if cameras != list(LAYOUTS[self.config['variant']]['cameras']) or cameras[0] != FIXED_TOP or any(
+                {k: v for k, v in c.items() if k not in ('name', 'position_m')}
+                != {k: v for k, v in FIXED_TOP.items() if k not in ('name', 'position_m')}
+                or c['position_m'][2] != FIXED_TOP['position_m'][2] for c in cameras):
+            raise ValueError('zone scene must keep the approved TOP plus identical shifted CCTVs')
 
     def transform(self, xml):
         from sim.research_scene_xml import plain_beam_xml
@@ -88,7 +89,7 @@ class ZoneScene(Scene):
 
     def setup(self, world):
         # The standard reset reads one top camera; give it the approved west
-        # TOP, then place the identical east TOP and frame the wider arena.
+        # TOP, then place the identical extra TOPs and frame the wider arena.
         import mujoco
         import numpy as np
         static = self.config['static_map']
@@ -102,7 +103,8 @@ class ZoneScene(Scene):
             top.pos[:] = spec['position_m']
             top.quat[:] = spec['quaternion_wxyz']
             top.fovy[:] = spec['fov_y_deg']
-        position, target = np.array(OBSERVER_POSITION_M), np.array(OBSERVER_TARGET_M)
+        observer = LAYOUTS[self.config['variant']]['observer']
+        position, target = np.array(observer['position_m']), np.array(observer['target_m'])
         forward = target-position; forward /= np.linalg.norm(forward)
         right = np.cross(forward, [0., 0., 1.]); right /= np.linalg.norm(right)
         up = np.cross(right, forward)
