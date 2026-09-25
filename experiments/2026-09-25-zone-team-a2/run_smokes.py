@@ -20,6 +20,9 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+# Shared host (coordinator, 2026-09-25: load 50-90 on 8 cores): one BLAS/OpenMP thread per run.
+THREAD_ENV = {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'VECLIB_MAXIMUM_THREADS': '1',
+              'MKL_NUM_THREADS': '1'}
 MIXED = {'A': {'long_beam': 1}, 'B': {'heavy_crate': 1, 'red': 1}, 'C': {'can': 1, 'green': 1, 'tile': 1}}
 TRI = {'A': {'tri_frame': 1, 'red': 1}, 'C': {'green': 1}}
 # (run id, variant, goal, seed, coordination, extra args)
@@ -45,9 +48,10 @@ def one(out, perception, rid, variant, goal, seed, mode, extra):
            '--coordination', mode, '--mode', 'fixture', '--goal', json.dumps(goal), '--seed', str(seed),
            '--contact-profile', 'cargo_noslip_v1', '--perception-profile', perception, '--record-replay', *extra]
     start_load, t0 = os.getloadavg(), time.monotonic()
-    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env={**os.environ, **THREAD_ENV})
     row = {'run': rid, 'variant': variant, 'goal': goal, 'seed': seed, 'coordination': mode, 'extra': extra,
-           'perception_profile': perception,
+           'perception_profile': perception, 'thread_env': THREAD_ENV,
+           'load_avg_start': [round(v, 2) for v in start_load], 'load_avg_end': [round(v, 2) for v in os.getloadavg()],
            'returncode': proc.returncode, 'wall_s': round(time.monotonic()-t0, 1),
            'load_1min_start': round(start_load[0], 2), 'load_1min_end': round(os.getloadavg()[0], 2),
            'command': cmd[1:]}
