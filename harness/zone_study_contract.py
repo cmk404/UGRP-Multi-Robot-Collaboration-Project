@@ -510,6 +510,37 @@ def _shape_hits(payload: Mapping, spec: Condition, seed: int | None) -> list[str
     return hits
 
 
+ROBOT_FACING = {
+    'static_map': 'the static map projection and its schematic, re-sent on every call',
+    'order_sheet': 'the immutable order sheet built from the scenario config',
+    'own_rgb_refs': "this robot's own wrist fisheye frames (own-<robot>-<index>)",
+    'own_command_history': "this robot's own issued commands and its own command states",
+    'self_belief': 'a belief built only from the inputs above',
+    'inbox': 'the messages this condition actually delivered to this robot',
+    'channel': "the condition's own send/receive rule",
+}
+EVALUATION_ONLY = {
+    'cameras': 'TOP/cctv frames, their calibration and anything derived from them; the sim-only nav_cam',
+    'ground_truth': 'object and robot poses, measured joints, contacts, forces, simulator identifiers, weld',
+    'judgements': 'teacher receipts, grasp/placement/delivery confirmations, completion and success flags',
+    'peer_state': "other robots' cameras, raw commands, claims, busy state, host boards, global progress",
+    'schedule': 'hidden event schedules and injected failures',
+    'metrics': 'referee counts, scores, makespan and every evaluation metric',
+}
+
+
+def boundary_manifest() -> dict:
+    """The public/private schema as data: what a robot may see and what stays in evaluation."""
+    return {'contract_version': CONTRACT_VERSION, 'payload_schema': PAYLOAD_SCHEMA,
+            'robot_facing': dict(ROBOT_FACING),
+            'input_allowlist': {name: sorted(spec.input_allowlist) for name, spec in CONDITIONS.items()},
+            'evaluation_only': dict(EVALUATION_ONLY), 'forbidden_keys': sorted(FORBIDDEN_KEYS),
+            'forbidden_key_substrings': list(FORBIDDEN_KEY_SUBSTRINGS),
+            'forbidden_value_substrings': list(FORBIDDEN_VALUE_SUBSTRINGS),
+            'own_rgb_ref_pattern': OWN_RGB_REF.pattern, 'map_schematic_ref_pattern': MAP_SCHEMATIC_REF.pattern,
+            'own_command_states': list(LOCAL_STATES), 'belief_keys': list(BELIEF_KEYS)}
+
+
 def payload_violations(payload: object, *, seed: int | None = None) -> list[str]:
     """Every contract violation of a robot-facing per-call payload (empty list = clean)."""
     if not isinstance(payload, Mapping):

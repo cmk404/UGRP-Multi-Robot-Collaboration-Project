@@ -174,6 +174,22 @@ def test_message_envelope_keeps_the_meaning_in_the_body():
 # ---------------------------------------------------------------------------
 # Robot-facing boundary
 
+def test_boundary_manifest_declares_the_public_private_schema():
+    manifest = c.boundary_manifest()
+    assert manifest['contract_version'] == c.CONTRACT_VERSION
+    assert set(manifest['input_allowlist']) == set(c.CONDITIONS)
+    for name, spec in c.CONDITIONS.items():
+        assert manifest['input_allowlist'][name] == sorted(spec.input_allowlist)
+    assert set(manifest['robot_facing']) == {'static_map', 'order_sheet', 'own_rgb_refs',
+                                            'own_command_history', 'self_belief', 'inbox', 'channel'}
+    assert set(manifest['evaluation_only']) == {'cameras', 'ground_truth', 'judgements', 'peer_state',
+                                                'schedule', 'metrics'}
+    assert all(manifest['evaluation_only'].values()) and len(manifest['forbidden_keys']) > 50
+    assert manifest['own_command_states'] == list(c.LOCAL_STATES)
+    # nothing a robot may see is also declared evaluation-only
+    assert not set(manifest['robot_facing']) & set(manifest['forbidden_keys'])
+
+
 def test_a_clean_payload_passes_for_every_main_condition():
     for name in c.MAIN_CONDITIONS:
         assert c.validate_robot_payload(_payload(name), seed=11)
