@@ -72,7 +72,7 @@ def detect_all(tops, static_map):
     rows = []
     for camera in static_map['top_cameras']:
         for row in detect_boxes(tops[camera['name']], camera, kinds):
-            # Same-row views share the image y, so this orders zone_open's
+            # Same-row views share the image y, so this orders the retired zone_open's
             # east-west overlap exactly as the former |x - .5| key did.
             row['_centre_offset'] = math.hypot(row['pixel'][0]-.5, row['pixel'][1]-.5)
             rows.append(row)

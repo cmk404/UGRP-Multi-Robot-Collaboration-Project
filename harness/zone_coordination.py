@@ -66,9 +66,11 @@ Reply JSON only: {{"request_id": copied, "claim": {{"box": label or null,
 peers"}}. reason/message under 240 characters.'''
 
 
-# zone_open TOP views; other maps pass sim.zone_arena.top_views(static_map).
-DEFAULT_VIEWS = (('cctv_top', 'TOP_WEST', 'top_west', 'top-west', 'pickup'),
-                 ('cctv_top_east', 'TOP_EAST', 'top_east', 'top-east', 'zones'))
+# TOP views of the default map (zone_wide); runs pass sim.zone_arena.top_views(static_map).
+DEFAULT_VIEWS = (('cctv_top', 'TOP_SW', 'top_sw', 'top-sw', 'pickup, south'),
+                 ('cctv_top_north', 'TOP_NW', 'top_nw', 'top-nw', 'pickup, north'),
+                 ('cctv_top_east', 'TOP_SE', 'top_se', 'top-se', 'zones, south'),
+                 ('cctv_top_north_east', 'TOP_NE', 'top_ne', 'top-ne', 'zones, north'))
 
 
 def _images(frame, views):
@@ -102,8 +104,12 @@ def context(rid, *, task, labels, view, board, own_jobs, inbox, extra=None):
 
 
 def _system(template, rid, task, views):
-    return template.format(rid=rid, instruction=task['instruction'],
+    text = template.format(rid=rid, instruction=task['instruction'],
                            goal=json.dumps(task['goal'], sort_keys=True), images=_image_text(views))
+    if task.get('static_map_text'):
+        # Maps with interior walls: the authored walls and doors (static map).
+        text += '\nStatic map: ' + task['static_map_text']
+    return text
 
 
 def build_plan_request(rid, *, request_id, task, frame, agreement, ctx, views=DEFAULT_VIEWS):
