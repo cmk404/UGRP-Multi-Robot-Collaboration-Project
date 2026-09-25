@@ -21,14 +21,18 @@ class CargoZoneScene(ZoneScene):
     @classmethod
     def from_cargo_config(cls, variant, seed, *, cargo, goal=None, extra_boxes=None,
                           contact_profile='local_contact_fine', base_dir=ROOT):
+        from sim.zone_cargo_contact import CARGO_PROFILES, base_profile
         if variant not in VARIANTS:
             raise ValueError('unknown zone arena variant')
+        cargo_profile = contact_profile if contact_profile in CARGO_PROFILES else None
+        contact_profile = base_profile(contact_profile) if contact_profile is not None else None
         if contact_profile is not None:
             from sim.dispatch_contact_profile import PROFILES
             if contact_profile not in PROFILES:
-                raise ValueError(f'contact profile: choose {PROFILES}')
+                raise ValueError(f'contact profile: choose {PROFILES} or {tuple(CARGO_PROFILES)}')
         selected = {'layout': 'zones/' + variant, 'seed': seed, 'map_file': None, 'cargo_ids': None,
                     'robots': {}, 'objects': [], 'builder': None, 'contact_profile': contact_profile,
+                    'cargo_contact_profile': cargo_profile,
                     'params': {'goal': goal or DEFAULT_GOAL, 'extra_boxes': extra_boxes or {},
                                'cargo_set': {'schema': CARGO_SET_SCHEMA, 'items': list(cargo or [])}}}
         return cls(selected, base_dir)
@@ -45,11 +49,16 @@ class CargoZoneScene(ZoneScene):
 
     def transform(self, xml):
         xml = super().transform(xml)
-        if not self.cargo:
-            return xml
-        xml, record = add_cargo_xml(xml, self.cargo, mirror_pairs=bool(self.scene['contact_profile']))
-        self.manifest['scene_xml_sha256'] = hashlib.sha256(xml.encode()).hexdigest()
-        self.manifest['cargo'] = record
+        if self.cargo:
+            xml, record = add_cargo_xml(xml, self.cargo, mirror_pairs=bool(self.scene['contact_profile']))
+            self.manifest['cargo'] = record
+        profile = self.scene.get('cargo_contact_profile')
+        if profile:
+            from sim.zone_cargo_contact import apply, profile_record
+            xml = apply(xml, profile)
+            self.manifest['cargo_contact_profile'] = profile_record(profile)
+        if self.cargo or profile:
+            self.manifest['scene_xml_sha256'] = hashlib.sha256(xml.encode()).hexdigest()
         return xml
 
     def setup(self, world):
