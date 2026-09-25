@@ -237,13 +237,19 @@ def robot_view_at_door(run_dir, target, door_xy):
         for rid in ROBOTS:
             cam = model.camera(rid + '__robot_cam').id
             x, y = (float(v) for v in data.cam_xpos[cam][:2])
-            heading = float(-data.cam_xmat[cam].reshape(3, 3)[:, 2][0])
+            forward = -data.cam_xmat[cam].reshape(3, 3)[:, 2]
+            heading = float(forward[0])
+            # Folded arm (driving pose): camera ~0.21 m high, ~22 deg down.
+            if float(data.cam_xpos[cam][2]) < .19 or not -.5 < float(forward[2]) < -.25:
+                continue
             # West of the door, on its axis, facing east (towards the opening).
-            if not (door_xy[0]-.8 <= x <= door_xy[0]-.2 and abs(y-door_xy[1]) <= .25 and heading > .9):
+            if not (door_xy[0]-.8 <= x <= door_xy[0]-.2 and abs(y-door_xy[1]) <= .35 and heading > .7):
                 continue
             d = abs(x-(door_xy[0]-.45)) + abs(y-door_xy[1])
             if best is None or d < best[0]:
                 best = (d, index, rid)
+    if best is None:
+        return None
     _, index, rid = best
     data.qpos[:] = states['qpos'][index]
     mujoco.mj_forward(model, data)
@@ -291,9 +297,12 @@ def main():
             render_top_down(sample, render)
         maps[variant] = {'schematic_png': png.name, 'render_png': render.name if sample else None}
     door = za.authored_map('zone_wide_door')['passages'][0]['center_m']
-    door_run = next(args.output/r['run'] for r in rows if r.get('variant') == 'zone_wide_door')
-    maps['robot_view_at_door'] = robot_view_at_door(door_run, args.record/'robot-rgb-at-door.png', door)
-    maps['robot_view_at_door']['png'] = 'robot-rgb-at-door.png'
+    for r in rows:
+        if r.get('variant') == 'zone_wide_door' and (args.output/r['run']/'replay').is_dir():
+            view = robot_view_at_door(args.output/r['run'], args.record/'robot-rgb-at-door.png', door)
+            if view:
+                maps['robot_view_at_door'] = {**view, 'run': r['run'], 'png': 'robot-rgb-at-door.png'}
+                break
     videos = {}
     for run in args.videos:
         target = args.media/f'{run}.mp4'

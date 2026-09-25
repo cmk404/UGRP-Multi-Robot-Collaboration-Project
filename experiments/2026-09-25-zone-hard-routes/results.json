@@ -1,0 +1,4065 @@
+{
+  "experiment": "2026-09-25-zone-hard-routes",
+  "branch": "claude/zone-hard-routes",
+  "claim_scope": "teacher-executor + scripted fixture (LLM 0 calls): route feasibility and traffic on new maps; not evidence of LLM coordination, not an RGB-skill result",
+  "sources": {
+    "retire_zone_open": "8935ed9",
+    "routes_and_rules": "c6cd334",
+    "matrix_driver": "dc27695",
+    "route_drive_limit_240s": "3183650",
+    "door_and_two_doors_runs_source": "dc27695",
+    "corridor_runs_source": "3183650",
+    "wide_baseline_source": "dc27695",
+    "note": "dc27695 -> 3183650 changes only the drive-phase limit on maps with interior walls (120 -> 240 s); no door/two_doors run reached it (teacher_path_blocked = 0 in all), so their behaviour is identical under 3183650"
+  },
+  "conditions": {
+    "mode": "fixture (scripted protocol replies, LLM 0 calls)",
+    "sim": "synchronous",
+    "contact_profile": "local_contact_fine",
+    "weld": "off",
+    "record_replay": true,
+    "goals": {
+      "G5": {
+        "goal": {
+          "A": {
+            "red": 2
+          },
+          "B": {
+            "cyan": 1
+          },
+          "C": {
+            "green": 1,
+            "red": 1
+          }
+        },
+        "extra": {}
+      },
+      "G8": {
+        "goal": {
+          "A": {
+            "red": 2
+          },
+          "B": {
+            "cyan": 2
+          },
+          "C": {
+            "green": 1,
+            "yellow": 1
+          }
+        },
+        "extra": {
+          "red": 1,
+          "cyan": 1
+        }
+      }
+    },
+    "coordination": [
+      "plan_first",
+      "dynamic",
+      "independent"
+    ],
+    "seeds": {
+      "zone_wide_door": [
+        11,
+        12,
+        13
+      ],
+      "zone_wide_two_doors": [
+        11,
+        12
+      ],
+      "zone_wide_corridor": [
+        11,
+        12
+      ],
+      "zone_wide (baseline)": [
+        11,
+        12,
+        13
+      ]
+    }
+  },
+  "raw_root": "/Users/changmin/projects/ugrp-worktrees/zone-hard-routes/outputs/zone-hard-routes-20260925 (local only, gitignored)",
+  "v1_identity_sim": {
+    "run": "zone_wide G8 dynamic seed 12 fixture",
+    "sha256": {
+      "teacher-events.json": {
+        "origin_main_3cbf4e4": "ae804c28c0d2ec67ff88a5a9e47bf1639862e79f9d32224d7830304517ff0874",
+        "branch_c6cd334": "ae804c28c0d2ec67ff88a5a9e47bf1639862e79f9d32224d7830304517ff0874"
+      },
+      "scene.xml": {
+        "origin_main_3cbf4e4": "86eb2f49299b46212917e9b97b47faaf86ae6b410675e1f808bb15d602c0ca29",
+        "branch_c6cd334": "86eb2f49299b46212917e9b97b47faaf86ae6b410675e1f808bb15d602c0ca29"
+      },
+      "box-labels.json": {
+        "origin_main_3cbf4e4": "a0b6f55c681644daee7dc3917c08f12e0ca54d33afe1af891d1ff84591af3c3a",
+        "branch_c6cd334": "a0b6f55c681644daee7dc3917c08f12e0ca54d33afe1af891d1ff84591af3c3a"
+      },
+      "replay/states.npz": {
+        "origin_main_3cbf4e4": "607eb76fa7290ad0839a06cdca00c2a8a116edde9471521396ee3a978a9355f8",
+        "branch_c6cd334": "607eb76fa7290ad0839a06cdca00c2a8a116edde9471521396ee3a978a9355f8"
+      }
+    },
+    "identical": true,
+    "teacher_events_matches_ZC2_gate2_dynamic_nominal": true
+  },
+  "v1_identity_tests": {
+    "planner_digest": "ee5961d94ad6c143d50cf3ec2fee7969440215d9527570a2b2f987307d88f455",
+    "map_sha256": {
+      "zone_open": "2057e40536f0f71077ff362ee127b36c6a4a486fca409d92cfb348a3a8c1c1e0",
+      "zone_wide": "6b7b9eb671e5114c78b52e1ee0a4cc02288038aa04edfe37ab4f908bbac6f852"
+    }
+  },
+  "map_sha256": {
+    "zone_wide_door": "a4d2c03de5d0085c2d0ea04d631ec4e9dd95de6dffbb8d44c09870e2ec921903",
+    "zone_wide_two_doors": "04b6baf6e457e65e490f921ad2f82aa2778726bf6e7d547fdb5158e55b5b84d2",
+    "zone_wide_corridor": "f7b62732a6db80b97f51cb792082b702dfbbade20de7c81a7795611794919c32"
+  },
+  "aggregates_routes": {
+    "zone_wide_corridor|G5|dynamic": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 335.5,
+      "makespan_sim_s": [
+        364.0,
+        307.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 2,
+      "passage_standoffs": 1,
+      "passage_wait_s": 37.3,
+      "drive_wait_near_passage_s": 323.7,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_corridor|G5|independent": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 1,
+      "goal_met_rgb": 1,
+      "makespan_sim_s_mean": 494.5,
+      "makespan_sim_s": [
+        394.5,
+        594.5
+      ],
+      "teacher_path_blocked": 2,
+      "generic_yields": 2,
+      "passage_standoffs": 1,
+      "passage_wait_s": 24.0,
+      "drive_wait_near_passage_s": 741.5,
+      "robot_robot_contact_s": 148.74,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 3
+    },
+    "zone_wide_corridor|G5|plan_first": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 332.8,
+      "makespan_sim_s": [
+        356.5,
+        309.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 2,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 284.9,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_corridor|G8|dynamic": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 395.5,
+      "makespan_sim_s": [
+        437.5,
+        353.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 5,
+      "passage_standoffs": 0,
+      "passage_wait_s": 40.6,
+      "drive_wait_near_passage_s": 476.4,
+      "robot_robot_contact_s": 0.2,
+      "robot_wall_contact_episodes": 1,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_corridor|G8|independent": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 0,
+      "goal_met_rgb": 0,
+      "makespan_sim_s_mean": 506.0,
+      "makespan_sim_s": [
+        518.5,
+        493.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 6,
+      "passage_standoffs": 1,
+      "passage_wait_s": 44.8,
+      "drive_wait_near_passage_s": 421.0,
+      "robot_robot_contact_s": 0.3,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 10
+    },
+    "zone_wide_corridor|G8|plan_first": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 368.0,
+      "makespan_sim_s": [
+        388.0,
+        348.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 345.2,
+      "robot_robot_contact_s": 0.2,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_door|G5|dynamic": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 220.2,
+      "makespan_sim_s": [
+        258.0,
+        193.0,
+        209.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_wait_s": 21.2,
+      "drive_wait_near_passage_s": 186.4,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_door|G5|independent": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 1,
+      "goal_met_rgb": 1,
+      "makespan_sim_s_mean": 280.7,
+      "makespan_sim_s": [
+        328.0,
+        218.5,
+        295.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_wait_s": 16.3,
+      "drive_wait_near_passage_s": 165.4,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 9
+    },
+    "zone_wide_door|G5|plan_first": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 216.7,
+      "makespan_sim_s": [
+        258.0,
+        182.5,
+        209.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_wait_s": 24.7,
+      "drive_wait_near_passage_s": 201.8,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_door|G8|dynamic": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 252.0,
+      "makespan_sim_s": [
+        252.0,
+        233.5,
+        270.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 2,
+      "passage_wait_s": 99.9,
+      "drive_wait_near_passage_s": 288.7,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_door|G8|independent": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 0,
+      "goal_met_rgb": 0,
+      "makespan_sim_s_mean": 335.0,
+      "makespan_sim_s": [
+        377.0,
+        319.5,
+        308.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 1,
+      "passage_wait_s": 28.5,
+      "drive_wait_near_passage_s": 240.9,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 9
+    },
+    "zone_wide_door|G8|plan_first": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 230.8,
+      "makespan_sim_s": [
+        250.0,
+        209.5,
+        233.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_wait_s": 3.8,
+      "drive_wait_near_passage_s": 239.7,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_two_doors|G5|dynamic": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 187.5,
+      "makespan_sim_s": [
+        183.0,
+        192.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 73.7,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_two_doors|G5|independent": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 1,
+      "goal_met_rgb": 1,
+      "makespan_sim_s_mean": 247.0,
+      "makespan_sim_s": [
+        281.0,
+        213.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 3.4,
+      "drive_wait_near_passage_s": 51.8,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 3
+    },
+    "zone_wide_two_doors|G5|plan_first": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 211.5,
+      "makespan_sim_s": [
+        205.0,
+        218.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 1.8,
+      "drive_wait_near_passage_s": 106.1,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_two_doors|G8|dynamic": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 211.8,
+      "makespan_sim_s": [
+        204.0,
+        219.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 7.2,
+      "drive_wait_near_passage_s": 104.5,
+      "robot_robot_contact_s": 16.68,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide_two_doors|G8|independent": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 0,
+      "goal_met_rgb": 0,
+      "makespan_sim_s_mean": 320.5,
+      "makespan_sim_s": [
+        325.0,
+        316.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 1.5,
+      "drive_wait_near_passage_s": 109.0,
+      "robot_robot_contact_s": 16.98,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 3
+    },
+    "zone_wide_two_doors|G8|plan_first": {
+      "runs": 2,
+      "seeds": [
+        11,
+        12
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 194.0,
+      "makespan_sim_s": [
+        205.5,
+        182.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 76.5,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 1,
+      "box_taken_by_peer": 0
+    }
+  },
+  "aggregates_zone_wide_baseline": {
+    "zone_wide|G5|dynamic": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 150.2,
+      "makespan_sim_s": [
+        153.0,
+        162.5,
+        135.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide|G5|independent": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 2,
+      "goal_met_rgb": 2,
+      "makespan_sim_s_mean": 190.7,
+      "makespan_sim_s": [
+        179.0,
+        193.0,
+        200.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 5
+    },
+    "zone_wide|G5|plan_first": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 154.8,
+      "makespan_sim_s": [
+        169.5,
+        147.5,
+        147.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 1.11,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide|G8|dynamic": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 152.5,
+      "makespan_sim_s": [
+        163.5,
+        154.5,
+        139.5
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    },
+    "zone_wide|G8|independent": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 0,
+      "goal_met_rgb": 0,
+      "makespan_sim_s_mean": 258.7,
+      "makespan_sim_s": [
+        250.0,
+        310.0,
+        216.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 37.18,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 8
+    },
+    "zone_wide|G8|plan_first": {
+      "runs": 3,
+      "seeds": [
+        11,
+        12,
+        13
+      ],
+      "goal_met_referee": 3,
+      "goal_met_rgb": 3,
+      "makespan_sim_s_mean": 156.2,
+      "makespan_sim_s": [
+        165.5,
+        153.0,
+        150.0
+      ],
+      "teacher_path_blocked": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_wait_s": 0,
+      "drive_wait_near_passage_s": 0.0,
+      "robot_robot_contact_s": 0.0,
+      "robot_wall_contact_episodes": 0,
+      "box_taken_by_peer": 0
+    }
+  },
+  "runs": [
+    {
+      "run": "corr-G5-dynamic-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 874.9,
+      "load_1min_start": 15.29,
+      "load_1min_end": 11.81,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 364.0,
+      "control_end_sim_s": 365.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 7.1,
+      "door_wait_by_passage_s": {
+        "corridor_1": 7.1
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "047209594b9f0a770832f65a477dfc1ccc67f962ae8721f389b0d617e21385fb",
+        "teacher-events.json": "66520512de372946f43cc1cf22b1a5408669210953f069b631327b0dc7f57fa7",
+        "scene.xml": "3ab29e3bd98071eece3a97f680e592a8ceffaa60fd3030e24b603a0d33cf732a",
+        "replay_manifest": "163f79c16bc5279a24837a5858969da56fa8c8d39fe2bfc5f92a7fc802efb621"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 343.8,
+      "drive_wait_near_passage_s": 191.9,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G5-dynamic-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 884.6,
+      "load_1min_start": 6.25,
+      "load_1min_end": 5.0,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 307.0,
+      "control_end_sim_s": 308.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 30.2,
+      "door_wait_by_passage_s": {
+        "corridor_1": 30.2
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "622daeda45c91c85b71cfef6ef1395c03715d416d7b0af1828c80dbc19da4f6b",
+        "teacher-events.json": "4ec0bfb06090717938322b78c70f42f04807fc12c7b1190e4fe0d3c5162493be",
+        "scene.xml": "5958f6e816beb6647756e210ea282435e61e95c1580a6d56ddd131b2e3f410dc",
+        "replay_manifest": "6e72e1ce0cfeccc806eb6552e11a80cadd9ccb7abc25f429c4b849390d6053c7"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 299.1,
+      "drive_wait_near_passage_s": 131.8,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G5-independent-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 1409.9,
+      "load_1min_start": 6.41,
+      "load_1min_end": 6.71,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 394.5,
+      "control_end_sim_s": 396.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 3,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "d2d8e4860ecdbe75c140e0e5f932109815935ab578a922389b11911cedf670c7",
+        "teacher-events.json": "ff6def2ac6092aa9219626cbb4d6d82faeb567dab5dd1dc434b418cbe157ea92",
+        "scene.xml": "3ab29e3bd98071eece3a97f680e592a8ceffaa60fd3030e24b603a0d33cf732a",
+        "replay_manifest": "a427c042a9bc02ddda814cc2dcfc79a643cf57598bf0b3c510a87725ae0fc6a9"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 351.0,
+      "drive_wait_near_passage_s": 197.4,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G5-independent-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 854.7,
+      "load_1min_start": 6.71,
+      "load_1min_end": 4.66,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 594.5,
+      "control_end_sim_s": 596.3,
+      "llm_calls": 0,
+      "jobs_placed": 4,
+      "teacher_path_blocked": 2,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 24.0,
+      "door_wait_by_passage_s": {
+        "corridor_1": 24.0
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "7e633b87efca3df3d3a001a8894051d5c990c75f70f7dc77c2c1e0827230df93",
+        "teacher-events.json": "ab3df5bd845315b0c57b0c2e46ea70c2d3a178d881abd020aff194b1cd188cf9",
+        "scene.xml": "5958f6e816beb6647756e210ea282435e61e95c1580a6d56ddd131b2e3f410dc",
+        "replay_manifest": "afa3462f2ca3914963989d644421c81db9e87a18b9fcfd55340bcfad7d54bbbf"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 57,
+          "seconds": 147.63
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 668.3,
+      "drive_wait_near_passage_s": 544.1,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G5-plan_first-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 784.5,
+      "load_1min_start": 15.29,
+      "load_1min_end": 6.41,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 356.5,
+      "control_end_sim_s": 358.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "fb27c79228dd23a435fdf845e11abec003afa76b01551c800cb576731aea11cf",
+        "teacher-events.json": "b3c38e347ebd26ee600c89f3660352f87eedb8b40d31ba318cbbac06769f26fe",
+        "scene.xml": "3ab29e3bd98071eece3a97f680e592a8ceffaa60fd3030e24b603a0d33cf732a",
+        "replay_manifest": "3bb4df31568a10d994027733f98c75203e72a183a367c1af8ac384af44c6978b"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 320.9,
+      "drive_wait_near_passage_s": 183.2,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G5-plan_first-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 855.4,
+      "load_1min_start": 11.81,
+      "load_1min_end": 6.25,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 309.0,
+      "control_end_sim_s": 310.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "3dbd517e80b934586b15de35ca9f7236902640e4d1554ae686578e057d7a0789",
+        "teacher-events.json": "d31d97128343a495686462375eba1baa46d1839f52a7be42f10110db515fc4ae",
+        "scene.xml": "5958f6e816beb6647756e210ea282435e61e95c1580a6d56ddd131b2e3f410dc",
+        "replay_manifest": "335fbe0475ecf6026677b8b83999b4b8628801e700cd24a69c610f6f35de434d"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 236.0,
+      "drive_wait_near_passage_s": 101.7,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-dynamic-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 1001.9,
+      "load_1min_start": 4.66,
+      "load_1min_end": 3.46,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 437.5,
+      "control_end_sim_s": 439.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 36.5,
+      "door_wait_by_passage_s": {
+        "corridor_1": 36.5
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "78a9bb39b52e09ff5bac32dd764351181369f0d2fc0c0c71898363c67ccbfcd4",
+        "teacher-events.json": "66d02a4319a5fb9de668b4068a5ce956661a897343e8c38330750bba973cadae",
+        "scene.xml": "99dc76e005c6b9e56a9c191e1c5611c48d0dc7c7fcabc97a466f7b1b2c1708a8",
+        "replay_manifest": "18501f92f5a996b350ce2265f647d92789c13c7673e12c784bd9bfceb8fb72a5"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 2,
+          "seconds": 0.2
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 491.4,
+      "drive_wait_near_passage_s": 300.7,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-dynamic-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 891.9,
+      "load_1min_start": 5.2,
+      "load_1min_end": 10.19,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 353.5,
+      "control_end_sim_s": 355.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 2,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 4.1,
+      "door_wait_by_passage_s": {
+        "corridor_1": 4.1
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "8e39f4186992d45ea7ff6fe9a1e93cd12462d104242af3ee51ec766eb775e717",
+        "teacher-events.json": "7814da9ac46c620ac3474240e9143c224b9cfe636e0446aee7f0b80fcfd5c092",
+        "scene.xml": "223651662f2ee0d65eb764befd459e0ffebd74f06c2dd7198331036801bf292c",
+        "replay_manifest": "9987af0caf6e2a59df130f6a5e933300c19414a99d32f59550f91356d13d18f2"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 1,
+          "seconds": 0.1
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 380.6,
+      "drive_wait_near_passage_s": 175.7,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-independent-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 934.8,
+      "load_1min_start": 4.03,
+      "load_1min_end": 5.2,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 518.5,
+      "control_end_sim_s": 520.3,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 4,
+      "dropped_in_transit": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "be07be3f87330b75a18f92a7720f2d766728f8352128f15004e2d401aa2b75f3",
+        "teacher-events.json": "95c2e429b8c7ed5008fd55df18c0f5649d7fbda714557c3fe1413de1748b3c93",
+        "scene.xml": "99dc76e005c6b9e56a9c191e1c5611c48d0dc7c7fcabc97a466f7b1b2c1708a8",
+        "replay_manifest": "466f97e0d5278964a98696082ca3687686a1b4bb7bb4708621176ce4d35a9e78"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 0.3
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 448.7,
+      "drive_wait_near_passage_s": 215.1,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-independent-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 968.2,
+      "load_1min_start": 5.1,
+      "load_1min_end": 5.79,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 493.5,
+      "control_end_sim_s": 495.3,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 6,
+      "dropped_in_transit": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 44.8,
+      "door_wait_by_passage_s": {
+        "corridor_1": 44.8
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "64aab3c7a1d8a6d7d5c1f489dfccb6bd8d2bf236559c024e8e8144b51a4f908a",
+        "teacher-events.json": "722bd6c1b524c948e5c0b638b3f4d8778647531dc6e0a4d2818db94e7eeb9e0c",
+        "scene.xml": "223651662f2ee0d65eb764befd459e0ffebd74f06c2dd7198331036801bf292c",
+        "replay_manifest": "4c68fdb30697686603e29384f0b4c44be07cad7b14a4805bf713930673db1f3a"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 425.4,
+      "drive_wait_near_passage_s": 205.9,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-plan_first-s11",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 945.1,
+      "load_1min_start": 5.0,
+      "load_1min_end": 4.03,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 388.0,
+      "control_end_sim_s": 389.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 2,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "74c7f466c1050ad2ed2272e8bb0d5adbd013a0b2e5faf4865219aa7dd2e68226",
+        "teacher-events.json": "2e148fdf90ce54543099b1d3c7bd85f924fa179a1cbdae3a74403481ad9256e3",
+        "scene.xml": "99dc76e005c6b9e56a9c191e1c5611c48d0dc7c7fcabc97a466f7b1b2c1708a8",
+        "replay_manifest": "db5e1953c423bbb41d962dad120e8d3005bdf1063ce3f17a5b726a83dec152d8"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 2,
+          "seconds": 0.2
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 401.3,
+      "drive_wait_near_passage_s": 232.1,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "corr-G8-plan_first-s12",
+      "variant": "zone_wide_corridor",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 791.0,
+      "load_1min_start": 3.46,
+      "load_1min_end": 5.1,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 348.0,
+      "control_end_sim_s": 349.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "70d09b190f059b49673b4eeb47fa798cdb172dcc5bf7960b1f46478d934a8971",
+        "teacher-events.json": "49f20e2dd24125590604b84d67d550fae9daa39771f693b010160c2df5a067af",
+        "scene.xml": "223651662f2ee0d65eb764befd459e0ffebd74f06c2dd7198331036801bf292c",
+        "replay_manifest": "0fe103e8c8af4bc07eb955c234382cac8f4f16106801f7860ef726821d355d66"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 342.9,
+      "drive_wait_near_passage_s": 113.1,
+      "source_sha": "318365095f3d6c9b2627e7a1730d8d14aa1855c3"
+    },
+    {
+      "run": "door-G5-dynamic-s11",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 302.4,
+      "load_1min_start": 2.85,
+      "load_1min_end": 6.26,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 258.0,
+      "control_end_sim_s": 259.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 16.3,
+      "door_wait_by_passage_s": {
+        "door_1": 16.3
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "2164e45d53995677b1e53701e0449bc85fc54bed24386c585d08757f9fc264df",
+        "teacher-events.json": "13341bd4d5208f808fc8f9019b3518872d84895d3fb4ff27984eb920f0159dfa",
+        "scene.xml": "cde9b4ee7748f4d5d387a1d29a8fc6c3cb1261c9e75fed5fe36d89c8d755dab9",
+        "replay_manifest": "a31619bd767aec00520e988e772f322b8359487d74e9374cd333e194e42b0db3"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 235.8,
+      "drive_wait_near_passage_s": 94.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-dynamic-s12",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 237.6,
+      "load_1min_start": 6.26,
+      "load_1min_end": 8.39,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 193.0,
+      "control_end_sim_s": 194.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 4.9,
+      "door_wait_by_passage_s": {
+        "door_1": 4.9
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "f92e698e35f604c9a5dcff48409699c46c9ae7523c3c177f51de7b6d35fe42a6",
+        "teacher-events.json": "41886af6bf3e53a8e7a396d1592f38bddcbf1951391940112d7b67cf74ea5c14",
+        "scene.xml": "0e8fad1f1a737cf907e9ef2f87fdff9fa6338d64fc14bfa008196bbba1617783",
+        "replay_manifest": "10c206038d83e833a167536323cb518b6f544e2e4dcccfef50bf42ba64c6aa3c"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 104.2,
+      "drive_wait_near_passage_s": 28.1,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-dynamic-s13",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "dynamic",
+      "wall_s": 309.0,
+      "load_1min_start": 8.39,
+      "load_1min_end": 6.71,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 209.5,
+      "control_end_sim_s": 211.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "ed1dc98007199a00e7adc0fb9a4de0a71a0094f2e7b02c004b43de16e2309936",
+        "teacher-events.json": "7f96a45a046dd9becb279287239876f1627cebe692e15e21e196929551673eb7",
+        "scene.xml": "c240e3722fc953acfa4e9e6bb85ee2f281aa26301bdb9433da6d1284f906cd81",
+        "replay_manifest": "18c518e499bf54865ffad259d9f46e3cc44d26b6e750fef509fc33323212d437"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 179.8,
+      "drive_wait_near_passage_s": 64.3,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-independent-s11",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 279.9,
+      "load_1min_start": 2.85,
+      "load_1min_end": 6.22,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 328.0,
+      "control_end_sim_s": 329.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 3,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 16.3,
+      "door_wait_by_passage_s": {
+        "door_1": 16.3
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "51971623c6bca45677a9d7ea220e4aff930edf2f576bd4a270e7acb07c7bc611",
+        "teacher-events.json": "3bd23d45c46f995b81a428412e9ddb4a33cbd0ccc3e15234392b5ec92c36e62e",
+        "scene.xml": "cde9b4ee7748f4d5d387a1d29a8fc6c3cb1261c9e75fed5fe36d89c8d755dab9",
+        "replay_manifest": "fc28abcdfcd0fdb5de7446f7f39370b1cc2d4fd653e8bf4e629d28c65c698ca4"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 181.8,
+      "drive_wait_near_passage_s": 78.3,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-independent-s12",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 253.7,
+      "load_1min_start": 6.26,
+      "load_1min_end": 7.85,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 218.5,
+      "control_end_sim_s": 220.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 2,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "46931d896eed6b4dfcc74ce3f86e9bef30565c9d23ee7645b0da9ff57974833a",
+        "teacher-events.json": "7626167ad437e87d6b01fa7fb959e6d0b7c7568c4ebecfc7e636b3164d3eea3b",
+        "scene.xml": "0e8fad1f1a737cf907e9ef2f87fdff9fa6338d64fc14bfa008196bbba1617783",
+        "replay_manifest": "b16cf26b1c9bafbbc80971e27899c895b5554cd38fff4ad6fdbab381e03bb14d"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 104.3,
+      "drive_wait_near_passage_s": 24.1,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-independent-s13",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "independent",
+      "wall_s": 343.1,
+      "load_1min_start": 7.85,
+      "load_1min_end": 6.26,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 295.5,
+      "control_end_sim_s": 297.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 4,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "fc6918144fc6071a4f8c855cddc0e6cd0ef0bb5fbd45e2441669f36610251a08",
+        "teacher-events.json": "a3772dcf1d5d377a6f750271f13a3504b3af0529d9d96b7824a4872c93a729fb",
+        "scene.xml": "c240e3722fc953acfa4e9e6bb85ee2f281aa26301bdb9433da6d1284f906cd81",
+        "replay_manifest": "69ada1064cf3f40ebe927d0bb2ab0cab3a19ccd88c2c1fc38345ec03444440eb"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 160.9,
+      "drive_wait_near_passage_s": 63.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-plan_first-s11",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 301.5,
+      "load_1min_start": 2.85,
+      "load_1min_end": 6.26,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 258.0,
+      "control_end_sim_s": 259.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 16.3,
+      "door_wait_by_passage_s": {
+        "door_1": 16.3
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "3919624a87ccf7472c90584da24ce3e15f12e0f97319c5f5007e64a14ea02b78",
+        "teacher-events.json": "562786645f9bceef57baf1ee15ec9137cf06a088e7ff3da229bc88372a7972f5",
+        "scene.xml": "cde9b4ee7748f4d5d387a1d29a8fc6c3cb1261c9e75fed5fe36d89c8d755dab9",
+        "replay_manifest": "a31619bd767aec00520e988e772f322b8359487d74e9374cd333e194e42b0db3"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 235.8,
+      "drive_wait_near_passage_s": 94.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-plan_first-s12",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 233.8,
+      "load_1min_start": 6.22,
+      "load_1min_end": 9.55,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 182.5,
+      "control_end_sim_s": 184.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 8.4,
+      "door_wait_by_passage_s": {
+        "door_1": 8.4
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "bf923b3fb5b385c75d39b5363f9db87de8a3659ce155db9fe774b3d7ab6b40b2",
+        "teacher-events.json": "1096c48e93d78107cababa3d79e2521c276641867bc2f51fd2779dc1a4b00ffa",
+        "scene.xml": "0e8fad1f1a737cf907e9ef2f87fdff9fa6338d64fc14bfa008196bbba1617783",
+        "replay_manifest": "6be26e9d220ca7fd57fd14458939be46393db8b57de28c97fa72886997f775ef"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 111.8,
+      "drive_wait_near_passage_s": 43.5,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G5-plan_first-s13",
+      "variant": "zone_wide_door",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "plan_first",
+      "wall_s": 307.7,
+      "load_1min_start": 9.55,
+      "load_1min_end": 6.61,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 209.5,
+      "control_end_sim_s": 211.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "d5d21afaba568f00c1015042b0c9a731646c8d9b726ed577eb631df085cc3e5f",
+        "teacher-events.json": "260cf62c5ce47f900529052160f8c82e1e1169578175e7dc2d49b3c145bd3f61",
+        "scene.xml": "c240e3722fc953acfa4e9e6bb85ee2f281aa26301bdb9433da6d1284f906cd81",
+        "replay_manifest": "18c518e499bf54865ffad259d9f46e3cc44d26b6e750fef509fc33323212d437"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 179.8,
+      "drive_wait_near_passage_s": 64.3,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-dynamic-s11",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 540.4,
+      "load_1min_start": 6.71,
+      "load_1min_end": 13.21,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 252.0,
+      "control_end_sim_s": 253.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 34.4,
+      "door_wait_by_passage_s": {
+        "door_1": 34.4
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "45a0b74c28667e472c3c5144dbf4d7c25867ba4d6c36be502006fa2879b40af6",
+        "teacher-events.json": "f44ff0a052b7217320fdc9b1df1a03be4e55bdaeecfeb6132be40198ae7ff878",
+        "scene.xml": "805318af59bab56705950f84c6f551e8f3df216b688e6677ad46a873c458ec0c",
+        "replay_manifest": "f1db1c55e51c3b8d4491caf42ca9c2d10c91cf51ad9e9ec1ab54a0803a90099c"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 254.4,
+      "drive_wait_near_passage_s": 96.5,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-dynamic-s12",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 451.2,
+      "load_1min_start": 12.69,
+      "load_1min_end": 7.85,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 233.5,
+      "control_end_sim_s": 235.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "ef34dffe65e2ff297f6f1ce96aa8c82bcd36a523afb5a985528f8f0bf2265f9c",
+        "teacher-events.json": "e32cd28966ccd688211026f1a99426586a1828c71383c56ed198f1892060dac2",
+        "scene.xml": "cb1a917b2b319a07353cdd79f3b0cbf4a97c60041041d66f6404aa7e094067c0",
+        "replay_manifest": "3868dcce8ee83ffbeddf0d1b48d29a1dface4fb1c18389178835081802ac9727"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 214.7,
+      "drive_wait_near_passage_s": 48.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-dynamic-s13",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "dynamic",
+      "wall_s": 2022.5,
+      "load_1min_start": 7.85,
+      "load_1min_end": 297.38,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 270.5,
+      "control_end_sim_s": 272.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 3,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 65.5,
+      "door_wait_by_passage_s": {
+        "door_1": 65.5
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "0d942dc15ea75e9a26cdb0507e2f9e702ddfcde5dcfc47674ae327e959e489f4",
+        "teacher-events.json": "4a5733d48d10e8d862fffba07474cf2013ea77bfdd3bc4e7b8be32b33e5f52dd",
+        "scene.xml": "f13b94ea0b86994df59144fdc3ba3aa56a5f1f4d55f7c095c06934c6f3529300",
+        "replay_manifest": "5aa6bc029a11d96d1be760d609bb25632df8eaa37b6a2fe385f072baa9a4fb58"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 337.7,
+      "drive_wait_near_passage_s": 144.2,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-independent-s11",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 648.0,
+      "load_1min_start": 6.26,
+      "load_1min_end": 11.76,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 377.0,
+      "control_end_sim_s": 378.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 5,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "54d80dae957230ee5b49f0cc96d419bdc35b12743c3b47af811f56d14260c5bd",
+        "teacher-events.json": "34fbf53d8f715d5e8bfa4271e3fc9ffaff4b91921c87701011db890c16064b52",
+        "scene.xml": "805318af59bab56705950f84c6f551e8f3df216b688e6677ad46a873c458ec0c",
+        "replay_manifest": "b9762e644953b47a5608b5cd0d911a00217daa3fd3383c430cf526cdd349dab4"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 243.7,
+      "drive_wait_near_passage_s": 77.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-independent-s12",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 738.2,
+      "load_1min_start": 11.76,
+      "load_1min_end": 178.94,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 319.5,
+      "control_end_sim_s": 321.3,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 4,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 1,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 24.5,
+      "door_wait_by_passage_s": {
+        "door_1": 24.5
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "7cab3b57d9d8cbb914af4b59b68e23f9deac7d7cd2abe186b3167da2f0dccae4",
+        "teacher-events.json": "8805f8409ed2be14f8ed1d2272eae2cd0beb53c17f3cc72ae8dc93ddb8f26d8f",
+        "scene.xml": "cb1a917b2b319a07353cdd79f3b0cbf4a97c60041041d66f6404aa7e094067c0",
+        "replay_manifest": "9e4c4b313fa8c887431bd89adc23b42075ce6cd7a8925064bfd6a130a8739ee9"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 230.7,
+      "drive_wait_near_passage_s": 76.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-independent-s13",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "independent",
+      "wall_s": 2115.5,
+      "load_1min_start": 178.94,
+      "load_1min_end": 195.72,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 308.5,
+      "control_end_sim_s": 310.3,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 4.0,
+      "door_wait_by_passage_s": {
+        "door_1": 4.0
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "9b27bd8e97498cd3a5915f74ca0f03792d691e45ef98af586c1f45e4a471c932",
+        "teacher-events.json": "f4ec8563d8da42e27ce0b13f11e7b5b15e6b2b81d95ed1dee223daffed2a6e9c",
+        "scene.xml": "f13b94ea0b86994df59144fdc3ba3aa56a5f1f4d55f7c095c06934c6f3529300",
+        "replay_manifest": "3ecc5b68fda8acb486bd28d8223420871b11c212cb22dd71a1ebade9306e52ce"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 245.6,
+      "drive_wait_near_passage_s": 87.3,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-plan_first-s11",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 578.0,
+      "load_1min_start": 6.61,
+      "load_1min_end": 12.69,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 250.0,
+      "control_end_sim_s": 251.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "7accc557963c238d7489d18de12747402228fcdaa1d43789dd9114279cbc4815",
+        "teacher-events.json": "c6ba9506c6f840d372b94c092ff57bfa833cb407643cc733d7f5e6ea48e59641",
+        "scene.xml": "805318af59bab56705950f84c6f551e8f3df216b688e6677ad46a873c458ec0c",
+        "replay_manifest": "be3b40f4ef4bef49b0288f72f524af6f43858d95d1172fd185e07a9bafe60191"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 250.4,
+      "drive_wait_near_passage_s": 81.8,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-plan_first-s12",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 411.4,
+      "load_1min_start": 13.21,
+      "load_1min_end": 8.48,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 209.5,
+      "control_end_sim_s": 211.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "a55cd75db36467d115a3b98f71a7e835180c010f3f2d187ceb324abde6f5abf4",
+        "teacher-events.json": "3f92ab1b87bbca59367bffa34a521554064f440559ee5bbd8dfc2433c8e7c275",
+        "scene.xml": "cb1a917b2b319a07353cdd79f3b0cbf4a97c60041041d66f6404aa7e094067c0",
+        "replay_manifest": "1c6f7a58e577ba4d52bb5271ba3326b7f78676269d0aae655c06e088b5173779"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 195.7,
+      "drive_wait_near_passage_s": 68.4,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "door-G8-plan_first-s13",
+      "variant": "zone_wide_door",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "plan_first",
+      "wall_s": 1037.6,
+      "load_1min_start": 8.48,
+      "load_1min_end": 91.58,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 233.0,
+      "control_end_sim_s": 234.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 1,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 3.8,
+      "door_wait_by_passage_s": {
+        "door_1": 3.8
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "a7827cadd11c6e18916b1a21f4ad74994ac2bb8c7fb5d28feafd2e2731fc8a6e",
+        "teacher-events.json": "39b271fd2d5491bebd9dfc03c8e6dbd2f45a43c26e5597d8c509ccf0ad9e4b52",
+        "scene.xml": "f13b94ea0b86994df59144fdc3ba3aa56a5f1f4d55f7c095c06934c6f3529300",
+        "replay_manifest": "feb98179c99e09e6e1662dab48f77bc9f32a48243a7c5d7aad92c8488459f6ff"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 245.5,
+      "drive_wait_near_passage_s": 89.5,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-dynamic-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 568.5,
+      "load_1min_start": 297.38,
+      "load_1min_end": 183.21,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 183.0,
+      "control_end_sim_s": 184.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "14525b8c011336c821af178d092edacceef9ff51993f6e88b92b731441150541",
+        "teacher-events.json": "5da4b7969dbb506623d4cd5860f0c86f13e5dfd30b433def1b628c1ae107d8de",
+        "scene.xml": "d0737e72a9dfb2e815caca9f9fb80dc9a0d58f6092803c7a414b9f479b783d69",
+        "replay_manifest": "d18988df30f416d675e00027af42bc353508394e7729d44d190683b607ce75c6"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 114.2,
+      "drive_wait_near_passage_s": 30.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-dynamic-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 231.8,
+      "load_1min_start": 183.21,
+      "load_1min_end": 34.12,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 192.0,
+      "control_end_sim_s": 193.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "55d0e297d2d1a3f757e31755a58a0c6857b9502fc92b7376516e80dc2567811f",
+        "teacher-events.json": "58d4d718d7b32e809628e053fdf14aca16ad8fa4822324f7f9a18610dd1be468",
+        "scene.xml": "37a28cd238c425fe2ddbcf7d9ab5dc3647f7867a45a6275b2a777e9726bd33ce",
+        "replay_manifest": "8604c2f433883941841041ac4188c9a0e800867962d998d5d8f38214e0707b89"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 111.3,
+      "drive_wait_near_passage_s": 43.1,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-independent-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 436.6,
+      "load_1min_start": 187.31,
+      "load_1min_end": 56.38,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 281.0,
+      "control_end_sim_s": 282.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 3,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "b1298e59a0fec31571226c1cbc3af35cf53c4667863b522ac7ca70f57d2eb51a",
+        "teacher-events.json": "bba656c693bb498a48942e4e9f5e3c110161875f8b89420f9f67900d96f91368",
+        "scene.xml": "d0737e72a9dfb2e815caca9f9fb80dc9a0d58f6092803c7a414b9f479b783d69",
+        "replay_manifest": "cf3be0bc325e485fe9239b907bb1f7bd21c90c27b0733b1588411c1e65a43a07"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 98.3,
+      "drive_wait_near_passage_s": 19.2,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-independent-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 251.6,
+      "load_1min_start": 56.38,
+      "load_1min_end": 25.46,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 213.0,
+      "control_end_sim_s": 214.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 3.4,
+      "door_wait_by_passage_s": {
+        "door_narrow": 3.4
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "e49ced32798dd72aa5e3a0ddcfb974efdc5e2dafe8c56b55d5b7e15b230e6a4a",
+        "teacher-events.json": "291b4bb4f0d8b412f1017f11bb38c8cd558bce746e85cec64707dace2ecabb04",
+        "scene.xml": "37a28cd238c425fe2ddbcf7d9ab5dc3647f7867a45a6275b2a777e9726bd33ce",
+        "replay_manifest": "077ece31fc52e2ed81e59bccd632a49803c0fd176f4315124e2f4db56a21a020"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 96.2,
+      "drive_wait_near_passage_s": 32.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-plan_first-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 1350.4,
+      "load_1min_start": 91.58,
+      "load_1min_end": 187.31,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 205.0,
+      "control_end_sim_s": 206.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "529901a2d45278ea94550c0fb3f7d3def690f315e700f1cbc931ebde74f9da0b",
+        "teacher-events.json": "af7a6cd75588c9ae8ccfee74e72406674772afeb0c2f4061e7d7306c484974d9",
+        "scene.xml": "d0737e72a9dfb2e815caca9f9fb80dc9a0d58f6092803c7a414b9f479b783d69",
+        "replay_manifest": "f83ee7b7df43e05f22ed878be4c90d8fb8b690f8ce4dfec209e35c30f2a29279"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 114.5,
+      "drive_wait_near_passage_s": 30.5,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G5-plan_first-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 268.0,
+      "load_1min_start": 195.72,
+      "load_1min_end": 36.3,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 218.0,
+      "control_end_sim_s": 219.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 1.8,
+      "door_wait_by_passage_s": {
+        "door_narrow": 1.8
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "a4764e38086448716c399a8314b63d6371527fa03c21dd4c6b4dfdaad67745ee",
+        "teacher-events.json": "0ea93265a0fe729886a111d0cdbe62118f3515b95197257394699ab7364edf7f",
+        "scene.xml": "37a28cd238c425fe2ddbcf7d9ab5dc3647f7867a45a6275b2a777e9726bd33ce",
+        "replay_manifest": "4c8d9c022b0aed185be9925a1ac0f6703f27b69b36df8d36b58619a4a48e299e"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 149.2,
+      "drive_wait_near_passage_s": 75.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-dynamic-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 276.8,
+      "load_1min_start": 34.12,
+      "load_1min_end": 13.42,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 204.0,
+      "control_end_sim_s": 205.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "b413470f35c89cfddaec2b74609e0e3240bf52afbce06f716198cb593bc2c36f",
+        "teacher-events.json": "02bba9a695db46d8d9ed47a4f4709b445e880cc145be9a3c2f9d7c22374fac43",
+        "scene.xml": "030832cee67a4a4ab26ea013f656b4f0b5a26ee4344ca8a2bbf8cf0d4ff351c4",
+        "replay_manifest": "4bf92b96d2c9d0c1ab3af7653b7a2ace622a0a352030510a36cad90b2c5b6f6f"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 140.8,
+      "drive_wait_near_passage_s": 51.1,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-dynamic-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 280.6,
+      "load_1min_start": 13.42,
+      "load_1min_end": 8.97,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 219.5,
+      "control_end_sim_s": 221.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 7.2,
+      "door_wait_by_passage_s": {
+        "door_narrow": 7.2
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "9583b15ef5828cb2f9a2d660586411137dd52f6605a58275ff128c7541f50525",
+        "teacher-events.json": "14c0439c2c453d71437aeab704eac27f1a8223670d8c8ae68623f55dc5bf05fe",
+        "scene.xml": "41813d0c28e3c9166078f0c1bd853dd208e626b4ab540b07cd886df954b8b37c",
+        "replay_manifest": "b91d060b4eda26f4c2ae9f0958b8017a2de18857ecf91fea1d4ea82ea8de7fba"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 4,
+          "seconds": 16.68
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 155.3,
+      "drive_wait_near_passage_s": 53.4,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-independent-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 372.3,
+      "load_1min_start": 25.46,
+      "load_1min_end": 8.64,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 325.0,
+      "control_end_sim_s": 326.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 3,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 1.5,
+      "door_wait_by_passage_s": {
+        "door_narrow": 1.5
+      },
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "6fafc076117fa728d40b1f42c18b9f1eb5c57bd2d1f3fa8573781b0a836d7170",
+        "teacher-events.json": "70983635b70b17f26c2b5aa572cd601cec11782a27be12e9e0d7a14c9be0c237",
+        "scene.xml": "030832cee67a4a4ab26ea013f656b4f0b5a26ee4344ca8a2bbf8cf0d4ff351c4",
+        "replay_manifest": "c547f5d551910e7ce50e0e79a4e20d2bdd3109cf64d1802a35c6baeaa082f3ce"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 163.9,
+      "drive_wait_near_passage_s": 57.4,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-independent-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 242.4,
+      "load_1min_start": 7.44,
+      "load_1min_end": 4.48,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 316.0,
+      "control_end_sim_s": 317.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "1f5ceebd828c773c9cbcda4fcc380538a6ba570cd7a9ad0c4e478d7627d8c058",
+        "teacher-events.json": "329487c89fca060380564065ca74154b7865b88866a09c64e3b8bb428113f764",
+        "scene.xml": "41813d0c28e3c9166078f0c1bd853dd208e626b4ab540b07cd886df954b8b37c",
+        "replay_manifest": "cbf621f407cde6c14dc64791acc61ae1b3f85ba57221f653aa36d982b335bfd0"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 6,
+          "seconds": 16.98
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 177.5,
+      "drive_wait_near_passage_s": 51.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-plan_first-s11",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 278.7,
+      "load_1min_start": 34.12,
+      "load_1min_end": 13.42,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 205.5,
+      "control_end_sim_s": 207.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "fb41a2b0640204ed08618a33d042b4b4e46a5dab4ec44a4dca2177a209a1e240",
+        "teacher-events.json": "2ea4b57f5ce80237ea0b999d22056fc9b5a6187dc328d67d9628cd07f5e4eab8",
+        "scene.xml": "030832cee67a4a4ab26ea013f656b4f0b5a26ee4344ca8a2bbf8cf0d4ff351c4",
+        "replay_manifest": "64241b8ad5fb578f7272b8b003ad8956479aee412553387e0d335f2bbef7c30b"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 158.1,
+      "drive_wait_near_passage_s": 49.6,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "two-G8-plan_first-s12",
+      "variant": "zone_wide_two_doors",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 253.3,
+      "load_1min_start": 13.42,
+      "load_1min_end": 9.76,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 182.5,
+      "control_end_sim_s": 184.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "3256b9f9d55e507aa34392b9b9129644b9586a49b6b8bf8432cd6beb313cf2ce",
+        "teacher-events.json": "07b92eff2c28c1649ab88a541ade722d4afa93984f07e0f2f404c6f82ffa0a39",
+        "scene.xml": "41813d0c28e3c9166078f0c1bd853dd208e626b4ab540b07cd886df954b8b37c",
+        "replay_manifest": "c6de2cd8b67aa8bba44b7dbdeeeb74f0e3905251b6c5d77bf3310b2c9792d74e"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 1,
+          "seconds": 0.1
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 130.5,
+      "drive_wait_near_passage_s": 26.9,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    }
+  ],
+  "baseline_runs": [
+    {
+      "run": "wide-G5-dynamic-s11",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 161.4,
+      "load_1min_start": 10.47,
+      "load_1min_end": 13.58,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 153.0,
+      "control_end_sim_s": 154.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "8adb19bce92eecbb6a9e954eefaf73e4d3d42413bfd8c871643f27fad61d2b13",
+        "teacher-events.json": "8cac057d0949ab9332ec41dccff443daadce6a5a1ce780a7d590842e4c7041ef",
+        "scene.xml": "b7dc69cac432193aaeaec8151b5051080654af4d1413c2c8aea78a76bd02da47",
+        "replay_manifest": "18b675cf5b7e98e1d349cd75e70557fb6e59fa5f660f454cacfb3f8cb109d770"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 73.4,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-dynamic-s12",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 177.9,
+      "load_1min_start": 16.08,
+      "load_1min_end": 11.17,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 162.5,
+      "control_end_sim_s": 164.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "8867cad529fd14fcf978a0c04eb51116f0274bcd97c749edeacd5ff2f9e6a5bf",
+        "teacher-events.json": "9fc6a0509edf7ee596362e7768fa7b70dd58a4972534315b979e7f3b7ee70248",
+        "scene.xml": "f3c5013c10465d978dda6af8d6b9700e408378a37e8c9686c1139ae679e14b80",
+        "replay_manifest": "cc348762344a0460285d03699ace56c41f9777a561e303134099451a86e6b955"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 59.1,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-dynamic-s13",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "dynamic",
+      "wall_s": 138.7,
+      "load_1min_start": 10.44,
+      "load_1min_end": 8.89,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 135.0,
+      "control_end_sim_s": 136.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "02d747cbd56cc7c28e8a568ae8c390ab6a8b28309693360fc26cf4f431415241",
+        "teacher-events.json": "bb84e1484a8d9faa353d537691cf3e4b05db645c4202a00b86654d197c694c27",
+        "scene.xml": "a67fe9cc03cd4e05301138fa3585f94a1ae1e97a1b74dc2bf5023e3e4fd2bbe7",
+        "replay_manifest": "c12486551dfae65d6b6b3cc10f111ed6d70a01d878a49bcd1214bc19cedf04c0"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 55.7,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-independent-s11",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 188.5,
+      "load_1min_start": 13.58,
+      "load_1min_end": 14.99,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 179.0,
+      "control_end_sim_s": 180.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "2ddacb800a267e62d5d0b10bd3e5834ce2508794e16e9d60c5e318ea1180eba3",
+        "teacher-events.json": "989926bb6afa70ef9053336637894ba11b6811896f235eda7e79094602bfd59d",
+        "scene.xml": "b7dc69cac432193aaeaec8151b5051080654af4d1413c2c8aea78a76bd02da47",
+        "replay_manifest": "5c278dad4260dce3dd7296bb356528310d4a67c8b0c87a0190843a95c8f561f4"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 74.3,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-independent-s12",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 210.3,
+      "load_1min_start": 14.99,
+      "load_1min_end": 10.44,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 193.0,
+      "control_end_sim_s": 194.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 2,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "98f750ffc99b2d47fe3d1017838a2f304f54f14ac2e56d569a17de17bf600c6d",
+        "teacher-events.json": "e7f7bc414c544ddee7ab5a7a306c67bf7a835d896a7c258f8cda47c94124d603",
+        "scene.xml": "f3c5013c10465d978dda6af8d6b9700e408378a37e8c9686c1139ae679e14b80",
+        "replay_manifest": "6e8b5c0f8f57cce24fccf59405601f08f5570f9cd97d63e15071366dfffeb08f"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 63.9,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-independent-s13",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "independent",
+      "wall_s": 197.7,
+      "load_1min_start": 8.75,
+      "load_1min_end": 8.08,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 200.0,
+      "control_end_sim_s": 201.8,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 3,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "ed74ba2579d1fb1e6c4e1a59fd95e0eb071dfd3fcb1221b8361f4d043fda701b",
+        "teacher-events.json": "36c0fc7ecf60211cf1735efa57e32a86cfc4cd8fc4709ded9bdaa968c9a73a44",
+        "scene.xml": "a67fe9cc03cd4e05301138fa3585f94a1ae1e97a1b74dc2bf5023e3e4fd2bbe7",
+        "replay_manifest": "d0098f4c2ac78e9a33fc70abf49f6ec721eae8bed19e9dd9f1bbbd5367ebd7ff"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 49.5,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-plan_first-s11",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 172.5,
+      "load_1min_start": 10.47,
+      "load_1min_end": 12.56,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 169.5,
+      "control_end_sim_s": 171.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "b6b39c2fa64873cf32a2d75b4d6235df94f73ca962451e14feafa5031d5da44e",
+        "teacher-events.json": "989926bb6afa70ef9053336637894ba11b6811896f235eda7e79094602bfd59d",
+        "scene.xml": "b7dc69cac432193aaeaec8151b5051080654af4d1413c2c8aea78a76bd02da47",
+        "replay_manifest": "2f80539061209355b293c5968cb9e35c8f9b5746dacdc224c9dbb50d6d55cf72"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 3,
+          "seconds": 1.11
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 74.3,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-plan_first-s12",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 168.7,
+      "load_1min_start": 12.56,
+      "load_1min_end": 16.08,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 147.5,
+      "control_end_sim_s": 149.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "4f389c2c8e0f2adc0859f56fbe5a7800fba0ab088b883371f18f4a5f7eb0a771",
+        "teacher-events.json": "d3aa6b2637b41840ddb81e9daa7cfad069eff87f1ab190fbbf331867cd1baa0a",
+        "scene.xml": "f3c5013c10465d978dda6af8d6b9700e408378a37e8c9686c1139ae679e14b80",
+        "replay_manifest": "f6b3b01efa2d17485a5d322d653bfe11f87253b44b778257b737a0bb3103c5ba"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 59.3,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G5-plan_first-s13",
+      "variant": "zone_wide",
+      "goal": "G5",
+      "seed": 13,
+      "coordination": "plan_first",
+      "wall_s": 147.9,
+      "load_1min_start": 11.17,
+      "load_1min_end": 8.75,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 147.5,
+      "control_end_sim_s": 149.3,
+      "llm_calls": 0,
+      "jobs_placed": 5,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "bc8974616658e866340bc0c8da13db707d6b22ff97d9831e81dd25f1933d6336",
+        "teacher-events.json": "f7bdfa40ea2f92eb0ad7a7f78ce90d477a86c71a5c234aa0166596a2ce3fb471",
+        "scene.xml": "a67fe9cc03cd4e05301138fa3585f94a1ae1e97a1b74dc2bf5023e3e4fd2bbe7",
+        "replay_manifest": "005bbf6552657f370ff4ec2220015b99390f65250499e159402cf0d19bcbb056"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 50.5,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-dynamic-s11",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "dynamic",
+      "wall_s": 328.9,
+      "load_1min_start": 8.08,
+      "load_1min_end": 63.43,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 163.5,
+      "control_end_sim_s": 165.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "4d893a8b110514ee5ee963fa8c3a3286edc59b7e631b56bd80daf478a866afd8",
+        "teacher-events.json": "2f4738346d76f4c5aef6140a3ed30eb4061b6018bc88c9716fcad5083d158f04",
+        "scene.xml": "ac900ff8d6e14817f08f2f038fd52a87c51246cfc49ecbeb173d2cafc9c2e14f",
+        "replay_manifest": "cd17c8337a20ecbecffc03ec32e4106e7e56678a22db0b7fdec33bf75478a675"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 72.4,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-dynamic-s12",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "dynamic",
+      "wall_s": 702.0,
+      "load_1min_start": 110.9,
+      "load_1min_end": 455.74,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 154.5,
+      "control_end_sim_s": 156.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "ef1f7989cf8773f22dbf242487ccc22088c4b01a377122fbe3289d0b86eddc54",
+        "teacher-events.json": "ae804c28c0d2ec67ff88a5a9e47bf1639862e79f9d32224d7830304517ff0874",
+        "scene.xml": "86eb2f49299b46212917e9b97b47faaf86ae6b410675e1f808bb15d602c0ca29",
+        "replay_manifest": "91b85b8622f54f5ca8708c9d85d793740ba533b5e901ad9680c00e39f83d86c1"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 80.1,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-dynamic-s13",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "dynamic",
+      "wall_s": 305.4,
+      "load_1min_start": 182.98,
+      "load_1min_end": 210.72,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 139.5,
+      "control_end_sim_s": 141.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "8ad5bcab3fbc91e1e2a8e4c17a80ca8a60a28fdf59a1af6bd78ac6659bc4bc8f",
+        "teacher-events.json": "d46de678255c9a53abe85d77a813eb01b022b5db925419ea560f2ba32d3be2ba",
+        "scene.xml": "e5dcc1b00b91e78e547fc84f24f708c929db16c57ebc2b85bc4dbd9daea76e7f",
+        "replay_manifest": "2b4da62ebe54919e9d61925dcc302655b7ab10cc36d3e1df535abd9eddd5944f"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 62.8,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-independent-s11",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "independent",
+      "wall_s": 613.2,
+      "load_1min_start": 7.54,
+      "load_1min_end": 110.9,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 250.0,
+      "control_end_sim_s": 251.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "e68a95cbd39b9991f4d7ae02d1ab46ed7677efe99ba6fca94de7dfeb64568295",
+        "teacher-events.json": "a86075d4b8e4deb306d01ac5f0f6aa894256e59cd227a1ab2004981fc9e717ce",
+        "scene.xml": "ac900ff8d6e14817f08f2f038fd52a87c51246cfc49ecbeb173d2cafc9c2e14f",
+        "replay_manifest": "edc116f28c8f8fd09f7423de35cc9e7177ee5230c0d67857d81ba3830b9ac727"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 85.5,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-independent-s12",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "independent",
+      "wall_s": 1697.9,
+      "load_1min_start": 181.42,
+      "load_1min_end": 207.44,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 310.0,
+      "control_end_sim_s": 311.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 4,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "8e126e822a6f1675394ee24628d7773c0503056633c3f6eef968f672833d6c5a",
+        "teacher-events.json": "0614157c3411418c82b84c14373dfbe75149bdc008550f925fc35424ba248e9a",
+        "scene.xml": "86eb2f49299b46212917e9b97b47faaf86ae6b410675e1f808bb15d602c0ca29",
+        "replay_manifest": "ca54f370f6a4313fbe70737879c71d7c05cf6d6a7ed598003d0b95dd7b99a304"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 2,
+          "seconds": 37.18
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 128.4,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-independent-s13",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "independent",
+      "wall_s": 280.9,
+      "load_1min_start": 207.44,
+      "load_1min_end": 43.8,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": false,
+      "goal_met_rgb": false,
+      "makespan_sim_s": 216.0,
+      "control_end_sim_s": 217.8,
+      "llm_calls": 0,
+      "jobs_placed": 7,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 4,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "a253c2cc350f5910a0de7057239bf399940ae2e2144be9927194546ec8a62f42",
+        "teacher-events.json": "2c301fdb4603c57f56683837629501f09b5e8192b1ecaadec063646c7530e00c",
+        "scene.xml": "e5dcc1b00b91e78e547fc84f24f708c929db16c57ebc2b85bc4dbd9daea76e7f",
+        "replay_manifest": "f8642106fee33392a41b60c146e127379ee250f26f541586fdf91191b5285ac1"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 88.2,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-plan_first-s11",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 11,
+      "coordination": "plan_first",
+      "wall_s": 178.6,
+      "load_1min_start": 8.89,
+      "load_1min_end": 7.54,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 165.5,
+      "control_end_sim_s": 167.3,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "d6e77a61105a93096648f916cd7d14af2c4cf0bdc0648a8ec832607f6c0ed85b",
+        "teacher-events.json": "2f5a6beba0d8d04eba9291c8f9d09ed5a7dd5687a3985ff1849b665afe3f24ee",
+        "scene.xml": "ac900ff8d6e14817f08f2f038fd52a87c51246cfc49ecbeb173d2cafc9c2e14f",
+        "replay_manifest": "6458992069b84ff77580f37c4321998ad71542fb2088015a66c1bb9f1d1b159a"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 70.5,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-plan_first-s12",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 12,
+      "coordination": "plan_first",
+      "wall_s": 466.4,
+      "load_1min_start": 63.43,
+      "load_1min_end": 181.42,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 153.0,
+      "control_end_sim_s": 154.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "d7abf73de65b93541984f5b4ccadc1c049839480b20c4d17035c009493861b63",
+        "teacher-events.json": "3bbe48d87ac4c42582890863a504ac6db1eae976be558968c344bc4f3a069e59",
+        "scene.xml": "86eb2f49299b46212917e9b97b47faaf86ae6b410675e1f808bb15d602c0ca29",
+        "replay_manifest": "d58e34b8ff913d02f4443c1915ac1c7a0bc93052e9f63090ea38b6e4ed4d0d6a"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 77.4,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    },
+    {
+      "run": "wide-G8-plan_first-s13",
+      "variant": "zone_wide",
+      "goal": "G8",
+      "seed": 13,
+      "coordination": "plan_first",
+      "wall_s": 1009.4,
+      "load_1min_start": 455.74,
+      "load_1min_end": 182.98,
+      "phase": "FINISHED",
+      "error": null,
+      "goal_met_referee": true,
+      "goal_met_rgb": true,
+      "makespan_sim_s": 150.0,
+      "control_end_sim_s": 151.8,
+      "llm_calls": 0,
+      "jobs_placed": 6,
+      "teacher_path_blocked": 0,
+      "goal_occupied": 0,
+      "grasp_failed": 0,
+      "box_taken_by_peer": 0,
+      "dropped_in_transit": 0,
+      "generic_yields": 0,
+      "passage_standoffs": 0,
+      "passage_fallbacks": 0,
+      "passage_no_spot": 0,
+      "door_wait_s": 0,
+      "door_wait_by_passage_s": {},
+      "claim_collisions": 0,
+      "invalid_claims": 0,
+      "sha256": {
+        "result.json": "e5eed70c3ac4cfde714833bc6a6c5159dd1481d43cf2012e966a8a30d7f1fb83",
+        "teacher-events.json": "2ccd9ffc6ebc329255abdcf09cd7408da8ca880df3c9ed3069c7c4650f226bb4",
+        "scene.xml": "e5dcc1b00b91e78e547fc84f24f708c929db16c57ebc2b85bc4dbd9daea76e7f",
+        "replay_manifest": "11fa083a2cd5556785aa53284ac1f0c85e2410e25eac1432f6433e7c25a8d985"
+      },
+      "contacts": {
+        "robot_robot": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "robot_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        },
+        "box_wall": {
+          "episodes": 0,
+          "seconds": 0.0
+        }
+      },
+      "drive_wait_s": 67.3,
+      "drive_wait_near_passage_s": 0.0,
+      "source_sha": "dc27695ba7185948e43c8dc1c70d3d9f655f639e"
+    }
+  ],
+  "not_run": {
+    "runs": [
+      "corr-G5-dynamic-s13",
+      "corr-G5-independent-s13",
+      "corr-G5-plan_first-s13",
+      "corr-G8-dynamic-s13",
+      "corr-G8-independent-s13",
+      "corr-G8-plan_first-s13",
+      "two-G5-dynamic-s13",
+      "two-G5-independent-s13",
+      "two-G5-plan_first-s13",
+      "two-G8-dynamic-s13",
+      "two-G8-independent-s13",
+      "two-G8-plan_first-s13"
+    ],
+    "reason": "host overload by concurrent agents (1-min load 240-490); seed 13 dropped for two_doors and corridor, placeholder folders block the runner"
+  },
+  "superseded": {
+    "runs": [
+      "corr-G5-plan_first-s11",
+      "corr-G5-dynamic-s11"
+    ],
+    "source": "dc27695",
+    "where": "raw_root/matrix-superseded",
+    "reason": "corr-G5-plan_first-s11 ended teacher_path_blocked 1.3 m short of the B slot by the 120 s drive limit after 42 s queueing at the corridor; rerun under 3183650 (240 s)",
+    "results": {
+      "corr-G5-plan_first-s11": "goal not met, 4/5 placed, 1 teacher_path_blocked",
+      "corr-G5-dynamic-s11": "goal met"
+    }
+  },
+  "aborted": {
+    "runs": [
+      "corr-G5-dynamic-s11-jobs3-stopped",
+      "corr-G5-independent-s11-limit-fix-stopped",
+      "corr-G5-plan_first-s11-jobs3-stopped",
+      "corr-G5-plan_first-s12-limit-fix-stopped",
+      "two-G8-independent-s12-jobs3-stopped"
+    ],
+    "reason": "stopped at 1.5-10 min wall to cap concurrency at 2 (coordinator) or when the drive limit was changed; no result, rerun from scratch"
+  },
+  "loads": {
+    "rule": "os.getloadavg() 1-min at each run start and end, in runs[]; sync SIM results do not depend on load",
+    "agent_lock": "no realtime/training lock at start (zone-comm-audit offline-test lock only)"
+  },
+  "contacts_method": "observer-only: replay qpos -> mj_forward at 10 Hz, penetrating contacts (dist < 0) between geoms of different robots, robot and zone_wall_* geoms, cargo box and wall",
+  "ci": {
+    "command": "scripts/run_ci_tests.py at cefc41d (after merging origin/main 23fcaaa)",
+    "result": "2350 passed, 9 skipped, 1 xfailed, 205 subtests passed"
+  },
+  "media": {
+    "maps": {
+      "zone_wide_door": {
+        "schematic_png": "map-zone_wide_door.png",
+        "render_png": "render-zone_wide_door.png"
+      },
+      "zone_wide_two_doors": {
+        "schematic_png": "map-zone_wide_two_doors.png",
+        "render_png": "render-zone_wide_two_doors.png"
+      },
+      "zone_wide_corridor": {
+        "schematic_png": "map-zone_wide_corridor.png",
+        "render_png": "render-zone_wide_corridor.png"
+      },
+      "robot_view_at_door": {
+        "run": "door-G5-dynamic-s12",
+        "robot": "r2",
+        "sim_time_s": 101.5,
+        "camera_xy_m": [
+          1.457,
+          0.055
+        ],
+        "png": "robot-rgb-at-door.png",
+        "pose": "folded arm (driving), 0.74 m west of door_1, facing east"
+      }
+    },
+    "videos": {
+      "door-G8-dynamic-s13": {
+        "bytes": 587518,
+        "sha256": "7f3671896fd9617eb88b61eeecb209ff964d63fcc0da45c97a0016eadcc7ba0a",
+        "path": "media/door-G8-dynamic-s13.mp4"
+      },
+      "two-G8-dynamic-s12": {
+        "bytes": 510504,
+        "sha256": "bff7b534869513743d1f511a14e4cbca412336d4c048347166dd598c439d6914",
+        "path": "media/two-G8-dynamic-s12.mp4"
+      },
+      "corr-G5-dynamic-s12": {
+        "bytes": 620232,
+        "sha256": "268a7163313dfd9ebdb95f94952ec8a39c9980f38be8b022a54c4ef53420236c",
+        "path": "media/corr-G5-dynamic-s12.mp4"
+      }
+    },
+    "png_sha256": {
+      "map-zone_wide_corridor.png": "d99deaac70bbc8e43038adbf1f08122cc9640c672d4e10e9547e62dccfd17c34",
+      "map-zone_wide_door.png": "84ec9a79e2731fa2f7c9ff7e742d18cea9a0fd54362c9e92f3dc916481e1e4fe",
+      "map-zone_wide_two_doors.png": "14bc389a76007da4aa30e99fba132122dd6afb23bab63436aded1e6d7109f1dc",
+      "render-zone_wide_corridor.png": "818084eb4ba0d1828098fa9c7f555fb01a58c778c56f1050900ae366cf35e0d8",
+      "render-zone_wide_door.png": "87bd796cc1c58c24f20d9ff22a5c62d8f3e7de128c5860c7d2362c4d1ed11067",
+      "render-zone_wide_two_doors.png": "4a60650133645ba06e9e4f119db9a9f7f255ceee4e981d238607f5784d629f31",
+      "robot-rgb-at-door.png": "51b29887f2f4902c98e4f0757f66c3e46e90cac0ae045b0f69cab077646f05ea"
+    }
+  },
+  "known_issues": [
+    "corr-G5-independent-s12: r1 (to_box) and r2 (carry) met just outside the corridor east exit (x 4.15-4.40, y 0.48-0.78) and stayed in contact 199-400 s; only r2 was inside the passage zone, so no standoff, and the planner's no-closer peer rule kept paths for both, so the generic yield never fired. Both jobs ended teacher_path_blocked; goal not met. Same mechanism without walls in the zone_wide baseline wide-G8-independent-s12 (37 s contact near C). Not fixed here.",
+    "robot-robot sub-mm touches at 9.6-14 s in every seed-11 G5 run (all maps incl. zone_wide), pickup area near spawns: pre-existing.",
+    "independent mode misses the goal in most runs on every map (box_taken_by_peer / over-fill), as in ZC2; not a route effect. _taken_by_peer intention-based arbitration (audit PR #161 L1) is left for the follow-up task."
+  ]
+}
