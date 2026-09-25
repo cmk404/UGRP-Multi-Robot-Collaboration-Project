@@ -18,6 +18,8 @@ ROOT = HERE.parents[1]
 RAW = Path('/Users/changmin/projects/ugrp/outputs/zone-owncam-pair-20260926')
 TB = Path('/Users/changmin/projects/ugrp/outputs/tensorboard')
 ARMS = {'O': ('own_only', (611, 612, 613, 614)), 'S': ('stub_approach', (611, 612))}
+V2_SEEDS = (621, 622, 623, 624, 625, 626)
+ARMS_V2 = {'ON': ('own_only', V2_SEEDS), 'OFF': ('own_only', V2_SEEDS)}   # --status-channel on / off
 DEV = ('dev/601-own-7d97bab-calib', 'dev/602-own-dd70122')
 BARRIERS = ('lift', 'carry', 'lower', 'open')
 
@@ -51,7 +53,45 @@ def summarise(folder):
             'sim_seconds': r.get('sim_seconds'), 'wall_seconds': r.get('wall_seconds'),
             'load_average_start': r.get('load_average_start'), 'load_average_end': r.get('load_average_end'),
             'carry_odometry_calibration': r.get('carry_odometry_calibration'), 'thresholds': r.get('thresholds'),
-            'contact_profile': r.get('contact_profile'), 'weld': r.get('weld')}
+            'contact_profile': r.get('contact_profile'), 'weld': r.get('weld'),
+            'profile': r.get('profile'), 'perception': r.get('perception'),
+            'status_channel': r.get('status_channel'), 'posture': r.get('posture')}
+
+
+def gates_v2(runs):
+    out = {}
+    for arm in ARMS_V2:
+        rs = [x for x in runs if x['arm'] == arm]
+        g1 = sum(all(x['aligned'].values()) and bool(x['evaluation_only'].get('both_gripped_gt')) for x in rs)
+        done = [x for x in rs if all(s == 'done' for s in x['final_states'].values())]
+        lifted = [x for x in rs if x['evaluation_only'].get('lifted_clear_gt')]
+        g4 = sum(bool(x['evaluation_only'].get('on_floor_released')) and x['evaluation_only']['final_error_m'] <= .10
+                 for x in rs)
+        switches = [v['switches'] for x in rs for v in (x['posture'] or {}).values()]
+        out[arm] = {
+            'G1_aligned_and_both_gripped': f'{g1}/{len(rs)}', 'G1_pass': g1 >= 5,
+            'G2_align_timeouts': sum(any(f and 'ALIGN_TIMEOUT' in f for f in x['failures'].values()) for x in rs),
+            'G2_max_posture_switches': max(switches, default=None),
+            'G2_commit_backoffs': sum(v['commit_backoffs'] for x in rs for v in (x['posture'] or {}).values()),
+            'G2_pass': (not any(any(f and 'ALIGN_TIMEOUT' in f for f in x['failures'].values()) for x in rs)
+                        and max(switches, default=0) <= 4),
+            'G3_barrier_skew_le_0.2s': all(all(v is not None and v <= .2 for v in x['barrier_go_skew_s'].values())
+                                           for x in done),
+            'G3_channel_rejected': sum(len((x['status_channel'] or {}).get('rejected') or []) for x in rs),
+            'G4_placed_within_0.10m': f'{g4}/{len(rs)}', 'G4_pass': (g4 >= 4 and not any(x['false_load_alarm'] for x in rs)
+                                                                    and all(x['evaluation_only']['max_tilt_deg_lifted'] <= 5
+                                                                            for x in lifted)),
+            'G5': (all(x['evaluation_only'].get('weld_eq_active_max') == 0 for x in rs)
+                   and all(x['pose_source'] == 'none' for x in rs)),
+            'descriptive': {'failures': {x['seed']: x['failures'] for x in rs},
+                            'barrier_timeouts': sum(any(f and f.startswith('BARRIER_') for f in x['failures'].values())
+                                                    for x in rs),
+                            'partner_aligning_waits': {x['seed']: (x['status_channel'] or {}).get('partner_aligning_waits')
+                                                       for x in rs},
+                            'sim_seconds': {x['seed']: x['sim_seconds'] for x in rs},
+                            'commands': {x['seed']: x['commands'] for x in rs},
+                            'final_error_m': {x['seed']: x['evaluation_only']['final_error_m'] for x in rs}}}
+    return out
 
 
 def gates(runs):
@@ -75,7 +115,8 @@ def gates(runs):
 def main():
     cohort = sys.argv[1]
     runs, missing = [], []
-    for arm, (condition, seeds) in ARMS.items():
+    v2 = cohort.startswith('cohort-v2-')
+    for arm, (condition, seeds) in (ARMS_V2 if v2 else ARMS).items():
         for seed in seeds:
             folder = RAW / cohort / arm / str(seed)
             if (folder / 'result.json').exists():
@@ -88,9 +129,12 @@ def main():
     out = {'experiment_id': '2026-09-26-zone-owncam-pair', 'raw_root_local_only': str(RAW),
            'raw_note': 'raw outputs are local (gitignored); not a remote backup', 'cohort': cohort,
            'cohort_log': {'path': str(log), 'sha256': sha(log)} if log.exists() else None,
-           'runs': runs, 'missing': missing, 'report_blocked': bool(missing), 'gates': gates(runs),
-           'development_runs': [summarise(RAW / d) for d in DEV if (RAW / d / 'result.json').exists()]}
-    (HERE / 'results.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
+           'runs': runs, 'missing': missing, 'report_blocked': bool(missing),
+           'gates': gates_v2(runs) if v2 else gates(runs),
+           'development_runs': [summarise(RAW / d) for d in (sorted(str(p.parent.relative_to(RAW)) for p in
+                                (RAW / 'dev-v2').glob('*/result.json')) if v2 else DEV)
+                                if (RAW / d / 'result.json').exists()]}
+    (HERE / ('results-v2.json' if v2 else 'results.json')).write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     print(json.dumps(out['gates'], ensure_ascii=False))
     if '--tensorboard' in sys.argv:
         snapshot = sys.argv[sys.argv.index('--tensorboard') + 1]
@@ -101,7 +145,9 @@ def tensorboard(runs, dev, cohort, snapshot):
     view = RAW / 'tensorboard-view'
     names = {}
     for x in runs + [{'arm': 'dev', **d} for d in dev]:
-        name = f"pair{x['arm']}-s{x['seed']}" if x['arm'] != 'dev' else f"pairdev-{Path(x['raw_dir']).name}"
+        tag = 'v2' if x.get('profile') == 'owncam_pair_beam_v2' else ''
+        name = (f"pair{tag}{x['arm']}-s{x['seed']}" if x['arm'] != 'dev'
+                else f"pair{tag}dev-{Path(x['raw_dir']).name}")
         ev = x['evaluation_only']
         derived = {'derived_view_only': True, 'derived_from': x['raw_dir'], 'source_result_sha256': x['result_sha256'],
                    'success': False, 'success_definition': 'feasibility study: no success claim; see evaluation',
@@ -112,8 +158,11 @@ def tensorboard(runs, dev, cohort, snapshot):
                                       'stub_approach_gt': x['condition'] == 'stub_approach'},
                    'success_semantics': 'success = m1_success (always false here); diagnostic_success = GT placement',
                    'stop_reason': json.dumps(x['failures']), 'scope': 'own-camera pair beam feasibility, open floor',
-                   'policy': 'owncam_pair_beam_v1', 'case': f"pair {x['condition']}",
-                   'config': {'contact_profile': x['contact_profile'], 'condition': x['condition']},
+                   'policy': x.get('profile') or 'owncam_pair_beam_v1',
+                   'case': f"pair {x['condition']}" + (f" status_channel={'on' if (x['status_channel'] or {}).get('enabled') else 'off'}"
+                                                        if x.get('status_channel') is not None else ''),
+                   'config': {'contact_profile': x['contact_profile'], 'condition': x['condition'],
+                              'status_channel': (x['status_channel'] or {}).get('enabled')},
                    'sim_s': x['sim_seconds'], 'wall_s': x['wall_seconds'],
                    'commands': sum((x['commands'] or {}).values()) if isinstance(x['commands'], dict) else x['commands'],
                    'model_calls': 0, 'evaluation': {**ev, 'barrier_go_skew_s': x['barrier_go_skew_s'],
@@ -122,7 +171,9 @@ def tensorboard(runs, dev, cohort, snapshot):
                    'seed': x['seed'], 'source_sha': x['source_sha']}
         (view / name).mkdir(parents=True, exist_ok=True)
         (view / name / 'result.json').write_text(json.dumps(derived, indent=1) + '\n')
-        names[name] = f"{x['condition']} ({'dev' if x['arm'] == 'dev' else 'pre-registered ' + cohort})"
+        names[name] = (f"{x['condition']} ({'dev' if x['arm'] == 'dev' else 'pre-registered ' + cohort})"
+                       + (f"; status_channel={'on' if (x['status_channel'] or {}).get('enabled') else 'off'} (candidate)"
+                          if x.get('status_channel') is not None else ''))
     target = TB / snapshot
     if target.exists():
         raise SystemExit(f'{target} exists; snapshots are never overwritten')
