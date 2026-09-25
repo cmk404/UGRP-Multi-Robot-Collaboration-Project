@@ -1,0 +1,319 @@
+{
+  "schema": "ugrp.owncam_loc_metrics.v1",
+  "episodes": [
+    "posthoc-cp20-s11",
+    "posthoc-cp30-s11"
+  ],
+  "thresholds_sha256": "9ed4211dcdbab14c35fc16d069bda0e3ff41190bfe4952aebc78f39762b6d5e8",
+  "gates": {
+    "G1_door_stop_look_p90": {
+      "id": "G1_door_stop_look_p90",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "stationary_look": true,
+      "quantile": 90,
+      "pos_m": 0.05,
+      "yaw_deg": 5.0,
+      "meaning": "robot stopped near the door with a pan sweep: 90% of frames within 5 cm / 5 deg",
+      "frames": 0,
+      "uninitialized": 0,
+      "pass": false
+    },
+    "G2_door_drive_p50": {
+      "id": "G2_door_drive_p50",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "quantile": 50,
+      "pos_m": 0.05,
+      "yaw_deg": 5.0,
+      "meaning": "all frames (driving and stopped) near the door, median within 5 cm / 5 deg",
+      "frames": 0,
+      "uninitialized": 0,
+      "pass": false
+    },
+    "G3_door_drive_p90": {
+      "id": "G3_door_drive_p90",
+      "modes": [
+        "look_search",
+        "look_level",
+        "carry_level"
+      ],
+      "door_region": true,
+      "quantile": 90,
+      "pos_m": 0.1,
+      "yaw_deg": 10.0,
+      "meaning": "all frames near the door, 90% within 10 cm / 10 deg",
+      "frames": 0,
+      "uninitialized": 0,
+      "pass": false
+    },
+    "I1_teacher_carry_door_p50_info": {
+      "id": "I1_teacher_carry_door_p50_info",
+      "modes": [
+        "teacher_carry"
+      ],
+      "door_region": true,
+      "quantile": 50,
+      "pos_m": 0.05,
+      "yaw_deg": 5.0,
+      "meaning": "informational only (not an M1 gate): the teacher's low carry pose sees the floor",
+      "frames": 0,
+      "uninitialized": 0,
+      "pass": false
+    }
+  },
+  "summary": {
+    "mode=carry_pitch": {
+      "frames": 1008,
+      "initialized": 1008,
+      "visible_rate": 0.587,
+      "pos_m": {
+        "p50": 0.0315,
+        "p90": 0.1268,
+        "max": 0.1684
+      },
+      "yaw_deg": {
+        "p50": 1.048,
+        "p90": 4.058,
+        "max": 8.628
+      }
+    },
+    "posture=arm_moving": {
+      "frames": 194,
+      "initialized": 194,
+      "visible_rate": 0.479,
+      "pos_m": {
+        "p50": 0.0342,
+        "p90": 0.1321,
+        "max": 0.1639
+      },
+      "yaw_deg": {
+        "p50": 1.319,
+        "p90": 5.822,
+        "max": 8.628
+      }
+    },
+    "posture=carry_pitch20_c": {
+      "frames": 20,
+      "initialized": 20,
+      "visible_rate": 1.0,
+      "pos_m": {
+        "p50": 0.0275,
+        "p90": 0.0658,
+        "max": 0.0669
+      },
+      "yaw_deg": {
+        "p50": 0.411,
+        "p90": 1.181,
+        "max": 2.228
+      }
+    },
+    "posture=carry_pitch20_drive": {
+      "frames": 243,
+      "initialized": 243,
+      "visible_rate": 0.971,
+      "pos_m": {
+        "p50": 0.0269,
+        "p90": 0.0544,
+        "max": 0.0747
+      },
+      "yaw_deg": {
+        "p50": 0.504,
+        "p90": 1.182,
+        "max": 2.247
+      }
+    },
+    "posture=carry_pitch20_l": {
+      "frames": 10,
+      "initialized": 10,
+      "visible_rate": 1.0,
+      "pos_m": {
+        "p50": 0.0248,
+        "p90": 0.0333,
+        "max": 0.0447
+      },
+      "yaw_deg": {
+        "p50": 0.45,
+        "p90": 1.176,
+        "max": 1.351
+      }
+    },
+    "posture=carry_pitch20_r": {
+      "frames": 10,
+      "initialized": 10,
+      "visible_rate": 0.9,
+      "pos_m": {
+        "p50": 0.0326,
+        "p90": 0.0467,
+        "max": 0.0584
+      },
+      "yaw_deg": {
+        "p50": 4.44,
+        "p90": 6.482,
+        "max": 6.521
+      }
+    },
+    "posture=carry_pitch30_c": {
+      "frames": 20,
+      "initialized": 20,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.0668,
+        "p90": 0.136,
+        "max": 0.164
+      },
+      "yaw_deg": {
+        "p50": 2.605,
+        "p90": 4.181,
+        "max": 6.538
+      }
+    },
+    "posture=carry_pitch30_drive": {
+      "frames": 243,
+      "initialized": 243,
+      "visible_rate": 0.07,
+      "pos_m": {
+        "p50": 0.0313,
+        "p90": 0.14,
+        "max": 0.1684
+      },
+      "yaw_deg": {
+        "p50": 2.211,
+        "p90": 4.649,
+        "max": 6.545
+      }
+    },
+    "posture=carry_pitch30_l": {
+      "frames": 10,
+      "initialized": 10,
+      "visible_rate": 0.0,
+      "pos_m": {
+        "p50": 0.0642,
+        "p90": 0.1358,
+        "max": 0.1631
+      },
+      "yaw_deg": {
+        "p50": 5.764,
+        "p90": 7.46,
+        "max": 8.627
+      }
+    },
+    "posture=carry_pitch30_r": {
+      "frames": 10,
+      "initialized": 10,
+      "visible_rate": 0.1,
+      "pos_m": {
+        "p50": 0.0605,
+        "p90": 0.1352,
+        "max": 0.1627
+      },
+      "yaw_deg": {
+        "p50": 0.865,
+        "p90": 4.191,
+        "max": 4.238
+      }
+    },
+    "posture=grasp": {
+      "frames": 40,
+      "initialized": 40,
+      "visible_rate": 0.1,
+      "pos_m": {
+        "p50": 0.0064,
+        "p90": 0.0076,
+        "max": 0.0125
+      },
+      "yaw_deg": {
+        "p50": 0.154,
+        "p90": 0.252,
+        "max": 0.256
+      }
+    },
+    "posture=search_drive": {
+      "frames": 208,
+      "initialized": 208,
+      "visible_rate": 0.971,
+      "pos_m": {
+        "p50": 0.043,
+        "p90": 0.1125,
+        "max": 0.1581
+      },
+      "yaw_deg": {
+        "p50": 1.059,
+        "p90": 2.58,
+        "max": 3.501
+      }
+    },
+    "episode=posthoc-cp20-s11": {
+      "frames": 504,
+      "initialized": 504,
+      "visible_rate": 0.929,
+      "pos_m": {
+        "p50": 0.0269,
+        "p90": 0.0658,
+        "max": 0.1581
+      },
+      "yaw_deg": {
+        "p50": 0.586,
+        "p90": 1.825,
+        "max": 6.521
+      }
+    },
+    "episode=posthoc-cp30-s11": {
+      "frames": 504,
+      "initialized": 504,
+      "visible_rate": 0.246,
+      "pos_m": {
+        "p50": 0.0417,
+        "p90": 0.1372,
+        "max": 0.1684
+      },
+      "yaw_deg": {
+        "p50": 1.761,
+        "p90": 4.695,
+        "max": 8.628
+      }
+    },
+    "door_region&mode=carry_pitch": {
+      "frames": 224,
+      "initialized": 224,
+      "visible_rate": 0.491,
+      "pos_m": {
+        "p50": 0.0322,
+        "p90": 0.0663,
+        "max": 0.0894
+      },
+      "yaw_deg": {
+        "p50": 1.104,
+        "p90": 4.654,
+        "max": 6.521
+      }
+    },
+    "all": {
+      "frames": 1008,
+      "initialized": 1008,
+      "visible_rate": 0.587,
+      "pos_m": {
+        "p50": 0.0315,
+        "p90": 0.1268,
+        "max": 0.1684
+      },
+      "yaw_deg": {
+        "p50": 1.048,
+        "p90": 4.058,
+        "max": 8.628
+      }
+    }
+  },
+  "estimates_sha256": {
+    "posthoc-cp20-s11": "0825779ad75a7592811a812319bb5511a11023a7dd2312045d8924cf25c4d84a",
+    "posthoc-cp30-s11": "d22173adf2f19f4b05fc161e322a13a06df144333f66a01bbb2abbb701d90e45"
+  }
+}

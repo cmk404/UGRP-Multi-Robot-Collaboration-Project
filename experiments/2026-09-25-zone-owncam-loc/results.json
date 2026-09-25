@@ -1,0 +1,562 @@
+{
+ "schema": "ugrp.owncam_loc_results.v1",
+ "preregistered_gates": {
+  "dev": {
+   "G1_door_stop_look_p90": {
+    "id": "G1_door_stop_look_p90",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "stationary_look": true,
+    "quantile": 90,
+    "pos_m": 0.1598,
+    "yaw_deg": 3.066,
+    "meaning": "robot stopped near the door with a pan sweep: 90% of frames within 5 cm / 5 deg",
+    "frames": 92,
+    "uninitialized": 0,
+    "pass": false
+   },
+   "G2_door_drive_p50": {
+    "id": "G2_door_drive_p50",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "quantile": 50,
+    "pos_m": 0.0318,
+    "yaw_deg": 0.461,
+    "meaning": "all frames (driving and stopped) near the door, median within 5 cm / 5 deg",
+    "frames": 760,
+    "uninitialized": 0,
+    "pass": true
+   },
+   "G3_door_drive_p90": {
+    "id": "G3_door_drive_p90",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "quantile": 90,
+    "pos_m": 0.1646,
+    "yaw_deg": 4.367,
+    "meaning": "all frames near the door, 90% within 10 cm / 10 deg",
+    "frames": 760,
+    "uninitialized": 0,
+    "pass": false
+   },
+   "I1_teacher_carry_door_p50_info": {
+    "id": "I1_teacher_carry_door_p50_info",
+    "modes": [
+     "teacher_carry"
+    ],
+    "door_region": true,
+    "quantile": 50,
+    "pos_m": 0.2005,
+    "yaw_deg": 5.074,
+    "meaning": "informational only (not an M1 gate): the teacher's low carry pose sees the floor",
+    "frames": 85,
+    "uninitialized": 0,
+    "pass": false
+   }
+  },
+  "test": {
+   "G1_door_stop_look_p90": {
+    "id": "G1_door_stop_look_p90",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "stationary_look": true,
+    "quantile": 90,
+    "pos_m": 0.0912,
+    "yaw_deg": 2.683,
+    "meaning": "robot stopped near the door with a pan sweep: 90% of frames within 5 cm / 5 deg",
+    "frames": 104,
+    "uninitialized": 0,
+    "pass": false
+   },
+   "G2_door_drive_p50": {
+    "id": "G2_door_drive_p50",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "quantile": 50,
+    "pos_m": 0.0316,
+    "yaw_deg": 0.269,
+    "meaning": "all frames (driving and stopped) near the door, median within 5 cm / 5 deg",
+    "frames": 755,
+    "uninitialized": 0,
+    "pass": true
+   },
+   "G3_door_drive_p90": {
+    "id": "G3_door_drive_p90",
+    "modes": [
+     "look_search",
+     "look_level",
+     "carry_level"
+    ],
+    "door_region": true,
+    "quantile": 90,
+    "pos_m": 0.2623,
+    "yaw_deg": 3.529,
+    "meaning": "all frames near the door, 90% within 10 cm / 10 deg",
+    "frames": 755,
+    "uninitialized": 0,
+    "pass": false
+   },
+   "I1_teacher_carry_door_p50_info": {
+    "id": "I1_teacher_carry_door_p50_info",
+    "modes": [
+     "teacher_carry"
+    ],
+    "door_region": true,
+    "quantile": 50,
+    "pos_m": 0.1986,
+    "yaw_deg": 4.642,
+    "meaning": "informational only (not an M1 gate): the teacher's low carry pose sees the floor",
+    "frames": 158,
+    "uninitialized": 0,
+    "pass": false
+   }
+  }
+ },
+ "posthoc_look_modes_only": {
+  "dev": {
+   "G1_door_stop_look_p90": {
+    "frames": 72,
+    "pos_m": 0.0537,
+    "yaw_deg": 0.824,
+    "pass": false
+   },
+   "G2_door_drive_p50": {
+    "frames": 584,
+    "pos_m": 0.0279,
+    "yaw_deg": 0.324,
+    "pass": true
+   },
+   "G3_door_drive_p90": {
+    "frames": 584,
+    "pos_m": 0.0552,
+    "yaw_deg": 0.876,
+    "pass": true
+   }
+  },
+  "test": {
+   "G1_door_stop_look_p90": {
+    "frames": 84,
+    "pos_m": 0.0446,
+    "yaw_deg": 0.427,
+    "pass": true
+   },
+   "G2_door_drive_p50": {
+    "frames": 562,
+    "pos_m": 0.0192,
+    "yaw_deg": 0.187,
+    "pass": true
+   },
+   "G3_door_drive_p90": {
+    "frames": 562,
+    "pos_m": 0.0579,
+    "yaw_deg": 0.475,
+    "pass": true
+   }
+  },
+  "note": "carry_level removed from the gate selection after test scoring; not a pre-registered result"
+ },
+ "visibility_by_posture": {
+  "dev": {
+   "search (drive+stops)": {
+    "frames": 1180,
+    "visible_rate": 0.933,
+    "mean_tags": 2.91
+   },
+   "level, no box": {
+    "frames": 940,
+    "visible_rate": 0.984,
+    "mean_tags": 3.35
+   },
+   "level carry with box": {
+    "frames": 437,
+    "visible_rate": 0.0,
+    "mean_tags": 0.0
+   },
+   "teacher low carry": {
+    "frames": 337,
+    "visible_rate": 0.0,
+    "mean_tags": 0.0
+   },
+   "grasp": {
+    "frames": 77,
+    "visible_rate": 0.078,
+    "mean_tags": 0.13
+   },
+   "place": {
+    "frames": 72,
+    "visible_rate": 0.625,
+    "mean_tags": 1.0
+   },
+   "arm moving": {
+    "frames": 857,
+    "visible_rate": 0.77,
+    "mean_tags": 2.57
+   }
+  },
+  "test": {
+   "search (drive+stops)": {
+    "frames": 1136,
+    "visible_rate": 0.922,
+    "mean_tags": 3.04
+   },
+   "level, no box": {
+    "frames": 961,
+    "visible_rate": 0.99,
+    "mean_tags": 3.39
+   },
+   "level carry with box": {
+    "frames": 402,
+    "visible_rate": 0.0,
+    "mean_tags": 0.0
+   },
+   "teacher low carry": {
+    "frames": 307,
+    "visible_rate": 0.0,
+    "mean_tags": 0.0
+   },
+   "grasp": {
+    "frames": 77,
+    "visible_rate": 0.039,
+    "mean_tags": 0.06
+   },
+   "place": {
+    "frames": 72,
+    "visible_rate": 0.611,
+    "mean_tags": 1.94
+   },
+   "arm moving": {
+    "frames": 902,
+    "visible_rate": 0.808,
+    "mean_tags": 2.75
+   }
+  }
+ },
+ "posthoc_carry_pitch": {
+  "mode=carry_pitch": {
+   "frames": 1008,
+   "initialized": 1008,
+   "visible_rate": 0.587,
+   "pos_m": {
+    "p50": 0.0315,
+    "p90": 0.1268,
+    "max": 0.1684
+   },
+   "yaw_deg": {
+    "p50": 1.048,
+    "p90": 4.058,
+    "max": 8.628
+   }
+  },
+  "posture=carry_pitch20_c": {
+   "frames": 20,
+   "initialized": 20,
+   "visible_rate": 1.0,
+   "pos_m": {
+    "p50": 0.0275,
+    "p90": 0.0658,
+    "max": 0.0669
+   },
+   "yaw_deg": {
+    "p50": 0.411,
+    "p90": 1.181,
+    "max": 2.228
+   }
+  },
+  "posture=carry_pitch20_drive": {
+   "frames": 243,
+   "initialized": 243,
+   "visible_rate": 0.971,
+   "pos_m": {
+    "p50": 0.0269,
+    "p90": 0.0544,
+    "max": 0.0747
+   },
+   "yaw_deg": {
+    "p50": 0.504,
+    "p90": 1.182,
+    "max": 2.247
+   }
+  },
+  "posture=carry_pitch20_l": {
+   "frames": 10,
+   "initialized": 10,
+   "visible_rate": 1.0,
+   "pos_m": {
+    "p50": 0.0248,
+    "p90": 0.0333,
+    "max": 0.0447
+   },
+   "yaw_deg": {
+    "p50": 0.45,
+    "p90": 1.176,
+    "max": 1.351
+   }
+  },
+  "posture=carry_pitch20_r": {
+   "frames": 10,
+   "initialized": 10,
+   "visible_rate": 0.9,
+   "pos_m": {
+    "p50": 0.0326,
+    "p90": 0.0467,
+    "max": 0.0584
+   },
+   "yaw_deg": {
+    "p50": 4.44,
+    "p90": 6.482,
+    "max": 6.521
+   }
+  },
+  "posture=carry_pitch30_c": {
+   "frames": 20,
+   "initialized": 20,
+   "visible_rate": 0.0,
+   "pos_m": {
+    "p50": 0.0668,
+    "p90": 0.136,
+    "max": 0.164
+   },
+   "yaw_deg": {
+    "p50": 2.605,
+    "p90": 4.181,
+    "max": 6.538
+   }
+  },
+  "posture=carry_pitch30_drive": {
+   "frames": 243,
+   "initialized": 243,
+   "visible_rate": 0.07,
+   "pos_m": {
+    "p50": 0.0313,
+    "p90": 0.14,
+    "max": 0.1684
+   },
+   "yaw_deg": {
+    "p50": 2.211,
+    "p90": 4.649,
+    "max": 6.545
+   }
+  },
+  "posture=carry_pitch30_l": {
+   "frames": 10,
+   "initialized": 10,
+   "visible_rate": 0.0,
+   "pos_m": {
+    "p50": 0.0642,
+    "p90": 0.1358,
+    "max": 0.1631
+   },
+   "yaw_deg": {
+    "p50": 5.764,
+    "p90": 7.46,
+    "max": 8.627
+   }
+  },
+  "posture=carry_pitch30_r": {
+   "frames": 10,
+   "initialized": 10,
+   "visible_rate": 0.1,
+   "pos_m": {
+    "p50": 0.0605,
+    "p90": 0.1352,
+    "max": 0.1627
+   },
+   "yaw_deg": {
+    "p50": 0.865,
+    "p90": 4.191,
+    "max": 4.238
+   }
+  },
+  "episode=posthoc-cp20-s11": {
+   "frames": 504,
+   "initialized": 504,
+   "visible_rate": 0.929,
+   "pos_m": {
+    "p50": 0.0269,
+    "p90": 0.0658,
+    "max": 0.1581
+   },
+   "yaw_deg": {
+    "p50": 0.586,
+    "p90": 1.825,
+    "max": 6.521
+   }
+  },
+  "episode=posthoc-cp30-s11": {
+   "frames": 504,
+   "initialized": 504,
+   "visible_rate": 0.246,
+   "pos_m": {
+    "p50": 0.0417,
+    "p90": 0.1372,
+    "max": 0.1684
+   },
+   "yaw_deg": {
+    "p50": 1.761,
+    "p90": 4.695,
+    "max": 8.628
+   }
+  },
+  "door_region&mode=carry_pitch": {
+   "frames": 224,
+   "initialized": 224,
+   "visible_rate": 0.491,
+   "pos_m": {
+    "p50": 0.0322,
+    "p90": 0.0663,
+    "max": 0.0894
+   },
+   "yaw_deg": {
+    "p50": 1.104,
+    "p90": 4.654,
+    "max": 6.521
+   }
+  }
+ },
+ "calibration_report": {
+  "motion_unloaded": {
+   "tau_s": 0.3,
+   "gain": [
+    [
+     1.3323,
+     -0.0822,
+     -0.0053
+    ],
+    [
+     0.0052,
+     1.0177,
+     -0.0462
+    ],
+    [
+     -0.0045,
+     0.1279,
+     1.4885
+    ]
+   ],
+   "velocity_residual_rms": [
+    0.0228,
+    0.0071,
+    0.0175
+   ],
+   "samples": 16229,
+   "slip_ratio_std": 0.2148
+  },
+  "motion_loaded": {
+   "tau_s": 0.44,
+   "gain": [
+    [
+     1.3533,
+     0.0667,
+     -0.0111
+    ],
+    [
+     -0.0038,
+     0.9079,
+     -0.0415
+    ],
+    [
+     0.0023,
+     -0.0512,
+     0.7411
+    ]
+   ],
+   "velocity_residual_rms": [
+    0.0151,
+    0.004,
+    0.055
+   ],
+   "samples": 5260,
+   "slip_ratio_std": 0.1457
+  },
+  "detections": 6667,
+  "bearing_deg": {
+   "median": 1.0371329717729998,
+   "p90": 1.0815401471748982
+  },
+  "azimuth_deg": {
+   "mean": -0.03697103182745255,
+   "std": 0.06346827535878914
+  },
+  "elevation_deg": {
+   "mean": -1.0698832105606584,
+   "std": 0.028585254898448507
+  },
+  "range_log": {
+   "median": -0.00025675748290251293,
+   "robust_std": 0.011341280924589584
+  },
+  "normal_deg": {
+   "median": 3.6580017239322102,
+   "p90": 9.266414733348155
+  },
+  "by_range": {
+   "0.0-0.5m": {
+    "n": 11,
+    "bearing_p50_deg": 1.1018738590743116,
+    "range_log_p50_abs": 0.0012272789341780353
+   },
+   "0.5-1.0m": {
+    "n": 404,
+    "bearing_p50_deg": 1.0818436093603077,
+    "range_log_p50_abs": 0.002525201813713061
+   },
+   "1.0-2.0m": {
+    "n": 2305,
+    "bearing_p50_deg": 1.0490093232823554,
+    "range_log_p50_abs": 0.006095095749558473
+   },
+   "2.0-3.0m": {
+    "n": 3060,
+    "bearing_p50_deg": 1.029015486896385,
+    "range_log_p50_abs": 0.009030298008109266
+   },
+   "3.0-5.0m": {
+    "n": 887,
+    "bearing_p50_deg": 1.019700308430566,
+    "range_log_p50_abs": 0.013498423527169831
+   },
+   "5.0-9.0m": {
+    "n": 0,
+    "bearing_p50_deg": null,
+    "range_log_p50_abs": null
+   }
+  }
+ },
+ "dev_tuning": {
+  "chosen": "a.5_r3_t1 + loaded motion model",
+  "overrides": {
+   "roughen": [
+    0.01,
+    0.01,
+    0.005
+   ],
+   "measurement.azimuth_floor_rad": 0.0087,
+   "measurement.range_floor": 0.03,
+   "measurement.elevation_floor_rad": 0.035,
+   "measurement.tag_temper": 1.0,
+   "measurement.normal_std_rad": 0.52,
+   "motion/motion_loaded noise": "x2 of the fitted rel/abs"
+  },
+  "selection": "dev look episodes (ls/ll s11,s12), 2 filter seeds; best G1/G3 p90 among ~25 variants; loaded motion model added after the dev dead-reckoning analysis (turn gain 0.74 loaded vs 1.49); test split never localized or scored before this freeze"
+ }
+}
