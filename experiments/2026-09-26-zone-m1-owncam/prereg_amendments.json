@@ -103,6 +103,35 @@
         "controller: the loaded carry leg (OwnCamDriverV2, east-facing mecanum pursuit, arrive tolerance 0.03 m) goes through the door to the skill's pre-place goal instead of stopping at the door exit; the skill's nav_preplace then only corrects the residual (place tolerance 0.012 m) after the pre-place look. Pose limits unchanged."
       ],
       "student_patch": {}
+    },
+    {
+      "id": "A5-codex-prereview-and-skill-v6",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "Codex pre-review of PR #201 at ea45e3d (scratchpad codex-m1-prereview.md, forwarded by the coordinator): no runtime GT leak; blockers 1 (test launchable by default, freeze not enforced) and 2 (cargo_noslip_v1 not wired into the M1 path; every registered episode ran local_contact_fine); HIGH 3 (look-back sigma gate not applied to the actual confirmation frames), 4 (no full-seed aggregation / exception handling), 5 (success formula without retention / physical grasp); MEDIUM 6 (A2 bay 0.30 x 0.50 m, not the 0.5 m square); LOW 7 (timestep typo). PR #181 skill v6 (source ac34651, interface frozen): top-edge own-RGB face yaw for head-on boxes, public reanchor_after_probe, static keep-out approach point + guard; their own diagnostic cohort 551-560 is not M1 and is not pooled.",
+      "scope_note": "This amendment also changes an episode CONDITION (contact profile) and the judge, not only the student: directed by the coordinator per the Codex pre-review, before any test data. cargo_noslip_v1 is the primary condition while the user's decision on it is still pending (PR #181 / #189); it is recorded per run and changing it again requires a new amendment before the test.",
+      "changes": [
+        "skill v5 -> wrist_zone_skill_v6 (mode='m1', robot_id=episode robot, static_keepouts = the three idle-spawn spots of the static layout zone_wide_door (x -0.85; y -2.25/-0.85/0.55; radius 0.17 m, source static_layout_idle_spawn), static_bounds_m = map bounds); the controller drives its approach leg to v6's approach_point() and uses v6's public reanchor_after_probe (no private anchor writes)",
+        "order sheet: CoarseOrderSheet bay back to the 0.5 m square (half 0.25 m) centred on the own-RGB search cluster; A2's 0.30 m narrowing is withdrawn (Codex #6), the approach side/standoff comes from v6 around the static keep-outs",
+        "contact profile explicit for every episode: cargo_noslip_v1 (base local_contact_fine + sim/zone_cargo_contact.apply); each run records the profile record, the built model's noslip_iterations, timestep and the final scene XML sha256, and refuses cargo_noslip_v1 if noslip_iterations is 0",
+        "look-back: every own-RGB confirmation step (look_back_steps 0 and the retry step) is gated on the CURRENT estimate (own look <= 3 s old, look_back sigma limits); violation -> re-look, after 3 gate looks POSE_UNCERTAIN without a claim; the judge requires the gate recorded for the placement frame_id",
+        "judge (evaluation only, added to m1_success): no_exception; grasp_physical_both_fingers (both finger geoms touch the box in >= 95 % of physics steps while the skill is in to_carry_posture / nav_preplace / grip_check / pre_release); box_retained_in_carry (box centre z >= 0.04 m on every such step; intended set-downs reseat_* / release excluded); wall contact counted per physics step; max box penetration and normal force recorded",
+        "runner: dev split by default; --split test requires --frozen frozen_source.json, a clean tree under the frozen paths, no change since the frozen source (records-only paths listed in the freeze), matching per-file hashes and the same skill / calibration / contact profile; attempt_started.json is written before physics; a controller/skill exception is a FAILED episode with its logs kept",
+        "results: exactly one adopted attempt per test episode 101-106 sharing one frozen source; a test run dir without result.json is an infrastructure failure and only then may test-rerun/<ep> run once; missing, duplicate or disallowed attempts block the claim",
+        "records: loc README timestep corrected (cherry-pick of PR #198 09be45c)"
+      ],
+      "prior_dev_results": "dev-a1..a5 ran local_contact_fine (default of every registered episode) and were judged without the A5 retention/grasp/exception/per-frame gate checks; they stay recorded as dev evidence under those conditions",
+      "student_patch": {
+        "skill": "v6",
+        "skill_module": "harness/wrist_zone_skill_v6.py (PR #181 source ac34651, read-only, mode='m1')",
+        "contact_profile": "cargo_noslip_v1",
+        "bay_half_m": [
+          0.25,
+          0.25
+        ],
+        "controller_schema": "ugrp.m1_owncam_delivery.v3",
+        "runner_schema": "ugrp.m1_owncam_run.v3"
+      }
     }
   ]
 }

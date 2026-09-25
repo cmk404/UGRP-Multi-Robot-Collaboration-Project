@@ -20,6 +20,7 @@ ATTEMPTS = {
     'dev-a3': 'ce33ffd, amendment A2: bay half 0.15 m, rotated-box dev diagnostics (runner robot_id bug: non-r1 robots rejected)',
     'dev-a4': 'ea45e3d, amendment A3: skill gets the episode robot id',
     'dev-a5': '6352fde, amendment A4: loaded carry leg through the door to the pre-place goal',
+    'dev-a6': 'amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge',
 }
 if (RAW/'test').exists():
     ATTEMPTS['test'] = 'test split, once, frozen source (see frozen_source.json)'
