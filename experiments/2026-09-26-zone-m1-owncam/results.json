@@ -877,6 +877,98 @@
     },
     {
       "attempt": "dev-a6",
+      "episode": "m1devdiag-s94",
+      "split": "dev",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "1ff646e52a2d7e779e4e6a3a8000e45e5c72da31",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {
+        "box_yaw_deg": 15.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 913572,
+        "both_finger_steps": 913572,
+        "min_box_z_m": 0.08474455234157799,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.002402817537448813,
+        "max_box_normal_force_n": 3.1153935493581892,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0095,
+      "gt_box_final_xyz": [
+        4.5759,
+        -0.0108,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 503.0,
+      "looks": 4,
+      "commands": 7988,
+      "localizer_stats": {
+        "updates": 1652,
+        "resets": 0,
+        "resamples": 699
+      },
+      "load_average": {
+        "start": [
+          6.38,
+          5.82,
+          5.48
+        ],
+        "end": [
+          6.79,
+          7.44,
+          7.1
+        ]
+      },
+      "wall_s": 1069.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
       "episode": "m1devdiag-s95",
       "split": "dev",
       "robot_id": "r1",

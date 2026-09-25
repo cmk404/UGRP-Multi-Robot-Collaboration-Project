@@ -13,7 +13,7 @@
 - **test(101–106)는 실행하지 않았고 동결도 하지 않았다.** A5(v6, `cargo_noslip_v1`)로 dev를 확인한 결과(dev-a6)는 s93·s95 모두 `GRASP_TARGET_NOT_VISIBLE`이었다.
   - 원인: 스킬 N7 approach 단계의 cyan 검출 임계값(min_saturation 65)이 서쪽 픽업 구역의 밝은 청색 바닥에서 상자를 놓치거나 바닥을 상자로 오검출한다. 기록 프레임을 150으로 재생하면 정상 검출된다.
   - #181에 보고했다. 1회용 test를 쓸지는 코디네이터가 결정한다.
-- **dev 진단 성공 1건.** dev-a5 s94(+15°, `6352fde`)에서 전 과정을 완주했다. 조건은 A5 이전(`local_contact_fine`, v5, 이전 판정식)이다. **M1 코호트 증거가 아니다.**
+- **dev 진단 성공 2건(같은 s94).** A5 조건(v6·`cargo_noslip_v1`·새 판정식)에서도 dev-a6 s94가 완주했다(아래 표). 첫 완주는 dev-a5 s94(+15°, `6352fde`)였다. 조건은 A5 이전(`local_contact_fine`, v5, 이전 판정식)이다. **M1 코호트 증거가 아니다.**
   - 경로: 탐색(오차 2.3 cm) → 자기 RGB 면 추정 파지 → 운반·문 통과(둘러보기 16회) → 배치(GT 슬롯 오차 2.3 / 1.3 cm) → 다시 보기 IN_SLOT.
   - 기록: 벽·peer·다른 상자 접촉 0, weld OFF, 자세 출처 `owncam_pf_v2:757f7f09`만, SIM 544 s.
 - **접촉 프로필.** dev-a1–a5는 전부 `local_contact_fine`로 실행했다(등록 에피소드 기본값). A5 이후(dev-a6부터)는 `cargo_noslip_v1`이다(`noslip_iterations` 10 기록). 사용자 결정은 아직 대기 중이다(#181·#189).
@@ -52,6 +52,7 @@
 | dev-a4 `ea45e3d` | s93 / s94 / s95 | GRASP_TARGET_NOT_VISIBLE / SIM_LIMIT / GRASP_TARGET_NOT_VISIBLE | 탐색 / 운반·문 통과 / 탐색 |
 | dev-a5 `6352fde` | s94(+15°, 진단) | **OWN_RGB_PLACEMENT_IN_SLOT, 당시 m1 검사 전부 통과**(A5 이전 판정식) | 전 단계 |
 | dev-a6 `aa2dced` | s93 / s95(−20°) | GRASP_TARGET_NOT_VISIBLE ×2(N7 approach 임계값 65가 밝은 청색 바닥에서 실패) | 탐색(오차 8.0 / 7.1 cm) |
+| dev-a6 `1ff646e` | s94(+15°, 진단, A5 조건) | **OWN_RGB_PLACEMENT_IN_SLOT, A5 판정식 전부 통과**: noslip 10, 운반 step 913,572에서 양손가락 접촉 100%, 최저 z 0.085 m, 접촉 0, 배치 frame에 게이트, GT 슬롯 오차 2.4 / 1.1 cm, SIM 503 s | 전 단계 |
 
 ## 관찰 요약 (GT는 오프라인 평가에만 사용)
 - **파지 단계 plant.** 팔을 내린 상태에서 전진 반응이 크게 늦다. 0.08×0.3 s 명령이 0.66 cm만 움직였고(명령 2.4 cm), 적합값은 τ ≈ 1.3 s다. 주행 중 입자별 미끄럼 척도(1.27)가 이를 더 부풀린다. A1의 'fine' 프로필을 쓰면 s91 재생에서 파지 구간 오차가 3 cm다(in-sample).
