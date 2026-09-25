@@ -9214,7 +9214,1592 @@
    "counts_for": "delivery"
   }
  ],
- "v4_cohorts": {},
+ "v4_cohorts": {
+  "cohort-v4-6664425/D": {
+   "arm": "D",
+   "condition": "cargo_noslip_v1 + drop injection at carry+15 s",
+   "runs": [
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/D/531",
+     "seed": 531,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 80.032,
+     "steps": 160,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 21.0,
+      "to_carry_posture": 64.382,
+      "nav_preplace": 64.432
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 3,
+     "placement_own_rgb": null,
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": false,
+      "place_in_zone_gt": false,
+      "box_final_xyz": [
+       3.5376,
+       -2.1035,
+       0.016
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       0.5376,
+       -1.6535
+      ],
+      "max_box_z_m": 0.1707,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": false,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      7.46,
+      10.53,
+      18.72
+     ],
+     "load_average_end": [
+      11.17,
+      11.12,
+      17.97
+     ],
+     "wall_seconds": 108.6,
+     "artifact_sha256": {
+      "result.json": "82da3702bbcd194484deda63c7913b76089778bd8089b0e50826d4d87b9be801",
+      "control.jsonl": "f402655645cdda71e687e1b495f142f86cc888026fe6111061ed983211a81c20",
+      "evaluation-only.jsonl": "de0c0cf46c12cc498e560a4547ac4b525b278bd0c2158a8e39f37761785a2db2",
+      "scene.xml": "d3c9e11eb9a5399cf11b43f84a0424c425065ca56e6165183e54f86a6da1cd85"
+     },
+     "input_frames": 160,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 22,
+       "drives": 23
+      },
+      "grip_checks": [],
+      "placement_detector": null,
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": {
+      "requested_after_carry_s": 15.0,
+      "carry_start_sim_s": 64.432,
+      "applied_sim_s": 80.032,
+      "box_before_xyz": [
+       3.5651,
+       -2.0211,
+       0.1707
+      ],
+      "box_after_xyz": [
+       3.5376,
+       -2.1035,
+       0.016
+      ],
+      "kind": "held box moved to the floor below the jaws (teleport drop)"
+     },
+     "counts_for": "drop_safety_only"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/D/533",
+     "seed": 533,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 78.589,
+     "steps": 157,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 19.8,
+      "to_carry_posture": 63.539,
+      "nav_preplace": 63.589
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 5,
+     "placement_own_rgb": null,
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": false,
+      "place_in_zone_gt": false,
+      "box_final_xyz": [
+       3.4432,
+       0.619,
+       0.016
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       0.4432,
+       1.469
+      ],
+      "max_box_z_m": 0.1708,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": false,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      7.46,
+      10.53,
+      18.72
+     ],
+     "load_average_end": [
+      11.17,
+      11.12,
+      17.97
+     ],
+     "wall_seconds": 108.4,
+     "artifact_sha256": {
+      "result.json": "60eab987f90e422eb45050bbce1f66b8eecdf8ef398322fe7ffffc9aac38ef24",
+      "control.jsonl": "46ae2c7550cbeb0e2e36a55d7f6064d3661216df5ecf63e2e255ac193595d1b9",
+      "evaluation-only.jsonl": "c9435a402ec403b75cb94d71d131c1a824383f0392d070b6bde30fe94c7cbe48",
+      "scene.xml": "63dde43836fdc23cc7d7f96ae5fc34c13c17214377680567ab7ae8c93435c340"
+     },
+     "input_frames": 157,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 23,
+       "drives": 20
+      },
+      "grip_checks": [],
+      "placement_detector": null,
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": {
+      "requested_after_carry_s": 15.0,
+      "carry_start_sim_s": 63.589,
+      "applied_sim_s": 78.589,
+      "box_before_xyz": [
+       3.4777,
+       0.5397,
+       0.1708
+      ],
+      "box_after_xyz": [
+       3.4432,
+       0.619,
+       0.016
+      ],
+      "kind": "held box moved to the floor below the jaws (teleport drop)"
+     },
+     "counts_for": "drop_safety_only"
+    }
+   ],
+   "summary": {
+    "n": 2,
+    "pose_source": "gt_stub_eval_only",
+    "counts_as_m1": false,
+    "place_in_slot_gt": 0,
+    "grasp_success_gt": 2,
+    "skill_claim_agrees_with_gt": 2,
+    "false_success": 0,
+    "weld_eq_active_max": 0,
+    "wall_contact_steps": 0,
+    "sim_seconds": [
+     80.032,
+     78.589
+    ],
+    "steps": [
+     160,
+     157
+    ],
+    "reasons": [
+     "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+     "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED"
+    ],
+    "reseats": [
+     0,
+     0
+    ],
+    "retreats": [
+     0,
+     0
+    ],
+    "grip_checks": [
+     [],
+     []
+    ],
+    "placement_detector": [
+     null,
+     null
+    ],
+    "contact_profiles": [
+     "cargo_noslip_v1"
+    ],
+    "g4_violations": [],
+    "self_occluded_rejections": [
+     0,
+     0
+    ],
+    "zone_c_placed": 0,
+    "zone_c_n": 2,
+    "held_stops": [],
+    "drop_safety": [
+     {
+      "seed": 531,
+      "reason": "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+      "claim_in_slot": false,
+      "box_final_z_m": 0.016,
+      "fault_injection": {
+       "requested_after_carry_s": 15.0,
+       "carry_start_sim_s": 64.432,
+       "applied_sim_s": 80.032,
+       "box_before_xyz": [
+        3.5651,
+        -2.0211,
+        0.1707
+       ],
+       "box_after_xyz": [
+        3.5376,
+        -2.1035,
+        0.016
+       ],
+       "kind": "held box moved to the floor below the jaws (teleport drop)"
+      }
+     },
+     {
+      "seed": 533,
+      "reason": "CARRY_VISUAL_LOAD_DROPPED_OR_OCCLUDED",
+      "claim_in_slot": false,
+      "box_final_z_m": 0.016,
+      "fault_injection": {
+       "requested_after_carry_s": 15.0,
+       "carry_start_sim_s": 63.589,
+       "applied_sim_s": 78.589,
+       "box_before_xyz": [
+        3.4777,
+        0.5397,
+        0.1708
+       ],
+       "box_after_xyz": [
+        3.4432,
+        0.619,
+        0.016
+       ],
+       "kind": "held box moved to the floor below the jaws (teleport drop)"
+      }
+     }
+    ]
+   }
+  },
+  "cohort-v4-6664425/P": {
+   "arm": "P",
+   "condition": "cargo_noslip_v1",
+   "runs": [
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/531",
+     "seed": 531,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 158.518,
+     "steps": 337,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 21.0,
+      "to_carry_posture": 64.382,
+      "nav_preplace": 64.432,
+      "pre_release": 147.694,
+      "release": 148.094,
+      "look_back": 158.518
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 3,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1628,
+       0.0042
+      ],
+      "box_map_m": [
+       3.0,
+       -0.4472
+      ],
+      "slot_error_m": [
+       0.0,
+       0.0028
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9963,
+       -0.4474,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0037,
+       0.0026
+      ],
+      "max_box_z_m": 0.1707,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      11.17,
+      11.12,
+      17.97
+     ],
+     "load_average_end": [
+      35.32,
+      23.8,
+      21.66
+     ],
+     "wall_seconds": 228.3,
+     "artifact_sha256": {
+      "result.json": "075ddc464560abe6eae72e365079d9f9e9b128f3c8537012520aba985e7d69fc",
+      "control.jsonl": "b08bac04b7eb3a0770bc00426641824f69f66da1c44928b143eb5c2b426f0115",
+      "evaluation-only.jsonl": "a752af9d567e007a1440637d8f2baa90a1b6e13b0b10f59f81be3527d48228c2",
+      "scene.xml": "d3c9e11eb9a5399cf11b43f84a0424c425065ca56e6165183e54f86a6da1cd85"
+     },
+     "input_frames": 337,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 22,
+       "drives": 23
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/532",
+     "seed": 532,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 162.463,
+     "steps": 354,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 22.0,
+      "to_carry_posture": 66.69,
+      "nav_preplace": 66.74,
+      "pre_release": 151.67,
+      "release": 152.07,
+      "look_back": 162.463
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 5,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1657,
+       -0.0157
+      ],
+      "box_map_m": [
+       3.0013,
+       -1.2521
+      ],
+      "slot_error_m": [
+       0.0013,
+       -0.0021
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9969,
+       -1.2518,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0031,
+       -0.0018
+      ],
+      "max_box_z_m": 0.1712,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      11.17,
+      11.12,
+      17.97
+     ],
+     "load_average_end": [
+      33.05,
+      23.52,
+      21.57
+     ],
+     "wall_seconds": 236.5,
+     "artifact_sha256": {
+      "result.json": "101fbbb00d9deee9e9a094a026032026a5f3483d8076d4a69cedefa4823b3e8c",
+      "control.jsonl": "3a60427cff69670fa284581c6ffe0ccd03ca18d59e17b4c08ed7fb3f627b0481",
+      "evaluation-only.jsonl": "19e324979cca3ed86fafb14f5e2a6165b2476915bf52ec6cc33f86f3dc08f6b4",
+      "scene.xml": "d5c2c4cae12ef334be129c3e00362cb96d5734115baa4d0731fb256e56bd7914"
+     },
+     "input_frames": 354,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 23,
+       "drives": 22
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/533",
+     "seed": 533,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 151.179,
+     "steps": 319,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 19.8,
+      "to_carry_posture": 63.539,
+      "nav_preplace": 63.589,
+      "pre_release": 140.375,
+      "release": 140.796,
+      "look_back": 151.179
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 5,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.166,
+       -0.007
+      ],
+      "box_map_m": [
+       2.9992,
+       -0.8503
+      ],
+      "slot_error_m": [
+       -0.0008,
+       -0.0003
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9961,
+       -0.8502,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0039,
+       -0.0002
+      ],
+      "max_box_z_m": 0.1708,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      35.32,
+      23.8,
+      21.66
+     ],
+     "load_average_end": [
+      12.54,
+      18.42,
+      19.82
+     ],
+     "wall_seconds": 210.7,
+     "artifact_sha256": {
+      "result.json": "a6ed555945e37bb135d65430fef84efd5330c529387df9e11925a4d3005bda11",
+      "control.jsonl": "b477b7426e16cdc46f9fc5499671522d8e2bca2f0e4796fc1e4a92e7dd7250c6",
+      "evaluation-only.jsonl": "44ea6e0f18b3377483410a478506db11a8c026e67e9742afa074820a7bd79230",
+      "scene.xml": "63dde43836fdc23cc7d7f96ae5fc34c13c17214377680567ab7ae8c93435c340"
+     },
+     "input_frames": 319,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 23,
+       "drives": 20
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/534",
+     "seed": 534,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 201.562,
+     "steps": 440,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 58.7,
+      "to_carry_posture": 99.962,
+      "nav_preplace": 100.012,
+      "pre_release": 190.779,
+      "release": 191.179,
+      "look_back": 201.562
+     },
+     "face_normal_source": "own_rgb_markerless_face_fits",
+     "face_nudges": 1,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1639,
+       0.0145
+      ],
+      "box_map_m": [
+       3.0022,
+       -0.4476
+      ],
+      "slot_error_m": [
+       0.0022,
+       0.0024
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9975,
+       -0.4482,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0025,
+       0.0018
+      ],
+      "max_box_z_m": 0.1713,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      33.05,
+      23.52,
+      21.57
+     ],
+     "load_average_end": [
+      13.21,
+      17.29,
+      19.29
+     ],
+     "wall_seconds": 265.9,
+     "artifact_sha256": {
+      "result.json": "5c0f31b5e936d7c272a8bf5a3144c1dac6c123ae7f29a3e5b887a84434ea8318",
+      "control.jsonl": "12eb835787ddd5530a94562f4946fe1088d9e9505a53c6afe167010831b54267",
+      "evaluation-only.jsonl": "8ae188964c5deaccc5c76049f4535ed5803abaa0d01cbd0ef757b033b721d9c8",
+      "scene.xml": "88f2aefbbd03ae4a59492823aae6061db1fe3772fed11958cf31ce694020015f"
+     },
+     "input_frames": 440,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 21,
+       "drives": 22
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/535",
+     "seed": 535,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 179.788,
+     "steps": 360,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 18.6,
+      "to_carry_posture": 66.353,
+      "nav_preplace": 66.403,
+      "pre_release": 169.015,
+      "release": 169.415,
+      "look_back": 179.788
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 6,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1627,
+       0.005
+      ],
+      "box_map_m": [
+       4.5993,
+       0.3994
+      ],
+      "slot_error_m": [
+       -0.0007,
+       -0.0006
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5956,
+       0.3992,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0044,
+       -0.0008
+      ],
+      "max_box_z_m": 0.171,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      12.54,
+      18.42,
+      19.82
+     ],
+     "load_average_end": [
+      14.06,
+      17.47,
+      19.07
+     ],
+     "wall_seconds": 240.4,
+     "artifact_sha256": {
+      "result.json": "e5ab2c880fa1ed9a56d0705150c3c0942fac1c18d740d267b16207f040ad8b5a",
+      "control.jsonl": "90b81dab16c0aa6ac141fec816bf8468b64188d2a720fb0ca63c6bd1d6208e37",
+      "evaluation-only.jsonl": "339696469b996e658c85c1f502d3357defecc53d9d5ebcf5d3c5e94ed01a44bf",
+      "scene.xml": "e052d7a0145411ac73f4f870519d498a830e0a66276aaeef51ffbe80b08aadfe"
+     },
+     "input_frames": 360,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 26,
+       "drives": 21
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/536",
+     "seed": 536,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 160.39,
+     "steps": 319,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 14.2,
+      "to_carry_posture": 54.708,
+      "nav_preplace": 54.758,
+      "pre_release": 149.597,
+      "release": 149.997,
+      "look_back": 160.39
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 1,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1658,
+       -0.0107
+      ],
+      "box_map_m": [
+       4.5987,
+       -2.0891
+      ],
+      "slot_error_m": [
+       -0.0013,
+       0.0109
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5947,
+       -2.0886,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0053,
+       0.0114
+      ],
+      "max_box_z_m": 0.1707,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      13.21,
+      17.29,
+      19.29
+     ],
+     "load_average_end": [
+      12.14,
+      16.52,
+      18.64
+     ],
+     "wall_seconds": 221.1,
+     "artifact_sha256": {
+      "result.json": "a3fcbb6793f8f39c913cc455b08b2390a1b262179519587952ef4d56829c9c8c",
+      "control.jsonl": "1379e0ede9a70a4ff2d193dfd9a20a75efa632496cd33dd32ddc89a7334f3828",
+      "evaluation-only.jsonl": "5a0727dcbc2f539a0df0149d2a44a56280542f6c01a736c04b9f3e1b8eb2d359",
+      "scene.xml": "f094e304d1bd186d80bb7810b3678b1d5d82d11c302432c8bb813208da51b0ca"
+     },
+     "input_frames": 319,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 21,
+       "drives": 20
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/537",
+     "seed": 537,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 128.143,
+     "steps": 266,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 21.7,
+      "to_carry_posture": 70.995,
+      "nav_preplace": 71.045,
+      "pre_release": 117.38,
+      "release": 117.78,
+      "look_back": 128.143
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 6,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1682,
+       0.0096
+      ],
+      "box_map_m": [
+       4.6003,
+       0.7889
+      ],
+      "slot_error_m": [
+       0.0003,
+       -0.0111
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5962,
+       0.7887,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0038,
+       -0.0113
+      ],
+      "max_box_z_m": 0.1711,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      14.06,
+      17.47,
+      19.07
+     ],
+     "load_average_end": [
+      15.97,
+      18.07,
+      19.09
+     ],
+     "wall_seconds": 174.2,
+     "artifact_sha256": {
+      "result.json": "8ff38bcfff3db2cbe7d9f65ade91022e64725e90a14d1c07a3d6bfe05a4ec9f4",
+      "control.jsonl": "ca2a78af98ffd1138d4be009fd1cdb4f76e35625ead1b52002e8593933d751c4",
+      "evaluation-only.jsonl": "afcd393c61b10945dbfd2ec75918e6a3042677159f679a7c3c2674440c9421f4",
+      "scene.xml": "691a6370c91642b043a2f8035409d934168ddee3bab536e2e6076a52ed2ecf17"
+     },
+     "input_frames": 266,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 25,
+       "drives": 20
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/538",
+     "seed": 538,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 169.402,
+     "steps": 379,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 28.6,
+      "to_carry_posture": 72.236,
+      "nav_preplace": 72.286,
+      "pre_release": 158.638,
+      "release": 159.038,
+      "look_back": 169.402
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 6,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1646,
+       0.0139
+      ],
+      "box_map_m": [
+       3.0,
+       -0.8477
+      ],
+      "slot_error_m": [
+       0.0,
+       0.0023
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9966,
+       -0.8481,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0034,
+       0.0019
+      ],
+      "max_box_z_m": 0.1706,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      12.14,
+      16.52,
+      18.64
+     ],
+     "load_average_end": [
+      11.79,
+      16.2,
+      18.26
+     ],
+     "wall_seconds": 226.3,
+     "artifact_sha256": {
+      "result.json": "c04f8436f357c2063e4bfdbc776ee1910a07babc5f012f1b2c1dc98aff799f0c",
+      "control.jsonl": "775e895c0ef5e2c9aa1c4e7960a685c14c084a41d07d00b3eb67f2988e47f1a0",
+      "evaluation-only.jsonl": "9e1183e95fee2edfe32dbf06495e3e64bdec2d8559b15318c73cdeb6ad897529",
+      "scene.xml": "90a87e4e1fa65f855985ef7e338666a2e16157aef3f2d9730dcc6e577517937f"
+     },
+     "input_frames": 379,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 20,
+       "drives": 22
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/539",
+     "seed": 539,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 145.172,
+     "steps": 294,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 20.0,
+      "to_carry_posture": 66.08,
+      "nav_preplace": 66.13,
+      "pre_release": 134.409,
+      "release": 134.809,
+      "look_back": 145.172
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 5,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1656,
+       -0.0112
+      ],
+      "box_map_m": [
+       4.5985,
+       -1.6896
+      ],
+      "slot_error_m": [
+       -0.0015,
+       0.0104
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5947,
+       -1.6893,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0053,
+       0.0107
+      ],
+      "max_box_z_m": 0.1706,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      15.97,
+      18.07,
+      19.09
+     ],
+     "load_average_end": [
+      60.19,
+      28.4,
+      22.51
+     ],
+     "wall_seconds": 212.0,
+     "artifact_sha256": {
+      "result.json": "e4f00fdb79e50186ade9ae8ebe7b102111f0e4764f0dc23a481ee781889d4150",
+      "control.jsonl": "60ec763bb9e12f154727d6aaf422bcfeb2b57f6c874adcfcfcb48f67af1aa53d",
+      "evaluation-only.jsonl": "9e3144df0cc380796cd4c10b2fae0fd61762d5b29be4de8ed4aaaeda1b88ec4e",
+      "scene.xml": "1732d66e822ad899018c27b01401bed75c298385edc220dc6b1d76da2e0100c9"
+     },
+     "input_frames": 294,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 25,
+       "drives": 20
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": []
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/P/540",
+     "seed": 540,
+     "development_seed": false,
+     "source_sha": "666442578d80f207fe318c6860496340bd5c5bd7",
+     "dirty_source": false,
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "pose_source": "gt_stub_eval_only",
+     "counts_as_m1": false,
+     "sim_seconds": 155.618,
+     "steps": 338,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 19.3,
+      "to_carry_posture": 61.776,
+      "nav_preplace": 61.826,
+      "pre_release": 144.825,
+      "release": 145.225,
+      "look_back": 155.618
+     },
+     "face_normal_source": "static_map_approach_convention+pose_estimate",
+     "face_nudges": 1,
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1666,
+       0.0117
+      ],
+      "box_map_m": [
+       3.0012,
+       -1.2488
+      ],
+      "slot_error_m": [
+       0.0012,
+       0.0012
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED"
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9973,
+       -1.2493,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0027,
+       0.0007
+      ],
+      "max_box_z_m": 0.1708,
+      "weld_eq_active_max": 0,
+      "r1_wall_contact_steps": 0,
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true
+     },
+     "load_average_start": [
+      11.79,
+      16.2,
+      18.26
+     ],
+     "load_average_end": [
+      41.33,
+      33.79,
+      25.57
+     ],
+     "wall_seconds": 242.2,
+     "artifact_sha256": {
+      "result.json": "af20953df86fd9d39e2990f878e54ee7232807ee891eeda4ca57f416d3ea490e",
+      "control.jsonl": "1a788d968314535af6a745b4be34240fd50629d66b191a4fa7c6069cfcdcfce0",
+      "evaluation-only.jsonl": "82016bdb782daa55e50de40209e27b26e08af826511369ae708b955026864d3d",
+      "scene.xml": "66bb298d63ffa95e65f3eb76d5f73f8726ab21fe09b388aeec2d8a297827e35b"
+     },
+     "input_frames": 338,
+     "profile": "wrist_zone_skill_v4",
+     "sim_limit_s": 420.0,
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 22,
+       "drives": 23
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 1,
+      "self_occluded_samples": [
+       {
+        "estimate": [
+         2.8524,
+         -1.2856,
+         0.4839
+        ],
+        "self_occluded": true,
+        "reason": "QUAD_INSIDE_HELD_SILHOUETTE",
+        "corners_inside": [
+         true,
+         true,
+         true,
+         true
+        ],
+        "area_ratio_to_anchor": 1.003,
+        "held_fraction": 0.544,
+        "quad_area_px": 225.0,
+        "quad_top_height_m": 0.027789673659002867,
+        "quad_edge_lengths_m": [
+         0.03960238877734862,
+         0.01472579520778382,
+         0.04040567629503511,
+         0.015923720209759046
+        ]
+       }
+      ]
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "fault_injection": null,
+     "counts_for": "delivery"
+    }
+   ],
+   "summary": {
+    "n": 10,
+    "pose_source": "gt_stub_eval_only",
+    "counts_as_m1": false,
+    "place_in_slot_gt": 10,
+    "grasp_success_gt": 10,
+    "skill_claim_agrees_with_gt": 10,
+    "false_success": 0,
+    "weld_eq_active_max": 0,
+    "wall_contact_steps": 0,
+    "sim_seconds": [
+     158.518,
+     162.463,
+     151.179,
+     201.562,
+     179.788,
+     160.39,
+     128.143,
+     169.402,
+     145.172,
+     155.618
+    ],
+    "steps": [
+     337,
+     354,
+     319,
+     440,
+     360,
+     319,
+     266,
+     379,
+     294,
+     338
+    ],
+    "reasons": [
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT"
+    ],
+    "reseats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "retreats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "grip_checks": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ],
+    "placement_detector": [
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit",
+     "n7_floor_cuboid_fit"
+    ],
+    "contact_profiles": [
+     "cargo_noslip_v1"
+    ],
+    "g4_violations": [],
+    "self_occluded_rejections": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "zone_c_placed": 6,
+    "zone_c_n": 6,
+    "held_stops": []
+   }
+  },
+  "logs": {
+   "cohort-v4-6664425": {
+    "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v4-6664425/cohort.log",
+    "sha256": "f86f7633488f35fd9e70b5608f7e65fa6125ce63a07637c67c59d345563fa76a"
+   }
+  }
+ },
  "v2_cohort_log": {
   "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v2-edd075d/cohort.log",
   "sha256": "d1290571f2e799f12b469f34e4a5aacb519ff981c71b31f47290bec5758efc07"
