@@ -8,7 +8,8 @@ v1 path unchanged. What differs from v1:
   by ``harness.zone_mixed_episode``; the contact profile must be named
   explicitly (``--contact-profile``; A2 smokes use ``cargo_noslip_v1``), so a
   goal change never changes physics unnoticed;
-- robot input: TOP RGB labels and view from ``top_cargo_v1`` (+ its box path),
+- robot input: TOP RGB labels and view from ``top_cargo_v2`` by default
+  (``--perception-profile``; + its box path; weak v2 beams need confirmation),
   the static task text (kinds, carriers, roles, landing areas, team rule) that
   is identical in every mode (``harness.zone_protocol_v2``);
 - claims ``{item, zone, role}`` in all three modes; the host never picks teammates;
@@ -38,8 +39,7 @@ from harness.three_robot_plan import ROBOTS, TeamAgreement, validate_plan_reply
 from harness.zone_goal_v2 import referee_v2
 from harness.zone_mixed_episode import item_table, mixed_episode, scene_for
 from harness.zone_outcomes_v2 import RobotResults, TeacherReceiptSource
-from harness.zone_cargo_perception import PROFILE as PERCEPTION_PROFILE
-from harness.zone_perception_v2 import detect_items, goal_met, label_items, observe_items
+from harness.zone_perception_v2 import PROFILES as PERCEPTION_PROFILES, detect_items, goal_met, label_items, observe_items
 from harness.zone_team_jobs import (check_dynamic_claims, check_independent_claims, normalize_claim,
                                     validate_team_plan)
 from scripts.run_zone_dispatch import ZoneRun, write
@@ -133,12 +133,15 @@ def run_v2(args, goal):
     config['contact_solver_profile'] = profile
     source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     outcome_source = TeacherReceiptSource()
+    perception = getattr(args, 'perception_profile', None) or 'top_cargo_v2'
+    if perception not in PERCEPTION_PROFILES:
+        raise SystemExit(f'unknown perception profile {perception}')
     max_sim_s = args.max_sim_s if args.max_sim_s is not None else DEFAULT_MAX_SIM_S
     result = {'schema': SCHEMA, 'protocol': PROTOCOL, 'source_sha': source, 'coordination': args.coordination,
               'condition_switches': switches,
               'condition_switches_default': zp2.CONDITIONS[args.coordination],
               'robot_facing_outcome_source': outcome_source.record(),
-              'perception_profile': PERCEPTION_PROFILE,
+              'perception_profile': perception,
               'executor': ('ground-truth TEACHER team executor (scripts.zone_team_teacher; drive + calibrated IK + '
                            'real gripper, weld OFF); every job a TeamJob, one rendezvous rule'),
               'claim_scope': 'teacher-executor condition: coordination/team metrics, not RGB-skill or student success',
@@ -152,6 +155,7 @@ def run_v2(args, goal):
         inject = {'kind': None if args.inject_team_grasp_failure == 'any' else args.inject_team_grasp_failure,
                   'min_carriers': 2}
     zone = ZoneRunV2(config, args.output, contact_profile=profile, record_replay=args.record_replay, inject=inject)
+    zone.perception_profile = perception
     write(args.output/'episode-setup-only.json', config)
     result['scene'] = {'scene_xml_sha256': zone.definition.manifest.get('scene_xml_sha256'),
                        'cargo_contact_profile': zone.definition.manifest.get('cargo_contact_profile'),
@@ -178,7 +182,11 @@ def run_v2(args, goal):
     try:
         zone.step(.5)
         frames, tops = zone.capture('start')
-        labels.update(label_items(detect_items(tops, config['static_map']), config['static_map']))
+        first = detect_items(tops, config['static_map'], perception)
+        zone.step(1.)
+        _, tops_later = zone.capture('start-confirm')
+        later = detect_items(tops_later, config['static_map'], perception)
+        labels.update(label_items(first, config['static_map'], perception, later=later))
         write(args.output/'item-labels.json', labels)
         result['labels'] = {k: v['kind'] for k, v in labels.items()}
         write(args.output/'task.json', task)
@@ -205,7 +213,7 @@ def run_v2(args, goal):
 
         if args.coordination == 'plan_first':
             result['phase'] = 'NEGOTIATE'
-            view = observe_items(tops, config['static_map'], labels)
+            view = observe_items(tops, config['static_map'], labels, perception)
             for turn in range(args.planning_rounds):
                 frames, tops = zone.capture(f'plan-{turn}')
                 context = agreement.context()
@@ -295,7 +303,7 @@ def run_v2(args, goal):
         result['control_end_sim_s'] = round(control_end - motion_started, 2)
         zone.step(1.)
         _, tops = zone.capture('final')
-        result['final_rgb_view'] = observe_items(tops, config['static_map'], labels)
+        result['final_rgb_view'] = observe_items(tops, config['static_map'], labels, perception)
         result['goal_met_rgb'] = goal_met(goal, result['final_rgb_view'])
         result['makespan_sim_s'] = round(control_end - motion_started, 2)
     except Exception as exc:
@@ -360,7 +368,7 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
     retry = []
     for attempt in range(3):
         frames, tops = zone.capture(f'claim-{turn}-{attempt}', robots=askers)
-        view = observe_items(tops, zone.config['static_map'], labels)
+        view = observe_items(tops, zone.config['static_map'], labels, zone.perception_profile)
         pending = {**active, **accepted}
         brd = board()
         if brd is not None:
@@ -412,7 +420,7 @@ def independent_round(zone, team, task, labels, goal, askers, own_jobs, stats, t
         return f'{team.agreement.run_id}-{rid}-solo-{own_turns[rid]}-{attempt}'
     for attempt in range(2):
         frames, tops = zone.capture(f'solo-{turn}-{attempt}', robots=ask)
-        view = observe_items(tops, zone.config['static_map'], labels)
+        view = observe_items(tops, zone.config['static_map'], labels, zone.perception_profile)
         ctx = {r: zp2.context(r, labels=labels, view=view, own_jobs=own_jobs[r],
                               extra={'invalid_reason': reasons[r]} if r in reasons else None) for r in ask}
         def build(rid, _shared, ctx=ctx, frames=frames, attempt=attempt):

@@ -24,9 +24,10 @@ ROBOTS = ('r1', 'r2', 'r3')
 
 def _labels(config):
     """RGB-like labels from the setup (test only: the detector is tested elsewhere)."""
-    dets = [{'kind': o['kind'], 'floor_xy_m': o['position_m'][:2], 'yaw_rad': None}
+    dets = [{'kind': o['kind'], 'floor_xy_m': o['position_m'][:2], 'yaw_rad': None, 'confidence': 1.}
             for o in config['setup_only']['objects'].values()]
-    dets += [{'kind': c['kind'], 'floor_xy_m': c['pose'][:2], 'yaw_rad': c['pose'][2]} for c in config['cargo_items']]
+    dets += [{'kind': c['kind'], 'floor_xy_m': c['pose'][:2], 'yaw_rad': c['pose'][2], 'confidence': 1.}
+             for c in config['cargo_items']]
     return label_items(dets, config['static_map'])
 
 
@@ -255,11 +256,12 @@ def test_roles_bind_to_the_physical_handle_nearest_the_rgb_handle_not_by_name():
 
 def test_label_view_tracks_items_by_kind_and_counts_zone_items():
     static = za.authored_map('zone_wide')
-    dets = [{'kind': 'long_beam', 'floor_xy_m': [.7, -.15], 'yaw_rad': 1.57},
+    dets = [{'kind': 'long_beam', 'floor_xy_m': [.7, -.15], 'yaw_rad': 1.57, 'confidence': .9},
             {'kind': 'red', 'floor_xy_m': [1.6, -2.45], 'yaw_rad': None}]
     labels = label_items(dets, static)
     assert set(labels) == {'long_beam-1', 'red-1'} and set(labels['long_beam-1']['handles']) == {'end_neg', 'end_pos'}
-    moved = [{'kind': 'long_beam', 'floor_xy_m': [4.6, .4]}, {'kind': 'red', 'floor_xy_m': [1.61, -2.45]}]
+    moved = [{'kind': 'long_beam', 'floor_xy_m': [4.6, .4], 'confidence': .9},
+             {'kind': 'red', 'floor_xy_m': [1.61, -2.45], 'confidence': 1.}]
     view = view_from_detections(moved, static, labels)
     assert view['pickup_items_still_visible'] == ['red-1'] and view['zone_counts_seen']['A'] == {'long_beam': 1}
 
@@ -446,3 +448,24 @@ def test_protocol_v2_requires_an_explicit_contact_profile():
     with pytest.raises(SystemExit, match='explicit --contact-profile'):
         main(['--output', 'unused-never-created', '--goal', json.dumps(MIXED), '--variant', 'zone_wide_door',
               '--mode', 'fixture'])
+
+
+def test_weak_v2_beams_never_become_new_items_without_confirmation():
+    from harness.zone_perception_v2 import DEFAULT_PROFILE, confirmed
+    assert DEFAULT_PROFILE == 'top_cargo_v2'
+    static = za.authored_map('zone_wide')
+    beam = {'kind': 'long_beam', 'floor_xy_m': [.7, -1.5], 'yaw_rad': 1.57, 'confidence': .9, 'camera': 'a', 'views': 1}
+    frag = dict(beam, floor_xy_m=[.72, -1.3], confidence=.3)                 # duplicate fragment of that beam
+    lone = dict(beam, floor_xy_m=[.1, -2.6], confidence=.3)                 # weak beam elsewhere, one view
+    items, unconf = confirmed([beam, frag, lone])
+    assert items == [beam] and [u['reason'] for u in unconf] == ['fragment_of_confident_beam', 'weak_beam_unconfirmed']
+    labels = label_items([beam, frag, lone], static)
+    assert list(labels) == ['long_beam-1']
+    # Confirmed by another view (cross-TOP merge) or by a later capture at the same place.
+    two_views = dict(lone, camera='a+b', views=2)
+    assert confirmed([beam, two_views])[0][-1]['confirmed_by'] == 'another_view'
+    assert confirmed([beam, lone], later=[dict(lone)])[0][-1]['confirmed_by'] == 'later_capture'
+    # Zone counts never count an unconfirmed weak beam; v1 keeps its cohort behaviour.
+    in_a = dict(lone, floor_xy_m=[4.6, .4])
+    assert view_from_detections([in_a], static, {})['zone_counts_seen']['A'] == {}
+    assert view_from_detections([in_a], static, {}, 'top_cargo_v1')['zone_counts_seen']['A'] == {'long_beam': 1}
