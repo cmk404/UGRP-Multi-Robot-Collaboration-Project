@@ -39,7 +39,7 @@ from harness.owncam_drive import CARRY_POSTURE, LOOK_P20, SEARCH_POSE, SETTLE_S,
 from harness.owncam_drive_v2 import OwnCamDriverV2
 from harness.owncam_pose_source import OwnCamPoseSource, PoseLimits, PoseReport, check_limits
 
-SCHEMA = 'ugrp.m1_owncam_delivery.v2'
+SCHEMA = 'ugrp.m1_owncam_delivery.v3'
 # Search: static viewpoints west of the pickup grid (east-facing), visited from the
 # row nearest the robot's first own estimate outward. A far_coarse cyan detection brings the robot to a closer view.
 SEARCH_VIEW_X_M = -.47                 # peers idle at the spawn column x = -0.85
@@ -66,10 +66,10 @@ FINE_PHASE_PREFIXES = ('reseat',)
 PROBE_PAN_PWM = 60
 PROBE_SETTLE_S = .5
 ORDER_KINDS = ('own_rgb_point', 'own_rgb_bay')
-# v5 CoarseOrderSheet bay (>= 0.15 m: coarse by construction). x half 0.15 m puts v5's approach point
-# 0.40 m west of the own-RGB target (the v1 standoff), clear of the idle peers at the spawn column
-# (dev-a2 s91: half 0.25 -> approach x -0.69 next to a peer at (-0.85, -2.25), 226 contact steps).
-BAY_HALF_M = (.15, .25)
+# CoarseOrderSheet bay: the 0.5 m square of the #181 order contract (Codex pre-review #6). The
+# approach point is the skill's own (v6 ``approach_point``: static keep-out discs of the idle spawn
+# spots); the A2 narrowing to 0.30 m (dev-a2 s91 peer contact under v5) is withdrawn in A5.
+BAY_HALF_M = (.25, .25)
 
 
 class _LegDriver(OwnCamDriverV2):
@@ -137,7 +137,8 @@ class M1OwnCamDelivery:
         self.gate_looks = 0
         self.preplace_look_done = False
         self.reanchor_needed = False
-        self.lookback_gate: dict | None = None
+        self.lookback_gates: list[dict] = []      # one per own-RGB confirmation frame (Codex pre-review #3)
+        self.approach_choice: dict | None = None
         self.outcome: str | None = None
         self.events: list[dict] = []
         self.pose_sources: set[str] = set()
@@ -304,8 +305,12 @@ class M1OwnCamDelivery:
             self._event(now, 'search_result', near=near, n_near=n_near, far=far, n_far=n_far)
             if near is not None and n_near >= NEAR_MIN_DETECTIONS:
                 self.target_xy, self.pickup_source = near, 'own_rgb_search'
+                goal = self._approach_goal(near)
+                if goal is None:
+                    self.outcome = 'SKILL_BAY_APPROACH_BLOCKED'
+                    return {'mode': 'done', 'outcome': self.outcome}
                 self.phase = 'approach_leg'
-                self._start_leg(self._approach_goal(near), loaded=False)
+                self._start_leg(goal, loaded=False)
             elif far is not None and not getattr(self, '_closer_done', False):
                 self._closer_done = True
                 self.phase = 'search_leg'
@@ -322,6 +327,15 @@ class M1OwnCamDelivery:
         return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}   # next decision continues the phase
 
     def _approach_goal(self, target):
+        if self.order_kind == 'own_rgb_bay' and self.skill is None:
+            self.skill = self.skill_factory(self._make_order())
+        if hasattr(self.skill, 'approach_point'):
+            # v6: the skill chooses its approach point around the static keep-outs; the leg drives there.
+            self.approach_choice = self.skill.approach_point()
+            self._event(0., 'approach_point', **{k: v for k, v in self.approach_choice.items() if k != 'keepouts'})
+            if self.approach_choice['blocked']:
+                return None
+            return tuple(self.approach_choice['goal_xy_m'])
         if self.order_kind == 'own_rgb_bay':
             from harness.wrist_zone_skill_v5 import BAY_APPROACH_CLEARANCE_M
             return (target[0] - BAY_HALF_M[0] - BAY_APPROACH_CLEARANCE_M, target[1])
@@ -382,7 +396,8 @@ class M1OwnCamDelivery:
         if outcome != 'arrived':
             self.outcome = 'APPROACH_LEG_' + outcome
             return {'mode': 'done', 'outcome': self.outcome}
-        self.skill = self.skill_factory(self._make_order())
+        if self.skill is None:
+            self.skill = self.skill_factory(self._make_order())
         self.leg = None
         self.phase = 'skill'
         self._event(now, 'skill_start', pickup_xy=[round(v, 4) for v in self.target_xy],
@@ -409,8 +424,8 @@ class M1OwnCamDelivery:
                 self.reanchor_needed = False
                 return {'mode': 'capture'}
             pan0 = int(self.servo.get(6, 1500))
-            self.probe = {'pan0': pan0, 'ref': obs['image'], 'queue': [('left', pan0 + PROBE_PAN_PWM),
-                          ('right', pan0 - PROBE_PAN_PWM), ('home', pan0)], 'images': {}, 'since': now}
+            self.probe = {'pan0': pan0, 'ref': obs, 'queue': [('left', pan0 + PROBE_PAN_PWM),
+                          ('right', pan0 - PROBE_PAN_PWM), ('home', pan0)], 'obs': {}, 'since': now}
             self._event(now, 'reanchor_probe_start', pan0=pan0)
             return self._tick_probe(now, obs)
         phase = sk.phase
@@ -418,12 +433,26 @@ class M1OwnCamDelivery:
         limits = None if in_carry_leg else {'nav_pregrasp': LIMITS['nav_unloaded'], 'nav_preplace': LIMITS['nav_loaded'],
                                             'pre_release': LIMITS['release']}.get(phase)
         since_look = None if self.last_look_t is None else now - self.last_look_t
-        if phase == 'look_back' and sk.look_back_steps == 0 and self.lookback_gate is None:
-            if self.last_look_t is None or since_look > LIMITS['look_back'].max_since_look_s:
-                return self._gate_look(now, 'look_back_fresh', obs, loaded=False)
-            bad = check_limits(report, now, LIMITS['look_back'], since_look_s=since_look)
-            self.lookback_gate = {'t': round(now, 3), 'violations': bad, 'report': report.as_dict()}
-            self._event(now, 'look_back_gate', **self.lookback_gate)
+        from harness.wrist_zone_skill import LOOK_BACK_RETRY_STEP
+        if phase == 'look_back' and sk.look_back_steps in (0, LOOK_BACK_RETRY_STEP):
+            # Every own-RGB confirmation frame is gated on the CURRENT estimate (fresh look <= 3 s,
+            # sigma limits); a violation re-looks, and after MAX_GATE_LOOKS the run stops without a claim.
+            if obs['frame_id'] == self.last_skill_frame:
+                return {'mode': 'capture'}
+            bad = (['since_look'] if self.last_look_t is None or since_look > LIMITS['look_back'].max_since_look_s
+                   else check_limits(report, now, LIMITS['look_back'], since_look_s=since_look))
+            if bad:
+                if self.gate_looks >= MAX_GATE_LOOKS:
+                    self.outcome = 'POSE_UNCERTAIN'
+                    self._event(now, 'pose_uncertain', gate='look_back', violations=bad, report=report.as_dict())
+                    return {'mode': 'done', 'outcome': self.outcome}
+                self.gate_looks += 1
+                return self._gate_look(now, f'gate:look_back:{",".join(bad)}', obs, loaded=False)
+            self.gate_looks = 0
+            gate = {'t': round(now, 3), 'frame_id': int(obs['frame_id']), 'violations': [],
+                    'since_look_s': round(since_look, 3), 'report': report.as_dict()}
+            self.lookback_gates.append(gate)
+            self._event(now, 'look_back_gate', **gate)
         elif limits is not None:
             bad = check_limits(report, now, limits, since_look_s=since_look)
             if phase == 'nav_preplace' and not bad and self.carry_leg_done and not self.preplace_look_done:
@@ -509,27 +538,36 @@ class M1OwnCamDelivery:
             return {'mode': 'tick', 'commands': [{'kind': 'hold'}] + steps}
         if now - pr['since'] < PROBE_SETTLE_S or float(obs['sim_time']) < pr['since'] + .4:
             return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}
-        pr['images'][stage] = obs['image']
+        pr['obs'][stage] = obs
         pr['queue'].pop(0)
         if pr['queue']:
             pr['since'] = now
             return {'mode': 'tick', 'commands': [{'kind': 'hold'}]}
-        box = self.skill.box
-        im = pr['images']
-        checks = {'left_vs_ref': box._compare_attachment(pr['ref'], im['left'], camera_pan_delta_pwm=PROBE_PAN_PWM),
-                  'right_vs_left': box._compare_attachment(im['left'], im['right'], camera_pan_delta_pwm=-2*PROBE_PAN_PWM),
-                  'home_vs_right': box._compare_attachment(im['right'], im['home'], camera_pan_delta_pwm=PROBE_PAN_PWM)}
-        ok = all(c.get('attached') for c in checks.values())
-        self._event(now, 'reanchor', method='own_pan_probe', attached=ok,
-                    checks={k: {kk: v.get(kk) for kk in ('attached', 'reason', 'mask_iou') if kk in v} for k, v in checks.items()})
+        o = pr['obs']
         self.probe = None
         self.last_skill_frame = obs['frame_id']
+        if hasattr(self.skill, 'reanchor_after_probe'):
+            # v6 public hook (#181): full own observations; the skill updates its own anchor.
+            result = self.skill.reanchor_after_probe(pr['ref'], o['left'], o['right'], o['home'])
+            ok = bool(result.get('attached'))
+            self._event(now, 'reanchor', method='own_pan_probe_v6_hook', attached=ok, checks=result.get('checks'),
+                        frame_ids=result.get('frame_ids'))
+        else:
+            box = self.skill.box
+            checks = {'left_vs_ref': box._compare_attachment(pr['ref']['image'], o['left']['image'],
+                                                             camera_pan_delta_pwm=PROBE_PAN_PWM),
+                      'right_vs_left': box._compare_attachment(o['left']['image'], o['right']['image'],
+                                                               camera_pan_delta_pwm=-2*PROBE_PAN_PWM),
+                      'home_vs_right': box._compare_attachment(o['right']['image'], o['home']['image'],
+                                                               camera_pan_delta_pwm=PROBE_PAN_PWM)}
+            ok = all(c.get('attached') for c in checks.values())
+            self._event(now, 'reanchor', method='own_pan_probe_legacy', attached=ok)
+            if ok:          # legacy (v5) path: the fields N7 sets after its own probe
+                box._attachment_image = o['home']['image']
+                box._carry_previous_image = o['home']['image']
         if not ok:
             self.outcome = 'CARRY_REANCHOR_UNCONFIRMED'
             return {'mode': 'done', 'outcome': self.outcome}
-        # Same anchor fields N7 sets after its own attachment probe (visual_box_skill / v3 begin_check_grip).
-        box._attachment_image = im['home']
-        box._carry_previous_image = im['home']
         self.reanchor_needed = False
         return {'mode': 'capture'}
 
@@ -553,7 +591,8 @@ class M1OwnCamDelivery:
                 'target_xy': self.target_xy, 'pickup_source': self.pickup_source, 'order_kind': self.order_kind,
                 'order': self.order_record, 'localizer_stats': dict(self.pose.loc.stats),
                 'cyan_detections': len(self.cyan), 'pose_sources': sorted(self.pose_sources | skill_sources),
-                'face_fallback_used': self.face_fallback_used, 'lookback_gate': self.lookback_gate,
+                'face_fallback_used': self.face_fallback_used, 'lookback_gates': self.lookback_gates,
+                'approach_choice': self.approach_choice,
                 'carry_leg_done': self.carry_leg_done,
                 'skill_summary': self.skill.summary() if self.skill is not None and hasattr(self.skill, 'summary') else None,
                 'skill_placement': getattr(self.skill, 'placement', None)}

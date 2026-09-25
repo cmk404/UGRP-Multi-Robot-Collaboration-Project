@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-SCHEMA = 'ugrp.m1_owncam_run.v2'
+SCHEMA = 'ugrp.m1_owncam_run.v3'
 FRAME_S = .2
 TICK_S = .1
 GT_S = .05
@@ -35,13 +35,26 @@ SLOT_HALF_M = .06
 ON_FLOOR_MAX_Z_M = .05
 # skill -> (module, class, order kind, extra kwargs); v5 runs in its own M1 mode (it rejects non-owncam sources)
 SKILLS = {'v4': ('harness.wrist_zone_skill_v4', 'WristZoneDeliveryV4', 'own_rgb_point', {}),
-          'v5': ('harness.wrist_zone_skill_v5', 'WristZoneDeliveryV5', 'own_rgb_bay', {'mode': 'm1'})}
+          'v5': ('harness.wrist_zone_skill_v5', 'WristZoneDeliveryV5', 'own_rgb_bay', {'mode': 'm1'}),
+          'v6': ('harness.wrist_zone_skill_v6', 'WristZoneDeliveryV6', 'own_rgb_bay', {'mode': 'm1'})}
+CONTACT_PROFILES = ('local_contact_fine', 'cargo_noslip_v1')
+SPAWN_KEEPOUT_RADIUS_M = .17             # an idle MasterPi footprint (as the #181 v6 runner)
+# Evaluation-only retention rule (amendment A5, fixed before the test): skill phases in which the box
+# must be held (intended set-downs - reseat_*, release and later - are excluded).
+CARRY_PHASES = ('to_carry_posture', 'nav_preplace', 'grip_check', 'pre_release')
+RETAIN_MIN_BOX_Z_M = .04                 # on the floor the box centre is at 0.016 m
+GRASP_MIN_BOTH_FINGER_FRACTION = .95
+# Everything a test run depends on must be unchanged since the frozen source commit (Codex pre-review #1).
+FROZEN_PATHS = ('harness', 'scripts', 'sim', 'maps', 'configs', 'experiments/2026-09-26-zone-m1-owncam',
+                'experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json')
 RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_owncam_contract.py', 'harness/owncam_pose_source.py',
                  'harness/owncam_localizer.py', 'harness/owncam_drive.py', 'harness/owncam_drive_v2.py',
                  'harness/wall_tags.py', 'harness/map_goto.py', 'harness/zone_color_boxes.py',
                  'harness/wrist_zone_skill.py', 'harness/wrist_zone_skill_v2.py', 'harness/wrist_zone_skill_v3.py',
                  'harness/wrist_zone_skill_v4.py', 'harness/wrist_zone_skill_v5.py', 'harness/m1_contract.py',
-                 'harness/visual_box_skill.py', 'harness/visual_attachment.py', 'scripts/run_m1_owncam.py')
+                 'harness/wrist_zone_skill_v6.py', 'harness/visual_box_skill.py', 'harness/visual_attachment.py',
+                 'sim/zone_cargo_contact.py', 'sim/zone_landmarks.py', 'sim/zone_scene.py', 'sim/camera_robot_port.py',
+                 'scripts/run_m1_owncam.py')
 
 
 def git(*args):
@@ -76,18 +89,37 @@ def run(spec, out, student):
     from sim.zone_arena import LAYOUTS
     from sim.zone_landmarks import TaggedZoneScene
 
+    from sim.zone_cargo_contact import CARGO_PROFILES, base_profile, profile_record
+    from sim.zone_cargo_contact import apply as apply_cargo_profile
+
     out = Path(out)
     out.mkdir(parents=True, exist_ok=False)
     started, load_start = time.time(), os.getloadavg()
-    code = {'sha': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain', '--', 'sim', 'harness',
-                                                                 'scripts', 'maps', 'experiments')),
+    code = {'sha': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain', '--', *FROZEN_PATHS)),
             'stamped': 'at launch', 'runtime_files_sha256': {f: sha_bytes((ROOT/f).read_bytes()) for f in RUNTIME_FILES}}
+    (out/'attempt_started.json').write_text(json.dumps(
+        {'episode': spec['episode_id'], 'split': spec['split'], 'code': code, 'student': student,
+         'started_unix': round(started, 3), 'note': 'written before physics; a run dir without result.json is an '
+         'infrastructure failure (killed / host error)'}, indent=2) + '\n')
+    profile = spec['contact_profile']
+    if profile not in CONTACT_PROFILES:
+        raise ValueError(f'contact profile must be one of {CONTACT_PROFILES}')
     scene = TaggedZoneScene.from_tagged(spec['map'], spec['seed'], spec['goal'], spec.get('extra_boxes'),
-                                        contact_profile=spec.get('contact_profile', 'local_contact_fine'))
+                                        contact_profile=base_profile(profile))
+    xml_transform = ((lambda xml: apply_cargo_profile(scene.transform(xml), profile)) if profile in CARGO_PROFILES
+                     else scene.transform)
     world = MultiMasterPiProductionV2(seed=spec['seed'], width=640, height=480, render=True,
                                       warehouse_layout=scene.engine_layout, warehouse_cargo_ids=None,
-                                      xml_transform=scene.transform)
+                                      xml_transform=xml_transform)
     scene.setup(world)
+    contact_record = {'profile': profile, 'base_profile': base_profile(profile),
+                      'cargo_profile': profile_record(profile) if profile in CARGO_PROFILES else None,
+                      'noslip_iterations': int(world.model.opt.noslip_iterations),
+                      'timestep_s': float(world.model.opt.timestep),
+                      'final_scene_xml_sha256': sha_bytes(world.scene_xml.encode()),
+                      'user_decision': 'pending (PR #181/#189); cargo_noslip_v1 is the primary condition'}
+    if profile == 'cargo_noslip_v1' and contact_record['noslip_iterations'] <= 0:
+        raise RuntimeError('cargo_noslip_v1 requested but noslip_iterations is 0 in the built model')
     setup_diag = {}
     if spec.get('box_yaw_deg') is not None:
         # Dev diagnostic only (amendment A2): rotate the cyan box in place (setup-only, never an input).
@@ -109,7 +141,18 @@ def run(spec, out, student):
     calibration_path = ROOT/student['calibration']
     calibration = json.loads(calibration_path.read_text())
     module, name, order_kind, skill_kwargs = SKILLS[student['skill']]
-    skill_cls = getattr(importlib.import_module(module), name)
+    skill_mod = importlib.import_module(module)
+    skill_cls = getattr(skill_mod, name)
+    keepout_records = []
+    if student['skill'] == 'v6':
+        # Static layout only: every idle-spawn spot of the arena spec (#181 v6 contract), never a live pose.
+        from sim.zone_arena import layout
+        arena = layout(static['base_map']['map_id'])       # the tagged map's base layout (zone_wide_door)
+        keepouts = tuple(skill_mod.StaticKeepout(f'spawn_row_{i}', (float(arena['spawn_x']), float(y)),
+                                                 SPAWN_KEEPOUT_RADIUS_M, 'static_layout_idle_spawn')
+                         for i, y in enumerate(arena['spawn_rows_y']))
+        skill_kwargs = {**skill_kwargs, 'static_keepouts': keepouts, 'static_bounds_m': static['bounds_m']}
+        keepout_records = [k.record() for k in keepouts]
     rows_y = LAYOUTS['zone_wide']['pickup_rows_y']
 
     ctl_ref = {}
@@ -143,6 +186,12 @@ def run(spec, out, student):
     peer_geoms = {g for g, n in enumerate(names) if n.startswith(('r1__', 'r2__', 'r3__')) and g not in own_geoms}
     box_geom = {g for g, n in enumerate(names) if n == box_body + '_geom'}
     other_boxes = {g for g, n in enumerate(names) if n.startswith('cargo_box_') and g not in box_geom}
+    left_finger = {g for g, n in enumerate(names) if n == rid + '__left_finger'}
+    right_finger = {g for g, n in enumerate(names) if n == rid + '__right_finger'}
+    force6 = np.zeros(6)
+    retention = {'carry_steps': 0, 'both_finger_steps': 0, 'min_box_z_m': None, 'low_box_steps': 0,
+                 'max_box_penetration_m': 0., 'max_box_normal_force_n': 0., 'kind_steps': {}}
+    retention_log, window = [], {}
     frames_dir = out/'frames'
     frames_dir.mkdir()
     frames, frame_eval, gt, contacts, decisions = [], [], [], [], []
@@ -184,18 +233,41 @@ def run(spec, out, student):
                 p.tick(now)
             world._physics_step_for(world.controllers[rid])
             now = float(data.time)
+            kinds_now, lf, rf = set(), False, False
             for i in range(data.ncon):
                 c = data.contact[i]
                 pair = {int(c.geom1), int(c.geom2)}
                 mine = pair & (own_geoms | box_geom)
                 if not mine:
                     continue
+                if pair & box_geom:
+                    lf, rf = lf or bool(pair & left_finger), rf or bool(pair & right_finger)
+                    retention['max_box_penetration_m'] = max(retention['max_box_penetration_m'], -float(c.dist))
+                    mujoco.mj_contactForce(model, data, i, force6)
+                    retention['max_box_normal_force_n'] = max(retention['max_box_normal_force_n'], float(force6[0]))
                 other = next(iter(pair - mine), None)
                 kind = ('wall' if other in wall_geoms else 'peer_robot' if other in peer_geoms and mine & own_geoms else
                         'other_box' if other in other_boxes else None)
+                if kind:
+                    kinds_now.add(kind)
                 if kind and (not contacts or contacts[-1]['t'] < now - .1 or contacts[-1]['kind'] != kind):
                     contacts.append({'t': round(now, 4), 'kind': kind, 'dist_m': round(float(c.dist), 5),
                                      'geoms': sorted(names[g] for g in pair), 'phase': ctl.phase})
+            for kind in kinds_now:              # per physics step, not the 0.1 s de-duplicated log
+                retention['kind_steps'][kind] = retention['kind_steps'].get(kind, 0) + 1
+            skill_phase = getattr(ctl.skill, 'phase', None)
+            if skill_phase in CARRY_PHASES:
+                bz = float(data.body(box_body).xpos[2])
+                retention['carry_steps'] += 1
+                retention['both_finger_steps'] += int(lf and rf)
+                retention['low_box_steps'] += int(bz < RETAIN_MIN_BOX_Z_M)
+                retention['min_box_z_m'] = bz if retention['min_box_z_m'] is None else min(retention['min_box_z_m'], bz)
+                w = window.setdefault('w', {'t0': now, 'phase': skill_phase, 'steps': 0, 'both': 0, 'zmin': bz})
+                w['steps'] += 1; w['both'] += int(lf and rf); w['zmin'] = min(w['zmin'], bz)
+                if now - w['t0'] >= GT_S or skill_phase != w['phase']:
+                    retention_log.append({'t': round(w['t0'], 4), 'phase': w['phase'], 'steps': w['steps'],
+                                          'both_finger_steps': w['both'], 'min_box_z_m': round(w['zmin'], 5)})
+                    window.pop('w')
             if len(data.eq_active):
                 state['max_eq_active'] = max(state['max_eq_active'], int(data.eq_active.max()))
             if now + 1e-9 >= state['next_gt']:
@@ -243,32 +315,37 @@ def run(spec, out, student):
             raise ValueError('UNKNOWN_MACRO')
 
     physics(.5)
-    outcome = None
-    while True:
-        now = float(data.time)
-        if now > SIM_LIMIT_S:
-            outcome = 'SIM_LIMIT'
-            break
-        state['phase_times'].setdefault(f'{ctl.phase}:{getattr(ctl.skill, "phase", "")}', round(now, 2))
-        decision = ctl.decide(now)
-        mode = decision['mode']
-        if mode == 'done':
-            outcome = decision['outcome']
-            break
-        if mode == 'capture':
-            capture(now)
-            continue
-        if mode == 'tick':
-            for cmd in decision['commands']:
-                if cmd['kind'] == 'hold':
-                    port.hold(now)
-                else:
-                    apply(cmd)
-            physics(TICK_S)
-        elif mode == 'macro':
-            decisions.append({'t': round(now, 3), 'skill_phase': ctl.skill.phase, 'action': decision['action']})
-            execute_macro(decision['action'], ctl.last_obs)
-            capture(float(data.time))
+    outcome, exception = None, None
+    try:
+        while True:
+            now = float(data.time)
+            if now > SIM_LIMIT_S:
+                outcome = 'SIM_LIMIT'
+                break
+            state['phase_times'].setdefault(f'{ctl.phase}:{getattr(ctl.skill, "phase", "")}', round(now, 2))
+            decision = ctl.decide(now)
+            mode = decision['mode']
+            if mode == 'done':
+                outcome = decision['outcome']
+                break
+            if mode == 'capture':
+                capture(now)
+                continue
+            if mode == 'tick':
+                for cmd in decision['commands']:
+                    if cmd['kind'] == 'hold':
+                        port.hold(now)
+                    else:
+                        apply(cmd)
+                physics(TICK_S)
+            elif mode == 'macro':
+                decisions.append({'t': round(now, 3), 'skill_phase': ctl.skill.phase, 'action': decision['action']})
+                execute_macro(decision['action'], ctl.last_obs)
+                capture(float(data.time))
+    except Exception as exc:                 # noqa: BLE001 - a controller/skill exception is a FAILED episode
+        import traceback
+        exception = {'type': type(exc).__name__, 'message': str(exc)[:2000], 'traceback': traceback.format_exc()[-6000:]}
+        outcome = f'EXCEPTION:{type(exc).__name__}'
     port.hold(float(data.time))
     physics(.5)                       # settle before the final truth sample
     summary = ctl.summary()
@@ -276,14 +353,20 @@ def run(spec, out, student):
     gt_in_slot = abs(bx - slot_xy[0]) <= SLOT_HALF_M and abs(by - slot_xy[1]) <= SLOT_HALF_M and bz < ON_FLOOR_MAX_Z_M
     placement = summary['skill_placement'] or {}
     claim = placement.get('reason') == 'IN_SLOT'
-    gate = summary['lookback_gate'] or {}
-    wall_contacts = sum(1 for c in contacts if c['kind'] == 'wall')
+    gates = summary.get('lookback_gates') or []
+    gate = next((g for g in gates if g.get('frame_id') == placement.get('frame_id')), {})
+    wall_contacts = retention['kind_steps'].get('wall', 0)
+    carry_steps = retention['carry_steps']
+    grasp_physical = bool(carry_steps) and retention['both_finger_steps'] >= GRASP_MIN_BOTH_FINGER_FRACTION*carry_steps
+    box_retained = bool(carry_steps) and retention['low_box_steps'] == 0
     judged = m1_owncam_contract.judge(
         pose_sources=summary['pose_sources'], skill_reason=outcome, skill_claim_in_slot=claim,
         gt_box_in_slot=gt_in_slot, wall_contacts=wall_contacts, weld_used=state['max_eq_active'] > 0,
         face_fallback_used=summary['face_fallback_used'], pickup_source=summary['pickup_source'] or 'none',
         within_limit=outcome != 'SIM_LIMIT',
-        extra_checks={'look_back_pose_gate_ok': bool(gate) and not gate.get('violations')})
+        extra_checks={'look_back_pose_gate_ok': bool(gate) and not gate.get('violations'),
+                      'no_exception': exception is None,
+                      'grasp_physical_both_fingers': grasp_physical, 'box_retained_in_carry': box_retained})
     target = summary['target_xy']
     box0 = objects[box]['position_m']
     input_contract = ('own robot_cam JPEG + own issued commands + static tagged map v2 + fixed calibrations + '
@@ -306,9 +389,15 @@ def run(spec, out, student):
                                   'wall_contacts': wall_contacts,
                                   'contacts': {k: sum(1 for c in contacts if c['kind'] == k)
                                                for k in ('wall', 'peer_robot', 'other_box')},
-                                  'max_eq_active': state['max_eq_active']},
+                                  'max_eq_active': state['max_eq_active'],
+                                  'contact_steps_per_physics_step': retention['kind_steps'],
+                                  'retention': {**retention, 'rule': {'carry_phases': CARRY_PHASES,
+                                                'min_box_z_m': RETAIN_MIN_BOX_Z_M,
+                                                'min_both_finger_fraction': GRASP_MIN_BOTH_FINGER_FRACTION}},
+                                  'contact_profile': contact_record},
               'sim_s': round(float(data.time), 2), 'looks': summary['looks'], 'placement': placement,
-              'lookback_gate': gate, 'controller': summary, 'phase_times': state['phase_times'],
+              'lookback_gate': gate, 'lookback_gates': gates, 'exception': exception,
+              'static_keepouts': keepout_records, 'controller': summary, 'phase_times': state['phase_times'],
               'commands': len(commands), 'frames': len(frames)}
     m1_owncam_contract.assert_exportable(result)
     m1_contract.validate_outcome(result)
@@ -320,12 +409,13 @@ def run(spec, out, student):
     jsonl(out/'eval_only'/'frames_eval.jsonl', frame_eval)
     jsonl(out/'eval_only'/'gt_trajectory.jsonl', gt)
     jsonl(out/'eval_only'/'contacts.jsonl', contacts)
+    jsonl(out/'eval_only'/'retention.jsonl', retention_log)
     (out/'scene.xml').write_text(world.scene_xml)
     manifest = {'schema': SCHEMA, 'spec': spec, 'student': student, 'code': code, 'map_id': spec['map'],
                 'static_map_sha256': digest(static), 'landmarks_sha256': scene.manifest['landmarks_sha256'],
                 'scene_xml_sha256': scene.manifest['scene_xml_sha256'],
                 'calibration_sha256': sha_bytes(calibration_path.read_bytes()), 'pose_source': ctl.pose.source,
-                'weld': scene.manifest['weld'], 'contact_profile': scene.manifest.get('contact_solver_profile'),
+                'weld': scene.manifest['weld'], 'contact_profile': contact_record,
                 'timestep_s': float(model.opt.timestep), 'frame_period_s': FRAME_S, 'tick_s': TICK_S, 'sync_sim': True,
                 'env': {'python': platform.python_version(), 'platform': platform.platform(),
                         'mujoco': mujoco.__version__, 'opencv': cv2.__version__, 'numpy': np.__version__,
@@ -365,18 +455,57 @@ def effective_prereg(prereg_path: Path, prereg: dict) -> tuple[dict, list]:
     return student, episodes
 
 
+def check_frozen(frozen_path: Path, prereg_path: Path, student: dict) -> dict:
+    """Refuse a test launch unless the tree is clean and every run input equals the frozen source."""
+    if not frozen_path.is_file():
+        raise SystemExit(f'test refused: no frozen source file {frozen_path}')
+    frozen = json.loads(frozen_path.read_text())
+    dirty = git('status', '--porcelain', '--', *FROZEN_PATHS)
+    if dirty:
+        raise SystemExit(f'test refused: uncommitted changes under {FROZEN_PATHS}:\n{dirty}')
+    sha = frozen['source_sha']
+    changed = git('diff', '--name-only', sha, 'HEAD', '--', *FROZEN_PATHS).split()
+    allowed = set(frozen.get('records_only_paths', []))
+    bad = [f for f in changed if f not in allowed]
+    if bad:
+        raise SystemExit(f'test refused: files changed since frozen source {sha[:9]}: {bad}')
+    want = frozen['sha256']
+    have = {f: sha_bytes((ROOT/f).read_bytes()) for f in want}
+    diff = [f for f in want if have[f] != want[f]]
+    if diff:
+        raise SystemExit(f'test refused: hash mismatch vs frozen_source.json: {diff}')
+    for key in ('skill', 'calibration', 'contact_profile'):
+        if frozen['student'].get(key) != student.get(key):
+            raise SystemExit(f'test refused: student {key} {student.get(key)!r} != frozen {frozen["student"].get(key)!r}')
+    return {'frozen_source_sha': sha, 'frozen_file': str(frozen_path.relative_to(ROOT)),
+            'frozen_file_sha256': sha_bytes(frozen_path.read_bytes()), 'head': git('rev-parse', 'HEAD')}
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     p.add_argument('--prereg', required=True)
     p.add_argument('--only', default='')
     p.add_argument('--output', required=True)
+    p.add_argument('--split', choices=('dev', 'test'), default='dev',
+                   help='dev by default; the one-shot test split needs --split test and --frozen')
+    p.add_argument('--frozen', default='', help='frozen_source.json (required for --split test)')
     args = p.parse_args(argv)
-    prereg = json.loads(Path(args.prereg).read_text())
-    student, episodes = effective_prereg(Path(args.prereg), prereg)
+    prereg_path = Path(args.prereg).resolve()
+    prereg = json.loads(prereg_path.read_text())
+    student, episodes = effective_prereg(prereg_path, prereg)
+    freeze = None
+    if args.split == 'test':
+        if not args.frozen:
+            raise SystemExit('test refused: --frozen experiments/.../frozen_source.json is required')
+        freeze = check_frozen(Path(args.frozen).resolve(), prereg_path, student)
+        student = {**student, 'freeze': freeze}
     only = {s for s in args.only.split(',') if s}
-    for spec in episodes:
-        if only and spec['episode_id'] not in only:
-            continue
+    selected = [e for e in episodes if e['split'] == args.split and (not only or e['episode_id'] in only)]
+    unknown = only - {e['episode_id'] for e in episodes if e['split'] == args.split}
+    if unknown:
+        raise SystemExit(f'--only names episodes outside the {args.split} split: {sorted(unknown)}')
+    for spec in selected:
+        spec = {**spec, 'contact_profile': student.get('contact_profile', spec.get('contact_profile'))}
         result, manifest = run(spec, Path(args.output)/spec['episode_id'], student)
         print(json.dumps({'episode': spec['episode_id'], 'outcome': result['outcome'], 'm1_success': result['m1_success'],
                           'failed': result['m1_failed_checks'], 'diagnostic_success': result['diagnostic_success'],

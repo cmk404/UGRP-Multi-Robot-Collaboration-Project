@@ -1,5 +1,5 @@
 {
-  "schema": "ugrp.m1_owncam_results.v1",
+  "schema": "ugrp.m1_owncam_results.v2",
   "attempts": {
     "dev-a1": "969e03e, skill v4, loop v2 calibration (before amendment A1)",
     "dev-a2": "32c7069, amendment A1: skill v5 m1 mode, fine motion + kidnap reset, post-manipulation look, pan-probe re-anchor",
@@ -24,6 +24,8 @@
     "m1test-s105",
     "m1test-s106"
   ],
+  "test_problems": [],
+  "test_adopted": [],
   "claim": null,
   "runs": [
     {
@@ -31,11 +33,16 @@
       "episode": "m1dev-s91",
       "split": "dev",
       "robot_id": "r1",
+      "infrastructure_failure": false,
       "code_sha": "969e03e8b9897f882f51052dad13b94f47b20178",
       "code_dirty": false,
       "skill": "v4",
       "amendments": [],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "CARRY_REANCHOR_UNCONFIRMED",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -55,6 +62,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0307,
       "gt_box_final_xyz": [
         -0.2155,
@@ -66,6 +74,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 231.33,
       "looks": 1,
@@ -101,13 +110,18 @@
       "episode": "m1dev-s91",
       "split": "dev",
       "robot_id": "r1",
+      "infrastructure_failure": false,
       "code_sha": "32c70698cf560a9a2b367109d552194d6e830875",
       "code_dirty": false,
       "skill": "v5",
       "amendments": [
         "A1-dev-a1-s91"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -126,6 +140,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0307,
       "gt_box_final_xyz": [
         -0.2,
@@ -137,6 +152,7 @@
         "peer_robot": 226,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 262.66,
       "looks": 1,
@@ -177,13 +193,18 @@
       "episode": "m1dev-s92",
       "split": "dev",
       "robot_id": "r1",
+      "infrastructure_failure": false,
       "code_sha": "32c70698cf560a9a2b367109d552194d6e830875",
       "code_dirty": false,
       "skill": "v5",
       "amendments": [
         "A1-dev-a1-s91"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -202,6 +223,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0227,
       "gt_box_final_xyz": [
         1.6,
@@ -213,6 +235,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 212.7,
       "looks": 1,
@@ -252,6 +275,7 @@
       "episode": "m1dev-s93",
       "split": "dev",
       "robot_id": "r3",
+      "infrastructure_failure": false,
       "code_sha": "ce33ffdc99e23382aad29c0ad43b122598258e16",
       "code_dirty": false,
       "skill": "v5",
@@ -259,7 +283,11 @@
         "A1-dev-a1-s91",
         "A2-dev-a2-s91-s92"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_OBSERVATION_REJECTED:observation belongs to another sensor",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -278,6 +306,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0481,
       "gt_box_final_xyz": [
         0.4,
@@ -289,6 +318,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 134.5,
       "looks": 1,
@@ -328,6 +358,7 @@
       "episode": "m1devdiag-s94",
       "split": "dev",
       "robot_id": "r2",
+      "infrastructure_failure": false,
       "code_sha": "ce33ffdc99e23382aad29c0ad43b122598258e16",
       "code_dirty": false,
       "skill": "v5",
@@ -335,7 +366,11 @@
         "A1-dev-a1-s91",
         "A2-dev-a2-s91-s92"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_OBSERVATION_REJECTED:observation belongs to another sensor",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -356,6 +391,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0228,
       "gt_box_final_xyz": [
         1.6,
@@ -367,6 +403,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 180.7,
       "looks": 1,
@@ -406,6 +443,7 @@
       "episode": "m1dev-s93",
       "split": "dev",
       "robot_id": "r3",
+      "infrastructure_failure": false,
       "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
       "code_dirty": false,
       "skill": "v5",
@@ -414,7 +452,11 @@
         "A2-dev-a2-s91-s92",
         "A3-dev-a3-s93-runner-robot-id"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -433,6 +475,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0481,
       "gt_box_final_xyz": [
         0.4,
@@ -444,6 +487,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 156.25,
       "looks": 1,
@@ -483,6 +527,7 @@
       "episode": "m1devdiag-s94",
       "split": "dev",
       "robot_id": "r2",
+      "infrastructure_failure": false,
       "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
       "code_dirty": false,
       "skill": "v5",
@@ -491,7 +536,11 @@
         "A2-dev-a2-s91-s92",
         "A3-dev-a3-s93-runner-robot-id"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SIM_LIMIT",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -513,6 +562,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0228,
       "gt_box_final_xyz": [
         3.3904,
@@ -524,6 +574,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 720.56,
       "looks": 21,
@@ -563,6 +614,7 @@
       "episode": "m1devdiag-s95",
       "split": "dev",
       "robot_id": "r1",
+      "infrastructure_failure": false,
       "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
       "code_dirty": false,
       "skill": "v5",
@@ -571,7 +623,11 @@
         "A2-dev-a2-s91-s92",
         "A3-dev-a3-s93-runner-robot-id"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
       "m1_success": false,
       "counts_as_m1": true,
       "diagnostic_success": false,
@@ -592,6 +648,7 @@
         "released": false,
         "look_back": false
       },
+      "retention": null,
       "search_target_error_m": 0.0578,
       "gt_box_final_xyz": [
         0.4,
@@ -603,6 +660,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 124.39,
       "looks": 1,
@@ -642,6 +700,7 @@
       "episode": "m1devdiag-s94",
       "split": "dev",
       "robot_id": "r2",
+      "infrastructure_failure": false,
       "code_sha": "6352fdee997704af033dd4f5e45f6a2bab07c1a2",
       "code_dirty": false,
       "skill": "v5",
@@ -651,7 +710,11 @@
         "A3-dev-a3-s93-runner-robot-id",
         "A4-dev-a4-s94-carry-to-preplace"
       ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
       "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
       "m1_success": true,
       "counts_as_m1": true,
       "diagnostic_success": true,
@@ -668,6 +731,7 @@
         "released": true,
         "look_back": true
       },
+      "retention": null,
       "search_target_error_m": 0.0228,
       "gt_box_final_xyz": [
         4.5771,
@@ -679,6 +743,7 @@
         "peer_robot": 0,
         "other_box": 0
       },
+      "contact_steps": null,
       "max_eq_active": 0,
       "sim_s": 544.06,
       "looks": 5,

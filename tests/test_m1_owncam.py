@@ -20,7 +20,7 @@ RUNTIME = (ROOT/'harness'/'m1_owncam_delivery.py', ROOT/'harness'/'m1_owncam_con
 ALLOWED = {'__future__', 'math', 'hashlib', 'json', 'base64', 'collections.abc', 'dataclasses', 'numpy',
            'harness', 'harness.m1_owncam_contract', 'harness.owncam_pose_source', 'harness.owncam_localizer',
            'harness.wall_tags', 'harness.owncam_drive', 'harness.owncam_drive_v2', 'harness.zone_color_boxes',
-           'harness.wrist_zone_skill', 'harness.wrist_zone_skill_v5'}
+           'harness.wrist_zone_skill', 'harness.wrist_zone_skill_v5', 'harness.wrist_zone_skill_v6'}
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'qpos', 'qvel', 'base_xyz', 'base_rpy', 'eval_only', 'gt_trajectory',
              'frames_eval', 'MjData', 'setup_only', 'position_m', 'GtStubPoseSource')
 
@@ -247,10 +247,10 @@ class ControllerTests(unittest.TestCase):
         ctl.target_xy, ctl.pickup_source = (-.19, -2.48), 'own_rgb_search'
         order = ctl._make_order()
         self.assertIsInstance(order, CoarseOrderSheet)
-        self.assertEqual(order.pickup_bay_half_m, (.15, .25))
+        self.assertEqual(order.pickup_bay_half_m, (.25, .25))
         self.assertFalse(hasattr(order, 'pickup_xy_m'))
         gx, gy = ctl._approach_goal(ctl.target_xy)
-        self.assertAlmostEqual(gx, -.19 - .15 - BAY_APPROACH_CLEARANCE_M)
+        self.assertAlmostEqual(gx, -.19 - .25 - BAY_APPROACH_CLEARANCE_M)
         self.assertEqual(ctl.skill_factory(order).mode, 'm1')
         v4 = self._ctl('own_rgb_point')
         v4.target_xy = (-.19, -2.48)
@@ -276,6 +276,111 @@ class ControllerTests(unittest.TestCase):
         params = inspect.signature(M1OwnCamDelivery.__init__).parameters
         self.assertNotIn('pickup_xy', params)
         self.assertNotIn('spawn_y_hint', params)
+
+
+class PreReviewTests(unittest.TestCase):
+    """Codex M1 pre-review fixes: test launch guard, per-frame look-back gate, v6 approach, adoption."""
+
+    PREREG = ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'prereg.json'
+
+    def test_test_split_needs_explicit_flag_and_freeze(self):
+        from unittest import mock
+
+        import scripts.run_m1_owncam as runner
+        seen = []
+        with mock.patch.object(runner, 'run', side_effect=lambda spec, out, student: seen.append(spec) or
+                               ({'outcome': 'x', 'm1_success': False, 'm1_failed_checks': [], 'diagnostic_success': False,
+                                 'false_success': False, 'sim_s': 0, 'looks': 0}, {'wall_s': 0, 'load_average': {}})):
+            runner.main(['--prereg', str(self.PREREG), '--output', '/nonexistent-never-written'])
+            self.assertTrue(seen and all(sp['split'] == 'dev' for sp in seen))       # default: dev only
+            self.assertTrue(all(sp['contact_profile'] for sp in seen))
+            with self.assertRaises(SystemExit):
+                runner.main(['--prereg', str(self.PREREG), '--output', '/x', '--split', 'test'])
+            with self.assertRaises(SystemExit):
+                runner.main(['--prereg', str(self.PREREG), '--output', '/x', '--only', 'm1test-s101'])
+            n = len(seen)
+            with self.assertRaises(SystemExit):
+                runner.main(['--prereg', str(self.PREREG), '--output', '/x', '--split', 'test',
+                             '--frozen', str(ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'no_such_frozen.json')])
+            self.assertEqual(len(seen), n)                                              # nothing ran
+
+    def _ctl_v6(self):
+        from harness.m1_owncam_delivery import M1OwnCamDelivery
+        from harness.wrist_zone_skill import PoseEstimate
+        from harness.wrist_zone_skill_v6 import StaticKeepout, WristZoneDeliveryV6
+        from sim.zone_landmarks import tagged_map
+        static = tagged_map('zone_wide_door_tags_v2')
+        cal = json.loads((ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'calibration_m1_dev.json').read_text())
+        keep = tuple(StaticKeepout(f'spawn_row_{i}', (-.85, y), .17, 'static_layout_idle_spawn')
+                     for i, y in enumerate((-2.25, -.85, .55)))
+        ctl = M1OwnCamDelivery(static, cal['params'], box_kind='cyan', slot_id='A1', slot_xy=(4.6, 0.),
+                               skill_factory=lambda o: WristZoneDeliveryV6(o, mode='m1', static_keepouts=keep,
+                                                                           static_bounds_m=static['bounds_m']),
+                               pose_estimate_cls=PoseEstimate, search_rows_y=(-2.45, -1.65, -.85, -.05, .75))
+        return ctl, keep
+
+    def test_v6_approach_point_clears_spawn_keepouts_with_a_half_metre_bay(self):
+        ctl, keep = self._ctl_v6()
+        for target in ((-.19, -2.48), (-.2, -.85), (.4, -.05), (1.6, .75)):
+            ctl.skill, ctl.target_xy = None, target
+            goal = ctl._approach_goal(target)
+            self.assertEqual(ctl.skill.order.pickup_bay_half_m, (.25, .25))
+            self.assertIsNotNone(goal)
+            for k in keep:
+                self.assertGreater(math.hypot(goal[0] - k.xy_m[0], goal[1] - k.xy_m[1]), .17 + .17)
+
+    def test_look_back_gate_is_checked_on_every_confirmation_frame(self):
+        from harness.m1_owncam_delivery import MAX_GATE_LOOKS
+        from harness.owncam_pose_source import PoseReport
+        ctl, _ = self._ctl_v6()
+
+        class Skill:                                    # stand-in: always at a confirmation step
+            phase, look_back_steps, decided = 'look_back', 0, []
+            box = type('B', (), {'held': False})()
+
+            def decide(self, obs, est):
+                self.decided.append(obs['frame_id'])
+                return {'kind': 'wait', 'duration': .1}
+        ctl.skill, ctl.phase, ctl.servo = Skill(), 'skill', {1: 1500, 3: 740, 4: 2320, 5: 1320, 6: 1500}
+        good = PoseReport(t_est=0., initialized=True, x_m=4.4, y_m=0., yaw_rad=0., std_xy_m=.02, std_yaw_rad=.01,
+                          since_tag_s=.5, source='owncam_pf_v2:abcd1234')
+        bad = PoseReport(**{**good.__dict__, 'std_xy_m': .2, 'std_yaw_rad': .2})
+        fid = [10]
+
+        def step(now, report):
+            fid[0] += 1
+            ctl.last_obs = obs(frame_id=fid[0], t=now)
+            ctl.pose.report = lambda _now: PoseReport(**{**report.__dict__, 't_est': _now})
+            return ctl._skill(now)
+        ctl.last_look_t = 99.
+        self.assertEqual(step(100., good)['mode'], 'macro')                         # fresh look, gate passes
+        self.assertEqual([g['frame_id'] for g in ctl.lookback_gates], Skill.decided)
+        d = step(101., bad)                                                           # retry frame, now uncertain
+        self.assertEqual(d['mode'], 'tick')                                           # re-look, no confirmation
+        self.assertEqual(len(Skill.decided), 1)
+        ctl.sweep = None
+        ctl.gate_looks = MAX_GATE_LOOKS
+        self.assertEqual(step(102., bad)['outcome'], 'POSE_UNCERTAIN')
+        self.assertEqual(len(Skill.decided), 1)
+
+    def test_test_adoption_rules(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('m1_build', ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'build_results.py')
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        ids = [f'm1test-s{i}' for i in range(101, 107)]
+        f = {'frozen_source_sha': 'abc'}
+        ok = [{'attempt': 'test', 'episode': e, 'infrastructure_failure': False, 'freeze': f} for e in ids]
+        adopted, missing, problems = mod.adopt_test(ok, ids)
+        self.assertEqual((len(adopted), missing, problems), (6, [], []))
+        infra = ok[:5] + [{'attempt': 'test', 'episode': ids[5], 'infrastructure_failure': True, 'freeze': f}]
+        self.assertEqual(mod.adopt_test(infra, ids)[1], [ids[5]])                   # missing until a rerun
+        rerun = infra + [{'attempt': 'test-rerun', 'episode': ids[5], 'infrastructure_failure': False, 'freeze': f}]
+        self.assertEqual(mod.adopt_test(rerun, ids)[1:], ([], []))
+        dup = ok + [{'attempt': 'test-rerun', 'episode': ids[0], 'infrastructure_failure': False, 'freeze': f}]
+        self.assertTrue(mod.adopt_test(dup, ids)[2])                                 # rerun of a finished episode
+        mixed = ok[:5] + [{**ok[5], 'freeze': {'frozen_source_sha': 'zzz'}}]
+        self.assertTrue(mod.adopt_test(mixed, ids)[2])
 
 
 if __name__ == '__main__':
