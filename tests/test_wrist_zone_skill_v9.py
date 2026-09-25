@@ -69,50 +69,77 @@ def test_face_approach_no_progress_guard_forces_one_step(monkeypatch):
     assert all(s._approach(box, (.29, .10, .016), pose)['kind'] == 'pose' for _ in range(8))
 
 
-def test_587_close_range_fit_loss_backs_off_until_the_fit_validates(monkeypatch):
+def _str_pose(name):
+    return {str(k): v for k, v in _pose(name).items()}
+
+
+def test_587_close_range_fit_loss_enters_look_down_and_sweeps_until_fit(monkeypatch):
     good, lost = 'v8cohort-s587_0088.jpg', 'v8cohort-s587_0089.jpg'
     assert FRAMES[good]['logged_box']['visible'] and not FRAMES[lost]['logged_box']['visible']
     s = _skill()
 
     def parent(self, box, target, pose):
-        return self._drive_macro(.15, 0., 1.) if target is not None else {'kind': 'pose', 'pulses': {3: 623}}
+        return self._drive_macro(.15, 0., 1.) if target is not None else {'kind': 'wait', 'duration': .1}
     monkeypatch.setattr(v8.WristOnlyBoxSkillV8, '_approach', parent)
     box = dict(FRAMES[good]['logged_box'])
     target = tuple(box['estimated_box_center_base_m'])
-    first = s._approach(box, target, _pose(good))                          # valid fit at 0.377 m -> N7 0.15 m macro
+    first = s._approach(box, target, _str_pose(good))                      # valid fit at 0.377 m -> N7 0.15 m macro
     assert first['kind'] == 'drive' and first['fwd'] == .15
-    steps = [s._approach({'visible': False}, None, _pose(lost)) for _ in range(2)]   # lost -> reverse, still lost -> reverse
-    assert all(a == v9.BACKOFF_STEP for a in steps)
-    again = s._approach(box, target, _pose(good))                          # re-fitted: forward is now capped
+    sweep = [s._approach({'visible': False}, None, _str_pose(lost)) for _ in range(2)]
+    pan = _pose(good)[6]
+    assert sweep == [{'kind': 'pose', 'pulses': {4: v9.LOOK_DOWN_ELBOW, 3: w, 6: pan}}
+                     for w in v9.LOOK_DOWN_WRIST_SWEEP[:2]]
+    again = s._approach(box, target, _str_pose(good))                      # fit valid again in look-down: creep only
     assert again['kind'] == 'drive' and again['fwd'] * again['duration'] <= v9.CAPPED_FORWARD[0] * v9.CAPPED_FORWARD[1] + 1e-9
-    assert s.v9_stats['standoff_backoffs'] == 1 and s.v9_stats['backoff_steps'] == 2 and s.v9_stats['capped_forwards'] == 1
-    assert s.v9_stats['pose_restores'] == 0
-    assert [e['event'] for e in s.v9_events] == ['close_range_fit_lost_backoff', 'fit_valid_again_after_backoff']
+    st = s.v9_stats
+    assert st['look_down_entries'] == 1 and st['sweep_frames'] == 2 and st['capped_forwards'] == 1 and st['backoff_steps'] == 0
+    assert [e['event'] for e in s.v9_events] == ['close_range_fit_lost_look_down', 'look_down_fit_valid']
 
 
-def test_backoff_steps_are_bounded_then_pose_restored_then_n7(monkeypatch):
+def test_look_down_sweep_then_reverse_steps_then_restore_then_n7(monkeypatch):
     s = _skill()
     monkeypatch.setattr(v8.WristOnlyBoxSkillV8, '_approach', lambda self, box, target, pose: {'kind': 'wait', 'duration': .1})
     s._last_valid_fit = {'fx': .38, 'fy': 0., 'pose': {3: 611, 4: 2320, 6: 1534}}
     s._last_forward = (.15, 1., .38)
-    acts = [s._approach({'visible': False}, None, {3: 623, 4: 2320, 6: 1534}) for _ in range(v9.MAX_BACKOFF_STEPS + 2)]
-    assert acts[:v9.MAX_BACKOFF_STEPS] == [v9.BACKOFF_STEP] * v9.MAX_BACKOFF_STEPS
-    assert acts[v9.MAX_BACKOFF_STEPS] == {'kind': 'pose', 'pulses': {3: 611, 4: 2320, 6: 1534}}
-    assert acts[-1] == {'kind': 'wait', 'duration': .1}                      # N7 unchanged afterwards
+    pose = {'3': 623, '4': 2320, '6': 1534}
+    n = len(v9.LOOK_DOWN_WRIST_SWEEP)
+    acts = [s._approach({'visible': False}, None, pose) for _ in range((n + 1) * v9.MAX_BACKOFF_STEPS + n + 2)]
+    kinds = [a['kind'] for a in acts]
+    assert kinds[:n] == ['pose'] * n and acts[n] == v9.BACKOFF_STEP
+    assert sum(a == v9.BACKOFF_STEP for a in acts) == v9.MAX_BACKOFF_STEPS
+    restore = acts[(n + 1) * v9.MAX_BACKOFF_STEPS + n]
+    assert restore == {'kind': 'pose', 'pulses': {3: 611, 4: 2320, 6: 1534}}
+    assert acts[-1] == {'kind': 'wait', 'duration': .1} and s._look_down_done   # N7 unchanged afterwards
 
 
-def test_backoff_only_near_and_bounded_episodes():
+def test_no_look_down_when_far_or_without_a_forward_macro(monkeypatch):
     s = _skill()
+    monkeypatch.setattr(v8.WristOnlyBoxSkillV8, '_approach', lambda self, box, target, pose: {'kind': 'wait', 'duration': .1})
     s._last_valid_fit = {'fx': .60, 'fy': 0., 'pose': {3: 740}}
-    s._last_forward = (.15, 1., .60)                                       # far: N7 search, no backoff
-    assert s._standoff_backoff() is None
-    for _ in range(v9.MAX_STANDOFF_BACKOFFS):
-        s._backing_off = 0
-        s._last_forward = (.10, .6, .38)
-        assert s._standoff_backoff() == v9.BACKOFF_STEP
-    s._backing_off = 0
-    s._last_forward = (.10, .6, .38)
-    assert s._standoff_backoff() is None
+    s._last_forward = (.15, 1., .60)
+    assert s._approach({'visible': False}, None, {'3': 740, '6': 1500})['kind'] == 'wait'
+    s._last_forward = None
+    s._last_valid_fit['fx'] = .38
+    assert s._approach({'visible': False}, None, {'3': 740, '6': 1500})['kind'] == 'wait'
+    assert s.v9_stats['look_down_entries'] == 0
+
+
+def test_look_down_holds_the_vertical_within_tolerance(monkeypatch):
+    s = _skill()
+    seen = {}
+
+    def parent(self, box, target, pose):
+        seen['row'] = box['pixel_centroid'][1]
+        return {'kind': 'wait', 'duration': .1}
+    monkeypatch.setattr(v8.WristOnlyBoxSkillV8, '_approach', parent)
+    name = 'v8cohort-s583_0296.jpg'
+    fit = _fit(name)
+    projected = v9.projected_centre_px(fit, _pose(name))
+    s._approach(fit, tuple(fit['estimated_box_center_base_m']), _str_pose(name))
+    assert seen['row'] == projected[1]                                     # normal mode: projected centre
+    s._look_down = True
+    s._approach(fit, tuple(fit['estimated_box_center_base_m']), _str_pose(name))
+    assert abs(projected[1] - v9.TARGET_ROW_PX) <= v9.LOOK_DOWN_VERTICAL_HOLD_PX and seen['row'] == v9.TARGET_ROW_PX
 
 
 def test_v9_keeps_the_v6_to_v8_api():
