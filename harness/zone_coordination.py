@@ -1,6 +1,6 @@
 """LLM coordination for the zone benchmark: plan-first vs. talk-when-needed.
 
-Robots see their own RGB, both TOP RGB images, RGB-derived box labels and zone
+Robots see their own RGB, every TOP RGB image of the map, RGB-derived box labels and zone
 counts, their own issued jobs and peer messages. They never see simulator poses
 or the referee. Motions are executed by a ground-truth TEACHER executor; the
 coordination layer only receives its command receipts (finished / stopped).
@@ -26,7 +26,7 @@ Goal (zone -> colour -> count): {goal}
 The pickup area is west, zones A, B, C are painted floor areas east. You carry
 one box at a time. A motion executor moves you when you are given a job; you
 coordinate WHICH box goes to WHICH zone and WHO does it. Ground choices in the
-images: CURRENT OWN RGB, TOP_WEST (pickup) and TOP_EAST (zones). box_labels are
+images: {images}. box_labels are
 fixed names from the first TOP images (per colour, west to east then south to
 north). rgb_view is the current TOP-RGB estimate, not ground truth. Never claim
 simulator coordinates or physical success.'''
@@ -66,9 +66,19 @@ Reply JSON only: {{"request_id": copied, "claim": {{"box": label or null,
 peers"}}. reason/message under 240 characters.'''
 
 
-def _images(frame):
+# zone_open TOP views; other maps pass sim.zone_arena.top_views(static_map).
+DEFAULT_VIEWS = (('cctv_top', 'TOP_WEST', 'top_west', 'top-west', 'pickup'),
+                 ('cctv_top_east', 'TOP_EAST', 'top_east', 'top-east', 'zones'))
+
+
+def _images(frame, views):
     return [{'label': label, 'image': 'data:image/jpeg;base64,' + base64.b64encode(frame[key]).decode()}
-            for label, key in (('CURRENT OWN RGB', 'own'), ('TOP_WEST', 'top_west'), ('TOP_EAST', 'top_east'))]
+            for label, key in (('CURRENT OWN RGB', 'own'), *((v[1], v[2]) for v in views))]
+
+
+def _image_text(views):
+    names = [f'{label} ({role})' for _, label, _, _, role in views]
+    return 'CURRENT OWN RGB, ' + ', '.join(names[:-1]) + ' and ' + names[-1]
 
 
 def context(rid, *, task, labels, view, board, own_jobs, inbox, extra=None):
@@ -80,25 +90,25 @@ def context(rid, *, task, labels, view, board, own_jobs, inbox, extra=None):
     return value
 
 
-def _system(template, rid, task):
+def _system(template, rid, task, views):
     return template.format(rid=rid, instruction=task['instruction'],
-                           goal=json.dumps(task['goal'], sort_keys=True))
+                           goal=json.dumps(task['goal'], sort_keys=True), images=_image_text(views))
 
 
-def build_plan_request(rid, *, request_id, task, frame, agreement, ctx):
+def build_plan_request(rid, *, request_id, task, frame, agreement, ctx, views=DEFAULT_VIEWS):
     body = {'request_id': request_id, 'agreement': copy.deepcopy(agreement), **ctx}
     return {'request_id': request_id,
-            'messages': [{'role': 'system', 'content': _system(_PLAN, rid, task)},
+            'messages': [{'role': 'system', 'content': _system(_PLAN, rid, task, views)},
                          {'role': 'user', 'content': json.dumps(body, sort_keys=True)}],
-            'images': _images(frame)}
+            'images': _images(frame, views)}
 
 
-def build_claim_request(rid, *, request_id, task, frame, ctx):
+def build_claim_request(rid, *, request_id, task, frame, ctx, views=DEFAULT_VIEWS):
     body = {'request_id': request_id, **ctx}
     return {'request_id': request_id,
-            'messages': [{'role': 'system', 'content': _system(_CLAIM, rid, task)},
+            'messages': [{'role': 'system', 'content': _system(_CLAIM, rid, task, views)},
                          {'role': 'user', 'content': json.dumps(body, sort_keys=True)}],
-            'images': _images(frame)}
+            'images': _images(frame, views)}
 
 
 def plan_validator(goal, labels):

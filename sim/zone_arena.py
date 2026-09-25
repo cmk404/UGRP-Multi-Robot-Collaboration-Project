@@ -1,8 +1,8 @@
 """Zone-goal delivery arena: several coloured boxes, three goal zones, two TOPs.
 
 A coordination benchmark scene. It widens the dispatch laboratory eastwards and
-keeps the approved TOP camera; a second CCTV of the identical specification
-covers the east half. Box replicas keep the production cyan box shape, mass and
+keeps the approved TOP camera; CCTVs of the identical specification cover the
+rest (zone_open: one east; zone_wide: east plus a northern row of two). Box replicas keep the production cyan box shape, mass and
 friction; only the paint colour differs so robots can tell kinds apart in RGB.
 Setup poses and simulator IDs are setup-only and never reach the robots.
 """
@@ -20,9 +20,20 @@ from sim.research_dispatch_arena import FIXED_TOP, ROBOTS, digest
 
 SCHEMA = 'ugrp.zone_arena.v1'
 MAP_DIR = Path(__file__).resolve().parents[1] / 'maps' / 'zones'
-VARIANTS = ('zone_open',)
-EAST_TOP = {**copy.deepcopy(FIXED_TOP), 'name': 'cctv_top_east',
-            'position_m': [FIXED_TOP['position_m'][0] + 3.3, *FIXED_TOP['position_m'][1:]]}
+VARIANTS = ('zone_open', 'zone_wide')
+
+
+def _same_top(name, dx, dy):
+    """A CCTV of the approved TOP specification, shifted on the floor plane."""
+    x, y, z = FIXED_TOP['position_m']
+    return {**copy.deepcopy(FIXED_TOP), 'name': name, 'position_m': [x+dx, y+dy, z]}
+
+
+EAST_TOP = _same_top('cctv_top_east', 3.3, 0.)
+# zone_wide doubles the arena northwards: one more row of the same two CCTVs,
+# 2.3 m north, so the four views still overlap by about 0.3 m on the floor.
+NORTH_TOP = _same_top('cctv_top_north', 0., 2.3)
+NORTH_EAST_TOP = _same_top('cctv_top_north_east', 3.3, 2.3)
 # Kind -> paint. Cyan is the production box colour; the others are new kinds.
 COLORS = {'cyan': '.20 .65 .70 1', 'red': '.80 .12 .10 1', 'green': '.15 .62 .20 1',
           'yellow': '.92 .78 .10 1'}
@@ -41,13 +52,56 @@ PICKUP_COLUMNS_X = (-.20, .40, 1.00, 1.60)
 PICKUP_ROWS_Y = (-1.45, -2.05, -2.65)
 SPAWN_X = -.85
 SPAWN_ROWS_Y = (-1.35, -2.0, -2.65)
+# Per-variant geometry. zone_open is map v2 exactly as used by Z1-Z3.
+# views: (camera, image label shown to robots, frame key, file suffix, role).
+LAYOUTS = {
+    'zone_open': {
+        'version': 2, 'bounds': [-1.05, 5.40, -3.15, -.85], 'cameras': (FIXED_TOP, EAST_TOP),
+        'views': (('cctv_top', 'TOP_WEST', 'top_west', 'top-west', 'pickup'),
+                  ('cctv_top_east', 'TOP_EAST', 'top_east', 'top-east', 'zones')),
+        'cameras_text': 'TOP_WEST covers the west half (pickup); TOP_EAST covers the east half (zones)',
+        'zones': {'A': [4.70, -1.35], 'B': [4.70, -2.65], 'C': [3.30, -2.00]},
+        'zone_half': [.16, .40], 'slot_spacing': SLOT_SPACING_M,
+        'pickup': {'center_m': [.70, -2.05], 'half_extents_m': [1.15, .85]},
+        'pickup_columns_x': PICKUP_COLUMNS_X, 'pickup_rows_y': PICKUP_ROWS_Y,
+        'spawn_x': SPAWN_X, 'spawn_rows_y': SPAWN_ROWS_Y,
+        'observer': {'position_m': (2.2, -6.6, 4.6), 'target_m': (2.2, -2., .03)}},
+    # 2026-09-25 user request: the same benchmark on a wider (north-south) floor.
+    # 6.45 x 4.6 m; zones are twice as large with 0.40 m between slots, the
+    # pickup grid keeps 0.6 m between columns and spaces rows 0.8 m apart.
+    'zone_wide': {
+        'version': 1, 'bounds': [-1.05, 5.40, -3.15, 1.45],
+        'cameras': (FIXED_TOP, EAST_TOP, NORTH_TOP, NORTH_EAST_TOP),
+        'views': (('cctv_top', 'TOP_SW', 'top_sw', 'top-sw', 'pickup, south'),
+                  ('cctv_top_north', 'TOP_NW', 'top_nw', 'top-nw', 'pickup, north'),
+                  ('cctv_top_east', 'TOP_SE', 'top_se', 'top-se', 'zones, south'),
+                  ('cctv_top_north_east', 'TOP_NE', 'top_ne', 'top-ne', 'zones, north')),
+        'cameras_text': ('four TOP views of one size: TOP_SW and TOP_NW cover the west half (pickup), '
+                         'TOP_SE and TOP_NE the east half (zones); neighbouring views overlap slightly'),
+        'zones': {'A': [4.60, .40], 'B': [4.60, -2.10], 'C': [3.00, -.85]},
+        'zone_half': [.30, .70], 'slot_spacing': .40,
+        'pickup': {'center_m': [.70, -.85], 'half_extents_m': [1.15, 1.95]},
+        'pickup_columns_x': PICKUP_COLUMNS_X, 'pickup_rows_y': (-2.45, -1.65, -.85, -.05, .75),
+        'spawn_x': SPAWN_X, 'spawn_rows_y': (-2.25, -.85, .55),
+        'observer': {'position_m': (2.2, -6.2, 5.8), 'target_m': (2.2, -.85, .03)}},
+}
+
+
+def layout(variant):
+    if variant not in VARIANTS:
+        raise ValueError('unknown zone arena variant')
+    return LAYOUTS[variant]
+
+
+def top_views(static):
+    """(camera, label, frame key, file suffix, role) for the map's TOP images."""
+    return LAYOUTS[static['map_id']]['views']
 
 
 def build_authored_map(variant='zone_open'):
     """Author the static map (used once to write maps/zones/<variant>.json)."""
-    if variant not in VARIANTS:
-        raise ValueError('unknown zone arena variant')
-    bounds = [-1.05, 5.40, -3.15, -.85]
+    spec = layout(variant)
+    bounds = list(spec['bounds'])
     cx, cy = (bounds[0]+bounds[1])/2, (bounds[2]+bounds[3])/2
     hx, hy = (bounds[1]-bounds[0])/2, (bounds[3]-bounds[2])/2
     walls = [
@@ -57,19 +111,17 @@ def build_authored_map(variant='zone_open'):
         {'id': 'wall_east', 'center_m': [bounds[1], cy], 'half_extents_m': [.025, hy]}]
     for wall in walls:
         wall.update(height_m=.10, kind='wall')
-    zones = {'A': [4.70, -1.35], 'B': [4.70, -2.65], 'C': [3.30, -2.00]}
     zone_rgba = {'A': '.95 .45 .10 .30', 'B': '.20 .40 .95 .30', 'C': '.70 .20 .85 .30'}
-    regions = {'pickup': {'center_m': [.70, -2.05], 'half_extents_m': [1.15, .85],
-                          'rgba': '.12 .36 .70 .14'}}
+    regions = {'pickup': {**copy.deepcopy(spec['pickup']), 'rgba': '.12 .36 .70 .14'}}
     slots = {}
-    for zone, (x, y) in zones.items():
-        regions['zone_'+zone] = {'center_m': [x, y], 'half_extents_m': [.16, .40],
+    for zone, (x, y) in spec['zones'].items():
+        regions['zone_'+zone] = {'center_m': [x, y], 'half_extents_m': list(spec['zone_half']),
                                  'rgba': zone_rgba[zone]}
-        slots[zone] = [{'slot_id': f'{zone}{i+1}', 'center_m': [x, y+(i-1)*SLOT_SPACING_M],
+        slots[zone] = [{'slot_id': f'{zone}{i+1}', 'center_m': [x, y+(i-1)*spec['slot_spacing']],
                         'half_extents_m': [.06, .06]} for i in range(SLOTS_PER_ZONE)]
-    return {'schema': SCHEMA, 'map_id': 'zone_'+variant.split('_', 1)[1], 'version': 2,
+    return {'schema': SCHEMA, 'map_id': 'zone_'+variant.split('_', 1)[1], 'version': spec['version'],
             'frame': 'world metres; x east, y north',
-            'bounds_m': bounds, 'top_cameras': [copy.deepcopy(FIXED_TOP), copy.deepcopy(EAST_TOP)],
+            'bounds_m': bounds, 'top_cameras': [copy.deepcopy(c) for c in spec['cameras']],
             'obstacles': walls, 'terrain': [], 'regions': regions, 'zone_slots': slots,
             'box_kinds': sorted(COLORS),
             'approach_convention': 'boxes are grasped and placed with the robot facing east (+x)'}
@@ -77,8 +129,7 @@ def build_authored_map(variant='zone_open'):
 
 def authored_map(variant='zone_open'):
     """Static map the robots may know: the versioned JSON under maps/zones/."""
-    if variant not in VARIANTS:
-        raise ValueError('unknown zone arena variant')
+    layout(variant)
     value = json.loads((MAP_DIR/(variant+'.json')).read_text())
     if value != build_authored_map(variant):
         raise ValueError('zone map file differs from its authored definition')
@@ -114,7 +165,8 @@ def episode(variant='zone_open', seed=11, *, goal, extra_boxes=None):
         if kind not in COLORS or isinstance(count, bool) or not isinstance(count, int) or count < 0:
             raise ValueError('extra boxes need known kinds and non-negative counts')
         need[kind] = need.get(kind, 0) + count
-    cells = [(x, y) for x in PICKUP_COLUMNS_X for y in PICKUP_ROWS_Y]
+    spec = layout(variant)
+    cells = [(x, y) for x in spec['pickup_columns_x'] for y in spec['pickup_rows_y']]
     total = sum(need.values())
     if total > len(cells):
         raise ValueError(f'at most {len(cells)} boxes fit the pickup grid')
@@ -129,7 +181,7 @@ def episode(variant='zone_open', seed=11, *, goal, extra_boxes=None):
                         'position_m': [x, y, BOX_HALF[2]], 'half_extents_m': list(BOX_HALF)}
     order = list(ROBOTS)
     rng.shuffle(order)
-    spawns = {rid: [SPAWN_X, y, .032355118817659255, 0.] for rid, y in zip(order, SPAWN_ROWS_Y)}
+    spawns = {rid: [spec['spawn_x'], y, .032355118817659255, 0.] for rid, y in zip(order, spec['spawn_rows_y'])}
     return {'schema': 'ugrp.zone_episode.v1', 'variant': variant, 'seed': seed,
             'goal': goal, 'goal_sha256': digest(goal),
             'static_map': static, 'static_map_sha256': digest(static),
@@ -146,7 +198,7 @@ def actor_task(static, goal):
             'zones': {z: {'center_m': static['regions']['zone_'+z]['center_m'],
                           'slots': [s['slot_id'] for s in static['zone_slots'][z]]} for z in ZONE_IDS},
             'box_kinds': static['box_kinds'], 'bounds_m': static['bounds_m'],
-            'cameras': 'TOP_WEST covers the west half (pickup); TOP_EAST covers the east half (zones)'}
+            'cameras': LAYOUTS[static['map_id']]['cameras_text']}
 
 
 def _geom(world, name, center, half, height, rgba, *, collision=True, z=None):
@@ -201,13 +253,15 @@ def build_zone_xml(source, config):
         for geom in body.iter('geom'):
             geom.attrib.update(contype='0', conaffinity='0', rgba='0 0 0 0', group='5')
     top = world.find("camera[@name='cctv_top']")
-    east = copy.deepcopy(top)
-    east.set('name', EAST_TOP['name'])
-    east.set('pos', ' '.join(map(str, EAST_TOP['position_m'])))
-    world.append(east)
+    for spec in static['top_cameras'][1:]:
+        extra = copy.deepcopy(top)
+        extra.set('name', spec['name'])
+        extra.set('pos', ' '.join(map(str, spec['position_m'])))
+        world.append(extra)
+    light_y = -2 if static['map_id'] == 'zone_open' else (static['bounds_m'][2]+static['bounds_m'][3])/2
     for light in world.findall('light'):
         if light.get('name') == 'dispatch_ceiling':
-            light.set('pos', f"{(static['bounds_m'][0]+static['bounds_m'][1])/2} -2 4.5")
+            light.set('pos', f"{(static['bounds_m'][0]+static['bounds_m'][1])/2} {light_y} 4.5")
     if any(eq.get('active') != 'false' for eq in root.findall('equality/weld')):
         raise ValueError('weld assistance must be OFF')
     xml = ET.tostring(root, encoding='unicode')

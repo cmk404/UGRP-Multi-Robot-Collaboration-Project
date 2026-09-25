@@ -1,7 +1,7 @@
 """Zone-goal delivery benchmark: LLM coordination over a TEACHER motion executor.
 
 Robots (one independent LLM client each) decide who moves which box to which
-zone, from own RGB + two TOP RGB images, RGB-derived labels/counts, own jobs
+zone, from own RGB + the map's TOP RGB images, RGB-derived labels/counts, own jobs
 and peer messages. A ground-truth teacher executes the motions with the real
 gripper (weld OFF). Results are teacher-executor conditions: they measure the
 coordination (calls, conflicts, allocation, makespan), not RGB-skill success.
@@ -24,7 +24,7 @@ if str(ROOT) not in sys.path:
 from harness.three_robot_plan import ROBOTS, TeamAgreement  # noqa: E402
 from harness import zone_coordination as zc  # noqa: E402
 from harness.zone_perception import detect_all, label_pickup, observe  # noqa: E402
-from sim.zone_arena import actor_task, episode, goal_counts  # noqa: E402
+from sim.zone_arena import actor_task, episode, goal_counts, top_views  # noqa: E402
 
 SCHEMA = 'ugrp.zone_dispatch_result.v1'
 # Dynamic mode: re-ask a stalled team (no job running, claims unresolved) at
@@ -86,19 +86,20 @@ class ZoneRun:
                 self.replay.sample(' | '.join(f'{r}:{t.phase}' for r, t in self.executor.robots.items()))
 
     def tops(self):
-        return {'cctv_top': self.world.render_team_jpeg(camera='cctv_top', quality=95),
-                'cctv_top_east': self.world.render_team_jpeg(camera='cctv_top_east', quality=95)}
+        return {view[0]: self.world.render_team_jpeg(camera=view[0], quality=95)
+                for view in top_views(self.config['static_map'])}
 
     def capture(self, label, robots=ROBOTS):
         self.count += 1
         tops = self.tops()
-        (self.out/'rgb'/f'{self.count:03d}-{label}-top-west.jpg').write_bytes(tops['cctv_top'])
-        (self.out/'rgb'/f'{self.count:03d}-{label}-top-east.jpg').write_bytes(tops['cctv_top_east'])
+        views = top_views(self.config['static_map'])
+        for camera, _, _, suffix, _ in views:
+            (self.out/'rgb'/f'{self.count:03d}-{label}-{suffix}.jpg').write_bytes(tops[camera])
         frames = {}
         for rid in robots:
             own = self.world.render_jpeg(robot_id=rid, camera='robot_cam', quality=90)
             (self.out/'rgb'/f'{self.count:03d}-{label}-{rid}.jpg').write_bytes(own)
-            frames[rid] = {'own': own, 'top_west': tops['cctv_top'], 'top_east': tops['cctv_top_east']}
+            frames[rid] = {'own': own, **{key: tops[camera] for camera, _, key, _, _ in views}}
         return frames, tops
 
     def box_positions(self):
@@ -217,7 +218,8 @@ def run(args):
                 context = agreement.context()
                 def build(rid, request_id, ctx=ctx, context=context, frames=frames):
                     return zc.build_plan_request(rid, request_id=request_id, task=task, frame=frames[rid],
-                                                 agreement=context, ctx=ctx[rid])
+                                                 agreement=context, ctx=ctx[rid],
+                                                 views=top_views(config['static_map']))
                 def fixture(rid, request_id, context=context):
                     return _fixture_plan_reply(rid, request_id, context, goal, labels, args.fixture_plan)
                 from harness.three_robot_plan import validate_plan_reply
@@ -320,7 +322,8 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
                    'active': {k: {'box': j['box'], 'zone': j['zone']} for k, j in pending.items()}},
                    own_jobs=own_jobs[r], inbox=team.inbox[r], extra=extra.get(r)) for r in askers}
         def build(rid, request_id, ctx=ctx, frames=frames):
-            return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid])
+            return zc.build_claim_request(rid, request_id=request_id, task=task, frame=frames[rid], ctx=ctx[rid],
+                                          views=top_views(zone.config['static_map']))
         def fixture(rid, request_id, view=view, pending=pending, askers=tuple(askers)):
             return _fixture_claim(rid, request_id, goal, labels, view, pending, askers)
         replies = team.ask(askers, build, zc.validate_claim_reply, fixture,
