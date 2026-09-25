@@ -73,7 +73,7 @@
 
 ## dev 결과 (임계값 선택에만 사용, 합산 금지)
 
-렌더 `outputs/2026-09-26-zone-own-perception/dev-frames-v3`(92뷰, 209 프레임, wall 174.9 s, 1분 부하 9.05→13.31, 소스 `1cd9ea1`+미커밋 조정), 채점 `dev-score-6`. 뷰 단위, `gt_stub_eval_only`.
+임계값 선택은 `dev-frames-v3`/`dev-score-6`(소스 `1cd9ea1`+미커밋 조정)에서 했고, 사전 등록을 커밋한 뒤 같은 dev 분할을 **깨끗한 소스 `bc22129`로 다시 렌더·채점**해 같은 값을 확인했다(`dev-frames-clean` 92뷰·209프레임, wall 210.5 s, 1분 부하 10.53→21.32; `dev-score-clean`). 아래 표와 이 폴더의 `dev-summary.json`은 재현한 `bc22129` 결과이며, 두 채점의 뷰 단위 지표는 모든 판단에서 일치했다. 뷰 단위, `gt_stub_eval_only`.
 
 | 판단 | 뷰 | unknown | 전체 정확도 | 결정 정확도 | 확신 오류 | 관측 가능(뷰/정확도/확신 오류) |
 |---|---:|---:|---:|---:|---:|---|
@@ -84,7 +84,7 @@
 
 belief 민감도(뷰 단위 전체 정확도 / 확신 오류): `noise_30mm` — slot .542/0, hold .700/0, placed .708/0, block .700/2. `noise_60mm` — slot .292/2, hold .700/0, placed .375/4, block .450/1. 위치 belief가 나빠지면 `unknown`이 늘고 확신 오류도 생긴다. 이 판단들은 belief 품질에 종속되며 단독으로 위치 오차를 보정하지 않는다.
 
-`placed_zone_B`(518 쌍)는 dev 4뷰 모두 `yes`였다.
+`placed_zone_B`(518 쌍)는 dev 4뷰 모두 `yes`였다(재현 채점도 4/4).
 
 ### dev에서 찾아 고친 것 (모두 dev 근거)
 
@@ -99,17 +99,62 @@ belief 민감도(뷰 단위 전체 정확도 / 확신 오류): `noise_30mm` — 
 
 | 항목 | 위치 |
 |---|---|
-| dev 프레임·라벨 | `outputs/2026-09-26-zone-own-perception/dev-frames-v3` (8.9 MB, 로컬 보관; Git 제외) |
-| dev 채점 | `outputs/2026-09-26-zone-own-perception/dev-score-6`, 이 폴더의 `dev-summary.json`이 같은 내용 |
+| dev 프레임·라벨 | `outputs/2026-09-26-zone-own-perception/dev-frames-v3`(조정용), `dev-frames-clean`(`bc22129` 재현) — 각 8.9 MB, 로컬 보관, Git 제외 |
+| dev 채점 | `dev-score-6`(조정용), `dev-score-clean`(`bc22129`); 이 폴더의 `dev-summary.json`은 `dev-score-clean`과 같은 내용 |
+| test 프레임·라벨 | `outputs/2026-09-26-zone-own-perception/test-frames`(8.8 MB, 로컬 보관, Git 제외) |
+| test 채점 | `outputs/2026-09-26-zone-own-perception/test-score`; 이 폴더의 `test-summary.json`이 같은 내용 |
 | 장면 해시 (변형·시드 / ZoneScene / 추가물 포함 / 주문서) | door 41 `346a3ecc` / `7587eb0d` / `d6d2c525`; corridor 42 `18568f04` / `2bc886f8` / `c9e97b94`; two_doors 43 `2df01921` / `09fee3a8` / `fc5472e5`; door 44 `a1af9d3f` / `bfda1856` / `6dda8b98` |
 
 로컬 보관은 원격 백업이 아니다. `outputs/`는 Git에 포함되지 않는다.
 
-## test 결과
+## test 결과 (1회 채점, 사전 등록 뒤)
 
-test 분할은 이 문서의 사전 등록을 커밋한 뒤 한 번만 렌더·채점한다. 결과는 아래 절에 추가한다.
+렌더·채점 소스 `bc22129`(깨끗한 작업 트리), 렌더 `outputs/2026-09-26-zone-own-perception/test-frames`(92뷰·208프레임, wall 185.6 s, 1분 부하 12.07→11.40), 채점 `test-score`(같은 내용을 이 폴더 `test-summary.json`에 보존). 뷰 단위, `gt_stub_eval_only`.
 
-<!-- TEST-RESULTS -->
+| 판단 | 뷰 | unknown | 전체 정확도 | 결정 정확도 | 확신 오류 | 관측 가능(뷰 / 정확도 / unknown / 확신 오류) |
+|---|---:|---:|---:|---:|---:|---|
+| `slot_item` | 24 | .458 | .542 | **1.00** | **0** | 15 / .867 / .133 / 0 |
+| `holding_item` | 20 | .400 | .600 | **1.00** | **0** | 16 / .750 / .250 / 0 |
+| `placed_in_slot` | 24 | .333 | .667 | **1.00** | **0** | 20 / .800 / .200 / 0 |
+| `route_blockage` | 20 | .250 | .750 | **1.00** | **0** | 20 / .750 / .250 / 0 |
+
+사례별(뷰 수 / unknown / 정답 / 오답):
+
+| 판단 | 사례 |
+|---|---|
+| `slot_item` | `slot_expected_box` 4/0/4/0 · `slot_expected_can` 4/1/3/0 · `slot_wrong_kind` 4/1/3/0 · `slot_empty` 4/1/3/0 · `slot_occluded` 4/4/0/0 · `slot_far` 4/4/0/0 |
+| `holding_item` | `hold_expected_box` 4/0/4/0 · `hold_expected_tile` 4/1/3/0 · `hold_wrong_kind` 4/0/4/0 · `hold_empty` 4/3/1/0 · `hold_expected_can` 4/4/0/0 |
+| `placed_in_slot` | `placed_zone_A` 4/0/4/0 · `placed_zone_B` 4/0/4/0 · `placed_zone_C` 4/0/4/0 · `placed_outside_slot` 4/1/3/0 · `placed_empty` 4/3/1/0 · `placed_occluded` 4/4/0/0 |
+| `route_blockage` | `block_unmapped_passage` 4/0/4/0 · `block_unmapped_near` 4/0/4/0 · `clear_open` 4/1/3/0 · `clear_passage` 4/2/2/0 · `mapped_wall` 4/2/2/0 · (게이트 밖) `peer_in_lane` 4/0/0/4 |
+
+### 게이트 판정
+
+| ID | 기준 | 결과 | 판정 |
+|---|---|---|---|
+| G1 | 판단별 확신 오류 ≤ 1 | 4개 판단 모두 0 | 통과 |
+| G2 | `placed_in_slot`·`holding_item` 관측 가능 뷰 확신 오류 0 | 0, 0 | 통과 |
+| G3 | 결정한 뷰 정확도 ≥ 0.85 | 1.00 / 1.00 / 1.00 / 1.00 | 통과 |
+| G4 | 관측 가능 뷰 정확도 ≥ 0.70 | .867 / .750 / .800 / .750 | 통과 |
+| G5 | 관측 가능 뷰 unknown ≤ 0.35 | .133 / .250 / .200 / .250 | 통과 |
+| G6 | `placed_zone_B` ≥ 3/4 `yes` | 4/4 `yes` | 통과 (518 거짓 음성 재현 안 됨) |
+| G7 | 관측 불가 뷰 확신 오류 ≤ 1 | 0 (slot 9뷰, hold 4뷰, placed 4뷰 모두 `unknown`) | 통과 |
+| G8 | `tests/test_zone_own_perception.py` 전체 통과 | 20/20 통과 | 통과 |
+
+**8개 게이트 모두 통과.** 결정한 답은 test에서 하나도 틀리지 않았고(4판단 84뷰 중 결정 51뷰, 오답 0), 대신 `unknown`을 25–46% 냈다. 보이지 않는 경우(`slot_far`, `*_occluded`, CARRY가 담지 못하는 `can`)는 전부 `unknown`이었다. 이것이 의도한 절충이다: 이 판단들은 영수증·메시지 주장이 될 수 있으므로 확신해서 틀리는 것보다 모른다고 말하는 쪽을 택했다.
+
+### belief 민감도 (뷰 단위 전체 정확도 / 확신 오류)
+
+| belief | `slot_item` | `holding_item` | `placed_in_slot` | `route_blockage` |
+|---|---|---|---|---|
+| `gt_stub_eval_only` | .542 / 0 | .600 / 0 | .667 / 0 | .750 / 0 |
+| `noise_30mm` | .625 / 0 | .600 / 0 | .542 / 0 | .750 / 0 |
+| `noise_60mm` | .333 / 1 | .600 / 0 | .375 / 5 | .500 / 2 |
+
+σ 30 mm에서는 확신 오류가 여전히 0이지만, σ 60 mm에서는 지도 상대 판단(`slot_item`, `placed_in_slot`, `route_blockage`)이 무너지고 확신 오류가 생긴다. `holding_item`은 belief를 쓰지 않아 변하지 않는다. **결론: 이 판단들을 실행에 쓰려면 자기 위치 belief의 오차가 대략 30 mm 수준이어야 한다.** 위치 추정 정확도는 다른 패키지의 결과로 확인해야 하며 이 기록은 그것을 대신하지 않는다.
+
+### 장면 해시 (test)
+
+door 71 `170922d7` / `95c2f575` / `c203a954`; corridor 72 `9f5914f0` / `ff39a9f0` / `5a14cf68`; two_doors 73 `cd7c9265` / `f2c0a9fd` / `ad05f8bf`; corridor 74 `c70b1f61` / `9b7168f5` / `9a283002` (ZoneScene / 추가물 포함 / 주문서). 원본 프레임·라벨 8.8 MB는 로컬 `outputs/`에만 있고 Git에 없다.
 
 ## 한계
 

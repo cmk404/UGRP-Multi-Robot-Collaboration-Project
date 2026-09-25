@@ -1,15 +1,15 @@
 {
  "schema": "ugrp.zone_own_perception_eval.v1.score",
- "frames_dir": "outputs/2026-09-26-zone-own-perception/dev-frames-clean",
- "split": "dev",
+ "frames_dir": "outputs/2026-09-26-zone-own-perception/test-frames",
+ "split": "test",
  "render_source_sha": "bc22129531fb2d49f75341d7027f4520b7f67035",
  "score_source_sha": "bc22129531fb2d49f75341d7027f4520b7f67035",
  "score_source_dirty": false,
  "confident_threshold": 0.65,
  "primary_belief_level": "gt_stub_eval_only",
  "load_average_1min": {
-  "start": 21.31982421875,
-  "end": 21.60205078125
+  "start": 10.53466796875,
+  "end": 11.173828125
  },
  "results": {
   "gt_stub_eval_only": {
@@ -18,13 +18,13 @@
      "by_case": {
       "hold_empty": {
        "n": 8,
-       "unknown": 4,
-       "unknown_rate": 0.5,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 6,
+       "unknown_rate": 0.75,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -60,13 +60,13 @@
       },
       "hold_expected_tile": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -88,26 +88,26 @@
       }
      },
      "n": 40,
-     "unknown": 12,
-     "unknown_rate": 0.3,
-     "decided": 28,
-     "correct": 28,
+     "unknown": 15,
+     "unknown_rate": 0.375,
+     "decided": 25,
+     "correct": 25,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.625,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 32,
-      "unknown": 4,
-      "unknown_rate": 0.125,
-      "decided": 28,
-      "correct": 28,
+      "unknown": 7,
+      "unknown_rate": 0.2188,
+      "decided": 25,
+      "correct": 25,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.7812,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -138,13 +138,13 @@
      "by_case": {
       "placed_empty": {
        "n": 12,
-       "unknown": 5,
-       "unknown_rate": 0.4167,
-       "decided": 7,
-       "correct": 7,
+       "unknown": 10,
+       "unknown_rate": 0.8333,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5833,
+       "accuracy_of_all": 0.1667,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -152,37 +152,27 @@
       },
       "placed_occluded": {
        "n": 12,
-       "unknown": 8,
-       "unknown_rate": 0.6667,
-       "decided": 4,
-       "correct": 3,
-       "wrong": 1,
-       "accuracy_of_decided": 0.75,
-       "accuracy_of_all": 0.25,
-       "false_confident": 1,
-       "false_confident_rate": 0.0833,
-       "false_confident_cases": [
-        "placed_occluded"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_two_doors-s43-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        }
-       ]
+       "unknown": 12,
+       "unknown_rate": 1.0,
+       "decided": 0,
+       "correct": 0,
+       "wrong": 0,
+       "accuracy_of_decided": null,
+       "accuracy_of_all": 0.0,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "placed_outside_slot": {
        "n": 12,
-       "unknown": 5,
-       "unknown_rate": 0.4167,
-       "decided": 7,
-       "correct": 7,
+       "unknown": 4,
+       "unknown_rate": 0.3333,
+       "decided": 8,
+       "correct": 8,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5833,
+       "accuracy_of_all": 0.6667,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -190,33 +180,19 @@
       },
       "placed_zone_A": {
        "n": 12,
-       "unknown": 2,
-       "unknown_rate": 0.1667,
-       "decided": 10,
-       "correct": 10,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 12,
+       "correct": 12,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.8333,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
        "wrong_examples": []
       },
       "placed_zone_B": {
-       "n": 12,
-       "unknown": 2,
-       "unknown_rate": 0.1667,
-       "decided": 10,
-       "correct": 10,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.8333,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
-      "placed_zone_C": {
        "n": 12,
        "unknown": 1,
        "unknown_rate": 0.0833,
@@ -229,67 +205,61 @@
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
        "wrong_examples": []
+      },
+      "placed_zone_C": {
+       "n": 12,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 12,
+       "correct": 12,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 1.0,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       }
      },
      "n": 72,
-     "unknown": 23,
-     "unknown_rate": 0.3194,
-     "decided": 49,
-     "correct": 48,
-     "wrong": 1,
-     "accuracy_of_decided": 0.9796,
-     "accuracy_of_all": 0.6667,
-     "false_confident": 1,
-     "false_confident_rate": 0.0139,
-     "false_confident_cases": [
-      "placed_occluded"
-     ],
-     "wrong_examples": [
-      {
-       "view_id": "zone_wide_two_doors-s43-placed_occluded",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_PROVEN_BARE_PAINT",
-       "confidence": 0.8
-      }
-     ],
+     "unknown": 27,
+     "unknown_rate": 0.375,
+     "decided": 45,
+     "correct": 45,
+     "wrong": 0,
+     "accuracy_of_decided": 1.0,
+     "accuracy_of_all": 0.625,
+     "false_confident": 0,
+     "false_confident_rate": 0.0,
+     "false_confident_cases": [],
+     "wrong_examples": [],
      "observable": {
-      "n": 57,
-      "unknown": 12,
-      "unknown_rate": 0.2105,
+      "n": 60,
+      "unknown": 15,
+      "unknown_rate": 0.25,
       "decided": 45,
       "correct": 45,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.7895,
+      "accuracy_of_all": 0.75,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 15,
-      "unknown": 11,
-      "unknown_rate": 0.7333,
-      "decided": 4,
-      "correct": 3,
-      "wrong": 1,
-      "accuracy_of_decided": 0.75,
-      "accuracy_of_all": 0.2,
-      "false_confident": 1,
-      "false_confident_rate": 0.0667,
-      "false_confident_cases": [
-       "placed_occluded"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_two_doors-s43-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       }
-      ]
+      "n": 12,
+      "unknown": 12,
+      "unknown_rate": 1.0,
+      "decided": 0,
+      "correct": 0,
+      "wrong": 0,
+      "accuracy_of_decided": null,
+      "accuracy_of_all": 0.0,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "peer_in_lane_reported_separately": {
       "n": 0
@@ -302,13 +272,13 @@
      "by_case": {
       "block_unmapped_near": {
        "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 7,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 8,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.875,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -330,20 +300,6 @@
       },
       "clear_open": {
        "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 7,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.875,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
-      "clear_passage": {
-       "n": 8,
        "unknown": 2,
        "unknown_rate": 0.25,
        "decided": 6,
@@ -356,7 +312,7 @@
        "false_confident_cases": [],
        "wrong_examples": []
       },
-      "mapped_wall": {
+      "clear_passage": {
        "n": 8,
        "unknown": 1,
        "unknown_rate": 0.125,
@@ -368,15 +324,37 @@
        "false_confident": 1,
        "false_confident_rate": 0.125,
        "false_confident_cases": [
-        "mapped_wall"
+        "clear_passage"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-mapped_wall",
+         "view_id": "zone_wide_corridor-s74-clear_passage",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
+        }
+       ]
+      },
+      "mapped_wall": {
+       "n": 8,
+       "unknown": 3,
+       "unknown_rate": 0.375,
+       "decided": 5,
+       "correct": 4,
+       "wrong": 1,
+       "accuracy_of_decided": 0.8,
+       "accuracy_of_all": 0.5,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-mapped_wall",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
         }
        ]
       },
@@ -385,53 +363,53 @@
        "unknown": 0,
        "unknown_rate": 0.0,
        "decided": 8,
-       "correct": 1,
-       "wrong": 7,
-       "accuracy_of_decided": 0.125,
-       "accuracy_of_all": 0.125,
-       "false_confident": 6,
-       "false_confident_rate": 0.75,
+       "correct": 0,
+       "wrong": 8,
+       "accuracy_of_decided": 0.0,
+       "accuracy_of_all": 0.0,
+       "false_confident": 8,
+       "false_confident_rate": 1.0,
        "false_confident_cases": [
         "peer_in_lane"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-peer_in_lane",
+         "view_id": "zone_wide_door-s71-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s41-peer_in_lane",
+         "view_id": "zone_wide_door-s71-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_two_doors-s43-peer_in_lane",
+         "view_id": "zone_wide_two_doors-s73-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
+         "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-peer_in_lane",
+         "view_id": "zone_wide_two_doors-s73-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -441,21 +419,28 @@
       }
      },
      "n": 40,
-     "unknown": 5,
-     "unknown_rate": 0.125,
-     "decided": 35,
-     "correct": 34,
-     "wrong": 1,
-     "accuracy_of_decided": 0.9714,
-     "accuracy_of_all": 0.85,
+     "unknown": 6,
+     "unknown_rate": 0.15,
+     "decided": 34,
+     "correct": 32,
+     "wrong": 2,
+     "accuracy_of_decided": 0.9412,
+     "accuracy_of_all": 0.8,
      "false_confident": 1,
      "false_confident_rate": 0.025,
      "false_confident_cases": [
-      "mapped_wall"
+      "clear_passage"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_corridor-s42-mapped_wall",
+       "view_id": "zone_wide_corridor-s72-mapped_wall",
+       "answer": "yes",
+       "truth": "no",
+       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+       "confidence": 0.6
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-clear_passage",
        "answer": "yes",
        "truth": "no",
        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -464,21 +449,28 @@
      ],
      "observable": {
       "n": 40,
-      "unknown": 5,
-      "unknown_rate": 0.125,
-      "decided": 35,
-      "correct": 34,
-      "wrong": 1,
-      "accuracy_of_decided": 0.9714,
-      "accuracy_of_all": 0.85,
+      "unknown": 6,
+      "unknown_rate": 0.15,
+      "decided": 34,
+      "correct": 32,
+      "wrong": 2,
+      "accuracy_of_decided": 0.9412,
+      "accuracy_of_all": 0.8,
       "false_confident": 1,
       "false_confident_rate": 0.025,
       "false_confident_cases": [
-       "mapped_wall"
+       "clear_passage"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_corridor-s42-mapped_wall",
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-clear_passage",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -494,53 +486,53 @@
       "unknown": 0,
       "unknown_rate": 0.0,
       "decided": 8,
-      "correct": 1,
-      "wrong": 7,
-      "accuracy_of_decided": 0.125,
-      "accuracy_of_all": 0.125,
-      "false_confident": 6,
-      "false_confident_rate": 0.75,
+      "correct": 0,
+      "wrong": 8,
+      "accuracy_of_decided": 0.0,
+      "accuracy_of_all": 0.0,
+      "false_confident": 8,
+      "false_confident_rate": 1.0,
       "false_confident_cases": [
        "peer_in_lane"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-peer_in_lane",
+        "view_id": "zone_wide_door-s71-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s41-peer_in_lane",
+        "view_id": "zone_wide_door-s71-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_two_doors-s43-peer_in_lane",
+        "view_id": "zone_wide_two_doors-s73-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
+        "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-peer_in_lane",
+        "view_id": "zone_wide_two_doors-s73-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -550,25 +542,23 @@
      },
      "mapped_wall_view": {
       "n": 8,
-      "unknown": 1,
-      "unknown_rate": 0.125,
-      "decided": 7,
-      "correct": 6,
+      "unknown": 3,
+      "unknown_rate": 0.375,
+      "decided": 5,
+      "correct": 4,
       "wrong": 1,
-      "accuracy_of_decided": 0.8571,
-      "accuracy_of_all": 0.75,
-      "false_confident": 1,
-      "false_confident_rate": 0.125,
-      "false_confident_cases": [
-       "mapped_wall"
-      ],
+      "accuracy_of_decided": 0.8,
+      "accuracy_of_all": 0.5,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_corridor-s42-mapped_wall",
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
+        "confidence": 0.6
        }
       ]
      }
@@ -577,13 +567,13 @@
      "by_case": {
       "slot_empty": {
        "n": 8,
-       "unknown": 2,
-       "unknown_rate": 0.25,
-       "decided": 6,
-       "correct": 6,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -605,13 +595,13 @@
       },
       "slot_expected_can": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 2,
+       "unknown_rate": 0.25,
+       "decided": 6,
+       "correct": 6,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -633,44 +623,27 @@
       },
       "slot_occluded": {
        "n": 8,
-       "unknown": 6,
-       "unknown_rate": 0.75,
-       "decided": 2,
+       "unknown": 8,
+       "unknown_rate": 1.0,
+       "decided": 0,
        "correct": 0,
-       "wrong": 2,
-       "accuracy_of_decided": 0.0,
+       "wrong": 0,
+       "accuracy_of_decided": null,
        "accuracy_of_all": 0.0,
-       "false_confident": 2,
-       "false_confident_rate": 0.25,
-       "false_confident_cases": [
-        "slot_occluded"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s44-slot_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-slot_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        }
-       ]
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "slot_wrong_kind": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -678,78 +651,44 @@
       }
      },
      "n": 48,
-     "unknown": 16,
-     "unknown_rate": 0.3333,
-     "decided": 32,
-     "correct": 30,
-     "wrong": 2,
-     "accuracy_of_decided": 0.9375,
-     "accuracy_of_all": 0.625,
-     "false_confident": 2,
-     "false_confident_rate": 0.0417,
-     "false_confident_cases": [
-      "slot_occluded"
-     ],
-     "wrong_examples": [
-      {
-       "view_id": "zone_wide_door-s44-slot_occluded",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_SURFACE_PROVEN_BARE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-slot_occluded",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_SURFACE_PROVEN_BARE",
-       "confidence": 0.8
-      }
-     ],
+     "unknown": 20,
+     "unknown_rate": 0.4167,
+     "decided": 28,
+     "correct": 28,
+     "wrong": 0,
+     "accuracy_of_decided": 1.0,
+     "accuracy_of_all": 0.5833,
+     "false_confident": 0,
+     "false_confident_rate": 0.0,
+     "false_confident_cases": [],
+     "wrong_examples": [],
      "observable": {
-      "n": 32,
+      "n": 30,
       "unknown": 2,
-      "unknown_rate": 0.0625,
-      "decided": 30,
-      "correct": 30,
+      "unknown_rate": 0.0667,
+      "decided": 28,
+      "correct": 28,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.9375,
+      "accuracy_of_all": 0.9333,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 16,
-      "unknown": 14,
-      "unknown_rate": 0.875,
-      "decided": 2,
+      "n": 18,
+      "unknown": 18,
+      "unknown_rate": 1.0,
+      "decided": 0,
       "correct": 0,
-      "wrong": 2,
-      "accuracy_of_decided": 0.0,
+      "wrong": 0,
+      "accuracy_of_decided": null,
       "accuracy_of_all": 0.0,
-      "false_confident": 2,
-      "false_confident_rate": 0.125,
-      "false_confident_cases": [
-       "slot_occluded"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_door-s44-slot_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-slot_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       }
-      ]
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "peer_in_lane_reported_separately": {
       "n": 0
@@ -764,13 +703,13 @@
      "by_case": {
       "hold_empty": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 2,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
+       "correct": 1,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -806,13 +745,13 @@
       },
       "hold_expected_tile": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -834,26 +773,26 @@
       }
      },
      "n": 20,
-     "unknown": 6,
-     "unknown_rate": 0.3,
-     "decided": 14,
-     "correct": 14,
+     "unknown": 8,
+     "unknown_rate": 0.4,
+     "decided": 12,
+     "correct": 12,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.6,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 16,
-      "unknown": 2,
-      "unknown_rate": 0.125,
-      "decided": 14,
-      "correct": 14,
+      "unknown": 4,
+      "unknown_rate": 0.25,
+      "decided": 12,
+      "correct": 12,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.75,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -884,20 +823,6 @@
      "by_case": {
       "placed_empty": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
-      "placed_occluded": {
-       "n": 4,
        "unknown": 3,
        "unknown_rate": 0.75,
        "decided": 1,
@@ -905,6 +830,20 @@
        "wrong": 0,
        "accuracy_of_decided": 1.0,
        "accuracy_of_all": 0.25,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
+      },
+      "placed_occluded": {
+       "n": 4,
+       "unknown": 4,
+       "unknown_rate": 1.0,
+       "decided": 0,
+       "correct": 0,
+       "wrong": 0,
+       "accuracy_of_decided": null,
+       "accuracy_of_all": 0.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -968,40 +907,40 @@
       }
      },
      "n": 24,
-     "unknown": 5,
-     "unknown_rate": 0.2083,
-     "decided": 19,
-     "correct": 19,
+     "unknown": 8,
+     "unknown_rate": 0.3333,
+     "decided": 16,
+     "correct": 16,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7917,
+     "accuracy_of_all": 0.6667,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
-      "n": 17,
-      "unknown": 2,
-      "unknown_rate": 0.1176,
-      "decided": 15,
-      "correct": 15,
+      "n": 20,
+      "unknown": 4,
+      "unknown_rate": 0.2,
+      "decided": 16,
+      "correct": 16,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.8824,
+      "accuracy_of_all": 0.8,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 7,
-      "unknown": 3,
-      "unknown_rate": 0.4286,
-      "decided": 4,
-      "correct": 4,
+      "n": 4,
+      "unknown": 4,
+      "unknown_rate": 1.0,
+      "decided": 0,
+      "correct": 0,
       "wrong": 0,
-      "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.5714,
+      "accuracy_of_decided": null,
+      "accuracy_of_all": 0.0,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -1018,13 +957,13 @@
      "by_case": {
       "block_unmapped_near": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 2,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1060,13 +999,13 @@
       },
       "clear_passage": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 2,
+       "unknown_rate": 0.5,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 0.5,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1074,13 +1013,13 @@
       },
       "mapped_wall": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 2,
+       "unknown_rate": 0.5,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 0.5,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1088,35 +1027,42 @@
       },
       "peer_in_lane": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
        "correct": 0,
-       "wrong": 3,
+       "wrong": 4,
        "accuracy_of_decided": 0.0,
        "accuracy_of_all": 0.0,
-       "false_confident": 3,
-       "false_confident_rate": 0.75,
+       "false_confident": 4,
+       "false_confident_rate": 1.0,
        "false_confident_cases": [
         "peer_in_lane"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-peer_in_lane",
+         "view_id": "zone_wide_door-s71-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-peer_in_lane",
+         "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -1156,35 +1102,42 @@
      },
      "peer_in_lane_reported_separately": {
       "n": 4,
-      "unknown": 1,
-      "unknown_rate": 0.25,
-      "decided": 3,
+      "unknown": 0,
+      "unknown_rate": 0.0,
+      "decided": 4,
       "correct": 0,
-      "wrong": 3,
+      "wrong": 4,
       "accuracy_of_decided": 0.0,
       "accuracy_of_all": 0.0,
-      "false_confident": 3,
-      "false_confident_rate": 0.75,
+      "false_confident": 4,
+      "false_confident_rate": 1.0,
       "false_confident_cases": [
        "peer_in_lane"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-peer_in_lane",
+        "view_id": "zone_wide_door-s71-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-peer_in_lane",
+        "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
@@ -1194,13 +1147,13 @@
      },
      "mapped_wall_view": {
       "n": 4,
-      "unknown": 1,
-      "unknown_rate": 0.25,
-      "decided": 3,
-      "correct": 3,
+      "unknown": 2,
+      "unknown_rate": 0.5,
+      "decided": 2,
+      "correct": 2,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.75,
+      "accuracy_of_all": 0.5,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -1239,13 +1192,13 @@
       },
       "slot_expected_can": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1267,37 +1220,27 @@
       },
       "slot_occluded": {
        "n": 4,
-       "unknown": 3,
-       "unknown_rate": 0.75,
-       "decided": 1,
+       "unknown": 4,
+       "unknown_rate": 1.0,
+       "decided": 0,
        "correct": 0,
-       "wrong": 1,
-       "accuracy_of_decided": 0.0,
+       "wrong": 0,
+       "accuracy_of_decided": null,
        "accuracy_of_all": 0.0,
-       "false_confident": 1,
-       "false_confident_rate": 0.25,
-       "false_confident_cases": [
-        "slot_occluded"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s44-slot_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        }
-       ]
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "slot_wrong_kind": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1305,64 +1248,44 @@
       }
      },
      "n": 24,
-     "unknown": 8,
-     "unknown_rate": 0.3333,
-     "decided": 16,
-     "correct": 15,
-     "wrong": 1,
-     "accuracy_of_decided": 0.9375,
-     "accuracy_of_all": 0.625,
-     "false_confident": 1,
-     "false_confident_rate": 0.0417,
-     "false_confident_cases": [
-      "slot_occluded"
-     ],
-     "wrong_examples": [
-      {
-       "view_id": "zone_wide_door-s44-slot_occluded",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_SURFACE_PROVEN_BARE",
-       "confidence": 0.8
-      }
-     ],
+     "unknown": 11,
+     "unknown_rate": 0.4583,
+     "decided": 13,
+     "correct": 13,
+     "wrong": 0,
+     "accuracy_of_decided": 1.0,
+     "accuracy_of_all": 0.5417,
+     "false_confident": 0,
+     "false_confident_rate": 0.0,
+     "false_confident_cases": [],
+     "wrong_examples": [],
      "observable": {
-      "n": 16,
-      "unknown": 1,
-      "unknown_rate": 0.0625,
-      "decided": 15,
-      "correct": 15,
+      "n": 15,
+      "unknown": 2,
+      "unknown_rate": 0.1333,
+      "decided": 13,
+      "correct": 13,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.9375,
+      "accuracy_of_all": 0.8667,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 8,
-      "unknown": 7,
-      "unknown_rate": 0.875,
-      "decided": 1,
+      "n": 9,
+      "unknown": 9,
+      "unknown_rate": 1.0,
+      "decided": 0,
       "correct": 0,
-      "wrong": 1,
-      "accuracy_of_decided": 0.0,
+      "wrong": 0,
+      "accuracy_of_decided": null,
       "accuracy_of_all": 0.0,
-      "false_confident": 1,
-      "false_confident_rate": 0.125,
-      "false_confident_cases": [
-       "slot_occluded"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_door-s44-slot_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       }
-      ]
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "peer_in_lane_reported_separately": {
       "n": 0
@@ -1379,13 +1302,13 @@
      "by_case": {
       "hold_empty": {
        "n": 8,
-       "unknown": 4,
-       "unknown_rate": 0.5,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 6,
+       "unknown_rate": 0.75,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1421,13 +1344,13 @@
       },
       "hold_expected_tile": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1449,26 +1372,26 @@
       }
      },
      "n": 40,
-     "unknown": 12,
-     "unknown_rate": 0.3,
-     "decided": 28,
-     "correct": 28,
+     "unknown": 15,
+     "unknown_rate": 0.375,
+     "decided": 25,
+     "correct": 25,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.625,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 32,
-      "unknown": 4,
-      "unknown_rate": 0.125,
-      "decided": 28,
-      "correct": 28,
+      "unknown": 7,
+      "unknown_rate": 0.2188,
+      "decided": 25,
+      "correct": 25,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.7812,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -1499,13 +1422,13 @@
      "by_case": {
       "placed_empty": {
        "n": 12,
-       "unknown": 4,
-       "unknown_rate": 0.3333,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 9,
+       "unknown_rate": 0.75,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.6667,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1513,37 +1436,27 @@
       },
       "placed_occluded": {
        "n": 12,
-       "unknown": 8,
-       "unknown_rate": 0.6667,
-       "decided": 4,
-       "correct": 3,
-       "wrong": 1,
-       "accuracy_of_decided": 0.75,
-       "accuracy_of_all": 0.25,
-       "false_confident": 1,
-       "false_confident_rate": 0.0833,
-       "false_confident_cases": [
-        "placed_occluded"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_two_doors-s43-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        }
-       ]
+       "unknown": 12,
+       "unknown_rate": 1.0,
+       "decided": 0,
+       "correct": 0,
+       "wrong": 0,
+       "accuracy_of_decided": null,
+       "accuracy_of_all": 0.0,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "placed_outside_slot": {
        "n": 12,
-       "unknown": 5,
-       "unknown_rate": 0.4167,
-       "decided": 7,
-       "correct": 7,
+       "unknown": 2,
+       "unknown_rate": 0.1667,
+       "decided": 10,
+       "correct": 10,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5833,
+       "accuracy_of_all": 0.8333,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -1551,35 +1464,52 @@
       },
       "placed_zone_A": {
        "n": 12,
-       "unknown": 3,
-       "unknown_rate": 0.25,
-       "decided": 9,
-       "correct": 9,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 12,
+       "correct": 11,
+       "wrong": 1,
+       "accuracy_of_decided": 0.9167,
+       "accuracy_of_all": 0.9167,
+       "false_confident": 1,
+       "false_confident_rate": 0.0833,
+       "false_confident_cases": [
+        "placed_zone_A"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_two_doors-s73-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        }
+       ]
       },
       "placed_zone_B": {
        "n": 12,
-       "unknown": 2,
-       "unknown_rate": 0.1667,
-       "decided": 10,
+       "unknown": 1,
+       "unknown_rate": 0.0833,
+       "decided": 11,
        "correct": 9,
-       "wrong": 1,
-       "accuracy_of_decided": 0.9,
+       "wrong": 2,
+       "accuracy_of_decided": 0.8182,
        "accuracy_of_all": 0.75,
-       "false_confident": 1,
-       "false_confident_rate": 0.0833,
+       "false_confident": 2,
+       "false_confident_rate": 0.1667,
        "false_confident_cases": [
         "placed_zone_B"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-placed_zone_B",
+         "view_id": "zone_wide_door-s71-placed_zone_B",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_B",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -1603,29 +1533,36 @@
       }
      },
      "n": 72,
-     "unknown": 24,
-     "unknown_rate": 0.3333,
-     "decided": 48,
-     "correct": 46,
-     "wrong": 2,
-     "accuracy_of_decided": 0.9583,
-     "accuracy_of_all": 0.6389,
-     "false_confident": 2,
-     "false_confident_rate": 0.0278,
+     "unknown": 26,
+     "unknown_rate": 0.3611,
+     "decided": 46,
+     "correct": 43,
+     "wrong": 3,
+     "accuracy_of_decided": 0.9348,
+     "accuracy_of_all": 0.5972,
+     "false_confident": 3,
+     "false_confident_rate": 0.0417,
      "false_confident_cases": [
-      "placed_occluded",
+      "placed_zone_A",
       "placed_zone_B"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_corridor-s42-placed_zone_B",
+       "view_id": "zone_wide_door-s71-placed_zone_B",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_two_doors-s43-placed_occluded",
+       "view_id": "zone_wide_two_doors-s73-placed_zone_A",
+       "answer": "no",
+       "truth": "yes",
+       "reason": "SLOT_PROVEN_BARE_PAINT",
+       "confidence": 0.8
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-placed_zone_B",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -1633,22 +1570,37 @@
       }
      ],
      "observable": {
-      "n": 57,
-      "unknown": 13,
-      "unknown_rate": 0.2281,
-      "decided": 44,
+      "n": 60,
+      "unknown": 14,
+      "unknown_rate": 0.2333,
+      "decided": 46,
       "correct": 43,
-      "wrong": 1,
-      "accuracy_of_decided": 0.9773,
-      "accuracy_of_all": 0.7544,
-      "false_confident": 1,
-      "false_confident_rate": 0.0175,
+      "wrong": 3,
+      "accuracy_of_decided": 0.9348,
+      "accuracy_of_all": 0.7167,
+      "false_confident": 3,
+      "false_confident_rate": 0.05,
       "false_confident_cases": [
+       "placed_zone_A",
        "placed_zone_B"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_corridor-s42-placed_zone_B",
+        "view_id": "zone_wide_door-s71-placed_zone_B",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "SLOT_PROVEN_BARE_PAINT",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_two_doors-s73-placed_zone_A",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "SLOT_PROVEN_BARE_PAINT",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-placed_zone_B",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -1657,28 +1609,18 @@
       ]
      },
      "not_observable": {
-      "n": 15,
-      "unknown": 11,
-      "unknown_rate": 0.7333,
-      "decided": 4,
-      "correct": 3,
-      "wrong": 1,
-      "accuracy_of_decided": 0.75,
-      "accuracy_of_all": 0.2,
-      "false_confident": 1,
-      "false_confident_rate": 0.0667,
-      "false_confident_cases": [
-       "placed_occluded"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_two_doors-s43-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       }
-      ]
+      "n": 12,
+      "unknown": 12,
+      "unknown_rate": 1.0,
+      "decided": 0,
+      "correct": 0,
+      "wrong": 0,
+      "accuracy_of_decided": null,
+      "accuracy_of_all": 0.0,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "peer_in_lane_reported_separately": {
       "n": 0
@@ -1719,363 +1661,6 @@
       },
       "clear_open": {
        "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 7,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.875,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
-      "clear_passage": {
-       "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 2,
-       "wrong": 5,
-       "accuracy_of_decided": 0.2857,
-       "accuracy_of_all": 0.25,
-       "false_confident": 4,
-       "false_confident_rate": 0.5,
-       "false_confident_cases": [
-        "clear_passage"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s41-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        }
-       ]
-      },
-      "mapped_wall": {
-       "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 6,
-       "wrong": 1,
-       "accuracy_of_decided": 0.8571,
-       "accuracy_of_all": 0.75,
-       "false_confident": 1,
-       "false_confident_rate": 0.125,
-       "false_confident_cases": [
-        "mapped_wall"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_corridor-s42-mapped_wall",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        }
-       ]
-      },
-      "peer_in_lane": {
-       "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 1,
-       "wrong": 6,
-       "accuracy_of_decided": 0.1429,
-       "accuracy_of_all": 0.125,
-       "false_confident": 3,
-       "false_confident_rate": 0.375,
-       "false_confident_cases": [
-        "peer_in_lane"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s41-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_two_doors-s43-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_door-s44-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_door-s44-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        }
-       ]
-      }
-     },
-     "n": 40,
-     "unknown": 3,
-     "unknown_rate": 0.075,
-     "decided": 37,
-     "correct": 31,
-     "wrong": 6,
-     "accuracy_of_decided": 0.8378,
-     "accuracy_of_all": 0.775,
-     "false_confident": 5,
-     "false_confident_rate": 0.125,
-     "false_confident_cases": [
-      "clear_passage",
-      "mapped_wall"
-     ],
-     "wrong_examples": [
-      {
-       "view_id": "zone_wide_door-s41-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.6
-      },
-      {
-       "view_id": "zone_wide_corridor-s42-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_corridor-s42-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_corridor-s42-mapped_wall",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      }
-     ],
-     "observable": {
-      "n": 40,
-      "unknown": 3,
-      "unknown_rate": 0.075,
-      "decided": 37,
-      "correct": 31,
-      "wrong": 6,
-      "accuracy_of_decided": 0.8378,
-      "accuracy_of_all": 0.775,
-      "false_confident": 5,
-      "false_confident_rate": 0.125,
-      "false_confident_cases": [
-       "clear_passage",
-       "mapped_wall"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_door-s41-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-mapped_wall",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       }
-      ]
-     },
-     "not_observable": {
-      "n": 0
-     },
-     "peer_in_lane_reported_separately": {
-      "n": 8,
-      "unknown": 1,
-      "unknown_rate": 0.125,
-      "decided": 7,
-      "correct": 1,
-      "wrong": 6,
-      "accuracy_of_decided": 0.1429,
-      "accuracy_of_all": 0.125,
-      "false_confident": 3,
-      "false_confident_rate": 0.375,
-      "false_confident_cases": [
-       "peer_in_lane"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_door-s41-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_two_doors-s43-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_door-s44-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_door-s44-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       }
-      ]
-     },
-     "mapped_wall_view": {
-      "n": 8,
-      "unknown": 1,
-      "unknown_rate": 0.125,
-      "decided": 7,
-      "correct": 6,
-      "wrong": 1,
-      "accuracy_of_decided": 0.8571,
-      "accuracy_of_all": 0.75,
-      "false_confident": 1,
-      "false_confident_rate": 0.125,
-      "false_confident_cases": [
-       "mapped_wall"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_corridor-s42-mapped_wall",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       }
-      ]
-     }
-    },
-    "slot_item": {
-     "by_case": {
-      "slot_empty": {
-       "n": 8,
        "unknown": 2,
        "unknown_rate": 0.25,
        "decided": 6,
@@ -2088,15 +1673,310 @@
        "false_confident_cases": [],
        "wrong_examples": []
       },
-      "slot_expected_box": {
+      "clear_passage": {
        "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 7,
+       "unknown": 3,
+       "unknown_rate": 0.375,
+       "decided": 5,
+       "correct": 4,
+       "wrong": 1,
+       "accuracy_of_decided": 0.8,
+       "accuracy_of_all": 0.5,
+       "false_confident": 1,
+       "false_confident_rate": 0.125,
+       "false_confident_cases": [
+        "clear_passage"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s74-clear_passage",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        }
+       ]
+      },
+      "mapped_wall": {
+       "n": 8,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 6,
+       "wrong": 2,
+       "accuracy_of_decided": 0.75,
+       "accuracy_of_all": 0.75,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-mapped_wall",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        },
+        {
+         "view_id": "zone_wide_corridor-s72-mapped_wall",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        }
+       ]
+      },
+      "peer_in_lane": {
+       "n": 8,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 0,
+       "wrong": 8,
+       "accuracy_of_decided": 0.0,
+       "accuracy_of_all": 0.0,
+       "false_confident": 5,
+       "false_confident_rate": 0.625,
+       "false_confident_cases": [
+        "peer_in_lane"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_door-s71-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        },
+        {
+         "view_id": "zone_wide_door-s71-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        },
+        {
+         "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        }
+       ]
+      }
+     },
+     "n": 40,
+     "unknown": 5,
+     "unknown_rate": 0.125,
+     "decided": 35,
+     "correct": 32,
+     "wrong": 3,
+     "accuracy_of_decided": 0.9143,
+     "accuracy_of_all": 0.8,
+     "false_confident": 1,
+     "false_confident_rate": 0.025,
+     "false_confident_cases": [
+      "clear_passage"
+     ],
+     "wrong_examples": [
+      {
+       "view_id": "zone_wide_corridor-s72-mapped_wall",
+       "answer": "yes",
+       "truth": "no",
+       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+       "confidence": 0.6
+      },
+      {
+       "view_id": "zone_wide_corridor-s72-mapped_wall",
+       "answer": "yes",
+       "truth": "no",
+       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+       "confidence": 0.6
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-clear_passage",
+       "answer": "yes",
+       "truth": "no",
+       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+       "confidence": 0.8
+      }
+     ],
+     "observable": {
+      "n": 40,
+      "unknown": 5,
+      "unknown_rate": 0.125,
+      "decided": 35,
+      "correct": 32,
+      "wrong": 3,
+      "accuracy_of_decided": 0.9143,
+      "accuracy_of_all": 0.8,
+      "false_confident": 1,
+      "false_confident_rate": 0.025,
+      "false_confident_cases": [
+       "clear_passage"
+      ],
+      "wrong_examples": [
+       {
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-clear_passage",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       }
+      ]
+     },
+     "not_observable": {
+      "n": 0
+     },
+     "peer_in_lane_reported_separately": {
+      "n": 8,
+      "unknown": 0,
+      "unknown_rate": 0.0,
+      "decided": 8,
+      "correct": 0,
+      "wrong": 8,
+      "accuracy_of_decided": 0.0,
+      "accuracy_of_all": 0.0,
+      "false_confident": 5,
+      "false_confident_rate": 0.625,
+      "false_confident_cases": [
+       "peer_in_lane"
+      ],
+      "wrong_examples": [
+       {
+        "view_id": "zone_wide_door-s71-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_door-s71-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_two_doors-s73-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       }
+      ]
+     },
+     "mapped_wall_view": {
+      "n": 8,
+      "unknown": 0,
+      "unknown_rate": 0.0,
+      "decided": 8,
+      "correct": 6,
+      "wrong": 2,
+      "accuracy_of_decided": 0.75,
+      "accuracy_of_all": 0.75,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": [
+       {
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_corridor-s72-mapped_wall",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       }
+      ]
+     }
+    },
+    "slot_item": {
+     "by_case": {
+      "slot_empty": {
+       "n": 8,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 8,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.875,
+       "accuracy_of_all": 1.0,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
+      },
+      "slot_expected_box": {
+       "n": 8,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 8,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2104,27 +1984,17 @@
       },
       "slot_expected_can": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 7,
-       "wrong": 1,
-       "accuracy_of_decided": 0.875,
-       "accuracy_of_all": 0.875,
-       "false_confident": 1,
-       "false_confident_rate": 0.125,
-       "false_confident_cases": [
-        "slot_expected_can"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s44-slot_expected_can",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        }
-       ]
+       "unknown": 2,
+       "unknown_rate": 0.25,
+       "decided": 6,
+       "correct": 6,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 0.75,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "slot_far": {
        "n": 8,
@@ -2156,7 +2026,7 @@
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s44-slot_occluded",
+         "view_id": "zone_wide_corridor-s72-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -2180,29 +2050,21 @@
       }
      },
      "n": 48,
-     "unknown": 18,
-     "unknown_rate": 0.375,
-     "decided": 30,
-     "correct": 28,
-     "wrong": 2,
-     "accuracy_of_decided": 0.9333,
-     "accuracy_of_all": 0.5833,
-     "false_confident": 2,
-     "false_confident_rate": 0.0417,
+     "unknown": 17,
+     "unknown_rate": 0.3542,
+     "decided": 31,
+     "correct": 30,
+     "wrong": 1,
+     "accuracy_of_decided": 0.9677,
+     "accuracy_of_all": 0.625,
+     "false_confident": 1,
+     "false_confident_rate": 0.0208,
      "false_confident_cases": [
-      "slot_expected_can",
       "slot_occluded"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s44-slot_expected_can",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_SURFACE_PROVEN_BARE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-slot_occluded",
+       "view_id": "zone_wide_corridor-s72-slot_occluded",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -2210,46 +2072,36 @@
       }
      ],
      "observable": {
-      "n": 32,
-      "unknown": 3,
-      "unknown_rate": 0.0938,
-      "decided": 29,
-      "correct": 28,
-      "wrong": 1,
-      "accuracy_of_decided": 0.9655,
-      "accuracy_of_all": 0.875,
-      "false_confident": 1,
-      "false_confident_rate": 0.0312,
-      "false_confident_cases": [
-       "slot_expected_can"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_door-s44-slot_expected_can",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       }
-      ]
+      "n": 30,
+      "unknown": 0,
+      "unknown_rate": 0.0,
+      "decided": 30,
+      "correct": 30,
+      "wrong": 0,
+      "accuracy_of_decided": 1.0,
+      "accuracy_of_all": 1.0,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "not_observable": {
-      "n": 16,
-      "unknown": 15,
-      "unknown_rate": 0.9375,
+      "n": 18,
+      "unknown": 17,
+      "unknown_rate": 0.9444,
       "decided": 1,
       "correct": 0,
       "wrong": 1,
       "accuracy_of_decided": 0.0,
       "accuracy_of_all": 0.0,
       "false_confident": 1,
-      "false_confident_rate": 0.0625,
+      "false_confident_rate": 0.0556,
       "false_confident_cases": [
        "slot_occluded"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s44-slot_occluded",
+        "view_id": "zone_wide_corridor-s72-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -2270,13 +2122,13 @@
      "by_case": {
       "hold_empty": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 2,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
+       "correct": 1,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2312,13 +2164,13 @@
       },
       "hold_expected_tile": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2340,26 +2192,26 @@
       }
      },
      "n": 20,
-     "unknown": 6,
-     "unknown_rate": 0.3,
-     "decided": 14,
-     "correct": 14,
+     "unknown": 8,
+     "unknown_rate": 0.4,
+     "decided": 12,
+     "correct": 12,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.6,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 16,
-      "unknown": 2,
-      "unknown_rate": 0.125,
-      "decided": 14,
-      "correct": 14,
+      "unknown": 4,
+      "unknown_rate": 0.25,
+      "decided": 12,
+      "correct": 12,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.75,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -2390,13 +2242,13 @@
      "by_case": {
       "placed_empty": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
+       "correct": 1,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2418,6 +2270,34 @@
       },
       "placed_outside_slot": {
        "n": 4,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 1.0,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
+      },
+      "placed_zone_A": {
+       "n": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 0.75,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
+      },
+      "placed_zone_B": {
+       "n": 4,
        "unknown": 2,
        "unknown_rate": 0.5,
        "decided": 2,
@@ -2430,43 +2310,15 @@
        "false_confident_cases": [],
        "wrong_examples": []
       },
-      "placed_zone_A": {
-       "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
-      "placed_zone_B": {
-       "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
       "placed_zone_C": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2474,40 +2326,40 @@
       }
      },
      "n": 24,
-     "unknown": 7,
-     "unknown_rate": 0.2917,
-     "decided": 17,
-     "correct": 17,
+     "unknown": 11,
+     "unknown_rate": 0.4583,
+     "decided": 13,
+     "correct": 13,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7083,
+     "accuracy_of_all": 0.5417,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
-      "n": 17,
-      "unknown": 3,
-      "unknown_rate": 0.1765,
-      "decided": 14,
-      "correct": 14,
+      "n": 20,
+      "unknown": 7,
+      "unknown_rate": 0.35,
+      "decided": 13,
+      "correct": 13,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.8235,
+      "accuracy_of_all": 0.65,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 7,
+      "n": 4,
       "unknown": 4,
-      "unknown_rate": 0.5714,
-      "decided": 3,
-      "correct": 3,
+      "unknown_rate": 1.0,
+      "decided": 0,
+      "correct": 0,
       "wrong": 0,
-      "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.4286,
+      "accuracy_of_decided": null,
+      "accuracy_of_all": 0.0,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -2524,13 +2376,13 @@
      "by_case": {
       "block_unmapped_near": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2566,34 +2418,17 @@
       },
       "clear_passage": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
        "correct": 1,
-       "wrong": 2,
-       "accuracy_of_decided": 0.3333,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
        "accuracy_of_all": 0.25,
-       "false_confident": 2,
-       "false_confident_rate": 0.5,
-       "false_confident_cases": [
-        "clear_passage"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_corridor-s42-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        }
-       ]
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "mapped_wall": {
        "n": 4,
@@ -2611,95 +2446,95 @@
       },
       "peer_in_lane": {
        "n": 4,
-       "unknown": 4,
-       "unknown_rate": 1.0,
-       "decided": 0,
+       "unknown": 2,
+       "unknown_rate": 0.5,
+       "decided": 2,
        "correct": 0,
-       "wrong": 0,
-       "accuracy_of_decided": null,
+       "wrong": 2,
+       "accuracy_of_decided": 0.0,
        "accuracy_of_all": 0.0,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
+       "false_confident": 2,
+       "false_confident_rate": 0.5,
+       "false_confident_cases": [
+        "peer_in_lane"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        }
+       ]
       }
      },
      "n": 20,
-     "unknown": 4,
-     "unknown_rate": 0.2,
-     "decided": 16,
-     "correct": 14,
-     "wrong": 2,
-     "accuracy_of_decided": 0.875,
-     "accuracy_of_all": 0.7,
-     "false_confident": 2,
-     "false_confident_rate": 0.1,
-     "false_confident_cases": [
-      "clear_passage"
-     ],
-     "wrong_examples": [
-      {
-       "view_id": "zone_wide_corridor-s42-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.8
-      }
-     ],
+     "unknown": 5,
+     "unknown_rate": 0.25,
+     "decided": 15,
+     "correct": 15,
+     "wrong": 0,
+     "accuracy_of_decided": 1.0,
+     "accuracy_of_all": 0.75,
+     "false_confident": 0,
+     "false_confident_rate": 0.0,
+     "false_confident_cases": [],
+     "wrong_examples": [],
      "observable": {
       "n": 20,
-      "unknown": 4,
-      "unknown_rate": 0.2,
-      "decided": 16,
-      "correct": 14,
-      "wrong": 2,
-      "accuracy_of_decided": 0.875,
-      "accuracy_of_all": 0.7,
-      "false_confident": 2,
-      "false_confident_rate": 0.1,
-      "false_confident_cases": [
-       "clear_passage"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_corridor-s42-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.8
-       }
-      ]
+      "unknown": 5,
+      "unknown_rate": 0.25,
+      "decided": 15,
+      "correct": 15,
+      "wrong": 0,
+      "accuracy_of_decided": 1.0,
+      "accuracy_of_all": 0.75,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "not_observable": {
       "n": 0
      },
      "peer_in_lane_reported_separately": {
       "n": 4,
-      "unknown": 4,
-      "unknown_rate": 1.0,
-      "decided": 0,
+      "unknown": 2,
+      "unknown_rate": 0.5,
+      "decided": 2,
       "correct": 0,
-      "wrong": 0,
-      "accuracy_of_decided": null,
+      "wrong": 2,
+      "accuracy_of_decided": 0.0,
       "accuracy_of_all": 0.0,
-      "false_confident": 0,
-      "false_confident_rate": 0.0,
-      "false_confident_cases": [],
-      "wrong_examples": []
+      "false_confident": 2,
+      "false_confident_rate": 0.5,
+      "false_confident_cases": [
+       "peer_in_lane"
+      ],
+      "wrong_examples": [
+       {
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.8
+       }
+      ]
      },
      "mapped_wall_view": {
       "n": 4,
@@ -2720,13 +2555,13 @@
      "by_case": {
       "slot_empty": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2734,13 +2569,13 @@
       },
       "slot_expected_box": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 3,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2804,34 +2639,34 @@
       }
      },
      "n": 24,
-     "unknown": 11,
-     "unknown_rate": 0.4583,
-     "decided": 13,
-     "correct": 13,
+     "unknown": 9,
+     "unknown_rate": 0.375,
+     "decided": 15,
+     "correct": 15,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.5417,
+     "accuracy_of_all": 0.625,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
-      "n": 16,
-      "unknown": 3,
-      "unknown_rate": 0.1875,
-      "decided": 13,
-      "correct": 13,
+      "n": 15,
+      "unknown": 0,
+      "unknown_rate": 0.0,
+      "decided": 15,
+      "correct": 15,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.8125,
+      "accuracy_of_all": 1.0,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
       "wrong_examples": []
      },
      "not_observable": {
-      "n": 8,
-      "unknown": 8,
+      "n": 9,
+      "unknown": 9,
       "unknown_rate": 1.0,
       "decided": 0,
       "correct": 0,
@@ -2858,13 +2693,13 @@
      "by_case": {
       "hold_empty": {
        "n": 8,
-       "unknown": 4,
-       "unknown_rate": 0.5,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 6,
+       "unknown_rate": 0.75,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2900,13 +2735,13 @@
       },
       "hold_expected_tile": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2928,26 +2763,26 @@
       }
      },
      "n": 40,
-     "unknown": 12,
-     "unknown_rate": 0.3,
-     "decided": 28,
-     "correct": 28,
+     "unknown": 15,
+     "unknown_rate": 0.375,
+     "decided": 25,
+     "correct": 25,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.625,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 32,
-      "unknown": 4,
-      "unknown_rate": 0.125,
-      "decided": 28,
-      "correct": 28,
+      "unknown": 7,
+      "unknown_rate": 0.2188,
+      "decided": 25,
+      "correct": 25,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.7812,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -2978,13 +2813,13 @@
      "by_case": {
       "placed_empty": {
        "n": 12,
-       "unknown": 3,
-       "unknown_rate": 0.25,
-       "decided": 9,
-       "correct": 9,
+       "unknown": 7,
+       "unknown_rate": 0.5833,
+       "decided": 5,
+       "correct": 5,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 0.4167,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -2992,56 +2827,35 @@
       },
       "placed_occluded": {
        "n": 12,
-       "unknown": 3,
-       "unknown_rate": 0.25,
-       "decided": 9,
-       "correct": 2,
-       "wrong": 7,
-       "accuracy_of_decided": 0.2222,
-       "accuracy_of_all": 0.1667,
-       "false_confident": 7,
-       "false_confident_rate": 0.5833,
+       "unknown": 8,
+       "unknown_rate": 0.6667,
+       "decided": 4,
+       "correct": 1,
+       "wrong": 3,
+       "accuracy_of_decided": 0.25,
+       "accuracy_of_all": 0.0833,
+       "false_confident": 3,
+       "false_confident_rate": 0.25,
        "false_confident_cases": [
         "placed_occluded"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-placed_occluded",
+         "view_id": "zone_wide_two_doors-s73-placed_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-placed_occluded",
+         "view_id": "zone_wide_corridor-s74-placed_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_two_doors-s43-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_two_doors-s43-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-placed_occluded",
+         "view_id": "zone_wide_corridor-s74-placed_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3051,49 +2865,80 @@
       },
       "placed_outside_slot": {
        "n": 12,
-       "unknown": 5,
-       "unknown_rate": 0.4167,
-       "decided": 7,
-       "correct": 7,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5833,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
+       "unknown": 3,
+       "unknown_rate": 0.25,
+       "decided": 9,
+       "correct": 8,
+       "wrong": 1,
+       "accuracy_of_decided": 0.8889,
+       "accuracy_of_all": 0.6667,
+       "false_confident": 1,
+       "false_confident_rate": 0.0833,
+       "false_confident_cases": [
+        "placed_outside_slot"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s74-placed_outside_slot",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "DETECTOR_ONLY",
+         "confidence": 0.85
+        }
+       ]
       },
       "placed_zone_A": {
        "n": 12,
-       "unknown": 4,
-       "unknown_rate": 0.3333,
-       "decided": 8,
+       "unknown": 1,
+       "unknown_rate": 0.0833,
+       "decided": 11,
        "correct": 5,
-       "wrong": 3,
-       "accuracy_of_decided": 0.625,
+       "wrong": 6,
+       "accuracy_of_decided": 0.4545,
        "accuracy_of_all": 0.4167,
-       "false_confident": 3,
-       "false_confident_rate": 0.25,
+       "false_confident": 6,
+       "false_confident_rate": 0.5,
        "false_confident_cases": [
         "placed_zone_A"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-placed_zone_A",
+         "view_id": "zone_wide_door-s71-placed_zone_A",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-placed_zone_A",
+         "view_id": "zone_wide_corridor-s72-placed_zone_A",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-placed_zone_A",
+         "view_id": "zone_wide_corridor-s72-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_two_doors-s73-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_A",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3103,35 +2948,49 @@
       },
       "placed_zone_B": {
        "n": 12,
-       "unknown": 4,
-       "unknown_rate": 0.3333,
-       "decided": 8,
-       "correct": 5,
-       "wrong": 3,
-       "accuracy_of_decided": 0.625,
-       "accuracy_of_all": 0.4167,
-       "false_confident": 3,
-       "false_confident_rate": 0.25,
+       "unknown": 1,
+       "unknown_rate": 0.0833,
+       "decided": 11,
+       "correct": 6,
+       "wrong": 5,
+       "accuracy_of_decided": 0.5455,
+       "accuracy_of_all": 0.5,
+       "false_confident": 5,
+       "false_confident_rate": 0.4167,
        "false_confident_cases": [
         "placed_zone_B"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-placed_zone_B",
+         "view_id": "zone_wide_door-s71-placed_zone_B",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-placed_zone_B",
+         "view_id": "zone_wide_door-s71-placed_zone_B",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-placed_zone_B",
+         "view_id": "zone_wide_corridor-s72-placed_zone_B",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s72-placed_zone_B",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_two_doors-s73-placed_zone_B",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3141,35 +3000,56 @@
       },
       "placed_zone_C": {
        "n": 12,
-       "unknown": 5,
-       "unknown_rate": 0.4167,
-       "decided": 7,
-       "correct": 4,
-       "wrong": 3,
-       "accuracy_of_decided": 0.5714,
-       "accuracy_of_all": 0.3333,
-       "false_confident": 3,
-       "false_confident_rate": 0.25,
+       "unknown": 1,
+       "unknown_rate": 0.0833,
+       "decided": 11,
+       "correct": 5,
+       "wrong": 6,
+       "accuracy_of_decided": 0.4545,
+       "accuracy_of_all": 0.4167,
+       "false_confident": 6,
+       "false_confident_rate": 0.5,
        "false_confident_cases": [
         "placed_zone_C"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-placed_zone_C",
+         "view_id": "zone_wide_door-s71-placed_zone_C",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s41-placed_zone_C",
+         "view_id": "zone_wide_two_doors-s73-placed_zone_C",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_two_doors-s43-placed_zone_C",
+         "view_id": "zone_wide_two_doors-s73-placed_zone_C",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_C",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_C",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_C",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3179,59 +3059,60 @@
       }
      },
      "n": 72,
-     "unknown": 24,
-     "unknown_rate": 0.3333,
-     "decided": 48,
-     "correct": 32,
-     "wrong": 16,
-     "accuracy_of_decided": 0.6667,
-     "accuracy_of_all": 0.4444,
-     "false_confident": 16,
-     "false_confident_rate": 0.2222,
+     "unknown": 21,
+     "unknown_rate": 0.2917,
+     "decided": 51,
+     "correct": 30,
+     "wrong": 21,
+     "accuracy_of_decided": 0.5882,
+     "accuracy_of_all": 0.4167,
+     "false_confident": 21,
+     "false_confident_rate": 0.2917,
      "false_confident_cases": [
       "placed_occluded",
+      "placed_outside_slot",
       "placed_zone_A",
       "placed_zone_B",
       "placed_zone_C"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s41-placed_zone_A",
+       "view_id": "zone_wide_door-s71-placed_zone_A",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s41-placed_zone_C",
+       "view_id": "zone_wide_door-s71-placed_zone_B",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s41-placed_zone_C",
+       "view_id": "zone_wide_door-s71-placed_zone_B",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s41-placed_occluded",
+       "view_id": "zone_wide_door-s71-placed_zone_C",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-placed_zone_B",
+       "view_id": "zone_wide_corridor-s72-placed_zone_A",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-placed_occluded",
+       "view_id": "zone_wide_corridor-s72-placed_zone_A",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3239,59 +3120,60 @@
       }
      ],
      "observable": {
-      "n": 57,
-      "unknown": 18,
-      "unknown_rate": 0.3158,
-      "decided": 39,
-      "correct": 30,
-      "wrong": 9,
-      "accuracy_of_decided": 0.7692,
-      "accuracy_of_all": 0.5263,
-      "false_confident": 9,
-      "false_confident_rate": 0.1579,
+      "n": 60,
+      "unknown": 13,
+      "unknown_rate": 0.2167,
+      "decided": 47,
+      "correct": 29,
+      "wrong": 18,
+      "accuracy_of_decided": 0.617,
+      "accuracy_of_all": 0.4833,
+      "false_confident": 18,
+      "false_confident_rate": 0.3,
       "false_confident_cases": [
+       "placed_outside_slot",
        "placed_zone_A",
        "placed_zone_B",
        "placed_zone_C"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-placed_zone_A",
+        "view_id": "zone_wide_door-s71-placed_zone_A",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s41-placed_zone_C",
+        "view_id": "zone_wide_door-s71-placed_zone_B",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s41-placed_zone_C",
+        "view_id": "zone_wide_door-s71-placed_zone_B",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-placed_zone_B",
+        "view_id": "zone_wide_door-s71-placed_zone_C",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_two_doors-s43-placed_zone_C",
+        "view_id": "zone_wide_corridor-s72-placed_zone_A",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-placed_zone_A",
+        "view_id": "zone_wide_corridor-s72-placed_zone_A",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3300,57 +3182,36 @@
       ]
      },
      "not_observable": {
-      "n": 15,
-      "unknown": 6,
-      "unknown_rate": 0.4,
-      "decided": 9,
-      "correct": 2,
-      "wrong": 7,
-      "accuracy_of_decided": 0.2222,
-      "accuracy_of_all": 0.1333,
-      "false_confident": 7,
-      "false_confident_rate": 0.4667,
+      "n": 12,
+      "unknown": 8,
+      "unknown_rate": 0.6667,
+      "decided": 4,
+      "correct": 1,
+      "wrong": 3,
+      "accuracy_of_decided": 0.25,
+      "accuracy_of_all": 0.0833,
+      "false_confident": 3,
+      "false_confident_rate": 0.25,
       "false_confident_cases": [
        "placed_occluded"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-placed_occluded",
+        "view_id": "zone_wide_two_doors-s73-placed_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-placed_occluded",
+        "view_id": "zone_wide_corridor-s74-placed_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_two_doors-s43-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_two_doors-s43-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-placed_occluded",
+        "view_id": "zone_wide_corridor-s74-placed_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -3369,35 +3230,28 @@
      "by_case": {
       "block_unmapped_near": {
        "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
+       "unknown": 2,
+       "unknown_rate": 0.25,
+       "decided": 6,
        "correct": 4,
-       "wrong": 3,
-       "accuracy_of_decided": 0.5714,
+       "wrong": 2,
+       "accuracy_of_decided": 0.6667,
        "accuracy_of_all": 0.5,
-       "false_confident": 3,
-       "false_confident_rate": 0.375,
+       "false_confident": 2,
+       "false_confident_rate": 0.25,
        "false_confident_cases": [
         "block_unmapped_near"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-block_unmapped_near",
+         "view_id": "zone_wide_corridor-s72-block_unmapped_near",
          "answer": "no",
          "truth": "yes",
          "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
          "confidence": 0.75
         },
         {
-         "view_id": "zone_wide_door-s41-block_unmapped_near",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "LANE_PROVEN_CLEAR",
-         "confidence": 0.75
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-block_unmapped_near",
+         "view_id": "zone_wide_corridor-s74-block_unmapped_near",
          "answer": "no",
          "truth": "yes",
          "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
@@ -3410,25 +3264,39 @@
        "unknown": 0,
        "unknown_rate": 0.0,
        "decided": 8,
-       "correct": 6,
-       "wrong": 2,
-       "accuracy_of_decided": 0.75,
-       "accuracy_of_all": 0.75,
-       "false_confident": 2,
-       "false_confident_rate": 0.25,
+       "correct": 4,
+       "wrong": 4,
+       "accuracy_of_decided": 0.5,
+       "accuracy_of_all": 0.5,
+       "false_confident": 4,
+       "false_confident_rate": 0.5,
        "false_confident_cases": [
         "block_unmapped_passage"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-block_unmapped_passage",
+         "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
          "answer": "no",
          "truth": "yes",
          "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
          "confidence": 0.75
         },
         {
-         "view_id": "zone_wide_door-s44-block_unmapped_passage",
+         "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+         "confidence": 0.75
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+         "confidence": 0.75
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
          "answer": "no",
          "truth": "yes",
          "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
@@ -3437,6 +3305,51 @@
        ]
       },
       "clear_open": {
+       "n": 8,
+       "unknown": 2,
+       "unknown_rate": 0.25,
+       "decided": 6,
+       "correct": 6,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
+       "accuracy_of_all": 0.75,
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
+      },
+      "clear_passage": {
+       "n": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 5,
+       "wrong": 2,
+       "accuracy_of_decided": 0.7143,
+       "accuracy_of_all": 0.625,
+       "false_confident": 2,
+       "false_confident_rate": 0.25,
+       "false_confident_cases": [
+        "clear_passage"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-clear_passage",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-clear_passage",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.8
+        }
+       ]
+      },
+      "mapped_wall": {
        "n": 8,
        "unknown": 1,
        "unknown_rate": 0.125,
@@ -3450,107 +3363,62 @@
        "false_confident_cases": [],
        "wrong_examples": []
       },
-      "clear_passage": {
-       "n": 8,
-       "unknown": 1,
-       "unknown_rate": 0.125,
-       "decided": 7,
-       "correct": 4,
-       "wrong": 3,
-       "accuracy_of_decided": 0.5714,
-       "accuracy_of_all": 0.5,
-       "false_confident": 2,
-       "false_confident_rate": 0.25,
-       "false_confident_cases": [
-        "clear_passage"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s41-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_corridor-s42-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-clear_passage",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.8
-        }
-       ]
-      },
-      "mapped_wall": {
-       "n": 8,
-       "unknown": 2,
-       "unknown_rate": 0.25,
-       "decided": 6,
-       "correct": 6,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
-      },
       "peer_in_lane": {
        "n": 8,
        "unknown": 0,
        "unknown_rate": 0.0,
        "decided": 8,
-       "correct": 5,
-       "wrong": 3,
-       "accuracy_of_decided": 0.625,
-       "accuracy_of_all": 0.625,
-       "false_confident": 1,
-       "false_confident_rate": 0.125,
+       "correct": 4,
+       "wrong": 4,
+       "accuracy_of_decided": 0.5,
+       "accuracy_of_all": 0.5,
+       "false_confident": 2,
+       "false_confident_rate": 0.25,
        "false_confident_cases": [
         "peer_in_lane"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-peer_in_lane",
+         "view_id": "zone_wide_door-s71-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        },
+        {
+         "view_id": "zone_wide_door-s71-peer_in_lane",
+         "answer": "yes",
+         "truth": "no",
+         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+         "confidence": 0.6
+        },
+        {
+         "view_id": "zone_wide_corridor-s72-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_two_doors-s43-peer_in_lane",
+         "view_id": "zone_wide_corridor-s74-peer_in_lane",
          "answer": "yes",
          "truth": "no",
          "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
-        },
-        {
-         "view_id": "zone_wide_door-s44-peer_in_lane",
-         "answer": "yes",
-         "truth": "no",
-         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-         "confidence": 0.6
+         "confidence": 0.8
         }
        ]
       }
      },
      "n": 40,
-     "unknown": 5,
-     "unknown_rate": 0.125,
-     "decided": 35,
-     "correct": 27,
+     "unknown": 6,
+     "unknown_rate": 0.15,
+     "decided": 34,
+     "correct": 26,
      "wrong": 8,
-     "accuracy_of_decided": 0.7714,
-     "accuracy_of_all": 0.675,
-     "false_confident": 7,
-     "false_confident_rate": 0.175,
+     "accuracy_of_decided": 0.7647,
+     "accuracy_of_all": 0.65,
+     "false_confident": 8,
+     "false_confident_rate": 0.2,
      "false_confident_cases": [
       "block_unmapped_near",
       "block_unmapped_passage",
@@ -3558,59 +3426,59 @@
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s41-block_unmapped_near",
+       "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
        "answer": "no",
        "truth": "yes",
        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
        "confidence": 0.75
       },
       {
-       "view_id": "zone_wide_door-s41-block_unmapped_near",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "LANE_PROVEN_CLEAR",
-       "confidence": 0.75
-      },
-      {
-       "view_id": "zone_wide_door-s41-clear_passage",
-       "answer": "yes",
-       "truth": "no",
-       "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-       "confidence": 0.6
-      },
-      {
-       "view_id": "zone_wide_corridor-s42-block_unmapped_passage",
+       "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
        "answer": "no",
        "truth": "yes",
        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
        "confidence": 0.75
       },
       {
-       "view_id": "zone_wide_corridor-s42-block_unmapped_near",
+       "view_id": "zone_wide_corridor-s72-block_unmapped_near",
        "answer": "no",
        "truth": "yes",
        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
        "confidence": 0.75
       },
       {
-       "view_id": "zone_wide_corridor-s42-clear_passage",
+       "view_id": "zone_wide_corridor-s72-clear_passage",
        "answer": "yes",
        "truth": "no",
        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
        "confidence": 0.8
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+       "answer": "no",
+       "truth": "yes",
+       "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+       "confidence": 0.75
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+       "answer": "no",
+       "truth": "yes",
+       "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+       "confidence": 0.75
       }
      ],
      "observable": {
       "n": 40,
-      "unknown": 5,
-      "unknown_rate": 0.125,
-      "decided": 35,
-      "correct": 27,
+      "unknown": 6,
+      "unknown_rate": 0.15,
+      "decided": 34,
+      "correct": 26,
       "wrong": 8,
-      "accuracy_of_decided": 0.7714,
-      "accuracy_of_all": 0.675,
-      "false_confident": 7,
-      "false_confident_rate": 0.175,
+      "accuracy_of_decided": 0.7647,
+      "accuracy_of_all": 0.65,
+      "false_confident": 8,
+      "false_confident_rate": 0.2,
       "false_confident_cases": [
        "block_unmapped_near",
        "block_unmapped_passage",
@@ -3618,46 +3486,46 @@
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-block_unmapped_near",
+        "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
         "answer": "no",
         "truth": "yes",
         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
         "confidence": 0.75
        },
        {
-        "view_id": "zone_wide_door-s41-block_unmapped_near",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "LANE_PROVEN_CLEAR",
-        "confidence": 0.75
-       },
-       {
-        "view_id": "zone_wide_door-s41-clear_passage",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_corridor-s42-block_unmapped_passage",
+        "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
         "answer": "no",
         "truth": "yes",
         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
         "confidence": 0.75
        },
        {
-        "view_id": "zone_wide_corridor-s42-block_unmapped_near",
+        "view_id": "zone_wide_corridor-s72-block_unmapped_near",
         "answer": "no",
         "truth": "yes",
         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
         "confidence": 0.75
        },
        {
-        "view_id": "zone_wide_corridor-s42-clear_passage",
+        "view_id": "zone_wide_corridor-s72-clear_passage",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+        "confidence": 0.75
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+        "confidence": 0.75
        }
       ]
      },
@@ -3669,48 +3537,55 @@
       "unknown": 0,
       "unknown_rate": 0.0,
       "decided": 8,
-      "correct": 5,
-      "wrong": 3,
-      "accuracy_of_decided": 0.625,
-      "accuracy_of_all": 0.625,
-      "false_confident": 1,
-      "false_confident_rate": 0.125,
+      "correct": 4,
+      "wrong": 4,
+      "accuracy_of_decided": 0.5,
+      "accuracy_of_all": 0.5,
+      "false_confident": 2,
+      "false_confident_rate": 0.25,
       "false_confident_cases": [
        "peer_in_lane"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_corridor-s42-peer_in_lane",
+        "view_id": "zone_wide_door-s71-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_door-s71-peer_in_lane",
+        "answer": "yes",
+        "truth": "no",
+        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
+        "confidence": 0.6
+       },
+       {
+        "view_id": "zone_wide_corridor-s72-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_two_doors-s43-peer_in_lane",
+        "view_id": "zone_wide_corridor-s74-peer_in_lane",
         "answer": "yes",
         "truth": "no",
         "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
-       },
-       {
-        "view_id": "zone_wide_door-s44-peer_in_lane",
-        "answer": "yes",
-        "truth": "no",
-        "reason": "UNMAPPED_OBSTRUCTION_IN_LANE",
-        "confidence": 0.6
+        "confidence": 0.8
        }
       ]
      },
      "mapped_wall_view": {
       "n": 8,
-      "unknown": 2,
-      "unknown_rate": 0.25,
-      "decided": 6,
-      "correct": 6,
+      "unknown": 1,
+      "unknown_rate": 0.125,
+      "decided": 7,
+      "correct": 7,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.75,
+      "accuracy_of_all": 0.875,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -3721,13 +3596,13 @@
      "by_case": {
       "slot_empty": {
        "n": 8,
-       "unknown": 2,
-       "unknown_rate": 0.25,
-       "decided": 6,
-       "correct": 6,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 8,
+       "correct": 8,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.75,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -3735,13 +3610,13 @@
       },
       "slot_expected_box": {
        "n": 8,
-       "unknown": 2,
-       "unknown_rate": 0.25,
-       "decided": 6,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 5,
        "wrong": 2,
-       "accuracy_of_decided": 0.6667,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_decided": 0.7143,
+       "accuracy_of_all": 0.625,
        "false_confident": 2,
        "false_confident_rate": 0.25,
        "false_confident_cases": [
@@ -3749,14 +3624,14 @@
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-slot_expected_box",
+         "view_id": "zone_wide_two_doors-s73-slot_expected_box",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-slot_expected_box",
+         "view_id": "zone_wide_corridor-s74-slot_expected_box",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -3766,35 +3641,28 @@
       },
       "slot_expected_can": {
        "n": 8,
-       "unknown": 2,
-       "unknown_rate": 0.25,
-       "decided": 6,
-       "correct": 3,
-       "wrong": 3,
+       "unknown": 4,
+       "unknown_rate": 0.5,
+       "decided": 4,
+       "correct": 2,
+       "wrong": 2,
        "accuracy_of_decided": 0.5,
-       "accuracy_of_all": 0.375,
-       "false_confident": 3,
-       "false_confident_rate": 0.375,
+       "accuracy_of_all": 0.25,
+       "false_confident": 2,
+       "false_confident_rate": 0.25,
        "false_confident_cases": [
         "slot_expected_can"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-slot_expected_can",
+         "view_id": "zone_wide_door-s71-slot_expected_can",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_corridor-s42-slot_expected_can",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-slot_expected_can",
+         "view_id": "zone_wide_corridor-s72-slot_expected_can",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -3832,28 +3700,28 @@
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-slot_occluded",
+         "view_id": "zone_wide_door-s71-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_two_doors-s43-slot_occluded",
+         "view_id": "zone_wide_two_doors-s73-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-slot_occluded",
+         "view_id": "zone_wide_corridor-s74-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
          "confidence": 0.8
         },
         {
-         "view_id": "zone_wide_door-s44-slot_occluded",
+         "view_id": "zone_wide_corridor-s74-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -3863,13 +3731,13 @@
       },
       "slot_wrong_kind": {
        "n": 8,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 8,
-       "correct": 8,
+       "unknown": 1,
+       "unknown_rate": 0.125,
+       "decided": 7,
+       "correct": 7,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.875,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -3880,12 +3748,12 @@
      "unknown": 18,
      "unknown_rate": 0.375,
      "decided": 30,
-     "correct": 21,
-     "wrong": 9,
-     "accuracy_of_decided": 0.7,
-     "accuracy_of_all": 0.4375,
-     "false_confident": 9,
-     "false_confident_rate": 0.1875,
+     "correct": 22,
+     "wrong": 8,
+     "accuracy_of_decided": 0.7333,
+     "accuracy_of_all": 0.4583,
+     "false_confident": 8,
+     "false_confident_rate": 0.1667,
      "false_confident_cases": [
       "slot_expected_box",
       "slot_expected_can",
@@ -3893,42 +3761,42 @@
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s41-slot_expected_can",
+       "view_id": "zone_wide_door-s71-slot_expected_can",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s41-slot_occluded",
+       "view_id": "zone_wide_door-s71-slot_occluded",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-slot_expected_box",
+       "view_id": "zone_wide_corridor-s72-slot_expected_can",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-slot_expected_box",
+       "view_id": "zone_wide_two_doors-s73-slot_expected_box",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-slot_expected_can",
+       "view_id": "zone_wide_two_doors-s73-slot_occluded",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_two_doors-s43-slot_occluded",
+       "view_id": "zone_wide_corridor-s74-slot_expected_box",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -3936,51 +3804,44 @@
       }
      ],
      "observable": {
-      "n": 32,
-      "unknown": 6,
-      "unknown_rate": 0.1875,
+      "n": 30,
+      "unknown": 4,
+      "unknown_rate": 0.1333,
       "decided": 26,
-      "correct": 21,
-      "wrong": 5,
-      "accuracy_of_decided": 0.8077,
-      "accuracy_of_all": 0.6562,
-      "false_confident": 5,
-      "false_confident_rate": 0.1562,
+      "correct": 22,
+      "wrong": 4,
+      "accuracy_of_decided": 0.8462,
+      "accuracy_of_all": 0.7333,
+      "false_confident": 4,
+      "false_confident_rate": 0.1333,
       "false_confident_cases": [
        "slot_expected_box",
        "slot_expected_can"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-slot_expected_can",
+        "view_id": "zone_wide_door-s71-slot_expected_can",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-slot_expected_box",
+        "view_id": "zone_wide_corridor-s72-slot_expected_can",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-slot_expected_box",
+        "view_id": "zone_wide_two_doors-s73-slot_expected_box",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_corridor-s42-slot_expected_can",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-slot_expected_can",
+        "view_id": "zone_wide_corridor-s74-slot_expected_box",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -3989,43 +3850,43 @@
       ]
      },
      "not_observable": {
-      "n": 16,
-      "unknown": 12,
-      "unknown_rate": 0.75,
+      "n": 18,
+      "unknown": 14,
+      "unknown_rate": 0.7778,
       "decided": 4,
       "correct": 0,
       "wrong": 4,
       "accuracy_of_decided": 0.0,
       "accuracy_of_all": 0.0,
       "false_confident": 4,
-      "false_confident_rate": 0.25,
+      "false_confident_rate": 0.2222,
       "false_confident_cases": [
        "slot_occluded"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-slot_occluded",
+        "view_id": "zone_wide_door-s71-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_two_doors-s43-slot_occluded",
+        "view_id": "zone_wide_two_doors-s73-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-slot_occluded",
+        "view_id": "zone_wide_corridor-s74-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-slot_occluded",
+        "view_id": "zone_wide_corridor-s74-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -4046,13 +3907,13 @@
      "by_case": {
       "hold_empty": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 2,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
+       "correct": 1,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 0.25,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -4088,13 +3949,13 @@
       },
       "hold_expected_tile": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -4116,26 +3977,26 @@
       }
      },
      "n": 20,
-     "unknown": 6,
-     "unknown_rate": 0.3,
-     "decided": 14,
-     "correct": 14,
+     "unknown": 8,
+     "unknown_rate": 0.4,
+     "decided": 12,
+     "correct": 12,
      "wrong": 0,
      "accuracy_of_decided": 1.0,
-     "accuracy_of_all": 0.7,
+     "accuracy_of_all": 0.6,
      "false_confident": 0,
      "false_confident_rate": 0.0,
      "false_confident_cases": [],
      "wrong_examples": [],
      "observable": {
       "n": 16,
-      "unknown": 2,
-      "unknown_rate": 0.125,
-      "decided": 14,
-      "correct": 14,
+      "unknown": 4,
+      "unknown_rate": 0.25,
+      "decided": 12,
+      "correct": 12,
       "wrong": 0,
       "accuracy_of_decided": 1.0,
-      "accuracy_of_all": 0.875,
+      "accuracy_of_all": 0.75,
       "false_confident": 0,
       "false_confident_rate": 0.0,
       "false_confident_cases": [],
@@ -4166,13 +4027,13 @@
      "by_case": {
       "placed_empty": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 2,
+       "unknown_rate": 0.5,
+       "decided": 2,
+       "correct": 2,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.5,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -4180,28 +4041,21 @@
       },
       "placed_occluded": {
        "n": 4,
-       "unknown": 1,
-       "unknown_rate": 0.25,
-       "decided": 3,
-       "correct": 1,
-       "wrong": 2,
-       "accuracy_of_decided": 0.3333,
-       "accuracy_of_all": 0.25,
-       "false_confident": 2,
-       "false_confident_rate": 0.5,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
+       "correct": 0,
+       "wrong": 1,
+       "accuracy_of_decided": 0.0,
+       "accuracy_of_all": 0.0,
+       "false_confident": 1,
+       "false_confident_rate": 0.25,
        "false_confident_cases": [
         "placed_occluded"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_corridor-s42-placed_occluded",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_PROVEN_BARE_PAINT",
-         "confidence": 0.8
-        },
-        {
-         "view_id": "zone_wide_door-s44-placed_occluded",
+         "view_id": "zone_wide_corridor-s74-placed_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -4211,19 +4065,50 @@
       },
       "placed_outside_slot": {
        "n": 4,
-       "unknown": 3,
-       "unknown_rate": 0.75,
-       "decided": 1,
-       "correct": 1,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.25,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
        "wrong_examples": []
       },
       "placed_zone_A": {
+       "n": 4,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 2,
+       "wrong": 2,
+       "accuracy_of_decided": 0.5,
+       "accuracy_of_all": 0.5,
+       "false_confident": 2,
+       "false_confident_rate": 0.5,
+       "false_confident_cases": [
+        "placed_zone_A"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-placed_zone_A",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "SLOT_PROVEN_BARE_PAINT",
+         "confidence": 0.8
+        }
+       ]
+      },
+      "placed_zone_B": {
        "n": 4,
        "unknown": 2,
        "unknown_rate": 0.5,
@@ -4235,31 +4120,17 @@
        "false_confident": 1,
        "false_confident_rate": 0.25,
        "false_confident_cases": [
-        "placed_zone_A"
+        "placed_zone_B"
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s44-placed_zone_A",
+         "view_id": "zone_wide_corridor-s72-placed_zone_B",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
          "confidence": 0.8
         }
        ]
-      },
-      "placed_zone_B": {
-       "n": 4,
-       "unknown": 3,
-       "unknown_rate": 0.75,
-       "decided": 1,
-       "correct": 1,
-       "wrong": 0,
-       "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.25,
-       "false_confident": 0,
-       "false_confident_rate": 0.0,
-       "false_confident_cases": [],
-       "wrong_examples": []
       },
       "placed_zone_C": {
        "n": 4,
@@ -4277,7 +4148,7 @@
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s41-placed_zone_C",
+         "view_id": "zone_wide_corridor-s74-placed_zone_C",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -4287,44 +4158,52 @@
       }
      },
      "n": 24,
-     "unknown": 11,
-     "unknown_rate": 0.4583,
-     "decided": 13,
+     "unknown": 10,
+     "unknown_rate": 0.4167,
+     "decided": 14,
      "correct": 9,
-     "wrong": 4,
-     "accuracy_of_decided": 0.6923,
+     "wrong": 5,
+     "accuracy_of_decided": 0.6429,
      "accuracy_of_all": 0.375,
-     "false_confident": 4,
-     "false_confident_rate": 0.1667,
+     "false_confident": 5,
+     "false_confident_rate": 0.2083,
      "false_confident_cases": [
       "placed_occluded",
       "placed_zone_A",
+      "placed_zone_B",
       "placed_zone_C"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s41-placed_zone_C",
+       "view_id": "zone_wide_corridor-s72-placed_zone_A",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_corridor-s42-placed_occluded",
+       "view_id": "zone_wide_corridor-s72-placed_zone_B",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s44-placed_zone_A",
+       "view_id": "zone_wide_corridor-s74-placed_zone_A",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
        "confidence": 0.8
       },
       {
-       "view_id": "zone_wide_door-s44-placed_occluded",
+       "view_id": "zone_wide_corridor-s74-placed_zone_C",
+       "answer": "no",
+       "truth": "yes",
+       "reason": "SLOT_PROVEN_BARE_PAINT",
+       "confidence": 0.8
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-placed_occluded",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -4332,30 +4211,45 @@
       }
      ],
      "observable": {
-      "n": 17,
+      "n": 20,
       "unknown": 7,
-      "unknown_rate": 0.4118,
-      "decided": 10,
-      "correct": 8,
-      "wrong": 2,
-      "accuracy_of_decided": 0.8,
-      "accuracy_of_all": 0.4706,
-      "false_confident": 2,
-      "false_confident_rate": 0.1176,
+      "unknown_rate": 0.35,
+      "decided": 13,
+      "correct": 9,
+      "wrong": 4,
+      "accuracy_of_decided": 0.6923,
+      "accuracy_of_all": 0.45,
+      "false_confident": 4,
+      "false_confident_rate": 0.2,
       "false_confident_cases": [
        "placed_zone_A",
+       "placed_zone_B",
        "placed_zone_C"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-placed_zone_C",
+        "view_id": "zone_wide_corridor-s72-placed_zone_A",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
         "confidence": 0.8
        },
        {
-        "view_id": "zone_wide_door-s44-placed_zone_A",
+        "view_id": "zone_wide_corridor-s72-placed_zone_B",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "SLOT_PROVEN_BARE_PAINT",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-placed_zone_A",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "SLOT_PROVEN_BARE_PAINT",
+        "confidence": 0.8
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-placed_zone_C",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -4364,29 +4258,22 @@
       ]
      },
      "not_observable": {
-      "n": 7,
-      "unknown": 4,
-      "unknown_rate": 0.5714,
-      "decided": 3,
-      "correct": 1,
-      "wrong": 2,
-      "accuracy_of_decided": 0.3333,
-      "accuracy_of_all": 0.1429,
-      "false_confident": 2,
-      "false_confident_rate": 0.2857,
+      "n": 4,
+      "unknown": 3,
+      "unknown_rate": 0.75,
+      "decided": 1,
+      "correct": 0,
+      "wrong": 1,
+      "accuracy_of_decided": 0.0,
+      "accuracy_of_all": 0.0,
+      "false_confident": 1,
+      "false_confident_rate": 0.25,
       "false_confident_cases": [
        "placed_occluded"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_corridor-s42-placed_occluded",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_PROVEN_BARE_PAINT",
-        "confidence": 0.8
-       },
-       {
-        "view_id": "zone_wide_door-s44-placed_occluded",
+        "view_id": "zone_wide_corridor-s74-placed_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_PROVEN_BARE_PAINT",
@@ -4405,30 +4292,6 @@
      "by_case": {
       "block_unmapped_near": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 1,
-       "wrong": 1,
-       "accuracy_of_decided": 0.5,
-       "accuracy_of_all": 0.25,
-       "false_confident": 1,
-       "false_confident_rate": 0.25,
-       "false_confident_cases": [
-        "block_unmapped_near"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_door-s41-block_unmapped_near",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "LANE_PROVEN_CLEAR",
-         "confidence": 0.75
-        }
-       ]
-      },
-      "block_unmapped_passage": {
-       "n": 4,
        "unknown": 3,
        "unknown_rate": 0.75,
        "decided": 1,
@@ -4440,6 +4303,37 @@
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
        "wrong_examples": []
+      },
+      "block_unmapped_passage": {
+       "n": 4,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 2,
+       "wrong": 2,
+       "accuracy_of_decided": 0.5,
+       "accuracy_of_all": 0.5,
+       "false_confident": 2,
+       "false_confident_rate": 0.5,
+       "false_confident_cases": [
+        "block_unmapped_passage"
+       ],
+       "wrong_examples": [
+        {
+         "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+         "confidence": 0.75
+        },
+        {
+         "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+         "answer": "no",
+         "truth": "yes",
+         "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+         "confidence": 0.75
+        }
+       ]
       },
       "clear_open": {
        "n": 4,
@@ -4499,47 +4393,61 @@
       }
      },
      "n": 20,
-     "unknown": 10,
-     "unknown_rate": 0.5,
-     "decided": 10,
-     "correct": 9,
-     "wrong": 1,
-     "accuracy_of_decided": 0.9,
-     "accuracy_of_all": 0.45,
-     "false_confident": 1,
-     "false_confident_rate": 0.05,
+     "unknown": 8,
+     "unknown_rate": 0.4,
+     "decided": 12,
+     "correct": 10,
+     "wrong": 2,
+     "accuracy_of_decided": 0.8333,
+     "accuracy_of_all": 0.5,
+     "false_confident": 2,
+     "false_confident_rate": 0.1,
      "false_confident_cases": [
-      "block_unmapped_near"
+      "block_unmapped_passage"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_door-s41-block_unmapped_near",
+       "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
        "answer": "no",
        "truth": "yes",
-       "reason": "LANE_PROVEN_CLEAR",
+       "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+       "confidence": 0.75
+      },
+      {
+       "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+       "answer": "no",
+       "truth": "yes",
+       "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
        "confidence": 0.75
       }
      ],
      "observable": {
       "n": 20,
-      "unknown": 10,
-      "unknown_rate": 0.5,
-      "decided": 10,
-      "correct": 9,
-      "wrong": 1,
-      "accuracy_of_decided": 0.9,
-      "accuracy_of_all": 0.45,
-      "false_confident": 1,
-      "false_confident_rate": 0.05,
+      "unknown": 8,
+      "unknown_rate": 0.4,
+      "decided": 12,
+      "correct": 10,
+      "wrong": 2,
+      "accuracy_of_decided": 0.8333,
+      "accuracy_of_all": 0.5,
+      "false_confident": 2,
+      "false_confident_rate": 0.1,
       "false_confident_cases": [
-       "block_unmapped_near"
+       "block_unmapped_passage"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s41-block_unmapped_near",
+        "view_id": "zone_wide_corridor-s72-block_unmapped_passage",
         "answer": "no",
         "truth": "yes",
-        "reason": "LANE_PROVEN_CLEAR",
+        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
+        "confidence": 0.75
+       },
+       {
+        "view_id": "zone_wide_corridor-s74-block_unmapped_passage",
+        "answer": "no",
+        "truth": "yes",
+        "reason": "ONLY_MAPPED_OBSTACLE_IN_LANE",
         "confidence": 0.75
        }
       ]
@@ -4580,13 +4488,13 @@
      "by_case": {
       "slot_empty": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
-       "correct": 2,
+       "unknown": 0,
+       "unknown_rate": 0.0,
+       "decided": 4,
+       "correct": 4,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 0.5,
+       "accuracy_of_all": 1.0,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -4594,27 +4502,17 @@
       },
       "slot_expected_box": {
        "n": 4,
-       "unknown": 2,
-       "unknown_rate": 0.5,
-       "decided": 2,
+       "unknown": 3,
+       "unknown_rate": 0.75,
+       "decided": 1,
        "correct": 1,
-       "wrong": 1,
-       "accuracy_of_decided": 0.5,
+       "wrong": 0,
+       "accuracy_of_decided": 1.0,
        "accuracy_of_all": 0.25,
-       "false_confident": 1,
-       "false_confident_rate": 0.25,
-       "false_confident_cases": [
-        "slot_expected_box"
-       ],
-       "wrong_examples": [
-        {
-         "view_id": "zone_wide_corridor-s42-slot_expected_box",
-         "answer": "no",
-         "truth": "yes",
-         "reason": "SLOT_SURFACE_PROVEN_BARE",
-         "confidence": 0.8
-        }
-       ]
+       "false_confident": 0,
+       "false_confident_rate": 0.0,
+       "false_confident_cases": [],
+       "wrong_examples": []
       },
       "slot_expected_can": {
        "n": 4,
@@ -4660,7 +4558,7 @@
        ],
        "wrong_examples": [
         {
-         "view_id": "zone_wide_door-s44-slot_occluded",
+         "view_id": "zone_wide_corridor-s74-slot_occluded",
          "answer": "no",
          "truth": "yes",
          "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -4670,13 +4568,13 @@
       },
       "slot_wrong_kind": {
        "n": 4,
-       "unknown": 0,
-       "unknown_rate": 0.0,
-       "decided": 4,
-       "correct": 4,
+       "unknown": 1,
+       "unknown_rate": 0.25,
+       "decided": 3,
+       "correct": 3,
        "wrong": 0,
        "accuracy_of_decided": 1.0,
-       "accuracy_of_all": 1.0,
+       "accuracy_of_all": 0.75,
        "false_confident": 0,
        "false_confident_rate": 0.0,
        "false_confident_cases": [],
@@ -4687,26 +4585,18 @@
      "unknown": 15,
      "unknown_rate": 0.625,
      "decided": 9,
-     "correct": 7,
-     "wrong": 2,
-     "accuracy_of_decided": 0.7778,
-     "accuracy_of_all": 0.2917,
-     "false_confident": 2,
-     "false_confident_rate": 0.0833,
+     "correct": 8,
+     "wrong": 1,
+     "accuracy_of_decided": 0.8889,
+     "accuracy_of_all": 0.3333,
+     "false_confident": 1,
+     "false_confident_rate": 0.0417,
      "false_confident_cases": [
-      "slot_expected_box",
       "slot_occluded"
      ],
      "wrong_examples": [
       {
-       "view_id": "zone_wide_corridor-s42-slot_expected_box",
-       "answer": "no",
-       "truth": "yes",
-       "reason": "SLOT_SURFACE_PROVEN_BARE",
-       "confidence": 0.8
-      },
-      {
-       "view_id": "zone_wide_door-s44-slot_occluded",
+       "view_id": "zone_wide_corridor-s74-slot_occluded",
        "answer": "no",
        "truth": "yes",
        "reason": "SLOT_SURFACE_PROVEN_BARE",
@@ -4714,46 +4604,36 @@
       }
      ],
      "observable": {
-      "n": 16,
-      "unknown": 8,
-      "unknown_rate": 0.5,
+      "n": 15,
+      "unknown": 7,
+      "unknown_rate": 0.4667,
       "decided": 8,
-      "correct": 7,
-      "wrong": 1,
-      "accuracy_of_decided": 0.875,
-      "accuracy_of_all": 0.4375,
-      "false_confident": 1,
-      "false_confident_rate": 0.0625,
-      "false_confident_cases": [
-       "slot_expected_box"
-      ],
-      "wrong_examples": [
-       {
-        "view_id": "zone_wide_corridor-s42-slot_expected_box",
-        "answer": "no",
-        "truth": "yes",
-        "reason": "SLOT_SURFACE_PROVEN_BARE",
-        "confidence": 0.8
-       }
-      ]
+      "correct": 8,
+      "wrong": 0,
+      "accuracy_of_decided": 1.0,
+      "accuracy_of_all": 0.5333,
+      "false_confident": 0,
+      "false_confident_rate": 0.0,
+      "false_confident_cases": [],
+      "wrong_examples": []
      },
      "not_observable": {
-      "n": 8,
-      "unknown": 7,
-      "unknown_rate": 0.875,
+      "n": 9,
+      "unknown": 8,
+      "unknown_rate": 0.8889,
       "decided": 1,
       "correct": 0,
       "wrong": 1,
       "accuracy_of_decided": 0.0,
       "accuracy_of_all": 0.0,
       "false_confident": 1,
-      "false_confident_rate": 0.125,
+      "false_confident_rate": 0.1111,
       "false_confident_cases": [
        "slot_occluded"
       ],
       "wrong_examples": [
        {
-        "view_id": "zone_wide_door-s44-slot_occluded",
+        "view_id": "zone_wide_corridor-s74-slot_occluded",
         "answer": "no",
         "truth": "yes",
         "reason": "SLOT_SURFACE_PROVEN_BARE",
