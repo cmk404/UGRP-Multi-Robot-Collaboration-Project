@@ -1,0 +1,82 @@
+{
+  "purpose": "English (V0) manual act labels, added 2026-09-26 for the PR #172 review fix (act rules v1 -> v2). The 2026-09-25 manual_labels.json covers Korean V1/V2/window messages only and is unchanged.",
+  "labeller": "Kiro (review follow-up), not blind to variant or to the rule output; single labeller, no adjudication",
+  "sample": "all V0 messages with non-empty text in results.json single_rows (28), sampled with random.Random(20260926).sample(..., 12) after sorting by call_id",
+  "act_rules_compared": ["v1", "v2"],
+  "labelling_rules": "harness.zone_dialogue_metrics.ACT_DEFINITIONS; labels assigned from the message text only, without the request or the reply JSON",
+  "n": 12,
+  "rows": [
+    {
+      "id": "single:ZC2-s12-dynamic-graspfail/r2/claim-3-0-3:V0:0",
+      "message": "cyan-1 delivered to B. Claiming cyan-2 for B to complete cyan goal.",
+      "manual": ["claim", "report"],
+      "note": "own delivery reported, then a new claim"
+    },
+    {
+      "id": "single:ZC2-s12-dynamic-nominal/r1/claim-7-0-7:V0:0",
+      "message": "All goals have been achieved. Standing by.",
+      "manual": ["report", "standby"],
+      "note": "reports a completed team state; v2 has no cue for achieved/complete"
+    },
+    {
+      "id": "single:ZC2-s12-dynamic-nominal/r3/claim-1-0-1:V0:0",
+      "message": "r3 claiming green-1 to C",
+      "manual": ["claim"],
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-graspfail/r3/plan-0:V0:0",
+      "message": "Standing by for r1 proposal. Total goal: A: 2 red, B: 2 cyan, C: 1 green, 1 yellow (6 jobs, 2 each).",
+      "manual": ["standby"],
+      "note": "mentions someone else's proposal without proposing"
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-nominal/r1/plan-3:V0:0",
+      "message": "Plan looks great and balanced, accepting proposal.",
+      "manual": ["agree"],
+      "note": "accepting, not proposing"
+    },
+    {
+      "id": "single:ZC2-s12-plan_first-nominal/r3/plan-3:V0:0",
+      "message": "Accepting proposal v3. Ready to execute.",
+      "manual": ["agree"],
+      "note": "accepting, not proposing"
+    },
+    {
+      "id": "single:ZC2-s13-dynamic-graspfail/r3/claim-1-1-1:V0:1",
+      "message": "Yielding cyan-1 to r2. I will take green-1 to Zone C.",
+      "manual": ["claim", "yield"],
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:0",
+      "message": "Proposing balanced 2-job plan for all robots.",
+      "manual": ["propose"],
+      "note": null
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-0:V0:1",
+      "message": "Proposed balanced assignment: r1 takes red to A, r2 takes cyan to B, r3 takes green/yellow to C. Please accept.",
+      "manual": ["propose", "request"],
+      "note": "asks the peers to accept; the speaker is not agreeing, and the listed assignments are proposal content, not own claims"
+    },
+    {
+      "id": "single:ZC2-s13-plan_first-graspfail/r1/plan-1:V0:1",
+      "message": "Confirming my proposal: 2 boxes per robot, exactly meeting all zone goals.",
+      "manual": ["propose"],
+      "note": "submitting one's own proposal"
+    },
+    {
+      "id": "single:ZC2-s14-dynamic-graspfail/r2/claim-7-0-7:V0:0",
+      "message": "All goals are complete or being completed by r1. Standing by.",
+      "manual": ["report", "standby"],
+      "note": "same missing report cue as the achieved case"
+    },
+    {
+      "id": "single:ZC2-s14-plan_first-nominal/r1/plan-0:V0:1",
+      "message": "Proposing balanced plan: r1 takes C (green-1, yellow-1), r2 takes A (red-1, red-2), r3 takes B (cyan-1, cyan-2).",
+      "manual": ["propose"],
+      "note": "third-person assignments inside a proposal are not own claims"
+    }
+  ]
+}
