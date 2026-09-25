@@ -41,6 +41,7 @@ SEED = 11
 POSTURES = (
     ('teacher_hover', None, None, None),       # the zone teacher's carry pose (hover above grasp)
     ('carry_p45', .155, .14, -45.),
+    ('carry_p38', .15, .16, -38.),       # added in probe run 2 (gap between p45 and p30)
     ('carry_p30', .14, .18, -30.),
     ('look_p20', .14, .18, -20.),
     ('look_p10', .14, .22, -10.),
@@ -241,6 +242,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--allow-dirty', action='store_true', help='development only; records dirty=true')
+    parser.add_argument('--order', choices=('rest-drive-door', 'door-first'), default='rest-drive-door',
+                        help='door-first runs the door sweep right after the grasp (no slip from drive tests)')
     args = parser.parse_args()
     dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
     if dirty and not args.allow_dirty:
@@ -268,13 +271,17 @@ def main():
 
     def hold_record(stage, extra):
         offset = float(np.linalg.norm(probe.box_in_gripper() - probe.reference))
+        vector = probe.box_in_gripper() - probe.reference
         rec = {'stage': stage, 'sim_time_s': round(float(probe.world.data.time), 3), 'box_z_m': round(probe.box_z(), 4),
-               'box_offset_in_gripper_m': round(offset, 4), 'held': probe.box_z() > .045 and offset < .02, **extra}
+               'box_offset_in_gripper_m': round(offset, 4),
+               'box_offset_vector_gripper_frame_m': [round(float(v), 4) for v in vector], 'held': probe.box_z() > .045 and offset < .02, **extra}
         log['stages'].append(rec)
         return rec
 
-    # --- 1. postures at rest: stability + view metrics + renders ---
-    for name, radius, height, pitch in POSTURES:
+    log['order'] = args.order
+
+    def stage_rest():
+      for name, radius, height, pitch in POSTURES:
         for pan in PANS:
             pose = pose_of(probe, name, radius, height, pitch, pan)
             probe.arm_to(pose)
@@ -284,8 +291,9 @@ def main():
             hold_record('rest', {'posture': name, 'pan_pwm': pan, 'issued_pwm': {str(k): v for k, v in pose.items()},
                                  'frame': str(path.relative_to(out)), 'frame_sha256': _sha(path),
                                  'held_box_pixel_fraction': round(float(occ.mean()), 4), 'view': metrics})
-    # --- 2. drive stability in each carry posture ---
-    for name, radius, height, pitch in POSTURES:
+
+    def stage_drive():
+      for name, radius, height, pitch in POSTURES:
         pose = pose_of(probe, name, radius, height, pitch, 1500)
         probe.arm_to(pose)
         probe.max_offset_m = 0.
@@ -295,9 +303,10 @@ def main():
         probe.drive_to((x - .40, y), 0.)                 # back
         probe.drive_to((x, y), 0.)                       # forward 0.4 m
         hold_record('drive', {'posture': name, 'max_box_offset_during_drive_m': round(probe.max_offset_m, 4)})
-    # --- 3. door approach: tag detection vs lens distance, posture and pan ---
     from harness.visual_arm import camera_extrinsics
-    for distance in LENS_DISTANCES_M:
+
+    def stage_door():
+      for distance in LENS_DISTANCES_M:
         for name, radius, height, pitch in POSTURES[1:]:
             for pan in PANS:
                 pose = pose_of(probe, name, radius, height, pitch, pan)
@@ -309,6 +318,7 @@ def main():
                 probe.arm_to(pose, .4)
                 path, bgr = probe.render(f'door-d{distance:.1f}-{name}-pan{pan}')
                 detections = detect_tags(bgr)
+                occ = held_box_mask(bgr)
                 x, y, yaw = probe.gt_pose()
                 predicted = []
                 for tid, (lat, h, size) in enumerate(TEST_TAGS):
@@ -321,7 +331,13 @@ def main():
                 hold_record('door', {'lens_distance_m': distance, 'posture': name, 'pan_pwm': pan,
                                      'frame': str(path.relative_to(out)), 'frame_sha256': _sha(path),
                                      'gt_base_xy_eval_only': [round(x, 3), round(y, 3)],
+                                     'held_box_pixel_fraction': round(float(occ.mean()), 4),
+                                     'view': view_metrics(pose, occlusion=occ),
                                      'detected': detections, 'predicted': predicted})
+
+    for stage in ((stage_rest, stage_drive, stage_door) if args.order == 'rest-drive-door'
+                  else (stage_door, stage_rest, stage_drive)):
+        stage()
     # --- 4. zone C paint through the door (teacher drive), look postures ---
     probe.arm_to(pose_of(probe, 'carry_p30', .14, .18, -30., 1500), .2)
     probe.drive_to((1.95, DOOR_Y), 0.)
