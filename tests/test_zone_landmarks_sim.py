@@ -1,6 +1,7 @@
 """Tagged zone maps in MuJoCo: tags are visual only and visible to the wrist camera."""
 from __future__ import annotations
 
+import importlib.util
 import math
 import unittest
 
@@ -46,6 +47,7 @@ def drive(world, seconds=1.5):
     return np.array(trace)
 
 
+@unittest.skipUnless(importlib.util.find_spec('mujoco'), 'mujoco is not installed')
 class TaggedScenePhysicsTests(unittest.TestCase):
     def test_tags_do_not_change_physics(self):
         base_scene, base = build(False, False)
