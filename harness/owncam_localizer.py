@@ -43,6 +43,7 @@ from collections.abc import Mapping, Sequence
 
 import numpy as np
 
+from harness.visual_arm import tool_pose
 from harness.wall_tags import (angle_between, camera_in_base, observed_tag_in_camera, predicted_tag_in_camera,
                                tag_world_frame, tags_by_id)
 
@@ -63,11 +64,47 @@ DEFAULT_PARAMS = {
     'measurement': {'azimuth_std_rad': math.radians(.3), 'elevation_std_rad': math.radians(1.5),
                     'range_log_std': .08,
                     'normal_std_rad': math.radians(20.), 'outlier_prob': .05, 'outlier_margin': 6.,
-                    'invisible_log_penalty': -20., 'min_side_px': 8.},
+                    'invisible_log_penalty': -20., 'min_side_px': 8., 'max_range_m': None,
+                    'range_log_bias': [0., 0.]},
     'map': {'robot_clearance_m': .07, 'wall_log_penalty': -8.},
     'resample_ratio': .5,
+    'roughen': [0., 0., 0.],
     'reset': {'min_best_loglik': -12., 'fraction': .2, 'init_pos_std_m': .03, 'init_yaw_bins': 1},
 }
+
+
+GRIP_CLOSED_MAX = 1600       # servo 1 pulse at or below: gripper commanded closed
+GRIP_OPEN_MIN = 1800         # servo 1 pulse at or above: gripper commanded open
+GRASP_TOOL_Z_M = .06         # commanded tool height of a grasp (floor boxes)
+
+
+class LoadState:
+    """'Loaded' from the robot's own commands only: the gripper was commanded
+    closed while the commanded tool point was at grasp height, and has not been
+    commanded open since. (A carried box changes the command->motion map: the
+    dev fit gave turn gain 0.74 loaded vs 1.49 unloaded.)"""
+
+    def __init__(self):
+        self.servo: dict[int, int] = {}
+        self.loaded = False
+
+    def command(self, row):
+        kind = row['kind']
+        if kind == 'initial_servo_command':
+            self.servo = {int(k): int(v) for k, v in row['pulses'].items()}
+        elif kind == 'look':
+            self.servo[6] = int(row['pan_pulse'])
+        elif kind == 'arm':
+            servo, pulse = int(row['servo_id']), int(row['pulse'])
+            self.servo[servo] = pulse
+            if servo == 1 and pulse >= GRIP_OPEN_MIN:
+                self.loaded = False
+            elif servo == 1 and pulse <= GRIP_CLOSED_MAX and not self.loaded:
+                try:
+                    self.loaded = tool_pose(self.servo).z_m < GRASP_TOOL_Z_M
+                except (KeyError, ValueError):
+                    pass
+        return self.loaded
 
 
 def wrap(a):
@@ -92,6 +129,7 @@ class OwnCamLocalizer:
         self.cmd_expires = -1.
         self.vel = np.zeros(3)
         self.servo: dict[int, int] = {}
+        self.load = LoadState()
         m = self.params['map']
         x0, x1, y0, y1 = static_map['bounds_m']
         c = m['robot_clearance_m']
@@ -107,6 +145,7 @@ class OwnCamLocalizer:
         """Feed one issued command (in time order)."""
         t = float(row['t'])
         self.predict_to(t)
+        self.load.command(row)
         kind = row['kind']
         if kind == 'initial_servo_command':
             self.servo = {int(k): int(v) for k, v in row['pulses'].items()}
@@ -126,10 +165,11 @@ class OwnCamLocalizer:
 
     # ------------------------------------------------------------ predict
     def predict_to(self, t: float) -> None:
-        mp = self.params['motion']
-        gain = np.asarray(mp['gain'], float)
-        rel, ab = np.asarray(mp['noise_rel']), np.asarray(mp['noise_abs'])
         while self.t < t - 1e-9:
+            mp = self.params['motion_loaded'] if self.load.loaded and 'motion_loaded' in self.params \
+                else self.params['motion']
+            gain = np.asarray(mp['gain'], float)
+            rel, ab = np.asarray(mp['noise_rel']), np.asarray(mp['noise_abs'])
             dt = min(STEP_S, t - self.t)
             u = self.cmd if self.t < self.cmd_expires - 1e-9 else np.zeros(3)
             target = gain @ u
@@ -169,7 +209,12 @@ class OwnCamLocalizer:
             p_c, n_c = predicted_tag_in_camera(px, tag, pose)
             az = np.arctan2(p_c[:, 0], p_c[:, 2]) - math.atan2(t_obs[0], t_obs[2])
             el = np.arctan2(p_c[:, 1], p_c[:, 2]) - math.atan2(t_obs[1], t_obs[2])
-            rng_err = np.log(np.linalg.norm(t_obs)/np.maximum(np.linalg.norm(p_c, axis=1), 1e-6))
+            r_obs = float(np.linalg.norm(t_obs))
+            # Detector range bias (small tags: sub-pixel corner offset), fitted
+            # offline on dev as log(r_obs/r_true) = a + b*r_obs.
+            bias = mp.get('range_log_bias', [0., 0.])
+            rng_err = (np.log(r_obs/np.maximum(np.linalg.norm(p_c, axis=1), 1e-6))
+                       - (bias[0] + bias[1]*r_obs))
             normal = np.min([angle_between(np.broadcast_to(n, n_c.shape), n_c) for n in n_obs], axis=0)
             s_az = max(mp['azimuth_std_rad'], mp.get('azimuth_floor_rad', 0.))
             s_el = max(mp['elevation_std_rad'], mp.get('elevation_floor_rad', 0.))
@@ -224,7 +269,9 @@ class OwnCamLocalizer:
         """Predict to ``t`` and apply this frame's tag detections."""
         self.predict_to(t)
         pose = {int(k): int(v) for k, v in (commanded_pose or self.servo).items()}
-        dets = [d for d in detections if int(d['id']) in self.tags and d.get('solutions')]
+        max_range = self.params['measurement'].get('max_range_m')
+        dets = [d for d in detections if int(d['id']) in self.tags and d.get('solutions')
+                and (not max_range or float(np.linalg.norm(observed_tag_in_camera(d)[0])) <= max_range)]
         if dets:
             self.stats['updates'] += 1
             self.last_tag_t = t
@@ -258,6 +305,12 @@ class OwnCamLocalizer:
             positions = (np.arange(self.n) + self.rng.uniform())/self.n
             idx = np.minimum(np.searchsorted(np.cumsum(w), positions), self.n - 1)
             self.px, self.scale = self.px[idx].copy(), self.scale[idx].copy()
+            # Roughening (regularized PF): small jitter so the cloud can move
+            # when the likelihood is much sharper than the motion noise.
+            rough = np.asarray(self.params.get('roughen', [0., 0., 0.]), float)
+            if np.any(rough > 0):
+                self.px += self.rng.normal(size=self.px.shape)*rough
+                self.px[:, 2] = wrap(self.px[:, 2])
             self.logw = np.zeros(self.n)
             self.stats['resamples'] += 1
         else:

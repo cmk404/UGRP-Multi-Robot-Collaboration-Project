@@ -105,12 +105,14 @@ def localize(static, inputs, params, seed=0):
 
 
 # ------------------------------------------------------------------ calibrate (dev only, uses eval truth)
-def _active_series(commands, times):
+def _active_series(commands, times, with_load=False):
+    from harness.owncam_localizer import LoadState
     cmds = sorted(commands, key=lambda c: c['t'])
-    u, exp, ci, out = np.zeros(3), -1., 0, []
+    u, exp, ci, out, loads, load = np.zeros(3), -1., 0, [], [], LoadState()
     for t in times:
         while ci < len(cmds) and cmds[ci]['t'] <= t + 1e-9:
             c = cmds[ci]
+            load.command(c)
             if c['kind'] == 'mecanum':
                 u, exp = np.array([c['forward'], c['left'], c['turn']], float), c['t'] + c['duration_s']
             elif c['kind'] == 'drive':
@@ -119,7 +121,8 @@ def _active_series(commands, times):
                 u, exp = np.zeros(3), -1.
             ci += 1
         out.append(u if t < exp - 1e-9 else np.zeros(3))
-    return np.array(out)
+        loads.append(load.loaded)
+    return (np.array(out), np.array(loads)) if with_load else np.array(out)
 
 
 def _gt_body_velocity(gt):
@@ -140,18 +143,12 @@ def _lagged(u, dt, tau):
     return np.array(out)
 
 
-def calibrate(eps, base_params):
-    from harness.wall_tags import angle_between, observed_tag_in_camera, predicted_tag_in_camera, tags_by_id
-    series = []
-    for ep in eps:
-        gt = read_jsonl(ep/'eval_only'/'gt_trajectory.jsonl')
-        t, dt, v = _gt_body_velocity(gt)
-        u = _active_series(read_jsonl(ep/'inputs'/'commands.jsonl'), t)
-        series.append((u, dt, v))
+def fit_motion(series, base):
+    """Gain, lag and noise of the issued-command motion model on (u, dt, v, mask)."""
     best = None
     for tau in np.arange(0., .61, .02):
-        U = np.vstack([_lagged(u, dt, tau) for u, dt, _ in series])
-        V = np.vstack([v for _, _, v in series])
+        U = np.vstack([_lagged(u, dt, tau)[m] for u, dt, _, m in series])
+        V = np.vstack([v[m] for _, _, v, m in series])
         gain_t, *_ = np.linalg.lstsq(U, V, rcond=None)
         res = V - U @ gain_t
         score = float(np.sum(res**2))
@@ -159,23 +156,40 @@ def calibrate(eps, base_params):
             best = (score, float(tau), gain_t.T, U, V, res)
     _, tau, gain, U, V, res = best
     vm = U @ gain.T
-    # noise std = rel*|v| + abs per axis: regress |res| * sqrt(pi/2) on |v_model|
     rel, ab = [], []
     for k in range(3):
         a = np.column_stack((np.abs(vm[:, k]), np.ones(len(vm))))
         coef, *_ = np.linalg.lstsq(a, np.abs(res[:, k])*math.sqrt(math.pi/2), rcond=None)
         rel.append(max(float(coef[0]), 0.)); ab.append(max(float(coef[1]), 1e-4))
-    # persistent slip: ratio of true to modelled displacement over 2 s moving windows
     ratios = []
-    for u, dt, v in series:
-        m = _lagged(u, dt, tau) @ gain.T
+    for u, dt, v, m in series:
+        mm = (_lagged(u, dt, tau) @ gain.T)
         step = int(round(2./float(np.median(dt))))
         for i in range(0, len(v) - step, step):
-            dm, dg = (m[i:i+step]*dt[i:i+step, None]).sum(0), (v[i:i+step]*dt[i:i+step, None]).sum(0)
+            if not m[i:i+step].all():
+                continue
+            dm, dg = (mm[i:i+step]*dt[i:i+step, None]).sum(0), (v[i:i+step]*dt[i:i+step, None]).sum(0)
             for k, thr in ((0, .05), (1, .05), (2, .15)):
                 if abs(dm[k]) > thr:
-                    ratios.append((k, dg[k]/dm[k]))
-    scale_std = float(np.std([r for _, r in ratios])) if ratios else .05
+                    ratios.append(dg[k]/dm[k])
+    motion = copy.deepcopy(base)
+    motion.update(gain=np.round(gain, 4).tolist(), tau_s=round(tau, 3), noise_rel=[round(v, 4) for v in rel],
+                  noise_abs=[round(v, 5) for v in ab], scale_std=round(float(np.std(ratios)) if ratios else .05, 4))
+    return motion, {'tau_s': tau, 'gain': gain.round(4).tolist(), 'velocity_residual_rms': res.std(0).round(4).tolist(),
+                    'samples': int(len(V)), 'slip_ratio_std': motion['scale_std']}
+
+
+def calibrate(eps, base_params):
+    from harness.wall_tags import angle_between, observed_tag_in_camera, predicted_tag_in_camera, tags_by_id
+    raw = []
+    for ep in eps:
+        gt = read_jsonl(ep/'eval_only'/'gt_trajectory.jsonl')
+        t, dt, v = _gt_body_velocity(gt)
+        u, loaded = _active_series(read_jsonl(ep/'inputs'/'commands.jsonl'), t, with_load=True)
+        raw.append((u, dt, v, loaded))
+    params = copy.deepcopy(base_params)
+    params['motion'], unloaded_report = fit_motion([(u, dt, v, ~m) for u, dt, v, m in raw], base_params['motion'])
+    params['motion_loaded'], loaded_report = fit_motion([(u, dt, v, m) for u, dt, v, m in raw], base_params['motion'])
     # measurement noise from dev detections vs truth-predicted tag geometry
     errs = {'bearing': [], 'azimuth': [], 'elevation': [], 'range_log': [], 'normal': [], 'range_m': []}
     for ep in eps:
@@ -205,19 +219,20 @@ def calibrate(eps, base_params):
         a = np.asarray(values)
         return float(np.sqrt(np.median(a**2)) + 1.4826*np.median(np.abs(a - np.median(a))))
     b = np.asarray(errs['bearing'])
-    params = copy.deepcopy(base_params)
-    params['motion'].update(gain=np.round(gain, 4).tolist(), tau_s=round(tau, 3),
-                            noise_rel=[round(v, 4) for v in rel], noise_abs=[round(v, 5) for v in ab],
-                            scale_std=round(scale_std, 4))
+    # range bias log(r_obs/r_true) = a + b*r_obs (least squares on dev detections)
+    r_obs = np.asarray(errs['range_m'])*np.exp(np.asarray(errs['range_log']))
+    ab_fit, *_ = np.linalg.lstsq(np.column_stack((np.ones(len(r_obs)), r_obs)), np.asarray(errs['range_log']), rcond=None)
+    corrected = np.asarray(errs['range_log']) - (ab_fit[0] + ab_fit[1]*r_obs)
+    errs['range_log'] = corrected.tolist()
     params['measurement'].update(
+        range_log_bias=[round(float(ab_fit[0]), 5), round(float(ab_fit[1]), 5)],
         # RMS about zero (bias included: the filter has no bias term)
         azimuth_std_rad=round(rms(errs['azimuth']), 5),
         elevation_std_rad=round(rms(errs['elevation']), 5),
         range_log_std=round(rms(errs['range_log']), 4),
         normal_std_rad=round(max(float(np.median(errs['normal'])), math.radians(5.)), 4))
     rng = np.asarray(errs['range_m'])
-    report = {'tau_s': tau, 'gain': gain.round(4).tolist(), 'velocity_residual_rms': res.std(0).round(4).tolist(),
-              'slip_ratio_std': scale_std, 'detections': len(b),
+    report = {'motion_unloaded': unloaded_report, 'motion_loaded': loaded_report, 'detections': len(b),
               'bearing_deg': {'median': math.degrees(float(np.median(b))), 'p90': math.degrees(float(np.percentile(b, 90)))},
               'azimuth_deg': {'mean': math.degrees(float(np.mean(errs['azimuth']))),
                               'std': math.degrees(float(np.std(errs['azimuth'])))},
