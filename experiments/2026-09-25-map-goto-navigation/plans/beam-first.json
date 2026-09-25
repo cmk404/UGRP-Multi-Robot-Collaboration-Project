@@ -1,0 +1,38 @@
+{
+  "plan": {
+    "dock": "dock_b",
+    "tasks": [
+      {
+        "after": [],
+        "id": "beam_job",
+        "object": "beam",
+        "participants": [
+          "r1",
+          "r3"
+        ],
+        "route": "north"
+      },
+      {
+        "after": [
+          "beam_job"
+        ],
+        "id": "box_job",
+        "object": "box",
+        "park": {
+          "xy_m": [
+            0.0,
+            -2.6
+          ]
+        },
+        "participants": [
+          "r2"
+        ],
+        "route": "auto"
+      }
+    ]
+  },
+  "plan_hash": "1f9e567c3e93c757bd4cfa9fce598c21ff6675fca4e0657ea0944793aee19a7c",
+  "proposal_id": "map-goto-beam-first",
+  "proposer": "fixture",
+  "version": 1
+}
