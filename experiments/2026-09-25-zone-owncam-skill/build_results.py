@@ -22,6 +22,9 @@ V2_DEV_RUNS = ('dev-v2/403-a', 'dev-v2/404-a', 'dev-v2/404-b', 'dev-v2/405-b', '
 GRIP_HOLD = ('grip-hold/local_contact_fine', 'grip-hold/cargo_noslip_v1')
 V3_TEST_SEEDS = tuple(range(521, 531))
 V3_ARMS = {'P': 'cargo_noslip_v1', 'S': 'local_contact_fine'}   # cohort-v3-<sha>/<arm>/<seed>
+V4_TEST_SEEDS = tuple(range(531, 541))
+V4_ZONE_C_SEEDS = (531, 532, 533, 534, 538, 540)
+V4_ARMS = {'D': 'cargo_noslip_v1 + drop injection at carry+15 s', 'P': 'cargo_noslip_v1'}
 
 
 def sha(path):
@@ -81,7 +84,8 @@ def run_summary(folder):
             'profile': r.get('profile'), 'sim_limit_s': r.get('sim_limit_s'), 'skill_summary': r.get('skill_summary'),
             'contact_profile_selected': r.get('contact_profile_selected'),
             'cargo_contact_profile': r.get('cargo_contact_profile'),
-            'solver_noslip_iterations': r.get('solver_noslip_iterations')}
+            'solver_noslip_iterations': r.get('solver_noslip_iterations'),
+            'fault_injection': r.get('fault_injection'), 'counts_for': r.get('counts_for')}
 
 
 def grip_hold_summary(folder):
@@ -173,6 +177,28 @@ def main():
         log = folder / 'cohort.log'
         if log.exists():
             out['v3_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v4_development_runs'] = [run_summary(f.parent) for f in sorted(RAW.glob('dev-v4/*/result.json'))]
+    out['v4_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v4-*')):
+        for arm, condition in V4_ARMS.items():
+            runs = [run_summary(folder / arm / str(s)) for s in V4_TEST_SEEDS
+                    if (folder / arm / str(s) / 'result.json').exists()]
+            if not runs:
+                continue
+            summary = cohort_stats(runs)
+            summary['self_occluded_rejections'] = [(r['skill_summary'] or {}).get('self_occluded_rejections') for r in runs]
+            summary['zone_c_placed'] = sum(r['evaluation_only']['place_in_slot_gt'] for r in runs if r['seed'] in V4_ZONE_C_SEEDS)
+            summary['zone_c_n'] = sum(r['seed'] in V4_ZONE_C_SEEDS for r in runs)
+            summary['held_stops'] = [r['seed'] for r in runs if r['evaluation_only']['box_final_xyz'][2] > .08
+                                     and (r['reason'] == 'CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP' or r['reason'].startswith('GRIP_CHECK_'))]
+            if arm == 'D':
+                summary['drop_safety'] = [{'seed': r['seed'], 'reason': r['reason'], 'claim_in_slot': r['evaluation_only']['skill_claim_in_slot'],
+                                           'box_final_z_m': r['evaluation_only']['box_final_xyz'][2],
+                                           'fault_injection': r['fault_injection']} for r in runs]
+            out['v4_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs, 'summary': summary}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v4_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
     v2_log = RAW / V2_COHORT / 'cohort.log'
     if v2_log.exists():
         out['v2_cohort_log'] = {'path': str(v2_log), 'sha256': sha(v2_log)}
@@ -183,7 +209,7 @@ def main():
     contact_sheet()
     print(json.dumps(out['cohort_summary'], ensure_ascii=False))
     print(json.dumps(out['v2_cohort_summary'], ensure_ascii=False))
-    for key, value in out['v3_cohorts'].items():
+    for key, value in {**out['v3_cohorts'], **out['v4_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
 
