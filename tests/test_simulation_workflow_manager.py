@@ -228,7 +228,7 @@ raise SystemExit(3 if a.fail else 0)
             "zone-team-jobs-smoke": ["--probe", "pair_beam"],
             "zone-color-eval": ["render", "--split", "dev"],
             "zone-cargo-perception-eval": ["render", "--split", "dev"],
-            "zone-rgb-outcome-eval": ["score", "--split", "dev"],
+            "zone-rgb-outcome-eval": ["track", "--split", "dev_v2"],
         }
         with mock.patch.dict(os.environ, {"UGRP_SIM_TOKEN": "secret"}), \
              mock.patch.object(subprocess, "Popen", side_effect=AssertionError("planning launched a child")):

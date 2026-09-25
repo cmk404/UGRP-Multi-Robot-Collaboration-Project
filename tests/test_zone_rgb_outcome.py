@@ -2,7 +2,9 @@
 
 Small drawn TOP images (no SIM): a grey floor, 12x12 px coloured box tops at
 calibrated floor positions, dark discs as robots. Checks each outcome rule,
-the safety rules against false "delivered", the re-check policy and that the
+the source-emptiness proof (unchanged is not unoccluded), the decision policy
+(explicit ``unconfirmed``, two stable ticks, gripper gate, teacher-free
+deadline, command-evidenced releases), cargo footprint/yaw checks, and that the
 module reads no simulator/teacher state.
 """
 from __future__ import annotations
@@ -54,11 +56,28 @@ def top(boxes=(), robots=()):
 
 
 BEFORE = top([('red', SOURCE), ('red', (.4, -.6)), ('yellow', (.8, .2))])
+REFERENCE = BEFORE
+NAMES = {'cctv_top': 'a.jpg'}
 
 
-def run(after, job=JOB, **kw):
-    return zro.job_outcome(job, BEFORE, after, STATIC, before_names={'cctv_top': 'b.jpg'},
-                           after_names={'cctv_top': 'a.jpg'}, **kw)
+def run(after, job=JOB, reference=None, before=None, **kw):
+    return zro.observe(job, reference or REFERENCE, before or BEFORE, after, STATIC, names=NAMES, **kw)
+
+
+def track(frames, job=JOB, reference=None, before=None, commands=None, assigned_at=0., deadline_s=zro.DEADLINE_S):
+    tr = zro.JobTracker(job, reference or REFERENCE, before or BEFORE, STATIC, assigned_at=assigned_at,
+                        deadline_s=deadline_s)
+    d = None
+    for i, f in enumerate(frames):
+        d = tr.update(assigned_at + (i+1)*zro.CADENCE_S, f, commands=commands)
+    return d
+
+
+def cmd(t, pulse, rid='r1'):
+    return {'robot_id': rid, 'sim_time_s': t, 'kind': 'arm', 'servo_id': 1, 'pulse': pulse}
+
+
+DELIVERED = top([('red', (2.61, .01)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(2.1, 0.)])
 
 
 def test_floor_to_pixel_inverts_the_authored_calibration():
@@ -75,95 +94,196 @@ def test_drawn_boxes_are_detected_at_their_floor_position():
     assert math.dist(red['floor_xy_m'], SOURCE) < .01
 
 
-def test_delivered_needs_a_new_item_in_the_own_area_and_a_visibly_empty_source():
-    res = run(top([('red', (2.61, .01)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(2.1, 0.)]))
-    assert res['outcome'] == 'delivered' and res['rule'] == 'delivered_source_empty'
-    assert res['confidence'] >= zro.COMMIT_CONFIDENCE
-    assert res['evidence']['images'] == ['a.jpg', 'b.jpg']
-    assert res['evidence']['source']['visibility']['visible']
+def test_delivered_observation_needs_a_proven_empty_source():
+    res = run(DELIVERED)
+    assert res['outcome'] == 'delivered' and res['rule'] == 'delivered_source_proven'
+    view = res['evidence']['source']['state']['views'][0]
+    assert view['item_seen_here_in_reference'] and view['unchanged'] and view['centre_bare'] >= .7
 
 
 def test_still_at_source_tracked_and_pushed():
-    same = run(BEFORE)
-    assert same['outcome'] == 'still_at_source' and same['rule'] == 'still_at_source_tracked'
+    assert run(BEFORE)['rule'] == 'still_at_source_tracked'
     pushed = run(top([('red', (.49, .2)), ('red', (.4, -.6)), ('yellow', (.8, .2))]))
-    assert pushed['outcome'] == 'still_at_source' and pushed['rule'] == 'still_at_source_near'
-    assert 'source_item_moved_but_near' in pushed['flags']
+    assert pushed['rule'] == 'still_at_source_near' and 'source_item_moved_but_near' in pushed['flags']
 
 
 def test_dropped_on_the_way_is_seen_elsewhere():
     res = run(top([('red', (1.5, .1)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(1.05, .1)]))
     assert res['outcome'] == 'seen_elsewhere'
-    assert res['evidence']['new_elsewhere'] and math.dist(res['evidence']['new_elsewhere'][0], (1.5, .1)) < .02
 
 
-def test_lost_item_is_not_seen():
-    res = run(top([('red', (.4, -.6)), ('yellow', (.8, .2))]))
-    assert res['outcome'] == 'not_seen' and 'source_empty_item_not_found' in res['flags']
-
-
-def test_robot_over_the_source_is_occlusion_not_absence():
+def test_robot_over_the_source_is_not_proof_of_absence():
     res = run(top([('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.38, .2)]))
-    assert res['outcome'] == 'not_seen' and 'source_occluded' in res['flags']
-    assert not res['evidence']['source']['visibility']['visible']
+    assert res['outcome'] == 'not_seen' and 'source_emptiness_unproven' in res['flags']
 
 
-def test_same_kind_box_in_own_area_with_hidden_source_is_never_committed():
-    # Colour cannot tell two red boxes apart: a peer's red box in the own slot
-    # while the own box is hidden under a robot must not become "delivered".
-    res = run(top([('red', (2.6, 0.)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.38, .2)]))
-    assert res['rule'] == 'delivered_source_occluded'
-    assert res['confidence'] < zro.COMMIT_CONFIDENCE
-    _, committed = zro.commit([res])
-    assert committed['confidence'] < zro.COMMIT_CONFIDENCE
+def test_static_occluder_since_assignment_is_not_proof():
+    # Review item 2: a robot already over the source at assignment and still
+    # there now leaves the ring unchanged; a peer's red box in the own slot must
+    # not make this "delivered".
+    occluded = top([('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.4, .2)])
+    now = top([('red', (2.6, 0.)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.4, .2)])
+    res = run(now, before=occluded)
+    assert res['rule'] == 'delivered_source_unproven'
+    # v1 compared with the assignment frame (unchanged -> "visible"); v2 compares
+    # with the label frame and needs the item seen there, so this is unproven.
+    assert not res['evidence']['source']['state']['proven_empty']
+    old_style = zro.point_state(occluded, now, STATIC, SOURCE)
+    assert old_style['unchanged'] and not old_style['proven_empty']
+    d = track([now, now, now], before=occluded, deadline_s=1.5)
+    assert d['status'] == 'confirmed' and d['outcome'] != 'delivered'
+
+
+def test_static_occluder_since_reference_is_not_proof():
+    # The occluder is in the label frame too: the reference ring is not floor
+    # and the item was never seen there.
+    occluded = top([('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.4, .2)])
+    now = top([('red', (2.6, 0.)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.4, .2)])
+    res = run(now, reference=occluded, before=occluded)
+    assert res['outcome'] != 'delivered' or res['rule'] == 'delivered_source_unproven'
+    assert not res['evidence']['source']['state']['proven_empty']
+
+
+def test_occluder_on_the_ring_only_since_reference_is_not_proof():
+    ringed = top([('red', SOURCE), ('red', (.4, -.6))], robots=[(.4, .36)])
+    now = top([('red', (2.6, 0.)), ('red', (.4, -.6))], robots=[(.4, .36)])
+    res = run(now, reference=ringed, before=ringed)
+    assert not res['evidence']['source']['state']['proven_empty']
 
 
 def test_wrong_kind_in_the_target_is_not_delivered():
-    res = run(top([('yellow', (2.6, 0.)), ('red', (.4, -.6))]))
-    assert res['outcome'] != 'delivered'
+    assert run(top([('yellow', (2.6, 0.)), ('red', (.4, -.6))]))['outcome'] != 'delivered'
 
 
-def test_same_kind_in_the_zone_with_hidden_target_is_not_evidence():
-    after = top([('red', (2.6, .4)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(2.55, 0.)])
-    res = run(after)
-    assert res['outcome'] == 'not_seen'
-    assert 'new_same_kind_in_zone_while_target_hidden' in res['flags']
+def test_same_kind_in_the_zone_with_changed_target_is_not_evidence():
+    res = run(top([('red', (2.6, .4)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(2.55, 0.)]))
+    assert res['outcome'] == 'not_seen' and 'new_same_kind_in_zone_while_target_changed' in res['flags']
 
 
-def test_zone_only_job_uses_the_zone_count_with_lower_confidence():
+def test_zone_only_job_uses_the_zone_count():
     job = zro.job_spec(robot_ids=['r1', 'r2'], item='red-1', kind='red', source_xy_m=SOURCE, zone='A')
     res = run(top([('red', (2.5, .3)), ('red', (.4, -.6)), ('yellow', (.8, .2))]), job=job)
-    assert res['outcome'] == 'delivered' and res['rule'] == 'delivered_zone_count'
-    assert res['confidence'] == zro.CONFIDENCE['delivered_zone_count']
-    assert res['job']['robot_ids'] == ['r1', 'r2']
+    assert res['rule'] == 'delivered_zone_count'
 
 
-def test_commit_takes_the_first_confident_decision():
-    ns = {'outcome': 'not_seen', 'confidence': 0.}
-    low = {'outcome': 'delivered', 'confidence': .5}
-    hit = {'outcome': 'still_at_source', 'confidence': .95}
-    assert zro.commit([ns, low, hit, ns]) == (2, hit)
-    assert zro.commit([ns, low]) == (1, low)
+# ---------------------------------------------------------------- decisions
+
+def test_one_tick_is_unconfirmed_and_receipt_never_claims_success():
+    d = track([DELIVERED])
+    assert d['status'] == 'unconfirmed' and d['outcome'] == zro.UNCONFIRMED
+    rc = zro.receipt(d)
+    assert rc['status'] == zro.RECEIPT_TEXT[zro.UNCONFIRMED] and not rc['confirmed'] and rc['rgb_outcome'] == 'unconfirmed'
 
 
-def test_receipt_replaces_teacher_text():
-    res = run(BEFORE)
-    rc = zro.receipt(res)
-    assert rc['status'] == zro.RECEIPT_TEXT['still_at_source']
-    assert 'finished' not in rc['status'] and 'executor' not in rc['status']
+def test_two_stable_ticks_confirm_delivered():
+    d = track([DELIVERED, DELIVERED])
+    assert d['status'] == 'confirmed' and d['outcome'] == 'delivered'
+    assert zro.receipt(d)['status'] == zro.RECEIPT_TEXT['delivered']
 
+
+def test_low_confidence_delivered_is_never_confirmed():
+    now = top([('red', (2.6, 0.)), ('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.38, .2)])
+    d = track([now]*4, deadline_s=2.5)
+    assert d['outcome'] != 'delivered'
+    assert zro.receipt(d)['status'] != zro.RECEIPT_TEXT['delivered']
+
+
+def test_closed_gripper_blocks_delivered():
+    commands = {'r1': [cmd(0.1, 2000), cmd(0.2, 1500)]}
+    d = track([DELIVERED, DELIVERED], commands=commands)
+    assert d['status'] == 'unconfirmed' and 'target_item_but_carrier_gripper_closed' in d['flags']
+    commands = {'r1': [cmd(0.1, 2000), cmd(0.2, 1500), cmd(0.5, 2000)]}
+    assert track([DELIVERED, DELIVERED], commands=commands)['outcome'] == 'delivered'
+
+
+def test_non_delivered_waits_for_the_teacher_free_deadline():
+    assert track([BEFORE]*3)['status'] == 'unconfirmed'
+    d = track([BEFORE]*3, deadline_s=2.5)
+    assert d['status'] == 'confirmed' and d['outcome'] == 'still_at_source' and d['rule'].startswith('deadline_')
+
+
+def test_deadline_without_evidence_confirms_not_seen():
+    lost = top([('red', (.4, -.6)), ('yellow', (.8, .2))], robots=[(.38, .2)])
+    d = track([lost]*3, deadline_s=2.5)
+    assert d['outcome'] == 'not_seen' and d['rule'] == 'deadline_not_seen'
+
+
+def test_three_command_evidenced_releases_at_the_source_confirm_early():
+    commands = {'r1': [cmd(.05, 2000), cmd(.1, 1500), cmd(.3, 2000), cmd(1.1, 1500), cmd(1.3, 2000),
+                       cmd(2.1, 1500), cmd(2.3, 2000)]}
+    d = track([BEFORE]*5, commands=commands)
+    assert d['status'] == 'confirmed' and d['rule'] == 'released_at_source'
+
+
+def test_issued_arm_and_releases_follow_the_command_log():
+    log = [{'robot_id': 'r1', 'sim_time_s': 0., 'kind': 'initial', 'pulses': {'1': 2000, '3': 740}},
+           cmd(1., 1500), {'robot_id': 'r1', 'sim_time_s': 1.5, 'kind': 'look', 'pan_pulse': 1400}, cmd(2., 2000)]
+    assert zro.issued_arm(log, 1.6) == {1: 1500, 3: 740, 6: 1400}
+    assert zro.gripper_open(log, .5) is True and zro.gripper_open(log, 1.2) is False
+    assert zro.releases(log, 0., 3.) == [2.]
+    assert zro.gripper_open([], 1.) is None
+
+
+# ---------------------------------------------------------------- cargo
+
+def _cargo_job(yaw=0.):
+    area = {'landing_center_m': [2.6, 0.], 'landing_half_extents_m': [.36, .06], 'item_pose': [2.6, 0., yaw]}
+    return zro.job_spec(robot_ids=['r1', 'r2'], item='beam-1', kind='long_beam', source_xy_m=SOURCE, zone='A',
+                        target=zro.landing_target(area))
+
+
+@pytest.mark.parametrize('row,ok', [
+    ({'floor_xy_m': [2.6, 0.], 'yaw_rad': 0., 'clipped': False}, True),
+    ({'floor_xy_m': [2.6, 0.], 'yaw_rad': math.pi, 'clipped': False}, True),     # 180 deg symmetric
+    ({'floor_xy_m': [2.6, 0.], 'yaw_rad': .5, 'clipped': False}, False),         # wrong yaw
+    ({'floor_xy_m': [2.75, 0.], 'yaw_rad': 0., 'clipped': False}, False),        # footprint leaves the area
+    ({'floor_xy_m': [2.6, 0.], 'yaw_rad': 0., 'clipped': True}, False),          # clipped view
+    ({'floor_xy_m': [2.6, 0.], 'yaw_rad': None, 'clipped': False}, False),       # yaw unknown
+])
+def test_cargo_target_checks_full_footprint_and_yaw(row, ok):
+    assert zro._in_target({'kind': 'long_beam', **row}, _cargo_job()) is ok
+
+
+def test_cargo_needs_known_open_grippers_to_confirm(monkeypatch):
+    job = _cargo_job()
+    obs = {'outcome': 'delivered', 'confidence': .95, 'rule': 'delivered_source_proven', 'flags': [],
+           'target_sighting': {'floor_xy_m': [2.6, 0.], 'yaw_rad': 0.}, 'images': []}
+    hist = [dict(obs, t=1.), dict(obs, t=2.)]
+    d = zro.decide(job, hist, assigned_at=0., now=2.)
+    assert d['status'] == 'unconfirmed' and 'cargo_lifted_state_unknown' in d['flags']
+    lifted = {'r1': [cmd(.5, 1500)], 'r2': [cmd(.5, 1500, 'r2')]}
+    assert zro.decide(job, hist, assigned_at=0., now=2., commands=lifted)['status'] == 'unconfirmed'
+    placed = {'r1': [cmd(.5, 1500), cmd(.8, 2000)], 'r2': [cmd(.5, 1500, 'r2'), cmd(.8, 2000, 'r2')]}
+    assert zro.decide(job, hist, assigned_at=0., now=2., commands=placed)['outcome'] == 'delivered'
+
+
+def test_catalogue_items_need_a_landing_area():
+    with pytest.raises(ValueError):
+        zro.job_spec(robot_ids=['r1', 'r2'], item='beam-1', kind='long_beam', source_xy_m=SOURCE, zone='A')
+
+
+# ---------------------------------------------------------------- boundaries
 
 def test_module_reads_no_simulator_or_teacher_state():
     src = (ROOT/'harness'/'zone_rgb_outcome.py').read_text()
-    # Names and calls only: drop comments and every string literal.
     code = ' '.join(t.string for t in tokenize.generate_tokens(io.StringIO(src).readline)
                     if t.type not in (tokenize.COMMENT, tokenize.STRING))
     for token in ('mujoco', 'qpos', 'xpos', 'setup_only', 'body (', 'placed_by_teacher', 'grasp_failed',
-                  'dropped_in_transit', 'teacher', 'inject', 'contact', 'referee'):
+                  'dropped_in_transit', 'teacher', 'inject', 'contact', 'referee', 'phase'):
         assert token not in code, token
-    params = set(inspect.signature(zro.job_outcome).parameters)
-    assert params == {'job', 'before_tops', 'after_tops', 'static_map', 'own_rgb', 'own_servo_pose',
-                      'before_names', 'after_names', 'own_name', 'profile', 'before_rows'}
+    assert set(inspect.signature(zro.observe).parameters) == {
+        'job', 'reference_tops', 'before_tops', 'current_tops', 'static_map', 'own_rgb', 'own_arm_pulses',
+        'profile', 'reference_rows', 'before_rows', 'names'}
+    assert set(inspect.signature(zro.JobTracker.update).parameters) == {'self', 't', 'current_tops', 'commands',
+                                                                       'own_rgb', 'names'}
+
+
+def test_eval_refuses_to_overwrite(tmp_path):
+    from scripts import eval_zone_rgb_outcome as ev
+    (tmp_path/'x').mkdir()
+    with pytest.raises(SystemExit, match='refusing to overwrite'):
+        ev.new_dir(tmp_path/'x')
+    assert ev.new_dir(tmp_path/'y').is_dir()
 
 
 def test_static_map_given_has_no_item_poses():
@@ -176,12 +296,3 @@ def test_new_modules_are_outside_the_bundle_source_closure():
     closure = source_closure()
     assert 'harness/zone_rgb_outcome.py' not in closure
     assert 'scripts/eval_zone_rgb_outcome.py' not in closure
-
-
-def test_catalogue_kinds_need_the_cargo_detector():
-    job = zro.job_spec(robot_ids=['r1', 'r2'], item='beam-1', kind='long_beam', source_xy_m=SOURCE, zone='A')
-    if zro._zcp is None:
-        with pytest.raises(RuntimeError, match='zone_cargo_perception'):
-            run(BEFORE, job=job)
-    else:
-        assert run(BEFORE, job=job)['outcome'] in zro.OUTCOMES

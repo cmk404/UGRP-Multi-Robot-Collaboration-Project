@@ -226,33 +226,46 @@
       "purpose": "구역 작업 결과(배달·출발지 잔류·다른 곳 발견·미발견) RGB 전용 판정 오프라인 평가(기록 실행 재렌더·합성 사례)",
       "entry": "scripts/eval_zone_rgb_outcome.py",
       "docs": "experiments/2026-09-25-zone-rgb-outcome/README.md",
-      "requires": "committed split file; render-only from recorded observer replays (no stepping); ground truth is written to eval-labels.json and read only after decisions are made",
-      "version": "1.0.0",
+      "requires": "committed split file (split-v2.json); record runs the unmodified zone runner in fixture mode with an observation-only port command log; track/synth/validate render only from recorded observer replays; ground truth is written by label and read only by score; every subcommand needs a new --out directory",
+      "version": "2.0.0",
       "runner": "scripts.eval_zone_rgb_outcome",
       "output_flag": {
-        "render": "--out",
-        "synth": "--out",
+        "record": "--out",
+        "track": "--out",
+        "label": "--out",
         "score": "--out",
+        "synth": "--out",
         "validate": "--out"
       },
       "side_effect": "local_simulation",
       "adapter": "managed_legacy_cli",
       "required_inputs": {
-        "render": [
+        "record": [
+          "--seed"
+        ],
+        "track": [
           "--split"
+        ],
+        "label": [
+          "--track"
+        ],
+        "score": [
+          "--track",
+          "--labels"
         ],
         "synth": [
           "--split"
         ],
-        "score": [
-          "--split"
-        ],
-        "validate": []
+        "validate": [
+          "--splits"
+        ]
       },
       "output_kind": {
-        "render": "directory",
-        "synth": "directory",
+        "record": "directory",
+        "track": "directory",
+        "label": "directory",
         "score": "directory",
+        "synth": "directory",
         "validate": "directory"
       }
     },
