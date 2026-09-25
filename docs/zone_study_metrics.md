@@ -27,33 +27,45 @@
 | `no_comm` | ① 무통신 | 고수준 메시지 송수신 0. 발화가 있으면 위반 |
 | `peer_ko` | ② 자유 한국어 대화 | mesh, 자유 한국어 본문 |
 | `leader_ko` | ③ 한국어 지휘 겸임 | 로봇 한 대가 지휘 겸임, seed마다 r1/r2/r3 **순환**. 허브-스포크만 허용하며 follower 사이 직접 전달과 leader 방송은 위반. follower의 보고·거절은 허용 |
-| `peer_structured` | ④ 정형 메시지 | mesh, 고정 schema만. 비어 있지 않은 자유 `text`는 위반 |
-| `central_rgb_reference` | R 참조 상한 | 주 조건이 아니다. 비교에서 기본 제외이며 `--include-reference`로만 포함 |
+| `structured` | ④ 정형 메시지 대조 | mesh, 고정 schema만. 비어 있지 않은 자유 `text`는 위반 |
+| `reference_R` | R 전지적 지휘 참조 상한 | 주 조건이 아니다. 비교에서 기본 제외이며 `--include-reference`로만 포함 |
+
+조건 이름·한국어 라벨·주 조건 여부는 **패키지 A의 `CONDITIONS`에서 가져온다.** 이 모듈은 별도 목록을 두지 않는다.
 
 `leader_ko`는 `leader_id`가 필수이고 다른 조건에는 있으면 거절한다. 순환 여부는 조건 요약의
 `leader_ids`에서 확인한다.
 
-### 패키지 C 표기 호환
+### 과거 표기 호환
 
-패키지 C(`kiro/zone-study-protocol`, PR 184)는 두 조건을 `structured`, `reference_R`로 적고
-메시지 봉투에 `from_robot`, `sent_at_sim_s`, `delivered_at_sim_s`, `structured`를 쓴다. 통합
-때 다시 고치지 않도록 `parse_trial()`이 두 표기를 모두 받아 위 표의 이름으로 정규화하고, 원래
-표기는 `condition_as_logged`에 남긴다.
+패키지 A의 이름이 기준이다. 과거 잠정 기록의 표기는 `parse_trial()`이 정규화하고 원래 값을
+`condition_as_logged` / `encoding_as_logged`에 남긴다.
 
 | 기록된 값 | 정규화 결과 |
 |---|---|
-| `structured` | `peer_structured` |
-| `reference_R` | `central_rgb_reference` |
+| `peer_structured` | `structured` |
+| `central_rgb_reference` | `reference_R` |
+| `ko_free` (encoding) | `free_ko` |
+| `structured` (encoding) | `schema` |
 | `from_robot` | `sender` |
 | `sent_at_sim_s` | `sim_s` |
 | `delivered_at_sim_s` | `delivered_sim_s` |
 | `structured` (발화 payload) | `message` |
 
-## 잠정 기록 형식
+## 기록 형식
 
-로그 schema의 최종 소유자는 Package A(`kiro/zone-study-contract`)다. 그 PR이 올라오면
-`SUPPORTED_SCHEMAS`에 계약 schema id를 추가하고 `parse_trial()`에 어댑터를 넣는다. 그때까지
-이 모듈은 `ugrp.zone_study_trial.provisional.v1`만 읽고, 모르는 schema는 거절한다.
+로그 schema의 소유자는 패키지 A(`harness/zone_study_contract.py`)다. 읽는 형식은 둘이다.
+
+- **`ugrp.zone_study_trial.v1`** — A 정렬 형식. `calls` / `messages` / `actions`가 각각 A의
+  `ugrp.zone_study_call.v1` / `ugrp.zone_study_message_log.v1` / `ugrp.zone_study_action.v1`
+  기록이며 `parse_trial()`이 A의 `validate_log_record`로 검사한 뒤 `requests` / `utterances`
+  뷰를 **파생**한다. 두 뷰를 직접 적은 기록은 거절한다(한 숫자에 출처는 하나).
+  A의 호출 기록에는 `input_keys`가 없다. 경계는 payload를 만들 때 이미 강제됐으므로 감사
+  근거는 `payload_validated`이며, payload 키를 따로 보관한 실행만 `input_keys`를 덧붙일 수
+  있다. 발화의 SIM 비용은 그 발화를 만든 **호출**에 부과되므로 발화 행의 `sim_cost_s`는
+  `null`이고 대화 비용의 기준은 `model.sim_cost_s`다.
+- **`ugrp.zone_study_trial.provisional.v1`** — 과거 파일럿 로그용. 계속 읽는다.
+
+모르는 schema는 거절한다.
 
 ```json
 {
@@ -93,7 +105,7 @@
   "requests": [{"request_id": "req-1", "robot": "r1", "sim_s": 0.0,
                 "input_keys": ["static_map", "order_sheet", "own_rgb", "own_commands", "inbox"]}],
   "utterances": [{"message_id": "m-1", "sender": "r1", "recipients": ["r2"],
-                  "sim_s": 300.0, "delivered_sim_s": 300.1, "encoding": "ko_free",
+                  "sim_s": 300.0, "delivered_sim_s": 300.1, "encoding": "free_ko",
                   "text": "door_narrow가 막혀 있습니다.", "sim_cost_s": 1.9,
                   "grounds": ["own-r1-0042"],
                   "claims": [{"type": "blocked", "passage": "door_narrow"}]}]
@@ -106,7 +118,7 @@
 - `literals`는 정적 지도 투영에서 온 문자열이다(문·복도·bay·slot ID). 한국어 준수 계산에서
   제외할 literal 집합을 만드는 데 쓴다.
 - `claims`를 직접 기록하면 규칙 추출보다 우선한다.
-- `utterances[].encoding`은 `ko_free` 또는 `structured`다.
+- `utterances[].encoding`은 `free_ko` 또는 `schema`다(과거 `ko_free`/`structured`도 받아 정규화한다).
 
 ## 효율 지표
 

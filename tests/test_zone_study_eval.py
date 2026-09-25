@@ -72,7 +72,7 @@ def trial(condition='peer_ko', scenario='mixed', seed=101, *, end_reason='orders
 
 
 def utter(message_id='m-1', sender='r1', recipients=('r2',), sim_s=100.0, text='',
-          encoding='ko_free', **extra):
+          encoding='free_ko', **extra):
     row = {'message_id': message_id, 'sender': sender, 'recipients': list(recipients),
            'sim_s': sim_s, 'delivered_sim_s': sim_s + 0.1, 'encoding': encoding,
            'text': text, 'sim_cost_s': 1.9}
@@ -120,14 +120,22 @@ class ParseTest(unittest.TestCase):
         with self.assertRaises(ev.TrialError):
             ev.parse_trial(bad)
 
-    def test_package_c_condition_names_are_accepted(self):
-        for logged, expected in (('structured', 'peer_structured'),
-                                 ('reference_R', ev.REFERENCE_CONDITION)):
+    def test_provisional_condition_names_are_normalised_onto_package_a(self):
+        """Package A's names are canonical; the earlier spellings still parse."""
+        for logged, expected in (('peer_structured', 'structured'),
+                                 ('central_rgb_reference', ev.REFERENCE_CONDITION)):
             record = trial()
             record['condition'] = logged
             parsed = ev.parse_trial(record)
             self.assertEqual(parsed['condition'], expected)
             self.assertEqual(parsed['condition_as_logged'], logged)
+        # package A's own names need no alias
+        for name in ('no_comm', 'peer_ko', 'structured', ev.REFERENCE_CONDITION):
+            record = trial()
+            record['condition'] = name
+            parsed = ev.parse_trial(record)
+            self.assertEqual(parsed['condition'], name)
+            self.assertNotIn('condition_as_logged', parsed)
 
     def test_package_c_envelope_fields_are_accepted(self):
         record = trial(condition='peer_ko', utterances=[{
@@ -400,7 +408,7 @@ class DialogueTest(unittest.TestCase):
         self.assertNotIn('order', acts['coarse'])
 
     def test_structured_act_enum_maps_to_coarse_types(self):
-        acts = ev.act_types(utter(encoding='structured',
+        acts = ev.act_types(utter(encoding='schema',
                                   message={'act': 'reject', 'item': 'crate-2'}))
         self.assertEqual(acts['fine'], ['reject'])
         self.assertEqual(acts['coarse'], ['objection'])

@@ -229,8 +229,9 @@ def markdown(summary, comparisons, sources, generated_at):
         '',
         '- 이 보고서는 지표 계산의 정확성만 확인한다. 조건 간 우열은 사전 고정한 코호트를 '
         '실제로 실행한 뒤에만 주장한다.',
-        '- 로그 schema는 Package A(`kiro/zone-study-contract`)가 확정한다. 현재는 '
-        f'`{ev.PROVISIONAL_SCHEMA}` 잠정 형식을 읽는다.',
+        '- 로그 schema는 Package A(`harness/zone_study_contract.py`)가 소유한다. '
+        f'`{ev.TRIAL_SCHEMA}`는 A의 호출·메시지·행동 기록을 담고 A가 검증한다. '
+        f'과거 파일럿 로그를 위해 `{ev.PROVISIONAL_SCHEMA}`도 계속 읽는다.',
         '',
     ]
     return '\n'.join(lines)

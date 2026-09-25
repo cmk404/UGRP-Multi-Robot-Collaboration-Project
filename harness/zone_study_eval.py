@@ -8,11 +8,18 @@ never re-enter a robot request, memory, wake-up or executor decision. The
 functions here are pure: they take a trial record and return new dictionaries,
 never mutating the input, so the same record can also be hashed/archived.
 
-Package A (``kiro/zone-study-contract``) owns the final log schema. Until its
-PR lands this module accepts the *provisional* record described in
-``docs/zone_study_metrics.md`` and identified by ``PROVISIONAL_SCHEMA``. Add the
-contract schema id to ``SUPPORTED_SCHEMAS`` (and adapt in ``parse_trial``) when
-it appears; do not silently accept unknown schemas.
+Package A (``harness/zone_study_contract.py``) owns the condition registry and
+the call/message/action log schema. The conditions, their Korean labels and the
+message encodings here come from A. Two record shapes are accepted:
+
+* ``ugrp.zone_study_trial.v1`` (:data:`TRIAL_SCHEMA`) — the A-aligned trial
+  envelope. Its ``calls``/``messages``/``actions`` rows ARE A's log records and
+  are validated by ``A.validate_log_record``; :func:`parse_trial` maps them onto
+  the ``requests``/``utterances`` views the metrics below read.
+* ``ugrp.zone_study_trial.provisional.v1`` (:data:`PROVISIONAL_SCHEMA`) — the
+  earlier hand-written shape, kept so archived pilot logs still parse.
+
+Unknown schemas are refused, never silently accepted.
 
 Study decisions (user, 2026-09-25/26) that this module encodes:
 
@@ -36,36 +43,38 @@ import statistics
 from pathlib import Path
 
 from harness import zone_dialogue_metrics as zm
+from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, CONDITIONS as A_CONDITIONS,
+                                         MAIN_CONDITIONS as A_MAIN_CONDITIONS, MESSAGE_LOG_SCHEMA,
+                                         forbidden_key_hits, validate_log_record)
 
+#: A-aligned trial envelope: ``calls``/``messages``/``actions`` are A log records.
+TRIAL_SCHEMA = 'ugrp.zone_study_trial.v1'
 PROVISIONAL_SCHEMA = 'ugrp.zone_study_trial.provisional.v1'
-#: Schemas this module knows how to read. Package A's contract id is appended
-#: here (with an adapter in :func:`parse_trial`) once its PR is merged.
-SUPPORTED_SCHEMAS = (PROVISIONAL_SCHEMA,)
+#: Schemas this module knows how to read.
+SUPPORTED_SCHEMAS = (TRIAL_SCHEMA, PROVISIONAL_SCHEMA)
 
-#: Main conditions in reporting order, then the reference ceiling.
-MAIN_CONDITIONS = ('no_comm', 'peer_ko', 'leader_ko', 'peer_structured')
-REFERENCE_CONDITION = 'central_rgb_reference'
-CONDITIONS = MAIN_CONDITIONS + (REFERENCE_CONDITION,)
+#: Main conditions in reporting order, then the reference ceiling (package A).
+MAIN_CONDITIONS = A_MAIN_CONDITIONS
+REFERENCE_CONDITION = next(name for name, c in A_CONDITIONS.items() if not c.is_main)
+CONDITIONS = tuple(A_CONDITIONS)
 
-CONDITION_LABELS_KO = {
-    'no_comm': '① 무통신',
-    'peer_ko': '② 자유 한국어 대화',
-    'leader_ko': '③ 한국어 지휘 겸임',
-    'peer_structured': '④ 정형 메시지',
-    REFERENCE_CONDITION: 'R 전지적 지휘 참조 상한',
-}
-#: Package C (``kiro/zone-study-protocol``, PR 184) names two conditions
-#: differently. Accept both spellings and normalise to the names above so the
-#: integration does not need a rewrite; the original is kept in
-#: ``condition_as_logged``.
-CONDITION_ALIASES = {'structured': 'peer_structured', 'reference_R': REFERENCE_CONDITION}
-#: Package C's message envelope field names, mapped onto the ones used here.
+#: Report labels: package A's ``korean_label`` with the study's numbering.
+_NUMBER_KO = {'no_comm': '①', 'peer_ko': '②', 'leader_ko': '③', 'structured': '④',
+              REFERENCE_CONDITION: 'R'}
+CONDITION_LABELS_KO = {name: f'{_NUMBER_KO.get(name, "")} {c.korean_label}'.strip()
+                       for name, c in A_CONDITIONS.items()}
+#: Condition spellings of the provisional records, normalised onto package A's
+#: names. The value as logged is kept in ``condition_as_logged``.
+CONDITION_ALIASES = {'peer_structured': 'structured', 'central_rgb_reference': REFERENCE_CONDITION}
+#: Utterance field names of the provisional records, mapped onto the ones used here.
 UTTERANCE_ALIASES = {'from_robot': 'sender', 'sent_at_sim_s': 'sim_s',
                      'delivered_at_sim_s': 'delivered_sim_s', 'structured': 'message'}
 
-#: Free-text channels. ``structured`` carries no free text by construction.
-FREE_TEXT_ENCODINGS = ('ko_free',)
-STRUCTURED_ENCODINGS = ('structured',)
+#: Free-text and fixed-schema channels, using package A's encoding literals.
+FREE_TEXT_ENCODINGS = ('free_ko',)
+STRUCTURED_ENCODINGS = ('schema',)
+#: Encoding spellings of the provisional records, normalised onto A's literals.
+ENCODING_ALIASES = {'ko_free': 'free_ko', 'structured': 'schema'}
 
 SUCCESS_END_REASON = 'orders_complete'
 #: Every non-success terminal reason still counts in the denominators.
@@ -75,12 +84,13 @@ FAILURE_END_REASONS = (
 )
 END_REASONS = (SUCCESS_END_REASON,) + FAILURE_END_REASONS
 
-#: Robot-facing input keys allowed on every model call (own-camera study).
-ALLOWED_INPUT_KEYS = frozenset({
-    'static_map', 'static_map_figure', 'order_sheet', 'own_rgb', 'own_rgb_history',
-    'own_commands', 'own_command_state', 'own_belief', 'inbox', 'robot_id',
-    'request_id', 'sim_time_s', 'action_schema', 'condition_instruction',
-})
+#: Robot-facing input keys allowed on every model call. Package A's per-condition
+#: allowlists are the source of truth; the extra names are request bookkeeping the
+#: provisional records used.
+ALLOWED_INPUT_KEYS = frozenset().union(*(c.input_allowlist for c in A_CONDITIONS.values())) | {
+    'static_map_figure', 'own_rgb', 'own_rgb_history', 'own_commands', 'own_command_state',
+    'own_belief', 'action_schema', 'condition_instruction', 'dialogue_window',
+}
 #: Input keys that mean evaluation data leaked back into a robot request.
 FORBIDDEN_INPUT_KEYS = frozenset({
     'top_rgb', 'top_camera', 'top_labels', 'top_zone_counts', 'nav_cam',
@@ -151,9 +161,12 @@ class TrialError(ValueError):
 # --------------------------------------------------------------------------- #
 
 def parse_trial(obj):
-    """Validate a provisional trial record and return an independent copy.
+    """Validate a trial record and return an independent copy.
 
-    The input mapping is never mutated; callers keep their raw archived log.
+    For :data:`TRIAL_SCHEMA` the ``calls``/``messages``/``actions`` rows are
+    package A log records: each one is validated by ``A.validate_log_record`` and
+    then mapped onto the ``requests``/``utterances`` views the metrics read. The
+    input mapping is never mutated; callers keep their raw archived log.
     """
     if not isinstance(obj, dict):
         raise TrialError('trial record must be a JSON object')
@@ -168,10 +181,15 @@ def parse_trial(obj):
     if condition not in CONDITIONS:
         raise TrialError(f'unknown condition {condition!r}; known: {CONDITIONS}'
                          f' (aliases: {sorted(CONDITION_ALIASES)})')
+    if schema == TRIAL_SCHEMA:
+        _adapt_contract_rows(trial)
     for utt in _rows(trial, 'utterances'):
         for old, new in UTTERANCE_ALIASES.items():
             if old in utt and new not in utt:
                 utt[new] = utt.pop(old)
+        if utt.get('encoding') in ENCODING_ALIASES:
+            utt['encoding_as_logged'] = utt['encoding']
+            utt['encoding'] = ENCODING_ALIASES[utt['encoding']]
     reason = trial.get('end_reason')
     if reason not in END_REASONS:
         raise TrialError(f'unknown end_reason {reason!r}; known: {END_REASONS}')
@@ -188,6 +206,66 @@ def parse_trial(obj):
     if trial.get('end_sim_s') is None:
         raise TrialError('trial record needs end_sim_s')
     return trial
+
+
+def _adapt_contract_rows(trial):
+    """Validate package A log rows in place and build the metric views.
+
+    ``requests`` and ``utterances`` are derived, never authored: an A-aligned
+    record that also carries them by hand is refused, so there is exactly one
+    source for every number.
+    """
+    for key in ('requests', 'utterances'):
+        if key in trial:
+            raise TrialError(f'{TRIAL_SCHEMA} derives {key} from the package A log rows; '
+                             'do not author it as well')
+    expected = {'calls': CALL_LOG_SCHEMA, 'messages': MESSAGE_LOG_SCHEMA, 'actions': ACTION_LOG_SCHEMA}
+    for key, log_schema in expected.items():
+        for row in _rows(trial, key):
+            if row.get('schema') != log_schema:
+                raise TrialError(f'{key}[] must carry schema {log_schema}, got {row.get("schema")!r}')
+            validate_log_record(row)
+    trial['requests'] = [_request_view(row) for row in _rows(trial, 'calls')]
+    trial['utterances'] = [_utterance_view(row) for row in _rows(trial, 'messages')]
+
+
+def _request_view(call):
+    """One package A call record as the request row the boundary audit reads.
+
+    A's call record carries no ``input_keys``: the payload was validated at build
+    time, and ``payload_validated`` is the auditable fact. A run that also stored
+    the payload keys may pass them through ``input_keys``.
+    """
+    return {'request_id': call['request_id'], 'robot': call['actor'], 'role': call['role'],
+            'sim_s': call['requested_at_sim_s'], 'released_sim_s': call['released_at_sim_s'],
+            'sim_cost_s': call['sim_cost_s'], 'trigger': call['trigger'], 'status': call['status'],
+            'payload_validated': call['payload_validated'], 'input_sha256': call['input_sha256'],
+            'decision_sources': list(call['decision_sources']),
+            'message_ids': list(call['message_ids']),
+            'http_attempts': call['http_attempts'], 'output_tokens': call['output_tokens'],
+            'input_tokens': dict(call['input_tokens'])}
+
+
+def _utterance_view(message):
+    """One package A message record as the utterance row the dialogue metrics read.
+
+    The SIM cost of speaking is charged on the CALL that produced the message
+    (package D), so ``sim_cost_s`` stays ``None`` here and the authoritative talk
+    cost is ``model.sim_cost_s``.
+    """
+    body = message.get('body')
+    free = message.get('encoding') in FREE_TEXT_ENCODINGS
+    view = {'message_id': message['message_id'], 'sender': message['sender'],
+            'recipients': list(message['recipients']), 'encoding': message['encoding'],
+            'sim_s': message['created_at_sim_s'], 'delivered_sim_s': message['delivered_at_sim_s'],
+            'reply_to': message.get('reply_to'), 'status': message['status'],
+            'act': message.get('act'), 'chars': message.get('chars'),
+            'korean_ok': message.get('korean_ok'), 'sim_cost_s': None}
+    if free:
+        view['text'] = body.get('text') if isinstance(body, dict) else None
+    else:
+        view['message'] = copy.deepcopy(body)
+    return view
 
 
 def load_trial(path):
@@ -239,15 +317,20 @@ def audit_input_boundary(trial):
     """Check that no recorded robot request carried evaluation-only inputs.
 
     Returns a report with one row per offending request. ``clean`` is False as
-    soon as a forbidden or unknown input key, a forbidden grounds citation, or a
-    channel/topology violation appears.
+    soon as a forbidden or unknown input key, an unvalidated payload, a forbidden
+    grounds citation, or a channel/topology violation appears.
+
+    For an A-aligned record the per-call boundary was enforced when the payload
+    was built, so ``payload_validated`` is the auditable fact; a run that also
+    archived the payload keys may add ``input_keys`` and both are checked.
     """
     condition = trial['condition']
-    leaks, unknown = [], []
+    leaks, unknown, unvalidated = [], [], []
     for req in _rows(trial, 'requests'):
         keys = req.get('input_keys')
         keys = list(keys) if isinstance(keys, (list, tuple)) else []
-        bad = sorted(set(keys) & FORBIDDEN_INPUT_KEYS)
+        bad = sorted(set(keys) & FORBIDDEN_INPUT_KEYS
+                     | {k for k in keys if forbidden_key_hits({k: None})})
         odd = sorted(set(keys) - FORBIDDEN_INPUT_KEYS - ALLOWED_INPUT_KEYS)
         if bad:
             leaks.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
@@ -255,6 +338,9 @@ def audit_input_boundary(trial):
         if odd:
             unknown.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
                             'unknown_input_keys': odd})
+        if req.get('payload_validated') is False:
+            unvalidated.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
+                                'status': req.get('status')})
     if condition == REFERENCE_CONDITION:
         # R is the all-seeing commander: peer RGB is expected there, so the
         # request audit is reported but does not gate the main conditions.
@@ -266,10 +352,11 @@ def audit_input_boundary(trial):
         if bad:
             grounds.append({'message_id': utt.get('message_id'), 'forbidden_grounds': bad})
     channel = channel_compliance(trial)
-    clean = (not leaks and not unknown and not grounds
+    clean = (not leaks and not unknown and not grounds and not unvalidated
              and not channel['violations'] and condition != REFERENCE_CONDITION)
     return {'condition': condition, 'requests_checked': len(_rows(trial, 'requests')),
             'input_leaks': leaks, 'unknown_input_keys': unknown,
+            'unvalidated_payloads': unvalidated,
             'forbidden_grounds': grounds, 'channel_violations': channel['violations'],
             'clean': clean,
             'note': 'R은 전지적 참조 상한이므로 주 조건 경계 판정에서 제외한다.'
@@ -298,7 +385,7 @@ def channel_compliance(trial):
             if sender == leader and len(recipients) > 1:
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'leader_broadcast',
                                    'recipients': recipients})
-        if condition == 'peer_structured':
+        if condition == 'structured':
             if encoding not in STRUCTURED_ENCODINGS:
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'non_structured_encoding',
                                    'encoding': encoding})
