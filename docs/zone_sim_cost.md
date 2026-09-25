@@ -141,7 +141,7 @@ CallReply(attempts=(zc.Attempt(input_tokens=8000, output_tokens=120, utterances=
                             body='좁은 문 앞이 막혔다. door_wide로 우회한다.', encoding='ko'),))
 ```
 
-`encoding`은 `ko`(자유 한국어)와 `structured`(고정 schema) 두 가지다. 스케줄러는 본문을 해석하지 않는다. 메시지가 호스트의 예약이나 다른 로봇의 행동을 직접 바꾸지 않고, 수신자의 다음 호출 입력이 될 뿐이다.
+`encoding`은 패키지 A의 값 `free_ko`(자유 한국어)와 `schema`(고정 schema) 두 가지이며 `ENCODINGS`는 A의 조건 registry에서 파생한다. 스케줄러는 본문을 해석하지 않는다. 메시지가 호스트의 예약이나 다른 로봇의 행동을 직접 바꾸지 않고, 수신자의 다음 호출 입력이 될 뿐이다.
 
 기록은 `sched.calls`(`CallCostRecord`), `sched.messages`(`MessageCostRecord`), `sched.metrics`, `sched.trace()`로 얻는다. `trace()`는 두 실행의 SIM 결과를 그대로 비교할 수 있는 문자열 tuple이다.
 
@@ -173,7 +173,11 @@ CallReply(attempts=(zc.Attempt(input_tokens=8000, output_tokens=120, utterances=
 확인하지 않은 것:
 
 - **러너 통합.** 의도적으로 하지 않았다. PR 169 이후 러너 담당이 `scripts/zone_dispatch_v2.py`에 연결한다. 그 전까지 실제 물리·모델 호출로 이 비용을 쓴 실행은 없다.
-- **패키지 A 로그 스키마.** `harness/zone_study_contract.py`가 아직 없어 `ugrp.zone_sim_cost.local_call.v0` 로컬 최소 기록을 쓴다. 필드는 그대로 두고 패키지 A 스키마로 다시 내보내면 된다.
+- **패키지 A 로그 스키마(정렬 완료).** 비용 행은 `ugrp.zone_sim_cost.call_cost.v1` / `ugrp.zone_sim_cost.message_cost.v1`이고, **로그 기록은 패키지 A가 소유한다.** `contract_call_record()`가 `ugrp.zone_study_call.v1`을, `contract_message_records()`가 `ugrp.zone_study_message_log.v1`을 만들고 A의 `validate_log_record`로 검사한다. `EventScheduler.contract_log()`가 한 실행 전체를 그 형식으로 내보낸다.
+  - `CallCost.cost_terms()`는 A가 요구하는 `alpha_s`·`beta_s_per_token`·`gamma_s_per_utterance`·`output_tokens`·`utterances`에 이 모듈의 감사 항목(입력 토큰 비용, raw·격자, 시도별 결과, 파라미터 해시)을 더한다.
+  - 스케줄러의 계기 이름은 병합 우선순위를 담고 있어 A의 `TRIGGERS` enum과 1:1이 아니다. `TRIGGER_TO_CONTRACT`가 대응을 고정하며, 대응이 없는 이름은 조용히 넘기지 않고 `KeyError`로 막는다.
+  - 시도 결과는 `OUTCOME_STATUS`로 A의 `CALL_STATUS`에 대응한다(`invalid`→`invalid_json`, `error`→`http_error`).
+  - 방송 한 건은 A 기록 한 행이며 수신자별 전달 시각이 `deliveries`에 들어간다.
 - **CI 등록.** `scripts/run_ci_tests.py`는 다른 브랜치와 충돌하는 공용 파일이라 건드리지 않았다. 통합 담당이 두 테스트 파일을 목록에 추가해야 CI에서 돌아간다.
 - **기본값의 타당성.** 위 표의 근거는 일반적인 처리량 가정이다. 모델·tokenizer를 정한 뒤 검증하고 동결해야 한다.
 - `scale=0`(비용 없음) 조건에서는 전달 지연도 0이라 같은 SIM 시각에 메시지-호출이 이어질 수 있다. 최소 호출 간격과 예산이 이를 유한하게 막지만, 이 진단 조건은 사건 수 상한과 함께 쓰는 것이 안전하다.

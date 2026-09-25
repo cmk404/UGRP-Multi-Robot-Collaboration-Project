@@ -38,18 +38,23 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import heapq
 
-from harness.zone_sim_cost import (Attempt, CallCostRecord, FAILED_OUTCOMES, MessageCostRecord, call_cost,
-                                   delivery_delay_s, params, quantize)
+from harness.zone_sim_cost import (Attempt, CallCostRecord, FAILED_OUTCOMES, MessageCostRecord,
+                                   TRIGGER_TO_CONTRACT, call_cost, contract_call_record,
+                                   contract_message_records, delivery_delay_s, params, quantize)
+from harness.zone_study_contract import CONDITIONS as CONTRACT_CONDITIONS, ROBOTS
 
 SCHEDULER_SCHEMA = 'ugrp.zone_event_scheduler.v1'
-DEFAULT_ACTORS = ('r1', 'r2', 'r3')
-ENCODINGS = ('ko', 'structured')
+DEFAULT_ACTORS = ROBOTS
+#: Package A's message encodings (``harness.zone_study_contract``).
+ENCODINGS = tuple(sorted({c.encoding for c in CONTRACT_CONDITIONS.values()} - {'none'}))
 
 #: Call triggers. The number is the merge priority: when several triggers reach
 #: one actor while it is busy they collapse into one call carrying the strongest
-#: label, and the collapsed labels are recorded.
+#: label, and the collapsed labels are recorded. Every label maps onto package
+#: A's ``TRIGGERS`` enum through ``zone_sim_cost.TRIGGER_TO_CONTRACT``.
 TRIGGERS = {'start': 70, 'failure': 60, 'blockage': 50, 'timeout': 40, 'report': 30,
             'retry': 25, 'idle': 20, 'timer': 10}
+assert set(TRIGGERS) == set(TRIGGER_TO_CONTRACT)
 
 #: Event kinds processed at one SIM time, in this order. Deliveries land before
 #: anything else so a call starting at ``t`` sees every message delivered at
@@ -68,7 +73,7 @@ class Message:
     sender: str
     recipients: tuple
     body: object = ''
-    encoding: str = 'ko'
+    encoding: str = 'free_ko'
 
     def __post_init__(self):
         if self.encoding not in ENCODINGS:
@@ -260,6 +265,33 @@ class EventScheduler:
         the same tuple.
         """
         return tuple(row['line'] for row in self.events)
+
+    def contract_log(self, *, run_id, condition_name, seed, provenance, envelopes=None,
+                     request_ids=None, input_sha256=None, acts=None):
+        """This run's calls and messages as package A log records.
+
+        ``request_ids``/``input_sha256`` map ``call_id`` to the request id and the
+        digest of the validated payload of that call; ``envelopes`` maps
+        ``message_id`` to the package A envelope that was relayed. Every record
+        is validated by ``harness.zone_study_contract.validate_log_record``.
+        """
+        request_ids, input_sha256 = dict(request_ids or {}), dict(input_sha256 or {})
+        index = {actor: 0 for actor in self.actors}
+        calls = []
+        for record in self.calls:
+            calls.append(contract_call_record(
+                record, run_id=run_id, condition_name=condition_name, seed=seed,
+                request_id=request_ids.get(record.call_id, record.call_id),
+                call_index=index[record.actor],
+                input_sha256=input_sha256.get(record.call_id, '0' * 64),
+                provenance=provenance,
+                message_ids=[m.message_id for m in self.messages if m.call_id == record.call_id]))
+            index[record.actor] += 1
+        messages = contract_message_records(self.messages, run_id=run_id,
+                                            condition_name=condition_name, seed=seed,
+                                            envelopes=dict(envelopes or {}), acts=acts) \
+            if envelopes else []
+        return {'schema': SCHEDULER_SCHEMA, 'calls': calls, 'messages': messages}
 
     def run(self, until_s=None, max_events=None):
         """Process events until the queue is quiet, ``until_s`` or ``max_events``."""
