@@ -33,7 +33,7 @@ ZONES = ('A', 'B', 'C')
 def solo_context(rid, *, labels, view, own_jobs, extra=None):
     value = {'robot_id': rid, 'box_labels': {k: {'kind': v['kind'], 'rgb_floor_xy_m': v['floor_xy_m']}
                                              for k, v in labels.items()},
-             'rgb_view': copy.deepcopy(view), 'own_jobs': copy.deepcopy(list(own_jobs)[-8:])}
+             'rgb_view': copy.deepcopy(view), 'own_jobs': zc.visible_own_jobs(own_jobs)}
     value.update(extra or {})
     return value
 
