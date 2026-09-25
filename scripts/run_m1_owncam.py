@@ -121,7 +121,7 @@ def run(spec, out, student):
         return None if result is None else [tuple(p) for p in result['waypoints_m'][1:]]
 
     ctl = M1OwnCamDelivery(static, calibration['params'], box_kind='cyan', slot_id=spec['slot_id'], slot_xy=slot_xy,
-                           skill_factory=lambda order: skill_cls(order, planner=planner, **skill_kwargs),
+                           skill_factory=lambda order: skill_cls(order, planner=planner, robot_id=rid, **skill_kwargs),
                            pose_estimate_cls=PoseEstimate, search_rows_y=rows_y, robot_id=rid, seed=spec['seed'],
                            order_kind=order_kind)
     ctl_ref['ctl'] = ctl

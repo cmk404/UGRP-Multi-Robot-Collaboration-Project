@@ -83,6 +83,16 @@
         }
       ],
       "test_status": "The registered test (101-106, axis-aligned boxes) is NOT run while the face-on grasp limit is open: dev 0/2 at the grasp predicts a blocked test; freezing now would spend the one-shot cohort on a known skill blocker."
+    },
+    {
+      "id": "A3-dev-a3-s93-runner-robot-id",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a3 (ce33ffd) m1dev-s93 spawned as r3; the runner built the skill without robot_id (skill default 'r1'), so v5's strict gate rejected the first own frame: SKILL_OBSERVATION_REJECTED 'observation belongs to another sensor' at 134.5 s (the skill contract working as intended; a runner bug). s91/s92 spawned as r1 and were unaffected.",
+      "changes": [
+        "runner: the skill is constructed with robot_id = the episode's own robot id"
+      ],
+      "student_patch": {}
     }
   ]
 }
