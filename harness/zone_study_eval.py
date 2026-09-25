@@ -542,9 +542,15 @@ def _ratio(num, den):
 # --------------------------------------------------------------------------- #
 
 def _labels(trial):
-    """Item ids that must stay literal in Korean prose."""
+    """Ids that must stay literal in Korean prose.
+
+    Package A's order sheet declares BOTH the order ids and the item ids, and a
+    robot may name either, so both are literals here. An id-bearing token that is
+    in neither list stays reported as a literal-id issue.
+    """
     ids, _ = _ordered_items(trial)
-    return tuple(ids)
+    orders = [str(o['order_id']) for o in _rows(trial, 'orders') if o.get('order_id')]
+    return tuple(dict.fromkeys(list(ids) + orders))
 
 
 #: Identifier-like study words that are literal references, not code-switching.
