@@ -231,11 +231,49 @@ v1·v2 파일은 바이트 그대로다. 테스트가 d016c04·edd075d 해시로
 - 조건 P 10개를 먼저 돌린 뒤 조건 S 10개를 돌린다. **거짓 IN_SLOT이 한 번이라도 나오면 즉시 코호트를 멈추고 보고한다.** 그 밖에는 결과와 무관하게 모두 돌린다.
 - 동시 SIM은 2개 이하, 스레드는 1(OMP/OPENBLAS/VECLIB/MKL=1)로 제한한다. 시드별 부하 평균을 기록한다.
 
+## v3 결과 (사전 등록 시드 521–530, 소스 `7322a96`, 깨끗한 트리)
+- 조건: 동기 SIM, 스레드 1, 동시 SIM 2개 이하. 시드별 시작 부하 평균은 9–37이다(`cohort-v3-7322a96/cohort.log`, sha256 `3ba75790…`).
+- **인프라 사건(기록):** 코호트 도중 실행과 무관한 파일(`build_tensorboard_v3.py`)을 worktree에 추가해 트리가 dirty해졌다. 그 결과 조건 P의 523/525/527/529 실행기가 **제어 단계 전에 실행을 거부했다**(출력 없음, 로그는 `P/<seed>.infra-dirty-refusal.log`로 보존).
+  - 파일을 밖으로 옮기고, 내 드라이버 셸만 멈췄다(실행 중이던 522는 유지).
+  - 같은 인자로 이어 가는 드라이버(`run_v3_cohort_continue.sh`)로 사전 등록 규칙에 따라 1회 재실행했다. 그 밖의 재실행은 없다.
+
+| seed | 슬롯 | P 판정 (cargo_noslip_v1) | P GT·SIM s | P 재장착 | P grip check | S 판정 (local_contact_fine) | S GT·SIM s | S 재장착 | S grip check |
+|---|---|---|---|---|---|---|---|---|---|
+| 521 | B2 | IN_SLOT | ✓ 114.8 | 0 | 0 | IN_SLOT | ✓ 114.6 | 0 | 0 |
+| 522 | B3 | IN_SLOT | ✓ 167.4 | 0 | 0 | IN_SLOT | ✓ 225.5 | 1 | 0 |
+| 523 | C1 | IN_SLOT | ✓ 205.5 | 0 | 1 | IN_SLOT | ✓ 265.6 | 1 | 1 |
+| 524 | A3 | IN_SLOT | ✓ 169.5 | 0 | 0 | IN_SLOT | ✓ 230.3 | 1 | 0 |
+| 525 | C2 | IN_SLOT | ✓ 155.8 | 0 | 0 | IN_SLOT | ✓ 212.4 | 1 | 0 |
+| 526 | B1 | IN_SLOT | ✓ 163.6 | 0 | 0 | IN_SLOT | ✓ 261.7 | 1 | 0 |
+| 527 | A1 | IN_SLOT | ✓ 152.8 | 0 | 0 | IN_SLOT | ✓ 213.8 | 1 | 0 |
+| 528 | A2 | IN_SLOT | ✓ 107.7 | 0 | 0 | IN_SLOT | ✓ 107.6 | 0 | 0 |
+| 529 | C3 | CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP | ✗ 118.0 | 0 | 2 | IN_SLOT | ✓ 217.8 | 1 | 0 |
+| 530 | B2 | IN_SLOT | ✓ 162.9 | 0 | 0 | IN_SLOT | ✓ 227.6 | 1 | 0 |
+
+**게이트 판정 (조건 P)**
+- G1 GT 슬롯 배치 **9/10** → 통과.
+- G2 자기 판정과 GT 일치 **10/10**, 거짓 IN_SLOT 0 → 통과.
+- G3 weld 0, 벽 접촉 0, `pose_source`는 모두 `gt_stub_eval_only` → 통과.
+- G4 **실패(1건, 529).** 들고 있는 채 `CARRY_TOP_GEOMETRY_AMBIGUOUS_FOR_DROP`로 끝났다(상자 z 0.171 m).
+- 다시 보기는 20개 실행 모두 N7 바닥 적합으로 확정됐고, 구역 B 목적지 8회 중 거짓 음성은 0이다(518 유형 해결).
+
+**조건 비교 (보조)**
+- S: 10/10 배치, 일치 10/10, 거짓 성공 0. 재장착은 8/10에서 1회씩 일어났다. P는 재장착 0, anchor 경고 0.
+- SIM 중앙값: P 159.4 s, S 221.7 s. 제어 단계 중앙값: P 329, S 442.5.
+- P가 성공한 9개 시드에서 쌍별 S−P 차이의 중앙값은 **+60.0 s**다. 재장착 1회의 비용이며, 재장착이 없던 521/528은 ±0.2 s다. creep 인공물을 없애면 같은 스킬이 약 60 s 빨라진다.
+
+**529 분석 (v4 후보, 이번 결과에는 반영하지 않음)**
+- C3 앞으로 가려고 구역 C 칠 위를 북쪽으로 지날 때, N7의 낮은 표면 높이 인계가 약 4 s 간격으로 세 번 났다(stale surface-height 목표 z<0.035). 앞의 두 grip check는 모두 ATTACHED였고, 세 번째에서 상한 2회에 걸려 종료했다.
+- 523(C1)에서도 1회 발생 뒤 통과했다. v2의 519도 같은 C3 목적지에서 났다. 구역 C 칠 위 운반 중의 체계적인 시각 오경보다.
+- S의 529는 재장착으로 경로와 시각이 달라져 성공했다(우연적 차이이며 조건 효과로 해석하지 않는다).
+- 후보: grip check를 통과한 뒤에는 같은 운반 구간에서 이 인계를 이동 거리 기준으로 억제하거나, 통과 뒤 stale 목표 높이를 갱신한다. 새 버전과 새 시드로만 평가한다.
+
 ## M1까지 남은 차단 요인
-1. 자세 추정기 연결: PR #177의 파티클 필터를 `PoseEstimate` 인터페이스에 붙여야 한다. 지금은 stub이다.
+1. 자세 추정기 연결: PR #178의 폐루프 추정기를 `PoseEstimate` 인터페이스에 붙여야 한다. 지금은 stub이며, #178 보고 이후에 한다.
 2. 문 통과 정책: carry_p30 주행과 look_p20 정지 관찰, 문기둥 태그(`_tags_v2`).
-3. v2로 접근 교착은 해결됨(격리 조건). 남은 것: 운반 중 보수적 정지(519), 다시 보기 거짓 음성(518), grip creep로 인한 약 60 s마다 재장착.
-4. 위치 추정 오차가 슬롯 배치(허용 ±6 cm)와 놓은 뒤 확인에 미치는 영향 측정.
+3. 접근 교착(v2), 다시 보기 거짓 음성(v3), creep 재장착(v3 P 조건)은 격리 조건에서 해결됐다. 남은 것은 구역 C 칠 위 N7 인계 반복(529)이다.
+4. 접촉 프로필 결정: zone 스킬을 `cargo_noslip_v1`로 운영할지 사용자 결정이 필요하다. 전역 solver 옵션이며, 팀 운반·교사·ACT 경로에는 아직 적용되지 않았다.
+5. 위치 추정 오차가 슬롯 배치(허용 ±6 cm)와 놓은 뒤 확인에 미치는 영향 측정.
 
 ## TensorBoard
 - 스냅샷: `outputs/tensorboard/0925-zone-owncam-skill`(run 7개: v1-s501…s505, v1-dev401/402).
@@ -243,7 +281,12 @@ v1·v2 파일은 바이트 그대로다. 테스트가 d016c04·edd075d 해시로
 - 보기 설정: `outputs/tensorboard-view.json`의 `zone_owncam_skill_v1_20260925` 키. 고정 카드는 reported_success, sim_s, commands, model_calls(0), wall_s다.
 - 공용 서버(PID 9291, 다른 작업 소유)에서 run이 나오는 것과 값이 원본과 같은 것을 확인했다. 모델 응답 시간은 LLM이 없어 해당 없음이다.
 
+- v3 스냅샷: `outputs/tensorboard/0926-zone-owncam-skill-v3`(run 34개: v3P-s521…530, v3S-s521…530, v3dev 4개, v2 기준 s511…520). 파생 보기는 `outputs/zone-owncam-skill-20260925/tensorboard-view-v3/`이고, 생성은 `build_tensorboard_v3.py`로 한다.
+  - 보기 키는 `zone_owncam_skill_v3_20260926`(HParams 열: policy, case, outcome, 성공, sim_s, commands).
+  - 공용 서버(PID 9291, 다른 작업 소유)에서 run 34개가 나오는 것과, 스칼라·HParams 세션 24개(v3) 값이 원본과 같은 것을 확인했다.
+
 ## 원자료 (로컬 전용, 원격 백업 아님)
+- v3: `grip-hold/{local_contact_fine,cargo_noslip_v1}/`, `dev-v3/*`, `cohort-v3-7322a96/{P,S}/<seed>/`와 `cohort.log`. 경로와 해시는 `results.json`의 `grip_hold_probe`, `v3_development_runs`, `v3_cohorts`에 있다.
 - 위치: 기본 체크아웃 `outputs/zone-owncam-skill-20260925/`. probe 2개, `cohort-d016c04/{501..505}`, `dev/*`, `cohort-d016c04/cohort.log`(시드별 부하 평균 포함).
 - 경로·SHA-256·부하 평균·단계 시각은 `results.json`에 있다.
 - 재생성: `python experiments/2026-09-25-zone-owncam-skill/build_results.py`.
