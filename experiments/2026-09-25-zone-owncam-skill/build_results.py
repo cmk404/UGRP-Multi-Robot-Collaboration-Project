@@ -16,6 +16,9 @@ PROBES = {'probe1_rest_drive_door': 'view-probe-4219506', 'probe2_door_first': '
 COHORT = 'cohort-d016c04'
 TEST_SEEDS = (501, 502, 503, 504, 505)
 DEV_RUNS = ('dev/401-a', 'dev/401-b', 'dev/402-a868328', 'dev/402-d016c04', 'dev/401-d016c04')
+V2_COHORT = 'cohort-v2-edd075d'
+V2_TEST_SEEDS = tuple(range(511, 521))
+V2_DEV_RUNS = ('dev-v2/403-a', 'dev-v2/404-a', 'dev-v2/404-b', 'dev-v2/405-b', 'dev-v2/405-c', 'dev-v2/406-c')
 
 
 def sha(path):
@@ -71,7 +74,8 @@ def run_summary(folder):
             'load_average_start': r['load_average_start'], 'load_average_end': r['load_average_end'],
             'wall_seconds': r['wall_seconds'],
             'artifact_sha256': json.loads((folder / 'hashes.json').read_text()),
-            'input_frames': len(list((folder / 'inputs').glob('*.jpg')))}
+            'input_frames': len(list((folder / 'inputs').glob('*.jpg'))),
+            'profile': r.get('profile'), 'sim_limit_s': r.get('sim_limit_s'), 'skill_summary': r.get('skill_summary')}
 
 
 def contact_sheet():
@@ -109,12 +113,30 @@ def main():
         'weld_eq_active_max': max((r['evaluation_only']['weld_eq_active_max'] for r in cohort), default=None),
         'sim_seconds': [r['sim_seconds'] for r in cohort],
         'face_normal_sources': [r['face_normal_source'] for r in cohort]}
+    v2 = [run_summary(RAW / V2_COHORT / str(s)) for s in V2_TEST_SEEDS if (RAW / V2_COHORT / str(s) / 'result.json').exists()]
+    out['v2_cohort'] = v2
+    out['v2_development_runs'] = [run_summary(RAW / d) for d in V2_DEV_RUNS if (RAW / d / 'result.json').exists()]
+    out['v2_cohort_summary'] = {
+        'n': len(v2), 'profile': 'wrist_zone_skill_v2', 'pose_source': 'gt_stub_eval_only', 'counts_as_m1': False,
+        'place_in_slot_gt': sum(r['evaluation_only']['place_in_slot_gt'] for r in v2),
+        'grasp_success_gt': sum(r['evaluation_only']['grasp_success_gt'] for r in v2),
+        'skill_claim_agrees_with_gt': sum(r['evaluation_only']['skill_claim_agrees_with_gt'] for r in v2),
+        'false_success': sum(r['evaluation_only']['skill_claim_in_slot'] and not r['evaluation_only']['place_in_slot_gt'] for r in v2),
+        'weld_eq_active_max': max((r['evaluation_only']['weld_eq_active_max'] for r in v2), default=None),
+        'wall_contact_steps': sum(r['evaluation_only']['r1_wall_contact_steps'] for r in v2),
+        'sim_seconds': [r['sim_seconds'] for r in v2], 'reasons': [r['reason'] for r in v2],
+        'reseats': [(r['skill_summary'] or {}).get('reseats') for r in v2],
+        'retreats': [(r['skill_summary'] or {}).get('retreats') for r in v2]}
+    v2_log = RAW / V2_COHORT / 'cohort.log'
+    if v2_log.exists():
+        out['v2_cohort_log'] = {'path': str(v2_log), 'sha256': sha(v2_log)}
     cohort_log = RAW / COHORT / 'cohort.log'
     if cohort_log.exists():
         out['cohort_log'] = {'path': str(cohort_log), 'sha256': sha(cohort_log)}
     (HERE / 'results.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     contact_sheet()
     print(json.dumps(out['cohort_summary'], ensure_ascii=False))
+    print(json.dumps(out['v2_cohort_summary'], ensure_ascii=False))
 
 
 if __name__ == '__main__':
