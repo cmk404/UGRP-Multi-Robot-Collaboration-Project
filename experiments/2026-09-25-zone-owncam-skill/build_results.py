@@ -42,6 +42,9 @@ V6_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_st
 V7_TEST_SEEDS = tuple(range(561, 573))
 V7_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay, '
                 'top-edge face yaw, static peer keep-outs, peers parked next to the box, face re-plan after guard'}
+V8_TEST_SEEDS = tuple(range(581, 591))
+V8_ARMS = {'P': 'cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay incl. west pickup '
+                'floor + door crossing, frame-relative approach cyan gate'}
 MISSING = 'missing/infrastructure_failure'
 
 
@@ -256,6 +259,17 @@ def cohort_stats_v7(runs):
     return stats
 
 
+def cohort_stats_v8(runs):
+    stats = cohort_stats_v7(runs)
+    west = [r for r in runs if str(r['scenario_setup_only']['bay']).startswith('W')]
+    stats.update({'west_seeds': [r['seed'] for r in west],
+                  'west_diagnostic_success': sum(bool(r['diagnostic_success']) for r in west),
+                  'east_diagnostic_success': sum(bool(r['diagnostic_success']) for r in runs if r not in west),
+                  'grasp_target_not_visible': [r['seed'] for r in runs if 'NOT_VISIBLE' in str(r['reason'])],
+                  'last_floor_gate': {r['seed']: (r['skill_summary'] or {}).get('last_floor_gate') for r in runs}})
+    return stats
+
+
 def contact_sheet():
     import cv2
     import numpy as np
@@ -380,6 +394,17 @@ def main():
         log = folder / 'cohort.log'
         if log.exists():
             out['v7_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
+    out['v8_development_runs'] = [run_summary_v5(f.parent) for f in sorted(RAW.glob('dev-v8/*/result.json'))]
+    out['v8_cohorts'] = {}
+    for folder in sorted(RAW.glob('cohort-v8-*')):
+        for arm, condition in V8_ARMS.items():
+            runs, missing = collect_preregistered(_loader(folder / arm, run_summary_v5), V8_TEST_SEEDS)
+            missing_all[f'v8:{folder.name}/{arm}'] = missing
+            out['v8_cohorts'][f'{folder.name}/{arm}'] = {'arm': arm, 'condition': condition, 'runs': runs,
+                                                         'missing': missing, 'summary': cohort_stats_v8(runs)}
+        log = folder / 'cohort.log'
+        if log.exists():
+            out['v8_cohorts'].setdefault('logs', {})[folder.name] = {'path': str(log), 'sha256': sha(log)}
     out['missing_seeds'] = {k: v for k, v in missing_all.items() if v}
     blocked = bool(out['missing_seeds'])
     out['cohort_report_blocked'] = blocked
@@ -393,7 +418,7 @@ def main():
     for key, value in {**out['v3_cohorts'], **out['v4_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
-    for key, value in {**out['v5_cohorts'], **out['v6_cohorts'], **out['v7_cohorts']}.items():
+    for key, value in {**out['v5_cohorts'], **out['v6_cohorts'], **out['v7_cohorts'], **out['v8_cohorts']}.items():
         if key != 'logs':
             print(key, json.dumps(value['summary'], ensure_ascii=False))
 
