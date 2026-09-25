@@ -220,6 +220,7 @@ class TeacherRobot:
         if self.phase not in ('idle', 'done', 'failed'):
             raise RuntimeError(f'{self.rid} is busy')
         self.job, self.phase, self.phase_started = dict(job), 'to_box', now
+        self.assigned_at = now
         self.attempts, self.outcome, self.path = 0, None, None
         self.log('assign', self.rid, now, job=job['job_id'])
 
@@ -240,6 +241,11 @@ class TeacherRobot:
             if other.phase in TAKEN_PHASES or other.outcome == 'placed_by_teacher':
                 return True
             if other.phase == 'align_box' and self.phase == 'to_box':
+                return True
+            # Both still driving to the same box would block each other at its
+            # one pregrasp spot: the robot sent first keeps it (tie: lower id).
+            if other.phase == 'to_box' and self.phase == 'to_box' and (
+                    (other.assigned_at, other.rid) < (self.assigned_at, self.rid)):
                 return True
         return False
 

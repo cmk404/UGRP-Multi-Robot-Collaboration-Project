@@ -91,7 +91,7 @@ def test_wide_rgb_detection_matches_the_setup_across_four_tops():
 def test_wide_teacher_paths_exist_from_every_spawn_to_every_box_and_slot():
     from scripts.zone_teacher import BOX_CLEARANCE_M, CARRY_RADIUS_M, GRASP_RADIUS_M, plan_path
     goal = {'A': {'red': 3}, 'B': {'cyan': 3}, 'C': {'green': 2, 'yellow': 1}}
-    for seed in (11, 12):
+    for seed in (11, 12, 13, 14):
         cfg = za.episode('zone_wide', seed, goal=goal, extra_boxes={'red': 1, 'cyan': 1, 'yellow': 1})
         static = cfg['static_map']
         boxes = {oid: o['position_m'][:2] for oid, o in cfg['setup_only']['objects'].items()}
@@ -451,6 +451,8 @@ def test_teacher_stops_the_second_robot_and_injected_grasps_stay_open():
     assert not a._taken_by_peer('cargo_box_00')
     b.phase = 'align_box'  # the peer already aligning wins over one still driving
     assert a._taken_by_peer('cargo_box_00')
+    b.phase, a.assigned_at, b.assigned_at = 'to_box', 60.8, 47.3  # both driving: the earlier job keeps the box
+    assert a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
     assert a._grip() == CLOSED
     a.job['inject'] = 'grasp_stays_open'
     assert a._grip() == OPEN
