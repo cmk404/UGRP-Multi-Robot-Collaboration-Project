@@ -562,3 +562,56 @@ def test_module_takes_no_host_decision_state():
     for func in (pk.build_request, pk.system_prompt, pk.public_map, pk.validate_order_sheet):
         names.update(inspect.signature(func).parameters)
     assert not (names & set(zp.FORBIDDEN_TRANSPORT_PARAMS))
+
+
+# --- one window end to end (offline, fixture replies) ---------------------
+
+@pytest.mark.parametrize('condition,seed', [('no_comm', 4), ('peer_ko', 4), ('leader_ko', 13),
+                                            ('structured', 4)])
+def test_one_window_round_trip_per_condition(condition, seed):
+    """request -> fixture reply -> validate -> relay -> inbox -> next request.
+
+    A fixture reply is an explicit offline stand-in, never a fallback for a
+    model failure, and the delivered messages only reach the named recipients.
+    """
+    s = zp.spec(condition)
+    t = zp.Transport(condition, seed=seed, item_ids=('long_beam-1', 'tile-1'),
+                     order_ids=('order-1', 'order-2'), roles=('end_neg', 'end_pos', 'west'),
+                     passages=('door_narrow', 'door_wide'), location_refs=('P1-2',))
+    t.open_window('w1', at_sim_s=10.)
+    lead = zp.leader_of(condition, seed=seed)
+    sent = 0
+    for rid in ROBOTS:
+        channel = dict(window={'window_id': 'w1'}, inbox=t.inbox(rid, now_sim_s=10.)) if s.channel_open else {}
+        request = pk.build_request(condition, rid, request_id=f'q-{rid}', inputs=inputs(), seed=seed,
+                                   **channel)
+        assert len(request['messages']) == 2 and len(request['images']) == 1
+        target = lead if (lead and rid != lead) else next(b for b in ROBOTS if b != (lead or rid))
+        messages = []
+        if s.channel_open:
+            body = {'recipients': [target], 'reply_to': None}
+            body.update({'text': f'{target}에게 보고합니다. order-1을 확인했습니다.'}
+                        if s.encoding == 'ko_free' else {'message': struct(act='inform')})
+            messages = [body]
+        reply = {'request_id': f'q-{rid}', 'action': {'kind': 'wait'},
+                 'decision_sources': ['static_map', 'own_rgb'], 'messages': messages}
+        value = zp.validate_reply(json.dumps(reply, ensure_ascii=False), request_id=f'q-{rid}',
+                                 condition=condition, actor=rid, order_ids=('order-1', 'order-2'),
+                                 item_ids=('long_beam-1', 'tile-1'),
+                                 roles_by_order={'order-1': ('end_neg', 'end_pos')},
+                                 passages=('door_narrow', 'door_wide'), location_refs=('P1-2',))
+        receipts = zp.relay(t, rid, value, at_sim_s=10. + 0.1 * len(ROBOTS))
+        sent += sum(r.accepted for r in receipts)
+    assert t.sent_count() == sent == (0 if not s.channel_open else 3)
+    if not s.channel_open:
+        assert all(t.inbox(rid, now_sim_s=99.) == () for rid in ROBOTS)
+        return
+    # the leader hears both followers; each robot only sees what was addressed to it
+    if lead:
+        assert len(t.inbox(lead, now_sim_s=99.)) == 2
+    after = pk.build_request(condition, ROBOTS[0], request_id='q-2', inputs=inputs(), seed=seed,
+                             window={'window_id': 'w1'}, inbox=t.inbox(ROBOTS[0], now_sim_s=99.),
+                             sent=('w1-r1-1',))
+    window = json.loads(after['messages'][1]['content'])['dialogue_window']
+    assert window['your_utterances_left'] == 1
+    assert all(set(m) <= set(zp.INBOX_FIELDS) for m in window['received'])
