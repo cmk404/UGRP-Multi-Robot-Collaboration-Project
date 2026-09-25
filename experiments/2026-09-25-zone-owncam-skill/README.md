@@ -396,6 +396,33 @@ v1·v2·v3 파일은 바이트 그대로다. 테스트가 해시로 고정한다
   - 회전 12회 또는 횡이동 40회 안에 수렴하지 않으면 재관측한다.
 - bay 접근: bay 서쪽 가장자리에서 0.25 m 떨어진 지점까지 정적 지도 경로로 간다. 이때 bay 전체를 장애물로 둔다. 그 뒤 N7 탐색과 접근을 한다.
 
+## v5 사전 등록 (시험 고정 커밋 전에 작성, 개발 데이터 수집과 분리)
+**개발 데이터 수집** (dev 시드 409–411, `outputs/.../dev-v5/`, 합산 금지)
+- 409-a: dirty, 첫 v5다. 면 추정 준비는 됐으나 N7 웨이포인트 접근에서 v2 무진전 후퇴 2회 → `GRASP_APPROACH_NO_PROGRESS`. 이것이 mecanum 면 정렬을 도입한 근거다.
+- 409-b, 410-a: dirty. 면 정렬 회전은 수렴했다(409-b: 13°→2°, 참값 1°). 횡이동은 0.06 × 0.3 s로 약 3 mm뿐이었고, 매번 yaw 창을 비워서 16회 한도에 걸렸다. 재관측 2회 뒤 `GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS`로 **정직하게 중단**했다(fallback 없음, IN_SLOT 주장 없음).
+- 409-c, 410-b: dirty. 횡이동 뒤 yaw 창 유지, 최대 0.08 × 1.0 s, 한도 회전 12 / 횡이동 40으로 바꿨다. 둘 다 IN_SLOT, GT 슬롯 ✓, 139 / 143 s. 409-c: 회전 6 + 횡이동 8, 정렬 뒤 yaw 0.18°, 슬롯 오차 (-10, -8) mm. 벽 접촉 0.
+- 411(깨끗한 dev 커밋 `25af375`, 구역 C3): IN_SLOT, GT 슬롯 ✓, 170.7 s, 벽 접촉 0.
+
+**시험 시드와 조건 (고정)**
+- 시드 **541–548**(8개). bay E1–E4에 각 2개다. bay 안 상자 오프셋은 ±0.14 m, **상자 yaw는 −28°…+27°**다. 목적지는 A1·A2·A3·B1·B2·B3·C1·C2를 섞었다(구역 C 2개).
+  - 상자 위치와 yaw는 setup 전용이며 스킬에는 주지 않는다. 표는 `scripts/run_zone_owncam_skill_v5.py`의 `SCENARIOS`에 있다.
+- 조건 **P**: 러너 v5 `--mode diagnostic --contact-profile cargo_noslip_v1`, 시드당 1회. `cargo_noslip_v1`은 사용자 결정 대기 중인 주 조건이다.
+- 한도: SIM 420 s, 제어 900단계. pose는 `gt_stub_eval_only`이므로 **M1 아님**. M1 모드는 추정기가 없어 실행을 거부한다(테스트로 확인).
+
+**판정 기준**
+- G1 `diagnostic_success`(GT 슬롯 배치 + 스킬 IN_SLOT 주장) ≥ 6/8. v4 9/10보다 낮춘 이유: bay 탐색과 회전된 상자를 처음 시험한다.
+- G2 거짓 IN_SLOT 0, 스킬 판정과 GT 일치 ≥ 7/8.
+- G3 모든 파지의 면 법선이 자기 RGB inlier 투표에서 나온다(`face_evidence` 존재). 지도 법선 사용 0(구조상 불가, 결과로 확인). 면 실패는 재관측 또는 중단으로만 끝난다.
+- G4 계약: 모든 결과가 `validate_outcome`을 통과한다. `counts_as_m1 = m1_success = false`, `cameras_seen = [robot_cam]`, 관측 거부 0, `source_changed_during_run = false`, 시작 시점 트리가 깨끗하다.
+- G5 weld 0. physics step 단위 화물–벽·r1–벽 접촉을 보고한다(목표 0, 발생하면 힘·거리와 함께 적는다).
+- G6 등록 시드 8개가 모두 있다. 없으면 `missing/infrastructure_failure`로 보고가 막힌다.
+- 보고 항목: 재관측 수, 면 정렬 회전·횡이동 수, SIM 시간, 제어 단계 수, 벽 접촉 힘.
+
+**중단 규칙**
+- 시험 커밋 SHA 고정, 깨끗한 트리. 코호트 동안 worktree에 파일을 만들지 않는다.
+- 거짓 IN_SLOT이 나오면 즉시 멈춘다. 첫 제어 단계 전 인프라 예외만 1회 재실행하고 기록한다.
+- 동시 SIM 2개, 스레드 1. 시드별 부하 평균은 `cohort.log`에 남긴다. 코호트 뒤 조정은 새 버전으로만 한다.
+
 ## M1까지 남은 차단 요인
 1. 자세 추정기 연결: PR #178의 폐루프 추정기를 `PoseEstimate` 인터페이스에 붙여야 한다. 지금은 stub이며, #178 보고 이후에 한다.
 2. 문 통과 정책: carry_p30 주행과 look_p20 정지 관찰, 문기둥 태그(`_tags_v2`).
