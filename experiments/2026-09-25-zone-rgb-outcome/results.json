@@ -1,0 +1,1574 @@
+{
+ "schema": "ugrp.zone_rgb_outcome.results.v1",
+ "date": "2026-09-25",
+ "module": "harness/zone_rgb_outcome.py",
+ "module_sha256_scored": "58126da38bfb9355ec14acf8e33c5da999cf29b69b326000961a33d677e5da22",
+ "frozen_for_test_commit": "88b033a",
+ "split_file_sha256": "9fc6d337159d85951d2ef126972d5b0812a69903d3e22168de7f70d2474ea40e",
+ "outputs_root": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925 (primary checkout, local only; not a remote backup)",
+ "commit_confidence": 0.6,
+ "recheck_delays_s": [
+  0,
+  0.5,
+  1,
+  2,
+  4,
+  8
+ ],
+ "gt_definition": "eval only, job box simulator pose at the check time: delivered = on floor (z<0.05) inside the job zone rect; still_at_source = on floor within 0.15 m of its pose at assignment; elsewhere = otherwise (incl. carried)",
+ "splits": {
+  "dev": {
+   "score_file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925/dev/score-dev-top_zone_v2.json",
+   "score_sha256": "8edd0e0f33f5fb7760fd48e29d1312628b51ffd0c50eae33bbb4a03c4b71beaf",
+   "source_sha_at_scoring": "f0cd98ee749fd73b756f50414961949cad57a955",
+   "summary": {
+    "jobs": 151,
+    "at_job_end": {
+     "matrix": {
+      "delivered": {
+       "delivered": 114,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 0
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 28,
+       "seen_elsewhere": 0,
+       "not_seen": 5
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 1,
+       "not_seen": 3
+      }
+     },
+     "n": 151,
+     "correct": 143,
+     "not_seen": 8,
+     "false_delivered": 0
+    },
+    "committed_within_8s": {
+     "matrix": {
+      "delivered": {
+       "delivered": 114,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 0
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 32,
+       "seen_elsewhere": 0,
+       "not_seen": 1
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 3,
+       "not_seen": 1
+      }
+     },
+     "n": 151,
+     "correct": 149,
+     "not_seen": 2,
+     "false_delivered": 0
+    },
+    "committed_by_teacher_outcome": {
+     "grasp_failed_by_teacher": {
+      "delivered": 0,
+      "still_at_source": 6,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "placed_by_teacher": {
+      "delivered": 114,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "box_taken_by_peer": {
+      "delivered": 0,
+      "still_at_source": 21,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "teacher_path_blocked": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 1,
+      "not_seen": 1
+     },
+     "dropped_in_transit": {
+      "delivered": 0,
+      "still_at_source": 1,
+      "seen_elsewhere": 2,
+      "not_seen": 1
+     },
+     "unfinished_at_run_end": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     }
+    },
+    "time_to_detect": {
+     "delivered": {
+      "jobs": 114,
+      "detected_within_8s": 114,
+      "at_0s": 114,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "still_at_source": {
+      "jobs": 33,
+      "detected_within_8s": 32,
+      "at_0s": 28,
+      "median_s": 0.0,
+      "max_s": 2.0
+     },
+     "elsewhere": {
+      "jobs": 4,
+      "detected_within_8s": 3,
+      "at_0s": 1,
+      "median_s": 1.0,
+      "max_s": 4.0
+     }
+    }
+   },
+   "raw_delivered_on_non_delivered_any_delay": [],
+   "misses": [
+    {
+     "run": "zone-communication-20260925/gate-independent-graspfail",
+     "job_id": "r2-1",
+     "kind": "red",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      22,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      2.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate-plan_first-graspfail",
+     "job_id": "r2-1",
+     "kind": "red",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      22,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate2-independent-graspfail",
+     "job_id": "r2-1",
+     "kind": "red",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      22,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      2.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate2-plan_first-graspfail",
+     "job_id": "r2-1",
+     "kind": "red",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      22,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-2",
+     "job_id": "r2-1",
+     "kind": "red",
+     "teacher_outcome": "dropped_in_transit",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      21,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "elsewhere",
+      8.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-2",
+     "job_id": "r3-1",
+     "kind": "cyan",
+     "teacher_outcome": "dropped_in_transit",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      33,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "seen_elsewhere",
+      "elsewhere",
+      4.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-3",
+     "job_id": "r3-1",
+     "kind": "cyan",
+     "teacher_outcome": "teacher_path_blocked",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      12,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "seen_elsewhere",
+      "elsewhere",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-4",
+     "job_id": "r1-2",
+     "kind": "green",
+     "teacher_outcome": "teacher_path_blocked",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      24,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.5
+     ]
+    }
+   ],
+   "render": {
+    "source_sha": "e6b653662821f2b1a45855b9699ee3aadfecf2e4",
+    "load_avg_start": [
+     5.26,
+     8.95,
+     22.23
+    ],
+    "load_avg_end": [
+     14.05,
+     9.11,
+     17.32
+    ],
+    "wall_s": 367.7,
+    "manifest_sha256": "c40390f84cd617d3cdbb5ecd7eb1187d29d16fd41cabe0fced5629e60a0c85b3"
+   }
+  },
+  "test": {
+   "score_file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925/test/score-test-top_zone_v2.json",
+   "score_sha256": "4118b099793750427ba8e7639a90fb921a4a5a3b51ea979786c050d594823ff9",
+   "source_sha_at_scoring": "88b033a7ec4c2dffa19721e5904ae4e5dc1643fb",
+   "summary": {
+    "jobs": 204,
+    "at_job_end": {
+     "matrix": {
+      "delivered": {
+       "delivered": 164,
+       "still_at_source": 0,
+       "seen_elsewhere": 1,
+       "not_seen": 0
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 33,
+       "seen_elsewhere": 0,
+       "not_seen": 5
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 1
+      }
+     },
+     "n": 204,
+     "correct": 197,
+     "not_seen": 6,
+     "false_delivered": 0
+    },
+    "committed_within_8s": {
+     "matrix": {
+      "delivered": {
+       "delivered": 164,
+       "still_at_source": 0,
+       "seen_elsewhere": 1,
+       "not_seen": 0
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 39,
+       "seen_elsewhere": 0,
+       "not_seen": 0
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 0
+      }
+     },
+     "n": 204,
+     "correct": 203,
+     "not_seen": 0,
+     "false_delivered": 0
+    },
+    "committed_by_teacher_outcome": {
+     "placed_by_teacher": {
+      "delivered": 164,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "grasp_failed_by_teacher": {
+      "delivered": 0,
+      "still_at_source": 8,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "box_taken_by_peer": {
+      "delivered": 0,
+      "still_at_source": 23,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "teacher_path_blocked": {
+      "delivered": 0,
+      "still_at_source": 7,
+      "seen_elsewhere": 1,
+      "not_seen": 0
+     },
+     "unfinished_at_run_end": {
+      "delivered": 0,
+      "still_at_source": 1,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     }
+    },
+    "time_to_detect": {
+     "delivered": {
+      "jobs": 165,
+      "detected_within_8s": 164,
+      "at_0s": 164,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "still_at_source": {
+      "jobs": 38,
+      "detected_within_8s": 38,
+      "at_0s": 33,
+      "median_s": 0.0,
+      "max_s": 1.0
+     },
+     "elsewhere": {
+      "jobs": 1,
+      "detected_within_8s": 1,
+      "at_0s": 0,
+      "median_s": 2.0,
+      "max_s": 2.0
+     }
+    },
+    "skipped_jobs": [
+     {
+      "run": "zone-dispatch-20260925/Z1-G8-dyn",
+      "job_id": "r2-2",
+      "reason": "no_after_frame"
+     },
+     {
+      "run": "zone-dispatch-20260925/Z1-G8-dyn",
+      "job_id": "r3-2",
+      "reason": "no_after_frame"
+     }
+    ]
+   },
+   "raw_delivered_on_non_delivered_any_delay": [],
+   "misses": [
+    {
+     "run": "zone-communication-20260925/ZC2-s12-dynamic-graspfail",
+     "job_id": "r3-1",
+     "kind": "green",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      54,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s12-plan_first-graspfail",
+     "job_id": "r2-1",
+     "kind": "cyan",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      161,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-graspfail",
+     "job_id": "r2-1",
+     "kind": "cyan",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      143,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      0.5
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-independent-graspfail",
+     "job_id": "r2-1",
+     "kind": "green",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      50,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s14-dynamic-graspfail",
+     "job_id": "r1-1",
+     "kind": "green",
+     "teacher_outcome": "grasp_failed_by_teacher",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      54,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      1.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z1-G8-dyn",
+     "job_id": "r1-1",
+     "kind": "cyan",
+     "teacher_outcome": "teacher_path_blocked",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      93,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "still_at_source",
+      "still_at_source",
+      2.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z1-G8-plan",
+     "job_id": "r3-1",
+     "kind": "red",
+     "teacher_outcome": "teacher_path_blocked",
+     "at_end": [
+      "seen_elsewhere",
+      "delivered",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target"
+      ]
+     ],
+     "committed": [
+      "seen_elsewhere",
+      "delivered",
+      0.0
+     ]
+    }
+   ],
+   "render": {
+    "source_sha": "f0cd98ee749fd73b756f50414961949cad57a955",
+    "load_avg_start": [
+     6.61,
+     7.26,
+     17.75
+    ],
+    "load_avg_end": [
+     28.88,
+     33.06,
+     25.4
+    ],
+    "wall_s": 746.2,
+    "manifest_sha256": "5cf1cd88e6ac2970bc8405437d5b8111ee9b6c92170eb5f7f8dee61f7c03efea"
+   }
+  },
+  "synth-dev": {
+   "score_file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925/synth-dev/score-synth-dev-top_zone_v2.json",
+   "score_sha256": "c138b361fecb79c1b7df38605bf4dfe432bc36e76fa4ac33e828344aa1c7367d",
+   "source_sha_at_scoring": "f0cd98ee749fd73b756f50414961949cad57a955",
+   "summary": {
+    "jobs": 36,
+    "at_job_end": {
+     "matrix": {
+      "delivered": {
+       "delivered": 6,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 2
+      },
+      "still_at_source": {
+       "delivered": 1,
+       "still_at_source": 10,
+       "seen_elsewhere": 0,
+       "not_seen": 5
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 11,
+       "not_seen": 1
+      }
+     },
+     "n": 36,
+     "correct": 27,
+     "not_seen": 8,
+     "false_delivered": 1
+    },
+    "committed_within_8s": {
+     "matrix": {
+      "delivered": {
+       "delivered": 6,
+       "still_at_source": 0,
+       "seen_elsewhere": 0,
+       "not_seen": 2
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 9,
+       "seen_elsewhere": 0,
+       "not_seen": 7
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 11,
+       "not_seen": 1
+      }
+     },
+     "n": 36,
+     "correct": 26,
+     "not_seen": 10,
+     "false_delivered": 0
+    },
+    "committed_by_teacher_outcome": {
+     "synthetic:drop_mid_route_visible": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 4,
+      "not_seen": 0
+     },
+     "synthetic:drop_under_robot": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 3,
+      "not_seen": 1
+     },
+     "synthetic:grasp_fail_robot_at_pregrasp": {
+      "delivered": 0,
+      "still_at_source": 4,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "synthetic:grasp_fail_robot_over_source": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:peer_same_kind_other_slot_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 1,
+      "seen_elsewhere": 0,
+      "not_seen": 1
+     },
+     "synthetic:peer_same_kind_own_slot_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:placed_arm_over_target": {
+      "delivered": 4,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "synthetic:placed_robot_over_target": {
+      "delivered": 2,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:wrong_kind_in_target_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:wrong_zone": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 4,
+      "not_seen": 0
+     }
+    },
+    "time_to_detect": {
+     "delivered": {
+      "jobs": 8,
+      "detected_within_8s": 6,
+      "at_0s": 6,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "still_at_source": {
+      "jobs": 16,
+      "detected_within_8s": 9,
+      "at_0s": 9,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "elsewhere": {
+      "jobs": 12,
+      "detected_within_8s": 11,
+      "at_0s": 11,
+      "median_s": 0.0,
+      "max_s": 0.0
+     }
+    },
+    "synthetic_cases": {
+     "drop_mid_route_visible": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 4
+      }
+     },
+     "drop_under_robot": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 3,
+       "not_seen": 1
+      }
+     },
+     "grasp_fail_robot_at_pregrasp": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "still_at_source": 4
+      }
+     },
+     "grasp_fail_robot_over_source": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "still_at_source": 2,
+       "not_seen": 2
+      }
+     },
+     "peer_same_kind_other_slot_source_occluded": {
+      "n": 2,
+      "safe": 2,
+      "outcomes": {
+       "still_at_source": 1,
+       "not_seen": 1
+      }
+     },
+     "peer_same_kind_own_slot_source_occluded": {
+      "n": 2,
+      "safe": 1,
+      "outcomes": {
+       "not_seen": 2
+      }
+     },
+     "placed_arm_over_target": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "delivered": 4
+      }
+     },
+     "placed_robot_over_target": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "not_seen": 2,
+       "delivered": 2
+      }
+     },
+     "wrong_kind_in_target_source_occluded": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "still_at_source": 2,
+       "not_seen": 2
+      }
+     },
+     "wrong_zone": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 4
+      }
+     }
+    }
+   },
+   "raw_delivered_on_non_delivered_any_delay": [
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:peer_same_kind_own_slot_source_occluded",
+     "delay_s": 0.0,
+     "gt": "still_at_source",
+     "rule": "delivered_source_occluded",
+     "confidence": 0.5
+    }
+   ],
+   "misses": [
+    {
+     "run": "zone-communication-20260925/gate-dynamic-nominal",
+     "job_id": "r1-1:peer_same_kind_own_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_own_slot_source_occluded",
+     "at_end": [
+      "still_at_source",
+      "still_at_source",
+      152,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "new_item_in_target_but_source_still_seen"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate-dynamic-nominal",
+     "job_id": "r1-1:placed_robot_over_target",
+     "kind": "red",
+     "teacher_outcome": "synthetic:placed_robot_over_target",
+     "at_end": [
+      "not_seen",
+      "delivered",
+      9,
+      [
+       "new_same_kind_in_zone_while_target_hidden",
+       "source_empty_item_not_found",
+       "target_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "delivered",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate-dynamic-nominal",
+     "job_id": "r1-2:grasp_fail_robot_over_source",
+     "kind": "green",
+     "teacher_outcome": "synthetic:grasp_fail_robot_over_source",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/gate-dynamic-nominal",
+     "job_id": "r1-2:wrong_kind_in_target_source_occluded",
+     "kind": "green",
+     "teacher_outcome": "synthetic:wrong_kind_in_target_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:grasp_fail_robot_over_source",
+     "kind": "red",
+     "teacher_outcome": "synthetic:grasp_fail_robot_over_source",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:peer_same_kind_other_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_other_slot_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:peer_same_kind_own_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_own_slot_source_occluded",
+     "at_end": [
+      "delivered",
+      "still_at_source",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:placed_robot_over_target",
+     "kind": "red",
+     "teacher_outcome": "synthetic:placed_robot_over_target",
+     "at_end": [
+      "not_seen",
+      "delivered",
+      31,
+      [
+       "new_same_kind_in_zone_while_target_hidden",
+       "source_empty_item_not_found",
+       "target_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "delivered",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-1:wrong_kind_in_target_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:wrong_kind_in_target_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/dev-fixture-7",
+     "job_id": "r1-2:drop_under_robot",
+     "kind": "yellow",
+     "teacher_outcome": "synthetic:drop_under_robot",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      0,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "elsewhere",
+      0.0
+     ]
+    }
+   ],
+   "render": {
+    "source_sha": "e6b653662821f2b1a45855b9699ee3aadfecf2e4",
+    "load_avg_start": [
+     4.93,
+     7.87,
+     20.48
+    ],
+    "load_avg_end": [
+     5.75,
+     7.9,
+     20.27
+    ],
+    "method": "render-only: qpos edit of a recorded replay state + mj_forward; no stepping",
+    "cases": {
+     "drop_mid_route_visible": "box on the floor half way to the target, robot stopped 0.45 m behind it",
+     "drop_under_robot": "box half way, 0.13 m in front of the stopped robot (under its front)",
+     "grasp_fail_robot_at_pregrasp": "box at source, robot at the pregrasp pose 0.255 m west",
+     "grasp_fail_robot_over_source": "box at source, robot 0.10 m west (chassis over it)",
+     "placed_robot_over_target": "box in its slot, robot 0.10 m west of the slot (chassis over it)",
+     "placed_arm_over_target": "box in its slot, robot at the release pose 0.235 m west",
+     "wrong_zone": "box in a slot of another zone, robot backed off",
+     "wrong_kind_in_target_source_occluded": "own box at source under the robot; a different-kind box in the own slot",
+     "peer_same_kind_other_slot_source_occluded": "own box at source under the robot; a same-kind box in another slot of the zone",
+     "peer_same_kind_own_slot_source_occluded": "own box at source under the robot; a same-kind box in the OWN slot (colour cannot tell boxes apart)"
+    }
+   }
+  },
+  "synth-test": {
+   "score_file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925/synth-test/score-synth-test-top_zone_v2.json",
+   "score_sha256": "4b445d4bf2ac69420ed13c59978360c1f349ab273f9b86e6d6eef26473357dbe",
+   "source_sha_at_scoring": "88b033a7ec4c2dffa19721e5904ae4e5dc1643fb",
+   "summary": {
+    "jobs": 38,
+    "at_job_end": {
+     "matrix": {
+      "delivered": {
+       "delivered": 5,
+       "still_at_source": 0,
+       "seen_elsewhere": 1,
+       "not_seen": 2
+      },
+      "still_at_source": {
+       "delivered": 2,
+       "still_at_source": 10,
+       "seen_elsewhere": 0,
+       "not_seen": 6
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 11,
+       "not_seen": 1
+      }
+     },
+     "n": 38,
+     "correct": 26,
+     "not_seen": 9,
+     "false_delivered": 2
+    },
+    "committed_within_8s": {
+     "matrix": {
+      "delivered": {
+       "delivered": 5,
+       "still_at_source": 0,
+       "seen_elsewhere": 1,
+       "not_seen": 2
+      },
+      "still_at_source": {
+       "delivered": 0,
+       "still_at_source": 9,
+       "seen_elsewhere": 0,
+       "not_seen": 9
+      },
+      "elsewhere": {
+       "delivered": 0,
+       "still_at_source": 0,
+       "seen_elsewhere": 11,
+       "not_seen": 1
+      }
+     },
+     "n": 38,
+     "correct": 25,
+     "not_seen": 12,
+     "false_delivered": 0
+    },
+    "committed_by_teacher_outcome": {
+     "synthetic:drop_mid_route_visible": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 4,
+      "not_seen": 0
+     },
+     "synthetic:drop_under_robot": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 3,
+      "not_seen": 1
+     },
+     "synthetic:grasp_fail_robot_at_pregrasp": {
+      "delivered": 0,
+      "still_at_source": 4,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "synthetic:grasp_fail_robot_over_source": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:peer_same_kind_other_slot_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 1,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:peer_same_kind_own_slot_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 3
+     },
+     "synthetic:placed_arm_over_target": {
+      "delivered": 4,
+      "still_at_source": 0,
+      "seen_elsewhere": 0,
+      "not_seen": 0
+     },
+     "synthetic:placed_robot_over_target": {
+      "delivered": 1,
+      "still_at_source": 0,
+      "seen_elsewhere": 1,
+      "not_seen": 2
+     },
+     "synthetic:wrong_kind_in_target_source_occluded": {
+      "delivered": 0,
+      "still_at_source": 2,
+      "seen_elsewhere": 0,
+      "not_seen": 2
+     },
+     "synthetic:wrong_zone": {
+      "delivered": 0,
+      "still_at_source": 0,
+      "seen_elsewhere": 4,
+      "not_seen": 0
+     }
+    },
+    "time_to_detect": {
+     "delivered": {
+      "jobs": 8,
+      "detected_within_8s": 5,
+      "at_0s": 5,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "still_at_source": {
+      "jobs": 18,
+      "detected_within_8s": 9,
+      "at_0s": 9,
+      "median_s": 0.0,
+      "max_s": 0.0
+     },
+     "elsewhere": {
+      "jobs": 12,
+      "detected_within_8s": 11,
+      "at_0s": 11,
+      "median_s": 0.0,
+      "max_s": 0.0
+     }
+    },
+    "synthetic_cases": {
+     "drop_mid_route_visible": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 4
+      }
+     },
+     "drop_under_robot": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 3,
+       "not_seen": 1
+      }
+     },
+     "grasp_fail_robot_at_pregrasp": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "still_at_source": 4
+      }
+     },
+     "grasp_fail_robot_over_source": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "not_seen": 2,
+       "still_at_source": 2
+      }
+     },
+     "peer_same_kind_other_slot_source_occluded": {
+      "n": 3,
+      "safe": 3,
+      "outcomes": {
+       "not_seen": 2,
+       "still_at_source": 1
+      }
+     },
+     "peer_same_kind_own_slot_source_occluded": {
+      "n": 3,
+      "safe": 3,
+      "outcomes": {
+       "not_seen": 3
+      }
+     },
+     "placed_arm_over_target": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "delivered": 4
+      }
+     },
+     "placed_robot_over_target": {
+      "n": 4,
+      "safe": 3,
+      "outcomes": {
+       "not_seen": 2,
+       "delivered": 1,
+       "seen_elsewhere": 1
+      }
+     },
+     "wrong_kind_in_target_source_occluded": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "not_seen": 2,
+       "still_at_source": 2
+      }
+     },
+     "wrong_zone": {
+      "n": 4,
+      "safe": 4,
+      "outcomes": {
+       "seen_elsewhere": 4
+      }
+     }
+    }
+   },
+   "raw_delivered_on_non_delivered_any_delay": [
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:peer_same_kind_own_slot_source_occluded",
+     "delay_s": 0.0,
+     "gt": "still_at_source",
+     "rule": "delivered_source_occluded",
+     "confidence": 0.5
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:peer_same_kind_own_slot_source_occluded",
+     "delay_s": 0.0,
+     "gt": "still_at_source",
+     "rule": "delivered_source_occluded",
+     "confidence": 0.5
+    }
+   ],
+   "misses": [
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:grasp_fail_robot_over_source",
+     "kind": "red",
+     "teacher_outcome": "synthetic:grasp_fail_robot_over_source",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      50,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:peer_same_kind_other_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_other_slot_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      50,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:peer_same_kind_own_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_own_slot_source_occluded",
+     "at_end": [
+      "delivered",
+      "still_at_source",
+      50,
+      []
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:placed_robot_over_target",
+     "kind": "red",
+     "teacher_outcome": "synthetic:placed_robot_over_target",
+     "at_end": [
+      "not_seen",
+      "delivered",
+      9,
+      [
+       "source_empty_item_not_found",
+       "target_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "delivered",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-1:wrong_kind_in_target_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:wrong_kind_in_target_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      50,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-2:peer_same_kind_own_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_own_slot_source_occluded",
+     "at_end": [
+      "still_at_source",
+      "still_at_source",
+      107,
+      [
+       "new_item_in_target_but_source_still_seen"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+     "job_id": "r1-2:placed_robot_over_target",
+     "kind": "red",
+     "teacher_outcome": "synthetic:placed_robot_over_target",
+     "at_end": [
+      "not_seen",
+      "delivered",
+      0,
+      [
+       "source_empty_item_not_found",
+       "target_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "delivered",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-1:drop_under_robot",
+     "kind": "green",
+     "teacher_outcome": "synthetic:drop_under_robot",
+     "at_end": [
+      "not_seen",
+      "elsewhere",
+      34,
+      [
+       "source_empty_item_not_found"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "elsewhere",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:grasp_fail_robot_over_source",
+     "kind": "red",
+     "teacher_outcome": "synthetic:grasp_fail_robot_over_source",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:peer_same_kind_other_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_other_slot_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "new_same_kind_in_zone_outside_target",
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:peer_same_kind_own_slot_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:peer_same_kind_own_slot_source_occluded",
+     "at_end": [
+      "delivered",
+      "still_at_source",
+      107,
+      []
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:placed_robot_over_target",
+     "kind": "red",
+     "teacher_outcome": "synthetic:placed_robot_over_target",
+     "at_end": [
+      "seen_elsewhere",
+      "delivered",
+      31,
+      []
+     ],
+     "committed": [
+      "seen_elsewhere",
+      "delivered",
+      0.0
+     ]
+    },
+    {
+     "run": "zone-dispatch-20260925/Z3-G8-dyn",
+     "job_id": "r1-2:wrong_kind_in_target_source_occluded",
+     "kind": "red",
+     "teacher_outcome": "synthetic:wrong_kind_in_target_source_occluded",
+     "at_end": [
+      "not_seen",
+      "still_at_source",
+      107,
+      [
+       "source_occluded"
+      ]
+     ],
+     "committed": [
+      "not_seen",
+      "still_at_source",
+      0.0
+     ]
+    }
+   ],
+   "render": {
+    "source_sha": "88b033a7ec4c2dffa19721e5904ae4e5dc1643fb",
+    "load_avg_start": [
+     25.22,
+     32.13,
+     25.16
+    ],
+    "load_avg_end": [
+     20.89,
+     30.84,
+     24.82
+    ],
+    "method": "render-only: qpos edit of a recorded replay state + mj_forward; no stepping",
+    "cases": {
+     "drop_mid_route_visible": "box on the floor half way to the target, robot stopped 0.45 m behind it",
+     "drop_under_robot": "box half way, 0.13 m in front of the stopped robot (under its front)",
+     "grasp_fail_robot_at_pregrasp": "box at source, robot at the pregrasp pose 0.255 m west",
+     "grasp_fail_robot_over_source": "box at source, robot 0.10 m west (chassis over it)",
+     "placed_robot_over_target": "box in its slot, robot 0.10 m west of the slot (chassis over it)",
+     "placed_arm_over_target": "box in its slot, robot at the release pose 0.235 m west",
+     "wrong_zone": "box in a slot of another zone, robot backed off",
+     "wrong_kind_in_target_source_occluded": "own box at source under the robot; a different-kind box in the own slot",
+     "peer_same_kind_other_slot_source_occluded": "own box at source under the robot; a same-kind box in another slot of the zone",
+     "peer_same_kind_own_slot_source_occluded": "own box at source under the robot; a same-kind box in the OWN slot (colour cannot tell boxes apart)"
+    }
+   }
+  }
+ },
+ "replay_validation": {
+  "frames": 106,
+  "max_mean_abs": 0.1296,
+  "max_frac_gt20": 0.0021,
+  "file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-20260925/replay-validation.json",
+  "sha256": "093a3811fad03527a3f683058741f0b5f2cc32af31252072beeddd9485a9cc6b",
+  "load_avg": [
+   6.12,
+   15.18,
+   19.25
+  ]
+ }
+}
