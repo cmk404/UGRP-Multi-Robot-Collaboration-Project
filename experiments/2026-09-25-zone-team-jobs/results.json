@@ -1,0 +1,780 @@
+{
+  "schema": "ugrp.experiment.zone_team_jobs_a1.v1",
+  "date": "2026-09-25",
+  "source_sha": "f9446a2289abff52e1ded014d2735bd449d7c36f",
+  "base": {
+    "main": "ad18b93",
+    "note": "started as 12695bc + merge of PR #164 branch (941ff7f, never pushed); PR #164 merged to main during the work, branch moved onto ad18b93"
+  },
+  "condition": "GT TEACHER on an open zone_wide floor patch, weld OFF, synchronous SIM; not RGB/student, not zone-dispatch",
+  "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+  "untouched_files_phase_a1": [
+    "scripts/zone_teacher.py",
+    "scripts/run_zone_dispatch.py",
+    "harness/zone_coordination.py",
+    "harness/zone_perception.py",
+    "sim/zone_arena.py",
+    "sim/zone_scene.py",
+    "maps/zones/*"
+  ],
+  "execution_bundle_registry_touched": false,
+  "rendezvous_rule": {
+    "rule": "all formation stations physically occupied by robots whose own claims share one spec",
+    "tol_m": 0.1,
+    "tol_rad": 0.35,
+    "wait_s": 60.0,
+    "near_item_m": 0.5,
+    "uses_robot_ids": false,
+    "reads_peer_claims_of_robots_not_at_station": false
+  },
+  "landing_capacity_zone_wide": {
+    "cyan": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "green": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "red": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "yellow": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "can": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "tile": {
+      "required_carriers": 1,
+      "landing_yaw_deg": -0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "long_beam": {
+      "required_carriers": 2,
+      "landing_yaw_deg": 90.0,
+      "bay_length_m": 1.11,
+      "max_per_zone_by_length": 1
+    },
+    "heavy_crate": {
+      "required_carriers": 2,
+      "landing_yaw_deg": 0.0,
+      "bay_length_m": 0.3,
+      "max_per_zone_by_length": 4
+    },
+    "tri_frame": {
+      "required_carriers": 3,
+      "landing_yaw_deg": 90.0,
+      "bay_length_m": 0.8784,
+      "max_per_zone_by_length": 1
+    }
+  },
+  "unit_tests": {
+    "file": "tests/test_zone_team_jobs.py",
+    "result": "41 collected: 40 passed, 1 skipped (static_keepouts not on this branch); with tests/test_simulation_workflow_manager.py 58 passed, 1 skipped"
+  },
+  "ci": {
+    "command": "PYTHONPATH=. .venv-sim-worker-mac/bin/python scripts/run_ci_tests.py",
+    "source_sha": "f9446a2",
+    "result": "2313 passed, 10 skipped, 1 xfailed (existing L1 strict xfail), 205 subtests passed",
+    "wall_s": 293.14
+  },
+  "static_keepouts_check": {
+    "module": "harness/static_keepouts.py on claude/zone-hard-routes (local commit c6cd334e3d45ad96a598893f4093b88bda8acc7a, not pushed)",
+    "file_sha256": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "kinds": [
+      "long_beam",
+      "heavy_crate",
+      "tri_frame"
+    ],
+    "clear_far": true,
+    "blocked_overlapping_wall": true,
+    "swept_blocked_through_wall": true,
+    "bounds_rejects_near_east_wall": true,
+    "hull_clear_samples": 954,
+    "hull_clear_but_union_blocked": 0,
+    "ci_test": "test_team_footprint_is_consumed_by_static_keepouts (skipped until the module is on the branch)"
+  },
+  "smokes": {
+    "pair_beam": {
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0617,
+      "placement": {
+        "pos_err_m": 0.0036,
+        "yaw_err_deg": 0.01,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      },
+      "eq_active_max": 0,
+      "weld": "off",
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "max_cargo_tilt_deg": {
+        "lift": 0.03,
+        "hold": 0.03,
+        "carry": 0.02
+      },
+      "max_robot_tilt_deg": 0.09,
+      "max_slip_mm": {
+        "r1": 5.2,
+        "r2": 5.2
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0676,
+        "r2": 0.1511
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "grasp_forces_n": {
+        "r1": [
+          5.36,
+          5.36
+        ],
+        "r2": [
+          5.36,
+          5.36
+        ]
+      },
+      "max_track_err_m": 0.0439,
+      "phase_sim_s": {
+        "to_station": 6.0,
+        "approach": 1.9,
+        "grasp": 3.0,
+        "lift": 1.6,
+        "hold": 1.6,
+        "carry": 34.6,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.4,
+        "back_off": 2.5
+      },
+      "sim_time_s": 56.1,
+      "wall_s": 279.5,
+      "load_avg_1m": {
+        "start": 285.0,
+        "end": 197.16
+      },
+      "scene_xml_sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "f9446a2289abff52e1ded014d2735bd449d7c36f",
+      "git_dirty": false,
+      "standoff_m": {
+        "r1": 0.3,
+        "r2": 0.55
+      },
+      "arrived_sim_s": {
+        "r1": 3.9,
+        "r2": 6.0
+      },
+      "rendezvous_rule": {
+        "rule": "all formation stations physically occupied by robots whose own claims share one spec",
+        "tol_m": 0.1,
+        "tol_rad": 0.35,
+        "wait_s": 60.0,
+        "near_item_m": 0.5,
+        "uses_robot_ids": false,
+        "reads_peer_claims_of_robots_not_at_station": false
+      },
+      "barriers": [
+        {
+          "state": "COMMITTED",
+          "ready_t": {
+            "r1": 6.1,
+            "r2": 6.1
+          },
+          "spread_s": 0.0,
+          "advanced_t": 6.1,
+          "next": "RENDEZVOUS"
+        },
+        {
+          "state": "RENDEZVOUS",
+          "ready_t": {
+            "r1": 7.9,
+            "r2": 7.9
+          },
+          "spread_s": 0.0,
+          "advanced_t": 7.9,
+          "next": "PREGRASP"
+        },
+        {
+          "state": "PREGRASP",
+          "ready_t": {
+            "r1": 9.1,
+            "r2": 9.1
+          },
+          "spread_s": 0.0,
+          "advanced_t": 9.1,
+          "next": "CLOSE"
+        },
+        {
+          "state": "CLOSE",
+          "ready_t": {
+            "r1": 10.9,
+            "r2": 10.9
+          },
+          "spread_s": 0.0,
+          "advanced_t": 10.9,
+          "next": "LIFT"
+        },
+        {
+          "state": "LIFT",
+          "ready_t": {
+            "r1": 14.1,
+            "r2": 14.1
+          },
+          "spread_s": 0.0,
+          "advanced_t": 14.1,
+          "next": "CARRY"
+        },
+        {
+          "state": "CARRY",
+          "ready_t": {
+            "r1": 48.7,
+            "r2": 48.7
+          },
+          "spread_s": 0.0,
+          "advanced_t": 48.7,
+          "next": "LOWER"
+        },
+        {
+          "state": "LOWER",
+          "ready_t": {
+            "r1": 50.3,
+            "r2": 50.3
+          },
+          "spread_s": 0.0,
+          "advanced_t": 50.3,
+          "next": "RELEASE"
+        },
+        {
+          "state": "RELEASE",
+          "ready_t": {
+            "r1": 51.2,
+            "r2": 51.2
+          },
+          "spread_s": 0.0,
+          "advanced_t": 51.2,
+          "next": "RETREAT"
+        },
+        {
+          "state": "RETREAT",
+          "ready_t": {
+            "r1": 56.1,
+            "r2": 56.1
+          },
+          "spread_s": 0.0,
+          "advanced_t": 56.1,
+          "next": "FINISHED"
+        }
+      ],
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "robots": {
+        "r1": "end_neg",
+        "r2": "end_pos"
+      },
+      "mass_kg": 0.3,
+      "kind": "long_beam",
+      "weld_path_used": false,
+      "team_job": {
+        "job_id": "probe@g1",
+        "generation": 1,
+        "state": "FINISHED",
+        "role_by_robot": {
+          "r1": "end_neg",
+          "r2": "end_pos"
+        },
+        "formation_id": "long_beam/end_neg+end_pos",
+        "spec_hash": "18644ccc92bae80d51bb4e686f0521474af216d1838046a86341d2a7c5ce36ec",
+        "required_carriers": 2,
+        "history": [
+          {
+            "t": 6.0,
+            "state": "COMMITTED"
+          },
+          {
+            "t": 6.1,
+            "state": "RENDEZVOUS"
+          },
+          {
+            "t": 7.9,
+            "state": "PREGRASP"
+          },
+          {
+            "t": 9.1,
+            "state": "CLOSE"
+          },
+          {
+            "t": 10.9,
+            "state": "LIFT"
+          },
+          {
+            "t": 14.1,
+            "state": "CARRY"
+          },
+          {
+            "t": 48.7,
+            "state": "LOWER"
+          },
+          {
+            "t": 50.3,
+            "state": "RELEASE"
+          },
+          {
+            "t": 51.2,
+            "state": "RETREAT"
+          },
+          {
+            "t": 56.1,
+            "state": "FINISHED"
+          }
+        ],
+        "failures": []
+      },
+      "ledger_delivered": {
+        "A": {
+          "long_beam": 1
+        }
+      }
+    },
+    "trio_frame": {
+      "success": true,
+      "teacher_outcome": "completed_sequence",
+      "lifted_clear": true,
+      "hold_min_z_m": 0.0461,
+      "placement": {
+        "pos_err_m": 0.0054,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      },
+      "eq_active_max": 0,
+      "weld": "off",
+      "contact_profile": "local_contact_fine",
+      "timestep_s": 0.00025,
+      "max_cargo_tilt_deg": {
+        "lift": 0.09,
+        "hold": 0.08,
+        "carry": 0.04
+      },
+      "max_robot_tilt_deg": 1.83,
+      "max_slip_mm": {
+        "r1": 17.4,
+        "r2": 17.5,
+        "r3": 17.4
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.473,
+        "r2": 0.473,
+        "r3": 0.473
+      },
+      "drop_events": [],
+      "floor_contact_samples_in_carry": 0,
+      "grasp_forces_n": {
+        "r1": [
+          5.38,
+          5.38
+        ],
+        "r2": [
+          5.38,
+          5.38
+        ],
+        "r3": [
+          5.38,
+          5.38
+        ]
+      },
+      "max_track_err_m": 0.0444,
+      "phase_sim_s": {
+        "to_station": 8.1,
+        "approach": 1.9,
+        "grasp": 3.0,
+        "lift": 1.6,
+        "hold": 1.6,
+        "carry": 36.1,
+        "lower": 1.6,
+        "release": 0.9,
+        "retract": 2.4,
+        "back_off": 2.5
+      },
+      "sim_time_s": 59.7,
+      "wall_s": 250.7,
+      "load_avg_1m": {
+        "start": 194.34,
+        "end": 178.46
+      },
+      "scene_xml_sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "catalogue_sha256": "89245cca1497da4d6537eeed3dc7160882b006e0922542c2a0a7a3a23f926c6a",
+      "git_sha": "f9446a2289abff52e1ded014d2735bd449d7c36f",
+      "git_dirty": false,
+      "standoff_m": {
+        "r1": 0.3,
+        "r2": 0.55,
+        "r3": 0.8
+      },
+      "arrived_sim_s": {
+        "r1": 3.9,
+        "r2": 6.0,
+        "r3": 8.1
+      },
+      "rendezvous_rule": {
+        "rule": "all formation stations physically occupied by robots whose own claims share one spec",
+        "tol_m": 0.1,
+        "tol_rad": 0.35,
+        "wait_s": 60.0,
+        "near_item_m": 0.5,
+        "uses_robot_ids": false,
+        "reads_peer_claims_of_robots_not_at_station": false
+      },
+      "barriers": [
+        {
+          "state": "COMMITTED",
+          "ready_t": {
+            "r1": 8.2,
+            "r2": 8.2,
+            "r3": 8.2
+          },
+          "spread_s": 0.0,
+          "advanced_t": 8.2,
+          "next": "RENDEZVOUS"
+        },
+        {
+          "state": "RENDEZVOUS",
+          "ready_t": {
+            "r1": 10.0,
+            "r2": 10.0,
+            "r3": 10.0
+          },
+          "spread_s": 0.0,
+          "advanced_t": 10.0,
+          "next": "PREGRASP"
+        },
+        {
+          "state": "PREGRASP",
+          "ready_t": {
+            "r1": 11.2,
+            "r2": 11.2,
+            "r3": 11.2
+          },
+          "spread_s": 0.0,
+          "advanced_t": 11.2,
+          "next": "CLOSE"
+        },
+        {
+          "state": "CLOSE",
+          "ready_t": {
+            "r1": 13.0,
+            "r2": 13.0,
+            "r3": 13.0
+          },
+          "spread_s": 0.0,
+          "advanced_t": 13.0,
+          "next": "LIFT"
+        },
+        {
+          "state": "LIFT",
+          "ready_t": {
+            "r1": 16.2,
+            "r2": 16.2,
+            "r3": 16.2
+          },
+          "spread_s": 0.0,
+          "advanced_t": 16.2,
+          "next": "CARRY"
+        },
+        {
+          "state": "CARRY",
+          "ready_t": {
+            "r1": 52.3,
+            "r2": 52.3,
+            "r3": 52.3
+          },
+          "spread_s": 0.0,
+          "advanced_t": 52.3,
+          "next": "LOWER"
+        },
+        {
+          "state": "LOWER",
+          "ready_t": {
+            "r1": 53.9,
+            "r2": 53.9,
+            "r3": 53.9
+          },
+          "spread_s": 0.0,
+          "advanced_t": 53.9,
+          "next": "RELEASE"
+        },
+        {
+          "state": "RELEASE",
+          "ready_t": {
+            "r1": 54.8,
+            "r2": 54.8,
+            "r3": 54.8
+          },
+          "spread_s": 0.0,
+          "advanced_t": 54.8,
+          "next": "RETREAT"
+        },
+        {
+          "state": "RETREAT",
+          "ready_t": {
+            "r1": 59.7,
+            "r2": 59.7,
+            "r3": 59.7
+          },
+          "spread_s": 0.0,
+          "advanced_t": 59.7,
+          "next": "FINISHED"
+        }
+      ],
+      "legs": [
+        [
+          "move",
+          0.8
+        ],
+        [
+          "turn",
+          1.5707963267948966
+        ],
+        [
+          "move",
+          0.5
+        ]
+      ],
+      "target_pose": [
+        3.3,
+        0.7,
+        1.5708
+      ],
+      "robots": {
+        "r1": "v0",
+        "r2": "v1",
+        "r3": "v2"
+      },
+      "mass_kg": 1.5,
+      "kind": "tri_frame",
+      "weld_path_used": false,
+      "team_job": {
+        "job_id": "probe@g1",
+        "generation": 1,
+        "state": "FINISHED",
+        "role_by_robot": {
+          "r1": "v0",
+          "r2": "v1",
+          "r3": "v2"
+        },
+        "formation_id": "tri_frame/v0+v1+v2",
+        "spec_hash": "e8daa0e9f28687e8fa03f5b159e676d3365b4f21ce34cb639c26a3e2462e35ee",
+        "required_carriers": 3,
+        "history": [
+          {
+            "t": 8.1,
+            "state": "COMMITTED"
+          },
+          {
+            "t": 8.2,
+            "state": "RENDEZVOUS"
+          },
+          {
+            "t": 10.0,
+            "state": "PREGRASP"
+          },
+          {
+            "t": 11.2,
+            "state": "CLOSE"
+          },
+          {
+            "t": 13.0,
+            "state": "LIFT"
+          },
+          {
+            "t": 16.2,
+            "state": "CARRY"
+          },
+          {
+            "t": 52.3,
+            "state": "LOWER"
+          },
+          {
+            "t": 53.9,
+            "state": "RELEASE"
+          },
+          {
+            "t": 54.8,
+            "state": "RETREAT"
+          },
+          {
+            "t": 59.7,
+            "state": "FINISHED"
+          }
+        ],
+        "failures": []
+      },
+      "ledger_delivered": {
+        "A": {
+          "tri_frame": 1
+        }
+      }
+    }
+  },
+  "pr164_probe_baseline_same_scene": {
+    "pair_beam": {
+      "success": true,
+      "sim_time_s": 52.3,
+      "max_slip_mm": {
+        "r1": 5.1,
+        "r2": 5.1
+      },
+      "max_track_err_m": 0.0423,
+      "hold_min_z_m": 0.0619,
+      "placement": {
+        "pos_err_m": 0.0044,
+        "yaw_err_deg": 0.01,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0001,
+        "released": true
+      }
+    },
+    "trio_frame": {
+      "success": true,
+      "sim_time_s": 54.3,
+      "max_slip_mm": {
+        "r1": 17.5,
+        "r2": 17.5,
+        "r3": 17.5
+      },
+      "max_track_err_m": 0.0425,
+      "hold_min_z_m": 0.047,
+      "placement": {
+        "pos_err_m": 0.0007,
+        "yaw_err_deg": 0.0,
+        "final_tilt_deg": 0.0,
+        "final_min_z_m": -0.0,
+        "released": true
+      }
+    }
+  },
+  "raw_root_local_only": "/Users/changmin/projects/ugrp/outputs/zone-team-jobs-20260925",
+  "raw_files": {
+    "pair_beam/events.json": {
+      "sha256": "9852768e1692f190398deb55560518a52466d7c5572971ceb01224cf4fa4cb25",
+      "bytes": 1929
+    },
+    "pair_beam/pair_beam.mp4": {
+      "sha256": "142d964d5a517b272f875472dbebcf2c689633165015776c3c8db58f0c38b163",
+      "bytes": 239815
+    },
+    "pair_beam/result.json": {
+      "sha256": "4bbf1149fa37b6b2460009e6bb949890d969251c9c7ece9a0c2284528f8b7303",
+      "bytes": 8284
+    },
+    "pair_beam/scene.xml": {
+      "sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+      "bytes": 117130
+    },
+    "pair_beam/station-log.json": {
+      "sha256": "1aa5b79de2812e70d95376cbf0d6fa7521548c49fab69bc6ff40a747d7c9d21b",
+      "bytes": 3071
+    },
+    "pair_beam/trace.jsonl": {
+      "sha256": "fad62f3eb388948df2d975321ef44da575f847482d55feccf7812c661c218043",
+      "bytes": 1017015
+    },
+    "trio_frame/events.json": {
+      "sha256": "9d98c88353a4a774a79ef83149a67d1abb03d4625247df8c55eb5a76e0fe1577",
+      "bytes": 1957
+    },
+    "trio_frame/result.json": {
+      "sha256": "1e0eb683c15033f42ad4b55d50afd73d3950d3c60742e3572554b6188ee2bae1",
+      "bytes": 8971
+    },
+    "trio_frame/scene.xml": {
+      "sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+      "bytes": 124953
+    },
+    "trio_frame/station-log.json": {
+      "sha256": "9da2110800d4915f756a0bac5d439229d11e990392537854aede386c3ec0ad62",
+      "bytes": 5722
+    },
+    "trio_frame/trace.jsonl": {
+      "sha256": "4be7db2fbb5a88f60c9b6754023b40cbe968d7d11cf9bd1c74c74130a67f0890",
+      "bytes": 1268441
+    },
+    "trio_frame/trio_frame.mp4": {
+      "sha256": "cd76e0e6788d0012cc90a36be8b2e32a0c144dc0599aae2fbd570ced5928feef",
+      "bytes": 264330
+    }
+  },
+  "debug_run_not_counted": {
+    "probe": "pair_beam",
+    "source": "uncommitted working tree before f9446a2",
+    "outcome": "physically identical carry (placement 3.6 mm, eq_active 0); Probe success=false only because phase_times[carry] was not recorded (bookkeeping bug fixed in f9446a2)"
+  },
+  "codex_proposal_line_check": {
+    "baseline_of_proposal": "3cbf4e4",
+    "checked_on": "main 12695bc/ad18b93",
+    "exact": [
+      "probe_dual_grasp_sync.py:97,242",
+      "multi_masterpi_production.py:1979,2362(_activate_beam_constraint call)",
+      "zone_teacher.py:168,250,473,490",
+      "run_zone_dispatch.py:82,120,192",
+      "pair_navigation.py:51,107",
+      "dispatch_pair_navigation.py:292",
+      "pair_carry_sync.py:26,250",
+      "dispatch_execution.py:171",
+      "audit_pair_navigation.py:18",
+      "audit_pair_carry_sync.py:272",
+      "dispatch_pair_skill.py:1056,1081,1273,1307",
+      "visual_arm.py:146",
+      "zone_solo.py:33",
+      "evaluate_pair_navigation.py:28",
+      "tests/test_zone_dispatch.py:413",
+      "tests/test_pair_navigation.py:24",
+      "tests/test_pair_carry_sync.py:31"
+    ],
+    "shifted_by_R1_audit_merge": {
+      "zone_coordination.remaining_need": "159->170",
+      "zone_coordination.check_claims": "182->193",
+      "zone_coordination.referee": "234->245",
+      "run_zone_dispatch.independent_round": "405->406",
+      "zone_teacher 12 s forced grasp": "403->404",
+      "zone_teacher goal_occupied gripper open": "376->380"
+    }
+  },
+  "scope": "A1 pure pieces and a two-case open-floor teacher smoke; no zone E2E, no LLM, no walls, no failure injection in SIM"
+}
