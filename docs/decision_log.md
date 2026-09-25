@@ -2687,3 +2687,17 @@ Claude 코디네이터가 여러 Codex/Claude 위임 작업을 진행하며 2026
 - 세 Codex 설계 제안 원문을 그대로 `docs/design/`에 보존했다: [팀 운반](design/2026-09-25-zone-team-carry-codex.md), [미등록 장애물](design/2026-09-25-zone-unmapped-blockage-codex.md), [한국어 대화](design/2026-09-25-zone-korean-dialogue-codex.md). 각 문서는 제안 당시 상태와 이후 실제 진행 상황을 구분해 적었다.
 - 지도 비교 렌더 `docs/design/media/2026-09-25-zone-open-vs-wide.png`(같은 축척, 하향식, 왼쪽 = 퇴역한 `zone_open` 6.45×2.3 m, 오른쪽 = `zone_wide` 6.45×4.6 m, replay `model.mjb`인 Z3-G5-dyn과 ZC2-s13-dynamic-graspfail에서 렌더링). SHA-256: `d410af3107df3542ecffebb59d50bb243991718a34e151193b4176827fc62fb0`.
 - 파이프라인 단계별 현재 완료/진행/미착수 스냅샷은 [docs/e2e_status_20260925.md](e2e_status_20260925.md)에 별도로 남긴다.
+
+## 2026-09-25 — 주 연구 조건 변경: 무통신·동적 통신·AI 지휘
+
+같은 날 앞 절의 "연구 목표 강조"에 이어, 사용자가 본 연구의 조정 조건을 다시 정했다. 이 절은 결정과 이유만 기록한다. 구현·실행 결과는 아직 없다.
+
+- **사용자 결정:** 본 연구의 조정 조건을 "통신 없음 / 동적 통신 / 미리 계획(`plan_first`)"에서 **"통신 없음(`independent`) / 동적 통신(`dynamic`, 분산 한국어 대화) / AI 한 명이 모두 지휘(`leader`, 중앙 지휘)"**로 바꾼다.
+- **이유:** 연구 질문은 자연어 대화가 효율에 영향을 주는가이다. `plan_first`(제안자 순환 + 만장일치 ACK)는 협상 프로토콜의 변형일 뿐 연구 조건이 아니다. `leader`와 `dynamic`의 비교는 같은 대화라도 중앙 지휘 구조와 분산 구조의 차이를 본다.
+- **`plan_first` 은퇴:** 새 본 연구 조건에서 뺀다. 다만 Z1–Z3·ZC1·ZC2 재현을 위해 코드는 남긴다. 정확한 은퇴 방식(선택 차단, 버전·프로필 표시 등)은 설계 문서에서 정한다. 기존 Z1–Z3·ZC1·ZC2 기록과 결론은 기록 당시 조건 범위 그대로 유지한다.
+- **앞선 A/B/C/D 계획의 재배치:** [한국어 대화 설계 제안](design/2026-09-25-zone-korean-dialogue-codex.md)의 A 무통신 / B 정형 통신 / C 자유 한국어 / D 게시판 제거실험 구조를 다시 배치한다. 위 세 조건이 주 비교 축이다. 정형 통신 대 자유 한국어 비교와 게시판 제거실험은 보조 제거실험으로 내리고, 실행 여부와 방식은 나중에 정한다.
+- **상태:** `leader` 조건 설계가 진행 중이다(Codex 읽기 전용 설계, 끝나면 `docs/design/`에 커밋). 구현은 PR [#169](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/169)(A2 러너 연결)를 기다린다. 아직 이 세 조건으로 실행한 결과는 없다.
+- **승인 상태:** 사용자 결정(2026-09-25 세션 지시).
+
+**보존한 자료:**
+- 같은 날 Codex의 PR 검토 보고서 원문을 [docs/design/2026-09-25-zone-pr-review-codex.md](design/2026-09-25-zone-pr-review-codex.md)에 보존했다(#167·#168·#170·#172·#169 검토, 수정은 #169·#170·#172에서 추적). 조건 변경과는 별개 기록이다.
