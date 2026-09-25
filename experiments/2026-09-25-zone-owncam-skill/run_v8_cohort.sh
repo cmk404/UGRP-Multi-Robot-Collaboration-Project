@@ -2,7 +2,7 @@
 # v8 pre-registered cohort: arm P 581-590, runner v8, diagnostic mode (gt_stub pose, NOT M1),
 # cargo_noslip_v1 (pending user decision), 2 lanes. Stop rule: any false OWN_RGB_PLACEMENT_IN_SLOT stops it.
 set -u
-WT=/Users/changmin/projects/ugrp-wt/zone-owncam-skill-v2
+WT=${V8_WT:-/Users/changmin/projects/ugrp-wt/zone-owncam-skill-v8-frozen}   # detached worktree at the freeze commit (no dev edits can dirty it)
 cd $WT
 SHA=$(git rev-parse --short HEAD)
 OUT=/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v8-$SHA
