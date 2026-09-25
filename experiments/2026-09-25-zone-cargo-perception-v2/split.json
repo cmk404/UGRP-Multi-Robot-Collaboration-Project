@@ -4,11 +4,34 @@
   "reason": "The frame-interior failure was found on the top_cargo_v1 held-out test (seeds 401-410), so that test is no longer held out for a fix designed after it. top_cargo_v1 and top_cargo_v2 are compared on this new test only.",
   "rule": "top_cargo_v2 changes are fixed before dev rendering; dev only checks them. 'test' is rendered and scored once after the v2 source is committed; test failures are reported, not tuned away.",
   "view_plan": "v2",
-  "targeted_cases": {"parallel_beams": "two beams side by side, edge gap 0.5-8 cm (centre lines 4.5-12 cm apart), along-axis offset <= 10 cm; index 1 across a TOP seam",
-                     "box_in_frame": "1-2 boxes in the frame's open interior (<= 4.5 cm from its centre); index 1 also a box 4.5-6 cm from a bar centre-line outside the frame"},
+  "targeted_cases": {
+    "parallel_beams": "two beams side by side, edge gap 0.5-8 cm (centre lines 4.5-12 cm apart), along-axis offset <= 10 cm; index 1 across a TOP seam",
+    "box_in_frame": "1-2 boxes in the frame's open interior (<= 4.5 cm from its centre); index 1 also a box 4.5-6 cm from a bar centre-line outside the frame"
+  },
   "seed_namespace": "disjoint from zone_color_eval (101-106, 171-172, 201-210, 271-273) and top_cargo_v1 (301-306, 401-410)",
   "splits": {
-    "dev": [501, 502, 503, 504],
-    "test": [601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612]
-  }
+    "dev": [
+      501,
+      502,
+      503,
+      504
+    ],
+    "test": [
+      601,
+      602,
+      603,
+      604,
+      605,
+      606,
+      607,
+      608,
+      609,
+      610,
+      611,
+      612
+    ]
+  },
+  "revisions": [
+    "dev r2 (before any test rendering): dev (501-504) showed v2 regressions - same-beam pieces left unmerged (end-cap slack), 3-5 px slivers reported as beams, fused close parallel bars cut through the lit side face and a tilted fit (parallelogram). Fixed on dev only: top-face split with iterated common direction, one re-split only above 2.0x, min width 0.6x, end slack 6 cm, union <= 0.68 m. The rule line above ('dev only checks them') therefore did not hold; test is still rendered and scored once after the r2 source commit."
+  ]
 }

@@ -39,14 +39,26 @@ PROVENANCE = v1.PROVENANCE
 
 # Beam (per camera): a single bar is <= 1.45x its nominal width on dev renders.
 BEAM_SPLIT_WIDTH_RATIO = 1.6
-BEAM_MAX_WIDTH_RATIO = 1.6
+# A half produced by a split keeps the lit side face of its bar; it is split
+# again only when it is clearly two bars wide (dev r2: 1.6x over-split).
+BEAM_RESPLIT_WIDTH_RATIO = 2.0
+BEAM_MAX_WIDTH_RATIO = 2.0             # split halves carry a side face (see above)
 BEAM_SPLIT_MIN_SHARE = .2
+# The cut between fused bars is chosen from the brightest pixels (top faces):
+# with a 1-3 cm edge gap the lit side face of one bar fills the gap in the
+# colour mask, but it is darker than the tops (dev, 2026-09-25 r2).
+BEAM_TOP_FACE_REL = .85
+BEAM_MIN_WIDTH_RATIO = .6            # thinner slivers are side faces / edges (dev r2)
 # Beam (across TOPs).
 MERGE_LATERAL_M = .02
 MERGE_ANGLE_DEG = 5.
 MERGE_MIN_OVERLAP_M = -.03          # the pieces must overlap (TOP views overlap ~0.3 m)
-MERGE_END_SLACK_M = .03
-MERGE_MAX_LENGTH_M = v1.BEAM_LENGTH_M + .03
+# One view may include a 12 mm lime end cap beyond the dark band that the
+# other misses: visible ends of one beam can differ by ~5 cm (dev r2).
+MERGE_END_SLACK_M = .06
+# Split parts can measure up to ~0.66 m on dev (cap + a side-face sliver);
+# two distinct collinear beams would span >= ~1.2 m.
+MERGE_MAX_LENGTH_M = v1.BEAM_LENGTH_M + .08
 # Box suppression on a frame: bars' centre-line +- (half bar + margin), lugs.
 FRAME_BOX_MARGIN_M = .010
 FRAME_LUG_SUPPRESS_M = .045
@@ -64,25 +76,51 @@ def _width(pts, n, p0):
     return float(np.percentile(np.abs((pts - p0) @ n), 95))*2+1
 
 
-def _split_wide(pts, s):
-    """Split a fused group of parallel bars along its normal (Otsu on offsets)."""
-    out, todo = [], [pts]
+def _top_face(p, value, d, p0, s):
+    """Pixels at least 85 % as bright as the brightest in their along-axis bin
+    (bar tops; the lit side faces between fused bars are darker)."""
+    v = value[p[:, 1].astype(int), p[:, 0].astype(int)].astype(float)
+    t = (p - p0) @ d
+    bins = np.floor((t - t.min())/max(.03*s, 1.)).astype(int)
+    ref = np.zeros(bins.max()+1)
+    for b in np.unique(bins):
+        ref[b] = np.percentile(v[bins == b], 90)
+    return v >= BEAM_TOP_FACE_REL*ref[bins]
+
+
+def _split_wide(pts, s, value=None):
+    """Split a fused group of parallel bars along its normal: Otsu on the
+    offsets of the bar-top pixels; each part keeps only its top pixels."""
+    out, todo = [], [(pts, BEAM_SPLIT_WIDTH_RATIO)]
     while todo:
-        p = todo.pop()
+        p, ratio = todo.pop()
         d, n, p0 = _line(p)
-        if _width(p, n, p0) <= BEAM_SPLIT_WIDTH_RATIO*v1.BEAM_WIDTH_M*s or len(p) < 40:
+        if _width(p, n, p0) <= ratio*v1.BEAM_WIDTH_M*s or len(p) < 40:
             out.append(p)
             continue
-        off = (p - p0) @ n
-        lo, hi = float(off.min()), float(off.max())
-        hist = np.round((off - lo)/(hi - lo + 1e-9)*255).astype(np.uint8).reshape(-1, 1)
-        t, _ = cv2.threshold(hist, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        cut = lo + (hi - lo)*float(t)/255
-        a, b = p[off <= cut], p[off > cut]
-        if min(len(a), len(b)) < BEAM_SPLIT_MIN_SHARE*len(p):
+        top = _top_face(p, value, d, p0, s) if value is not None else np.ones(len(p), bool)
+        # Fused bars offset along their axis form a parallelogram whose fitted
+        # line is tilted; re-estimate the (common) bar direction from the two
+        # halves and cut again.
+        for _ in range(3):
+            off = (p - p0) @ n
+            sel = off[top]
+            lo, hi = float(sel.min()), float(sel.max())
+            hist = np.round((sel - lo)/(hi - lo + 1e-9)*255).astype(np.uint8).reshape(-1, 1)
+            t, _ = cv2.threshold(hist, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            cut = lo + (hi - lo)*float(t)/255
+            a, b = p[(off <= cut) & top], p[(off > cut) & top]
+            if min(len(a), len(b)) < 20:
+                break
+            da, db = _line(a)[0], _line(b)[0]
+            if da @ db < 0:
+                db = -db
+            d = (da + db)/np.linalg.norm(da + db)
+            n = np.array([-d[1], d[0]])
+        if min(len(a), len(b)) < BEAM_SPLIT_MIN_SHARE*top.sum():
             out.append(p)
             continue
-        todo += [a, b]
+        todo += [(a, BEAM_RESPLIT_WIDTH_RATIO), (b, BEAM_RESPLIT_WIDTH_RATIO)]
     return out
 
 
@@ -97,7 +135,7 @@ def _beam(hsv, camera, shape):
         if int(stats[i][4]) < v1.BEAM_MIN_FRAGMENT_PX:
             continue
         pts = np.column_stack(np.nonzero(labels == i)[::-1]).astype(np.float32)
-        for part in _split_wide(pts, s):
+        for part in _split_wide(pts, s, hsv[..., 2]):
             (_, _), (rw, rh), _ = cv2.minAreaRect(part)
             frags.append({'pts': part, 'area': len(part), 'long': max(rw, rh)+1., 'short': min(rw, rh)+1.,
                           'split': len(part) != len(pts)})
@@ -131,7 +169,8 @@ def _beam(hsv, camera, shape):
         width = _width(pts, n, p0)
         tmin, tmax = float(t.min()), float(t.max())
         length_m = (tmax-tmin)/s
-        if length_m < v1.BEAM_MIN_LEN_M or width > BEAM_MAX_WIDTH_RATIO*v1.BEAM_WIDTH_M*s:
+        if length_m < v1.BEAM_MIN_LEN_M or not \
+                BEAM_MIN_WIDTH_RATIO*v1.BEAM_WIDTH_M*s <= width <= BEAM_MAX_WIDTH_RATIO*v1.BEAM_WIDTH_M*s:
             continue
         used.update(group)
         e0, e1 = p0 + tmin*d, p0 + tmax*d

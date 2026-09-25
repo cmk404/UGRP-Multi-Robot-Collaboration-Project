@@ -41,14 +41,17 @@ def _match(rows, truth, tol):
         assert _yaw_err(best['yaw_rad'], t[2], 180) < 3
 
 
-@pytest.mark.parametrize('sep', [.045, .05, .06, .08, .12])
-def test_parallel_beams_in_one_view_stay_two_items(sep):
-    a, b = _pair(sep)
+@pytest.mark.parametrize('sep,along', [(.045, .05), (.05, .05), (.06, .05), (.08, .05), (.12, .05),
+                                       (.05, .10), (.06, -.09)])
+def test_parallel_beams_in_one_view_stay_two_items(sep, along):
+    a, b = _pair(sep, along=along)
     f = _floor()
     _beam(f, SW, a)
     _beam(f, SW, b)
     rows = v2.detect_cargo_top(_jpeg(f), SW)
-    _match(rows, [a, b], .01)
+    # Known residual: with a large along-axis offset the split part of one bar
+    # keeps ~3-4 cm of extra extent at one end (centre error ~13 mm).
+    _match(rows, [a, b], .01 if abs(along) <= .06 else .015)
     if sep < .055:
         assert all(r['evidence']['split_from_wider_blob'] for r in rows if r['kind'] == 'long_beam')
 
