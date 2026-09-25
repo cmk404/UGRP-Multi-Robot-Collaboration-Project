@@ -70,5 +70,6 @@ Colab/Kaggle은 명시적으로 선택하는 배치 경로로 보존한다. 기�
 1. [실험 인덱스](../experiments/README.md)에서 관련 ID를 선택한다.
 2. 해당 README/report의 코드 SHA·프로토콜·결과·실패·한계를 읽는다.
 3. 필요한 manifest·감사·영상만 열고 로컬 전용 원본의 존재를 확인한다. 저장소에 해시만 있다고 원본이 백업된 것은 아니다.
+4. 자기 카메라 PR(#177 `a9f5d6e`, #176 `edd075d`)의 수치를 인용하기 전에 [자기 카메라 반대 검토(Codex, 2026-09-26)](design/2026-09-26-owncam-adversarial-review-codex.md)를 함께 읽는다. 검토의 판정은 현재 입증 범위가 교사 주행의 오프라인 위치 추정과 GT pose를 쓰는 스킬 격리 시험까지이며 wrist-only M1 성공이 아니라는 것이고, 수정은 PR #181(스킬)·#178(폐루프)에서 추적한다.
 
 [이전 README 요약](archive/validation_summary_20260917.md), [과거 아키텍처](current_architecture_todo.md), [결정 이력](decision_log.md)은 과거 배경 자료다. 날짜·실행 경로가 다른 성공률을 합산하거나 옛 운영 명령을 현재 설치법으로 사용하지 않는다. 제어 입력과 교사/지도 예외의 현재 규칙은 [AGENTS.md](../AGENTS.md)를 따른다.
