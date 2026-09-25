@@ -24,6 +24,13 @@ from sim.research_dispatch_arena import authored_map, digest as static_map_diges
 
 COARSE_LEAD_LIMIT_PX = 16.
 COARSE_FINE_HANDOFF_GAP = .065
+# Dynamic recovery back-off: re-centre the coarse wheel crops every 5 reverse
+# slices (about 16 px of TOP motion, well inside the 55 px crop half-width).
+RECOVERY_RECENTER_SLICES = 5
+# Dynamic recovery back-off length. V1/V2 (v56): after 20 slices (~35 px on
+# TOP from a docked pose) the next coarse approach could not resolve a
+# carrier heading next to the beam; after 40 slices (~70 px) it could.
+RECOVERY_BACKOFF_SLICES = 40
 # Cluttered maps issue one existing .2s coarse command per RGB batch. Admit it
 # only while that whole command fits within the original capture + .6s TTL.
 COARSE_CONCURRENT_MAX_CAPTURE_AGE_S = .4
@@ -1176,30 +1183,44 @@ class BoundPairSkill:
             if ready_count>=2:return report
         raise RuntimeError('fine docking confirmation budget exhausted')
 
-    def back_off(self,slices=20,speed=.05):
+    def back_off(self,slices=RECOVERY_BACKOFF_SLICES,speed=.05):
         """Dynamic recovery only: short straight reverse of both carriers.
 
         Issued commands only; the next approach re-observes from RGB. The coarse
         pixel tracker keeps its RGB-tracked wheel crops (the start-of-run probe
-        centres are far from the beam by now) and re-centres them on one fresh
-        stopped TOP frame, so the next approach does not start from stale crops.
+        centres are far from the beam by now) and re-centres them on fresh
+        stopped TOP frames, so the next approach does not start from stale
+        crops. A long back-off moves a carrier more than the 55 px crop
+        half-width, so the crops follow in chunks: once before reversing
+        (fine alignment may have moved the carriers) and after every chunk.
         """
         if getattr(self.io,'realtime_control',False):
             raise RuntimeError('recovery back-off supports synchronous execution only')
-        if not 0<slices<=20 or not 0<speed<=.05:
+        if not 0<slices<=RECOVERY_BACKOFF_SLICES or not 0<speed<=.05:
             raise ValueError('bounded recovery back-off required')
-        for _ in range(slices):self.drive({r:-speed for r in ROBOTS})
         self.stop_dwell()
+        self._recenter_coarse(0,speed)
+        done=0
+        while done<slices:
+            chunk=min(RECOVERY_RECENTER_SLICES,slices-done)
+            for _ in range(chunk):self.drive({r:-speed for r in ROBOTS})
+            done+=chunk
+            self.stop_dwell()
+            self._recenter_coarse(done,speed)
+
+    def _recenter_coarse(self,reversed_slices,speed):
         if self.coarse is None:return
         raw=self.capture('recovery-recenter')['r1']['raw_top_bytes']
         before={slot:[float(v) for v in c] for slot,c in self.coarse.centers.items()}
+        lost=[]
         for slot in self.coarse.centers:
             for _ in range(3):
                 decision=self.coarse.decide(raw,slot)
-                if not decision.get('wheel_center_px'):break
+                if not decision.get('wheel_center_px'):
+                    lost.append(slot);break
                 self.coarse.centers[slot]=np.array(decision['wheel_center_px'])
-        self.calls.append({'kind':'recovery_recenter','slices':slices,'speed':speed,
-            'crop_centers_before_px':before,
+        self.calls.append({'kind':'recovery_recenter','slices':reversed_slices,'speed':speed,
+            'crop_centers_before_px':before,'lost_slots':lost,
             'crop_centers_after_px':{slot:[float(v) for v in c] for slot,c in self.coarse.centers.items()}})
 
     def holds_cargo(self):

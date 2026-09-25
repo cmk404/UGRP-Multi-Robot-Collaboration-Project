@@ -1,0 +1,1069 @@
+{
+ "experiment": "2026-09-25-dynamic-team-recovery",
+ "model": "gemini-3.8-flash",
+ "map": "open",
+ "task": "서로 역할과 순서를 합의해서 beam과 box를 dock_b로 옮겨",
+ "mode": "synchronous SIM, headless, --record-replay, --coordination dynamic",
+ "weld": "off",
+ "source_log": [
+  "sha 846b4b0 bundle v51 2026-09-24T17:24:13Z",
+  "V-runs sha 997c851 bundle v56 2026-09-24T18:24:06Z",
+  "W-runs sha c2fdc63 bundle v58 2026-09-24T19:22:08Z"
+ ],
+ "runs": [
+  {
+   "run": "E1-approach",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/E1-approach",
+   "bundle": "rgb-standard-dispatch-v51",
+   "source_sha": "846b4b0cf78084f1b3889eec7de08fcea6d294c3",
+   "flags": [
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 5,
+   "usage": {
+    "prompt_tokens": 39732,
+    "completion_tokens": 660,
+    "total_tokens": 40540
+   },
+   "control_end_sim_s": 176.6099999975517,
+   "wall_s": 440.6630224160035,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [],
+   "loads": [
+    {
+     "run": "E1-approach",
+     "start_utc": "2026-09-24T17:24:13Z",
+     "load": "{ 3.73 7.03 8.43 }"
+    },
+    {
+     "run": "E1-approach",
+     "end_utc": "2026-09-24T17:31:35Z",
+     "exit": 0,
+     "load": "{ 5.26 5.24 6.88 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "4c5b7eb9145a7dbd525050ee590f444613bf9cede692ef7ccc2ff474d6e886a6",
+    "evaluation-only.json": "89bfe3ffc933205a3098f38559df993ac63fbbaaaddfe3462336bfea60a1f282",
+    "team/team.json": "4e630e35bee5f2683d545bcaef09195d194614f915af90b35378232899953c15"
+   }
+  },
+  {
+   "run": "E2-grasp",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/E2-grasp",
+   "bundle": "rgb-standard-dispatch-v51",
+   "source_sha": "846b4b0cf78084f1b3889eec7de08fcea6d294c3",
+   "flags": [
+    "--diagnostic-fail-grasp-once"
+   ],
+   "phase": "APPROACH",
+   "protocol_complete": false,
+   "error": "TeamStop: coarse RGB model convention unresolved; team decided to stop all",
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": true
+   },
+   "llm_calls": 24,
+   "usage": {
+    "prompt_tokens": 210634,
+    "completion_tokens": 4916,
+    "total_tokens": 219323
+   },
+   "control_end_sim_s": 204.0099999969038,
+   "wall_s": 381.8694337089837,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "pair_grasp_failure",
+     "failure": "existing pair carry guard stopped: ABORT",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "regrasp",
+     "rounds": 1,
+     "sim_time_s": 171.61,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "regrasp",
+       "r1": "regrasp"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 194.51,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB model convention unresolved",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 199.26,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "coarse RGB model convention unresolved",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "stop_all",
+     "rounds": 1,
+     "sim_time_s": 204.01,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "stop_all",
+       "r2": "stop_all",
+       "r3": "stop_all"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [],
+   "loads": [
+    {
+     "run": "E2-grasp",
+     "start_utc": "2026-09-24T17:31:35Z",
+     "load": "{ 5.26 5.24 6.88 }"
+    },
+    {
+     "run": "E2-grasp",
+     "end_utc": "2026-09-24T17:37:59Z",
+     "exit": 1,
+     "load": "{ 2.98 4.17 5.80 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "36960f51426b1da4ddf2763f8e11aaa86cdb5387143287eaca1f8458749843e2",
+    "evaluation-only.json": "ff71bd2e01daa20e3940ace02f67120894987386d6c9c2f28ff3a13642f95b8e",
+    "team/team.json": "52b121bf02ac753605fdf3bebb17b58e65a6707c898190907132164c2582938f"
+   }
+  },
+  {
+   "run": "E3-box",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/E3-box",
+   "bundle": "rgb-standard-dispatch-v51",
+   "source_sha": "846b4b0cf78084f1b3889eec7de08fcea6d294c3",
+   "flags": [
+    "--diagnostic-fail-box-once"
+   ],
+   "phase": "RELEASE",
+   "protocol_complete": false,
+   "error": "TeamStop: box stopped: TARGET_NOT_VISIBLE; team decided to stop all",
+   "physical_success": false,
+   "cargo_success": {
+    "beam": true,
+    "box": false
+   },
+   "llm_calls": 11,
+   "usage": {
+    "prompt_tokens": 77618,
+    "completion_tokens": 1322,
+    "total_tokens": 82104
+   },
+   "control_end_sim_s": 183.51549999738842,
+   "wall_s": 366.73978520798846,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "box_failure",
+     "failure": "APPROACH_OVERSHOT",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 61.11,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "box_failure",
+     "failure": "BOX_FACE_ALIGNMENT_UNOBSERVABLE",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 150.08,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "box stopped: TARGET_NOT_VISIBLE",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "stop_all",
+     "rounds": 2,
+     "sim_time_s": 183.52,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "stop_all",
+       "r2": "stop_all",
+       "r3": "continue_others"
+      },
+      {
+       "r1": "stop_all",
+       "r2": "stop_all",
+       "r3": "stop_all"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [
+    {
+     "reason": "APPROACH_OVERSHOT",
+     "decision": "retry",
+     "diagnostic_injection": true
+    },
+    {
+     "reason": "BOX_FACE_ALIGNMENT_UNOBSERVABLE",
+     "decision": "retry",
+     "diagnostic_injection": false
+    }
+   ],
+   "loads": [
+    {
+     "run": "E3-box",
+     "start_utc": "2026-09-24T17:37:59Z",
+     "load": "{ 2.98 4.17 5.80 }"
+    },
+    {
+     "run": "E3-box",
+     "end_utc": "2026-09-24T17:44:07Z",
+     "exit": 1,
+     "load": "{ 4.79 4.34 5.23 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "ee69d88f90c7716d4b435258366958b0fa8f3e08c267b7cba0e8369b5f037476",
+    "evaluation-only.json": "8dfc99de0f59acab549617c405f63379f1f54bb5ad0ff80fb5d87f0dad21c4a5",
+    "team/team.json": "c2dde3109ea8815ff8816045689b4bfeaaf8517b621f98210d7156a34b83ea4a"
+   }
+  },
+  {
+   "run": "E4-drop-beam",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/E4-drop-beam",
+   "bundle": "rgb-standard-dispatch-v51",
+   "source_sha": "846b4b0cf78084f1b3889eec7de08fcea6d294c3",
+   "flags": [
+    "--approach-retries",
+    "0",
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "APPROACH",
+   "protocol_complete": false,
+   "error": "ComponentExecutionError: solo_box: RuntimeError: solo SIM budget exhausted",
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": false
+   },
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 104418,
+    "completion_tokens": 2411,
+    "total_tokens": 108055
+   },
+   "control_end_sim_s": 305.45399999450495,
+   "wall_s": 493.04251662499155,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "job_failed",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "beam",
+     "reason": "coarse RGB approach budget exhausted",
+     "sim_time_s": 48.150000000138895
+    }
+   ],
+   "box_events": [],
+   "loads": [
+    {
+     "run": "E4-drop-beam",
+     "start_utc": "2026-09-24T17:44:07Z",
+     "load": "{ 4.79 4.34 5.23 }"
+    },
+    {
+     "run": "E4-drop-beam",
+     "end_utc": "2026-09-24T17:52:22Z",
+     "exit": 1,
+     "load": "{ 3.59 3.61 4.42 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "87ea41205d2e3afcd2dba0108d6093492cd9cc59b92b2362e43dc12411557e1d",
+    "evaluation-only.json": "a4e476e402d4d8a01b849d66210ccc1a34512d74ccad9e3cae192009d30c1169",
+    "team/team.json": "54aa654712701bc5073a7b35b7995269b0925821df7df740d2c7672a99c1730b"
+   }
+  },
+  {
+   "run": "V1-approach",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/V1-approach",
+   "bundle": "rgb-standard-dispatch-v56",
+   "source_sha": "997c851d47b259bc19cdc2ee475969c754e1ae88",
+   "flags": [
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 7,
+   "usage": {
+    "prompt_tokens": 53116,
+    "completion_tokens": 861,
+    "total_tokens": 55204
+   },
+   "control_end_sim_s": 186.55999999731642,
+   "wall_s": 524.7771624999878,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB model convention unresolved",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 53.9,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [],
+   "loads": [
+    {
+     "run": "V1-approach",
+     "start_utc": "2026-09-24T18:24:06Z",
+     "load": "{ 2.96 3.34 3.81 }"
+    },
+    {
+     "run": "V1-approach",
+     "end_utc": "2026-09-24T18:32:52Z",
+     "exit": 0,
+     "load": "{ 3.66 4.03 4.03 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "95a5698dfb554302107fa7946c7e7c243c4e7504d6ac864022c95c5e4d78adf2",
+    "evaluation-only.json": "d1f532af1c9da34a66c82770e5d9517a07ed6cfcd5a4d0c279a716ea9025c99c",
+    "team/team.json": "731d3689a69a9a828c5db0176a39667056346df8f9abdb446aae96c13158795e"
+   }
+  },
+  {
+   "run": "V2-grasp",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/V2-grasp",
+   "bundle": "rgb-standard-dispatch-v56",
+   "source_sha": "997c851d47b259bc19cdc2ee475969c754e1ae88",
+   "flags": [
+    "--diagnostic-fail-grasp-once"
+   ],
+   "phase": "FINISHED_PARTIAL",
+   "protocol_complete": false,
+   "error": null,
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": true
+   },
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147487,
+    "completion_tokens": 3221,
+    "total_tokens": 151351
+   },
+   "control_end_sim_s": 186.30999999732234,
+   "wall_s": 454.9915867910022,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "pair_grasp_failure",
+     "failure": "existing pair carry guard stopped: ABORT",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "regrasp",
+     "rounds": 1,
+     "sim_time_s": 63.81,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "regrasp",
+       "r1": "regrasp"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB model convention unresolved",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 77.41,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 99.56,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 113.11,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "beam",
+     "reason": "fine RGB alignment outside saved skill support",
+     "sim_time_s": 113.10999999905327
+    }
+   ],
+   "box_events": [],
+   "loads": [
+    {
+     "run": "V2-grasp",
+     "start_utc": "2026-09-24T18:32:52Z",
+     "load": "{ 3.66 4.03 4.03 }"
+    },
+    {
+     "run": "V2-grasp",
+     "end_utc": "2026-09-24T18:40:29Z",
+     "exit": 1,
+     "load": "{ 15.97 7.09 5.17 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "0d55d12dd3c5d7d364e1048d4c2016ce0fbfdf267d84683946123f46f187cab7",
+    "evaluation-only.json": "1bb6033fc4879ff71df945a630ee3dad2792bce42f5eb237606f6c5654ae2447",
+    "team/team.json": "963517d9d99e64623285df689690340a6b9bbe780e319f6f24033adbd9a899ea"
+   }
+  },
+  {
+   "run": "V3-box",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/V3-box",
+   "bundle": "rgb-standard-dispatch-v56",
+   "source_sha": "997c851d47b259bc19cdc2ee475969c754e1ae88",
+   "flags": [
+    "--diagnostic-fail-box-once"
+   ],
+   "phase": "FINISHED_PARTIAL",
+   "protocol_complete": false,
+   "error": null,
+   "physical_success": false,
+   "cargo_success": {
+    "beam": true,
+    "box": false
+   },
+   "llm_calls": 8,
+   "usage": {
+    "prompt_tokens": 57093,
+    "completion_tokens": 984,
+    "total_tokens": 58881
+   },
+   "control_end_sim_s": 166.45999999779173,
+   "wall_s": 365.30193495799904,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "box_failure",
+     "failure": "APPROACH_OVERSHOT",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 61.11,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "box_failure",
+     "failure": "BOX_FACE_ALIGNMENT_UNOBSERVABLE",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 150.08,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "box stopped: TARGET_NOT_VISIBLE",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 166.38,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "box",
+     "reason": "box stopped: TARGET_NOT_VISIBLE",
+     "sim_time_s": 166.37974999779362
+    }
+   ],
+   "box_events": [
+    {
+     "reason": "APPROACH_OVERSHOT",
+     "decision": "retry",
+     "diagnostic_injection": true
+    },
+    {
+     "reason": "BOX_FACE_ALIGNMENT_UNOBSERVABLE",
+     "decision": "retry",
+     "diagnostic_injection": false
+    },
+    {
+     "reason": "TARGET_NOT_VISIBLE",
+     "decision": "dropped",
+     "diagnostic_injection": false
+    }
+   ],
+   "loads": [
+    {
+     "run": "V3-box",
+     "start_utc": "2026-09-24T18:40:29Z",
+     "load": "{ 15.97 7.09 5.17 }"
+    },
+    {
+     "run": "V3-box",
+     "end_utc": "2026-09-24T18:46:36Z",
+     "exit": 1,
+     "load": "{ 4.65 6.94 6.00 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "aa9211ce866853d0e3fb4a3458265555ecc9ce5415c8bd21dc717be4bf9caf23",
+    "evaluation-only.json": "f8bbc33128e1cf5f44a77e5020f47a6d3b9dc7d9bf845accc16a9fa73df441b4",
+    "team/team.json": "c66e00add5ddda8466ee4b0d930b320a0f4c837c883f426f8e761fb3e076706e"
+   }
+  },
+  {
+   "run": "V4-drop-beam",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/V4-drop-beam",
+   "bundle": "rgb-standard-dispatch-v56",
+   "source_sha": "997c851d47b259bc19cdc2ee475969c754e1ae88",
+   "flags": [
+    "--approach-retries",
+    "0",
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "FINISHED_PARTIAL",
+   "protocol_complete": false,
+   "error": null,
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": true
+   },
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 104594,
+    "completion_tokens": 2516,
+    "total_tokens": 108678
+   },
+   "control_end_sim_s": 125.34999999876383,
+   "wall_s": 259.6856363329862,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "job_failed",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "beam",
+     "reason": "coarse RGB approach budget exhausted",
+     "sim_time_s": 48.150000000138895
+    }
+   ],
+   "box_events": [],
+   "loads": [
+    {
+     "run": "V4-drop-beam",
+     "start_utc": "2026-09-24T18:46:36Z",
+     "load": "{ 4.65 6.94 6.00 }"
+    },
+    {
+     "run": "V4-drop-beam",
+     "end_utc": "2026-09-24T18:50:58Z",
+     "exit": 1,
+     "load": "{ 4.13 5.03 5.36 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "82c2d52f37ee2bcb565f74b847203490121d5350b718b901997e2688a99e18c3",
+    "evaluation-only.json": "a6a03fdebaec9ce1ee4252a214f32fffb646f8a6fd8b95d18dfacf8704209daf",
+    "team/team.json": "a196676ba3282336315b4a3d294025504d90415cb41a9beee869f69c071e0dd4"
+   }
+  },
+  {
+   "run": "W1-approach",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W1-approach",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-approach-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 5,
+   "usage": {
+    "prompt_tokens": 39737,
+    "completion_tokens": 642,
+    "total_tokens": 41313
+   },
+   "control_end_sim_s": 185.6099999973389,
+   "wall_s": 355.9949075419863,
+   "start_path": "claims",
+   "recoveries": [
+    {
+     "kind": "pair_approach_failure",
+     "failure": "coarse RGB approach budget exhausted",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 48.15,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [],
+   "loads": [
+    {
+     "run": "W1-approach",
+     "start_utc": "2026-09-24T19:22:08Z",
+     "load": "{ 2.74 2.79 3.04 }"
+    },
+    {
+     "run": "W1-approach",
+     "end_utc": "2026-09-24T19:28:06Z",
+     "exit": 0,
+     "load": "{ 4.08 4.25 3.76 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "c33ddbc7285d5944c43afc8991f5f40e68495a069c0cf637d27ee3c8bd16c425",
+    "evaluation-only.json": "b70ab7c32944e432f10f5c5eea98b1f850f1e795bf5f713461dc1cd9b786f178",
+    "team/team.json": "188ae285105b2739cb5e8283df73b681d90a50ed148aba70e28afd77fd5c3edc"
+   }
+  },
+  {
+   "run": "W2-grasp",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W2-grasp",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-grasp-once"
+   ],
+   "phase": "FINISHED_PARTIAL",
+   "protocol_complete": false,
+   "error": null,
+   "physical_success": false,
+   "cargo_success": {
+    "beam": false,
+    "box": true
+   },
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147791,
+    "completion_tokens": 3165,
+    "total_tokens": 151551
+   },
+   "control_end_sim_s": 201.90999999695345,
+   "wall_s": 422.45270166700357,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "pair_grasp_failure",
+     "failure": "existing pair carry guard stopped: ABORT",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "regrasp",
+     "rounds": 1,
+     "sim_time_s": 63.81,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r3": "regrasp",
+       "r1": "regrasp"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 93.81,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "pair_approach_failure",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r3",
+      "r1"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 114.96,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r3": "retry",
+       "r1": "retry"
+      }
+     ]
+    },
+    {
+     "kind": "job_failed",
+     "failure": "fine RGB alignment outside saved skill support",
+     "participants": [
+      "r1",
+      "r2",
+      "r3"
+     ],
+     "decision": "continue_others",
+     "rounds": 1,
+     "sim_time_s": 132.91,
+     "diagnostic_injection": false,
+     "replies": [
+      {
+       "r1": "continue_others",
+       "r2": "continue_others",
+       "r3": "continue_others"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": [
+    {
+     "job": "beam",
+     "reason": "fine RGB alignment outside saved skill support",
+     "sim_time_s": 132.90999999858508
+    }
+   ],
+   "box_events": [],
+   "loads": [
+    {
+     "run": "W2-grasp",
+     "start_utc": "2026-09-24T19:28:06Z",
+     "load": "{ 4.08 4.25 3.76 }"
+    },
+    {
+     "run": "W2-grasp",
+     "end_utc": "2026-09-24T19:35:11Z",
+     "exit": 1,
+     "load": "{ 4.72 4.17 3.85 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "aeb057a7fe5056afe2621e9a5e2de22b77ee8e5106a633d0c84db0f5993ad7be",
+    "evaluation-only.json": "770d0aba04bc92ceccc307d11496b5ea63de4b8251295850142590d0f34c0f88",
+    "team/team.json": "d1b3085a83cefe5f7a4315fcca695f546671084d33bef6446dbcfb4232cff987"
+   }
+  },
+  {
+   "run": "W3-box",
+   "path": "/Users/changmin/projects/ugrp/outputs/dynamic-team-recovery-20260925/W3-box",
+   "bundle": "rgb-standard-dispatch-v58",
+   "source_sha": "c2fdc633c25d4ababb7246ec94ff310fa05dd5ae",
+   "flags": [
+    "--diagnostic-fail-box-once"
+   ],
+   "phase": "FINISHED",
+   "protocol_complete": true,
+   "error": null,
+   "physical_success": true,
+   "cargo_success": {
+    "beam": true,
+    "box": true
+   },
+   "llm_calls": 10,
+   "usage": {
+    "prompt_tokens": 90355,
+    "completion_tokens": 2264,
+    "total_tokens": 93353
+   },
+   "control_end_sim_s": 183.659999997385,
+   "wall_s": 383.6619862090156,
+   "start_path": "conflict_then_talk",
+   "recoveries": [
+    {
+     "kind": "box_failure",
+     "failure": "APPROACH_OVERSHOT",
+     "participants": [
+      "r2"
+     ],
+     "decision": "retry",
+     "rounds": 1,
+     "sim_time_s": 61.11,
+     "diagnostic_injection": true,
+     "replies": [
+      {
+       "r2": "retry"
+      }
+     ]
+    }
+   ],
+   "dropped_jobs": null,
+   "box_events": [
+    {
+     "reason": "APPROACH_OVERSHOT",
+     "decision": "retry",
+     "diagnostic_injection": true
+    }
+   ],
+   "loads": [
+    {
+     "run": "W3-box",
+     "start_utc": "2026-09-24T19:35:11Z",
+     "load": "{ 4.72 4.17 3.85 }"
+    },
+    {
+     "run": "W3-box",
+     "end_utc": "2026-09-24T19:41:36Z",
+     "exit": 0,
+     "load": "{ 4.92 4.35 4.00 }"
+    }
+   ],
+   "sha256": {
+    "result.json": "b9834359d8a59c670a1d9dfbe5a8e9cfebfef8a407aa77f20fcd90c1bfeeef7d",
+    "evaluation-only.json": "dfbdffae1d55467cc9f6874eabb90a45ee7f848f1c1bfec5eb9835c32986e2aa",
+    "team/team.json": "fc31edc205939b849aa1436e0f3e7ffadc6a3e876d0be445ffb872c4291d5665"
+   }
+  }
+ ]
+}

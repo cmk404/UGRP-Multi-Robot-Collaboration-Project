@@ -282,7 +282,8 @@ class SkillBindings:
             # The pair leaves pickup first. The box may lift and use its own
             # route while the beam is moving, but queues before the shared bay.
             released=self.grasp_started if self.overlap_start=='grasp' else self.transit_started
-            if obj=='box' and stage=='GRASP' and 'beam' not in released:return False
+            # A beam job the team dropped never starts; it no longer holds the box.
+            if obj=='box' and stage=='GRASP' and 'beam' not in released and not self.settled('beam'):return False
             if stage=='UNLOAD':
                 if obj=='box' and not self.settled('beam'):return False
                 resources=['dispatch_apron']
