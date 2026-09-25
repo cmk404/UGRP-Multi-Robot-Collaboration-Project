@@ -1,4 +1,6 @@
-# 구역 화물 종류 인식 (TOP RGB, 프로필 `top_cargo_v1`)
+# 구역 화물 종류 인식 (TOP RGB, 프로필 `top_cargo_v1`·`top_cargo_v2`)
+
+> **연동에는 `top_cargo_v2`를 쓴다.** v1은 평행 빔 병합과 틀 안쪽 상자 억제 결함이 있어 평가 기준으로만 바이트 그대로 남긴다. v2의 차이는 [아래 절](#top_cargo_v2)과 [v2 실험 기록](../experiments/2026-09-25-zone-cargo-perception-v2/README.md)을 따른다.
 
 2026-09-25 요청: [화물 목록](zone_cargo.md)의 새 종류(can·tile·long_beam·heavy_crate·tri_frame)를 TOP RGB에서 알아보게 해 LLM 로봇이 볼 수 있게 한다. **이 문서는 인식기와 출력 계약만 다룬다.** 제어기·프롬프트 연결은 팀 운반 연동 담당이 한다. 평가 수치는 [실험 기록](../experiments/2026-09-25-zone-cargo-perception/README.md)에 있다.
 
@@ -66,8 +68,39 @@ approach_base = floor_xy + R(yaw) · grasp.approach_base()[:2], heading = yaw + 
 
 - held-out test(110장면) 요약: 완전 가시 화물 검출 can 98.2%·tile·beam·frame 100%·crate 98.6%, 종류 혼동 0, 칠·바닥 오검출 0. 수치와 실패는 [실험 기록](../experiments/2026-09-25-zone-cargo-perception/README.md)을 따른다.
 - **can 위치는 서쪽 과노출 영역에서 +x로 2–2.6 cm 치우친다**(p90 19.6 mm). 한쪽 집게 여유(약 11.5 mm)보다 크므로, can은 접근 전에 자기 RGB 근거리 관측으로 다시 맞춰야 한다.
-- 틀 삼각형 **안쪽**에 놓인 상자는 화물 위 상자로 보고 지워진다(test 1건). 틀 안쪽 상자는 이 프로필로는 보이지 않을 수 있다.
+- 틀 삼각형 **안쪽**에 놓인 상자는 화물 위 상자로 보고 지워진다(test 1건). 틀 안쪽 상자는 이 프로필로는 보이지 않을 수 있다. → `top_cargo_v2`에서 수정.
+- v1은 약 4.5 cm 떨어진 평행 빔 두 개를 하나로 합칠 수 있고, 한 시야에서 붙은 평행 빔은 둘 다 놓친다 → `top_cargo_v2`에서 수정.
 - 한 시점 정지 영상이다. 들린 화물, 움직이는 중의 흐림, 기울어진 화물은 평가하지 않았다.
 - 같은 색 물체끼리 닿으면(예: can 두 개) 한 덩어리가 될 수 있다.
 - 빔의 먼 끝이 로봇에 가려지고 다른 끝도 경계에 잘리면 중심을 알 수 없다(`partial_midpoint`).
 - 임계값은 `zone_wide` dev 장면에서 정했다. 다른 조명·지도로 일반화된다는 근거는 없다.
+
+## top_cargo_v2
+
+`harness/zone_cargo_perception_v2.py` (PR #168 검토 결함 수정). 입력 경계, 출력 스키마 `ugrp.zone_cargo_perception.v1`, `grasp_handles`는 v1과 같다. `profile` 값만 `top_cargo_v2`다.
+
+```python
+from harness.zone_cargo_perception_v2 import detect_all_cargo, detect_cargo_top, grasp_handles
+```
+
+- **빔 병합**
+  - 같은 카메라의 검출은 합치지 않는다.
+  - 다른 카메라 조각은 다음을 모두 만족할 때만 합친다.
+    - 각도 차 5° 이하, 측면 거리 2 cm 이하, 축 방향 겹침 -3 cm 이상.
+    - 합친 길이가 정적 길이 + 8 cm 이하.
+    - 경계에 잘리지 않은 끝을 6 cm 넘게 지나지 않을 것.
+  - 비빔 종류의 중복 제거도 다른 카메라끼리만 한다.
+- **붙은 평행 빔 분리**
+  - 폭이 1.6배를 넘는 빔 덩어리는 윗면 화소로 둘로 나눈다.
+  - 나눈 결과에는 `evidence.split_from_wider_blob=true`를 표시한다.
+  - 폭 0.6배 미만 조각은 버린다.
+- **틀 근처 상자.** 막대 띠(반폭 + 1 cm)와 손잡이 돌기 4.5 cm 이내에서만 억제한다. 삼각형 안쪽 빈 곳의 상자는 남는다.
+- **알려진 절충.** 서로 다른 빔을 합치지 않는 대신, 같은 빔의 짧은 잘린 조각이 따로 남을 수 있다.
+  - 새 test에서 180장면 중 중복 4개가 나왔고, 신뢰도는 모두 0.5 미만이었다.
+  - 신뢰도 0.5 미만 빔은 다른 시점에서 다시 확인한다.
+  - 같은 축 위 가까운 두 빔은 길이 합을 정적 길이와 비교한다.
+- **평가 요약**(새 test 12시드·180장면, 완전 가시)
+  - 빔: v1 293/297 → v2 297/297.
+  - 붙은 평행 빔 쌍: v1 5/11 → v2 11/11.
+  - 틀 안쪽 상자: v1 0/40 → v2 37/40. 놓친 3개는 기본 상자 검출기도 놓쳤다.
+  - 그 밖의 종류: v1과 같다.
