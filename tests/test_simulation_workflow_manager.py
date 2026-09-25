@@ -224,8 +224,8 @@ raise SystemExit(3 if a.fail else 0)
             "communication-study": ["prepare", "--config", str(source)],
             "communication-cloud-submit": ["--evidence-root", str(model), "--inventory", str(source)],
             "zone-dispatch": ["--mode", "fixture", "--coordination", "dynamic"],
-            "zone-color-eval": ["render", "--split", "dev"],
             "zone-cargo-probe": ["--probe", "pair_crate"], "zone-cargo-catalogue": [],
+            "zone-color-eval": ["render", "--split", "dev"],
             "zone-cargo-perception-eval": ["render", "--split", "dev"],
         }
         with mock.patch.dict(os.environ, {"UGRP_SIM_TOKEN": "secret"}), \

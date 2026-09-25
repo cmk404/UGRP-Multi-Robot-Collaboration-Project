@@ -124,6 +124,34 @@
       "output_kind": "directory"
     },
     {
+      "id": "zone-cargo-probe",
+      "purpose": "구역 화물 목록의 물리 가능성 검사(정답 교사, weld OFF)",
+      "entry": "scripts/probe_zone_cargo.py",
+      "docs": "docs/zone_cargo.md",
+      "requires": "local Mac/Linux; privileged ground-truth TEACHER (poses, IK, contact forces), never an RGB/student success; one of --probe or --sweep",
+      "version": "1.0.0",
+      "runner": "scripts.probe_zone_cargo",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
+    },
+    {
+      "id": "zone-cargo-catalogue",
+      "purpose": "구역 화물 목록 그림과 TOP RGB 색 분리 검사",
+      "entry": "scripts/render_zone_cargo_catalogue.py",
+      "docs": "docs/zone_cargo.md",
+      "requires": "local Mac/Linux offscreen rendering; segmentation is evaluation-only",
+      "version": "1.0.0",
+      "runner": "scripts.render_zone_cargo_catalogue",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
+    },
+    {
       "id": "zone-color-eval",
       "purpose": "구역 상자 4색 RGB 검출 오프라인 평가(자기 RGB·TOP)",
       "entry": "scripts/eval_zone_color_detection.py",
@@ -176,34 +204,6 @@
         "render": "directory",
         "score": "directory"
       }
-    },
-    {
-      "id": "zone-cargo-probe",
-      "purpose": "구역 화물 목록의 물리 가능성 검사(정답 교사, weld OFF)",
-      "entry": "scripts/probe_zone_cargo.py",
-      "docs": "docs/zone_cargo.md",
-      "requires": "local Mac/Linux; privileged ground-truth TEACHER (poses, IK, contact forces), never an RGB/student success; one of --probe or --sweep",
-      "version": "1.0.0",
-      "runner": "scripts.probe_zone_cargo",
-      "output_flag": "--output",
-      "side_effect": "local_simulation",
-      "adapter": "managed_legacy_cli",
-      "required_inputs": [],
-      "output_kind": "directory"
-    },
-    {
-      "id": "zone-cargo-catalogue",
-      "purpose": "구역 화물 목록 그림과 TOP RGB 색 분리 검사",
-      "entry": "scripts/render_zone_cargo_catalogue.py",
-      "docs": "docs/zone_cargo.md",
-      "requires": "local Mac/Linux offscreen rendering; segmentation is evaluation-only",
-      "version": "1.0.0",
-      "runner": "scripts.render_zone_cargo_catalogue",
-      "output_flag": "--output",
-      "side_effect": "local_simulation",
-      "adapter": "managed_legacy_cli",
-      "required_inputs": [],
-      "output_kind": "directory"
     },
     {
       "id": "navigation",
