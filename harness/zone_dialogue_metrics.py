@@ -61,16 +61,18 @@ def id_issues(text, labels):
 
 # Rule-based dialogue acts, multi-label. Korean and English cues.
 ACT_RULES = {
-    'claim': r'맡|가져가|가져갈|옮기겠|옮길게|옮깁니다|담당|제가 .*(하겠|할게)|선언|claim|taking|take |i will|i\'ll',
-    'yield': r'양보|넘기|넘겨|포기|대신 .*(고르|선택)|다른 (상자|작업)|yield|give .* to|leave .* to|instead',
-    'request': r'부탁|해 ?주세요|해 ?줘|해 ?주실|요청|주시겠|please|could you|can you',
-    'agree': r'좋아|좋습니다|동의|알겠|확인했|그렇게 하|수락|ok\b|okay|agree|sounds good|confirmed',
+    'claim': r'맡겠|맡을|가져가겠|가져갈게|가져가도|가져오겠|옮기겠|옮길게|운반하겠|운반할게|배달하겠|전달하겠|담당하겠|'
+             r'claim|taking|take |i will|i\'ll',
+    'propose': r'제안합니다|제안할게|제안을 올|propos',
+    'yield': r'양보|넘기|넘겨|포기|yield|give .* to|leave .* to',
+    'request': r'부탁|해 ?주세요|해 ?줘|줘[.!]?$|올려줘|주실|요청|주시겠|please|could you|can you',
+    'agree': r'좋아|좋습니다|동의합니다|동의해요|알겠|확인했|그렇게 하|수락합니다|수락할게|ok\b|okay|agree|sounds good|accept',
     'refuse': r'거절|안 됩니다|불가|못 합니다|reject|refuse|cannot|can\'t',
     'question': r'\?|까요|나요|습니까|할래|괜찮을',
-    'report': r'완료|배달했|배달 완료|놓았|도착|끝났|멈췄|중단|delivered|finished|stopped|done',
+    'report': r'완료|배달했|놓았|도착|끝났|멈췄|중단|delivered|finished|stopped|done',
     'inform_obstacle': r'막혀|막힌|장애물|길을 막|경로가 겹|blocked|obstacle|in the way',
     'correct': r'정정|수정합니다|아니라|잘못|correction|actually',
-    'standby': r'대기|기다리|할 일이 없|standing by|stand by|nothing (useful )?remains',
+    'standby': r'대기|기다리|할 일이 없|standing by|stand by|nothing (useful )?remains|waiting',
 }
 
 
