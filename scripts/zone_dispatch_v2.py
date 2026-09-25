@@ -222,7 +222,15 @@ def run_v2(args, goal):
         result['phase'] = 'EXECUTE'
         motion_started = zone.time()
         turn = 0
+        next_progress = motion_started
         while zone.time() - motion_started < max_sim_s:
+            if zone.time() >= next_progress:
+                next_progress += 30.
+                print('PROGRESS ' + json.dumps({
+                    't': round(zone.time() - motion_started, 1),
+                    'robots': {r: t.phase for r, t in ex.robots.items()},
+                    'jobs': {j: c.job.state for j, c in ex.carries.items() if not c.job.terminal},
+                    'delivered': ex.ledger.delivered}), flush=True)
             collect_done()
             idle = [r for r in ROBOTS if r not in active and not ex.robots[r].busy]
             if args.coordination == 'plan_first':
