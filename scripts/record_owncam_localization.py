@@ -21,6 +21,9 @@ Modes (the posture the robot commands while moving):
 * ``carry_level``: the teacher grasps the cyan box, then the arm moves to the
   production level carry pose (``CARRY_POSE``) and the robot drives the route
   holding the box, with pan sweeps at stops.
+* ``carry_pitch`` (post-hoc diagnostic, 2026-09-25): as ``carry_level`` but the
+  wrist (servo 3) is pitched down by ``carry_pitch_deg`` so that wall tags
+  appear above the held box in the image.
 
 Sync SIM only (no realtime). Weld OFF (scene builder refuses otherwise).
 """
@@ -271,22 +274,28 @@ class Recorder:
         mode = spec['mode']
         self.hold_for(.5)
         outcome = {}
-        if mode in ('teacher_carry', 'carry_level'):
+        if mode in ('teacher_carry', 'carry_level', 'carry_pitch'):
             self.teacher_controls = True
             self.robot.assign({'job_id': 'j1', 'box_body': self.box_body, 'slot_xy': [sx, sy]}, self.now())
             labels = {'to_box': 'search_drive', 'align_box': 'search_drive', 'grasp': 'grasp', 'lift': 'grasp',
                       'carry': 'teacher_carry_drive', 'align_slot': 'teacher_carry_drive', 'release': 'place',
                       'retract': 'place', 'back_off': 'place', 'done': 'done', 'failed': 'failed'}
-            stop_phase = ('carry',) if mode == 'carry_level' else ('done', 'failed')
+            stop_phase = ('carry',) if mode in ('carry_level', 'carry_pitch') else ('done', 'failed')
             self.run_until(lambda: self.robot.phase in stop_phase or self.robot.phase in ('done', 'failed'),
                            lambda: labels.get(self.robot.phase, self.robot.phase), 400.)
             outcome['teacher_phase'] = self.robot.phase
             outcome['teacher_outcome'] = self.robot.outcome
             self.teacher_controls = False
-            if mode == 'carry_level' and self.robot.phase == 'carry':
+            if mode in ('carry_level', 'carry_pitch') and self.robot.phase == 'carry':
                 self.ports[self.rid].hold(self.now())
-                self.queue_pose({**CARRY_POSE, 1: CLOSED})
-                self.drive_route(approach, True, 'carry_level')
+                pose = {**CARRY_POSE, 1: CLOSED}
+                label = 'carry_level'
+                if mode == 'carry_pitch':
+                    deg = float(spec['carry_pitch_deg'])
+                    pose[3] = CARRY_POSE[3] - round(deg*2000/180)
+                    label = f'carry_pitch{int(deg)}'
+                self.queue_pose(pose)
+                self.drive_route(approach, True, label)
             if mode == 'teacher_carry':
                 self.hold_for(.5)
                 self.capture('done')

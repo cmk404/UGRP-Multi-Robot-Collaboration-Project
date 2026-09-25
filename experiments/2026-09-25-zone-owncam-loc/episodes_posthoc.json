@@ -1,0 +1,50 @@
+{
+ "schema": "ugrp.owncam_loc_episodes.v1",
+ "note": "post-hoc diagnostic after the test split was scored: same route as dev-cl-s11 with the wrist pitched down while carrying; not part of the pre-registered gates",
+ "episodes": [
+  {
+   "split": "posthoc",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "carry_pitch",
+   "spawn_y": 0.55,
+   "zone": "B",
+   "slot": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "episode_id": "posthoc-cp20-s11",
+   "carry_pitch_deg": 20
+  },
+  {
+   "split": "posthoc",
+   "map": "zone_wide_door_tags_v1",
+   "seed": 11,
+   "mode": "carry_pitch",
+   "spawn_y": 0.55,
+   "zone": "B",
+   "slot": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "box_kind": "cyan",
+   "contact_profile": "local_contact_fine",
+   "episode_id": "posthoc-cp30-s11",
+   "carry_pitch_deg": 30
+  }
+ ]
+}
