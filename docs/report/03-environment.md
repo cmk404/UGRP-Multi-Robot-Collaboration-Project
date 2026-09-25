@@ -17,7 +17,8 @@ SHA-256 `d410af31…`).
 
 ### 벽·문·복도 지도 3종
 
-PR [#173](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/173)(병합 전 기록,
+PR [#173](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/pull/173)(2026-09-25 병합;
+`docs/current_status.md`는 기록 당시 "병합 전"으로 적었다.
 [experiments/2026-09-25-zone-hard-routes](../../experiments/2026-09-25-zone-hard-routes/README.md))가
 `zone_wide` 위에 안쪽 벽을 더해 세 지도를 만들었다.
 
