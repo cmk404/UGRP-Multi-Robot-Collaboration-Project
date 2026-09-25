@@ -388,9 +388,38 @@ FORBIDDEN_VALUE_SUBSTRINGS = ('cctv', 'nav_cam', 'top_rgb', 'top_frame', 'top_we
                               'top_nw', 'top_se', 'top_ne', 'ground_truth', 'teacher_receipt')
 OWN_RGB_REF = re.compile(r'^own-(r1|r2|r3)-\d{3,6}$')
 MAP_SCHEMATIC_REF = re.compile(r'^map-[A-Za-z0-9_\-]+-schematic$')
+SHA256_HEX = re.compile(r'^[0-9a-f]{64}$')
+ID_TOKEN = re.compile(r'^[A-Za-z0-9_][A-Za-z0-9_.\-]*$')
 LOCAL_STATES = ('command_issued', 'queue_empty', 'hold_requested', 'local_timeout', 'command_rejected')
 BELIEF_KEYS = ('region', 'last_visual_anchor', 'last_requested_destination', 'last_visually_confirmed_region',
                'confidence', 'sources', 'held_item_guess', 'blocked_passages', 'notes_ko')
+# Closed sub-schemas: a robot-facing section may carry NO key beyond these, so an
+# evaluation-only field cannot slip in under a new name (renamed poses, overhead
+# stills, peer views, host boards, hidden schedules, metrics). Extending a tuple
+# is a contract change: bump CONTRACT_VERSION and re-run the boundary tests.
+STATIC_MAP_KEYS = ('map_id', 'map_file_sha256', 'public_map', 'public_map_sha256', 'schematic_ref')
+STATIC_MAP_REQUIRED = ('map_id', 'public_map', 'public_map_sha256')
+SCHEMATIC_REF_KEYS = ('ref', 'kind', 'png_sha256', 'width_px', 'height_px', 'px_per_m')
+PUBLIC_MAP_KEYS = ('schema', 'map_id', 'version', 'frame', 'bounds_m', 'walls', 'terrain', 'passages',
+                   'regions', 'zone_slots', 'pickup_bays', 'item_kinds_painted', 'approach_convention',
+                   'landmark_detail', 'landmarks', 'base_map_id')
+ORDER_KEYS = ('order_id', 'kind', 'count', 'item_ids', 'required_robots', 'destination_zone',
+              'initial_location', 'identity')
+ORDER_SHEET_KEYS = ('schema', 'scenario_id', 'map_id', 'map_file_sha256', 'public_map_sha256', 'orders',
+                    'kinds', 'team_size', 'note_ko')
+RGB_REF_KEYS = ('ref', 'kind', 'captured_at_sim_s', 'sha256')
+COMMAND_KEYS = ('command_id', 'issued_at_sim_s', 'kind', 'arguments', 'local_state')
+# Arguments of the robot's OWN commands: own-frame targets and map/order ids only.
+COMMAND_ARGUMENT_KEYS = ('target_ref', 'target_zone', 'order_id', 'item', 'role', 'passage', 'distance_m',
+                         'turn_deg', 'speed', 'duration_s', 'gripper', 'observe', 'waypoints', 'reason_code')
+ISSUED_ORDER_KEYS = ('order_ref', 'to', 'at_sim_s', 'instruction')
+CHANNEL_KEYS = ('condition', 'topology', 'encoding', 'free_text_allowed', 'can_send_to',
+                'can_receive_from', 'role')
+ENVELOPE_KEYS = ('schema', 'message_id', 'sender', 'recipients', 'encoding', 'created_at_sim_s',
+                 'reply_to', 'body')
+ENVELOPE_REQUIRED = ('message_id', 'sender', 'recipients', 'encoding', 'created_at_sim_s', 'body')
+# Item kinds, their team size and their grasp roles (static task information).
+ROLE_NAMES = ('west', 'east', 'any', 'end_neg', 'end_pos', 'v0', 'v1', 'v2')
 
 
 def _walk(value, path='$'):
@@ -429,84 +458,221 @@ def _value_hits(value: object) -> list[str]:
     for path, key, item in _walk(value):
         if not isinstance(item, str):
             continue
-        low = unicodedata.normalize('NFKC', item).lower()
+        low = unicodedata.normalize('NFKC', item).lower().replace('-', '_').replace(' ', '_')
         for part in FORBIDDEN_VALUE_SUBSTRINGS:
             if part in low:
                 hits.append(f'{path}.{key}: value names {part}')
     return hits
 
 
-def _ref_hits(payload: Mapping, spec: Condition) -> list[str]:
+def _closed(value: object, keys: Sequence[str], label: str, *, required: Sequence[str] = ()) -> list[str]:
+    """Reject any key outside ``keys`` (closed sub-schema) and any missing required key."""
+    if not isinstance(value, Mapping):
+        return [f'{label} must be an object']
+    out = []
+    extra = sorted(set(value) - set(keys))
+    if extra:
+        out.append(f'{label} carries key(s) outside the contract: {extra}')
+    missing = [k for k in required if k not in value]
+    if missing:
+        out.append(f'{label} misses {missing}')
+    return out
+
+
+def _sha(value: object, label: str, *, required: bool = True) -> list[str]:
+    if value is None and not required:
+        return []
+    return [] if isinstance(value, str) and SHA256_HEX.match(value) else [f'{label} must be a sha256 hex digest']
+
+
+def vocabulary_from_payload(payload: Mapping) -> Vocabulary:
+    """The IDs a message may name, read from the payload's own order sheet and public map."""
+    sheet = payload.get('order_sheet') if isinstance(payload.get('order_sheet'), Mapping) else {}
+    static = payload.get('static_map') if isinstance(payload.get('static_map'), Mapping) else {}
+    public = static.get('public_map') if isinstance(static.get('public_map'), Mapping) else {}
+    items: set = set()
+    for order in sheet.get('orders', ()) or ():
+        if isinstance(order, Mapping):
+            items |= {order.get('order_id'), order.get('kind'), *(order.get('item_ids') or ())}
+    refs = set(ZONE_IDS) | {'pickup'}
+    for bay in public.get('pickup_bays', ()) or ():
+        if isinstance(bay, Mapping):
+            refs.add(bay.get('bay_id'))
+            refs |= {s.get('slot_id') for s in bay.get('slots', ()) or () if isinstance(s, Mapping)}
+    for slots in (public.get('zone_slots') or {}).values():
+        refs |= {s.get('slot_id') for s in slots or () if isinstance(s, Mapping)}
+    passages = {p.get('id') for p in public.get('passages', ()) or () if isinstance(p, Mapping)}
+    keep = lambda values: frozenset(v for v in values if isinstance(v, str))   # noqa: E731
+    return Vocabulary(items=keep(items), zones=frozenset(ZONE_IDS), roles=frozenset(ROLE_NAMES),
+                      passages=keep(passages), location_refs=keep(refs))
+
+
+def _rgb_hits(entries: object, label: str, allowed_robots: Sequence[str], now: float | None) -> list[str]:
+    hits = []
+    if not isinstance(entries, Sequence) or isinstance(entries, str):
+        return [f'{label} must be a list']
+    for entry in entries:
+        hits.extend(_closed(entry, RGB_REF_KEYS, label, required=('ref', 'captured_at_sim_s', 'sha256')))
+        if not isinstance(entry, Mapping):
+            continue
+        ref = entry.get('ref')
+        if not isinstance(ref, str) or not OWN_RGB_REF.match(ref):
+            hits.append(f'{label}: {ref!r} is not a wrist RGB ref (own-<robot>-<index>)')
+        elif not any(ref.startswith(f'own-{robot}-') for robot in allowed_robots):
+            hits.append(f'{label}: {ref} belongs to another robot')
+        if entry.get('kind') not in (None, 'own_wrist_rgb'):
+            hits.append(f'{label}: kind must be own_wrist_rgb')
+        hits.extend(_sha(entry.get('sha256'), f'{label}.sha256'))
+        taken = entry.get('captured_at_sim_s')
+        if isinstance(taken, bool) or not isinstance(taken, (int, float)) or taken < 0:
+            hits.append(f'{label}.captured_at_sim_s must be a non-negative number')
+        elif now is not None and taken > now + 1e-9:
+            hits.append(f'{label}: {ref} was captured after the call time')
+    return hits
+
+
+def _static_map_hits(payload: Mapping) -> list[str]:
+    static = payload.get('static_map')
+    hits = _closed(static, STATIC_MAP_KEYS, 'static_map', required=STATIC_MAP_REQUIRED)
+    if not isinstance(static, Mapping):
+        return hits
+    hits.extend(_sha(static.get('public_map_sha256'), 'static_map.public_map_sha256'))
+    hits.extend(_sha(static.get('map_file_sha256'), 'static_map.map_file_sha256', required=False))
+    public = static.get('public_map')
+    hits.extend(_closed(public, PUBLIC_MAP_KEYS, 'static_map.public_map',
+                        required=('map_id', 'bounds_m', 'walls', 'regions')))
+    if isinstance(public, Mapping) and isinstance(static.get('public_map_sha256'), str) \
+            and digest(public) != static['public_map_sha256']:
+        hits.append('static_map.public_map_sha256 does not match the projection')
+    if 'schematic_ref' in static:
+        hits.extend(_closed(static['schematic_ref'], SCHEMATIC_REF_KEYS, 'static_map.schematic_ref',
+                            required=('ref', 'png_sha256')))
+        if isinstance(static['schematic_ref'], Mapping):
+            ref = static['schematic_ref'].get('ref')
+            if not isinstance(ref, str) or not MAP_SCHEMATIC_REF.match(ref):
+                hits.append(f'static_map.schematic_ref: {ref!r} is not a map schematic ref')
+            hits.extend(_sha(static['schematic_ref'].get('png_sha256'), 'static_map.schematic_ref.png_sha256'))
+    return hits
+
+
+def _order_sheet_hits(payload: Mapping) -> list[str]:
+    sheet = payload.get('order_sheet')
+    hits = _closed(sheet, ORDER_SHEET_KEYS, 'order_sheet', required=('schema', 'orders'))
+    if not isinstance(sheet, Mapping):
+        return hits
+    if sheet.get('schema') != ORDER_SHEET_SCHEMA:
+        hits.append(f'order_sheet must carry schema {ORDER_SHEET_SCHEMA}')
+    orders = sheet.get('orders')
+    if not isinstance(orders, Sequence) or isinstance(orders, str):
+        return hits + ['order_sheet.orders must be a list']
+    for order in orders:
+        hits.extend(_closed(order, ORDER_KEYS, 'order_sheet.orders[]',
+                            required=('order_id', 'kind', 'count', 'destination_zone', 'initial_location')))
+        if isinstance(order, Mapping):
+            if order.get('destination_zone') not in ZONE_IDS:
+                hits.append(f'order {order.get("order_id")!r} has a destination outside {ZONE_IDS}')
+            hits.extend(_closed(order.get('initial_location'), ('pickup_bay', 'slot'),
+                                'order_sheet.orders[].initial_location', required=('pickup_bay',)))
+    return hits
+
+
+def _history_hits(payload: Mapping, now: float | None) -> list[str]:
+    entries = payload.get('own_command_history')
+    if not isinstance(entries, Sequence) or isinstance(entries, str):
+        return ['own_command_history must be a list']
+    hits, previous = [], None
+    for entry in entries:
+        hits.extend(_closed(entry, COMMAND_KEYS, 'own_command_history[]',
+                            required=('command_id', 'issued_at_sim_s', 'kind')))
+        if not isinstance(entry, Mapping):
+            continue
+        if not isinstance(entry.get('command_id'), str) or not ID_TOKEN.match(str(entry.get('command_id'))):
+            hits.append('own_command_history[].command_id must be a literal id token')
+        if entry.get('local_state') not in (None,) + LOCAL_STATES:
+            hits.append(f'own_command_history: local_state {entry.get("local_state")!r} is not a self state')
+        hits.extend(_closed(entry.get('arguments', {}), COMMAND_ARGUMENT_KEYS,
+                            'own_command_history[].arguments'))
+        issued = entry.get('issued_at_sim_s')
+        if isinstance(issued, bool) or not isinstance(issued, (int, float)) or issued < 0:
+            hits.append('own_command_history[].issued_at_sim_s must be a non-negative number')
+            continue
+        if now is not None and issued > now + 1e-9:
+            hits.append(f'own_command_history: {entry.get("command_id")} was issued after the call time')
+        if previous is not None and issued < previous - 1e-9:
+            hits.append('own_command_history must be ordered oldest first')
+        previous = issued
+    return hits
+
+
+def _inbox_hits(payload: Mapping, spec: Condition, seed: int | None, now: float | None) -> list[str]:
+    inbox = payload.get('inbox')
+    if inbox is None:
+        return []
+    if spec.topology == 'none':
+        return ['no_comm must not carry an inbox']
+    if not isinstance(inbox, Sequence) or isinstance(inbox, str):
+        return ['inbox must be a list']
+    if spec.topology == 'star' and seed is None:
+        return ['validating a leader_ko inbox needs the seed that places the rotating leader']
     hits, robot = [], payload.get('robot_id')
-    for entry in payload.get('own_rgb_refs', ()) or ():
-        ref = entry.get('ref') if isinstance(entry, Mapping) else None
-        if not isinstance(ref, str) or not OWN_RGB_REF.match(ref):
-            hits.append(f'own_rgb_refs: {ref!r} is not an own wrist RGB ref (own-<robot>-<index>)')
-        elif not ref.startswith(f'own-{robot}-'):
-            hits.append(f'own_rgb_refs: {ref} belongs to another robot')
-    for entry in payload.get('team_rgb_refs', ()) or ():
-        ref = entry.get('ref') if isinstance(entry, Mapping) else None
-        if not isinstance(ref, str) or not OWN_RGB_REF.match(ref):
-            hits.append(f'team_rgb_refs: {ref!r} is not a wrist RGB ref')
-        elif spec.name != 'reference_R':
-            hits.append('team_rgb_refs is only allowed for reference_R')
-    schematic = (payload.get('static_map') or {}).get('schematic_ref')
-    if isinstance(schematic, Mapping):
-        ref = schematic.get('ref')
-        if not isinstance(ref, str) or not MAP_SCHEMATIC_REF.match(ref):
-            hits.append(f'static_map.schematic_ref: {ref!r} is not a map schematic ref')
+    vocabulary = vocabulary_from_payload(payload)
+    for envelope in inbox:
+        hits.extend(_closed(envelope, ENVELOPE_KEYS, 'inbox[]', required=ENVELOPE_REQUIRED))
+        if not isinstance(envelope, Mapping) or not {'sender', 'recipients', 'body'} <= set(envelope):
+            continue
+        if envelope.get('encoding') != spec.encoding:
+            hits.append(f'inbox envelope encoding {envelope.get("encoding")!r} differs from the condition')
+        recipients = envelope['recipients']
+        if not isinstance(recipients, Sequence) or isinstance(recipients, str):
+            hits.append('inbox[].recipients must be a list')
+            continue
+        if robot not in recipients:
+            hits.append(f'inbox envelope {envelope.get("message_id")} was not addressed to this robot')
+        unknown = [r for r in recipients if r not in spec.actors]
+        if unknown:
+            hits.append(f'inbox envelope names recipient(s) outside this condition: {unknown}')
+        hits.extend(message_violations(spec.name, envelope['sender'], recipients, envelope['body'],
+                                      seed=seed, vocabulary=vocabulary))
+        created = envelope.get('created_at_sim_s')
+        if isinstance(created, bool) or not isinstance(created, (int, float)) or created < 0:
+            hits.append('inbox[].created_at_sim_s must be a non-negative number')
+        elif now is not None and created > now + 1e-9:
+            hits.append('an inbox message cannot be created after the call time')
     return hits
 
 
 def _shape_hits(payload: Mapping, spec: Condition, seed: int | None) -> list[str]:
-    hits = []
-    for entry in payload.get('own_command_history', ()) or ():
-        if not isinstance(entry, Mapping) or not {'command_id', 'issued_at_sim_s', 'kind'} <= set(entry):
-            hits.append('own_command_history entries need command_id, issued_at_sim_s and kind')
-        elif entry.get('local_state') not in (None,) + LOCAL_STATES:
-            hits.append(f'own_command_history: local_state {entry.get("local_state")!r} is not a self state')
-    belief = payload.get('self_belief')
-    if belief is not None:
-        if not isinstance(belief, Mapping):
-            hits.append('self_belief must be an object')
-        else:
-            unknown = [k for k in belief if k not in BELIEF_KEYS]
-            if unknown:
-                hits.append(f'self_belief has non-contract key(s): {sorted(unknown)}')
-    inbox = payload.get('inbox')
-    if inbox is not None:
-        if spec.topology == 'none':
-            hits.append('no_comm must not carry an inbox')
-        for envelope in inbox if isinstance(inbox, Sequence) and not isinstance(inbox, str) else []:
-            if not isinstance(envelope, Mapping):
-                hits.append('inbox entries must be message envelopes')
-                continue
-            missing = [k for k in ('message_id', 'sender', 'recipients', 'encoding', 'body') if k not in envelope]
-            if missing:
-                hits.append(f'inbox envelope misses {missing}')
-                continue
-            if envelope['encoding'] != spec.encoding:
-                hits.append(f'inbox envelope encoding {envelope["encoding"]!r} differs from the condition')
-            if payload.get('robot_id') not in envelope['recipients']:
-                hits.append(f'inbox envelope {envelope["message_id"]} was not addressed to this robot')
-            hits.extend(message_violations(spec.name, envelope['sender'], [payload.get('robot_id')],
-                                           envelope['body'], seed=seed))
+    time_s = payload.get('sim_time_s')
+    now = time_s if isinstance(time_s, (int, float)) and not isinstance(time_s, bool) else None
+    hits = _static_map_hits(payload) + _order_sheet_hits(payload)
+    if not isinstance(payload.get('request_id'), str) or not ID_TOKEN.match(str(payload.get('request_id'))):
+        hits.append('request_id must be a literal id token')
+    if 'own_rgb_refs' in payload:
+        hits.extend(_rgb_hits(payload['own_rgb_refs'], 'own_rgb_refs', [payload.get('robot_id')], now))
+    if 'team_rgb_refs' in payload:
+        hits.extend(_rgb_hits(payload['team_rgb_refs'], 'team_rgb_refs', ROBOTS, now)
+                    if spec.name == 'reference_R' else ['team_rgb_refs is only allowed for reference_R'])
+    if 'own_command_history' in payload:
+        hits.extend(_history_hits(payload, now))
+    if 'issued_orders' in payload:
+        for entry in payload['issued_orders'] if isinstance(payload['issued_orders'], Sequence) else []:
+            hits.extend(_closed(entry, ISSUED_ORDER_KEYS, 'issued_orders[]', required=('order_ref', 'to')))
+    if 'self_belief' in payload:
+        hits.extend(_closed(payload['self_belief'], BELIEF_KEYS, 'self_belief'))
+    hits.extend(_inbox_hits(payload, spec, seed, now))
     if spec.leader_rotation:
-        if seed is not None and payload.get('leader_id') != leader_for_seed(spec.name, seed):
+        if seed is None:
+            hits.append('validating a leader_ko payload needs the seed that places the rotating leader')
+        elif payload.get('leader_id') != leader_for_seed(spec.name, seed):
             hits.append('leader_id differs from the seed rotation')
         if payload.get('role') not in ('leader', 'follower'):
             hits.append('leader_ko payloads carry role=leader|follower')
-    order_sheet = payload.get('order_sheet')
-    if not isinstance(order_sheet, Mapping) or order_sheet.get('schema') != ORDER_SHEET_SCHEMA:
-        hits.append(f'order_sheet must carry schema {ORDER_SHEET_SCHEMA}')
-    static_map = payload.get('static_map')
-    if not isinstance(static_map, Mapping) or 'public_map' not in static_map:
-        hits.append('static_map must carry the public_map projection')
-    elif static_map.get('public_map_sha256') and digest(static_map['public_map']) != static_map['public_map_sha256']:
-        hits.append('static_map.public_map_sha256 does not match the projection')
     channel = payload.get('channel')
-    if not isinstance(channel, Mapping) or channel.get('condition') != spec.name:
-        hits.append('channel must describe this condition')
+    hits.extend(_closed(channel, CHANNEL_KEYS, 'channel', required=CHANNEL_KEYS))
+    if isinstance(channel, Mapping) and not (spec.leader_rotation and seed is None):
+        expected = channel_section(spec.name, payload.get('robot_id'), seed)
+        if channel != expected:
+            hits.append('channel does not match the condition rule for this actor')
     return hits
 
 
@@ -537,6 +703,17 @@ def boundary_manifest() -> dict:
             'evaluation_only': dict(EVALUATION_ONLY), 'forbidden_keys': sorted(FORBIDDEN_KEYS),
             'forbidden_key_substrings': list(FORBIDDEN_KEY_SUBSTRINGS),
             'forbidden_value_substrings': list(FORBIDDEN_VALUE_SUBSTRINGS),
+            'closed_sub_schemas': {'static_map': list(STATIC_MAP_KEYS),
+                                   'static_map.public_map': list(PUBLIC_MAP_KEYS),
+                                   'static_map.schematic_ref': list(SCHEMATIC_REF_KEYS),
+                                   'order_sheet': list(ORDER_SHEET_KEYS),
+                                   'order_sheet.orders[]': list(ORDER_KEYS),
+                                   'own_rgb_refs[]': list(RGB_REF_KEYS),
+                                   'own_command_history[]': list(COMMAND_KEYS),
+                                   'own_command_history[].arguments': list(COMMAND_ARGUMENT_KEYS),
+                                   'inbox[]': list(ENVELOPE_KEYS), 'channel': list(CHANNEL_KEYS),
+                                   'self_belief': list(BELIEF_KEYS),
+                                   'issued_orders[]': list(ISSUED_ORDER_KEYS)},
             'own_rgb_ref_pattern': OWN_RGB_REF.pattern, 'map_schematic_ref_pattern': MAP_SCHEMATIC_REF.pattern,
             'own_command_states': list(LOCAL_STATES), 'belief_keys': list(BELIEF_KEYS)}
 
@@ -567,10 +744,13 @@ def payload_violations(payload: object, *, seed: int | None = None) -> list[str]
     time_s = payload.get('sim_time_s')
     if isinstance(time_s, bool) or not isinstance(time_s, (int, float)) or time_s < 0:
         out.append('sim_time_s must be a non-negative number')
+    try:                                  # everything a model receives must be plain JSON
+        json.dumps(payload, allow_nan=False)
+    except (TypeError, ValueError) as error:
+        return out + [f'payload is not JSON serialisable: {error}']
     out.extend(forbidden_key_hits(payload))
     out.extend(non_ascii_keys(payload))
     out.extend(_value_hits(payload))
-    out.extend(_ref_hits(payload, spec))
     out.extend(_shape_hits(payload, spec, seed))
     return out
 
@@ -587,10 +767,17 @@ def validate_robot_payload(payload: object, *, seed: int | None = None) -> Mappi
 # Log schema (written by the runner, read by package D and package I)
 
 CALL_STATUS = ('ok', 'invalid_json', 'rejected_message', 'timeout', 'http_error', 'budget_exhausted',
-               'policy_refusal')
+               'policy_refusal', 'input_rejected')
 ACTION_KINDS = ('claim_order', 'goto', 'observe', 'grasp', 'place', 'release', 'wait', 'yield_passage',
                 'abort_job', 'noop')
 DELIVERY_STATUS = ('delivered', 'pending', 'rejected', 'dropped_budget')
+# What every call record pins so a cohort can be re-identified (AGENTS.md,
+# docs/execution_versioning.md). ``model``/``provider``/``model_settings_sha256``
+# identify the model; the hashes identify the inputs and the contract.
+PROVENANCE_KEYS = ('registry_sha256', 'order_sheet_sha256', 'map_file_sha256', 'public_map_sha256',
+                   'code_sha', 'execution_bundle_id', 'model', 'provider', 'model_settings_sha256',
+                   'prompt_template_sha256', 'cost_profile_id', 'input_profile_id')
+DELIVERY_KEYS = ('recipient', 'delivered_at_sim_s', 'status')
 CALL_FIELDS = {
     'schema': 'literal ugrp.zone_study_call.v1',
     'run_id': 'str; one physical trial',
@@ -614,7 +801,8 @@ CALL_FIELDS = {
     'action_id': 'str|null; the action this call submitted',
     'message_ids': 'list[str]; messages this call emitted',
     'decision_sources': 'list[str]; own refs, own command ids and message ids the answer cited',
-    'payload_validated': 'bool; validate_robot_payload passed before the call',
+    'payload_validated': 'bool; validate_robot_payload passed; False only with status=input_rejected',
+    'provenance': f'object; keys of {PROVENANCE_KEYS}',
 }
 MESSAGE_FIELDS = {
     'schema': 'literal ugrp.zone_study_message_log.v1',
@@ -622,9 +810,10 @@ MESSAGE_FIELDS = {
     'message_id': 'str', 'sender': 'str', 'recipients': 'list[str]',
     'encoding': 'str; none|free_ko|schema',
     'reply_to': 'str|null; message_id',
-    'created_at_sim_s': 'float', 'delivered_at_sim_s': 'float|null',
-    'delivery_delay_s': 'float; deterministic transport delay (package D)',
-    'status': f'str; one of {DELIVERY_STATUS}',
+    'created_at_sim_s': 'float', 'delivered_at_sim_s': 'float|null; earliest delivery',
+    'deliveries': f'list of objects with {DELIVERY_KEYS}; one per recipient (per-spoke delays)',
+    'delivery_delay_s': 'float; deterministic transport delay of the earliest delivery (package D)',
+    'status': f'str; aggregate, one of {DELIVERY_STATUS}',
     'rejected_reason': 'str|null; contract violation text when status=rejected',
     'body': 'object; {"text": str} for free_ko, the schema object for structured',
     'body_sha256': 'str',
@@ -685,10 +874,15 @@ def call_record_violations(record: Mapping) -> list[str]:
     if isinstance(record.get('http_attempts'), bool) or not isinstance(record.get('http_attempts'), int) \
             or record.get('http_attempts', -1) < 0:
         out.append('http_attempts must be a non-negative int')
-    if record.get('payload_validated') is not True:
-        out.append('payload_validated must be True: the payload passed validate_robot_payload')
+    if record.get('payload_validated') is not True and record.get('status') != 'input_rejected':
+        out.append('payload_validated must be True unless status=input_rejected')
     if not isinstance(record.get('message_ids'), list) or not isinstance(record.get('decision_sources'), list):
         out.append('message_ids and decision_sources must be lists')
+    out.extend(_closed(record.get('provenance'), PROVENANCE_KEYS, 'provenance',
+                       required=('registry_sha256', 'order_sheet_sha256', 'map_file_sha256', 'code_sha',
+                                 'model')))
+    if not isinstance(record.get('cost_terms'), Mapping) or not isinstance(record.get('input_tokens'), Mapping):
+        out.append('cost_terms and input_tokens must be objects')
     return out
 
 
@@ -711,9 +905,51 @@ def message_record_violations(record: Mapping) -> list[str]:
             out.append('delivered_at_sim_s must not precede created_at_sim_s')
     elif record.get('status') == 'delivered':
         out.append('a delivered message needs delivered_at_sim_s')
+    out.extend(_delivery_hits(record, created, delivered))
     if record.get('body_sha256') and isinstance(record.get('body'), (Mapping, str)):
         if digest(record['body']) != record['body_sha256']:
             out.append('body_sha256 does not match body')
+    return out
+
+
+def _delivery_hits(record: Mapping, created, delivered) -> list[str]:
+    entries = record.get('deliveries')
+    if not isinstance(entries, list):
+        return ['deliveries must be a list, one entry per recipient']
+    recipients = record.get('recipients') if isinstance(record.get('recipients'), list) else []
+    out, seen, times = [], set(), []
+    for entry in entries:
+        out.extend(_closed(entry, DELIVERY_KEYS, 'deliveries[]', required=DELIVERY_KEYS))
+        if not isinstance(entry, Mapping):
+            continue
+        recipient = entry.get('recipient')
+        if recipient not in recipients:
+            out.append(f'deliveries[] names {recipient!r}, which is not a recipient of the message')
+        if recipient in seen:
+            out.append(f'deliveries[] repeats {recipient!r}')
+        seen.add(recipient)
+        if entry.get('status') not in DELIVERY_STATUS:
+            out.append(f'deliveries[].status must be one of {DELIVERY_STATUS}')
+        at = entry.get('delivered_at_sim_s')
+        if at is None:
+            if entry.get('status') == 'delivered':
+                out.append('a delivered recipient needs delivered_at_sim_s')
+            continue
+        if isinstance(at, bool) or not isinstance(at, _NUMBER):
+            out.append('deliveries[].delivered_at_sim_s must be a number or null')
+        elif isinstance(created, _NUMBER) and at < created:
+            out.append('deliveries[].delivered_at_sim_s must not precede created_at_sim_s')
+        else:
+            times.append(at)
+    if recipients and set(recipients) - seen:
+        out.append(f'deliveries misses recipient(s): {sorted(set(recipients) - seen)}')
+    if times:
+        if delivered is None or abs(min(times) - delivered) > 1e-9:
+            out.append('delivered_at_sim_s must be the earliest delivery time')
+        delay = record.get('delivery_delay_s')
+        if isinstance(created, _NUMBER) and isinstance(delay, _NUMBER) \
+                and abs((created + delay) - min(times)) > 1e-9:
+            out.append('delivery_delay_s must equal the earliest delivery minus created_at_sim_s')
     return out
 
 

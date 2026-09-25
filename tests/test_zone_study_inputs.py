@@ -17,6 +17,7 @@ from harness import zone_study_inputs as si
 
 ROOT = Path(__file__).resolve().parents[1]
 MAP_ID = 'zone_wide_two_doors_tags_v1'
+FRAME_SHA = 'b' * 64
 PLAIN_MAP_ID = 'zone_wide_two_doors'
 
 
@@ -131,19 +132,29 @@ def test_static_map_section_is_verifiable_against_the_map_file(bundle):
 # ---------------------------------------------------------------------------
 # Order sheet
 
-def test_order_sheet_is_built_without_any_simulator_object():
+def test_order_sheet_is_built_without_any_simulator_object(bundle):
     code = ('import json, sys;'
             'from harness import zone_map_schematic as ms, zone_study_inputs as si;'
-            f'b = ms.map_bundle({MAP_ID!r}, schematic=False);'
+            f'b = ms.map_bundle({MAP_ID!r});'
             'scen = json.loads(sys.argv[1]);'
             'src = si.OrderSheetSource(scen, b);'
-            'print(json.dumps({"sha": src.sha256, "mujoco": "mujoco" in sys.modules,'
+            'print(json.dumps({"sha": src.sha256, "png": b["schematic"]["png_sha256"],'
+            ' "mujoco": "mujoco" in sys.modules,'
             ' "sim": sorted(m for m in sys.modules if m == "sim" or m.startswith("sim."))}))')
     out = subprocess.run([sys.executable, '-c', code, json.dumps(scenario())], cwd=ROOT,
                          capture_output=True, text=True, check=True)
     result = json.loads(out.stdout.strip().splitlines()[-1])
     assert result['mujoco'] is False and result['sim'] == []
-    assert result['sha'] == si.OrderSheetSource(scenario(), ms.map_bundle(MAP_ID, schematic=False)).sha256
+    assert result['sha'] == si.OrderSheetSource(scenario(), bundle).sha256
+    assert result['png'] == bundle['schematic']['png_sha256']      # same hash in another process
+
+
+def test_a_scenario_config_can_come_from_a_json_file(tmp_path, bundle):
+    path = tmp_path / 'scenario.json'
+    path.write_text(json.dumps(scenario(), ensure_ascii=False))
+    loaded = si.load_scenario(path)
+    assert si.order_sheet(loaded, bundle) == si.order_sheet(scenario(), bundle)
+    assert si.hidden_events(loaded)[0]['kind'] == 'item_moved'
 
 
 def test_order_sheet_does_not_change_during_a_run(source, bundle):
@@ -254,8 +265,8 @@ def _inbox(condition_name, seed, recipient='r2'):
 def _call(source, bundle, condition_name, seed=11, **extra):
     robot, inbox = _inbox(condition_name, seed)
     kwargs = {'robot_id': robot, 'condition_name': condition_name, 'request_id': 'req-1',
-              'sim_time_s': 12.5, 'static_map': si.static_map_for_call(bundle), 'sheet': source.sheet(),
-              'seed': seed, 'own_rgb_refs': [si.own_rgb_ref(robot, 41, 11.5), si.own_rgb_ref(robot, 42, 12.5)],
+              'sim_time_s': 12.5, 'static_map': si.static_map_for_call(bundle), 'source': source,
+              'seed': seed, 'own_rgb_refs': [si.own_rgb_ref(robot, 41, 11.5, FRAME_SHA), si.own_rgb_ref(robot, 42, 12.5, FRAME_SHA)],
               'own_command_history': [si.command_entry('cmd-1', 3., 'goto', {'target_ref': 'P1'})],
               'inbox': inbox if 'inbox' in c.condition(condition_name).input_allowlist else None}
     kwargs.update(extra)
@@ -296,8 +307,8 @@ def test_the_payload_is_invariant_to_evaluation_only_changes(source, bundle):
 
 def test_the_input_profile_trims_history_the_same_way_in_every_condition(source, bundle):
     robot = 'r2'
-    refs = [si.own_rgb_ref(robot, i, float(i)) for i in range(10)]
-    history = [si.command_entry(f'cmd-{i}', float(i), 'goto', {'target_ref': 'P1'}) for i in range(30)]
+    refs = [si.own_rgb_ref(robot, i, i * .5, FRAME_SHA) for i in range(10)]
+    history = [si.command_entry(f'cmd-{i}', i * .1, 'goto', {'target_ref': 'P1'}) for i in range(30)]
     for name in c.MAIN_CONDITIONS:
         payload = _call(source, bundle, name, robot_id=robot, own_rgb_refs=refs,
                         own_command_history=history)
@@ -310,41 +321,59 @@ def test_the_input_profile_trims_history_the_same_way_in_every_condition(source,
 def test_the_builder_refuses_inputs_the_condition_does_not_allow(source, bundle):
     with pytest.raises(c.ContractViolation, match='no messages'):
         si.build_call_input(robot_id='r1', condition_name='no_comm', request_id='req-1', sim_time_s=1.,
-                            static_map=si.static_map_for_call(bundle), sheet=source.sheet(),
+                            static_map=si.static_map_for_call(bundle), source=source,
                             inbox=[{'message_id': 'm-1'}])
     with pytest.raises(c.ContractViolation, match='seed'):
         si.build_call_input(robot_id='r1', condition_name='leader_ko', request_id='req-1', sim_time_s=1.,
-                            static_map=si.static_map_for_call(bundle), sheet=source.sheet())
+                            static_map=si.static_map_for_call(bundle), source=source)
     with pytest.raises(c.ContractViolation):
         si.command_entry('cmd-1', 1., 'goto', {'teacher_receipt': True})
     with pytest.raises(c.ContractViolation):
-        si.own_rgb_ref('r9', 1, 1.)
+        si.own_rgb_ref('r9', 1, 1., FRAME_SHA)
     with pytest.raises(c.ContractViolation):
         si.build_call_input(robot_id='r1', condition_name='no_comm', request_id='req-1', sim_time_s=1.,
-                            static_map={'map_id': 'x'}, sheet=source.sheet())
+                            static_map={'map_id': 'x'}, source=source)
 
 
 def test_reference_R_builds_a_commander_payload_only(source, bundle):
     payload = si.build_call_input(robot_id=si.COMMANDER, condition_name='reference_R', request_id='req-1',
                                   sim_time_s=3., static_map=si.static_map_for_call(bundle),
-                                  sheet=source.sheet(),
-                                  team_rgb_refs=[si.own_rgb_ref(r, 1, 3.) for r in c.ROBOTS],
+                                  source=source,
+                                  team_rgb_refs=[si.own_rgb_ref(r, 1, 3., FRAME_SHA) for r in c.ROBOTS],
                                   issued_orders=[{'order_ref': 'order-1', 'to': 'r1'}])
     assert c.validate_robot_payload(payload)
     assert len(payload['team_rgb_refs']) == 3 and 'own_rgb_refs' not in payload
     with pytest.raises(c.ContractViolation):
         si.build_call_input(robot_id='r1', condition_name='reference_R', request_id='req-2', sim_time_s=3.,
-                            static_map=si.static_map_for_call(bundle), sheet=source.sheet())
+                            static_map=si.static_map_for_call(bundle), source=source)
 
 
 def test_run_provenance_links_the_contract_the_map_and_the_inputs(source, bundle):
-    manifest = si.call_input_bundle(map_id=MAP_ID, source=source, condition_name='leader_ko', seed=12)
+    manifest = si.call_input_bundle(map_id=MAP_ID, source=source, condition_name='leader_ko', seed=12,
+                                    code_sha='5288933', execution_bundle_id='zone-study-A-1',
+                                    model='fixture-model', provider='fixture', cost_profile_id='dev-v1')
     assert manifest['contract']['leader_id'] == 'r1' and manifest['contract']['condition'] == 'leader_ko'
     assert manifest['inputs']['order_sheet_sha256'] == source.sha256
     assert manifest['inputs']['map']['map_file_sha256'] == bundle['map_file_sha256']
     assert manifest['inputs']['hidden_event_count'] == 1
     assert manifest['inputs']['input_profile'] == si.INPUT_PROFILE
+    assert manifest['inputs']['leader_rotation'] == {11: 'r3', 12: 'r1', 13: 'r2'}
     assert len(manifest['registry_sha256']) == 64
+    assert manifest['provenance']['code_sha'] == '5288933'
+    assert manifest['provenance']['order_sheet_sha256'] == source.sha256
+    assert manifest['provenance']['map_file_sha256'] == bundle['map_file_sha256']
+    assert manifest['provenance']['model'] == 'fixture-model'
+
+
+def test_seeds_that_would_freeze_the_leader_are_rejected(bundle):
+    config = scenario()
+    config['seeds'] = [11, 14, 17, 20]
+    with pytest.raises(c.ContractViolation, match='every residue'):
+        si.order_sheet(config, bundle)
+    assert si.leader_rotation([11, 14, 17]) == {11: 'r3', 14: 'r3', 17: 'r3'}
+    single = scenario()
+    single['seeds'] = [11]
+    assert si.order_sheet(single, bundle)                      # a one-seed pilot is allowed
 
 
 # ---------------------------------------------------------------------------
@@ -361,24 +390,33 @@ def test_log_record_builders_produce_records_that_pass_the_schema(source, bundle
                              input_sha256=si.payload_sha256(payload),
                              input_tokens={'text': 5200, 'image': 2, 'cached': 0}, output_tokens=120,
                              status='ok', action_id='act-1', message_ids=['m-2'],
-                             decision_sources=['own-r2-0042', 'm-1'])
+                             decision_sources=['own-r2-0042', 'm-1'],
+                             provenance=si.provenance(source=source, code_sha='5288933',
+                                                      execution_bundle_id='zone-study-A-1',
+                                                      model='fixture-model'))
     assert call['sim_cost_s'] == pytest.approx(3.7) and call['role'] == 'peer'
     envelope = c.message_envelope('peer_ko', 'm-2', 'r2', ['r1'], {'text': 'order-1 제가 갑니다'},
                                   created_at_sim_s=16.2)
     message = si.message_log_record(run_id='run-1', condition_name='peer_ko', seed=11, envelope=envelope,
-                                   delivered_at_sim_s=16.3, delivery_delay_s=.1, status='delivered',
-                                   act='propose')
+                                   deliveries=[{'recipient': 'r1', 'delivered_at_sim_s': 16.3,
+                                                'status': 'delivered'}],
+                                   delivery_delay_s=.1, status='delivered', act='propose')
+    assert message['delivered_at_sim_s'] == pytest.approx(16.3)
     assert message['korean_ok'] is True and message['chars'] > 0 and message['act'] == 'propose'
     english = c.message_envelope('peer_ko', 'm-3', 'r2', ['r1'], {'text': 'I take order-1 이제'},
                                  created_at_sim_s=17.)
     slip = si.message_log_record(run_id='run-1', condition_name='peer_ko', seed=11, envelope=english,
-                                 delivered_at_sim_s=17.1, delivery_delay_s=.1, status='delivered')
+                                 deliveries=[{'recipient': 'r1', 'delivered_at_sim_s': 17.1,
+                                              'status': 'delivered'}],
+                                 delivery_delay_s=.1, status='delivered')
     assert slip['korean_ok'] is True                    # has Korean, language slips are metrics
     structured = c.message_envelope('structured', 'm-4', 'r1', ['r2'], {'act': 'yield', 'zone': 'A'},
                                     created_at_sim_s=20.)
     record = si.message_log_record(run_id='run-1', condition_name='structured', seed=11,
-                                   envelope=structured, delivered_at_sim_s=None, delivery_delay_s=.1,
-                                   status='rejected', rejected_reason='budget')
+                                   envelope=structured,
+                                   deliveries=[{'recipient': 'r2', 'delivered_at_sim_s': None,
+                                                'status': 'dropped_budget'}],
+                                   delivery_delay_s=.1, status='rejected', rejected_reason='budget')
     assert record['korean_ok'] is None and record['act'] == 'yield' and record['chars'] == 0
     action = si.action_log_record(run_id='run-1', condition_name='peer_ko', seed=11, actor='r2',
                                  action_id='act-1', request_id='req-1', submitted_at_sim_s=16.2,
@@ -389,7 +427,10 @@ def test_log_record_builders_produce_records_that_pass_the_schema(source, bundle
         si.call_log_record(run_id='run-1', condition_name='peer_ko', seed=11, actor='r2', request_id='req-1',
                            call_index=0, trigger='start', requested_at_sim_s=1., released_at_sim_s=2.,
                            cost_terms={}, input_sha256='a' * 64, input_tokens={}, output_tokens=1,
-                           status='ok', payload_validated=False)
+                           status='ok', payload_validated=False,
+                           provenance=si.provenance(source=source, code_sha='5288933',
+                                                    execution_bundle_id='zone-study-A-1',
+                                                    model='fixture-model'))
     with pytest.raises(c.ContractViolation):
         si.action_log_record(run_id='run-1', condition_name='peer_ko', seed=11, actor='r2',
                             action_id='act-2', request_id='req-1', submitted_at_sim_s=1., kind='goto',

@@ -9,11 +9,18 @@ import pytest
 from harness import zone_study_contract as c
 
 SEEDS = (11, 12, 13, 14, 15, 16)
+FRAME_SHA = 'b' * 64
 
 
 def _static_map():
     projection = {'schema': 'ugrp.zone_public_map.v1', 'map_id': 'zone_x', 'version': 1,
-                  'regions': {'A': {'center_m': [1., 0.]}}, 'pickup_bays': [{'bay_id': 'P1', 'slots': []}]}
+                  'bounds_m': [-1., 5., -3., 1.], 'walls': [{'id': 'wall_north', 'center_m': [2., 1.],
+                                                             'half_extents_m': [3., .025], 'height_m': .1,
+                                                             'perimeter': True}],
+                  'passages': [{'id': 'door_narrow', 'kind': 'door', 'width_m': .5, 'lanes': 1}],
+                  'regions': {'A': {'center_m': [1., 0.]}, 'pickup': {'center_m': [0., 0.]}},
+                  'zone_slots': {'A': [{'slot_id': 'A1'}]},
+                  'pickup_bays': [{'bay_id': 'P1', 'slots': [{'slot_id': 'P1-2'}]}]}
     return {'map_id': 'zone_x', 'map_file_sha256': 'f' * 64, 'public_map': projection,
             'public_map_sha256': c.digest(projection),
             'schematic_ref': {'ref': 'map-zone_x-schematic', 'kind': 'map_schematic',
@@ -25,7 +32,9 @@ def _sheet():
             'orders': [{'order_id': 'order-1', 'kind': 'long_beam', 'count': 1,
                         'item_ids': ['long_beam-1'], 'required_robots': 2, 'destination_zone': 'A',
                         'initial_location': {'pickup_bay': 'P1', 'slot': 'P1-2'},
-                        'identity': 'specific_item'}]}
+                        'identity': 'specific_item'}],
+            'kinds': {'long_beam': {'required_robots': 2, 'roles': ['end_neg', 'end_pos']}},
+            'team_size': 3, 'note_ko': '설정 시점의 계획 정보다'}
 
 
 def _payload(condition='peer_ko', robot='r2', seed=11, **extra):
@@ -33,7 +42,7 @@ def _payload(condition='peer_ko', robot='r2', seed=11, **extra):
                'condition': condition, 'sim_time_s': 12.5, 'static_map': _static_map(),
                'order_sheet': _sheet(),
                'own_rgb_refs': [{'ref': f'own-{robot}-0042', 'kind': 'own_wrist_rgb',
-                                 'captured_at_sim_s': 12.5}],
+                                 'captured_at_sim_s': 12.5, 'sha256': FRAME_SHA}],
                'own_command_history': [{'command_id': 'cmd-1', 'issued_at_sim_s': 3.,
                                         'kind': 'goto', 'arguments': {'target_ref': 'P1'},
                                         'local_state': 'command_issued'}],
@@ -190,6 +199,118 @@ def test_boundary_manifest_declares_the_public_private_schema():
     assert not set(manifest['robot_facing']) & set(manifest['forbidden_keys'])
 
 
+@pytest.mark.parametrize('section, patch', [
+    ('static_map', {'survey_xy_m': {'r1': [1.2, -2.3]}}),          # renamed ground-truth poses
+    ('static_map', {'overhead_still': {'ref': 'overhead-0001'}}),  # renamed TOP frame
+    ('static_map', {'teammate_views': [{'ref': 'own-r1-0003'}]}),  # peer cameras
+    ('static_map', {'board': {'claimed_by': {'order-1': 'r1'}}}),  # host board
+    ('static_map', {'upcoming': [{'at_sim_s': 60}]}),              # hidden schedule
+    ('static_map', {'kpi': {'model_calls': 7}}),                   # metrics
+    ('static_map', {'source_view': 'TOP-WEST'}),                   # TOP name with a hyphen
+    ('order_sheet', {'status': 'fulfilled'}),                      # completion judgement
+    ('order_sheet', {'coach_ack': {'order-1': 'grasped_ok'}}),     # renamed teacher receipt
+])
+def test_validator_rejects_renamed_evaluation_data_in_every_section(section, patch):
+    payload = _payload()
+    payload[section].update(patch)
+    with pytest.raises(c.ContractViolation, match='outside the contract'):
+        c.validate_robot_payload(payload, seed=11)
+
+
+def test_validator_rejects_renamed_evaluation_data_in_list_entries():
+    joints = _payload()
+    joints['own_command_history'][0]['servo_deg'] = [1500, 1500, 1500]
+    with pytest.raises(c.ContractViolation, match='outside the contract'):
+        c.validate_robot_payload(joints, seed=11)
+    contact = _payload()
+    contact['own_command_history'][0]['arguments']['jaw_contact_n'] = 3.4
+    with pytest.raises(c.ContractViolation, match='outside the contract'):
+        c.validate_robot_payload(contact, seed=11)
+    overlay = _payload()
+    overlay['own_rgb_refs'][0]['overlay_from_overview'] = {'item_xy_px': [120, 88]}
+    with pytest.raises(c.ContractViolation, match='outside the contract'):
+        c.validate_robot_payload(overlay, seed=11)
+
+
+def test_validator_requires_a_hashed_verifiable_map_and_frames():
+    fake = _payload()
+    fake['static_map'] = {'map_id': 'zone_x', 'public_map': {'map_id': 'zone_x', 'bounds_m': [],
+                                                             'walls': [], 'regions': {}}}
+    with pytest.raises(c.ContractViolation, match='public_map_sha256'):
+        c.validate_robot_payload(fake, seed=11)
+    unhashed = _payload()
+    del unhashed['own_rgb_refs'][0]['sha256']
+    with pytest.raises(c.ContractViolation, match='sha256'):
+        c.validate_robot_payload(unhashed, seed=11)
+
+
+def test_validator_rejects_non_json_payloads():
+    payload = _payload()
+    payload['self_belief']['sources'] = iter(['own-r2-0042'])
+    with pytest.raises(c.ContractViolation, match='JSON'):
+        c.validate_robot_payload(payload, seed=11)
+
+
+def test_validator_rejects_information_from_the_future():
+    frame = _payload()
+    frame['own_rgb_refs'][0]['captured_at_sim_s'] = 9999.
+    with pytest.raises(c.ContractViolation, match='after the call time'):
+        c.validate_robot_payload(frame, seed=11)
+    command = _payload()
+    command['own_command_history'][0]['issued_at_sim_s'] = 9999.
+    with pytest.raises(c.ContractViolation, match='after the call time'):
+        c.validate_robot_payload(command, seed=11)
+    message = _payload()
+    message['inbox'] = [c.message_envelope('peer_ko', 'm-1', 'r1', ['r2'], {'text': '지금 갑니다'},
+                                           created_at_sim_s=9999.)]
+    with pytest.raises(c.ContractViolation, match='after the call time'):
+        c.validate_robot_payload(message, seed=11)
+
+
+def test_validator_needs_the_seed_and_never_raises_from_payload_violations():
+    stale = _payload('leader_ko', 'r2', 11)
+    stale['leader_id'] = 'r1'
+    problems = c.payload_violations(stale)                      # no seed: reported, not raised
+    assert any('needs the seed' in p for p in problems)
+    assert c.payload_violations(_payload('leader_ko', 'r2', 11), seed=None)
+
+
+def test_validator_checks_every_recipient_of_an_inbox_message():
+    payload = _payload('peer_ko', 'r2', 11)
+    payload['inbox'] = [{'schema': c.MESSAGE_ENVELOPE_SCHEMA, 'message_id': 'm-1', 'sender': 'r1',
+                         'recipients': ['r2', 'commander', 'ghost_robot'], 'encoding': 'free_ko',
+                         'created_at_sim_s': 4.5, 'reply_to': None, 'body': {'text': '가겠습니다'}}]
+    problems = c.payload_violations(payload, seed=11)
+    assert any('outside this condition' in p for p in problems)
+    assert any('not allowed' in p for p in problems)
+
+
+def test_structured_ids_are_checked_against_the_payloads_own_vocabulary():
+    payload = _payload('structured', 'r2', 11)
+    vocabulary = c.vocabulary_from_payload(payload)
+    assert {'order-1', 'long_beam', 'long_beam-1'} <= vocabulary.items
+    assert {'P1', 'P1-2', 'A1', 'A', 'pickup'} <= vocabulary.location_refs
+    payload['inbox'] = [{'schema': c.MESSAGE_ENVELOPE_SCHEMA, 'message_id': 'm-1', 'sender': 'r1',
+                         'recipients': ['r2'], 'encoding': 'schema', 'created_at_sim_s': 4.5,
+                         'reply_to': None, 'body': {'act': 'inform', 'location_ref': 'x1.23y-4.56'}}]
+    with pytest.raises(c.ContractViolation, match='vocabulary'):
+        c.validate_robot_payload(payload, seed=11)
+
+
+def test_validator_rejects_a_tampered_channel():
+    payload = _payload('no_comm', 'r1', 11)
+    payload['channel'] = {**payload['channel'], 'can_receive_from': ['r2', 'r3']}
+    with pytest.raises(c.ContractViolation, match='channel does not match'):
+        c.validate_robot_payload(payload, seed=11)
+
+
+def test_validator_rejects_non_token_ids():
+    payload = _payload()
+    payload['request_id'] = '../../etc/passwd'
+    with pytest.raises(c.ContractViolation, match='request_id'):
+        c.validate_robot_payload(payload, seed=11)
+
+
 def test_a_clean_payload_passes_for_every_main_condition():
     for name in c.MAIN_CONDITIONS:
         assert c.validate_robot_payload(_payload(name), seed=11)
@@ -300,6 +421,14 @@ def test_validator_rejects_host_judgements_in_the_command_history():
 # ---------------------------------------------------------------------------
 # Log schema
 
+def _provenance():
+    return {'registry_sha256': c.registry_sha256(), 'order_sheet_sha256': 'c' * 64,
+            'map_file_sha256': 'd' * 64, 'public_map_sha256': 'e' * 64, 'code_sha': '5288933',
+            'execution_bundle_id': 'zone-study-A-1', 'model': 'fixture-model', 'provider': 'fixture',
+            'model_settings_sha256': None, 'prompt_template_sha256': None, 'cost_profile_id': 'dev-v1',
+            'input_profile_id': 'zone_study_inputs.v1'}
+
+
 def _call_record(**patch):
     record = {'schema': c.CALL_LOG_SCHEMA, 'run_id': 'run-1', 'condition': 'peer_ko', 'seed': 11,
               'actor': 'r2', 'role': 'peer', 'request_id': 'req-1', 'call_index': 0, 'trigger': 'start',
@@ -309,7 +438,8 @@ def _call_record(**patch):
               'input_sha256': 'a' * 64, 'input_tokens': {'text': 5200, 'image': 2, 'cached': 0},
               'output_tokens': 120, 'wall_latency_s': 2.1, 'http_attempts': 1, 'status': 'ok',
               'action_id': 'act-1', 'message_ids': ['m-1'],
-              'decision_sources': ['own-r2-0042', 'cmd-1'], 'payload_validated': True}
+              'decision_sources': ['own-r2-0042', 'cmd-1'], 'payload_validated': True,
+              'provenance': _provenance()}
     record.update(patch)
     return record
 
@@ -321,26 +451,48 @@ def test_call_records_follow_the_declared_schema():
     assert c.call_record_violations(_call_record(status='fine'))
     assert c.call_record_violations(_call_record(payload_validated=False))
     assert c.call_record_violations(_call_record(condition='dynamic'))
+    assert c.call_record_violations(_call_record(provenance={'model': 'x'}))
+    assert c.call_record_violations(_call_record(provenance={**_provenance(), 'gpu': 'a100'}))
+    # a call blocked by the validator is still logged, with the status that says so
+    assert c.validate_log_record(_call_record(payload_validated=False, status='input_rejected'))
     record = _call_record()
     del record['trigger']
     assert any('missing field' in p for p in c.call_record_violations(record))
     assert c.call_record_violations({**_call_record(), 'top_frame': 'x'})
 
 
-def test_message_records_follow_the_declared_schema():
+def _message_record(**patch):
     body = {'text': 'order-1은 제가 A로 갑니다'}
     record = {'schema': c.MESSAGE_LOG_SCHEMA, 'run_id': 'run-1', 'condition': 'peer_ko', 'seed': 11,
-              'message_id': 'm-1', 'sender': 'r1', 'recipients': ['r2'], 'encoding': 'free_ko',
+              'message_id': 'm-1', 'sender': 'r1', 'recipients': ['r2', 'r3'], 'encoding': 'free_ko',
               'reply_to': None, 'created_at_sim_s': 4.5, 'delivered_at_sim_s': 4.6,
+              'deliveries': [{'recipient': 'r2', 'delivered_at_sim_s': 4.6, 'status': 'delivered'},
+                             {'recipient': 'r3', 'delivered_at_sim_s': 4.8, 'status': 'delivered'}],
               'delivery_delay_s': .1, 'status': 'delivered', 'rejected_reason': None, 'body': body,
               'body_sha256': c.digest(body), 'act': 'inform', 'chars': len(body['text']),
               'korean_ok': True}
-    assert c.validate_log_record(record)
-    assert c.message_record_violations({**record, 'body_sha256': 'b' * 64})
-    assert c.message_record_violations({**record, 'encoding': 'schema'})
-    assert c.message_record_violations({**record, 'delivered_at_sim_s': 4.0})
-    assert c.message_record_violations({**record, 'delivered_at_sim_s': None})
-    assert c.message_record_violations({**record, 'status': 'sent'})
+    record.update(patch)
+    return record
+
+
+def test_message_records_follow_the_declared_schema():
+    assert c.validate_log_record(_message_record())
+    assert c.message_record_violations(_message_record(body_sha256='b' * 64))
+    assert c.message_record_violations(_message_record(encoding='schema'))
+    assert c.message_record_violations(_message_record(delivered_at_sim_s=4.0))
+    assert c.message_record_violations(_message_record(delivered_at_sim_s=None))
+    assert c.message_record_violations(_message_record(status='sent'))
+    # per-recipient delivery must stay consistent with the envelope and the delay
+    assert c.message_record_violations(_message_record(delivered_at_sim_s=4.8))
+    assert c.message_record_violations(_message_record(delivery_delay_s=5.))
+    assert c.message_record_violations(_message_record(
+        deliveries=[{'recipient': 'r2', 'delivered_at_sim_s': 4.6, 'status': 'delivered'}]))
+    assert c.message_record_violations(_message_record(
+        deliveries=[{'recipient': 'r9', 'delivered_at_sim_s': 4.6, 'status': 'delivered'},
+                    {'recipient': 'r3', 'delivered_at_sim_s': 4.8, 'status': 'delivered'}]))
+    assert c.message_record_violations(_message_record(
+        deliveries=[{'recipient': 'r2', 'delivered_at_sim_s': 4.0, 'status': 'delivered'},
+                    {'recipient': 'r3', 'delivered_at_sim_s': 4.8, 'status': 'delivered'}]))
 
 
 def test_action_records_follow_the_declared_schema():

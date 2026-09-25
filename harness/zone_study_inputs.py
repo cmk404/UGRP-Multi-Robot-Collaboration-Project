@@ -13,10 +13,14 @@ what happens in the arena.
 * Hidden events live in the scenario's ``eval`` section. ``order_sheet`` and
   ``build_call_input`` never read it; ``eval_section``/``hidden_events`` are for
   the evaluator and the setup generator only.
-* ``build_call_input`` assembles exactly the condition's allowlisted keys and
-  runs ``harness.zone_study_contract.validate_robot_payload`` before returning,
-  so a payload that leaked TOP frames, poses, teacher receipts, completion flags
-  or a peer's camera never reaches a model.
+* ``build_call_input`` assembles exactly the condition's allowlisted keys from the
+  run's frozen ``OrderSheetSource`` and runs
+  ``harness.zone_study_contract.validate_robot_payload`` before returning (no
+  switch to skip it). The validator closes every robot-facing sub-schema, so a
+  renamed TOP frame, pose, teacher receipt, completion flag or peer camera is
+  rejected too. It checks key names and structure, not the meaning of values:
+  whoever fills a belief or a command argument must still use own observations
+  only.
 * ``call_log_record``/``message_log_record``/``action_log_record`` write the log
   schema that package D (SIM cost) and package I (evaluation) consume.
 
@@ -32,29 +36,29 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from harness.zone_map_schematic import MAP_BUNDLE_SCHEMA, digest, static_map_section
-from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, COMMANDER, LOCAL_STATES,
-                                         MESSAGE_LOG_SCHEMA, ORDER_SHEET_SCHEMA, PAYLOAD_SCHEMA, ROBOTS,
+from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, COMMANDER, ID_TOKEN,
+                                         LOCAL_STATES, MESSAGE_LOG_SCHEMA, ORDER_KEYS, ORDER_SHEET_SCHEMA,
+                                         PAYLOAD_SCHEMA, PROVENANCE_KEYS, ROBOTS, ROLE_NAMES, SHA256_HEX,
                                          ZONE_IDS, ContractViolation, Vocabulary, channel_section, condition,
-                                         forbidden_key_hits, free_text_report, leader_for_seed, role_of,
-                                         validate_log_record, validate_robot_payload)
+                                         condition_manifest, forbidden_key_hits, free_text_report,
+                                         leader_for_seed, registry_sha256, role_of, validate_log_record,
+                                         validate_robot_payload)
 
 SCENARIO_SCHEMA = 'ugrp.zone_scenario.v1'
-# Item kinds and their physical team size. Frozen here so the inputs stay
-# simulator-free; tests check the table against ``harness.zone_goal_v2``.
-REQUIRED_ROBOTS = {'cyan': 1, 'green': 1, 'red': 1, 'yellow': 1, 'can': 1, 'tile': 1,
-                   'long_beam': 2, 'heavy_crate': 2, 'tri_frame': 3}
-ITEM_KINDS = tuple(REQUIRED_ROBOTS)
-ROLE_NAMES = ('west', 'east', 'any', 'end_neg', 'end_pos', 'v0', 'v1', 'v2')
+# Item kinds, their physical team size and their grasp roles. Frozen here so the
+# inputs stay simulator-free; tests check the table against ``harness.zone_goal_v2``.
+FORMATIONS = {'cyan': ('west',), 'green': ('west',), 'red': ('west',), 'yellow': ('west',),
+              'can': ('any',), 'tile': ('west',), 'long_beam': ('end_neg', 'end_pos'),
+              'heavy_crate': ('west', 'east'), 'tri_frame': ('v0', 'v1', 'v2')}
+REQUIRED_ROBOTS = {kind: len(roles) for kind, roles in FORMATIONS.items()}
+ITEM_KINDS = tuple(FORMATIONS)
 IDENTITY = ('kind_fungible', 'specific_item')
-ID_TOKEN = re.compile(r'^[A-Za-z0-9_][A-Za-z0-9_.\-]*$')
 # Development start values, identical in every condition (fairness): the same
 # observation history, the same command history and the same inbox depth.
 INPUT_PROFILE = {'profile_id': 'zone_study_inputs.v1', 'own_rgb_frames': 2, 'command_history_entries': 12,
                  'inbox_messages': 8, 'text_token_budget': 8000, 'image_slots': 2, 'output_token_budget': 768}
 ORDER_NOTE_KO = ('주문서와 initial_location은 설정 시점의 계획 정보다. 현재 위치·재고·배송 완료를 보장하지 '
                  '않는다. 현재 상황은 자기 RGB, 자기 발행 명령과 허용된 수신 메시지로만 판단한다.')
-ORDER_KEYS = ('order_id', 'kind', 'count', 'item_ids', 'required_robots', 'destination_zone',
-              'initial_location', 'identity')
 TRIGGERS = ('start', 'own_view_change', 'own_timer', 'message_received', 'idle_review', 'execution_review')
 
 
@@ -97,6 +101,11 @@ def validate_scenario(scenario: Mapping, *, map_bundle: Mapping | None = None) -
         raise ContractViolation('seeds must be a non-empty list of ints')
     if len(set(seeds)) != len(seeds):
         raise ContractViolation('seeds must be unique')
+    leaders = leader_rotation(seeds)
+    if len(seeds) >= len(ROBOTS) and len(set(leaders.values())) < len(ROBOTS):
+        raise ContractViolation('leader_ko rotates as robots[seed % 3]; these seeds would never make '
+                                f'{sorted(set(ROBOTS) - set(leaders.values()))} the leader. '
+                                'Pick seeds that cover every residue.')
     orders = scenario.get('orders')
     if not isinstance(orders, Sequence) or isinstance(orders, str) or not orders:
         raise ContractViolation('orders must be a non-empty list')
@@ -186,18 +195,38 @@ def _order(raw: Mapping, *, bays, slots, seen: set) -> dict:
             'initial_location': {'pickup_bay': bay, 'slot': slot}, 'identity': identity}
 
 
-def order_sheet(scenario: Mapping, map_bundle: Mapping) -> dict:
-    """The immutable robot-facing task order sheet built from the scenario config alone."""
-    normalized = validate_scenario(scenario, map_bundle=map_bundle)
+def leader_rotation(seeds: Sequence[int]) -> dict:
+    """{seed: leader} of the ``leader_ko`` rotation, so a cohort can check its coverage."""
+    return {int(seed): leader_for_seed('leader_ko', int(seed)) for seed in seeds}
+
+
+def _kind_table(orders: Sequence[Mapping]) -> dict:
+    """Static team requirement of every kind the sheet names (task information, not live state)."""
+    return {kind: {'required_robots': REQUIRED_ROBOTS[kind], 'roles': list(FORMATIONS[kind])}
+            for kind in sorted({o['kind'] for o in orders})}
+
+
+def _build_sheet(normalized: Mapping, map_ref: Mapping) -> dict:
     sheet = {'schema': ORDER_SHEET_SCHEMA, 'scenario_id': normalized['scenario_id'],
-             'map_id': normalized['map_id'], 'map_file_sha256': map_bundle['map_file_sha256'],
-             'public_map_sha256': map_bundle['public_map_sha256'],
-             'orders': copy.deepcopy(normalized['orders']),
-             'team_size': len(ROBOTS), 'note_ko': ORDER_NOTE_KO}
+             'map_id': normalized['map_id'], 'map_file_sha256': map_ref['map_file_sha256'],
+             'public_map_sha256': map_ref['public_map_sha256'],
+             'orders': copy.deepcopy(list(normalized['orders'])),
+             'kinds': _kind_table(normalized['orders']), 'team_size': len(ROBOTS),
+             'note_ko': ORDER_NOTE_KO}
     hits = forbidden_key_hits(sheet)
     if hits:
         raise ContractViolation('order sheet leaks evaluation-only data: ' + '; '.join(hits))
     return sheet
+
+
+def _map_ref(map_bundle: Mapping) -> dict:
+    return {'map_id': map_bundle['map_id'], 'map_file_sha256': map_bundle['map_file_sha256'],
+            'public_map_sha256': map_bundle['public_map_sha256']}
+
+
+def order_sheet(scenario: Mapping, map_bundle: Mapping) -> dict:
+    """The immutable robot-facing task order sheet built from the scenario config alone."""
+    return _build_sheet(validate_scenario(scenario, map_bundle=map_bundle), _map_ref(map_bundle))
 
 
 class OrderSheetSource:
@@ -205,9 +234,8 @@ class OrderSheetSource:
 
     def __init__(self, scenario: Mapping, map_bundle: Mapping):
         self._scenario = validate_scenario(scenario, map_bundle=map_bundle)
-        self._bundle_ref = {'map_id': map_bundle['map_id'], 'map_file_sha256': map_bundle['map_file_sha256'],
-                            'public_map_sha256': map_bundle['public_map_sha256']}
-        self._sheet = order_sheet(self._scenario, map_bundle)
+        self._bundle_ref = _map_ref(map_bundle)
+        self._sheet = _build_sheet(self._scenario, self._bundle_ref)
         self.sha256 = digest(self._sheet)
         self.scenario_sha256 = digest(self._scenario)
 
@@ -233,12 +261,7 @@ class OrderSheetSource:
             raise ContractViolation('the scenario config changed during the run')
         if digest(self._sheet) != self.sha256:
             raise ContractViolation('the order sheet changed during the run')
-        rebuilt = {'schema': ORDER_SHEET_SCHEMA, 'scenario_id': self._scenario['scenario_id'],
-                   'map_id': self._scenario['map_id'], 'map_file_sha256': self._bundle_ref['map_file_sha256'],
-                   'public_map_sha256': self._bundle_ref['public_map_sha256'],
-                   'orders': copy.deepcopy(self._scenario['orders']), 'team_size': len(ROBOTS),
-                   'note_ko': ORDER_NOTE_KO}
-        if digest(rebuilt) != self.sha256:
+        if digest(_build_sheet(self._scenario, self._bundle_ref)) != self.sha256:
             raise ContractViolation('the order sheet no longer matches its scenario config')
 
     def manifest(self) -> dict:
@@ -246,8 +269,9 @@ class OrderSheetSource:
         return {'scenario_schema': SCENARIO_SCHEMA, 'scenario_id': self.scenario_id,
                 'scenario_sha256': self.scenario_sha256, 'order_sheet_schema': ORDER_SHEET_SCHEMA,
                 'order_sheet_sha256': self.sha256, 'orders': len(self._sheet['orders']),
-                'seeds': list(self.seeds), 'map': dict(self._bundle_ref),
-                'hidden_event_count': len(self.hidden_events()), 'input_profile': dict(INPUT_PROFILE)}
+                'seeds': list(self.seeds), 'leader_rotation': leader_rotation(self.seeds),
+                'map': dict(self._bundle_ref), 'hidden_event_count': len(self.hidden_events()),
+                'input_profile': dict(INPUT_PROFILE)}
 
 
 def vocabulary(sheet: Mapping, public_map: Mapping) -> Vocabulary:
@@ -266,15 +290,14 @@ def vocabulary(sheet: Mapping, public_map: Mapping) -> Vocabulary:
 # ---------------------------------------------------------------------------
 # Own observations, own commands, belief
 
-def own_rgb_ref(robot_id: str, index: int, captured_at_sim_s: float, *, sha256: str | None = None) -> dict:
-    """A reference to one of this robot's own wrist frames (the runtime attaches the bytes)."""
+def own_rgb_ref(robot_id: str, index: int, captured_at_sim_s: float, sha256: str) -> dict:
+    """A reference to one of this robot's own wrist frames; ``sha256`` binds it to the real bytes."""
     if robot_id not in ROBOTS:
         raise ContractViolation(f'unknown robot: {robot_id!r}')
-    ref = {'ref': f'own-{robot_id}-{int(index):04d}', 'kind': 'own_wrist_rgb',
-           'captured_at_sim_s': float(captured_at_sim_s)}
-    if sha256 is not None:
-        ref['sha256'] = sha256
-    return ref
+    if not isinstance(sha256, str) or not SHA256_HEX.match(sha256):
+        raise ContractViolation('own_rgb_ref needs the sha256 of the frame bytes (auditable input)')
+    return {'ref': f'own-{robot_id}-{int(index):04d}', 'kind': 'own_wrist_rgb',
+            'captured_at_sim_s': float(captured_at_sim_s), 'sha256': sha256}
 
 
 def command_entry(command_id: str, issued_at_sim_s: float, kind: str, arguments: Mapping | None = None, *,
@@ -305,19 +328,27 @@ def _trim(values: Sequence | None, limit: int) -> list:
 # Per-call input
 
 def build_call_input(*, robot_id: str, condition_name: str, request_id: str, sim_time_s: float,
-                     static_map: Mapping, sheet: Mapping, own_rgb_refs: Sequence[Mapping] = (),
+                     static_map: Mapping, source: 'OrderSheetSource', own_rgb_refs: Sequence[Mapping] = (),
                      own_command_history: Sequence[Mapping] = (), inbox: Sequence[Mapping] | None = None,
                      self_belief: Mapping | None = None, seed: int | None = None,
                      team_rgb_refs: Sequence[Mapping] | None = None,
                      issued_orders: Sequence[Mapping] | None = None,
-                     profile: Mapping = INPUT_PROFILE, validate: bool = True) -> dict:
-    """Assemble one validated per-call payload for ``robot_id`` under ``condition_name``."""
+                     profile: Mapping = INPUT_PROFILE) -> dict:
+    """Assemble one validated per-call payload for ``robot_id`` under ``condition_name``.
+
+    The order sheet comes from the frozen ``OrderSheetSource`` and is checked for
+    drift on every call, so a tampered sheet cannot reach a model. There is no
+    switch to skip validation.
+    """
     spec = condition(condition_name)
     if robot_id not in spec.actors:
         raise ContractViolation(f'{robot_id!r} is not an actor of {condition_name}')
+    if not isinstance(source, OrderSheetSource):
+        raise ContractViolation('build_call_input needs the run\'s frozen OrderSheetSource')
+    source.assert_unchanged()
     payload = {'schema': PAYLOAD_SCHEMA, 'request_id': _token(request_id, 'request_id'), 'robot_id': robot_id,
                'condition': condition_name, 'sim_time_s': float(sim_time_s),
-               'static_map': copy.deepcopy(dict(static_map)), 'order_sheet': copy.deepcopy(dict(sheet)),
+               'static_map': copy.deepcopy(dict(static_map)), 'order_sheet': source.sheet(),
                'channel': channel_section(condition_name, robot_id, seed)}
     allow = spec.input_allowlist
     if 'own_rgb_refs' in allow:
@@ -339,8 +370,7 @@ def build_call_input(*, robot_id: str, condition_name: str, request_id: str, sim
         payload['team_rgb_refs'] = _trim(team_rgb_refs, len(ROBOTS) * int(profile['own_rgb_frames']))
     if 'issued_orders' in allow:
         payload['issued_orders'] = _trim(issued_orders, int(profile['command_history_entries']))
-    if validate:
-        validate_robot_payload(payload, seed=seed)
+    validate_robot_payload(payload, seed=seed)
     return payload
 
 
@@ -349,11 +379,34 @@ def payload_sha256(payload: Mapping) -> str:
 
 
 def call_input_bundle(*, map_id: str, source: OrderSheetSource, condition_name: str, seed: int,
-                      landmark_detail: str = 'full') -> dict:
-    """Run-level provenance of the inputs: contract, condition, map hashes, order sheet hashes."""
-    from harness.zone_study_contract import condition_manifest, registry_sha256
+                      code_sha: str, execution_bundle_id: str, model: str, provider: str | None = None,
+                      model_settings_sha256: str | None = None, prompt_template_sha256: str | None = None,
+                      cost_profile_id: str | None = None, landmark_detail: str = 'full') -> dict:
+    """Run-level provenance: contract, condition, map hashes, order sheet hashes, code and model."""
     return {'contract': condition_manifest(condition_name, seed), 'registry_sha256': registry_sha256(),
-            'inputs': source.manifest(), 'map_id': map_id, 'landmark_detail': landmark_detail}
+            'inputs': source.manifest(), 'map_id': map_id, 'landmark_detail': landmark_detail,
+            'provenance': provenance(source=source, code_sha=code_sha,
+                                     execution_bundle_id=execution_bundle_id, model=model,
+                                     provider=provider, model_settings_sha256=model_settings_sha256,
+                                     prompt_template_sha256=prompt_template_sha256,
+                                     cost_profile_id=cost_profile_id)}
+
+
+def provenance(*, source: OrderSheetSource, code_sha: str, execution_bundle_id: str, model: str,
+               provider: str | None = None, model_settings_sha256: str | None = None,
+               prompt_template_sha256: str | None = None, cost_profile_id: str | None = None) -> dict:
+    """The ``provenance`` object every call record carries (closed keys, see PROVENANCE_KEYS)."""
+    value = {'registry_sha256': registry_sha256(), 'order_sheet_sha256': source.sha256,
+             'map_file_sha256': source.manifest()['map']['map_file_sha256'],
+             'public_map_sha256': source.manifest()['map']['public_map_sha256'],
+             'code_sha': code_sha, 'execution_bundle_id': execution_bundle_id, 'model': model,
+             'provider': provider, 'model_settings_sha256': model_settings_sha256,
+             'prompt_template_sha256': prompt_template_sha256, 'cost_profile_id': cost_profile_id,
+             'input_profile_id': INPUT_PROFILE['profile_id']}
+    unknown = set(value) - set(PROVENANCE_KEYS)
+    if unknown:
+        raise ContractViolation(f'provenance carries unknown key(s): {sorted(unknown)}')
+    return value
 
 
 # ---------------------------------------------------------------------------
@@ -362,9 +415,10 @@ def call_input_bundle(*, map_id: str, source: OrderSheetSource, condition_name: 
 def call_log_record(*, run_id: str, condition_name: str, seed: int, actor: str, request_id: str,
                     call_index: int, trigger: str, requested_at_sim_s: float, released_at_sim_s: float,
                     cost_terms: Mapping, input_sha256: str, input_tokens: Mapping, output_tokens: int,
-                    status: str, http_attempts: int = 1, wall_latency_s: float | None = None,
-                    action_id: str | None = None, message_ids: Sequence[str] = (),
-                    decision_sources: Sequence[str] = (), payload_validated: bool = True) -> dict:
+                    status: str, provenance: Mapping, http_attempts: int = 1,
+                    wall_latency_s: float | None = None, action_id: str | None = None,
+                    message_ids: Sequence[str] = (), decision_sources: Sequence[str] = (),
+                    payload_validated: bool = True) -> dict:
     """One logical model call, with the SIM cost that package D charged for it."""
     if trigger not in TRIGGERS:
         raise ContractViolation(f'trigger must be one of {TRIGGERS}')
@@ -378,25 +432,28 @@ def call_log_record(*, run_id: str, condition_name: str, seed: int, actor: str, 
               'wall_latency_s': None if wall_latency_s is None else float(wall_latency_s),
               'http_attempts': int(http_attempts), 'status': status, 'action_id': action_id,
               'message_ids': list(message_ids), 'decision_sources': list(decision_sources),
-              'payload_validated': bool(payload_validated)}
+              'payload_validated': bool(payload_validated), 'provenance': dict(provenance)}
     return dict(validate_log_record(record))
 
 
 def message_log_record(*, run_id: str, condition_name: str, seed: int, envelope: Mapping,
-                       delivered_at_sim_s: float | None, delivery_delay_s: float, status: str,
+                       deliveries: Sequence[Mapping], delivery_delay_s: float, status: str,
                        rejected_reason: str | None = None, act: str | None = None) -> dict:
-    """One message: what was sent, when it was delivered and whether it was accepted."""
+    """One message: what was sent, when each recipient got it and whether it was accepted."""
     body = envelope['body']
     free = condition(condition_name).encoding == 'free_ko'
     text = body.get('text') if isinstance(body, Mapping) else None
     report = free_text_report(text) if free else None
+    times = [d['delivered_at_sim_s'] for d in deliveries
+             if isinstance(d, Mapping) and d.get('delivered_at_sim_s') is not None]
     record = {'schema': MESSAGE_LOG_SCHEMA, 'run_id': run_id, 'condition': condition_name, 'seed': int(seed),
               'message_id': envelope['message_id'], 'sender': envelope['sender'],
               'recipients': list(envelope['recipients']), 'encoding': envelope['encoding'],
               'reply_to': envelope.get('reply_to'), 'created_at_sim_s': float(envelope['created_at_sim_s']),
-              'delivered_at_sim_s': None if delivered_at_sim_s is None else float(delivered_at_sim_s),
-              'delivery_delay_s': float(delivery_delay_s), 'status': status,
-              'rejected_reason': rejected_reason, 'body': copy.deepcopy(body), 'body_sha256': digest(body),
+              'delivered_at_sim_s': min(times) if times else None,
+              'deliveries': [dict(d) for d in deliveries], 'delivery_delay_s': float(delivery_delay_s),
+              'status': status, 'rejected_reason': rejected_reason, 'body': copy.deepcopy(body),
+              'body_sha256': digest(body),
               'act': act if act is not None else (body.get('act') if isinstance(body, Mapping) else None),
               'chars': len(text) if isinstance(text, str) else 0,
               'korean_ok': None if report is None else report['ok']}
@@ -421,8 +478,9 @@ def static_map_for_call(map_bundle: Mapping) -> dict:
     return static_map_section(map_bundle)
 
 
-__all__ = ['SCENARIO_SCHEMA', 'ITEM_KINDS', 'REQUIRED_ROBOTS', 'ROLE_NAMES', 'IDENTITY', 'INPUT_PROFILE',
-           'TRIGGERS', 'COMMANDER', 'load_scenario', 'validate_scenario', 'eval_section', 'hidden_events',
-           'order_sheet', 'OrderSheetSource', 'vocabulary', 'own_rgb_ref', 'command_entry',
-           'belief_skeleton', 'build_call_input', 'payload_sha256', 'call_input_bundle', 'call_log_record',
-           'message_log_record', 'action_log_record', 'static_map_for_call']
+__all__ = ['SCENARIO_SCHEMA', 'ITEM_KINDS', 'REQUIRED_ROBOTS', 'FORMATIONS', 'ROLE_NAMES', 'IDENTITY',
+           'INPUT_PROFILE', 'TRIGGERS', 'COMMANDER', 'load_scenario', 'validate_scenario', 'eval_section',
+           'hidden_events', 'leader_rotation', 'order_sheet', 'OrderSheetSource', 'vocabulary',
+           'own_rgb_ref', 'command_entry', 'belief_skeleton', 'build_call_input', 'payload_sha256',
+           'call_input_bundle', 'provenance', 'call_log_record', 'message_log_record', 'action_log_record',
+           'static_map_for_call']
