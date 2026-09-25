@@ -31,17 +31,20 @@ LIME_LO, LIME_HI = (36, 60, 40), (54, 255, 255)
 BAND_V_MAX = 60                    # black grip band
 BEAM_TOP_Z_M = .032
 GRIP_INSET_M = .03                 # band centre from the beam end
-GRASP_RADIUS_M = .155
+GRASP_RADIUS_M = .17               # alignment target; IK grasps at the measured grip point
 MIN_POINTS = 60
 RAY_STEP = 2
 ALIGN_TOL_M, ALIGN_TOL_RAD = .008, .035
+ALIGN_TOL_X_M = .015
 MIN_COMMAND = .035                 # smaller mecanum commands stall the chassis (zone skill dev 401)
 BORDER_PX = 14
 # Look postures by measured grip distance (dev 601: in SEARCH the near end leaves the valid
 # fisheye region below ~0.30 m; the inspection pose sees band and end at the 0.155 m station).
 LOOK_POSTURES = (
-    ('search', .33, {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}),
-    ('p45', .24, {**posture(.155, .14, -45.), 1: 2000}),
+    # thresholds from the eroded valid view on the beam-top centreline (dev, 2026-09-26):
+    # search sees x >= 0.280, p45 x in [0.226, 0.537], inspect x in [0.113, 0.278]; end = grip - 0.03.
+    ('search', .34, {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}),
+    ('p45', .275, {**posture(.155, .14, -45.), 1: 2000}),
     ('inspect', 0., {1: 2000, 3: 508, 4: 2432, 5: 1320, 6: 1500}),
 )
 
@@ -132,13 +135,14 @@ def _floor(value: float, tol: float) -> float:
 def align_command(obs: Mapping[str, Any]) -> dict[str, Any] | None:
     """None when aligned; otherwise one short mecanum command toward the station."""
     ex, ey, ea = align_errors(obs)
-    if abs(ex) <= ALIGN_TOL_M and abs(ey) <= ALIGN_TOL_M and abs(ea) <= ALIGN_TOL_RAD:
+    if abs(ex) <= ALIGN_TOL_X_M and abs(ey) <= ALIGN_TOL_M and abs(ea) <= ALIGN_TOL_RAD:
         return None
-    fwd = float(np.clip(.9 * ex, -.05, .08)) if abs(ex) > ALIGN_TOL_M else 0.
+    fwd = float(np.clip(.9 * ex, -.05, .08)) if abs(ex) > ALIGN_TOL_X_M else 0.
     left = float(np.clip(.9 * ey, -.06, .06)) if abs(ey) > ALIGN_TOL_M else 0.
     turn = float(np.clip(.8 * ea, -.10, .10)) if abs(ea) > ALIGN_TOL_RAD else 0.
-    return {'kind': 'mecanum', 'forward': _floor(fwd, ALIGN_TOL_M), 'left': _floor(left, ALIGN_TOL_M),
-            'turn': _floor(turn, ALIGN_TOL_RAD), 'duration': .3}
+    near = abs(ex) < .05 and abs(ey) < .03
+    return {'kind': 'mecanum', 'forward': _floor(fwd, ALIGN_TOL_X_M), 'left': _floor(left, ALIGN_TOL_M),
+            'turn': _floor(turn, ALIGN_TOL_RAD), 'duration': .2 if near else .3}
 
 
 def held_signature(image) -> np.ndarray:
