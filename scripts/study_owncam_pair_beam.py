@@ -84,8 +84,9 @@ def sha_file(path):
 class PairStudent:
     """One robot's own-view controller. Holds no reference to the world or the partner."""
 
-    def __init__(self, rid, port, arm, sync_for, log):
+    def __init__(self, rid, port, arm, sync_for, log, save=None):
         self.rid, self.port, self.arm, self.sync_for, self.log = rid, port, arm, sync_for, log
+        self.save = save
         self.state, self.state_t = 'align_start', 0.
         self.next_look = 0.
         self.aligned_streak = 0
@@ -112,6 +113,8 @@ class PairStudent:
     def look(self, now):
         obs = self.port.capture()
         self.frames += 1
+        if self.save is not None:
+            self.save(self.rid, obs, self.state)
         return obs
 
     def pose_of(self, obs):
@@ -391,7 +394,15 @@ def main():
         return syncs[key]
 
     arms = {r: ArmSequence(ports[r], FOLDED) for r in ROLES}
-    students = {r: PairStudent(r, ports[r], arms[r], sync_for, log) for r in ROLES}
+    frame_index = []
+
+    def save(rid, obs, state):
+        name = f"{rid}-{obs['frame_id']:05d}.jpg"
+        (out / 'inputs' / name).write_bytes(base64.b64decode(obs['image']))
+        frame_index.append({'file': name, 'robot': rid, 'state': state, 'sim_time': obs['sim_time'],
+                            'sha256': obs['sha256'], 'own_pose_commands': obs['actuator_state']['servo_pulses']})
+
+    students = {r: PairStudent(r, ports[r], arms[r], sync_for, log, save) for r in ROLES}
     # ---- labelled GT stub approach (condition stub_approach only) -------------------------
     stub_log = []
 
@@ -534,6 +545,7 @@ def main():
         'threads': {k: os.environ.get(k) for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS',
                                                   'VECLIB_MAXIMUM_THREADS', 'MKL_NUM_THREADS')},
     }
+    (out / 'inputs.jsonl').write_text(''.join(json.dumps(f) + '\n' for f in frame_index))
     (out / 'events.jsonl').write_text(''.join(json.dumps(e, default=str) + '\n' for e in events))
     (out / 'result.json').write_text(json.dumps(result, indent=1, default=str) + '\n')
     (out / 'hashes.json').write_text(json.dumps({n: sha_file(out / n) for n in
