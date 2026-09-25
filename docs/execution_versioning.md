@@ -140,3 +140,5 @@ python3 -m harness.rgb_execution_bundle verify-registry --base origin/main
 - `rgb-standard-dispatch-v57`(은퇴 보존): 부모는 main의 v54다. PR #144(v54)가 먼저 병합되어, R2 재생이 쓴 v55를 바이트 그대로 은퇴 보존하고 같은 `--navigation planned` 동작을 v54 위에 다시 등록했다(v56은 다른 브랜치가 사용 중). `--plan-guidance objective*`와의 결합은 거절한다. v55·v48 후보의 결과를 승계하지 않는다.
 
 - `rgb-standard-dispatch-v59`: 부모는 main의 v58이다. PR #153(v58)이 먼저 병합되어, #148 브랜치의 v57을 바이트 그대로 은퇴 보존하고 같은 기본 OFF `--navigation planned` 동작을 v58 위에 다시 등록했다. `--plan-guidance objective*`와의 결합은 거절한다. v55·v57·v48 후보의 결과를 승계하지 않는다.
+
+- `rgb-standard-dispatch-v60`: 부모는 main의 v59다(v59는 바이트 그대로 보존). 명시적 `--coordination dynamic`의 재파지 재접근에만 적용한다. 빔 북쪽 절반은 고정 조명에서 노랑(색상 약 28)이라 기존 빔 기준 마스크(색상 ≤24)에는 얇은 그늘 가장자리로만 남는다. W2(v58)에서 파지 실패 뒤 이 가장자리가 끊겨 색상 ≤24 빔이 123 → 95 px로 짧아졌고, 빔 기준 TOP이 14 px 옮겨져 학습된 lateral 모델이 지원 밖(거리 17,199와 1,088)으로 판정했다. 심판 기록상 빔은 움직이지 않았다. 이제 재파지 뒤 운반 전 캡처에서 색상 ≤24 빔이 색상 ≤35 빔의 0.9배보다 짧고 색상 ≤35 빔 중심이 실패한 파지 때보다 2 px 이하로 움직였으면, 그 파지 때의 RGB 평행 이동값을 그대로 쓴다(`fixed_from_prior_rgb`, 근거는 `transform.regrasp_binding`). 기록된 W2 프레임에서 오프라인으로 두 lateral 모델이 거리 7.6과 7.5로 돌아왔다. 물리 미검증이며 v58·v59 결과를 승계하지 않는다.
