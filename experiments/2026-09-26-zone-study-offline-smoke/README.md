@@ -1,5 +1,9 @@
 # 2026-09-26 구역 대화 연구 no-LLM 오프라인 스모크 (저장 RGB + 가짜 시계)
 
+> **버전 안내.** 이 폴더의 파일은 **v1**(코드 `d87e0f2`) 결과 그대로이며 덮어쓰지 않는다.
+> Codex 적대적 검토 18건을 수정한 뒤의 재실행은 [`v2/`](v2/README.md)(코드 `dd497c8`)에 있다.
+> 두 버전의 차이·불변 항목은 v2 README의 "v1과 무엇이 다른가"를 본다.
+
 - **상태:** 완료. 30회 전부 통과(`results.json` `ok: true`).
 - **실행 소스:** `d87e0f2bc179d00ad4c8de48e0559408d46d6a0c` (브랜치 `kiro/zone-study-core`, worktree `ugrp-wt/kiro-study-core`)
 - **실행기:** `scripts/run_zone_study_offline_smoke.py` → `harness/zone_study_offline.py`
