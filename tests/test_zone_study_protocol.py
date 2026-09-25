@@ -14,6 +14,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -345,23 +346,125 @@ def test_peer_and_structured_share_the_same_utterance_budget():
 
 
 def test_guards_still_raise_under_optimised_python():
-    """The rejection-name and inbox-field guards are real raises, not asserts,
-    so they also hold when pytest is run with python -O."""
+    """The rejection-name guard is a real raise, not an assert, so it also holds
+    when the suite runs with python -O."""
     root = Path(__file__).resolve().parents[1]
     code = ('import harness.zone_study_protocol as zp\n'
             'try:\n'
             '    zp._Reject("not_a_rejection", "x")\n'
             'except zp.ProtocolError:\n'
-            '    print("reject-guard")\n'
-            'env = zp.Envelope("m", "r1", ("r2",), 1.0, text="보고합니다.")\n'
-            'object.__setattr__(env, "structured", {"act": "inform"})\n'
-            'print("record-keys", sorted(env.record(delivered_at_sim_s=1.1)) == '
-            'sorted(("message_id", "from_robot", "recipients", "sent_at_sim_s", '
-            '"delivered_at_sim_s", "reply_to", "text")))\n')
+            '    print("reject-guard")\n')
     out = subprocess.run([sys.executable, '-O', '-c', code], capture_output=True, text=True,
                          cwd=root, env={**os.environ, 'PYTHONPATH': str(root)})
     assert out.returncode == 0, out.stderr
-    assert out.stdout.split() == ['reject-guard', 'record-keys', 'True'], out.stdout
+    assert out.stdout.split() == ['reject-guard'], out.stdout
+
+
+def test_window_id_cannot_carry_text_into_a_message_id():
+    """message_id is robot-facing and is built from the window id."""
+    t = zp.Transport('peer_ko')
+    for bad in ('r2는 물러나고 내가 order-1을 맡는다', 'w1 w2', 'w' * (zp.MESSAGE_ID_MAX + 1), '', 'w1\u200b'):
+        with pytest.raises(zp.ProtocolError):
+            t.open_window(bad, at_sim_s=10.)
+    assert t.windows == [] and t.window is None
+    t.open_window('w1', at_sim_s=10.)
+    mid = t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=10.).envelope.message_id
+    assert zp.is_message_id(mid) and mid == 'w1-r1-1'
+
+
+def test_reply_to_cannot_reference_a_message_not_delivered_yet():
+    t = transport('peer_ko')
+    late = t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=100.).envelope.message_id
+    early = t.send('r2', recipients=['r1'], text='먼저 답합니다.', reply_to=late, at_sim_s=10.)
+    assert early.rejection == 'unknown_reply_to'
+    assert t.send('r2', recipients=['r1'], text='이제 답합니다.', reply_to=late, at_sim_s=100.2).accepted
+
+
+def test_inbox_last_must_be_a_positive_count():
+    t = transport('peer_ko')
+    t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=10.)
+    for bad in (0, -2, True, 1.5, 'all'):
+        with pytest.raises(zp.ProtocolError):
+            t.inbox('r2', now_sim_s=99., last=bad)
+    assert t.truncations == [] and len(t.inbox('r2', now_sim_s=99., last=1)) == 1
+
+
+def test_a_delivered_record_is_a_copy():
+    t = transport('structured')
+    t.send('r1', recipients=['r2'], structured=struct(), at_sim_s=10.)
+    record = t.inbox('r2', now_sim_s=99.)[0]
+    record['message']['zone'] = 'C'
+    record['recipients'].append('r3')
+    assert t.inbox('r2', now_sim_s=99.)[0]['message']['zone'] == 'A'
+    assert t.inbox('r2', now_sim_s=99.)[0]['recipients'] == ['r2']
+
+
+def test_validated_action_is_a_copy_of_the_reply():
+    raw = _reply()
+    value = zp.validate_reply(copy.deepcopy(raw), request_id='q-1', condition='peer_ko', actor='r1',
+                             order_ids=('order-1',), roles_by_order={'order-1': ('end_neg',)})
+    value['action']['order_id'] = 'order-2'
+    assert raw['action']['order_id'] == 'order-1'
+
+
+def test_the_prompt_states_the_transports_real_budget():
+    """A window context from the transport, not the condition default."""
+    t = zp.Transport('peer_ko', max_window_utterances=30, max_robot_utterances=9,
+                     max_total_utterances=50)
+    t.open_window('w1', at_sim_s=10.)
+    t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=10.)
+    context = t.window_context('r1', now_sim_s=99.)
+    body = json.loads(pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
+                                       window=context)['messages'][1]['content'])
+    assert body['dialogue_window'] == {'window_id': 'w1', 'max_utterances': 30,
+                                       'max_your_utterances': 9, 'your_utterances_left': 8,
+                                       'received': [], 'sent': ['w1-r1-1']}
+    with pytest.raises(zp.ProtocolError):             # an open channel needs its window id
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs())
+    with pytest.raises(zp.ProtocolError):             # unknown window fields are refused
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
+                         window={'window_id': 'w1', 'budget': 99})
+    assert zp.Transport('no_comm').window_context('r1', now_sim_s=1.) is None
+
+
+def test_build_request_requires_the_validated_input_bundle():
+    """A look-alike object must not be able to skip the input boundary."""
+    leaky = SimpleNamespace(map_public={**MAP_PUBLIC, 'top_cameras': [{'name': 'TOP_NW'}]},
+                            map_sha256='b' * 64, order_sheet=ORDER_SHEET, order_sheet_sha256='c' * 64,
+                            wrist_jpeg=JPEG, own_commands=({'command': 'drive', 'measured_qpos': [1]},),
+                            own_belief={'ground_truth_xyz_m': [1, 2, 0]}, map_figure_jpeg=None,
+                            sim_time_s=1.0, adapter='fake')
+    with pytest.raises(zp.ProtocolError):
+        pk.build_request('no_comm', 'r1', request_id='q', inputs=leaky)
+
+
+def test_live_state_hidden_one_level_down_is_refused():
+    sheet = copy.deepcopy(ORDER_SHEET)
+    sheet['orders'][0]['initial_location'] = {'pickup_bay': 'P1', 'slot': {'xyz_m': [1, 2, 0]}}
+    with pytest.raises(zp.ProtocolError):
+        pk.validate_order_sheet(sheet)
+    with pytest.raises(zp.ProtocolError):
+        pk.validate_own_commands(({'command': 'drive', 'args': {'qpos': [0.1, 0.2]}},))
+    with pytest.raises(zp.ProtocolError):
+        pk.validate_own_commands(({'command': 'drive', 'args': {'held_by': 'r2'}},))
+    assert pk.validate_own_commands(({'command': 'drive', 'args': {'speed': 0.2}},))
+
+
+def test_order_sheet_element_types_are_checked():
+    for mutate in (lambda o: o.update(kind=''),
+                   lambda o: o.update(item_ids=[{'id': 'long_beam-1'}]),
+                   lambda o: o.update(roles=[None, 'end_pos'])):
+        sheet = copy.deepcopy(ORDER_SHEET)
+        mutate(sheet['orders'][0])
+        with pytest.raises(zp.ProtocolError):
+            pk.validate_order_sheet(sheet)
+
+
+def test_image_bytes_are_copied_at_construction():
+    buf = bytearray(JPEG)
+    got = inputs(wrist_jpeg=buf)
+    buf[0] = 0
+    assert got.wrist_jpeg == JPEG
 
 
 # --- reply parsing and schema violations ----------------------------------
@@ -570,7 +673,9 @@ def test_goal_and_input_boundary_text_is_identical_across_all_main_conditions():
 @pytest.mark.parametrize('condition,rid,seed', CASES)
 def test_every_call_carries_the_static_map_the_order_sheet_and_own_inputs(condition, rid, seed):
     views = {r: JPEG for r in ROBOTS} if rid == zp.COMMANDER else None
-    req = pk.build_request(condition, rid, request_id='q-9', inputs=inputs(), seed=seed, robot_views=views)
+    channel = {'window': {'window_id': 'w1'}} if zp.spec(condition).channel_open else {}
+    req = pk.build_request(condition, rid, request_id='q-9', inputs=inputs(), seed=seed,
+                           robot_views=views, **channel)
     body = json.loads(req['messages'][1]['content'])
     assert body['static_map']['map_id'] == MAP_PUBLIC['map_id']
     assert body['static_map_sha256'] == 'b' * 64 and body['order_sheet_sha256'] == 'c' * 64
@@ -670,14 +775,15 @@ def test_delivered_records_must_match_the_condition_encoding():
             'delivered_at_sim_s': 1.1, 'reply_to': None, 'text': KO_TEXT}
     fixed = {**free, 'message': struct()}
     del fixed['text']
+    w = {'window_id': 'w1'}
     with pytest.raises(zp.ProtocolError):             # free text into the structured condition
-        pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), inbox=(free,))
+        pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(free,))
     with pytest.raises(zp.ProtocolError):             # structured body into the Korean condition
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), inbox=(fixed,))
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(fixed,))
     with pytest.raises(zp.ProtocolError):             # never both
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
+        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), window=w,
                          inbox=({**free, 'message': struct()},))
-    assert pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), inbox=(fixed,))
+    assert pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(fixed,))
 
 
 def test_commander_views_must_be_the_robot_roster():

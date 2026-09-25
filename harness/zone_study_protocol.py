@@ -30,6 +30,14 @@ Scope and boundaries this module keeps:
 Literal tokens (``r1``/``r2``/``r3``, zone letters ``A``/``B``/``C``, order and
 item IDs, passage IDs, JSON keys, enum values) stay literal everywhere.
 
+Threat model: an honest runner plus an UNTRUSTED model reply. Every check here
+defends against a malformed, over-talkative or boundary-crossing reply and
+against a caller mistake (a reused window id, an unvalidated input bundle, a
+record edited after delivery). It does not defend against a hostile in-process
+caller that subclasses these types, uses ``object.__setattr__`` on a frozen
+value, or passes a mapping that lies in ``keys()``; that is out of scope and
+would need a different design.
+
 Package A (``harness/zone_study_contract.py``) is not merged yet; the study
 contract adapter lives in ``harness/zone_study_prompts_ko.py`` and must be
 aligned with A once it lands.
@@ -235,7 +243,8 @@ class Envelope:
     reply_to: str | None = None
 
     def record(self, *, delivered_at_sim_s) -> dict:
-        """Robot-facing record. Only ``INBOX_FIELDS``; no evaluation data."""
+        """Robot-facing record: only ``INBOX_FIELDS``, and a copy of the body so
+        a caller editing the record cannot change what was delivered."""
         out = {'message_id': self.message_id, 'from_robot': self.sender,
                'recipients': list(self.recipients), 'sent_at_sim_s': self.sent_at_sim_s,
                'delivered_at_sim_s': delivered_at_sim_s, 'reply_to': self.reply_to}
@@ -243,9 +252,6 @@ class Envelope:
             out['text'] = self.text
         else:
             out['message'] = copy.deepcopy(self.structured)
-        extra = set(out) - set(INBOX_FIELDS)
-        if extra:                                   # checked in -O too
-            raise ProtocolError(f'inbox record must not carry {sorted(extra)}')
         return out
 
 
@@ -300,21 +306,31 @@ class Transport:
         self.rejections = []   # evaluation only
         self.truncations = []  # evaluation only: inbox records a caller cut off
 
-    def _received_ids(self, rid) -> frozenset:
-        """A robot may only reply to a message it actually received."""
-        return frozenset(env.message_id for _, env in self._inbox.get(rid, ()))
+    def _received_ids(self, rid, at_sim_s=None) -> frozenset:
+        """Message ids actually delivered to ``rid`` (by ``at_sim_s`` if given).
+
+        A robot may only reply to a message it has received, so an id it could
+        not know yet is not a valid reference either.
+        """
+        return frozenset(env.message_id for at, env in self._inbox.get(rid, ())
+                         if at_sim_s is None or at <= float(at_sim_s))
 
     # -- windows ----------------------------------------------------------
     def open_window(self, window_id, *, at_sim_s) -> Window:
         """Open a new window. A window id is never reused, so the per-window
-        cap cannot be reset by re-opening the same window."""
-        if not isinstance(window_id, str) or not window_id:
-            raise ProtocolError('window id required')
+        cap cannot be reset by re-opening the same window.
+
+        The id must be an identifier: it becomes part of every ``message_id``,
+        which is a robot-facing field, so free text is refused here too.
+        """
+        if not is_message_id(window_id):
+            raise ProtocolError(f'window id must be at most {MESSAGE_ID_MAX} id characters')
         if window_id in self.windows:
             raise ProtocolError(f'window {window_id!r} was already opened; use a new id')
+        window = Window(window_id, float(at_sim_s))
         self.windows.append(window_id)
-        self.window = Window(window_id, float(at_sim_s))
-        return self.window
+        self.window = window
+        return window
 
     def close_window(self):
         self.window = None
@@ -388,8 +404,9 @@ class Transport:
                 seen.add(rid)
                 targets.append(rid)
         body_text, body_struct = self._body(text, structured)
+        known = self._received_ids(sender, at_sim_s)
         for candidate in (reply_to, (body_struct or {}).get('reply_to')):
-            if candidate is not None and candidate not in self._received_ids(sender):
+            if candidate is not None and candidate not in known:
                 raise _Reject('unknown_reply_to', str(candidate))
         if self.cap_total is not None and self.sent_count() >= self.cap_total:
             raise _Reject('total_cap', f'{self.cap_total} per run')
@@ -424,10 +441,13 @@ class Transport:
 
         Every delivered message is returned by default: a silently dropped
         utterance would be an unrecorded information loss. ``last`` is an
-        explicit caller choice and the drop is reported in ``truncations``.
+        explicit caller choice, must be a positive count, and the drop is
+        reported in ``truncations``.
         """
         if rid not in self._inbox:
             raise ProtocolError(f'unknown robot {rid!r}')
+        if last is not None and (isinstance(last, bool) or not isinstance(last, int) or last < 1):
+            raise ProtocolError('last must be a positive whole number of messages, or None')
         out = [env.record(delivered_at_sim_s=at) for at, env in self._inbox[rid] if at <= float(now_sim_s)]
         if last is not None and len(out) > last:
             self.truncations.append({'robot_id': rid, 'now_sim_s': float(now_sim_s),
@@ -439,6 +459,22 @@ class Transport:
         """message_ids this robot actually got accepted (optionally one window)."""
         return tuple(e['message_id'] for e in self.log if e['accepted'] and e['sender'] == rid
                      and (window_id is None or e['window'] == window_id))
+
+    def window_context(self, rid, *, now_sim_s) -> dict | None:
+        """The truthful dialogue-window block for a prompt.
+
+        Caps and the remaining budget come from this transport, not from the
+        condition defaults, so an overridden cap cannot make a prompt state a
+        budget the robot does not have. ``None`` when the channel is shut.
+        """
+        if not self.spec.channel_open:
+            return None
+        if self.window is None:
+            raise ProtocolError('no dialogue window is open')
+        return {'window_id': self.window.window_id, 'max_utterances': self.cap_window,
+                'max_your_utterances': self.cap_robot, 'your_utterances_left': self.remaining(rid),
+                'received': list(self.inbox(rid, now_sim_s=now_sim_s)),
+                'sent': list(self.sent_ids(rid, self.window.window_id))}
 
     def delivered_count(self, rid) -> int:
         return len(self._inbox[rid])

@@ -92,6 +92,11 @@ class StudyInputs:
         for name in ('map_sha256', 'order_sheet_sha256'):
             if not isinstance(getattr(self, name), str) or len(getattr(self, name)) != 64:
                 raise zp.ProtocolError(f'{name} must be a sha256 hex digest')
+        # copy the image bytes: a caller keeping a bytearray must not be able to
+        # change the picture a later prompt carries
+        set_(self, 'wrist_jpeg', _image_bytes(self.wrist_jpeg, 'wrist_jpeg'))
+        if self.map_figure_jpeg is not None:
+            set_(self, 'map_figure_jpeg', _image_bytes(self.map_figure_jpeg, 'map_figure_jpeg'))
 
     def order_ids(self) -> tuple:
         return tuple(o['order_id'] for o in self.order_sheet['orders'])
@@ -147,12 +152,20 @@ def public_map(static_map: dict) -> dict:
     return out
 
 
-def _nested_keys(value) -> set:
+def _nested_keys(value, depth=12) -> set:
+    if depth <= 0:
+        raise zp.ProtocolError('input is nested too deeply to audit')
     if isinstance(value, dict):
-        return set(value) | {k for v in value.values() for k in _nested_keys(v)}
+        return set(value) | {k for v in value.values() for k in _nested_keys(v, depth - 1)}
     if isinstance(value, (list, tuple)):
-        return {k for v in value for k in _nested_keys(v)}
+        return {k for v in value for k in _nested_keys(v, depth - 1)}
     return set()
+
+
+def _image_bytes(jpeg, where) -> bytes:
+    if not isinstance(jpeg, (bytes, bytearray)) or not jpeg:
+        raise zp.ProtocolError(f'{where} must be non-empty JPEG bytes')
+    return bytes(jpeg)
 
 
 def validate_belief(belief) -> dict:
@@ -190,6 +203,9 @@ def validate_own_commands(commands) -> tuple:
         if entry.get('status') is not None and entry['status'] not in OWN_COMMAND_STATUS:
             raise zp.ProtocolError(f'own_commands status must be one of {OWN_COMMAND_STATUS}; '
                                    'an executor success or contact judgement is not a robot input')
+        nested = sorted(_nested_keys(list(entry.values())) & set(ORDER_FORBIDDEN_KEYS))
+        if nested:                      # e.g. a measured pose hidden inside args
+            raise zp.ProtocolError(f'own_commands hides live state {nested}')
         out.append(copy.deepcopy(entry))
     return tuple(out)
 
@@ -212,15 +228,23 @@ def validate_order_sheet(sheet: dict) -> dict:
             raise zp.ProtocolError(f'order {order.get("order_id")!r} carries live state {bad}')
         if set(order) != set(ORDER_KEYS):
             raise zp.ProtocolError('each order needs exactly ' + ', '.join(ORDER_KEYS))
+        nested = sorted(_nested_keys(list(order.values())) & set(ORDER_FORBIDDEN_KEYS))
+        if nested:
+            raise zp.ProtocolError(f'order {order["order_id"]!r} hides live state {nested}')
+        for key in ('order_id', 'kind'):
+            if not isinstance(order[key], str) or not order[key]:
+                raise zp.ProtocolError(f'{key} must be a non-empty string')
         if order['order_id'] in seen:
             raise zp.ProtocolError(f'duplicate order_id {order["order_id"]!r}')
         seen.add(order['order_id'])
         if order['destination_zone'] not in zp.ZONES:
             raise zp.ProtocolError(f'destination_zone must be one of {zp.ZONES}')
-        if not isinstance(order['item_ids'], list) or not order['item_ids']:
-            raise zp.ProtocolError('item_ids must be a non-empty list')
-        if not isinstance(order['roles'], list) or len(order['roles']) != order['required_robots']:
-            raise zp.ProtocolError('roles must list one role per required robot')
+        if not isinstance(order['item_ids'], list) or not order['item_ids'] \
+                or not all(isinstance(i, str) and i for i in order['item_ids']):
+            raise zp.ProtocolError('item_ids must be a non-empty list of ids')
+        if not isinstance(order['roles'], list) or len(order['roles']) != order['required_robots'] \
+                or not all(isinstance(r, str) and r for r in order['roles']):
+            raise zp.ProtocolError('roles must list one role name per required robot')
         loc = order['initial_location']
         if not isinstance(loc, dict) or set(loc) != {'pickup_bay', 'slot'}:
             raise zp.ProtocolError('initial_location needs pickup_bay and slot only')
@@ -418,20 +442,29 @@ def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None,
                   inbox=(), sent=(), robot_views=None, robots=zp.ROBOTS) -> dict:
     """One model request: Korean system text, the per-call input JSON and images.
 
-    ``inbox``/``sent`` are the records the transport actually delivered and
-    accepted for this actor; this function never filters a channel itself and
-    never receives host claims, reservations or another robot's state.
+    ``inputs`` must be a ``StudyInputs``, so the input boundary is always the
+    validated one. ``window`` is preferably ``Transport.window_context(rid)``:
+    then the stated budget is the transport's real budget, not the condition
+    default. ``inbox``/``sent`` are what the transport actually delivered and
+    accepted; this function never filters a channel itself and never receives
+    host claims, reservations or another robot's state.
     """
     s = zp.spec(condition)
+    if not isinstance(inputs, StudyInputs):
+        raise zp.ProtocolError('inputs must be a StudyInputs bundle (the validated input boundary); '
+                               f'{ADAPTER_NOTE}')
     role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots)
     if (robot_views is not None) != (role == 'commander'):
         raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
     if robot_views is not None and set(robot_views) != set(robots):
         raise zp.ProtocolError(f'robot_views must be exactly {tuple(robots)}')
-    if not s.channel_open and (tuple(inbox) or tuple(sent) or window):
+    window = dict(window or {})
+    received = [dict(r) for r in (window.pop('received', None) or inbox)]
+    issued = list(window.pop('sent', None) or sent)
+    if not s.channel_open and (received or issued or window):
         raise zp.ProtocolError(f'{condition} has no dialogue channel: inbox, sent and window must be empty')
     body_key = 'text' if s.encoding == 'ko_free' else 'message'
-    for record in inbox:
+    for record in received:
         extra = set(record) - set(zp.INBOX_FIELDS)
         if extra:
             raise zp.ProtocolError(f'inbox record carries non-robot-facing fields {sorted(extra)}')
@@ -456,12 +489,17 @@ def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None,
     if s.rotating_leader:
         body['leader'] = zp.leader_of(condition, seed=seed, leader=leader, robots=robots)
     if s.channel_open:
-        body['dialogue_window'] = {
-            'window_id': (window or {}).get('window_id'),
-            'max_utterances': s.max_window_utterances,
-            'max_your_utterances': s.max_robot_utterances,
-            'your_utterances_left': max(0, s.max_robot_utterances - len(tuple(sent))),
-            'received': copy.deepcopy(list(inbox)), 'sent': copy.deepcopy(list(sent))}
+        cap_window = window.pop('max_utterances', s.max_window_utterances)
+        cap_robot = window.pop('max_your_utterances', s.max_robot_utterances)
+        left = window.pop('your_utterances_left', max(0, cap_robot - len(issued)))
+        window_id = window.pop('window_id', None)
+        if window:
+            raise zp.ProtocolError(f'unknown dialogue window fields {sorted(window)}')
+        if not zp.is_message_id(window_id or ''):
+            raise zp.ProtocolError('an open dialogue window needs its window_id')
+        body['dialogue_window'] = {'window_id': window_id, 'max_utterances': cap_window,
+                                   'max_your_utterances': cap_robot, 'your_utterances_left': left,
+                                   'received': received, 'sent': issued}
     return {'request_id': request_id, 'condition': condition, 'actor': rid, 'prompt_role': role,
             'prompt_version': PROMPT_VERSION, 'protocol_version': zp.PROTOCOL_VERSION,
             'messages': [{'role': 'system',
