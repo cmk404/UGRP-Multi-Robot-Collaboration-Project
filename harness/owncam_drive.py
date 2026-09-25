@@ -11,7 +11,7 @@ The robot drives on its own pose estimate only:
   envelope) from the ESTIMATED start/current pose;
 * control: waypoint pursuit with mecanum commands, heading held east;
 * stop-and-look: stop, move the wrist to ``LOOK_P20`` and pan through
-  ``LOOK_PANS`` when the estimate is uncertain, when no tag has been seen for a
+  ``WIDE_LOOK_PANS`` when the estimate is uncertain, when no tag has been seen for a
   while, and once at each door checkpoint (1.5 m and 0.6 m before the door).
 
 Nothing here imports the simulator; ``tests/test_owncam_drive.py`` checks it.
@@ -34,6 +34,12 @@ SCHEMA = 'ugrp.owncam_drive.v1'
 CARRY_POSTURE = {1: 1500, 3: 777, 4: 2053, 5: 1646, 6: 1500}
 LOOK_P20 = {3: 1072, 4: 2400, 5: 1482}
 LOOK_PANS = (1500, 1230, 1770, 1500)
+# Localization sweep of this driver (dev amendment 2026-09-26, not shared with
+# #176): LOOK_PANS plus +-48 deg (11.1 PWM/deg). With the box held, near/low
+# tags are hidden behind it, and from inside the doorway only the far east wall
+# (~3.4 m, a narrow bearing cone where yaw and y trade off) is in the +-24 deg
+# sweep; the wide pans reach side-wall tags ~1.4-2 m away that pin y.
+WIDE_LOOK_PANS = (1500, 1230, 970, 1770, 2030, 1500)
 SEARCH_POSE = {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}
 # Loaded body envelope relative to the chassis origin (east-facing): chassis
 # +-0.15 m (as UNLOADED_ENVELOPE) plus the box held ~0.14 m ahead in CARRY_POSTURE.
@@ -139,7 +145,7 @@ class OwnCamDriver:
     def _start_look(self, now, reason):
         self.looks += 1
         self.look_reason = reason
-        self.look_queue = list(LOOK_PANS)
+        self.look_queue = list(WIDE_LOOK_PANS)
         self.arm_target = dict(LOOK_P20)
         self._set('look_arm', now, reason=reason, look=self.looks)
         return [{'kind': 'hold'}]

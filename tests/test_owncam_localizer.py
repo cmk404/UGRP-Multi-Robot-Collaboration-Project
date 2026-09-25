@@ -161,6 +161,12 @@ class TaggedMapTests(unittest.TestCase):
         self.assertEqual(LOOK_P20, {3: 1072, 4: 2400, 5: 1482})
         self.assertEqual(LOOK_PANS, (1500, 1230, 1770, 1500))
 
+    def test_wide_look_pans_extend_shared_pans_within_servo_range(self):
+        from harness.owncam_drive import LOOK_PANS, WIDE_LOOK_PANS
+        self.assertTrue(set(LOOK_PANS) <= set(WIDE_LOOK_PANS))
+        self.assertEqual(WIDE_LOOK_PANS[-1], 1500)
+        self.assertTrue(all(500 <= p <= 2500 for p in WIDE_LOOK_PANS))
+
     def test_base_maps_are_unchanged(self):
         for name, sha in BASE_MAP_SHA256.items():
             data = (ROOT/'maps'/'zones'/f'{name}.json').read_bytes()
