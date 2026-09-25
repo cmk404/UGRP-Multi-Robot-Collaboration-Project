@@ -114,7 +114,7 @@
       "purpose": "구역별 수량 목표 협업 벤치마크(교사 실행기; 기본 zone_wide, 벽·문 경로 변형 포함, zone_open 은퇴; 화물 종류·팀 운반 목표는 protocol v2: 역할 선언·팀 형성 규칙·팀 교사)",
       "entry": "scripts/run_zone_dispatch.py",
       "docs": "docs/zone_dispatch.md",
-      "requires": "model endpoint in llm mode; privileged TEACHER motion executor, never an RGB-skill success; protocol v2 (goals with catalogue cargo, or --protocol v2): cargo scene with cargo_noslip_v1 and the GT team executor",
+      "requires": "model endpoint in llm mode; privileged TEACHER motion executor, never an RGB-skill success; protocol v2 (goals with catalogue cargo, or --protocol v2): an explicit --contact-profile (A2 smokes: cargo_noslip_v1), cargo scene and the GT team executor",
       "version": "1.2.0",
       "runner": "scripts.run_zone_dispatch",
       "output_flag": "--output",

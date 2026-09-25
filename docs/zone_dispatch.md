@@ -79,26 +79,29 @@
 
 ## 화물 종류·팀 운반 목표: protocol v2 (구역 팀 A2, 2026-09-25)
 
-목표에 화물 목록 종류(can, tile, long_beam, heavy_crate, tri_frame)가 있으면 실행기는 자동으로 protocol v2를 쓴다(`--protocol auto`). 색만 있는 목표는 지금까지와 같은 v1 경로로 간다. 기본값도 v1 그대로다(900 SIM초, `local_contact_fine`). `--protocol v2`를 명시하면 색만 있는 목표도 v2로 실행한다. 설계와 A1 부품은 [팀 작업 A1 기록](../experiments/2026-09-25-zone-team-jobs/README.md)에 있고, 연결 결과와 스모크는 [A2 기록](../experiments/2026-09-25-zone-team-a2/README.md)에 있다.
+목표에 화물 목록 종류(can, tile, long_beam, heavy_crate, tri_frame)가 있으면 실행기는 자동으로 protocol v2를 쓴다(`--protocol auto`). v2는 `--contact-profile`을 반드시 명시해야 한다. 목표만 바꿨는데 물리 조건이 몰래 바뀌지 않게 하려는 것이다(A2 스모크는 `cargo_noslip_v1`). 색만 있는 목표는 지금까지와 같은 v1 경로로 간다. 기본값도 v1 그대로다(900 SIM초, `local_contact_fine`). `--protocol v2`를 명시하면 색만 있는 목표도 v2로 실행한다. 설계와 A1 부품은 [팀 작업 A1 기록](../experiments/2026-09-25-zone-team-jobs/README.md)에 있고, 연결 결과와 스모크는 [A2 기록](../experiments/2026-09-25-zone-team-a2/README.md)에 있다.
 
 ```bash
 .venv-sim/bin/python -m scripts.run_zone_dispatch --output outputs/zone-v2 --mode fixture \
   --coordination dynamic --variant zone_wide_two_doors --seed 11 --record-replay \
+  --contact-profile cargo_noslip_v1 \
   --goal '{"A":{"long_beam":1},"B":{"heavy_crate":1,"red":1},"C":{"can":1,"green":1,"tile":1}}'
 ```
 
 | 항목 | v2 동작 |
 |---|---|
-| 장면 | 색 상자는 `sim.zone_arena.episode`로 그대로 놓는다. 화물은 `harness/zone_mixed_episode.py`가 seed마다 정해진 방식으로 놓는다. 팀 발자국과 정거장 뒤 접근 자리가 상자·출발점·벽·통로 앞 차선과 겹치지 않아야 한다(설정 전용). `CargoZoneScene`, 기본 접촉 프로필은 `cargo_noslip_v1`, weld OFF다. 목표에 색 상자가 하나 이상 있어야 한다 |
-| 로봇 입력 | 자기 RGB, TOP RGB 네 장, TOP RGB 라벨과 현재 추정(`harness/zone_perception_v2.py` = `top_cargo_v1` + 그 상자 경로)을 받는다. 화물 라벨에는 RGB 손잡이 위치가 붙는다. 정적 과제 글은 세 조건에서 같다. 종류별 필요 인원·역할, 착지 영역(id 없음), 팀 형성 규칙, 벽·문 지도가 들어 있다 |
+| 장면 | 색 상자는 `sim.zone_arena.episode`로 그대로 놓는다. 화물은 `harness/zone_mixed_episode.py`가 seed마다 정해진 방식으로 놓는다. 팀 발자국과 정거장 뒤 접근 자리가 상자·출발점·벽·통로 앞 차선과 겹치지 않아야 한다(설정 전용). `CargoZoneScene`을 쓰고, 접촉 프로필은 명시한 값(스모크는 `cargo_noslip_v1`), weld는 OFF다. 목표에 색 상자가 하나 이상 있어야 한다 |
+| 로봇 입력 | 자기 RGB, TOP RGB 네 장, TOP RGB 라벨과 현재 추정(`harness/zone_perception_v2.py` = `top_cargo_v1` + 그 상자 경로; 결과의 `perception_profile`에 기록. `top_cargo_v1`은 보고된 그대로 두고, 틀 안쪽 억제 수정은 별도 `top_cargo_v2`에서 한다)을 받는다. 화물 라벨에는 RGB 손잡이 위치가 붙는다. 정적 과제 글은 세 조건에서 같다. 종류별 필요 인원·역할, 착지 영역(id 없음), 팀 형성 규칙, 벽·문 지도가 들어 있다 |
 | 선언 | 세 조건 모두 `{"item", "zone", "role"}` 형식이다. 검사는 independent `check_independent_claims`(로봇별, 서로 비교 안 함), dynamic `check_dynamic_claims`, plan_first `validate_team_plan`이 한다. 호스트는 팀원을 고르지 않는다 |
-| 조건 스위치 | `harness/zone_protocol_v2.CONDITIONS`: 게시판, 호스트 중재, 동료 작업 종료 시 깨우기, 메시지 전달을 조건마다 명시적으로 켜고 끈다 |
-| 교사 | `scripts/zone_team_teacher.py`에서 모든 작업이 TeamJob이다(단독 물건은 1인 팀). 로봇은 자기 역할 정거장으로 가서 기다린다. 모든 정거장이 몸으로 채워지고 spec이 같을 때만 commit한다. 자기 도착 뒤 최대 60 SIM초까지 기다린다. 역할은 RGB 손잡이 위치에 가장 가까운 실제 손잡이로 묶는다(이름으로 묶지 않음) |
+| 조건 스위치 | `harness/zone_protocol_v2.CONDITIONS`: 게시판, 호스트 중재, 충돌 알림, 동료 작업 종료 시 깨우기, 메시지 전달을 기제마다 따로 둔다. 조건 이름은 기본값만 정한다. `--condition-switches '{"peer_board": false}'`로 하나씩 바꿀 수 있다. 그 조건의 반복문이 읽지 않는 스위치를 바꾸려 하면 거부한다. 결과에 기본값과 실제값을 함께 기록한다 |
+| 역할 계약 | 종류마다 formation이 여럿일 수 있다(`formations`, `claim_roles`). tile은 west 또는 east 중 한쪽을 한 대가 맡는다. 한 tile의 두 쪽을 동시에 선언하면 호스트는 `formation_conflict`로 처리한다. 두 로봇이 두 쪽에 서도 팀이 되지 않는다(id로 정하지 않음) |
+| 교사 | `scripts/zone_team_teacher.py`에서 모든 작업이 TeamJob이다(단독 물건은 1인 팀). 로봇은 자기 역할 정거장으로 가서 기다린다. 모든 정거장이 몸으로 채워지고 spec이 같을 때만 commit한다. 자기 도착 뒤 최대 60 SIM초까지 기다린다. 역할은 RGB 손잡이의 접근 자세(정거장 위치·방향)에 가장 가까운 실제 역할로 묶는다. 이름으로 묶지 않는다. 접근 자세가 없으면 손잡이 위치를 쓴다. east tile은 착지 영역의 정거장이 같도록 물건을 180° 돌려 내려놓는다 |
+| 단일 통로 진입 | v2 로봇만 적용한다. 통로 구역 안에서 자기 경로가 문을 지나면, 다른 로봇이 문 안에 서 있거나 문에 더 가까이 움직이는 로봇이 있는 동안 기다린다. 최대 60 SIM초다. 몸의 위치·정지 여부·정적 통로·자기 경로만 읽는다. 동료의 선언·id는 읽지 않는다. 팀 운반을 마친 두 로봇이 함께 0.5 m 문에 나란히 끼어 멈춘 문제(A2)를 막으려고 넣었다. 대기는 결과의 `door_gate_waits`에 남는다 |
 | 멈춤(L1 수정) | 정거장에 더 가까운 몸이 서 있을 때, 또는 물건이 이미 잡히는 중이거나 배달됐을 때만 멈춘다. 동료의 선언만으로는 멈추지 않는다. v1 교사에도 같은 수정을 적용했다 |
 | 팀 운반 | commit 직후, 접촉 전에 물건 자세 공간에서 경로를 한 번 계획한다(`harness/zone_team_route.py`). 직선 이동과 제자리 90° 회전만 쓰고, 회전은 원판 전체가 빈 곳에서만 한다(문 안 회전 없음). 각 구간을 static_keepouts swept 검사로 다시 확인한다. 경로가 없으면 접촉 전에 취소한다(cancel_retreat). 다른 팀은 발자국 전체를 장애물로 본다 |
 | 실패 | 접촉 전에는 모두 물러난다. 접촉 뒤에는 모두 멈추고 함께 내려놓고 놓고 물러난다(hold_lower). 12초 강제 파지와 막혔을 때 집게를 여는 처리는 v2에 없다 |
 | 착지·심판 | 슬롯 대신 착지 영역(`landing_layout`)을 쓴다. 영역 id는 모델에 보이지 않는다. `referee_v2`(전체 발자국, 평가 전용)로 판정하고, 목표는 물건당 한 번만 줄어든다 |
 | 결과 | `result.json`(schema `ugrp.zone_dispatch_result.v2`)에 `referee_v2`, 물건별 결과, 팀 형성 대기, 문 대기, 운반 멈춤, 미끄러짐·떨어뜨림, `eq_active_max`, 부하를 기록한다. `team_executor`에는 장부, 선언, 경로, 로봇 사건 hook 기록이 있다 |
 
-- 영수증은 여전히 교사 정답에서 나온다(R1 L4 미해결). RGB 완료 확인은 별도 작업이다.
+- 로봇에게 알리는 결과(자기 작업 상태, 게시판 보고, 재질문 시점, 호스트 검사·fixture가 쓰는 배달 목록)는 `harness/zone_outcomes_v2.RobotResults`를 거친다. 교사 운동 장부(`TeamJobLedger`)와 분리되어 있다. 지금 결과 출처는 교사 영수증(`teacher_receipt_L4`)뿐이다. 이것은 R1 L4가 풀리지 않은 상태이며 교사 스모크에만 쓴다. 모든 결과의 `robot_facing_outcome_source`에 이 표시가 남는다. RGB 완료 확인(#170)은 같은 자리에 결과 출처로 끼운다.
 - 모든 이동은 정답 교사가 한다. 결과는 교사 조건이며 학생·RGB 스킬 성공이 아니다.
