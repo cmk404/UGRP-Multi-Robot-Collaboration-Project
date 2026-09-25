@@ -16,239 +16,175 @@ Literal tokens stay literal: ``r1``/``r2``/``r3``, zone letters ``A``/``B``/``C`
 ``order_id``/``item_id``/passage IDs, item kinds, role names, JSON keys and enum
 values are never translated.
 
-Package A (``harness/zone_study_contract.py``, branch ``kiro/zone-study-contract``)
-is not merged yet. ``StudyInputs`` below is a MINIMAL LOCAL ADAPTER so package C
-can be built and tested now; ``from_contract`` accepts a duck-typed contract
-object. Both must be aligned with package A once it lands — see ``ADAPTER_NOTE``.
+Package A (``harness/zone_study_contract.py`` + ``harness/zone_study_inputs.py``)
+owns the input boundary. ``StudyInputs`` is a thin, immutable wrapper around ONE
+A payload (``ugrp.zone_study_call_input.v1``) built by
+``harness.zone_study_inputs.build_call_input``: the JSON a model receives is that
+validated payload, so the earlier local order-sheet/map/belief/command validators
+of this module are gone and cannot drift from A's contract.
 """
 from __future__ import annotations
 
 import base64
 import copy
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from harness import zone_study_protocol as zp
+from harness.zone_study_contract import (ORDER_SHEET_SCHEMA, PAYLOAD_SCHEMA, ROLE_NAMES,
+                                         validate_robot_payload)
+from harness.zone_study_inputs import INPUT_PROFILE, payload_sha256, vocabulary
 
 PROMPT_VERSION = 'ugrp.zone_study_prompts_ko.v1'
-ADAPTER_NOTE = ('package A (harness/zone_study_contract.py) 미병합 상태의 최소 로컬 어댑터. '
-                'A가 병합되면 StudyInputs 필드·해시·주문서 schema를 A의 계약에 맞춰 정렬해야 한다.')
+#: Which A schema this prompt builder consumes. A bump here is a prompt change.
+CONTRACT_PAYLOAD_SCHEMA = PAYLOAD_SCHEMA
 
 IMAGE_OWN = 'CURRENT OWN WRIST RGB'
 IMAGE_MAP = 'STATIC MAP FIGURE'
-ORDER_SHEET_SCHEMA = 'ugrp.zone_order.v1'
-
-# Public projection of a versioned static map. ``top_cameras`` is dropped: the
-# TOP views are evaluation-only.
-MAP_PUBLIC_KEYS = ('schema', 'map_id', 'version', 'frame', 'bounds_m', 'regions', 'zone_slots',
-                   'pickup_bays', 'passages', 'obstacles', 'terrain', 'box_kinds',
-                   'approach_convention', 'landmarks')
-MAP_FORBIDDEN_KEYS = ('top_cameras', 'setup_only', 'box_positions', 'robot_positions', 'digest')
-# An order sheet comes from the scenario config, never from simulator state.
-ORDER_KEYS = ('order_id', 'kind', 'item_ids', 'count', 'required_robots', 'roles',
-              'destination_zone', 'initial_location')
-ORDER_FORBIDDEN_KEYS = ('pose', 'xyz', 'xyz_m', 'held_by', 'carried_by', 'delivered', 'status',
-                        'current_location', 'current_zone', 'body', 'body_name', 'qpos', 'progress')
 FORBIDDEN_IMAGE_TOKENS = ('top', 'nav_cam', 'cctv')
-# Own belief: only fields a robot can build from its own allowed inputs (the
-# design's belief example). Package A/B may widen this on purpose, never by
-# accident, so an unknown key is refused instead of forwarded.
-BELIEF_KEYS = ('region', 'last_visual_anchor', 'last_requested_destination',
-               'last_visually_confirmed_region', 'confidence', 'sources')
-BELIEF_CONFIDENCE = ('low', 'medium', 'high')
-# Own issued commands: the command and its own queue state, never a measured
-# joint, a contact, a success judgement or another robot's command.
-OWN_COMMAND_KEYS = ('command', 'args', 'issued_at_sim_s', 'status', 'request_id', 'window_id')
-OWN_COMMAND_STATUS = ('command_issued', 'queue_empty', 'hold_requested', 'local_timeout')
+#: Extra top-level key of the request body: the channel BUDGET of the open
+#: dialogue window. It carries no observation — the delivered messages are A's
+#: ``inbox`` — so it cannot widen the input boundary.
+WINDOW_KEY = 'dialogue_window'
+WINDOW_FIELDS = ('window_id', 'max_utterances', 'max_your_utterances', 'your_utterances_left', 'sent')
 
 
 @dataclass(frozen=True)
 class StudyInputs:
-    """Minimal local stand-in for the package A per-call input bundle.
+    """One validated package A per-call payload plus the images it references.
 
-    The input boundary is enforced here, at construction: the map is projected
-    through ``public_map``, the order sheet through ``validate_order_sheet`` and
-    the belief and command history through their allowlists. Building the bundle
-    by hand therefore cannot smuggle a TOP camera, a ground-truth pose, another
-    robot's state or a completion judgement into a prompt.
+    The boundary is A's: ``validate_robot_payload`` runs at construction, so a
+    TOP frame, a ground-truth pose, a teacher receipt, a peer camera or a
+    completion flag cannot reach a prompt. This class adds only the image bytes
+    and the read-only views the prompt builder needs.
     """
-    map_public: dict
-    map_sha256: str
-    order_sheet: dict
-    order_sheet_sha256: str
-    wrist_jpeg: bytes
-    own_commands: tuple = ()
-    own_belief: dict = field(default_factory=dict)
+
+    payload: dict
+    wrist_jpeg: bytes | None = None
     map_figure_jpeg: bytes | None = None
-    sim_time_s: float = 0.0
-    adapter: str = 'local_minimal_v1'
+    robot_views: dict | None = None
+    seed: int | None = None
 
     def __post_init__(self):
         set_ = object.__setattr__
-        set_(self, 'map_public', public_map(self.map_public))
-        set_(self, 'order_sheet', validate_order_sheet(self.order_sheet))
-        set_(self, 'own_belief', validate_belief(self.own_belief))
-        set_(self, 'own_commands', validate_own_commands(self.own_commands))
-        for name in ('map_sha256', 'order_sheet_sha256'):
-            if not isinstance(getattr(self, name), str) or len(getattr(self, name)) != 64:
-                raise zp.ProtocolError(f'{name} must be a sha256 hex digest')
-        # copy the image bytes: a caller keeping a bytearray must not be able to
-        # change the picture a later prompt carries
-        set_(self, 'wrist_jpeg', _image_bytes(self.wrist_jpeg, 'wrist_jpeg'))
+        if not isinstance(self.payload, dict) or self.payload.get('schema') != PAYLOAD_SCHEMA:
+            raise zp.ProtocolError(f'inputs.payload must carry schema {PAYLOAD_SCHEMA} '
+                                   '(harness.zone_study_inputs.build_call_input)')
+        payload = copy.deepcopy(self.payload)
+        try:
+            validate_robot_payload(payload, seed=self.seed)
+        except Exception as exc:                    # ContractViolation and friends
+            raise zp.ProtocolError(f'payload violates the package A contract: {exc}') from None
+        set_(self, 'payload', payload)
+        commander = payload['robot_id'] == zp.COMMANDER
+        if commander:
+            if self.wrist_jpeg is not None:
+                raise zp.ProtocolError('the reference_R commander has no own wrist RGB')
+            refs = [r['ref'] for r in payload.get('team_rgb_refs', ())]
+            views = dict(self.robot_views or {})
+            if sorted(views) != sorted({ref.split('-')[1] for ref in refs}):
+                raise zp.ProtocolError('robot_views must match the team_rgb_refs of the payload')
+            set_(self, 'robot_views', {rid: _image_bytes(jpeg, f'robot_views[{rid}]')
+                                       for rid, jpeg in sorted(views.items())})
+        else:
+            if self.robot_views is not None:
+                raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
+            set_(self, 'wrist_jpeg', _image_bytes(self.wrist_jpeg, 'wrist_jpeg'))
         if self.map_figure_jpeg is not None:
             set_(self, 'map_figure_jpeg', _image_bytes(self.map_figure_jpeg, 'map_figure_jpeg'))
+
+    # -- A payload views ---------------------------------------------------
+    @property
+    def condition(self) -> str:
+        return self.payload['condition']
+
+    @property
+    def robot_id(self) -> str:
+        return self.payload['robot_id']
+
+    @property
+    def request_id(self) -> str:
+        return self.payload['request_id']
+
+    @property
+    def sim_time_s(self) -> float:
+        return self.payload['sim_time_s']
+
+    @property
+    def static_map(self) -> dict:
+        return self.payload['static_map']
+
+    @property
+    def map_public(self) -> dict:
+        return self.payload['static_map']['public_map']
+
+    @property
+    def map_sha256(self) -> str:
+        return self.payload['static_map']['public_map_sha256']
+
+    @property
+    def order_sheet(self) -> dict:
+        return self.payload['order_sheet']
+
+    @property
+    def order_sheet_sha256(self) -> str:
+        return payload_sha256(self.payload['order_sheet'])
+
+    @property
+    def payload_sha256(self) -> str:
+        return payload_sha256(self.payload)
+
+    @property
+    def own_commands(self) -> tuple:
+        return tuple(self.payload.get('own_command_history', ()))
+
+    @property
+    def own_belief(self) -> dict:
+        return self.payload.get('self_belief', {})
+
+    @property
+    def issued_orders(self) -> tuple:
+        return tuple(self.payload.get('issued_orders', ()))
+
+    @property
+    def inbox(self) -> tuple:
+        """The messages the condition actually delivered (A envelopes)."""
+        return tuple(self.payload.get('inbox', ()))
 
     def order_ids(self) -> tuple:
         return tuple(o['order_id'] for o in self.order_sheet['orders'])
 
     def item_ids(self) -> tuple:
-        return tuple(i for o in self.order_sheet['orders'] for i in o['item_ids'])
+        return tuple(i for o in self.order_sheet['orders'] for i in o.get('item_ids') or ())
+
+    def kinds(self) -> tuple:
+        return tuple(dict.fromkeys(o['kind'] for o in self.order_sheet['orders']))
 
     def roles_by_order(self) -> dict:
-        return {o['order_id']: tuple(o['roles']) for o in self.order_sheet['orders']}
+        """Grasp roles per order, from A's static ``kinds`` table."""
+        table = self.order_sheet.get('kinds') or {}
+        out = {}
+        for order in self.order_sheet['orders']:
+            roles = (table.get(order['kind']) or {}).get('roles')
+            out[order['order_id']] = tuple(roles) if roles else ROLE_NAMES
+        return out
 
     def passages(self) -> tuple:
         return tuple(p['id'] for p in self.map_public.get('passages', ()))
 
     def location_refs(self) -> tuple:
-        """Static location references a message may name."""
-        regions = tuple(self.map_public.get('regions', ()))
-        bays = tuple(self.map_public.get('pickup_bays', ()) or ())
-        slots = tuple(str(s) for bay in (self.map_public.get('pickup_bays') or {}).values()
-                      for s in (bay.get('slots', ()) if isinstance(bay, dict) else ()))
-        return tuple(dict.fromkeys(regions + bays + slots + self.passages() + zp.ZONES))
+        """Static location references a message may name (A's vocabulary)."""
+        return tuple(sorted(self.vocabulary().location_refs))
 
-
-def from_contract(obj) -> StudyInputs:
-    """Adapt a package A contract object (duck-typed) to ``StudyInputs``."""
-    if isinstance(obj, StudyInputs):
-        return obj
-    get = (lambda k, d=None: obj.get(k, d)) if isinstance(obj, dict) else (lambda k, d=None: getattr(obj, k, d))
-    missing = [k for k in ('map_public', 'map_sha256', 'order_sheet', 'order_sheet_sha256', 'wrist_jpeg')
-               if get(k) is None]
-    if missing:
-        raise zp.ProtocolError(f'contract object is missing {missing}; {ADAPTER_NOTE}')
-    return StudyInputs(map_public=get('map_public'), map_sha256=get('map_sha256'),
-                       order_sheet=get('order_sheet'),
-                       order_sheet_sha256=get('order_sheet_sha256'), wrist_jpeg=get('wrist_jpeg'),
-                       own_commands=tuple(get('own_commands', ()) or ()),
-                       own_belief=dict(get('own_belief', {}) or {}),
-                       map_figure_jpeg=get('map_figure_jpeg'), sim_time_s=float(get('sim_time_s', 0.0) or 0.0),
-                       adapter='from_contract_v1')
-
-
-def public_map(static_map: dict) -> dict:
-    """Keep only static, robot-allowed map content; drop the TOP cameras.
-
-    Keys outside the allowlist are dropped. A forbidden key NESTED inside an
-    allowed block cannot be dropped safely, so it is refused instead.
-    """
-    if not isinstance(static_map, dict) or 'map_id' not in static_map:
-        raise zp.ProtocolError('static map must be the authored map object')
-    out = {k: copy.deepcopy(static_map[k]) for k in MAP_PUBLIC_KEYS if k in static_map}
-    leaked = sorted(_nested_keys(out) & set(MAP_FORBIDDEN_KEYS))
-    if leaked:
-        raise zp.ProtocolError(f'public map must not carry {leaked}')
-    return out
-
-
-def _nested_keys(value, depth=12) -> set:
-    if depth <= 0:
-        raise zp.ProtocolError('input is nested too deeply to audit')
-    if isinstance(value, dict):
-        return set(value) | {k for v in value.values() for k in _nested_keys(v, depth - 1)}
-    if isinstance(value, (list, tuple)):
-        return {k for v in value for k in _nested_keys(v, depth - 1)}
-    return set()
+    def vocabulary(self):
+        """Package A ``Vocabulary``: the only IDs a message may name."""
+        return vocabulary(self.order_sheet, self.map_public)
 
 
 def _image_bytes(jpeg, where) -> bytes:
     if not isinstance(jpeg, (bytes, bytearray)) or not jpeg:
         raise zp.ProtocolError(f'{where} must be non-empty JPEG bytes')
     return bytes(jpeg)
-
-
-def validate_belief(belief) -> dict:
-    """Own belief: allowlisted fields only, so no ground truth can ride along."""
-    if belief is None:
-        return {}
-    if not isinstance(belief, dict):
-        raise zp.ProtocolError('own_belief must be an object')
-    extra = sorted(set(belief) - set(BELIEF_KEYS))
-    if extra:
-        raise zp.ProtocolError(f'own_belief carries unknown fields {extra}; allowed: {BELIEF_KEYS}')
-    for key in ('region', 'last_visual_anchor', 'last_requested_destination',
-                'last_visually_confirmed_region'):
-        if belief.get(key) is not None and not isinstance(belief[key], str):
-            raise zp.ProtocolError(f'own_belief.{key} must be a string or null')
-    if belief.get('confidence') is not None and belief['confidence'] not in BELIEF_CONFIDENCE:
-        raise zp.ProtocolError(f'own_belief.confidence must be one of {BELIEF_CONFIDENCE} or null')
-    sources = belief.get('sources')
-    if sources is not None and (not isinstance(sources, list)
-                                or not all(isinstance(s, str) for s in sources)):
-        raise zp.ProtocolError('own_belief.sources must be a list of source ids')
-    return copy.deepcopy(belief)
-
-
-def validate_own_commands(commands) -> tuple:
-    """The robot's own issued commands: no measurement, contact or peer record."""
-    out = []
-    for entry in tuple(commands or ()):
-        if not isinstance(entry, dict):
-            raise zp.ProtocolError('each own command must be an object')
-        extra = sorted(set(entry) - set(OWN_COMMAND_KEYS))
-        if extra:
-            raise zp.ProtocolError(f'own_commands carries unknown fields {extra}; '
-                                   f'allowed: {OWN_COMMAND_KEYS}')
-        if entry.get('status') is not None and entry['status'] not in OWN_COMMAND_STATUS:
-            raise zp.ProtocolError(f'own_commands status must be one of {OWN_COMMAND_STATUS}; '
-                                   'an executor success or contact judgement is not a robot input')
-        nested = sorted(_nested_keys(list(entry.values())) & set(ORDER_FORBIDDEN_KEYS))
-        if nested:                      # e.g. a measured pose hidden inside args
-            raise zp.ProtocolError(f'own_commands hides live state {nested}')
-        out.append(copy.deepcopy(entry))
-    return tuple(out)
-
-
-def validate_order_sheet(sheet: dict) -> dict:
-    """Config-built order sheet: no live state, no simulator names."""
-    if not isinstance(sheet, dict) or sheet.get('schema') != ORDER_SHEET_SCHEMA:
-        raise zp.ProtocolError(f'order sheet schema must be {ORDER_SHEET_SCHEMA}')
-    if set(sheet) != {'schema', 'map_id', 'map_sha256', 'orders'}:
-        raise zp.ProtocolError('order sheet needs schema, map_id, map_sha256 and orders only')
-    orders = sheet['orders']
-    if not isinstance(orders, list) or not orders:
-        raise zp.ProtocolError('order sheet needs at least one order')
-    seen = set()
-    for order in orders:
-        if not isinstance(order, dict):
-            raise zp.ProtocolError('each order must be an object')
-        bad = [k for k in order if k in ORDER_FORBIDDEN_KEYS]
-        if bad:
-            raise zp.ProtocolError(f'order {order.get("order_id")!r} carries live state {bad}')
-        if set(order) != set(ORDER_KEYS):
-            raise zp.ProtocolError('each order needs exactly ' + ', '.join(ORDER_KEYS))
-        nested = sorted(_nested_keys(list(order.values())) & set(ORDER_FORBIDDEN_KEYS))
-        if nested:
-            raise zp.ProtocolError(f'order {order["order_id"]!r} hides live state {nested}')
-        for key in ('order_id', 'kind'):
-            if not isinstance(order[key], str) or not order[key]:
-                raise zp.ProtocolError(f'{key} must be a non-empty string')
-        if order['order_id'] in seen:
-            raise zp.ProtocolError(f'duplicate order_id {order["order_id"]!r}')
-        seen.add(order['order_id'])
-        if order['destination_zone'] not in zp.ZONES:
-            raise zp.ProtocolError(f'destination_zone must be one of {zp.ZONES}')
-        if not isinstance(order['item_ids'], list) or not order['item_ids'] \
-                or not all(isinstance(i, str) and i for i in order['item_ids']):
-            raise zp.ProtocolError('item_ids must be a non-empty list of ids')
-        if not isinstance(order['roles'], list) or len(order['roles']) != order['required_robots'] \
-                or not all(isinstance(r, str) and r for r in order['roles']):
-            raise zp.ProtocolError('roles must list one role name per required robot')
-        loc = order['initial_location']
-        if not isinstance(loc, dict) or set(loc) != {'pickup_bay', 'slot'}:
-            raise zp.ProtocolError('initial_location needs pickup_bay and slot only')
-    return copy.deepcopy(sheet)
 
 
 # --- Korean prompt text ---------------------------------------------------
@@ -407,21 +343,22 @@ def system_prompt(condition, rid, *, seed=None, leader=None, robots=zp.ROBOTS) -
     text += KO_SOURCES
     if not s.channel_open:
         text += KO_MESSAGES_NONE
-    elif s.encoding == 'structured':
+    elif s.channel_open and s.encoding == 'schema':
         text += KO_MESSAGES_STRUCT
     else:
         text += KO_MESSAGES_KO.replace('__CHARS__', str(zp.PROMPT_TEXT_CHARS))
     text += '\n' + KO_SEPARATION.lstrip('\n')
-    text += '\n' + (KO_LANGUAGE_STRUCT if s.encoding == 'structured' else KO_LANGUAGE).lstrip('\n')
+    text += '\n' + (KO_LANGUAGE_STRUCT if s.channel_open and s.encoding == 'schema'
+                     else KO_LANGUAGE).lstrip('\n')
     return text
 
 
-def _images(inputs, *, robot_views=None):
+def _images(inputs):
     out = []
-    if robot_views is None:
+    if inputs.robot_views is None:
         out.append({'label': IMAGE_OWN, 'image': _uri(inputs.wrist_jpeg)})
     else:
-        for rid, jpeg in sorted(robot_views.items()):
+        for rid, jpeg in sorted(inputs.robot_views.items()):
             out.append({'label': f'WRIST RGB {rid}', 'image': _uri(jpeg)})
     if inputs.map_figure_jpeg is not None:
         out.append({'label': IMAGE_MAP, 'image': _uri(inputs.map_figure_jpeg)})
@@ -438,56 +375,35 @@ def _uri(jpeg):
     return 'data:image/jpeg;base64,' + base64.b64encode(bytes(jpeg)).decode()
 
 
-def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None, window=None,
-                  inbox=(), sent=(), robot_views=None, robots=zp.ROBOTS) -> dict:
-    """One model request: Korean system text, the per-call input JSON and images.
+def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robots=zp.ROBOTS) -> dict:
+    """One model request: Korean system text, package A's payload JSON and images.
 
-    ``inputs`` must be a ``StudyInputs``, so the input boundary is always the
-    validated one. ``window`` is preferably ``Transport.window_context(rid)``:
-    then the stated budget is the transport's real budget, not the condition
-    default. ``inbox``/``sent`` are what the transport actually delivered and
-    accepted; this function never filters a channel itself and never receives
+    ``inputs`` is a :class:`StudyInputs`, i.e. ONE validated A payload, so the
+    condition, actor, request id, static map, order sheet, own observations and
+    inbox all come from the contract. The user message is that payload verbatim,
+    plus ``dialogue_window`` when the channel is open: only the window id and the
+    utterance budget, never an extra observation. Preferably pass
+    ``Transport.window_context(rid)`` so the stated budget is the transport's
+    real one. This function never filters a channel itself and never receives
     host claims, reservations or another robot's state.
     """
-    s = zp.spec(condition)
     if not isinstance(inputs, StudyInputs):
-        raise zp.ProtocolError('inputs must be a StudyInputs bundle (the validated input boundary); '
-                               f'{ADAPTER_NOTE}')
+        raise zp.ProtocolError('inputs must be a StudyInputs wrapping a validated package A payload '
+                               '(harness.zone_study_inputs.build_call_input)')
+    condition, rid, request_id = inputs.condition, inputs.robot_id, inputs.request_id
+    s = zp.spec(condition)
+    seed = inputs.seed if seed is None else seed
     role = zp.role_of(condition, rid, seed=seed, leader=leader, robots=robots)
-    if (robot_views is not None) != (role == 'commander'):
-        raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
-    if robot_views is not None and set(robot_views) != set(robots):
-        raise zp.ProtocolError(f'robot_views must be exactly {tuple(robots)}')
     window = dict(window or {})
-    received = [dict(r) for r in (window.pop('received', None) or inbox)]
+    # ``received`` is package A's ``inbox``: drop a transport copy instead of
+    # sending the same messages twice under two key names.
+    window.pop('received', None)
     issued = list(window.pop('sent', None) or sent)
-    if not s.channel_open and (received or issued or window):
-        raise zp.ProtocolError(f'{condition} has no dialogue channel: inbox, sent and window must be empty')
-    body_key = 'text' if s.encoding == 'ko_free' else 'message'
-    for record in received:
-        extra = set(record) - set(zp.INBOX_FIELDS)
-        if extra:
-            raise zp.ProtocolError(f'inbox record carries non-robot-facing fields {sorted(extra)}')
-        if s.channel_open and body_key not in record:
-            raise zp.ProtocolError(f'{condition} delivers {body_key}; got {sorted(record)}')
-        if 'text' in record and 'message' in record:
-            raise zp.ProtocolError('a delivered message is free text or structured, never both')
-    body = {'request_id': request_id, 'robot_id': rid, 'condition': condition,
-            'sim_time_s': inputs.sim_time_s,
-            'static_map': copy.deepcopy(inputs.map_public), 'static_map_sha256': inputs.map_sha256,
-            'order_sheet': copy.deepcopy(inputs.order_sheet),
-            'order_sheet_sha256': inputs.order_sheet_sha256}
-    images = _images(inputs, robot_views=robot_views)
-    if role == 'commander':
-        # No body, no own camera: the commander sees every robot's wrist RGB and
-        # the orders it issued itself.
-        body['issued_orders'] = copy.deepcopy(list(inputs.own_commands)[-16:])
-        body['robot_views'] = [item['label'] for item in images if item['label'].startswith('WRIST RGB')]
-    else:
-        body['own_commands'] = copy.deepcopy(list(inputs.own_commands)[-16:])
-        body['own_belief'] = copy.deepcopy(inputs.own_belief)
-    if s.rotating_leader:
-        body['leader'] = zp.leader_of(condition, seed=seed, leader=leader, robots=robots)
+    if not s.channel_open and (issued or window):
+        raise zp.ProtocolError(f'{condition} has no dialogue channel: sent and window must be empty')
+    if not s.channel_open and inputs.inbox:
+        raise zp.ProtocolError(f'{condition} delivers no message, so the payload carries no inbox')
+    body = copy.deepcopy(inputs.payload)
     if s.channel_open:
         cap_window = window.pop('max_utterances', s.max_window_utterances)
         cap_robot = window.pop('max_your_utterances', s.max_robot_utterances)
@@ -497,20 +413,23 @@ def build_request(condition, rid, *, request_id, inputs, seed=None, leader=None,
             raise zp.ProtocolError(f'unknown dialogue window fields {sorted(window)}')
         if not zp.is_message_id(window_id or ''):
             raise zp.ProtocolError('an open dialogue window needs its window_id')
-        body['dialogue_window'] = {'window_id': window_id, 'max_utterances': cap_window,
-                                   'max_your_utterances': cap_robot, 'your_utterances_left': left,
-                                   'received': received, 'sent': issued}
+        for message_id in issued:
+            if not zp.is_message_id(message_id):
+                raise zp.ProtocolError(f'sent must be message_ids, got {message_id!r}')
+        body[WINDOW_KEY] = {'window_id': window_id, 'max_utterances': cap_window,
+                            'max_your_utterances': cap_robot, 'your_utterances_left': left,
+                            'sent': issued}
     return {'request_id': request_id, 'condition': condition, 'actor': rid, 'prompt_role': role,
             'prompt_version': PROMPT_VERSION, 'protocol_version': zp.PROTOCOL_VERSION,
+            'payload_schema': PAYLOAD_SCHEMA, 'input_sha256': inputs.payload_sha256,
+            'input_profile_id': INPUT_PROFILE['profile_id'],
             'messages': [{'role': 'system',
                           'content': system_prompt(condition, rid, seed=seed, leader=leader, robots=robots)},
                          {'role': 'user',
                           'content': json.dumps(body, sort_keys=True, ensure_ascii=False)}],
-            'images': images}
+            'images': _images(inputs)}
 
 
-__all__ = ['PROMPT_VERSION', 'ADAPTER_NOTE', 'StudyInputs', 'from_contract', 'public_map',
-           'validate_order_sheet', 'validate_belief', 'validate_own_commands', 'system_prompt',
-           'build_request', 'IMAGE_OWN', 'IMAGE_MAP', 'ORDER_SHEET_SCHEMA', 'ORDER_KEYS',
-           'MAP_PUBLIC_KEYS', 'MAP_FORBIDDEN_KEYS', 'FORBIDDEN_IMAGE_TOKENS', 'BELIEF_KEYS',
-           'OWN_COMMAND_KEYS', 'OWN_COMMAND_STATUS']
+__all__ = ['PROMPT_VERSION', 'CONTRACT_PAYLOAD_SCHEMA', 'StudyInputs', 'system_prompt', 'build_request',
+           'IMAGE_OWN', 'IMAGE_MAP', 'ORDER_SHEET_SCHEMA', 'FORBIDDEN_IMAGE_TOKENS', 'WINDOW_KEY',
+           'WINDOW_FIELDS']

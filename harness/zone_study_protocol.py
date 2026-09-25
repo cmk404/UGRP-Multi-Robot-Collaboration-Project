@@ -38,9 +38,13 @@ caller that subclasses these types, uses ``object.__setattr__`` on a frozen
 value, or passes a mapping that lies in ``keys()``; that is out of scope and
 would need a different design.
 
-Package A (``harness/zone_study_contract.py``) is not merged yet; the study
-contract adapter lives in ``harness/zone_study_prompts_ko.py`` and must be
-aligned with A once it lands.
+Package A (``harness/zone_study_contract.py``) owns the condition registry, the
+message envelope, the structured-message schema and the input boundary. This
+module derives ``SPECS`` from ``A.CONDITIONS``, delivers A envelopes
+(``ugrp.zone_study_message.v1``) into the inbox and delegates the structured
+schema to ``A.structured_violations``; it adds only what A leaves to the
+protocol: dialogue windows, utterance budgets, rejection names, the model reply
+schema and the evaluation-only language report.
 """
 from __future__ import annotations
 
@@ -51,10 +55,15 @@ from dataclasses import dataclass, field
 
 from harness.three_robot_plan import parse
 from harness.zone_dialogue_metrics import english_words, hangul_ratio, id_issues
+from harness.zone_study_contract import (CONDITIONS as CONTRACT_CONDITIONS, CONFIDENCE,
+                                         ENVELOPE_KEYS, FREE_TEXT_FIELDS,
+                                         MESSAGE_ENVELOPE_SCHEMA, ROBOTS as CONTRACT_ROBOTS,
+                                         STRUCTURED_ACTS, STRUCTURED_FIELDS, STRUCTURED_STATES,
+                                         Vocabulary, structured_violations)
 
-ROBOTS = ('r1', 'r2', 'r3')
+ROBOTS = CONTRACT_ROBOTS
 ZONES = ('A', 'B', 'C')
-CONDITIONS = ('no_comm', 'peer_ko', 'leader_ko', 'structured', 'reference_R')
+CONDITIONS = tuple(CONTRACT_CONDITIONS)
 COMMANDER = 'commander'
 PROTOCOL_VERSION = 'ugrp.zone_study_protocol.v1'
 
@@ -69,24 +78,23 @@ DELIVERY_DELAY_SIM_S = 0.1
 # Korean compliance threshold of the evaluation-only flag (pilot V2: 0.992).
 KOREAN_MIN_RATIO = 0.9
 
-# Structured-message schema (condition 4). Exactly these keys, ``act`` required.
-STRUCT_FIELDS = ('act', 'item', 'zone', 'role', 'passage', 'location_ref', 'state',
-                 'confidence', 'observed_at_sim_s', 'reply_to')
-STRUCT_ACTS = ('propose', 'request', 'accept', 'reject', 'inform', 'correct', 'yield', 'cancel')
-STRUCT_STATES = ('unknown', 'suspected', 'clear', 'blocked', 'present', 'absent', 'held', 'placed')
-CONFIDENCE = ('low', 'medium', 'high')
-# Free-text smuggling: any of these keys in a structured message is refused.
-FREE_TEXT_KEYS = ('text', 'reason', 'note', 'comment', 'other', 'message', 'detail', 'description')
+# Structured-message schema (condition 4), from package A. This module keeps its
+# stricter rule that ALL fields are present, so a reply cannot omit a field.
+STRUCT_FIELDS = STRUCTURED_FIELDS
+STRUCT_ACTS = STRUCTURED_ACTS
+STRUCT_STATES = STRUCTURED_STATES
+# Free-text smuggling: package A's list plus two names this protocol also refuses.
+FREE_TEXT_KEYS = tuple(dict.fromkeys(FREE_TEXT_FIELDS + ('detail', 'description')))
 
 REPLY_FIELDS = ('request_id', 'action', 'decision_sources', 'messages')
 ROBOT_ACTION_KINDS = ('claim', 'continue', 'release', 'wait')
 COMMANDER_ACTION_KINDS = ('order',)
 DECISION_SOURCES = ('static_map', 'order_sheet', 'own_rgb', 'own_commands', 'own_belief', 'message')
 
-# Robot-facing fields of a delivered message. Evaluation data (language flags,
-# the sender's reason, any action) must never appear in an inbox record.
-INBOX_FIELDS = ('message_id', 'from_robot', 'recipients', 'sent_at_sim_s', 'delivered_at_sim_s',
-                'reply_to', 'text', 'message')
+# Robot-facing fields of a delivered message: package A's closed message
+# envelope. Evaluation data (language flags, the sender's reason, any action) can
+# therefore never appear in an inbox record, and neither can the delivery time.
+INBOX_FIELDS = ENVELOPE_KEYS
 # No public callable of this module may take host decision state.
 FORBIDDEN_TRANSPORT_PARAMS = ('claims', 'claim', 'reservation', 'reservations', 'board', 'ledger',
                               'jobs', 'actions', 'assignments')
@@ -112,10 +120,15 @@ class ProtocolError(ValueError):
 
 @dataclass(frozen=True)
 class ConditionSpec:
-    """One study condition. Only the channel fields differ between 1-4."""
+    """One study condition. Only the channel fields differ between 1-4.
+
+    ``topology`` and ``encoding`` carry package A's literals
+    (``none|mesh|star|commander_downlink`` and ``none|free_ko|schema``); the
+    utterance caps are this protocol's own budget, which A does not define.
+    """
     name: str
-    topology: str            # 'none' | 'mesh' | 'star' | 'commander'
-    encoding: str            # 'none' | 'ko_free' | 'structured'
+    topology: str            # A: 'none' | 'mesh' | 'star' | 'commander_downlink'
+    encoding: str            # A: 'none' | 'free_ko' | 'schema'
     rotating_leader: bool
     robot_llm: bool
     commander_llm: bool
@@ -128,13 +141,20 @@ class ConditionSpec:
         return self.topology in ('mesh', 'star')
 
 
-SPECS = {
-    'no_comm': ConditionSpec('no_comm', 'none', 'none', False, True, False, True, 0, 0),
-    'peer_ko': ConditionSpec('peer_ko', 'mesh', 'ko_free', False, True, False, True),
-    'leader_ko': ConditionSpec('leader_ko', 'star', 'ko_free', True, True, False, True),
-    'structured': ConditionSpec('structured', 'mesh', 'structured', False, True, False, True),
-    'reference_R': ConditionSpec('reference_R', 'commander', 'none', False, False, True, False, 0, 0),
-}
+def _spec_from_contract(name, contract):
+    """One ``ConditionSpec`` derived from package A's ``Condition`` row."""
+    open_channel = contract.topology in ('mesh', 'star')
+    return ConditionSpec(name=name, topology=contract.topology, encoding=contract.encoding,
+                         rotating_leader=contract.leader_rotation, robot_llm=contract.robot_llm,
+                         commander_llm=contract.topology == 'commander_downlink',
+                         main_condition=contract.is_main,
+                         max_window_utterances=MAX_WINDOW_UTTERANCES if open_channel else 0,
+                         max_robot_utterances=MAX_ROBOT_UTTERANCES if open_channel else 0)
+
+
+#: Derived from package A: a new condition or a changed topology/encoding there
+#: reaches this protocol automatically instead of drifting.
+SPECS = {name: _spec_from_contract(name, contract) for name, contract in CONTRACT_CONDITIONS.items()}
 
 
 def spec(condition: str) -> ConditionSpec:
@@ -242,17 +262,21 @@ class Envelope:
     structured: dict | None = None
     reply_to: str | None = None
 
-    def record(self, *, delivered_at_sim_s) -> dict:
-        """Robot-facing record: only ``INBOX_FIELDS``, and a copy of the body so
-        a caller editing the record cannot change what was delivered."""
-        out = {'message_id': self.message_id, 'from_robot': self.sender,
-               'recipients': list(self.recipients), 'sent_at_sim_s': self.sent_at_sim_s,
-               'delivered_at_sim_s': delivered_at_sim_s, 'reply_to': self.reply_to}
-        if self.text is not None:
-            out['text'] = self.text
-        else:
-            out['message'] = copy.deepcopy(self.structured)
-        return out
+    def record(self, *, delivered_at_sim_s=None) -> dict:
+        """Robot-facing record: package A's closed message envelope
+        (``ugrp.zone_study_message.v1``), with a copy of the body so a caller
+        editing the record cannot change what was delivered.
+
+        ``delivered_at_sim_s`` is accepted and deliberately NOT forwarded: A's
+        envelope carries no delivery time, and the SIM delivery order belongs to
+        the scheduler and the evaluation log, not to a robot input.
+        """
+        del delivered_at_sim_s
+        body = {'text': self.text} if self.text is not None else copy.deepcopy(self.structured)
+        return {'schema': MESSAGE_ENVELOPE_SCHEMA, 'message_id': self.message_id, 'sender': self.sender,
+                'recipients': list(self.recipients),
+                'encoding': 'free_ko' if self.text is not None else 'schema',
+                'created_at_sim_s': float(self.sent_at_sim_s), 'reply_to': self.reply_to, 'body': body}
 
 
 @dataclass(frozen=True)
@@ -283,6 +307,7 @@ class Transport:
 
     def __init__(self, condition, *, seed=None, leader=None, robots=ROBOTS,
                  item_ids=(), order_ids=(), roles=(), passages=(), location_refs=(),
+                 vocabulary=None,
                  delivery_delay_sim_s=DELIVERY_DELAY_SIM_S, max_window_utterances=None,
                  max_robot_utterances=None, max_total_utterances=None):
         self.spec = spec(condition)
@@ -296,9 +321,16 @@ class Transport:
         # Optional episode budget. Re-opening windows must not be a way around
         # the per-window cap, so the runner can bound the whole run here.
         self.cap_total = max_total_utterances
-        self.vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
-                      'role': frozenset(roles), 'passage': frozenset(passages),
-                      'location_ref': frozenset(location_refs)}
+        if vocabulary is not None:
+            # Package A's Vocabulary (order sheet + public map) is the preferred
+            # source: then a message can only name an ID the robot was given.
+            self.vocab = {'item': frozenset(vocabulary.items), 'zone': frozenset(vocabulary.zones),
+                          'role': frozenset(vocabulary.roles), 'passage': frozenset(vocabulary.passages),
+                          'location_ref': frozenset(vocabulary.location_refs)}
+        else:
+            self.vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
+                          'role': frozenset(roles), 'passage': frozenset(passages),
+                          'location_ref': frozenset(location_refs)}
         self._inbox = {rid: [] for rid in self.robots}
         self.window = None
         self.windows = []      # every window id opened, in order
@@ -418,7 +450,7 @@ class Transport:
         return Envelope(mid, sender, tuple(targets), float(at_sim_s), body_text, body_struct, reply_to)
 
     def _body(self, text, structured):
-        if self.spec.encoding == 'ko_free':
+        if self.spec.encoding == 'free_ko':
             if structured is not None:
                 raise _Reject('structured_not_allowed', 'free Korean channel carries text')
             if not isinstance(text, str) or not text.strip():
@@ -496,8 +528,23 @@ class _Reject(ProtocolError):
 
 # --- validators -----------------------------------------------------------
 
+def _contract_vocabulary(vocab) -> Vocabulary:
+    """Package A ``Vocabulary`` from this module's internal per-field mapping."""
+    if isinstance(vocab, Vocabulary):
+        return vocab
+    return Vocabulary(items=frozenset(vocab.get('item', ())), zones=frozenset(vocab.get('zone', ZONES)),
+                      roles=frozenset(vocab.get('role', ())), passages=frozenset(vocab.get('passage', ())),
+                      location_refs=frozenset(vocab.get('location_ref', ())))
+
+
 def validate_structured(value, *, vocab) -> dict:
-    """Condition-4 message: fixed fields, enums and IDs only, no free text."""
+    """Condition-4 message: package A's schema, with every field required here.
+
+    Field names, enums and the ID vocabulary are A's
+    (``harness.zone_study_contract.structured_violations``). This protocol adds
+    two rules A leaves open: the full field set must be present, and ``reply_to``
+    must be a ``message_id`` of this transport's id shape.
+    """
     if not isinstance(value, dict):
         raise ProtocolError('structured message must be an object')
     for key in value:
@@ -505,23 +552,9 @@ def validate_structured(value, *, vocab) -> dict:
             raise _Reject('free_text_not_allowed', f'field {key!r}')
     if set(value) != set(STRUCT_FIELDS):
         raise ProtocolError('structured message needs exactly ' + ', '.join(STRUCT_FIELDS))
-    if value['act'] not in STRUCT_ACTS:
-        raise ProtocolError(f"unknown act {value['act']!r}")
-    for key in ('item', 'zone', 'role', 'passage', 'location_ref'):
-        got = value[key]
-        if got is None:
-            continue
-        if not isinstance(got, str):
-            raise ProtocolError(f'{key} must be a string or null')
-        if got not in vocab[key]:
-            raise ProtocolError(f'{key} {got!r} is not a declared id')
-    if value['state'] is not None and value['state'] not in STRUCT_STATES:
-        raise ProtocolError(f"unknown state {value['state']!r}")
-    if value['confidence'] is not None and value['confidence'] not in CONFIDENCE:
-        raise ProtocolError(f"confidence must be one of {CONFIDENCE} or null")
-    seen = value['observed_at_sim_s']
-    if seen is not None and (isinstance(seen, bool) or not isinstance(seen, (int, float)) or seen < 0):
-        raise ProtocolError('observed_at_sim_s must be a non-negative number or null')
+    problems = structured_violations(value, vocabulary=_contract_vocabulary(vocab))
+    if problems:
+        raise ProtocolError('; '.join(problems))
     if value['reply_to'] is not None and not is_message_id(value['reply_to']):
         raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
     return copy.deepcopy(value)
@@ -633,7 +666,7 @@ def _check_message(value, *, spec, robots, vocab, actor):
     recipient must cost the utterance, not void the whole reply and its action,
     so the mistake stays measurable.
     """
-    keys = {'recipients', 'reply_to', 'text' if spec.encoding == 'ko_free' else 'message'}
+    keys = {'recipients', 'reply_to', 'text' if spec.encoding == 'free_ko' else 'message'}
     if not isinstance(value, dict) or set(value) != keys:
         raise ProtocolError('each message needs exactly ' + ', '.join(sorted(keys)))
     recipients = value['recipients']
@@ -646,7 +679,7 @@ def _check_message(value, *, spec, robots, vocab, actor):
             raise ProtocolError('a robot does not address itself')
     if value['reply_to'] is not None and not is_message_id(value['reply_to']):
         raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
-    if spec.encoding == 'ko_free':
+    if spec.encoding == 'free_ko':
         text = value['text']
         if not isinstance(text, str) or not text.strip():
             raise ProtocolError('text must be a non-empty string')

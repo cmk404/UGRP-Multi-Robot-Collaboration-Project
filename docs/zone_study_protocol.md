@@ -11,15 +11,17 @@
 
 ## 1. 조건 registry
 
-`SPECS`([protocol.py:131](../harness/zone_study_protocol.py)). 주 조건 네 개는 **통신 채널만 다르고** 나머지는 같다.
+`SPECS`는 **패키지 A의 `CONDITIONS`에서 파생한다**(`_spec_from_contract`). 조건·topology·encoding·지휘 순환·주 조건 여부의 기준은 A이며, 이 모듈은 A가 정하지 않는 것(대화 창, 발화 예산, 거절 이름, 모델 응답 schema, 평가 전용 언어 보고)만 추가한다. 주 조건 네 개는 **통신 채널만 다르고** 나머지는 같다.
 
 | 조건 | topology | encoding | 지휘 | 로봇 LLM | 주 조건 |
 |---|---|---|---|---|---|
 | `no_comm` | `none` | `none` | 없음 | 있음 | 예 |
-| `peer_ko` | `mesh` | `ko_free` | 없음 | 있음 | 예 |
-| `leader_ko` | `star` | `ko_free` | 로봇 1대 겸임, seed마다 순환 | 있음 | 예 |
-| `structured` | `mesh` | `structured` | 없음 | 있음 | 예 |
-| `reference_R` | `commander` | `none` | 별도 commander | **없음** | 아니오(참고 상한) |
+| `peer_ko` | `mesh` | `free_ko` | 없음 | 있음 | 예 |
+| `leader_ko` | `star` | `free_ko` | 로봇 1대 겸임, seed마다 순환 | 있음 | 예 |
+| `structured` | `mesh` | `schema` | 없음 | 있음 | 예 |
+| `reference_R` | `commander_downlink` | `schema` | 별도 commander | **없음** | 아니오(참고 상한) |
+
+`topology`·`encoding` 값은 A의 문자열이다. `reference_R`의 `commander_downlink`는 A에서 **지시 하향 간선**을 뜻하지만 이 프로토콜에는 메시지 채널이 없다(지시는 `action`의 `kind "order"`). 그래서 `zp.allowed_edges('reference_R')`는 빈 집합이고 모든 `send`는 `channel_closed`로 거절된다.
 
 - `no_comm`은 고수준 메시지를 **0건 보내고 0건 받는다.** 채널이 없으므로 모든 `send`가 `channel_closed`로 거절된다.
 - `leader_ko`는 허브-스포크다. `leader↔follower` 간선만 있고 **follower끼리 직접 전달은 없다.** follower는 한국어로 보고·질문·거절·양보를 leader에게 보낼 수 있다.
@@ -171,7 +173,8 @@ confidence: low | medium | high
 
 ## 8. 남은 연결과 정렬
 
-- **패키지 A 정렬(필수):** 연구 계약 모듈 `harness/zone_study_contract.py`(브랜치 `kiro/zone-study-contract`)는 아직 없다. `StudyInputs`와 `from_contract`([prompts_ko.py:66, 122](../harness/zone_study_prompts_ko.py))는 **최소 로컬 어댑터**이며, A가 병합되면 입력 필드·해시·주문서 schema·공개 지도 투영을 A의 계약으로 바꿔야 한다(`ADAPTER_NOTE`). `BELIEF_KEYS`·`OWN_COMMAND_KEYS`를 넓혀야 하면 A/B가 **의도적으로** 넓히고 그 근거를 남긴다. 지금은 모르는 키를 조용히 넘기지 않고 거절한다.
+- **패키지 A 정렬(완료):** 로컬 어댑터를 제거했다. `StudyInputs`([prompts_ko.py](../harness/zone_study_prompts_ko.py))는 `harness.zone_study_inputs.build_call_input`이 만든 **A payload 하나**(`ugrp.zone_study_call_input.v1`)를 감싸고 생성 시점에 `validate_robot_payload`를 실행한다. 모델이 받는 user JSON은 그 payload 그대로이며, 채널이 열린 조건에서만 `dialogue_window`(창 ID와 발화 예산)가 추가된다. 전달된 메시지는 A의 `inbox`이므로 창 블록에 `received`를 중복해 넣지 않는다. 주문서·공개 지도·belief·자기 명령 검증은 모두 A가 소유하며, 이 모듈의 `validate_order_sheet`/`public_map`/`validate_belief`/`validate_own_commands`/`from_contract`/`ADAPTER_NOTE`는 삭제했다. 구조화 메시지 검사는 `A.structured_violations`에 위임하고, 이 프로토콜은 "모든 필드가 있어야 한다"와 `reply_to`의 ID 형식만 더한다. inbox 기록은 A의 닫힌 봉투(`ugrp.zone_study_message.v1`)이므로 **전달 시각도 로봇 입력이 아니다.**
+- **A가 검사하지 않는 것:** A는 키 이름과 구조를 검사하고 값의 의미는 검사하지 않는다. 예를 들어 `self_belief.confidence`가 enum 밖의 수여도 계약은 통과한다. belief를 채우는 쪽이 그 책임을 진다.
 - `FORBIDDEN_TRANSPORT_PARAMS` 감사는 **인자 이름 기반**이다. 다른 이름으로 결정 상태를 넘기는 호출은 잡지 못하므로, 실행기 통합(패키지 G)에서 실제 호출 지점을 함께 검토한다.
 - pickup bay/slot(`P1`, `P1-2`)은 현재 지도 JSON에 없다. 새 지도 버전(패키지 E)이 정의해야 하고, 그때 `location_refs`와 주문서 검증을 다시 맞춘다.
 - 발화·추론의 SIM 시간 비용과 전달 시각 예약은 패키지 D(`zone_sim_cost`, `zone_event_scheduler`)가 소유한다. 여기서는 전달 지연 상수만 둔다.

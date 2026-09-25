@@ -186,14 +186,15 @@ def test_only_the_channel_differs_between_conditions(sid):
     scenario = E.load(sid)
     map_bundle = bundle(scenario)
     sheet = order_sheet(scenario, map_bundle)
+    source = OrderSheetSource(scenario, map_bundle)
     static_map = static_map_section(map_bundle)
     seed = scenario['seeds'][0]
     payloads = {}
     for name in MAIN_CONDITIONS:
         spec = condition(name)
         payload = build_call_input(robot_id='r1', condition_name=name, request_id=f'req_{name}',
-                                   sim_time_s=0., static_map=static_map, sheet=sheet,
-                                   own_rgb_refs=[own_rgb_ref('r1', 1, 0.)],
+                                   sim_time_s=0., static_map=static_map, source=source,
+                                   own_rgb_refs=[own_rgb_ref('r1', 1, 0., 'a' * 64)],
                                    own_command_history=[], seed=seed,
                                    inbox=[] if 'inbox' in spec.input_allowlist else None)
         validate_robot_payload(payload, seed=seed)
