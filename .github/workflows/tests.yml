@@ -28,7 +28,7 @@ jobs:
       - name: Install optional TensorBoard tooling
         run: python -m pip install -r requirements-observability.txt pytest==9.1.1
       - name: Verify event readback and local original-video serving
-        run: python -m pytest -q tests/test_tensorboard_export.py
+        run: python -m pytest -q tests/test_tensorboard_export.py tests/test_offline_audit_export.py
 
   reference-act-smoke:
     runs-on: ubuntu-24.04

@@ -78,6 +78,27 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 
 `--source`는 한 실행/학습 폴더를 지정한다. 코호트 상위 폴더의 `results.json`이나 `report.json.runs`를 자동으로 따라가지 않는다. 원하는 하위 실행을 명시적으로 반복 지정한다. 현재 실행 중인 폴더보다 결과가 완성된 폴더를 선택한다.
 
+### 오프라인 감사·채점 기록 (별도 진입점)
+
+`scripts/export_tensorboard.py`는 로봇 실행·학습 기록을 변환한다. **실행이 아닌 평가 산출물**(오프라인 인식 채점, 접촉 프로필 A/B 물리 감사)은 `scripts/export_offline_audit.py`로 변환한다. 읽는 것은 파생 뷰 1폴더의 `result.json` 하나이며, 파생 뷰가 **어떤 수치를 보여줄지 스스로 선언**한다.
+
+```sh
+.venv-sim-worker-mac/bin/python scripts/export_offline_audit.py \
+  --source /absolute/path/to/derived/<run> ... \
+  --output outputs/tensorboard/review-NEW-ID
+```
+
+| 선언 키 | 뜻 |
+|---|---|
+| `derived_view_only`, `offline_source`, `offline_scalar_scope` | 파생 뷰임을 밝히고 원본 파일의 절대 경로·SHA-256과 그 수치의 범위를 적는다. 원본이 없거나 해시가 다르면 변환을 거부한다 |
+| `offline_scalars` | `offline/<이름>`·`gate/<이름>` 태그와 유한한 수치. 원본에 있는 값만 옮긴다 |
+| `offline_series` | 원본 JSONL의 표본을 태그별로 그대로 옮긴다. step은 표본 순번, SIM 시각은 `execution/sim_time_s`, 선택한 phase의 상대 시각은 `relative_time`. 보간·평활은 하지 않는다 |
+| `sim_s`·`wall_s`·`commands`·`model_calls` | 있으면 표준 `result/*` 태그로 옮긴다. 없는 값은 0으로 채우지 않는다 |
+| `success`+`success_definition` | `evaluation/reported_success`로 내보내는 bool 게이트 판정과 그 정의. **로봇 임무 성공이 아니다** |
+| `hparam_metrics` | HParams 표에 등록할 핵심 태그(전부 등록하면 표가 읽히지 않는다) |
+
+안전 규칙은 표준 변환기와 같다: 기존 출력 폴더 덮어쓰기 거부, 64 MiB 상한, 변환 중 원본이 바뀌면 이벤트 미게시 + 실패 manifest, 인증 필드 가림. 구역 문자(A/B/C)와 로봇 ID는 태그에서도 원본 표기를 유지한다. 선언 키는 파생 뷰가 `export.py`의 `offline_scalars` 형식과 같게 맞춘 것이며, 그 표준 지원이 들어오면 이 모듈을 합쳐 은퇴시킨다. 사용 예는 [2026-09-26 인식·감사 스냅샷](../experiments/2026-09-26-tb-perception-noslip/README.md)을 따른다.
+
 ## 저장과 갱신
 
 - 기존 출력 폴더에 덮어쓰기·추가 쓰기를 거부한다. 새 스냅샷 ID로 변환한다.
@@ -91,9 +112,10 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 ## 검증
 
 ```sh
-.venv-sim-worker-mac/bin/python -m pytest -q tests/test_tensorboard_export.py tests/test_tensorboard_launcher.py
+.venv-sim-worker-mac/bin/python -m pytest -q tests/test_tensorboard_export.py tests/test_tensorboard_launcher.py \
+  tests/test_offline_audit_export.py
 ```
 
-이벤트를 TensorBoard EventAccumulator로 다시 읽어 실제 scalar·text·image, HParams 메타데이터, 원본 불변성, 시간·누락값·완료 주장 분리, 영상 Range/경로 제한을 확인한다. launcher 회귀는 여러 export collection이 있을 때 최신 **export snapshot**만 고르는지와 손상·빈 collection을 무시하는지 확인한다. CI의 `tensorboard-export`가 선택 의존성을 설치해 실행하며 일반 회귀 환경에서는 선택 의존성이 필요한 테스트만 건너뛴다.
+이벤트를 TensorBoard EventAccumulator로 다시 읽어 실제 scalar·text·image, HParams 메타데이터, 원본 불변성, 시간·누락값·완료 주장 분리, 영상 Range/경로 제한을 확인한다. launcher 회귀는 여러 export collection이 있을 때 최신 **export snapshot**만 고르는지와 손상·빈 collection을 무시하는지 확인한다. CI의 `tensorboard-export`가 선택 의존성을 설치해 실행하며 일반 회귀 환경에서는 선택 의존성이 필요한 테스트만 건너뛴다. `tests/test_offline_audit_export.py`는 오프라인 감사 파생 뷰의 선언 검사·시계열 표본 전달·원본 해시 거부·변환 중 원본 변경 거부를 확인한다.
 
 설계 참고: [TensorBoard 시작](https://www.tensorflow.org/tensorboard/get_started), [HParams 비교](https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams), [PyTorch SummaryWriter](https://docs.pytorch.org/docs/stable/tensorboard.html). 실제 변환은 TensorBoard 2.21.0의 event protobuf를 사용한다.
