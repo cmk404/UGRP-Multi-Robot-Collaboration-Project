@@ -40,9 +40,9 @@ import math
 import numpy as np
 
 from harness.static_keepouts import inside_rect, polygons_overlap
-from harness.zone_goal_v2 import formation, landing_layout, required_carriers
+from harness.zone_goal_v2 import claim_roles, formation, landing_layout, required_carriers
 from harness.zone_team_formation import FormationPlan
-from harness.zone_team_footprint import TeamFootprint, circle, item_polygons, transform
+from harness.zone_team_footprint import TeamFootprint, circle, item_polygons, station_offset, transform
 from harness.zone_team_jobs import (CONTACT, SETTING_DOWN, TERMINAL, CommitRejected, RendezvousRule, RoleClaim,
                                     TeamJobLedger, station_pose)
 from harness.zone_team_route import PoseReference, plan_team_route
@@ -85,6 +85,18 @@ GATE_MOVING_S = 1.
 
 def _wrap(a):
     return (a + math.pi) % (2*math.pi) - math.pi
+
+
+def landing_pose_for_role(kind, area, role):
+    """Landing item pose for the claimed role. A one-robot item with alternative
+    sides (tile: west or east, 180 deg symmetric) is turned so the claimed side's
+    station lands where the landing layout put the default role's station."""
+    pose = tuple(area['item_pose'])
+    default = formation(kind)[0]
+    if required_carriers(kind) != 1 or role == default:
+        return pose
+    dyaw = station_offset(kind, default)[2] - station_offset(kind, role)[2]
+    return (pose[0], pose[1], _wrap(pose[2] + dyaw))
 
 
 def poly_rect(poly):
@@ -297,7 +309,7 @@ class TeamCarry:
         self.body = ex.items[self.item_id]['body_name']
         self.area = area
         self.plan = FormationPlan(self.kind, job.role_by_robot)
-        self.footprint = TeamFootprint(self.kind, formation(self.kind))
+        self.footprint = TeamFootprint(self.kind, tuple(sorted(job.role_by_robot.values())))
         self.n = len(self.parts)
         self.seen, self.state_t = None, float(now)
         self.arm_plans, self.arms_idle_t = {}, None
@@ -388,8 +400,9 @@ class TeamCarry:
                 rid = self.parts[0]
                 robot = robots[rid]
                 role = self.job.role_by_robot[rid]
-                robot.landing = {'station': tuple(self.area['stations'][role]),
-                                 'pose': tuple(self.area['item_pose']), 'plan': self.plan}
+                pose = landing_pose_for_role(self.kind, self.area, role)
+                robot.landing = {'station': tuple(station_pose(pose, self.kind, role)), 'pose': pose,
+                                 'plan': self.plan}
                 robot.landed, robot.flag = False, None
                 robot._set('carry', now)
             else:
@@ -819,7 +832,8 @@ class ZoneTeamExecutor(ZoneTeacherExecutor):
 
     # --- claims ---
     def bind(self, rid, role_claim, labels):
-        """Label -> nearest physical item of the same kind; role -> nearest physical handle (position)."""
+        """Label -> nearest physical item of the same kind; role -> the physical role whose approach
+        (base station pose from the RGB handle, else its grip point) is nearest the claimed RGB role."""
         label = labels[role_claim.item]
         cands = [iid for iid, it in self.items.items()
                  if it['kind'] == role_claim.kind and iid not in self.ledger.delivered_items]
@@ -827,14 +841,19 @@ class ZoneTeamExecutor(ZoneTeacherExecutor):
             raise ValueError(f'no {role_claim.kind} item')
         iid = min(cands, key=lambda i: math.dist(self.item_pose(i)[:2], label['floor_xy_m']))
         kind = role_claim.kind
-        roles = formation(kind)
+        roles = claim_roles(kind)
         if len(roles) == 1:
             return iid, roles[0]
-        handles = label.get('handles') or {}
-        rgb = handles.get(role_claim.role, {}).get('grip_xy_m')
+        handle = (label.get('handles') or {}).get(role_claim.role, {})
+        base, rgb = handle.get('approach_base_xyyaw'), handle.get('grip_xy_m')
+        pose = self.station_item_pose(iid) if required_carriers(kind) == 1 else self.item_pose(iid)
+        if base is not None:
+            def cost(r):
+                st = station_pose(pose, kind, r)
+                return math.dist(st[:2], base[:2]) + .1*abs(_wrap(st[2] - base[2]))
+            return iid, min(roles, key=cost)
         if rgb is None:
             return iid, role_claim.role
-        pose = self.item_pose(iid)
         from sim.zone_cargo import CATALOGUE
         grips = {g.role: transform([g.grip_xyz[:2]], pose)[0] for g in CATALOGUE[kind].grasps if g.role in roles}
         return iid, min(roles, key=lambda r: math.dist(grips[r], rgb))

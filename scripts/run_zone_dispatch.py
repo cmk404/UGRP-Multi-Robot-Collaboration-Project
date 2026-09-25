@@ -510,7 +510,8 @@ def parser():
                    help='SIM budget of the motion phase (default: 900 on protocol v1, 1800 on v2)')
     p.add_argument('--max-wall-s', type=float, default=3600.)
     p.add_argument('--contact-profile', default=None,
-                   help='contact profile (default: local_contact_fine on v1, cargo_noslip_v1 on v2)')
+                   help='contact profile (v1 default: local_contact_fine; protocol v2 requires it explicitly, '
+                        'A2 smokes use cargo_noslip_v1)')
     p.add_argument('--record-replay', action='store_true')
     p.add_argument('--inject-grasp-failure', type=int, default=0,
                    help='diagnostic: the N-th issued job keeps its gripper open, so its grasp really fails (0 = off)')
@@ -520,6 +521,8 @@ def parser():
                    help='v2 = mixed cargo goals, role claims, team jobs (zone team A2); auto: v2 when the goal '
                         'names catalogue cargo, else v1 (colour-only goals unchanged)')
     p.add_argument('--extra-cargo', default='{}', help='v2: spare cargo items per kind, JSON')
+    p.add_argument('--condition-switches', default=None,
+                   help='v2: per-mechanism switch overrides, JSON {name: bool} (harness.zone_protocol_v2.SWITCHES)')
     p.add_argument('--inject-team-grasp-failure', default=None,
                    help='v2 diagnostic: in the first committed team job (>= 2 carriers; optionally only of this '
                         "kind, or 'any'), the robot with the first role keeps its gripper open")
@@ -554,8 +557,8 @@ def main(argv=None):
         from scripts.zone_dispatch_v2 import run_v2
         result = run_v2(args, goal)
         return 0 if result.get('error') is None else 1
-    if args.inject_team_grasp_failure or args.extra_cargo != '{}':
-        raise SystemExit('--inject-team-grasp-failure and --extra-cargo are protocol v2 options')
+    if args.inject_team_grasp_failure or args.extra_cargo != '{}' or args.condition_switches:
+        raise SystemExit('--inject-team-grasp-failure, --extra-cargo and --condition-switches are protocol v2 options')
     for key, value in V1_DEFAULTS.items():
         if getattr(args, key) is None:
             setattr(args, key, value)

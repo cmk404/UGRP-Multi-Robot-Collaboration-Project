@@ -22,7 +22,8 @@ import json
 
 from harness import zone_coordination as zc
 from harness.three_robot_plan import ROBOTS, parse, text_fields
-from harness.zone_goal_v2 import formation, is_legacy_goal, landing_layout, required_carriers
+from harness.zone_goal_v2 import (claim_roles, fills_formation, formation, formations, is_legacy_goal, landing_layout,
+                                  required_carriers)
 from harness.zone_perception_v2 import public_labels
 from harness.zone_team_jobs import (RECEIPT_FINISHED, RECEIPT_STOPPED, RendezvousRule, normalize_claim,
                                     remaining_need_items)
@@ -34,17 +35,40 @@ ZONES = ZONE_IDS
 # ---------------------------------------------------------------------------
 # Condition switches (what the host adds beyond the robot's own channels)
 
+# One switch per mechanism; each is read at exactly one place in the v2 driver,
+# so a later A/B/C/D design can toggle them one at a time (audit confounds C1/C3).
+# The mode names only pick the defaults below; ``condition_switches`` applies
+# explicit per-run overrides (--condition-switches) and records both.
+SWITCHES = ('peer_board', 'host_arbitration', 'conflict_notices', 'wake_on_peer_job_end', 'peer_messages')
 CONDITIONS = {
-    # peer_board: the host shows active peer claims and every robot's receipts.
+    # peer_board: the host shows active peer claims and every robot's reported results.
     # host_arbitration: the host rejects a claim against peers' claims (collisions, joint need).
+    # conflict_notices: a robot re-asked after a host collision is told which claims collided.
     # wake_on_peer_job_end: idle robots are asked again when any peer's claim ends.
     # peer_messages: reply messages reach the peers.
-    'independent': {'peer_board': False, 'host_arbitration': False, 'wake_on_peer_job_end': False,
-                    'peer_messages': False},
-    'dynamic': {'peer_board': True, 'host_arbitration': True, 'wake_on_peer_job_end': True, 'peer_messages': True},
-    'plan_first': {'peer_board': False, 'host_arbitration': False, 'wake_on_peer_job_end': False,
-                   'peer_messages': True},
+    'independent': {'peer_board': False, 'host_arbitration': False, 'conflict_notices': False,
+                    'wake_on_peer_job_end': False, 'peer_messages': False},
+    'dynamic': {'peer_board': True, 'host_arbitration': True, 'conflict_notices': True,
+                'wake_on_peer_job_end': True, 'peer_messages': True},
+    'plan_first': {'peer_board': False, 'host_arbitration': False, 'conflict_notices': False,
+                   'wake_on_peer_job_end': False, 'peer_messages': True},
 }
+
+# Which switches each mode's driver loop actually reads (scripts.zone_dispatch_v2).
+READ_BY_MODE = {'independent': (), 'plan_first': ('peer_messages',), 'dynamic': SWITCHES}
+
+
+def condition_switches(mode, overrides=None):
+    """The mode's default switches with explicit per-run overrides (unknown names rejected)."""
+    out = dict(CONDITIONS[mode])
+    for name, value in (overrides or {}).items():
+        if name not in SWITCHES or not isinstance(value, bool):
+            raise ValueError(f'unknown condition switch or non-boolean value: {name}={value!r}')
+        out[name] = value
+    unread = [k for k in (overrides or {}) if k not in READ_BY_MODE[mode] and overrides[k] != CONDITIONS[mode][k]]
+    if unread:
+        raise ValueError(f'the {mode} loop does not implement switch(es) {unread}; an override would be ignored')
+    return out
 
 # ---------------------------------------------------------------------------
 # Static task text (same for every robot and every mode)
@@ -70,7 +94,10 @@ def task_static_text(goal, static_map):
     lines = ['Item kinds in this goal:']
     for k in kinds:
         n = required_carriers(k)
-        roles = ', '.join(formation(k))
+        if len(formations(k)) > 1:
+            roles = ' or '.join(claim_roles(k)) + ' (either side; claim the side you approach from)'
+        else:
+            roles = ', '.join(formation(k))
         lines.append(f'- {k}: {"1 robot" if n == 1 else f"{n} robots at once"}, role{"s" if n > 1 else ""} {roles}.')
     lines.append('Landing areas (one per requested item; the item must end fully inside its zone):')
     for zone, areas in landing_layout(goal, static_map=static_map).items():
@@ -273,7 +300,10 @@ def open_slots(goal, labels, view, active=None, finished=None):
         spec = by_item[item]
         if item not in _visible(view):
             continue
-        for role in formation(spec['kind']):
+        if fills_formation(spec['kind'], spec['roles']):
+            continue
+        need_roles = next((f for f in formations(spec['kind']) if spec['roles'] <= set(f)), formation(spec['kind']))
+        for role in need_roles:
             if role not in spec['roles']:
                 slots.append({'item': item, 'zone': spec['zone'], 'role': role})
     need = remaining_need_items(goal, view, active, finished)
@@ -353,7 +383,7 @@ def parse_claim(rid, raw, labels):
     return normalize_claim(rid, raw, labels)
 
 
-__all__ = ['CONDITIONS', 'TEAM_RULE_TEXT', 'TASK_SCHEMA', 'actor_task_v2', 'task_static_text', 'system_text',
+__all__ = ['CONDITIONS', 'SWITCHES', 'READ_BY_MODE', 'condition_switches', 'TEAM_RULE_TEXT', 'TASK_SCHEMA', 'actor_task_v2', 'task_static_text', 'system_text',
            'build_request', 'context', 'visible_own_jobs', 'OWN_JOB_KEYS', 'validate_claim_reply',
            'validate_solo_reply', 'open_slots', 'fixture_claim', 'fixture_solo_claim', 'fixture_plan',
            'fixture_plan_reply', 'receipt', 'parse_claim']

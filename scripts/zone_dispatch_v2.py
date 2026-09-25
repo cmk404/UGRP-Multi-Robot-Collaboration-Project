@@ -5,7 +5,9 @@ Entered from ``scripts.run_zone_dispatch`` when the goal names catalogue cargo
 v1 path unchanged. What differs from v1:
 
 - scene: ``CargoZoneScene`` (PR #164 cargo path) with the goal's cargo placed
-  by ``harness.zone_mixed_episode``; contact profile ``cargo_noslip_v1`` by default;
+  by ``harness.zone_mixed_episode``; the contact profile must be named
+  explicitly (``--contact-profile``; A2 smokes use ``cargo_noslip_v1``), so a
+  goal change never changes physics unnoticed;
 - robot input: TOP RGB labels and view from ``top_cargo_v1`` (+ its box path),
   the static task text (kinds, carriers, roles, landing areas, team rule) that
   is identical in every mode (``harness.zone_protocol_v2``);
@@ -15,11 +17,15 @@ v1 path unchanged. What differs from v1:
 - output: ``referee_v2`` (full footprint, evaluation only), per-item outcomes,
   formation waits, door waits, carry pauses, slip and drops, ``eq_active`` max.
 
-Receipts are still teacher-ground-truth receipts (audit L4 unresolved).
+Robot-facing results (own job status, board reports, re-ask timing, the
+delivered list for the host check) go through ``harness.zone_outcomes_v2``,
+separate from the executor's teacher-motion ledger. Its only source today is
+the teacher receipt (audit L4 unresolved, labelled in every result); an RGB
+outcome source plugs in there. Condition switches are per mechanism
+(``zone_protocol_v2.CONDITIONS``, overridable with ``--condition-switches``).
 """
 from __future__ import annotations
 
-import copy
 import json
 import os
 import subprocess
@@ -31,9 +37,11 @@ from harness import zone_protocol_v2 as zp2
 from harness.three_robot_plan import ROBOTS, TeamAgreement, validate_plan_reply
 from harness.zone_goal_v2 import referee_v2
 from harness.zone_mixed_episode import item_table, mixed_episode, scene_for
+from harness.zone_outcomes_v2 import RobotResults, TeacherReceiptSource
+from harness.zone_cargo_perception import PROFILE as PERCEPTION_PROFILE
 from harness.zone_perception_v2 import detect_items, goal_met, label_items, observe_items
-from harness.zone_team_jobs import (RECEIPT_FINISHED, check_dynamic_claims, check_independent_claims,
-                                    normalize_claim, validate_team_plan)
+from harness.zone_team_jobs import (check_dynamic_claims, check_independent_claims, normalize_claim,
+                                    validate_team_plan)
 from scripts.run_zone_dispatch import ZoneRun, write
 from sim.zone_arena import top_views
 
@@ -101,15 +109,19 @@ class ZoneRunV2(ZoneRun):
                 for iid, it in self.items.items()}
 
 
-def _issue(zone, rid, claim, labels, own_jobs, active):
+def _issue(zone, rid, claim, labels, results, active):
     zone.executor.claim(rid, claim, labels, zone.time())
     active[rid] = claim
-    own_jobs[rid].append({'item': claim.item, 'zone': claim.zone, 'role': claim.role, 'status': 'issued',
-                          'issued_at_sim_s': round(zone.time(), 2)})
+    results.issue(rid, claim, zone.time())
     print(f'CLAIM {rid} {claim.item}/{claim.role} -> {claim.zone}', flush=True)
 
 
 def run_v2(args, goal):
+    if not args.contact_profile:
+        raise SystemExit('protocol v2 needs an explicit --contact-profile (A2 smokes: cargo_noslip_v1); '
+                         'a goal change must not change physics unnoticed')
+    switches = zp2.condition_switches(args.coordination, json.loads(getattr(args, 'condition_switches', None)
+                                                                    or '{}'))
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=Path(__file__).resolve().parents[1],
                                text=True).strip():
         raise RuntimeError('commit and freeze source before a trial')
@@ -117,13 +129,16 @@ def run_v2(args, goal):
     config = mixed_episode(args.variant, args.seed, goal=goal, extra_boxes=json.loads(args.extra_boxes),
                            extra_cargo=json.loads(args.extra_cargo), colour_only_ok=True)
     goal = config['goal']
-    profile = args.contact_profile or 'cargo_noslip_v1'
+    profile = args.contact_profile
     config['contact_solver_profile'] = profile
     source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
-    switches = zp2.CONDITIONS[args.coordination]
+    outcome_source = TeacherReceiptSource()
     max_sim_s = args.max_sim_s if args.max_sim_s is not None else DEFAULT_MAX_SIM_S
     result = {'schema': SCHEMA, 'protocol': PROTOCOL, 'source_sha': source, 'coordination': args.coordination,
               'condition_switches': switches,
+              'condition_switches_default': zp2.CONDITIONS[args.coordination],
+              'robot_facing_outcome_source': outcome_source.record(),
+              'perception_profile': PERCEPTION_PROFILE,
               'executor': ('ground-truth TEACHER team executor (scripts.zone_team_teacher; drive + calibrated IK + '
                            'real gripper, weld OFF); every job a TeamJob, one rendezvous rule'),
               'claim_scope': 'teacher-executor condition: coordination/team metrics, not RGB-skill or student success',
@@ -150,7 +165,9 @@ def run_v2(args, goal):
                              model=args.model, max_wall_s=args.max_wall_s, request_timeout=60., max_tokens=1400)
     views = top_views(config['static_map'])
     ex = zone.executor
-    active, own_jobs, finished, failed = {}, {r: [] for r in ROBOTS}, [], []
+    active = {}
+    results = RobotResults(ROBOTS, outcome_source)
+    own_jobs = results.own_jobs
     queues = {r: [] for r in ROBOTS}
     stats = {'claim_rounds': 0, 'collisions': 0, 'invalid_claims': 0, 'plan_turns': 0, 'done_robots': [],
              'stalled_turns': 0}
@@ -167,30 +184,24 @@ def run_v2(args, goal):
         write(args.output/'task.json', task)
 
         def delivered():
-            return [{'zone': ex.ledger.jobs[j].zone, 'kind': ex.ledger.jobs[j].kind}
-                    for j in ex.ledger.delivered_items.values()]
+            # Robot-facing delivered list (outcome source), not the teacher-motion ledger.
+            return results.delivered()
 
         def board():
-            if not switches['peer_board']:
-                return None
-            return {'active': {r: {'item': c.item, 'zone': c.zone, 'role': c.role} for r, c in active.items()},
-                    'finished_reports': copy.deepcopy(finished[-12:]), 'stopped_reports': copy.deepcopy(failed[-6:])}
+            return results.board(active) if switches['peer_board'] else None
 
         def collect_done():
             for c in ex.pop_ended():
                 rid = c.rid
                 active.pop(rid, None)
-                report = {'robot': rid, 'item': c.role_claim.item, 'zone': c.role_claim.zone,
-                          'role': c.role_claim.role, 'executor_receipt': c.receipt,
-                          'sim_time_s': round(zone.time(), 2)}
-                own_jobs[rid][-1]['status'] = c.receipt
-                (finished if c.receipt == RECEIPT_FINISHED else failed).append(report)
+                out = results.end(rid, c, zone.time())
                 if switches['wake_on_peer_job_end']:
                     stats['done_robots'] = []
                 solo['last_end'] = zone.time()
-                if args.coordination == 'independent' and c.receipt != RECEIPT_FINISHED:
+                if args.coordination == 'independent' and not out['delivered']:
                     solo['next_ask'][rid] = zone.time() + SOLO_REASK_S
-                zone._log('claim_end', rid, zone.time(), outcome=c.outcome, item=c.item_id, receipt=c.receipt)
+                zone._log('claim_end', rid, zone.time(), outcome=c.outcome, item=c.item_id, receipt=c.receipt,
+                          robot_facing=out)
 
         if args.coordination == 'plan_first':
             result['phase'] = 'NEGOTIATE'
@@ -236,7 +247,7 @@ def run_v2(args, goal):
             if args.coordination == 'plan_first':
                 for rid in idle:
                     if queues[rid]:
-                        _issue(zone, rid, queues[rid].pop(0), labels, own_jobs, active)
+                        _issue(zone, rid, queues[rid].pop(0), labels, results, active)
                 if not active and not any(queues.values()) and not any(r.busy for r in ex.robots.values()):
                     break
             elif args.coordination == 'independent':
@@ -248,7 +259,7 @@ def run_v2(args, goal):
                     for rid in due:
                         solo['last_ask'][rid] = zone.time()
                         if rid in decided['accepted']:
-                            _issue(zone, rid, decided['accepted'][rid], labels, own_jobs, active)
+                            _issue(zone, rid, decided['accepted'][rid], labels, results, active)
                             solo['answer'][rid] = 'job'
                         else:
                             solo['answer'][rid] = 'null' if rid in decided['idle'] else 'invalid'
@@ -263,7 +274,7 @@ def run_v2(args, goal):
                     decided = dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, board,
                                             stats, turn, delivered(), switches, views)
                     for rid, claim in decided['accepted'].items():
-                        _issue(zone, rid, claim, labels, own_jobs, active)
+                        _issue(zone, rid, claim, labels, results, active)
                     for rid in waiting:
                         if rid not in decided['accepted']:
                             stats['done_robots'].append(rid)
@@ -305,7 +316,8 @@ def run_v2(args, goal):
         result['eq_active_max'] = zone.eq_active_max
         result['neq'] = zone.neq
         result['jobs'] = own_jobs
-        result['finished_reports'], result['stopped_reports'] = finished, failed
+        result['finished_reports'], result['stopped_reports'] = results.finished, results.stopped
+        result['robot_results'] = results.record()
         result['coordination_stats'] = stats
         result['team_executor'] = ex.record()
         result['items'] = item_outcomes(result['referee_v2'], ex, items, labels)
@@ -382,8 +394,10 @@ def dynamic_round(zone, team, task, labels, goal, waiting, active, own_jobs, boa
         if not retry:
             break
         askers = retry
-        extra = {r: {'conflict': [c for c in checked['collisions'] if r in c['robots']],
-                     'invalid_reason': checked['invalid'].get(r)} for r in retry}
+        extra = {r: {'invalid_reason': checked['invalid'].get(r)} for r in retry}
+        if switches['conflict_notices']:
+            for r in retry:
+                extra[r]['conflict'] = [c for c in checked['collisions'] if r in c['robots']]
     return {'accepted': accepted, 'idle': idle, 'unresolved': retry,
             'idle_all': not retry and set(waiting) - set(accepted) <= set(idle)}
 

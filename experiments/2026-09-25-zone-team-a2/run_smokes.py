@@ -37,7 +37,7 @@ def one(out, rid, variant, goal, seed, mode, extra):
         return json.loads(row_file.read_text())
     cmd = [sys.executable, '-m', 'scripts.run_zone_dispatch', '--output', str(target), '--variant', variant,
            '--coordination', mode, '--mode', 'fixture', '--goal', json.dumps(goal), '--seed', str(seed),
-           '--record-replay', *extra]
+           '--contact-profile', 'cargo_noslip_v1', '--record-replay', *extra]
     start_load, t0 = os.getloadavg(), time.monotonic()
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     row = {'run': rid, 'variant': variant, 'goal': goal, 'seed': seed, 'coordination': mode, 'extra': extra,

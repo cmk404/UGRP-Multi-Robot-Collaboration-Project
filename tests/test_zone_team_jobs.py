@@ -154,6 +154,7 @@ def test_task_static_info_is_setup_free():
     text = repr(info)
     assert 'setup_only' not in text and 'spawns' not in text and 'objects' not in text
     assert info['kinds']['long_beam'] == {'required_carriers': 2, 'roles': ['end_neg', 'end_pos'],
+                                          'formations': [['end_neg', 'end_pos']],
                                           'formation_id': 'long_beam/end_neg+end_pos'}
 
 

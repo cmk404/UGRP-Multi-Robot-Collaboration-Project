@@ -12,7 +12,7 @@ from harness.zone_goal_v2 import formation, goal_counts_v2, landing_layout
 from harness.zone_mixed_episode import _occupied, item_table, mixed_episode, split_goal
 from harness.zone_perception_v2 import label_items, public_labels, view_from_detections
 from harness.zone_team_footprint import TeamFootprint, circle, item_polygons, transform
-from harness.zone_team_jobs import (RoleClaim, check_independent_claims, normalize_claim, relabel,
+from harness.zone_team_jobs import (RendezvousRule, RoleClaim, check_independent_claims, normalize_claim,
                                     validate_team_plan)
 from harness.zone_team_route import PoseReference, plan_team_route
 from sim import zone_arena as za
@@ -132,7 +132,8 @@ def test_own_jobs_hide_landing_ids_and_independent_requests_ignore_peers():
                               views=views)
     assert base == again
     assert zp2.CONDITIONS['independent'] == {'peer_board': False, 'host_arbitration': False,
-                                             'wake_on_peer_job_end': False, 'peer_messages': False}
+                                             'conflict_notices': False, 'wake_on_peer_job_end': False,
+                                             'peer_messages': False}
     public = public_labels(labels)
     assert all('approach_base_xyyaw' not in json.dumps(v) for v in public.values())
 
@@ -335,3 +336,113 @@ def test_single_lane_gate_ignores_paths_that_do_not_enter_the_opening():
     from scripts.zone_teacher import PeerDisc
     robot, held, events = _gate_robot((2.55, .05, math.pi), [(2.6, -.6)])
     assert robot.passage_gate(0., [PeerDisc((2.21, .10, .14))]) is False and not held
+
+
+# --- review fixes (Codex review of #169, 2026-09-25) -------------------------------
+
+def test_tile_role_contract_accepts_either_side_and_never_two_sides_of_one_tile():
+    from harness.zone_goal_v2 import claim_roles, fills_formation, formation, formations
+    from harness.zone_team_jobs import check_dynamic_claims, normalize_claim
+    assert formations('tile') == (('west',), ('east',)) and claim_roles('tile') == ('west', 'east')
+    assert formation('tile') == ('west',) and fills_formation('tile', ['east']) and not fills_formation(
+        'tile', ['east', 'west'])
+    assert claim_roles('long_beam') == ('end_neg', 'end_pos') and claim_roles('red') == ('west',)
+    labels = {'tile-1': {'kind': 'tile', 'floor_xy_m': [.4, .2]}}
+    assert normalize_claim('r1', {'item': 'tile-1', 'zone': 'C', 'role': 'east'}, labels).role == 'east'
+    with pytest.raises(ValueError):
+        normalize_claim('r1', {'item': 'tile-1', 'zone': 'C', 'role': 'north'}, labels)
+    view = {'pickup_items_still_visible': ['tile-1'], 'zone_counts_seen': {}}
+    out = check_dynamic_claims({'r1': {'item': 'tile-1', 'zone': 'C', 'role': 'west'},
+                                'r2': {'item': 'tile-1', 'zone': 'C', 'role': 'east'}},
+                               goal={'C': {'tile': 1}}, labels=labels, view=view, active={})
+    assert list(out['accepted']) == ['r1']
+    assert out['collisions'] == [{'kind': 'formation_conflict', 'item': 'tile-1', 'roles': ['east', 'west'],
+                                  'robots': ['r1', 'r2']}]
+    # Rendezvous: both sides of one tile occupied -> no team (no id tie-break); one side -> a team.
+    rule = RendezvousRule()
+    w = RoleClaim('r1', 'tile-1', 'tile', 'C', 'west')
+    e = RoleClaim('r2', 'tile-1', 'tile', 'C', 'east')
+    assert rule.teams({'r1': w, 'r2': e}, {'r1': 'at_station', 'r2': 'at_station'}) == []
+    assert rule.teams({'r2': e}, {'r2': 'at_station'}) == [{'r2': e}]
+    # A claimed side is complete: the other side is never offered as a join slot.
+    slots = zp2.open_slots({'C': {'tile': 1}}, labels, view, {'r2': e}, [])
+    assert all(sl['item'] != 'tile-1' for sl in slots)
+    text = zp2.task_static_text({'C': {'tile': 1, 'green': 1}}, za.authored_map('zone_wide'))
+    assert 'tile: 1 robot, role west or east' in text
+
+
+def test_tile_binds_by_approach_direction_and_lands_on_the_layout_station():
+    from harness.zone_cargo_perception import grasp_handles
+    from harness.zone_team_jobs import station_pose
+    from scripts.zone_team_teacher import landing_pose_for_role
+    ex = _fake_executor({'tile_0': ('tile', (.4, .2, .2))})
+    ex.items['tile_0']['carriers'] = 1
+    for rgb_yaw, expect in ((.2, {'west': 'west', 'east': 'east'}), (.2 + math.pi, {'west': 'east', 'east': 'west'})):
+        hs = grasp_handles({'kind': 'tile', 'floor_xy_m': [.401, .199], 'yaw_rad': rgb_yaw})['handles']
+        label = {'kind': 'tile', 'floor_xy_m': [.401, .199],
+                 'handles': {h['role']: {'grip_xy_m': h['grip_xyz_m'][:2],
+                                         'approach_base_xyyaw': h['approach_base_xyyaw']} for h in hs}}
+        for role, phys in expect.items():
+            assert ex.bind('r1', RoleClaim('r1', 'tile-1', 'tile', 'C', role), {'tile-1': label}) == ('tile_0', phys)
+    area = {'item_pose': [4.6, -1.9, .3]}
+    west = station_pose(area['item_pose'], 'tile', 'west')
+    east = station_pose(landing_pose_for_role('tile', area, 'east'), 'tile', 'east')
+    assert all(abs(a - b) < 1e-9 for a, b in zip(west, east))
+    assert landing_pose_for_role('long_beam', area, 'end_pos') == tuple(area['item_pose'])
+
+
+def test_condition_switches_are_per_mechanism_and_overrides_must_be_read():
+    assert set(zp2.SWITCHES) == set(zp2.CONDITIONS['dynamic']) == set(zp2.CONDITIONS['independent'])
+    sw = zp2.condition_switches('dynamic', {'peer_board': False, 'conflict_notices': False})
+    assert sw == dict(zp2.CONDITIONS['dynamic'], peer_board=False, conflict_notices=False)
+    assert zp2.condition_switches('plan_first', {'peer_messages': False})['peer_messages'] is False
+    for mode, bad in (('plan_first', {'peer_board': True}), ('independent', {'peer_messages': True}),
+                      ('dynamic', {'nope': True}), ('dynamic', {'peer_board': 1})):
+        with pytest.raises(ValueError):
+            zp2.condition_switches(mode, bad)
+    import inspect
+    from scripts import zone_dispatch_v2
+    src = inspect.getsource(zone_dispatch_v2)
+    for name in zp2.SWITCHES:                     # every switch is read by the driver
+        assert f"switches['{name}']" in src
+
+
+def test_robot_facing_results_are_separate_from_the_teacher_ledger():
+    from harness.zone_outcomes_v2 import RobotResults, TeacherReceiptSource
+    from harness.zone_team_jobs import RECEIPT_FINISHED
+    src = TeacherReceiptSource()
+    assert src.name == 'teacher_receipt_L4' and 'L4' in src.label and 'never a student' in src.label
+    res = RobotResults(('r1', 'r2', 'r3'), src)
+    beam = [RoleClaim(r, 'long_beam-1', 'long_beam', 'A', role) for r, role in (('r1', 'end_neg'), ('r2', 'end_pos'))]
+    for c in beam:
+        res.issue(c.robot, c, 1.)
+    for c in beam:
+        res.end(c.robot, SimpleNamespace(receipt=RECEIPT_FINISHED, role_claim=c), 90.)
+    assert res.delivered() == [{'zone': 'A', 'kind': 'long_beam'}]         # once per item
+    tile = RoleClaim('r3', 'tile-1', 'tile', 'C', 'east')
+    res.issue('r3', tile, 2.)
+    out = res.end('r3', SimpleNamespace(receipt='executor stopped before finishing', role_claim=tile), 40.)
+    assert not out['delivered'] and res.own_jobs['r3'][-1]['status'] == 'executor stopped before finishing'
+    assert res.board({})['stopped_reports'][0]['item'] == 'tile-1'
+    assert res.record()['outcome_source']['name'] == 'teacher_receipt_L4'
+    # A source that has not confirmed a result never enters the delivered list.
+    class Unconfirmed:
+        def outcome(self, ended, t):
+            return {'status': 'unconfirmed', 'delivered': True, 'confirmed': False, 'source': 'rgb'}
+        def record(self):
+            return {'name': 'rgb'}
+    res2 = RobotResults(('r1',), Unconfirmed())
+    res2.issue('r1', tile, 1.)
+    res2.end('r1', SimpleNamespace(receipt=RECEIPT_FINISHED, role_claim=tile), 5.)
+    assert res2.delivered() == [] and res2.own_jobs['r1'][-1]['status'] == 'unconfirmed'
+    import inspect
+    from scripts import zone_dispatch_v2
+    src_text = inspect.getsource(zone_dispatch_v2.run_v2)
+    assert 'ex.ledger.delivered_items' not in src_text and 'c.receipt ==' not in src_text
+
+
+def test_protocol_v2_requires_an_explicit_contact_profile():
+    from scripts.run_zone_dispatch import main
+    with pytest.raises(SystemExit, match='explicit --contact-profile'):
+        main(['--output', 'unused-never-created', '--goal', json.dumps(MIXED), '--variant', 'zone_wide_door',
+              '--mode', 'fixture'])
