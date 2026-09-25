@@ -1,0 +1,531 @@
+{
+ "experiment": "2026-09-25-beam-regrasp-binding",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/beam-regrasp-20260925 (local only)",
+ "claim_scope": "diagnostic single-failure checks; not a success rate",
+ "runs": [
+  {
+   "run": "X1-grasp",
+   "bundle": "rgb-standard-dispatch-v60",
+   "source_sha": "d57989c17dec794d1d28107ba9aa34198d33daf0",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 85887,
+    "completion_tokens": 1450,
+    "total_tokens": 91262
+   },
+   "wall_s": 376.24851450001006,
+   "cargo": null,
+   "control_end_sim_s": 200.25999999699246,
+   "regrasp_binding_applied": 127,
+   "regrasp_binding_frames": 130,
+   "approaches": [
+    {
+     "ok": true,
+     "last_stage": "forward",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       219.6,
+       370.3
+      ],
+      "r3": [
+       214.8,
+       180.2
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       221.6,
+       370.1
+      ],
+      "r3": [
+       221.5,
+       180.8
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.9,
+       370.0
+      ],
+      "r3": [
+       213.3,
+       180.8
+      ]
+     }
+    }
+   ],
+   "sha256": {
+    "result.json": "f7fc164ce21de4673c599cd61dc558344e624b1121c4670402ebe8015068e51e",
+    "pair-decisions.json": "c2524a3e69c3932e90b769aa42e37c3c51788844cd8315d403fd0b2a66bf98e7"
+   },
+   "loads": [
+    {
+     "run": "X1-grasp",
+     "start_utc": "2026-09-25T06:27:02Z",
+     "load": "{ 1.85 2.03 2.19 }"
+    },
+    {
+     "run": "X1-grasp",
+     "end_utc": "2026-09-25T06:33:19Z",
+     "exit": 1,
+     "load": "{ 2.13 2.33 2.27 }"
+    }
+   ]
+  },
+  {
+   "run": "X2-grasp",
+   "bundle": "rgb-standard-dispatch-v60",
+   "source_sha": "d57989c17dec794d1d28107ba9aa34198d33daf0",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 12,
+   "usage": {
+    "prompt_tokens": 85856,
+    "completion_tokens": 1477,
+    "total_tokens": 89597
+   },
+   "wall_s": 375.0174442080024,
+   "cargo": null,
+   "control_end_sim_s": 200.25999999699246,
+   "regrasp_binding_applied": 127,
+   "regrasp_binding_frames": 130,
+   "approaches": [
+    {
+     "ok": true,
+     "last_stage": "forward",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       219.6,
+       370.3
+      ],
+      "r3": [
+       214.8,
+       180.2
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       221.6,
+       370.1
+      ],
+      "r3": [
+       221.5,
+       180.8
+      ]
+     }
+    },
+    {
+     "ok": false,
+     "last_stage": "yaw",
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.9,
+       370.0
+      ],
+      "r3": [
+       213.3,
+       180.8
+      ]
+     }
+    }
+   ],
+   "sha256": {
+    "result.json": "6b84ab96fa3531996ef1c32a0bc00d819f7021e4f0f796d9ac83d6bbcb555867",
+    "pair-decisions.json": "15f33d4e5bb9c733d841ceaa6d2e75c94485a0aea4825790e643cbf930bed73a"
+   },
+   "loads": [
+    {
+     "run": "X2-grasp",
+     "start_utc": "2026-09-25T06:33:19Z",
+     "load": "{ 2.13 2.33 2.27 }"
+    },
+    {
+     "run": "X2-grasp",
+     "end_utc": "2026-09-25T06:39:35Z",
+     "exit": 1,
+     "load": "{ 3.00 3.01 2.65 }"
+    }
+   ]
+  },
+  {
+   "run": "Y1-grasp",
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147180,
+    "completion_tokens": 3158,
+    "total_tokens": 150338
+   },
+   "wall_s": 426.20829766697716,
+   "control_end_sim_s": 218.60999999655854,
+   "recoveries": [
+    "regrasp",
+    "retry",
+    "retry",
+    "continue_others"
+   ],
+   "cargo": {
+    "beam": {
+     "inside_slot_at_end": false,
+     "released_supported_stable": false,
+     "max_lift_m": 0.07768081822808146,
+     "displacement_m": 0.0006026712425882999
+    },
+    "box": {
+     "inside_slot_at_end": true,
+     "released_supported_stable": true,
+     "max_lift_m": 0.06880076025123194,
+     "displacement_m": 2.0069548079531745
+    }
+   },
+   "regrasp_binding_applied": 217,
+   "regrasp_binding_frames": 220,
+   "coarse_anchor_applied": 146,
+   "coarse_anchor_decisions": 146,
+   "approaches": [
+    {
+     "ok": true,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw",
+      "forward",
+      "yaw",
+      "lateral",
+      "forward"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 11.325,
+       "orthogonal_residual": 17.481,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.9,
+       357.6
+      ],
+      "r3": [
+       217.2,
+       167.8
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.749,
+       "orthogonal_residual": 12.112,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.0,
+       357.4
+      ],
+      "r3": [
+       216.8,
+       167.9
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.473,
+       "orthogonal_residual": 12.512,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       226.7,
+       358.4
+      ],
+      "r3": [
+       223.6,
+       168.1
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 7.408,
+       "orthogonal_residual": 15.492,
+       "support_count": 164
+      }
+     ]
+    }
+   ],
+   "sha256": {
+    "result.json": "ac38321b8f988dc09d00b80ee4cac29923435435200bde9eb9b1b9e384cc08de",
+    "pair-decisions.json": "98fbebfe0fca0c0597195c89e2941926721771833d052113bc7c08bda15ea997",
+    "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f"
+   },
+   "loads": [
+    {
+     "run": "Y1-grasp",
+     "start_utc": "2026-09-25T06:42:51Z",
+     "load": "{ 3.23 3.18 2.80 }"
+    },
+    {
+     "run": "Y1-grasp",
+     "end_utc": "2026-09-25T06:49:58Z",
+     "exit": 1,
+     "load": "{ 2.80 3.00 2.84 }"
+    }
+   ]
+  },
+  {
+   "run": "Y2-grasp",
+   "bundle": "rgb-standard-dispatch-v61",
+   "source_sha": "222db6065ba7a3a7a7c0131c9e99b96a2a903d04",
+   "phase": "FINISHED_PARTIAL",
+   "error": null,
+   "physical_success": false,
+   "llm_calls": 18,
+   "usage": {
+    "prompt_tokens": 147416,
+    "completion_tokens": 3188,
+    "total_tokens": 151225
+   },
+   "wall_s": 446.5576144589868,
+   "control_end_sim_s": 218.60999999655854,
+   "recoveries": [
+    "regrasp",
+    "retry",
+    "retry",
+    "continue_others"
+   ],
+   "cargo": {
+    "beam": {
+     "inside_slot_at_end": false,
+     "released_supported_stable": false,
+     "max_lift_m": 0.07768081822808146,
+     "displacement_m": 0.0006026712425882999
+    },
+    "box": {
+     "inside_slot_at_end": true,
+     "released_supported_stable": true,
+     "max_lift_m": 0.06880076025123194,
+     "displacement_m": 2.0069548079531745
+    }
+   },
+   "regrasp_binding_applied": 217,
+   "regrasp_binding_frames": 220,
+   "coarse_anchor_applied": 146,
+   "coarse_anchor_decisions": 146,
+   "approaches": [
+    {
+     "ok": true,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw",
+      "forward",
+      "yaw",
+      "lateral",
+      "forward"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       222.4,
+       356.9
+      ],
+      "r3": [
+       218.6,
+       166.7
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 11.325,
+       "orthogonal_residual": 17.481,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.9,
+       357.6
+      ],
+      "r3": [
+       217.2,
+       167.8
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.749,
+       "orthogonal_residual": 12.112,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       218.0,
+       357.4
+      ],
+      "r3": [
+       216.8,
+       167.9
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "lateral",
+       "robot": "r3",
+       "nearest_support_distance": 7.473,
+       "orthogonal_residual": 12.512,
+       "support_count": 164
+      }
+     ]
+    },
+    {
+     "ok": false,
+     "stages_ok": [
+      "yaw",
+      "lateral",
+      "yaw"
+     ],
+     "coarse_end_wheel_px": {
+      "r1": [
+       226.7,
+       358.4
+      ],
+      "r3": [
+       223.6,
+       168.1
+      ]
+     },
+     "first_failures": [
+      {
+       "stage": "forward",
+       "robot": "r3",
+       "nearest_support_distance": 7.408,
+       "orthogonal_residual": 15.492,
+       "support_count": 164
+      }
+     ]
+    }
+   ],
+   "sha256": {
+    "result.json": "9d482f078a35e6c00cc91dcbd1bf5022a13b2b8ce6dc0f946b79e0035c64cb3b",
+    "pair-decisions.json": "816cb517db5f09078233fa04e567dee5dc4ef09d627c6ac75bfcfe18a8a042eb",
+    "issued-commands.json": "ff0113601e3788a367ee2d9a3937a84699101b545bd010570cc2ed8810118d1f"
+   },
+   "loads": [
+    {
+     "run": "Y2-grasp",
+     "start_utc": "2026-09-25T06:49:58Z",
+     "load": "{ 2.80 3.00 2.84 }"
+    },
+    {
+     "run": "Y2-grasp",
+     "end_utc": "2026-09-25T06:57:25Z",
+     "exit": 1,
+     "load": "{ 4.27 3.33 2.98 }"
+    }
+   ]
+  }
+ ]
+}

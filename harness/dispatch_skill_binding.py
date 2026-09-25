@@ -1435,6 +1435,40 @@ def _coarse_reference_lane(reference, slot):
     return copy.deepcopy(_cached_coarse_reference_lane(reference, slot))
 
 
+# Dynamic regrasp re-approach (v61). The beam's north half is yellow (hue ~28)
+# and the hue<=24 mask keeps it only as a thin edge that can thin after a failed
+# grasp. X1 (v60) kept the failed grasp's fine translation, but the coarse
+# approach still centred on the truncated hue<=24 shaft: its centre moved
+# 263.5 -> 277.5 px while the hue<=35 centre stayed at 261.5 px, both carriers
+# stopped ~13 px off and the learned yaw stage rejected r1. When the hue<=24
+# shaft is truncated against the hue<=35 shaft and the hue<=35 centre is still
+# where it was at the failed grasp, the coarse target keeps the hue<=24 centre
+# of the first approach's last coarse-ready frame.
+REGRASP_TRUNCATED_RATIO = .9
+REGRASP_STILL_PX = 2.
+
+
+def still_truncated_beam(raw_top, beam35_center):
+    """RGB only: (hue<=24 shaft truncated and hue<=35 beam still, evidence)."""
+    try:
+        wide = beam_feature(raw_top, hue_upper=35)
+    except ValueError as error:
+        return False, {'hue35_unresolved': str(error)}
+    evidence = {}
+    try:
+        narrow = beam_feature(raw_top)
+        evidence['hue24_length_px'] = float(narrow['length_px'])
+    except ValueError as error:
+        narrow = None
+        evidence['hue24_unresolved'] = str(error)
+    size = np.array(wide['image_size'], float)
+    moved = float(np.linalg.norm((np.array(wide['center']) - beam35_center) * size))
+    truncated = narrow is None or narrow['length_px'] < REGRASP_TRUNCATED_RATIO * wide['length_px']
+    evidence.update(hue35_length_px=float(wide['length_px']), hue35_moved_px=moved,
+                    hue24_truncated=bool(truncated))
+    return bool(truncated and moved <= REGRASP_STILL_PX), evidence
+
+
 class PairCoarsePixels:
     """Role-bound RGB wheel selection; rejects painted floor/beam components.
 
@@ -1453,8 +1487,12 @@ class PairCoarsePixels:
             if not claim.get('valid') or not claim.get('center'):
                 raise ValueError('valid own motion identity required for '+rid)
             self.centers[slot]=np.array(claim['center'])*[width,height]
+        # Hue<=24 beam centre of the latest coarse-ready approach frame, and
+        # the dynamic-regrasp anchor {'beam24_center','beam35_center'}.
+        self.ready_beam24_center=None
+        self.regrasp_anchor=None
 
-    def decide(self, raw_top, slot):
+    def decide(self, raw_top, slot, *, record_ready=True):
         from harness.camera_goal_transport import wheel_heading
         if not isinstance(raw_top, bytes) or not raw_top:
             raise ValueError('nonempty JPEG required')
@@ -1476,8 +1514,13 @@ class PairCoarsePixels:
                         reason='own_wheel_heading_unresolved',mask=mask)
         center=np.array([xs.mean(),ys.mean()])
         if heading is not None:self.centers[slot]=center
+        regrasp=None;anchor=getattr(self,'regrasp_anchor',None)
         try:
-            beam=_coarse_beam(raw_top)
+            if anchor is not None:
+                applied,regrasp=still_truncated_beam(raw_top,anchor['beam35_center'])
+                regrasp.update(applied=applied,anchor_beam24_center=list(anchor['beam24_center']))
+            beam=({'center':list(anchor['beam24_center'])}
+                  if regrasp is not None and regrasp['applied'] else _coarse_beam(raw_top))
             ref=_coarse_reference_lane(self.reference,slot)
         except ValueError as error:
             return dict(ok=False,ready=False,forward=0.,left=0.,turn=0.,
@@ -1498,9 +1541,12 @@ class PairCoarsePixels:
         angle=heading['angle_deg'];angle_ready=abs(angle)<=1.5
         lateral_ready=abs(gap[1])<=.003
         ready=gap[0]<=.065 and angle_ready and lateral_ready
+        extra={} if regrasp is None else {'regrasp_beam':regrasp}
+        if ready and record_ready and not (regrasp is not None and regrasp['applied']):
+            self.ready_beam24_center=[float(v) for v in beam['center']]
         return dict(ok=True,ready=bool(ready),
             forward=min(.12,max(.03,float(gap[0]))) if angle_ready and lateral_ready and not ready else 0.,
             left=(-math.copysign(min(.05,max(.01,abs(float(gap[1])))),float(gap[1])) if angle_ready and not lateral_ready else 0.),
             turn=0. if angle_ready else math.copysign(min(.10,max(.01,.5*abs(math.radians(angle)))),angle),
             reason='RGB role-relative coarse approach',wheel_center_px=center.tolist(),
-            image_error=gap.tolist(),heading=heading,mask=mask)
+            image_error=gap.tolist(),heading=heading,mask=mask,**extra)
