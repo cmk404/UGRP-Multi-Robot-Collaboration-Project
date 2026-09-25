@@ -58,6 +58,7 @@ TEST_PATTERNS = (
     "tests/test_zone_dispatch.py", "tests/test_zone_comm_boundary.py",
     "tests/test_zone_cargo.py", "tests/test_zone_team_jobs.py",
     "tests/test_zone_cargo_perception.py",
+    "tests/test_zone_dialogue_ko.py",
     "tests/test_zone_hard_routes.py",
     "tests/test_owncam_localizer.py", "tests/test_zone_landmarks_sim.py",
     "tests/test_rgb_execution*.py",
