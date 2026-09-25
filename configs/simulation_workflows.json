@@ -138,6 +138,22 @@
       "output_kind": "directory"
     },
     {
+      "id": "zone-team-jobs-smoke",
+      "purpose": "구역 팀 작업(A1) 순수 부품의 동기 SIM 결합 확인(정답 교사, weld OFF)",
+      "entry": "scripts/smoke_zone_team_formation.py",
+      "docs": "experiments/2026-09-25-zone-team-jobs/README.md",
+      "requires": "local Mac/Linux; privileged ground-truth TEACHER (poses, IK, contact forces) on an open floor patch, never an RGB/student or zone-dispatch success; --probe pair_beam or trio_frame",
+      "version": "1.0.0",
+      "runner": "scripts.smoke_zone_team_formation",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--probe"
+      ],
+      "output_kind": "directory"
+    },
+    {
       "id": "zone-cargo-catalogue",
       "purpose": "구역 화물 목록 그림과 TOP RGB 색 분리 검사",
       "entry": "scripts/render_zone_cargo_catalogue.py",

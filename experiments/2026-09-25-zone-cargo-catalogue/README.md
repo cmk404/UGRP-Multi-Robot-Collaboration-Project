@@ -103,3 +103,94 @@
    - 긴 경로는 중간에 내려놓고 다시 잡는 단계를 넣을지 먼저 SIM으로 확인한다. 접촉 설정은 바꾸지 않는다.
 6. **RGB 지원:** 이 기록의 시각 명세(색, 모양, 가로세로비, TOP 크기)로 탐지기 쪽 작업(`claude/zone-rgb-color`)이 종류 판별을 추가한다. 이후 RGB 학생의 공동 파지는 교사 시연으로 별도 검증한다.
 7. **반복:** 출발 위치·방향·역할 순열을 바꾼 반복 검사와 운반 속도·부담의 미끄러짐 한계 곡선을 측정한다. 지금은 조건마다 1회다.
+
+---
+
+## 8. 미끄러짐 제거 — 2026-09-25 후속 (`cargo_noslip_v1`)
+
+사용자 요청(조정자 전달): "미끄러짐 없애주삼". 조건은 다음과 같다.
+- weld·인위 고정은 OFF로 두고, 정상 접촉·마찰·관절 한계를 유지한다.
+- `local_contact_fine`은 바꾸지 않는다(ZC1/ZC2·v61 등이 의존).
+- 접촉 변경은 새 이름·버전·해시를 가진 opt-in profile로만 한다.
+
+**결론:**
+- 원인은 `local_contact_fine`의 손가락–화물 마찰 행이 **감쇠만 있는 soft constraint**(`solreffriction 0 -6000`, 강성 0)라는 데 있다. 그래서 일정한 접선력을 버티려면 일정한 미끄럼 속도가 생긴다(대략 R·f/b, R은 soft-constraint 정규화 항).
+- MuJoCo의 `noslip_iterations`는 주 풀이 뒤 마찰 행의 남은 미끄럼을 없애는 후처리다. 이것만 켠 새 profile **`cargo_noslip_v1`**(= `local_contact_fine` + `noslip_iterations 10`)을 추가했다. profile 해시: `2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4`.
+- 마찰 계수·손가락 힘·접촉 연성·관절 한계·구동은 그대로다. `sim/dispatch_contact_profile.py`(RGB 번들 소스)는 수정하지 않았다.
+
+### 8.1 원인 분리 (60 SIM초 정지 버티기, 0.5 kg 상자 모양, 로봇 1대)
+
+한 번에 한 요인만 바꿨다(진단용 `--contact-variant`). 기준 = `local_contact_fine`. 소스는 `8ee716f`이고 변형 코드는 커밋 전(`git_dirty`)이었다. 같은 정의를 `8886cf5`에 커밋했다.
+
+| 요인 | 변경 | 60초 미끄러짐 | 해석 |
+|---|---|---:|---|
+| 기준 | – | **70.6 mm (빠짐)** | 약 1.2 mm/s |
+| 마찰 계수 | μ 3.4→6.8 (pair) | 70.6 mm | 영향 없음. 마찰 원뿔 한계가 원인이 아님 |
+| condim | 3→6, 비틀림·구름 (pair) | 71.7 mm | 영향 없음 |
+| 법선 연성 | solref 0.013→0.004 (pair) | 69.8 mm | 영향 없음 |
+| 집게 힘 | kp ×2 (합력 5.4→9.8 N) | 21.5 mm | 부분 개선. 손가락 수직 지지가 늘어 접선 부담이 나뉨 |
+| 원뿔 | elliptic(기준)→pyramidal | 판정 불가 | 파지 접촉력 0.49 N으로 파지 확인 문턱(0.5 N) 미달 |
+| impratio | 1→10 (전역, elliptic 마찰만) | 2.8 mm | 크게 개선. 마찰 행의 정규화 R을 줄임 |
+| pair solimp | 0.9/0.96→0.99/0.999 | 5.0 mm | 개선 |
+| pair solimp | →0.999/0.9999 | 0.51 mm | 1 mm 미만. 법선 접촉까지 거의 강체가 됨(접촉력 6.6 N) |
+| 마찰 감쇠 | solreffriction −6000→−12000 / −60000 | **불안정(NaN)** | 6–7 SIM초에 발산 |
+| **noslip** | noslip_iterations 2 / 4 / 10 (전역) | 0.61 / 0.54 / **0.14 mm** | 제거. 채택 |
+
+- 미끄럼이 부하에 비례하고 μ·condim·법선 연성·손가락 힘과 거의 무관하다. impratio·solimp(정규화 R)와 noslip(후처리)에만 반응한다. 이는 수치적 soft-contact creep이라는 뜻이다. 실제 마찰 한계를 넘은 미끄러짐이 아니다.
+- 선택 이유:
+  - 조정자가 제시한 선호 순서 1번(solver 수준)이다.
+  - 계수·힘·기하를 바꾸지 않는다. solimp를 0.9999로 올리는 방법은 법선 접촉 성질까지 바꾸고 (1−d)→0에 가까워 안정성 여유가 줄어서 택하지 않았다. 감쇠 증가는 발산했다.
+  - 기하(턱·플랜지)는 미끄럼을 "막는" 대신 초기 틈만큼은 미끄러지게 둔다. solver 수정으로 기준을 만족해 쓰지 않았다.
+  - 계수·힘을 실물 MasterPi 값으로 정당화할 근거는 없다(실측 자료 없음).
+
+### 8.2 합격 검사 (고정 소스 `8886cf5`, 작업 트리 깨끗, 조건당 1회)
+
+정지 버티기 60 s, 필요한 로봇 수:
+
+| 물건 | 로봇 | `local_contact_fine` | `cargo_noslip_v1` |
+|---|---:|---:|---:|
+| box (30 g) | 1 | 2.0 mm | **0.0 mm** |
+| can | 1 | 4.7 mm | **0.0 mm** |
+| tile | 1 | 2.0 mm | **0.0 mm** |
+| long_beam | 2 | 8.2 mm | **0.4–0.5 mm** |
+| heavy_crate | 2 | 24.2 mm | **0.3 mm** |
+| tri_frame | 3 | 26.9 mm | **0.45–0.51 mm** |
+
+긴 경로 4.0 m(1.5 m → 90° → 1.0 m → 90° → 1.5 m). 이전 경로 1.3 m의 3.1배다.
+
+| 검사 | profile | 결과 | 배치 오차 | 최대 미끄러짐 | 떨어뜨림 | 운반 SIM s |
+|---|---|---|---:|---:|---|---:|
+| pair_beam_long | local_contact_fine | 성공 | 2.5 mm | 13.8 mm | 0 | 96.8 |
+| pair_beam_long | **cargo_noslip_v1** | **성공** | 2.7 mm | **0.6 mm** | 0 | 96.8 |
+| pair_crate_long | local_contact_fine | **실패** `grip_lost_in_transit` | 253 mm | 89–93 mm | 바닥 닿음 101.8 s | 92.9 |
+| pair_crate_long | **cargo_noslip_v1** | **성공** | 4.4 mm | **0.9 mm** | 0 | 97.2 |
+| trio_frame_long | local_contact_fine | **실패** `grip_lost_in_transit` | 829 mm | 90.5 mm | 바닥 닿음 92.5 s | 83.7 |
+| trio_frame_long | **cargo_noslip_v1** | **성공** | 4.2 mm | **1.2 mm** | 0 | 99.2 |
+
+- 한 대 적은 검사(`cargo_noslip_v1`)는 **계속 실패한다.** 셋 다 `carry_timeout`이고 들리지 않았다. 최저점은 solo_beam 0.0 m, solo_crate 0.0 m, duo_frame 0.8 mm다. 150 SIM초 동안 목표까지 0.94–0.96 m가 남았다. 이제는 손잡이가 빠지지 않고 바닥에 끌린다. 미끄러짐이 사라져도 한 대 적은 팀이 들지 못하는 것은 전복·지렛대 한계 때문이기 때문이다.
+- 한 대 한계도 그대로다(`cargo_noslip_v1` sweep). 0.66 kg은 성공하고 0.68 kg부터 전복(40.2°)한다. 미끄럼 속도는 ≤0.1 mm/s다(실패 질량 포함).
+- solo 운반(1 m): box/can/tile 모두 성공, 배치 오차 5.9/9.3/7.9 mm, 미끄러짐 0.0 mm.
+- 모든 실행에서 weld OFF, `eq_active` 최댓값은 0이다.
+
+### 8.3 부작용 (noslip은 전역 옵션)
+
+- 로봇 구동: 같은 메카넘 명령 순서(전진 0.10, 옆 0.08, 회전 0.12, 후진 −0.05, 정지 사이)에서, 두 profile의 단계별 pose·속도가 기록 자릿수(1e-5)까지 **같다**. 바퀴 마찰이 0.001이고 구동이 몸체 힘으로 걸리기 때문으로 본다.
+- 쉬고 있는 구역 상자 5개: 두 profile 모두 이동 0.
+- 기존 solo box 동작: 배치 오차 6.0→5.9 mm, 미끄러짐 0.8→0.0 mm.
+- 다른 장면(`zone_open`/`zone_wide` 기본, dispatch)은 이 profile을 고르지 않으면 바이트 단위로 같다(테스트). 구역 실행기·교사에는 아직 연결하지 않았다.
+- 계산 비용: noslip 후처리가 SIM 1초당 계산을 늘린다. 이번 실행은 호스트 부하가 매우 높아(1분 부하 최대 554) wall 시간을 비교하지 않는다.
+
+### 8.4 영상과 원본
+
+- 영상: noslip 긴 경로 [beam](media/slip-long-cargo_noslip_v1-pair_beam_long.mp4) · [crate](media/slip-long-cargo_noslip_v1-pair_crate_long.mp4) · [frame](media/slip-long-cargo_noslip_v1-trio_frame_long.mp4).
+- 비교(`local_contact_fine`): [beam](media/slip-long-local_contact_fine-pair_beam_long.mp4) · [crate 실패](media/slip-long-local_contact_fine-pair_crate_long.mp4) · [frame 실패](media/slip-long-local_contact_fine-trio_frame_long.mp4).
+- 한 대 적음(noslip): [solo_beam](media/slip-fewer-cargo_noslip_v1-solo_beam.mp4) · [solo_crate](media/slip-fewer-cargo_noslip_v1-solo_crate.mp4) · [duo_frame](media/slip-fewer-cargo_noslip_v1-duo_frame.mp4).
+- 전체 수치·진단표·드라이버 부하 기록·원본 해시: [results-slip.json](results-slip.json)(`collect_slip.py`로 생성).
+- 원본은 로컬 `outputs/zone-cargo/{diag-1,diag-2,slip-8886cf5}/`에만 있다(원격 백업 아님).
+
+### 8.5 검증하지 않은 것
+
+- 조건당 1회다. 출발 위치·역할 순열을 바꾼 반복은 하지 않았다.
+- `cargo_noslip_v1`에서 구역 교사·RGB 스킬·ACT를 돌리지 않았다. 과거 기록(ZC1/ZC2, v61 등)은 `local_contact_fine`이라 이 profile의 결과와 섞어 비교하지 않는다.
+- 실물 집게의 미끄러짐과 비교하지 않았다. 실물 파지가 이 정도로 미끄러지지 않는다는 보장은 실측 전까지 없다.
+- noslip의 계산 비용은 측정하지 않았다(부하 탓에 wall 시간 비교 불가).

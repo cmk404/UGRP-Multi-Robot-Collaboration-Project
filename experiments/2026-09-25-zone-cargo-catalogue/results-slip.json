@@ -1,0 +1,4290 @@
+{
+  "schema": "ugrp.experiment.zone_cargo_slip.v1",
+  "date": "2026-09-25",
+  "request": "user via coordinator: remove the slip (weld/fixation OFF, local_contact_fine unchanged)",
+  "profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+      "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+  },
+  "diagnosis_60s_static_hold_0p5kg_one_robot": {
+    "baseline": {
+      "lifted_clear": false,
+      "teacher_outcome": "not_lifted_clear",
+      "hold_slip_mm": {
+        "r1": 70.63
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 1.1795
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 1.02,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 154.65
+      },
+      "root": "diag-1"
+    },
+    "cone_pyramidal": {
+      "lifted_clear": false,
+      "teacher_outcome": "grasp_contact_missing",
+      "hold_slip_mm": {},
+      "hold_creep_mm_per_s": {},
+      "hold_measured_s": null,
+      "max_robot_tilt_deg": 0.04,
+      "grasp_forces_n": {
+        "r1": [
+          0.49,
+          0.49
+        ]
+      },
+      "solver_options": {
+        "cone": 0,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.43,
+        "end": 141.47
+      },
+      "root": "diag-1"
+    },
+    "gripper_kp_x2": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 21.49
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.359
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.74,
+      "grasp_forces_n": {
+        "r1": [
+          9.8,
+          9.8
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 154.65
+      },
+      "root": "diag-1"
+    },
+    "impratio_10": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 2.81
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0469
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.16,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 10.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 158.44
+      },
+      "root": "diag-1"
+    },
+    "noslip_10": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 0.14
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0024
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.17,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 10,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.43,
+        "end": 130.14
+      },
+      "root": "diag-1"
+    },
+    "pair_condim_6": {
+      "lifted_clear": false,
+      "teacher_outcome": "not_lifted_clear",
+      "hold_slip_mm": {
+        "r1": 71.72
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 1.1977
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.16,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 158.44
+      },
+      "root": "diag-1"
+    },
+    "pair_friction_x2": {
+      "lifted_clear": false,
+      "teacher_outcome": "not_lifted_clear",
+      "hold_slip_mm": {
+        "r1": 70.62
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 1.1794
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.91,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 154.65
+      },
+      "root": "diag-1"
+    },
+    "pair_frictiondamp_x10": {
+      "teacher_outcome": "simulation_unstable",
+      "root": "diag-1",
+      "detail": "WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 7.2065."
+    },
+    "pair_solimp_hard": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 5.01
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0837
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.16,
+      "grasp_forces_n": {
+        "r1": [
+          6.33,
+          6.33
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 158.44
+      },
+      "root": "diag-1"
+    },
+    "pair_solref_stiff": {
+      "lifted_clear": false,
+      "teacher_outcome": "not_lifted_clear",
+      "hold_slip_mm": {
+        "r1": 69.84
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 1.1664
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 1.0,
+      "grasp_forces_n": {
+        "r1": [
+          6.32,
+          6.32
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 63.64,
+        "end": 152.62
+      },
+      "root": "diag-1"
+    },
+    "_drivers": {
+      "diag-1": [
+        "start 8ee716f dirty=       1 load { 62.32 85.31 46.49 }",
+        "pair_frictiondamp_x10 exit 1 load { 92.14 89.04 49.80 }",
+        "cone_pyramidal exit 0 load { 141.47 100.83 55.19 }",
+        "pair_solref_stiff exit 0 load { 152.62 130.55 76.46 }",
+        "baseline exit 0 load { 154.65 131.34 77.06 }",
+        "pair_friction_x2 exit 0 load { 154.65 131.34 77.06 }",
+        "gripper_kp_x2 exit 0 load { 154.65 131.34 77.06 }",
+        "pair_solimp_hard exit 0 load { 158.44 132.51 77.79 }",
+        "impratio_10 exit 0 load { 158.44 132.51 77.79 }",
+        "pair_condim_6 exit 0 load { 158.44 132.51 77.79 }",
+        "noslip_10 exit 0 load { 130.14 129.67 79.92 }",
+        "end"
+      ],
+      "diag-2": [
+        "start 8ee716f dirty=       1 load { 91.87 119.83 78.59 }",
+        "pair_frictiondamp_x2 exit 1 load { 90.78 118.65 78.65 }",
+        "pair_solimp_vhard exit 0 load { 174.94 144.80 95.58 }",
+        "noslip_4 exit 0 load { 124.10 137.38 98.75 }",
+        "noslip_2 exit 0 load { 124.10 137.38 98.75 }",
+        "end"
+      ]
+    },
+    "noslip_2": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 0.61
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0102
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.17,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 2,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 89.8,
+        "end": 124.1
+      },
+      "root": "diag-2"
+    },
+    "noslip_4": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 0.54
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.009
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.17,
+      "grasp_forces_n": {
+        "r1": [
+          5.37,
+          5.37
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 4,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 89.8,
+        "end": 124.1
+      },
+      "root": "diag-2"
+    },
+    "pair_frictiondamp_x2": {
+      "teacher_outcome": "simulation_unstable",
+      "root": "diag-2",
+      "detail": "WARNING: Nan, Inf or huge value in QACC at DOF 11. The simulation is unstable. Time = 6.2200."
+    },
+    "pair_solimp_vhard": {
+      "lifted_clear": true,
+      "teacher_outcome": "completed_sequence",
+      "hold_slip_mm": {
+        "r1": 0.51
+      },
+      "hold_creep_mm_per_s": {
+        "r1": 0.0085
+      },
+      "hold_measured_s": 59.88,
+      "max_robot_tilt_deg": 0.16,
+      "grasp_forces_n": {
+        "r1": [
+          6.57,
+          6.57
+        ]
+      },
+      "solver_options": {
+        "cone": 1,
+        "impratio": 1.0,
+        "noslip_iterations": 0,
+        "iterations": 80
+      },
+      "git_sha": "8ee716f0d1b66cbccacf97cc5ff9c431c5d12265",
+      "git_dirty": true,
+      "load_avg_1m": {
+        "start": 89.8,
+        "end": 174.94
+      },
+      "root": "diag-2"
+    }
+  },
+  "acceptance": {
+    "static_hold_60s": {
+      "cargo_noslip_v1-pair_beam": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0629,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.04,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.5,
+          "r2": 0.6
+        },
+        "hold_slip_mm": {
+          "r1": 0.4,
+          "r2": 0.5
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.01
+        },
+        "max_robot_tilt_deg": 0.13,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.36,
+            5.36
+          ],
+          "r2": [
+            5.36,
+            5.36
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 266.95
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "2481fa4e11dab9a21f99d194b2de38aaa17c79573814239397368bc8118df13a",
+        "failure_detail": {
+          "hold_min_z_m": 0.0629
+        }
+      },
+      "cargo_noslip_v1-pair_crate": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0523,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.19,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.9,
+          "r2": 0.9
+        },
+        "hold_slip_mm": {
+          "r1": 0.3,
+          "r2": 0.3
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.01,
+          "hold": 0.03
+        },
+        "max_robot_tilt_deg": 0.21,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 219.35
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "cbe25ce78aa7cc99fe9db2e3d4e41ad57152ff001a94250470ae6c4d846ba0c7",
+        "failure_detail": {
+          "hold_min_z_m": 0.0498
+        }
+      },
+      "cargo_noslip_v1-solo_box": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0675,
+        "placement": {
+          "pos_err_m": 0.0009,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 6.36,
+          "hold": 6.2
+        },
+        "max_robot_tilt_deg": 0.04,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.19,
+            5.19
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 306.41
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "3b2e35f61049bb9ac478f5c700281cd27f5089e0eed398cdc5d2287fc2fc7961",
+        "failure_detail": {
+          "hold_min_z_m": 0.0675
+        }
+      },
+      "cargo_noslip_v1-solo_can": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0651,
+        "placement": {
+          "pos_err_m": 0.0024,
+          "yaw_err_deg": 0.03,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 5.07,
+          "hold": 4.91
+        },
+        "max_robot_tilt_deg": 0.05,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 4.32,
+              "max_total_n": 8.69,
+              "mean_total_n": 8.68
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 4.34,
+              "max_total_n": 8.68,
+              "mean_total_n": 8.68
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            4.34,
+            4.35
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 297.38
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "4543f9587a252ec26be862f5aec5d68cdae60ab53a45f22d4155c5ef6f53765a",
+        "failure_detail": {
+          "hold_min_z_m": 0.065
+        }
+      },
+      "cargo_noslip_v1-solo_tile": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0735,
+        "placement": {
+          "pos_err_m": 0.0051,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 6.25,
+          "hold": 5.35
+        },
+        "max_robot_tilt_deg": 0.88,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 4.1,
+              "max_total_n": 10.65,
+              "mean_total_n": 10.4
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.29,
+              "max_total_n": 10.58,
+              "mean_total_n": 10.58
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            4.1,
+            4.15
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 287.03
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "3411c5739b15629d1875596530633270c61e87a75d639e65f079bf70a4a4495a",
+        "failure_detail": {
+          "hold_min_z_m": 0.0731
+        }
+      },
+      "cargo_noslip_v1-trio_frame": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0514,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.15,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 1.1,
+          "r2": 1.1,
+          "r3": 1.2
+        },
+        "hold_slip_mm": {
+          "r1": 0.51,
+          "r2": 0.45,
+          "r3": 0.45
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0
+        },
+        "max_robot_tilt_deg": 0.23,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ],
+          "r3": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 138.26,
+          "end": 196.68
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "4bc9c76dd855a3fbe56caa1a52f61f57fe23a4542bd8d69684b3d4d8491a47c2",
+        "failure_detail": {
+          "hold_min_z_m": 0.048
+        }
+      },
+      "local_contact_fine-pair_beam": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0621,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 8.5,
+          "r2": 8.5
+        },
+        "hold_slip_mm": {
+          "r1": 8.2,
+          "r2": 8.2
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0
+        },
+        "max_robot_tilt_deg": 0.08,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.36,
+            5.36
+          ],
+          "r2": [
+            5.36,
+            5.36
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 412.68
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+        "failure_detail": {
+          "hold_min_z_m": 0.0544
+        }
+      },
+      "local_contact_fine-pair_crate": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0504,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 24.8,
+          "r2": 24.8
+        },
+        "hold_slip_mm": {
+          "r1": 24.2,
+          "r2": 24.2
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0
+        },
+        "max_robot_tilt_deg": 2.17,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.77
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.77
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 398.35
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+        "failure_detail": {
+          "hold_min_z_m": 0.0249
+        }
+      },
+      "local_contact_fine-solo_box": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0675,
+        "placement": {
+          "pos_err_m": 0.0002,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 2.0
+        },
+        "hold_slip_mm": {
+          "r1": 2.01
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 6.37,
+          "hold": 6.46
+        },
+        "max_robot_tilt_deg": 0.04,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.19,
+            5.19
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 505.7
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "430d39c380a2a36e606ce7d1fe3e06b4925adf16e2eae2355997ea11751849e9",
+        "failure_detail": {
+          "hold_min_z_m": 0.0654
+        }
+      },
+      "local_contact_fine-solo_can": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.065,
+        "placement": {
+          "pos_err_m": 0.0013,
+          "yaw_err_deg": 0.05,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 4.8
+        },
+        "hold_slip_mm": {
+          "r1": 4.72
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 5.09,
+          "hold": 4.94
+        },
+        "max_robot_tilt_deg": 0.05,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 4.34,
+              "max_total_n": 8.69,
+              "mean_total_n": 8.68
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 4.27,
+              "max_total_n": 8.69,
+              "mean_total_n": 8.66
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            4.34,
+            4.34
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 412.68
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "8f6236b3ecfe9072eeec52ce7f93d20c8d7f2fd9b5e8fbab05d776246ccb2154",
+        "failure_detail": {
+          "hold_min_z_m": 0.0605
+        }
+      },
+      "local_contact_fine-solo_tile": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0745,
+        "placement": {
+          "pos_err_m": 0.0025,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 2.1
+        },
+        "hold_slip_mm": {
+          "r1": 1.99
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 6.27,
+          "hold": 4.39
+        },
+        "max_robot_tilt_deg": 0.44,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.29,
+              "max_total_n": 10.58,
+              "mean_total_n": 10.58
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.15,
+              "max_total_n": 10.58,
+              "mean_total_n": 10.38
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.29,
+            5.29
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 505.65
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "e0cc4f160e07178ecc6fe04c98c2adb742be8e034599c094bbd92e80e8daaead",
+        "failure_detail": {
+          "hold_min_z_m": 0.0745
+        }
+      },
+      "local_contact_fine-trio_frame": {
+        "success": false,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.049,
+        "placement": {
+          "pos_err_m": 0.0,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 27.5,
+          "r2": 27.5,
+          "r3": 27.5
+        },
+        "hold_slip_mm": {
+          "r1": 26.9,
+          "r2": 26.9,
+          "r3": 26.9
+        },
+        "hold_measured_s": 59.88,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0
+        },
+        "max_robot_tilt_deg": 2.28,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.77
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.77
+            },
+            "r3": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.77
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ],
+          "r3": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 60.0,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 76.8,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 337.85
+        },
+        "legs": [],
+        "target_pose": [
+          2.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+        "failure_detail": {
+          "hold_min_z_m": 0.0203
+        }
+      }
+    },
+    "long_route": {
+      "cargo_noslip_v1-pair_beam_long": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0629,
+        "placement": {
+          "pos_err_m": 0.0027,
+          "yaw_err_deg": 0.02,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.6,
+          "r2": 0.6
+        },
+        "hold_slip_mm": {
+          "r1": 0.2,
+          "r2": 0.2
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.01,
+          "carry": 0.02
+        },
+        "max_robot_tilt_deg": 0.13,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.36,
+            5.36
+          ],
+          "r2": [
+            5.36,
+            5.36
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.042,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 96.8,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 115.2,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 211.08
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "a01ca4d188022224b5fb7c41604b7ccd576b24879d904c3b9d7452f6a6f7609b",
+        "failure_detail": {
+          "hold_min_z_m": 0.0613,
+          "finish_track_err_m": 0.0101
+        },
+        "video": "media/slip-long-cargo_noslip_v1-pair_beam_long.mp4"
+      },
+      "cargo_noslip_v1-pair_crate_long": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0523,
+        "placement": {
+          "pos_err_m": 0.0044,
+          "yaw_err_deg": 0.16,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.9,
+          "r2": 0.9
+        },
+        "hold_slip_mm": {
+          "r1": 0.2,
+          "r2": 0.2
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.01,
+          "hold": 0.01,
+          "carry": 0.03
+        },
+        "max_robot_tilt_deg": 0.21,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0419,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 97.2,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 115.6,
+        "load_avg_1m": {
+          "start": 138.26,
+          "end": 212.2
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "f0c3a944fd97345d4065f42c6c60293460ed0f0c531f222daca2b7121311bb27",
+        "failure_detail": {
+          "hold_min_z_m": 0.0508,
+          "finish_track_err_m": 0.0176
+        },
+        "video": "media/slip-long-cargo_noslip_v1-pair_crate_long.mp4"
+      },
+      "cargo_noslip_v1-trio_frame_long": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0514,
+        "placement": {
+          "pos_err_m": 0.0042,
+          "yaw_err_deg": 0.12,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 1.1,
+          "r2": 1.1,
+          "r3": 1.2
+        },
+        "hold_slip_mm": {
+          "r1": 0.2,
+          "r2": 0.22,
+          "r3": 0.22
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0,
+          "carry": 0.01
+        },
+        "max_robot_tilt_deg": 0.23,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ],
+          "r3": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0442,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 99.2,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 117.6,
+        "load_avg_1m": {
+          "start": 146.48,
+          "end": 211.74
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "f759a0f181f4c2ac06572397c871faa9b4e5ab38c01909bc5829261e7fb6f364",
+        "failure_detail": {
+          "hold_min_z_m": 0.0494,
+          "finish_track_err_m": 0.0188
+        },
+        "video": "media/slip-long-cargo_noslip_v1-trio_frame_long.mp4"
+      },
+      "local_contact_fine-pair_beam_long": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0622,
+        "placement": {
+          "pos_err_m": 0.0025,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 13.8,
+          "r2": 13.8
+        },
+        "hold_slip_mm": {
+          "r1": 0.2,
+          "r2": 0.2
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0,
+          "carry": 0.0
+        },
+        "max_robot_tilt_deg": 0.08,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            },
+            "r2": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.36,
+            5.36
+          ],
+          "r2": [
+            5.36,
+            5.36
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0423,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 96.8,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 115.2,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 209.5
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "79443c704cb1a936b41a61257bf40bcfe77c2e0df2d13ebc669127d20ee1ff0a",
+        "failure_detail": {
+          "hold_min_z_m": 0.0619,
+          "finish_track_err_m": 0.0096
+        },
+        "video": "media/slip-long-local_contact_fine-pair_beam_long.mp4"
+      },
+      "local_contact_fine-pair_crate_long": {
+        "success": false,
+        "teacher_outcome": "grip_lost_in_transit",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0504,
+        "placement": {
+          "pos_err_m": 0.2525,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 89.2,
+          "r2": 92.9
+        },
+        "hold_slip_mm": {
+          "r1": 0.6,
+          "r2": 0.6
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0,
+          "carry": 4.24
+        },
+        "max_robot_tilt_deg": 7.81,
+        "drop_events": [
+          {
+            "event": "cargo_touched_floor",
+            "t": 101.8
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 101.9
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 102.0
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 102.1
+          }
+        ],
+        "floor_contact_samples_in_carry": 19,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 0.0,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.71
+            },
+            "r2": {
+              "min_finger_n": 0.0,
+              "max_total_n": 11.43,
+              "mean_total_n": 10.72
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0414,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 92.9,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 111.3,
+        "load_avg_1m": {
+          "start": 120.15,
+          "end": 215.52
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "dfb88aba292be1d7963a330bc03c2225f3aed0d21b4694a7db9bd5b39e164b24",
+        "failure_detail": {
+          "hold_min_z_m": 0.0489,
+          "robots": [
+            "r1",
+            "r2"
+          ]
+        },
+        "video": "media/slip-long-local_contact_fine-pair_crate_long.mp4"
+      },
+      "local_contact_fine-trio_frame_long": {
+        "success": false,
+        "teacher_outcome": "grip_lost_in_transit",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.049,
+        "placement": {
+          "pos_err_m": 0.8293,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 90.7,
+          "r2": 90.5,
+          "r3": 90.5
+        },
+        "hold_slip_mm": {
+          "r1": 0.7,
+          "r2": 0.7,
+          "r3": 0.7
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 0.0,
+          "hold": 0.0,
+          "carry": 2.16
+        },
+        "max_robot_tilt_deg": 4.41,
+        "drop_events": [
+          {
+            "event": "cargo_touched_floor",
+            "t": 92.5
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 92.6
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 92.7
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 92.8
+          },
+          {
+            "event": "cargo_touched_floor",
+            "t": 92.9
+          }
+        ],
+        "floor_contact_samples_in_carry": 22,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r2": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            },
+            "r3": {
+              "min_finger_n": 5.38,
+              "max_total_n": 10.76,
+              "mean_total_n": 10.76
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 0.0,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.7
+            },
+            "r2": {
+              "min_finger_n": 0.0,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.71
+            },
+            "r3": {
+              "min_finger_n": 0.0,
+              "max_total_n": 10.99,
+              "mean_total_n": 10.71
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ],
+          "r3": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.043,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 83.7,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 102.1,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 192.47
+        },
+        "legs": [
+          [
+            "move",
+            1.5
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.0
+          ],
+          [
+            "turn",
+            -1.5707963267948966
+          ],
+          [
+            "move",
+            1.5
+          ]
+        ],
+        "target_pose": [
+          2.3,
+          -0.4,
+          -3.1416
+        ],
+        "contact_profile": "local_contact_fine",
+        "contact_profile_record": null,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "f074d46aa0da38cab7067e3faa0dda56b0c70316216cdfb8460477b7a98f31cc",
+        "failure_detail": {
+          "hold_min_z_m": 0.047,
+          "robots": [
+            "r1",
+            "r2",
+            "r3"
+          ]
+        },
+        "video": "media/slip-long-local_contact_fine-trio_frame_long.mp4"
+      }
+    },
+    "fewer_robots": {
+      "cargo_noslip_v1-duo_frame": {
+        "success": false,
+        "teacher_outcome": "carry_timeout",
+        "lifted_clear": false,
+        "max_lift_min_z_m": 0.0008,
+        "placement": {
+          "pos_err_m": 0.9394,
+          "yaw_err_deg": 28.21,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 4.0,
+          "r2": 4.2
+        },
+        "hold_slip_mm": {
+          "r1": 0.1,
+          "r2": 0.1
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 6.87,
+          "hold": 6.84,
+          "carry": 6.87
+        },
+        "max_robot_tilt_deg": 1.44,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 6580,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 0.0,
+              "max_total_n": 18.24,
+              "mean_total_n": 9.61
+            },
+            "r2": {
+              "min_finger_n": 0.0,
+              "max_total_n": 48.03,
+              "mean_total_n": 11.1
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.02,
+              "max_total_n": 10.9,
+              "mean_total_n": 10.74
+            },
+            "r2": {
+              "min_finger_n": 5.41,
+              "max_total_n": 11.73,
+              "mean_total_n": 11.57
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.14,
+              "max_total_n": 12.07,
+              "mean_total_n": 11.88
+            },
+            "r2": {
+              "min_finger_n": 5.57,
+              "max_total_n": 12.99,
+              "mean_total_n": 12.67
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ],
+          "r2": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0464,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 131.6,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 150.0,
+        "load_avg_1m": {
+          "start": 146.48,
+          "end": 213.34
+        },
+        "legs": [
+          [
+            "move",
+            0.8
+          ],
+          [
+            "turn",
+            1.5707963267948966
+          ],
+          [
+            "move",
+            0.5
+          ]
+        ],
+        "target_pose": [
+          3.3,
+          0.7,
+          1.5708
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "4bc9c76dd855a3fbe56caa1a52f61f57fe23a4542bd8d69684b3d4d8491a47c2",
+        "failure_detail": {
+          "hold_min_z_m": -0.0001,
+          "not_lifted_clear": true
+        },
+        "video": "media/slip-fewer-cargo_noslip_v1-duo_frame.mp4"
+      },
+      "cargo_noslip_v1-solo_beam": {
+        "success": false,
+        "teacher_outcome": "carry_timeout",
+        "lifted_clear": false,
+        "max_lift_min_z_m": 0.0,
+        "placement": {
+          "pos_err_m": 0.9578,
+          "yaw_err_deg": 89.83,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 1.8
+        },
+        "hold_slip_mm": {
+          "r1": 0.5
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 5.44,
+          "hold": 5.78,
+          "carry": 6.32
+        },
+        "max_robot_tilt_deg": 0.22,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 6568,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.35,
+              "max_total_n": 10.72,
+              "mean_total_n": 10.72
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.95,
+              "mean_total_n": 10.95
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.36,
+            5.36
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0476,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 131.6,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 150.0,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 209.1
+        },
+        "legs": [
+          [
+            "move",
+            0.8
+          ],
+          [
+            "turn",
+            1.5707963267948966
+          ],
+          [
+            "move",
+            0.5
+          ]
+        ],
+        "target_pose": [
+          3.3,
+          0.7,
+          1.5708
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "2481fa4e11dab9a21f99d194b2de38aaa17c79573814239397368bc8118df13a",
+        "failure_detail": {
+          "hold_min_z_m": -0.0,
+          "not_lifted_clear": true
+        },
+        "video": "media/slip-fewer-cargo_noslip_v1-solo_beam.mp4"
+      },
+      "cargo_noslip_v1-solo_crate": {
+        "success": false,
+        "teacher_outcome": "carry_timeout",
+        "lifted_clear": false,
+        "max_lift_min_z_m": 0.0,
+        "placement": {
+          "pos_err_m": 0.9632,
+          "yaw_err_deg": 89.88,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 2.2
+        },
+        "hold_slip_mm": {
+          "r1": 0.4
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 10.63,
+          "hold": 11.22,
+          "carry": 13.01
+        },
+        "max_robot_tilt_deg": 3.5,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 6568,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.37,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.36,
+              "max_total_n": 10.75,
+              "mean_total_n": 10.75
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.38,
+            5.38
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0517,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 131.6,
+          "lower": 1.7,
+          "release": 1.0,
+          "retract": 2.3,
+          "back_off": 2.6,
+          "settle": 1.6
+        },
+        "sim_time_s": 150.0,
+        "load_avg_1m": {
+          "start": 138.26,
+          "end": 212.23
+        },
+        "legs": [
+          [
+            "move",
+            0.8
+          ],
+          [
+            "turn",
+            1.5707963267948966
+          ],
+          [
+            "move",
+            0.5
+          ]
+        ],
+        "target_pose": [
+          3.3,
+          0.7,
+          1.5708
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "cbe25ce78aa7cc99fe9db2e3d4e41ad57152ff001a94250470ae6c4d846ba0c7",
+        "failure_detail": {
+          "hold_min_z_m": -0.0,
+          "not_lifted_clear": true
+        },
+        "video": "media/slip-fewer-cargo_noslip_v1-solo_crate.mp4"
+      }
+    },
+    "solo_carry": {
+      "cargo_noslip_v1-solo_box": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0675,
+        "placement": {
+          "pos_err_m": 0.0059,
+          "yaw_err_deg": 0.0,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 6.36,
+          "hold": 6.19,
+          "carry": 6.19
+        },
+        "max_robot_tilt_deg": 0.04,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.19,
+              "max_total_n": 10.38,
+              "mean_total_n": 10.38
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            5.19,
+            5.19
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0284,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 20.0,
+          "lower": 1.6,
+          "release": 0.9,
+          "retract": 2.3,
+          "back_off": 2.5,
+          "settle": 1.5
+        },
+        "sim_time_s": 38.0,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 554.55
+        },
+        "legs": [
+          [
+            "move",
+            1.0
+          ]
+        ],
+        "target_pose": [
+          3.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "3b2e35f61049bb9ac478f5c700281cd27f5089e0eed398cdc5d2287fc2fc7961",
+        "failure_detail": {
+          "hold_min_z_m": 0.0675,
+          "finish_track_err_m": 0.0053
+        }
+      },
+      "cargo_noslip_v1-solo_can": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0651,
+        "placement": {
+          "pos_err_m": 0.0093,
+          "yaw_err_deg": 0.05,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 5.07,
+          "hold": 4.91,
+          "carry": 4.89
+        },
+        "max_robot_tilt_deg": 0.05,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 4.32,
+              "max_total_n": 8.69,
+              "mean_total_n": 8.68
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 4.34,
+              "max_total_n": 8.68,
+              "mean_total_n": 8.68
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 4.34,
+              "max_total_n": 8.68,
+              "mean_total_n": 8.68
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            4.34,
+            4.35
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0284,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 20.0,
+          "lower": 1.6,
+          "release": 0.9,
+          "retract": 2.3,
+          "back_off": 2.5,
+          "settle": 1.5
+        },
+        "sim_time_s": 38.0,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 523.63
+        },
+        "legs": [
+          [
+            "move",
+            1.0
+          ]
+        ],
+        "target_pose": [
+          3.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "4543f9587a252ec26be862f5aec5d68cdae60ab53a45f22d4155c5ef6f53765a",
+        "failure_detail": {
+          "hold_min_z_m": 0.065,
+          "finish_track_err_m": 0.0055
+        }
+      },
+      "cargo_noslip_v1-solo_tile": {
+        "success": true,
+        "teacher_outcome": "completed_sequence",
+        "lifted_clear": true,
+        "max_lift_min_z_m": 0.0735,
+        "placement": {
+          "pos_err_m": 0.0079,
+          "yaw_err_deg": 0.02,
+          "final_tilt_deg": 0.0,
+          "final_min_z_m": -0.0001,
+          "released": true
+        },
+        "max_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_slip_mm": {
+          "r1": 0.0
+        },
+        "hold_measured_s": 1.48,
+        "max_cargo_tilt_deg": {
+          "lift": 6.25,
+          "hold": 4.98,
+          "carry": 5.1
+        },
+        "max_robot_tilt_deg": 0.88,
+        "drop_events": [],
+        "floor_contact_samples_in_carry": 0,
+        "cargo_robot_body_contact_geoms": {},
+        "finger_forces": {
+          "lift": {
+            "r1": {
+              "min_finger_n": 4.1,
+              "max_total_n": 10.65,
+              "mean_total_n": 10.4
+            }
+          },
+          "hold": {
+            "r1": {
+              "min_finger_n": 5.29,
+              "max_total_n": 10.58,
+              "mean_total_n": 10.58
+            }
+          },
+          "carry": {
+            "r1": {
+              "min_finger_n": 5.29,
+              "max_total_n": 10.58,
+              "mean_total_n": 10.58
+            }
+          }
+        },
+        "grasp_forces_n": {
+          "r1": [
+            4.1,
+            4.15
+          ]
+        },
+        "servo_saturated_samples": {},
+        "max_track_err_m": 0.0294,
+        "phase_sim_s": {
+          "approach": 3.1,
+          "grasp": 2.9,
+          "verify": 0.1,
+          "lift": 1.5,
+          "hold": 1.6,
+          "carry": 20.0,
+          "lower": 1.6,
+          "release": 0.9,
+          "retract": 2.3,
+          "back_off": 2.5,
+          "settle": 1.5
+        },
+        "sim_time_s": 38.0,
+        "load_avg_1m": {
+          "start": 129.75,
+          "end": 536.83
+        },
+        "legs": [
+          [
+            "move",
+            1.0
+          ]
+        ],
+        "target_pose": [
+          3.5,
+          0.2,
+          0.0
+        ],
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_record": {
+          "name": "cargo_noslip_v1",
+          "version": 1,
+          "base": "local_contact_fine",
+          "option": {
+            "noslip_iterations": "10"
+          },
+          "scope": "global solver option (all contacts)",
+          "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+          "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+        },
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10,
+          "iterations": 80
+        },
+        "weld": "off",
+        "eq_active_max": 0,
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "scene_xml_sha256": "3411c5739b15629d1875596530633270c61e87a75d639e65f079bf70a4a4495a",
+        "failure_detail": {
+          "hold_min_z_m": 0.0732,
+          "finish_track_err_m": 0.0053
+        }
+      }
+    },
+    "drive_check": {
+      "cargo_noslip_v1": {
+        "schema": "ugrp.zone_cargo_drive_check.v1",
+        "contact_profile": "cargo_noslip_v1",
+        "contact_variant": "baseline",
+        "script": [
+          [
+            "forward",
+            0.1,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "left",
+            0.08,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "turn",
+            0.12,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "forward",
+            -0.05,
+            3.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ]
+        ],
+        "segments": [
+          {
+            "segment": "forward",
+            "command": 0.1,
+            "end_t": 5.3,
+            "pose": [
+              2.96929,
+              0.2,
+              -0.0
+            ],
+            "vel_xy_mps": [
+              0.14841,
+              -0.0
+            ],
+            "yaw_rate": -0.0
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 7.3,
+            "pose": [
+              2.98659,
+              0.2,
+              -0.0
+            ],
+            "vel_xy_mps": [
+              -0.0,
+              -0.0
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "left",
+            "command": 0.08,
+            "end_t": 11.3,
+            "pose": [
+              2.98708,
+              0.472,
+              -0.00279
+            ],
+            "vel_xy_mps": [
+              0.00022,
+              0.08607
+            ],
+            "yaw_rate": -0.00023
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 13.3,
+            "pose": [
+              2.98711,
+              0.48198,
+              -0.00259
+            ],
+            "vel_xy_mps": [
+              0.0,
+              0.0
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "turn",
+            "command": 0.12,
+            "end_t": 17.3,
+            "pose": [
+              2.98729,
+              0.48153,
+              0.64489
+            ],
+            "vel_xy_mps": [
+              7e-05,
+              -6e-05
+            ],
+            "yaw_rate": 0.16811
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 19.3,
+            "pose": [
+              2.98729,
+              0.48153,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              -0.0,
+              0.0
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "forward",
+            "command": -0.05,
+            "end_t": 22.3,
+            "pose": [
+              2.86614,
+              0.38829,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              -0.05479,
+              -0.04217
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 24.3,
+            "pose": [
+              2.85977,
+              0.3834,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              -0.0,
+              -0.0
+            ],
+            "yaw_rate": 0.0
+          }
+        ],
+        "max_zone_box_drift_m": 0.0,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 10
+        },
+        "scene_xml_sha256": "3cb50157c3922aa79331f03aefd7c158bffdbd9a4affa239f218341dd616f50a",
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "load_avg_1m": {
+          "start": 86.29,
+          "end": 518.5
+        }
+      },
+      "local_contact_fine": {
+        "schema": "ugrp.zone_cargo_drive_check.v1",
+        "contact_profile": "local_contact_fine",
+        "contact_variant": "baseline",
+        "script": [
+          [
+            "forward",
+            0.1,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "left",
+            0.08,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "turn",
+            0.12,
+            4.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ],
+          [
+            "forward",
+            -0.05,
+            3.0
+          ],
+          [
+            "stop",
+            0.0,
+            2.0
+          ]
+        ],
+        "segments": [
+          {
+            "segment": "forward",
+            "command": 0.1,
+            "end_t": 5.3,
+            "pose": [
+              2.96929,
+              0.2,
+              -0.0
+            ],
+            "vel_xy_mps": [
+              0.14841,
+              -0.0
+            ],
+            "yaw_rate": -0.0
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 7.3,
+            "pose": [
+              2.98659,
+              0.2,
+              -0.0
+            ],
+            "vel_xy_mps": [
+              -0.0,
+              0.0
+            ],
+            "yaw_rate": -0.0
+          },
+          {
+            "segment": "left",
+            "command": 0.08,
+            "end_t": 11.3,
+            "pose": [
+              2.98708,
+              0.472,
+              -0.00279
+            ],
+            "vel_xy_mps": [
+              0.00022,
+              0.08607
+            ],
+            "yaw_rate": -0.00023
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 13.3,
+            "pose": [
+              2.98711,
+              0.48198,
+              -0.00259
+            ],
+            "vel_xy_mps": [
+              0.0,
+              -0.0
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "turn",
+            "command": 0.12,
+            "end_t": 17.3,
+            "pose": [
+              2.98729,
+              0.48153,
+              0.64489
+            ],
+            "vel_xy_mps": [
+              7e-05,
+              -6e-05
+            ],
+            "yaw_rate": 0.16811
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 19.3,
+            "pose": [
+              2.98729,
+              0.48153,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              -0.0,
+              -0.0
+            ],
+            "yaw_rate": -0.0
+          },
+          {
+            "segment": "forward",
+            "command": -0.05,
+            "end_t": 22.3,
+            "pose": [
+              2.86614,
+              0.38829,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              -0.05479,
+              -0.04217
+            ],
+            "yaw_rate": 0.0
+          },
+          {
+            "segment": "stop",
+            "command": 0.0,
+            "end_t": 24.3,
+            "pose": [
+              2.85977,
+              0.3834,
+              0.65594
+            ],
+            "vel_xy_mps": [
+              0.0,
+              0.0
+            ],
+            "yaw_rate": -0.0
+          }
+        ],
+        "max_zone_box_drift_m": 0.0,
+        "solver_options": {
+          "cone": 1,
+          "impratio": 1.0,
+          "noslip_iterations": 0
+        },
+        "scene_xml_sha256": "b7dc69cac432193aaeaec8151b5051080654af4d1413c2c8aea78a76bd02da47",
+        "git_sha": "8886cf575884e3444bda1ca1ddcc2cce2564bc4f",
+        "git_dirty": false,
+        "load_avg_1m": {
+          "start": 86.29,
+          "end": 461.21
+        }
+      }
+    },
+    "capacity_sweep_cargo_noslip_v1": {
+      "schema": "ugrp.zone_cargo_capacity.v1",
+      "rows": [
+        {
+          "mass_kg": 0.03,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0675,
+          "max_robot_tilt_deg": 0.04,
+          "max_slip_mm": {
+            "r1": 0.0
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 6.36,
+            "hold": 6.19,
+            "carry": 6.19
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 129.75,
+            "end": 566.94
+          }
+        },
+        {
+          "mass_kg": 0.3,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0559,
+          "max_robot_tilt_deg": 0.12,
+          "max_slip_mm": {
+            "r1": 0.0
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 6.04,
+            "hold": 0.86,
+            "carry": 0.54
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 564.91,
+            "end": 335.06
+          }
+        },
+        {
+          "mass_kg": 0.5,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0469,
+          "max_robot_tilt_deg": 0.17,
+          "max_slip_mm": {
+            "r1": 0.0
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0125
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 9.46,
+            "hold": 4.95,
+            "carry": 4.5
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 322.65,
+            "end": 262.91
+          }
+        },
+        {
+          "mass_kg": 0.6,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0429,
+          "max_robot_tilt_deg": 0.2,
+          "max_slip_mm": {
+            "r1": 0.1
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0125
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 11.0,
+            "hold": 6.89,
+            "carry": 6.18
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 260.6,
+            "end": 211.55
+          }
+        },
+        {
+          "mass_kg": 0.62,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0421,
+          "max_robot_tilt_deg": 0.24,
+          "max_slip_mm": {
+            "r1": 0.1
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0125
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 11.28,
+            "hold": 7.23,
+            "carry": 6.49
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 209.5,
+            "end": 189.49
+          }
+        },
+        {
+          "mass_kg": 0.64,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0413,
+          "max_robot_tilt_deg": 0.34,
+          "max_slip_mm": {
+            "r1": 0.1
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 11.62,
+            "hold": 7.57,
+            "carry": 6.8
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 190.65,
+            "end": 209.8
+          }
+        },
+        {
+          "mass_kg": 0.66,
+          "success": true,
+          "teacher_outcome": "completed_sequence",
+          "lifted_clear": true,
+          "hold_min_z_m": 0.0406,
+          "max_robot_tilt_deg": 1.19,
+          "max_slip_mm": {
+            "r1": 0.1
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 12.02,
+            "hold": 7.75,
+            "carry": 7.1
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 34.5,
+          "load_avg_1m": {
+            "start": 209.1,
+            "end": 177.15
+          }
+        },
+        {
+          "mass_kg": 0.68,
+          "success": false,
+          "teacher_outcome": "not_lifted_clear",
+          "lifted_clear": false,
+          "hold_min_z_m": -0.0003,
+          "max_robot_tilt_deg": 40.16,
+          "max_slip_mm": {
+            "r1": 0.4
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0376
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 31.52,
+            "hold": 27.66
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 24.5,
+          "load_avg_1m": {
+            "start": 177.15,
+            "end": 211.89
+          }
+        },
+        {
+          "mass_kg": 0.7,
+          "success": false,
+          "teacher_outcome": "not_lifted_clear",
+          "lifted_clear": false,
+          "hold_min_z_m": -0.0003,
+          "max_robot_tilt_deg": 36.6,
+          "max_slip_mm": {
+            "r1": 0.4
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0376
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 31.23,
+            "hold": 26.9
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 24.5,
+          "load_avg_1m": {
+            "start": 211.89,
+            "end": 197.86
+          }
+        },
+        {
+          "mass_kg": 0.8,
+          "success": false,
+          "teacher_outcome": "not_lifted_clear",
+          "lifted_clear": false,
+          "hold_min_z_m": -0.0003,
+          "max_robot_tilt_deg": 34.35,
+          "max_slip_mm": {
+            "r1": 0.5
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.0627
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 27.62,
+            "hold": 26.51
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 24.5,
+          "load_avg_1m": {
+            "start": 205.88,
+            "end": 186.87
+          }
+        },
+        {
+          "mass_kg": 1.0,
+          "success": false,
+          "teacher_outcome": "not_lifted_clear",
+          "lifted_clear": false,
+          "hold_min_z_m": -0.0004,
+          "max_robot_tilt_deg": 34.04,
+          "max_slip_mm": {
+            "r1": 0.9
+          },
+          "hold_creep_mm_per_s": {
+            "r1": 0.1003
+          },
+          "max_cargo_tilt_deg": {
+            "lift": 26.45,
+            "hold": 25.78
+          },
+          "servo_saturated_samples": {},
+          "sim_time_s": 24.5,
+          "load_avg_1m": {
+            "start": 186.87,
+            "end": 124.72
+          }
+        }
+      ],
+      "contact_profile": "cargo_noslip_v1",
+      "single_robot_capacity_kg": 0.66,
+      "first_failing_mass_kg": 0.68,
+      "hold_s": 8.0,
+      "criterion": "lift clear >= 12 mm for the 8 s hold, carry 0.5 m, place within 5 cm, robot tilt < 10 deg, weld off"
+    },
+    "drive_check_max_abs_difference": 0.0
+  },
+  "driver_log": [
+    "start 2026-09-25T08:59:37Z sha 8886cf5 dirty=0 load { 79.79 116.48 95.16 }",
+    "drive-local_contact_fine exit 0 load { 461.21 305.09 184.66 }",
+    "drive-cargo_noslip_v1 exit 0 load { 518.50 370.12 224.54 }",
+    "solo-cargo_noslip_v1-solo_box exit 0 load { 554.55 447.44 279.15 }",
+    "solo-cargo_noslip_v1-solo_tile exit 0 load { 536.83 448.80 282.57 }",
+    "solo-cargo_noslip_v1-solo_can exit 0 load { 523.63 450.17 285.97 }",
+    "hold60-local_contact_fine-solo_box exit 0 load { 505.65 461.44 308.34 }",
+    "hold60-local_contact_fine-solo_tile exit 0 load { 505.65 461.44 308.34 }",
+    "hold60-local_contact_fine-pair_beam exit 0 load { 412.68 442.97 310.24 }",
+    "hold60-local_contact_fine-solo_can exit 0 load { 403.26 440.51 310.15 }",
+    "hold60-local_contact_fine-pair_crate exit 0 load { 398.35 438.88 310.34 }",
+    "hold60-local_contact_fine-trio_frame exit 0 load { 337.85 411.98 311.02 }",
+    "hold60-cargo_noslip_v1-solo_box exit 0 load { 306.41 391.93 309.36 }",
+    "hold60-cargo_noslip_v1-solo_tile exit 0 load { 287.03 380.55 307.65 }",
+    "hold60-cargo_noslip_v1-solo_can exit 0 load { 297.38 359.94 306.17 }",
+    "hold60-cargo_noslip_v1-pair_beam exit 0 load { 266.95 340.01 302.39 }",
+    "hold60-cargo_noslip_v1-pair_crate exit 0 load { 219.35 302.36 292.27 }",
+    "long-local_contact_fine-pair_crate_long exit 0 load { 214.04 285.08 286.45 }",
+    "long-local_contact_fine-pair_beam_long exit 0 load { 209.50 281.77 285.26 }",
+    "long-local_contact_fine-trio_frame_long exit 0 load { 187.31 259.91 276.71 }",
+    "hold60-cargo_noslip_v1-trio_frame exit 0 load { 200.23 245.58 269.65 }",
+    "long-cargo_noslip_v1-pair_beam_long exit 0 load { 211.08 240.44 266.08 }",
+    "long-cargo_noslip_v1-pair_crate_long exit 0 load { 212.20 239.70 265.52 }",
+    "fewer-cargo_noslip_v1-solo_crate exit 0 load { 212.23 238.82 264.91 }",
+    "fewer-cargo_noslip_v1-solo_beam exit 0 load { 209.10 237.26 264.05 }",
+    "fewer-cargo_noslip_v1-duo_frame exit 0 load { 213.34 225.80 255.73 }",
+    "long-cargo_noslip_v1-trio_frame_long exit 0 load { 211.74 223.46 253.64 }",
+    "sweep-cargo_noslip_v1 exit 0 load { 124.72 199.23 243.03 }",
+    "end 2026-09-25T09:27:15Z"
+  ],
+  "raw_root_local_only": "/Users/changmin/projects/ugrp-worktrees/zone-cargo/outputs/zone-cargo/slip-8886cf5",
+  "raw_files_sha256": {
+    "diag-1/baseline/result.json": "0c24d8e5a9e09f0f11084567ab9edaebe168b729f0d9480765e0d4e506b999c4",
+    "diag-1/cone_pyramidal/result.json": "b6ad079c9bf0a63dd5df46d52d75863260f5b3d0cdffbb5dd005b4a27da0a641",
+    "diag-1/gripper_kp_x2/result.json": "ec74e2b63031db58264cfff7260c859efe5d5d50725c8aa61f8832303fa9adb7",
+    "diag-1/impratio_10/result.json": "3280d6134dd3d8e951b158fc18e29b78882c01702a98a8f542c2ac69469aea17",
+    "diag-1/noslip_10/result.json": "0671720b6e753fa8d021433e406262bd80ea3c27ed6dd88cc74488f26f6a77da",
+    "diag-1/pair_condim_6/result.json": "afea66f9e4b7cc35a68374bdcb9203ebc00e17d567027a3b14e49e4a17a24550",
+    "diag-1/pair_friction_x2/result.json": "e35e1885074603ef0d0acc3119e1a5090e3f5fc3287bfa74d4a1947ef8258df3",
+    "diag-1/pair_frictiondamp_x10.log": "f27db6df83a3a26c9249a71dd480d0b10cf6c7e4387b69751972f598262ee35d",
+    "diag-1/pair_solimp_hard/result.json": "b8f20a2f0a628fa4b037ccf81de1af9e0ebae199d27dd2198a96e59644f400f5",
+    "diag-1/pair_solref_stiff/result.json": "85952f0a89104388c627438a3072110ac907434fb26972ef0711a6dfe2ad1bcd",
+    "diag-1/driver.log": "69297237378f62f754ab79acf4febdfedba25ad0aaaea8f164866bdcb5d09654",
+    "diag-2/noslip_2/result.json": "3a0adff67f3d850158fcf9e35c98cd3842122607f60f4dedc1c87cf4ff29b8fb",
+    "diag-2/noslip_4/result.json": "458cd0f4d70231446db0d0ede0f842a5403b4fda372c1d71488f83f655ffaa11",
+    "diag-2/pair_frictiondamp_x2.log": "8d79892d37c58cf63a67e9680241c8f8fad4c41102a153ba79d3fbc2b162b4e4",
+    "diag-2/pair_solimp_vhard/result.json": "8195a11cfc130c132a54b56cda838c5c40be35e0ae4c7101796f0f0c7a022bf1",
+    "diag-2/driver.log": "ed4fdfe9428510cbaa9757a87a8d59ff6be1b1c28d4a8347db35f6fda4482e04",
+    "slip-8886cf5/drive-cargo_noslip_v1/result.json": "f0e3dcf5bfb7d7d53c0a9872274a8eb392243e1c196d9be2ee20bff896ed1f3d",
+    "slip-8886cf5/drive-local_contact_fine/result.json": "ccde9613b7899f604f3d0b36e6fd85dcf64ed1070a446bac0fdb70a8a414dda2",
+    "slip-8886cf5/fewer-cargo_noslip_v1-duo_frame/duo_frame.mp4": "b0c57a7e11b180ab4fab82fefb8642bef209712498d3e0388c9e801ceafc2be7",
+    "slip-8886cf5/fewer-cargo_noslip_v1-duo_frame/events.json": "4262e2d4aa861377d8fc069cd869fb8f8aa92c76f697d790d641d965ef06b0b3",
+    "slip-8886cf5/fewer-cargo_noslip_v1-duo_frame/result.json": "69af47fbe89d8532f348867ecefb5e6fac73357f603825713093802165455418",
+    "slip-8886cf5/fewer-cargo_noslip_v1-duo_frame/scene.xml": "4bc9c76dd855a3fbe56caa1a52f61f57fe23a4542bd8d69684b3d4d8491a47c2",
+    "slip-8886cf5/fewer-cargo_noslip_v1-duo_frame/trace.jsonl": "9e36fed301068bd5d5d5bfc3a36b8f1efe7136ec8f716916b75922811ab67ce4",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_beam/events.json": "28de42186d53acd5ed971c8164a1829df06d475b3f17e77d44e27f1d22085f89",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_beam/result.json": "558d8e2ba7a0e5346a04d8ed302d2b8b6e6711a9dc31d650e9fd23495f8af6e9",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_beam/scene.xml": "2481fa4e11dab9a21f99d194b2de38aaa17c79573814239397368bc8118df13a",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_beam/solo_beam.mp4": "67587feb0df6b4f5ae3792f665ed339d1e315c2f6dff21fbf9210801bdf61375",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_beam/trace.jsonl": "eda26de6b0df6cb387d34cedcb5d5a23d11710589207a7e62d779b91200c3311",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_crate/events.json": "28de42186d53acd5ed971c8164a1829df06d475b3f17e77d44e27f1d22085f89",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_crate/result.json": "e7909848d2ab93437ff4744644d2dc8de2be97cebf2e04801bd29aac44d305fe",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_crate/scene.xml": "cbe25ce78aa7cc99fe9db2e3d4e41ad57152ff001a94250470ae6c4d846ba0c7",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_crate/solo_crate.mp4": "f8211a46744d256585021ce09827b133be01b10df5c1af415432de0d509305f6",
+    "slip-8886cf5/fewer-cargo_noslip_v1-solo_crate/trace.jsonl": "8bd3772d8f813ec17a4b2f4bed2285d40191af9249702bec7f7bb32b7e2b0cdf",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_beam/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_beam/result.json": "cb56376f016b29931cc8a15ec6cf6bfca35e503e585649285c5e591b2bda4d5d",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_beam/scene.xml": "2481fa4e11dab9a21f99d194b2de38aaa17c79573814239397368bc8118df13a",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_beam/trace.jsonl": "713d8e02a2e613cf017aae6d615627dcd4eead60ec44888c1f6ba7bc1800081b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_crate/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_crate/result.json": "348a64bbd2ee3d026ef3ba75a358d320dfaa8929b75382105e620a7678743444",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_crate/scene.xml": "cbe25ce78aa7cc99fe9db2e3d4e41ad57152ff001a94250470ae6c4d846ba0c7",
+    "slip-8886cf5/hold60-cargo_noslip_v1-pair_crate/trace.jsonl": "8093335822afcac2301b428faf587874ffeb7d3bc4ffde8d67ae4b465faee6de",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_box/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_box/result.json": "8a86f003cab435156c56e5259e353aeb49bca1c447b7f2ff723f49d430c39ed1",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_box/scene.xml": "3b2e35f61049bb9ac478f5c700281cd27f5089e0eed398cdc5d2287fc2fc7961",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_box/trace.jsonl": "78729983b17fbdb38713df4ffd916641bc32ce3cceb543f87055738e69710170",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_can/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_can/result.json": "07487964c067d19bda78e47ee16e7782f8b6184df9890027907582c9228738a4",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_can/scene.xml": "4543f9587a252ec26be862f5aec5d68cdae60ab53a45f22d4155c5ef6f53765a",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_can/trace.jsonl": "82f44e8f1f1f86cee1159331fd549426f1661ff9d23257679af7b89c7ed9107e",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_tile/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_tile/result.json": "3afb0dbebe3765f1bbea19cef785b82131c08cd1e5f427652dc86750e0de5e90",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_tile/scene.xml": "3411c5739b15629d1875596530633270c61e87a75d639e65f079bf70a4a4495a",
+    "slip-8886cf5/hold60-cargo_noslip_v1-solo_tile/trace.jsonl": "3b0f5258140d3ad17194682236d6ac5cf61f793a5a16587c25bc9fd30d8a9584",
+    "slip-8886cf5/hold60-cargo_noslip_v1-trio_frame/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-cargo_noslip_v1-trio_frame/result.json": "0c5413240fd742cde8751ce8958a066f94867b1ed9d502a7081e4df6dccf5558",
+    "slip-8886cf5/hold60-cargo_noslip_v1-trio_frame/scene.xml": "4bc9c76dd855a3fbe56caa1a52f61f57fe23a4542bd8d69684b3d4d8491a47c2",
+    "slip-8886cf5/hold60-cargo_noslip_v1-trio_frame/trace.jsonl": "a99d47209fd88a3d1920bd9d496199e13280025ba50c1825b40210f59ff335a7",
+    "slip-8886cf5/hold60-local_contact_fine-pair_beam/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-pair_beam/result.json": "b3847116983dc6307ccf7279e22ab8fb8f606c109f405a83df3155195c57f217",
+    "slip-8886cf5/hold60-local_contact_fine-pair_beam/scene.xml": "4e2e05cba14b50bf8f46968879f0e5cb5f4b19c4265704e7a7be361d6f1c49cd",
+    "slip-8886cf5/hold60-local_contact_fine-pair_beam/trace.jsonl": "abf2b16fbe3f72b486a05dbc48aff01f26d43954c7c270ab09b5f071afa77949",
+    "slip-8886cf5/hold60-local_contact_fine-pair_crate/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-pair_crate/result.json": "58b2ef726502349e121f5d98a3aed8a99bff698a7b5bd813b35329562635a08a",
+    "slip-8886cf5/hold60-local_contact_fine-pair_crate/scene.xml": "cbfc709b5c32b4bd328f164dd98757ff1ac38e690bc8a2935d7b29824c30eeb9",
+    "slip-8886cf5/hold60-local_contact_fine-pair_crate/trace.jsonl": "0be3d8e192ce1bfbe84ae345670e9f1703dec24b190acd7ab16d53f24b06a0cb",
+    "slip-8886cf5/hold60-local_contact_fine-solo_box/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-solo_box/result.json": "af970ddfae8f5d1fb2bd795dd177a4af11f80844008d7856888e9d2a0ce9d559",
+    "slip-8886cf5/hold60-local_contact_fine-solo_box/scene.xml": "430d39c380a2a36e606ce7d1fe3e06b4925adf16e2eae2355997ea11751849e9",
+    "slip-8886cf5/hold60-local_contact_fine-solo_box/trace.jsonl": "aba06828757eac0889493a4311880fbb06dff90c4a8a72a808e01c54aa280fa8",
+    "slip-8886cf5/hold60-local_contact_fine-solo_can/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-solo_can/result.json": "8d40d51bd40c3e88697ff14520e9a8dac3d9fad46ed814f3013ee50ecdfee530",
+    "slip-8886cf5/hold60-local_contact_fine-solo_can/scene.xml": "8f6236b3ecfe9072eeec52ce7f93d20c8d7f2fd9b5e8fbab05d776246ccb2154",
+    "slip-8886cf5/hold60-local_contact_fine-solo_can/trace.jsonl": "f87d98d8cb24afbfc784779b142924314d300516ec73691c882cd3674e5bf1d6",
+    "slip-8886cf5/hold60-local_contact_fine-solo_tile/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-solo_tile/result.json": "0ee66d33fa41b2f1da3148d234838f50b6c12b38f81c430b05c0880454c889bc",
+    "slip-8886cf5/hold60-local_contact_fine-solo_tile/scene.xml": "e0cc4f160e07178ecc6fe04c98c2adb742be8e034599c094bbd92e80e8daaead",
+    "slip-8886cf5/hold60-local_contact_fine-solo_tile/trace.jsonl": "ccc59dfe95a94c092a6c5fc0590cd6ab9fdb0e1bba78037c5e5b2e0a8f38e9ae",
+    "slip-8886cf5/hold60-local_contact_fine-trio_frame/events.json": "4a4b273464cdb69bcfbadbafefdb030059b2418219c52b1d208a46d80e669e3b",
+    "slip-8886cf5/hold60-local_contact_fine-trio_frame/result.json": "e589facf5cf25d1a420843478fe009be07e8fc4d1a522398ea9c498f3279fd60",
+    "slip-8886cf5/hold60-local_contact_fine-trio_frame/scene.xml": "9e66b4f1ec1d2a93e644835bd6fa3675a83d2e34425ca1fb77fd99c059c450f7",
+    "slip-8886cf5/hold60-local_contact_fine-trio_frame/trace.jsonl": "da0fd26c8578cdedee1bb674ee8239612221acbcad64c56ac613ebf1874caca9",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_beam_long/events.json": "f0359ebcfe7a6ced762710228840c2d65e6cf1a041b3c0377c80d01d63ba48a8",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_beam_long/pair_beam_long.mp4": "ce5b6a2285c58aa85658f3650905f72159c62304dfe65462eef72257fbedf256",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_beam_long/result.json": "5b8c888902d9eef1308c2ea52d84840f47e1b589ddbd757e6e10ad32fe336fe1",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_beam_long/scene.xml": "a01ca4d188022224b5fb7c41604b7ccd576b24879d904c3b9d7452f6a6f7609b",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_beam_long/trace.jsonl": "44f1929687fdb717a5d56937208171e784daf18ee8b26d7d8c5398d84350473f",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_crate_long/events.json": "b902e08d9820ba22680be561f3917af8b99c2e51e34b91b06fc8cce8458bd5ab",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_crate_long/pair_crate_long.mp4": "45dcbe94173c75161727d21ffe96e5e93d446aefeca67e9cfcdddba58088b1e1",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_crate_long/result.json": "543a3ab8af0eb1a7be97e926ecc394b93a08cb5fcc6ff1b4d430683fb2dafc35",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_crate_long/scene.xml": "f0c3a944fd97345d4065f42c6c60293460ed0f0c531f222daca2b7121311bb27",
+    "slip-8886cf5/long-cargo_noslip_v1-pair_crate_long/trace.jsonl": "336997782bf1c3524df6837230d4e1c35e6c71feb922f7e1634b8ee45acff6ad",
+    "slip-8886cf5/long-cargo_noslip_v1-trio_frame_long/events.json": "7dac317c545022908021893be9f5b93879e663e3eed4c6e8a910a893387464b0",
+    "slip-8886cf5/long-cargo_noslip_v1-trio_frame_long/result.json": "bf441b460125abcef741352feecb196d38668b352b97ebff91e38096815d27ed",
+    "slip-8886cf5/long-cargo_noslip_v1-trio_frame_long/scene.xml": "f759a0f181f4c2ac06572397c871faa9b4e5ab38c01909bc5829261e7fb6f364",
+    "slip-8886cf5/long-cargo_noslip_v1-trio_frame_long/trace.jsonl": "c7a3b005cbad6856ac616416fce139107850c88e1812dfd8830360cb57c30f54",
+    "slip-8886cf5/long-cargo_noslip_v1-trio_frame_long/trio_frame_long.mp4": "22d8f8393cda96e734eae1c6b92cb0b8151fdc8a07980b9eb522da9f225e4cc4",
+    "slip-8886cf5/long-local_contact_fine-pair_beam_long/events.json": "f0359ebcfe7a6ced762710228840c2d65e6cf1a041b3c0377c80d01d63ba48a8",
+    "slip-8886cf5/long-local_contact_fine-pair_beam_long/pair_beam_long.mp4": "adb372db5d1526f02870a2cfab2e0d2378c54bbde92072c98fdd4775a7796db4",
+    "slip-8886cf5/long-local_contact_fine-pair_beam_long/result.json": "277830363402b511f31e22780ecd113832605eca13b53cc2637c351865fa29a3",
+    "slip-8886cf5/long-local_contact_fine-pair_beam_long/scene.xml": "79443c704cb1a936b41a61257bf40bcfe77c2e0df2d13ebc669127d20ee1ff0a",
+    "slip-8886cf5/long-local_contact_fine-pair_beam_long/trace.jsonl": "2d9bb4b27261592e746dcce359078088ec181a0b00927fa7f8de95698ee3cc92",
+    "slip-8886cf5/long-local_contact_fine-pair_crate_long/events.json": "075868d42a170e9ed2f04b6c9347caa5537d3fe1c769739d180c26e76b5e11b7",
+    "slip-8886cf5/long-local_contact_fine-pair_crate_long/pair_crate_long.mp4": "d6fa7017c596c28925fa449f01ae9b38a1f388e8600fcbd534b573245158ffea",
+    "slip-8886cf5/long-local_contact_fine-pair_crate_long/result.json": "81f891d38559d851aaaf71c3edb358aeaa7adec34b1d8f039687ec33b833fb86",
+    "slip-8886cf5/long-local_contact_fine-pair_crate_long/scene.xml": "dfb88aba292be1d7963a330bc03c2225f3aed0d21b4694a7db9bd5b39e164b24",
+    "slip-8886cf5/long-local_contact_fine-pair_crate_long/trace.jsonl": "7e728d4886d897e606fb6cf0aa019d80580ac1e53e2e362c850fb3707960bf17",
+    "slip-8886cf5/long-local_contact_fine-trio_frame_long/events.json": "1d1f8c48be283baa22a08cfe11e776a2bc7cadeea94c4f6a95546dc5babbcc21",
+    "slip-8886cf5/long-local_contact_fine-trio_frame_long/result.json": "e40721c61d1ede8bde4a84fea0f435996a6ba9bfa37436e3c34d85bf919debd1",
+    "slip-8886cf5/long-local_contact_fine-trio_frame_long/scene.xml": "f074d46aa0da38cab7067e3faa0dda56b0c70316216cdfb8460477b7a98f31cc",
+    "slip-8886cf5/long-local_contact_fine-trio_frame_long/trace.jsonl": "003808172e9660838e4ac99a448b1c5551449a77e8d1e37cad2e5036960e7944",
+    "slip-8886cf5/long-local_contact_fine-trio_frame_long/trio_frame_long.mp4": "994b592a3c831c0440b926813e422a70ca495080f9b3cfed3874aaf76ee62caa",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_box/events.json": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_box/result.json": "367f3f5703436e04dbc3e376a2cd8c132ed3949f7b8cbd21c17e7a6ac734a88d",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_box/scene.xml": "3b2e35f61049bb9ac478f5c700281cd27f5089e0eed398cdc5d2287fc2fc7961",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_box/trace.jsonl": "387c88cccc1d06f172bd37db590da6dfdde8b081125013724f96dc2a9c6b9903",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_can/events.json": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_can/result.json": "bc3758e79df3c090f72629d0cf18306cab3f516bae00e614ada98f8b1a4491d8",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_can/scene.xml": "4543f9587a252ec26be862f5aec5d68cdae60ab53a45f22d4155c5ef6f53765a",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_can/trace.jsonl": "c4a518ef9be6c9d059d338a3786e1f5c0bd97cfc71ce021962b5da79f275ca03",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_tile/events.json": "f41bd0937f1facb837c102561b41b71e54a45efc783c95b0f9759546639b4612",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_tile/result.json": "0e4c32f1b7138d8dc80eb793fb398a907cddf394cffdea8b5db8957640469284",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_tile/scene.xml": "3411c5739b15629d1875596530633270c61e87a75d639e65f079bf70a4a4495a",
+    "slip-8886cf5/solo-cargo_noslip_v1-solo_tile/trace.jsonl": "ee53622e741fa6e49ac5f88d8df7b4afd1fd9bc45ac24c504e112fd44747532f",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0030g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0030g/result.json": "3fd65742505585bba303000e41fa49a056f696f5785e8bc8b061d4a47ef92446",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0030g/scene.xml": "3b2e35f61049bb9ac478f5c700281cd27f5089e0eed398cdc5d2287fc2fc7961",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0030g/trace.jsonl": "bcde77f224369b228525d330cff83d39e9d9f18d8fa16f18ae6936a0e6a5b41f",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0300g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0300g/result.json": "4ec8069212d870757dd9ba237a8662c62c801610a369e5d9888f562c59620f4b",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0300g/scene.xml": "0aab9ce7667b2777344cdbd25983ffc1a9a8ca60b24bdddf91f4136a39e8ad28",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0300g/trace.jsonl": "ad3026a9d954c8277df48805d088accb771e6b789964f7c247a4aec3ca9f63e4",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0500g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0500g/result.json": "9a487035c27dc815fb8a7003137e82eef6829da5b65652799913249a41dad821",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0500g/scene.xml": "0e8c4bfaca084b0d17535f2eeb6939eb7d486c6839f47fdd4d8fb09c972b029f",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0500g/trace.jsonl": "2b39dd70780be1fd22902eafc3463e876b5f1f6a2b35bc135aeae772563bcab9",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0600g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0600g/result.json": "29720b9557dd8a3bb1b0ce6f0b9b8ad785a7675acecb85f60082d8f830d213c6",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0600g/scene.xml": "4d603269bac0c4cc1dad493c08119c8753c274aadacc5474b664a2abf9355381",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0600g/trace.jsonl": "63823d23cd4d840197c68516eeb9893f3c01f03eac7246ad4b139a3060bc7f44",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0620g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0620g/result.json": "d3754dd7301e301b0c08114d9fff5e88889ea7ae6469bbd7f308e971fb3095c6",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0620g/scene.xml": "1437e33efc9e272009025d18919b2b1ce01a0eca59cce66b50e28629b623135b",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0620g/trace.jsonl": "75c35cf249a88da1df25f558ac2c04981e2d2098aee3bad67b2c8bd822f62bb1",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0640g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0640g/result.json": "45eb18e1c17df3ee62e1a885106856f5f6936e6696040f944aac2c9efb0d772d",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0640g/scene.xml": "5acc2f1eaf16fa40fa516c7a5b36a87472b333bc2bf289b0be8bfb09ba6191c1",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0640g/trace.jsonl": "4bec11e5cec706f783d2e88ef7ab3f3c3cd70406da3bdfbd52ab93cc96a97333",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0660g/events.json": "ccb7d2805cada7fc2328e11f21bcc16bd0048a74c10d34d7c2e3e0491959400c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0660g/result.json": "a1fc069744b24b9130011321b638c3607d4176fcde4b0a2322cf50b5002feaae",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0660g/scene.xml": "060c3dca91ac3b7565ebc5d0fa98b1602177e6dec5044c67a9218f77c2883c0e",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0660g/trace.jsonl": "4b5cea26d82db12af38d4cccb1cb10876b7979403658a6cc24cc906e314aa26d",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0680g/events.json": "b41c1adb00b1e9f2d1b8364a3bcdd0f91400c922733f49a682b28e0c01c57701",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0680g/result.json": "2fc19d0e392ed79959cb25eeef8c66460647b75daca72ea492c762d971cbc4a7",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0680g/scene.xml": "5af210e6a08090aa1cbec4b3d355445aca53f5349b2ebc69473d5d868c7985ac",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0680g/trace.jsonl": "825e8b8e9a90ffbbfa5df2ba916b6139e222e33d586c8ecf106d55c902eb33cf",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0700g/events.json": "b41c1adb00b1e9f2d1b8364a3bcdd0f91400c922733f49a682b28e0c01c57701",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0700g/result.json": "fa2723a584c37f94ab3e21d29d93f9020f264aa017eebfb717276d22739792c5",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0700g/scene.xml": "9967d56299660e254ca25390b3139019dba77909a1bd2d66b05ba15c4f6c6471",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0700g/trace.jsonl": "11860299efa7a04cfdc40093eabed061868ad789d06fdbdf850348ae31446378",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0800g/events.json": "b41c1adb00b1e9f2d1b8364a3bcdd0f91400c922733f49a682b28e0c01c57701",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0800g/result.json": "c79227eedc01ee5edd9ce85e8c5ecf9dd39c477668acef7ec57e80bf3a5fafc4",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0800g/scene.xml": "c0d4a70f778ca9e8e293ce05442056fb9a6dfb79e8d1a1130bdc145e07a7bfcb",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_0800g/trace.jsonl": "85c4b42e254ba047a074fe8dbef3438970daf34c663ea2e26e7ae99b43364bcc",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_1000g/events.json": "9c3c4d81860d1c6825b022f58cb9a5780877550847688e41e2ac26469fc46219",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_1000g/result.json": "e11109b604d7b8534774c90155b51f437a768d904d55516e1da6476ff64b3178",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_1000g/scene.xml": "a25574e74cefe333a52d2048144cc3b0892b220d277658c905fa5f2138fdcc8c",
+    "slip-8886cf5/sweep-cargo_noslip_v1/cal_1000g/trace.jsonl": "3e21eba3653413c991fd647e9a898b6ffcea28dbfe5cae05ca394bf8ffca8747",
+    "slip-8886cf5/sweep-cargo_noslip_v1/capacity.json": "babd9793a96ea86599cf0b58943424fc203438d2f1c3afade3c1d479cbb142b3"
+  },
+  "scope": [
+    "1 run per condition, deterministic synchronous SIM; host load was very high (see driver logs), which does not change SIM results; no wall-time claims",
+    "diagnosis ran from 8ee716f with the variant code uncommitted (git_dirty); the same variant definitions were then committed in the acceptance source",
+    "ground-truth teacher only; not an RGB/student result"
+  ]
+}
