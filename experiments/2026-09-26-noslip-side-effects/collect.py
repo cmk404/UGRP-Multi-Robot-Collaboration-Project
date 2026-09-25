@@ -41,7 +41,7 @@ def main():
     scenarios = {}
     for name in sorted(SCENARIOS):
         seeds = sorted({seed for (s, _, seed) in runs if s == name})
-        per_seed, gate_fail = {}, []
+        per_seed, gate_fail, first_digest = {}, [], None
         for seed in seeds:
             a, b = runs.get((name, BASE, seed)), runs.get((name, CAND, seed))
             if not (a and b):
@@ -51,16 +51,29 @@ def main():
             gates = compare(name, a['metrics'], b['metrics'])
             failed = [g for g in gates if not g['ok']]
             gate_fail += [(seed, g) for g in failed]
-            per_seed[str(seed)] = {
+            metrics = {BASE: a['metrics'], CAND: b['metrics']}
+            digest = hashlib.sha256(json.dumps(metrics, sort_keys=True).encode()).hexdigest()
+            row = {
                 'status': 'compared', 'gates': len(gates), 'failed': len(failed),
                 'failed_gates': failed,
                 'hard_gates_ok': all(g['ok'] for run in (a, b) for g in run['hard_gates']),
                 'applied': {BASE: a['applied_solver_options'], CAND: b['applied_solver_options']},
                 'sim_time_s': {BASE: a['sim_time_s'], CAND: b['sim_time_s']},
                 'scene_xml_sha256': {BASE: a['scene_xml_sha256'], CAND: b['scene_xml_sha256']},
-                'metrics': {BASE: a['metrics'], CAND: b['metrics']},
+                'metrics_sha256': digest,
                 'load_avg_start': {BASE: a['host']['load_avg_start'], CAND: b['host']['load_avg_start']},
                 'load_avg_end': {BASE: a['host']['load_avg_end'], CAND: b['host']['load_avg_end']}}
+            # zone_wide_door seeds only shuffle the west pickup box, so the audited
+            # physics is seed-independent: later seeds are a determinism check.
+            # Keep the full metrics once and a hash for the rest (raw files keep everything).
+            if first_digest is None:
+                first_digest = digest
+                row['metrics'] = metrics
+            else:
+                row['identical_to_first_seed'] = digest == first_digest
+                if digest != first_digest:
+                    row['metrics'] = metrics
+            per_seed[str(seed)] = row
         scenarios[name] = {'question': SCENARIOS[name]['question'], 'metric': SCENARIOS[name]['metric'],
                            'tolerance': TOLERANCES[name], 'seeds': per_seed,
                            'side_effect_detected': bool(gate_fail),
