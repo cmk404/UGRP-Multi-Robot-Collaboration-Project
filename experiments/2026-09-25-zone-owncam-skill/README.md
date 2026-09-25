@@ -423,6 +423,40 @@ v1·v2·v3 파일은 바이트 그대로다. 테스트가 해시로 고정한다
 - 거짓 IN_SLOT이 나오면 즉시 멈춘다. 첫 제어 단계 전 인프라 예외만 1회 재실행하고 기록한다.
 - 동시 SIM 2개, 스레드 1. 시드별 부하 평균은 `cohort.log`에 남긴다. 코호트 뒤 조정은 새 버전으로만 한다.
 
+## v5 결과 (사전 등록 시드 541–548, 소스 `4884226`, 깨끗한 트리, 진단 모드 — **M1 아님**)
+- 조건: 러너 v5, `cargo_noslip_v1`(사용자 결정 대기), 동기 SIM, 스레드 1, 동시 SIM 2개.
+- 시드별 시작 부하 평균은 7.7–21.7이다(`cohort-v5-4884226/cohort.log`, sha256 `79ce4a7b…`). 인프라 사건과 재실행은 없다.
+
+| seed | bay / 상자 yaw | 목적지 | 판정 | GT 슬롯 (오차 mm) | 회전/횡이동 | 재관측 | SIM s |
+|---|---|---|---|---|---|---|---|
+| 541 | E1 / −18° | B3 | IN_SLOT | ✓ (−13, −4) | 5/8 | 0 | 137.8 |
+| 542 | E4 / +27° | A2 | IN_SLOT | ✓ (−17, +6) | 9/9 | 0 | 134.6 |
+| 543 | E2 / −8° | **C1** | IN_SLOT | ✓ (−4, −6) | 0/3 | 0 | 137.4 |
+| 544 | E3 / +22° | B1 | IN_SLOT | ✓ (−6, −1) | 5/5 | 0 | 190.0 |
+| 545 | E1 / +5° | A3 | IN_SLOT | ✓ (−4, +3) | 9/7 | 0 | 192.5 |
+| 546 | E4 / −28° | **C2** | IN_SLOT | ✓ (−2, −3) | 10/9 | 0 | 191.2 |
+| 547 | E2 / +16° | B2 | IN_SLOT | ✓ (−7, +13) | 5/4 | 0 | 138.7 |
+| 548 | E3 / −22° | A1 | IN_SLOT | ✓ (−14, +3) | 1/3 | **1** | 160.1 |
+
+**게이트 판정: G1–G6 모두 통과**
+- G1 `diagnostic_success` 8/8(등록 기준 ≥ 6/8).
+- G2 거짓 IN_SLOT 0, 판정 일치 8/8.
+- G3 8건 모두 `own_rgb_markerless_face_inlier_vote`로 면 법선을 얻었다. 지도 법선 0.
+  - 548은 첫 시도에서 회전 12회 뒤에도 준비가 안 돼 `GRASP_BOX_FACE_ALIGNMENT_UNOBSERVABLE` → 재관측 1회 → 성공했다.
+  - 정렬 종료 시 자기 추정 yaw 오차는 |≤ 3.2°|, 횡오차 ≤ 9.5 mm다.
+- G4 8건 모두 `validate_outcome` 통과. `counts_as_m1 = m1_success = false`, `cameras_seen = [robot_cam]`, 관측 거부 0, 시작 트리 깨끗, 실행 중 소스 변경 없음.
+- G5 weld 0. physics step 단위 화물–벽·r1–벽 접촉 0단계. 손가락–화물 최대 법선력 2.2–3.0 N.
+- G6 등록 시드 8/8, 누락 0.
+
+**보조 지표와 해석 한계**
+- SIM 중앙값 149.4 s, 제어 단계(명령) 중앙값 310.
+- v4 P(531–540, 정확한 좌표, yaw 0, 중앙값 159.5 s)와는 조건이 달라 직접 비교가 아니다. 그래도 면 정렬을 추가했는데 시간은 늘지 않았다.
+- **이것은 여전히 GT pose stub 진단이다.**
+  - 이동 목표·preplace·look-back 지도 변환은 GT pose를 쓴다.
+  - 자기 RGB로 바뀐 것은 상자 위치·방향(bay 안 탐색, 면 정렬)과 모든 관측 검증이다.
+  - M1은 PoseReport 추정기(#178/#197)를 붙이고 `--mode m1`로 돌려야 한다. 지금은 추정기가 없어 M1 실행이 거부된다.
+- 문 통과 없음. 표본은 8개다.
+
 ## M1까지 남은 차단 요인
 1. 자세 추정기 연결: PR #178의 폐루프 추정기를 `PoseEstimate` 인터페이스에 붙여야 한다. 지금은 stub이며, #178 보고 이후에 한다.
 2. 문 통과 정책: carry_p30 주행과 look_p20 정지 관찰, 문기둥 태그(`_tags_v2`).
@@ -440,7 +474,13 @@ v1·v2·v3 파일은 바이트 그대로다. 테스트가 해시로 고정한다
   - 보기 키는 `zone_owncam_skill_v3_20260926`(HParams 열: policy, case, outcome, 성공, sim_s, commands).
   - 공용 서버(PID 9291, 다른 작업 소유)에서 run 34개가 나오는 것과, 스칼라·HParams 세션 24개(v3) 값이 원본과 같은 것을 확인했다.
 
+- v5 스냅샷: `outputs/tensorboard/0926-zone-owncam-skill-v5`(run 24개: v5P 8, v5dev 6, v4P 기준 10은 진단으로 재표기). 생성은 `build_tensorboard_v5.py`로 한다. 보기 키는 `zone_owncam_skill_v5_20260926`이다.
+  - **M1 결과 계약 적용:** 파생 `success` = `m1_success`이므로 모든 run이 0이다(GT stub, `counts_as_m1=false`). `diagnostic_success`는 평가 텍스트와 run 조건에 있다.
+  - 공용 서버(PID 9291, 다른 작업 소유)에서 run 24개, 스칼라(v5P-s544: 0 / 190.011 / 372), HParams 세션 8개(v5 P)가 원본과 같은 것을 확인했다.
+  - 이전 v1–v4 스냅샷은 덮어쓰지 않았다. 그 `success`는 진단(GT 배치)을 뜻하며 M1이 아니다.
+
 ## 원자료 (로컬 전용, 원격 백업 아님)
+- v5: `dev-v5/*`(409-a/b/c, 410-a/b, 411-25af375)와 `cohort-v5-4884226/P/<seed>/`(시드별 `contacts-evaluation-only.json`, `provenance-start.json` 포함), `cohort.log`. 경로와 해시는 `results.json`의 `v5_development_runs`, `v5_cohorts`에 있다.
 - v4: `dev-v4/*`, `cohort-v4-6664425/{D,P}/<seed>/`와 `cohort.log`. 경로와 해시는 `results.json`의 `v4_development_runs`, `v4_cohorts`에 있다.
 - v3: `grip-hold/{local_contact_fine,cargo_noslip_v1}/`, `dev-v3/*`, `cohort-v3-7322a96/{P,S}/<seed>/`와 `cohort.log`. 경로와 해시는 `results.json`의 `grip_hold_probe`, `v3_development_runs`, `v3_cohorts`에 있다.
 - 위치: 기본 체크아웃 `outputs/zone-owncam-skill-20260925/`. probe 2개, `cohort-d016c04/{501..505}`, `dev/*`, `cohort-d016c04/cohort.log`(시드별 부하 평균 포함).

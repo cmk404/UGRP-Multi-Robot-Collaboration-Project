@@ -10812,8 +10812,3987 @@
   "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-d016c04/cohort.log",
   "sha256": "74b6f13b6023c8908f27b7861acf335c2ede07afafbd4ffd8e65d4a2cdffa9bc"
  },
- "v5_development_runs": [],
- "v5_cohorts": {},
+ "v5_development_runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/409-a",
+   "seed": 409,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": false,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E1",
+    "pickup_bay_center_m": [
+     3.55,
+     -2.35
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "B2",
+    "slot_xy_m": [
+     4.6,
+     -2.1
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.65,
+     -2.43
+    ],
+    "box_yaw_deg": 20.0,
+    "bay": "E1",
+    "offset_in_bay_m": [
+     0.1,
+     -0.08
+    ],
+    "robot_start": [
+     2.6,
+     -2.6,
+     0.0
+    ]
+   },
+   "source_sha_start": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "dirty_source_start": true,
+   "source_sha_end": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "source_changed_during_run": false,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "66bce275830057a7f6547f525347d3fa15f8c21ea061e43857b2a9e7443f84a0",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "e0adbe51127518c04a97a19236293fbfa176fc41fe667bf8dd7111243f9c4fa1",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "GRASP_APPROACH_NO_PROGRESS",
+   "steps": 249,
+   "sim_seconds": 139.212,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 18.4,
+    "backoff": 52.833
+   },
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.65,
+     -2.43,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.95,
+     -0.33
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "finger_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": []
+   },
+   "skill_summary": {
+    "retreats": 2,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 21,
+     "drives": 33
+    },
+    "grip_checks": [],
+    "placement_detector": null,
+    "self_occluded_rejections": 0,
+    "self_occluded_samples": [],
+    "mode": "diagnostic",
+    "face_relooks": 0,
+    "face_evidence": [],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 133.7,
+   "load_average_start": [
+    6.82,
+    9.18,
+    12.46
+   ],
+   "load_average_end": [
+    8.1,
+    8.62,
+    11.73
+   ],
+   "artifact_sha256": {
+    "result.json": "1bb350518b161cd4921f9cb87245344a53797d9becafdd9e57db41a46f191c4c",
+    "control.jsonl": "52b23c2c8ecaccbf4353b9c6f5ccfbf7983eb587a4478a9b290707596ac0d72f",
+    "evaluation-only.jsonl": "65b5c7ca0248616ef5638a3e49c7a386ee7fda6d4792f91b2d424a206f564e56",
+    "scene.xml": "22937b3f3955ee3aa0f90b9d01d6ff3c4180797b817b331aea75acfd57d89e2f",
+    "contacts-evaluation-only.json": "327cdb5fc540a17d416b2536aef0a5fa3911289c48a9f19a747283a4ef27c908",
+    "provenance-start.json": "6b4e16126c9f199418305c315b2f0f56bce6fb7d12e4ae515cdb9707dc05e620"
+   },
+   "input_frames": 249
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/409-b",
+   "seed": 409,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": false,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E1",
+    "pickup_bay_center_m": [
+     3.55,
+     -2.35
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "B2",
+    "slot_xy_m": [
+     4.6,
+     -2.1
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.65,
+     -2.43
+    ],
+    "box_yaw_deg": 20.0,
+    "bay": "E1",
+    "offset_in_bay_m": [
+     0.1,
+     -0.08
+    ],
+    "robot_start": [
+     2.6,
+     -2.6,
+     0.0
+    ]
+   },
+   "source_sha_start": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "dirty_source_start": true,
+   "source_sha_end": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "source_changed_during_run": true,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "66bce275830057a7f6547f525347d3fa15f8c21ea061e43857b2a9e7443f84a0",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "a374b3bb448bf5510aa4325ea214b00efb5c206e0778350cfdef979170b254c1",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+   "steps": 267,
+   "sim_seconds": 118.086,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 18.4,
+    "backoff": 50.637
+   },
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.65,
+     -2.43,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.95,
+     -0.33
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "finger_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": []
+   },
+   "skill_summary": {
+    "retreats": 0,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 12,
+     "drives": 27
+    },
+    "grip_checks": [],
+    "placement_detector": null,
+    "self_occluded_rejections": 0,
+    "self_occluded_samples": [],
+    "mode": "diagnostic",
+    "face_relooks": 2,
+    "face_evidence": [],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 150.6,
+   "load_average_start": [
+    4.74,
+    7.34,
+    10.84
+   ],
+   "load_average_end": [
+    6.79,
+    7.36,
+    10.29
+   ],
+   "artifact_sha256": {
+    "result.json": "c351a70133351fff25af28c4f78d0e4350e867745a59e9d56eb51c50c70f4265",
+    "control.jsonl": "b26607183db6ed5ce85371c8672640b482d9680cf7746149346e66438a344e31",
+    "evaluation-only.jsonl": "6f88f519f8787637f4f03ae7c179f08e67ac9147b9aea35078125767ed9a3045",
+    "scene.xml": "22937b3f3955ee3aa0f90b9d01d6ff3c4180797b817b331aea75acfd57d89e2f",
+    "contacts-evaluation-only.json": "8dfc96c11bf200ee37327ef6e7d96e38a2c2e25393948c28d98f5f58b2cfa6a2",
+    "provenance-start.json": "8132014eea0487e9a0ff9581a483a1b64485cdd62c902e187423fd7d24e4e04c"
+   },
+   "input_frames": 267
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/409-c",
+   "seed": 409,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": true,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E1",
+    "pickup_bay_center_m": [
+     3.55,
+     -2.35
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "B2",
+    "slot_xy_m": [
+     4.6,
+     -2.1
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.65,
+     -2.43
+    ],
+    "box_yaw_deg": 20.0,
+    "bay": "E1",
+    "offset_in_bay_m": [
+     0.1,
+     -0.08
+    ],
+    "robot_start": [
+     2.6,
+     -2.6,
+     0.0
+    ]
+   },
+   "source_sha_start": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "dirty_source_start": true,
+   "source_sha_end": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "source_changed_during_run": false,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "steps": 274,
+   "sim_seconds": 138.995,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 18.4,
+    "to_carry_posture": 99.5,
+    "nav_preplace": 99.55,
+    "pre_release": 128.212,
+    "release": 128.612,
+    "look_back": 138.995
+   },
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1626,
+     -0.0079
+    ],
+    "box_map_m": [
+     4.5938,
+     -2.1082
+    ],
+    "slot_error_m": [
+     -0.0062,
+     -0.0082
+    ],
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+    "detector": "n7_floor_cuboid_fit",
+    "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+    "observation_validated": true,
+    "frame_id": 274,
+    "frame_sha256": "3c062f9a0b0f35dd4cbc697dae7c13c9f02641aedc953678664f4ca624440246",
+    "mode": "diagnostic",
+    "counts_as_m1_input": false
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     4.5898,
+     -2.1081,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0102,
+     -0.0081
+    ],
+    "max_box_z_m": 0.1707,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 177212,
+      "min_dist_m": -0.001905,
+      "max_normal_force_n": 2.271,
+      "contact_s": 44.303
+     },
+     "finger_cargo": {
+      "steps": 177212,
+      "min_dist_m": -0.001905,
+      "max_normal_force_n": 2.271,
+      "contact_s": 44.303
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": [
+     "own_rgb_markerless_face_fits"
+    ]
+   },
+   "skill_summary": {
+    "retreats": 0,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 39,
+     "drives": 53
+    },
+    "grip_checks": [],
+    "placement_detector": "n7_floor_cuboid_fit",
+    "self_occluded_rejections": 0,
+    "self_occluded_samples": [],
+    "mode": "diagnostic",
+    "face_relooks": 0,
+    "face_evidence": [
+     {
+      "relooks": 0,
+      "evidence": {
+       "ready": true,
+       "normal_xy": [
+        -0.9993975481246493,
+        0.03470649510450743
+       ],
+       "reason": "OWN_RGB_FACE_INLIER_VOTE",
+       "normal_source": "own_rgb_markerless_face_inlier_vote",
+       "evidence": {
+        "window": [
+         0.0,
+         89.0,
+         84.0,
+         89.0
+        ],
+        "inliers": 4,
+        "min_inliers": 3,
+        "min_fraction": 0.6,
+        "inlier_tol_deg": 7.0,
+        "frame_accepted": false,
+        "yaw_mod90_deg": 88.01,
+        "selection": "current_own_frame_candidate_nearest_previous_normal"
+       }
+      },
+      "square": {
+       "moves": 14,
+       "turns": 6,
+       "strafes": 8,
+       "last": {
+        "yaw_err_deg": 0.48,
+        "y_m": -0.0114
+       },
+       "squared": {
+        "yaw_err_deg": 0.18,
+        "y_m": -0.0076,
+        "x_m": 0.3445
+       }
+      }
+     }
+    ],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 180.7,
+   "load_average_start": [
+    6.52,
+    7.28,
+    10.23
+   ],
+   "load_average_end": [
+    10.41,
+    8.56,
+    10.17
+   ],
+   "artifact_sha256": {
+    "result.json": "c843f6add1ca22e28d881329431c421a98d4acd689a26f53cd2ac83daeb11fb1",
+    "control.jsonl": "8b430c8a6f21a4060896b2bea8ed9ebdbb56d7e695cbc81d8c0d2b9ebd8fe328",
+    "evaluation-only.jsonl": "d2de21db8e684b859205a62be441facaf80bc9b741bebf0f03ff1fdb92f6f856",
+    "scene.xml": "22937b3f3955ee3aa0f90b9d01d6ff3c4180797b817b331aea75acfd57d89e2f",
+    "contacts-evaluation-only.json": "731ddb983c46f9986ccc9098445ac01862fae46d3fdc19a894cd29cddfe5b0a1",
+    "provenance-start.json": "6f904a0c354e4316d33b094a8eefd40ef5129b247ef659d9b35b812c959c806b"
+   },
+   "input_frames": 274
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/410-a",
+   "seed": 410,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": false,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E3",
+    "pickup_bay_center_m": [
+     3.7,
+     0.35
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "A1",
+    "slot_xy_m": [
+     4.6,
+     0.0
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.58,
+     0.44999999999999996
+    ],
+    "box_yaw_deg": -25.0,
+    "bay": "E3",
+    "offset_in_bay_m": [
+     -0.12,
+     0.1
+    ],
+    "robot_start": [
+     2.55,
+     0.8,
+     0.05
+    ]
+   },
+   "source_sha_start": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "dirty_source_start": true,
+   "source_sha_end": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "source_changed_during_run": true,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "66bce275830057a7f6547f525347d3fa15f8c21ea061e43857b2a9e7443f84a0",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "a374b3bb448bf5510aa4325ea214b00efb5c206e0778350cfdef979170b254c1",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+   "steps": 271,
+   "sim_seconds": 121.222,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 24.9,
+    "backoff": 51.676
+   },
+   "placement_own_rgb": null,
+   "evaluation_only": {
+    "grasp_success_gt": false,
+    "place_in_slot_gt": false,
+    "place_in_zone_gt": false,
+    "box_final_xyz": [
+     3.58,
+     0.45,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -1.02,
+     0.45
+    ],
+    "max_box_z_m": 0.0159,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "finger_cargo": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": false,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": []
+   },
+   "skill_summary": {
+    "retreats": 0,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 11,
+     "drives": 28
+    },
+    "grip_checks": [],
+    "placement_detector": null,
+    "self_occluded_rejections": 0,
+    "self_occluded_samples": [],
+    "mode": "diagnostic",
+    "face_relooks": 2,
+    "face_evidence": [],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 152.9,
+   "load_average_start": [
+    4.74,
+    7.34,
+    10.84
+   ],
+   "load_average_end": [
+    6.57,
+    7.3,
+    10.25
+   ],
+   "artifact_sha256": {
+    "result.json": "8fa6170d7d7b1fb6b7d960652039e6ee3cee711d06507c8405d2c506f93a4c4d",
+    "control.jsonl": "7b695dacd1ef8491380993cc13d0c9c37935eeaf5bc4c10e2fadbdf7a268762c",
+    "evaluation-only.jsonl": "d8127c37ab3a32ccded3f0eb7ff28ca4447afbb38ddf9b44ab1e5df2d43b4dfc",
+    "scene.xml": "f76a1371d6cccda5c120995eecc375839342dc03c87edd64e6e3e46c7fbec77e",
+    "contacts-evaluation-only.json": "73490488bb99e475a8f9126895bb0c56da737151d800539ea99c09894c930477",
+    "provenance-start.json": "8132014eea0487e9a0ff9581a483a1b64485cdd62c902e187423fd7d24e4e04c"
+   },
+   "input_frames": 271
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/410-b",
+   "seed": 410,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": true,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E3",
+    "pickup_bay_center_m": [
+     3.7,
+     0.35
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "A1",
+    "slot_xy_m": [
+     4.6,
+     0.0
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.58,
+     0.44999999999999996
+    ],
+    "box_yaw_deg": -25.0,
+    "bay": "E3",
+    "offset_in_bay_m": [
+     -0.12,
+     0.1
+    ],
+    "robot_start": [
+     2.55,
+     0.8,
+     0.05
+    ]
+   },
+   "source_sha_start": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "dirty_source_start": true,
+   "source_sha_end": "e60555873bfc28f3d4ac39b858c7e9cb6f49c72a",
+   "source_changed_during_run": false,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "steps": 286,
+   "sim_seconds": 142.998,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 24.9,
+    "to_carry_posture": 100.12,
+    "nav_preplace": 100.17,
+    "pre_release": 132.215,
+    "release": 132.615,
+    "look_back": 142.998
+   },
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1631,
+     0.0092
+    ],
+    "box_map_m": [
+     4.5914,
+     0.006
+    ],
+    "slot_error_m": [
+     -0.0086,
+     0.006
+    ],
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+    "detector": "n7_floor_cuboid_fit",
+    "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+    "observation_validated": true,
+    "frame_id": 286,
+    "frame_sha256": "3b93a360fa1a25cc06cde61ac475c56fd30017987275f6a62f250f1b7858346b",
+    "mode": "diagnostic",
+    "counts_as_m1_input": false
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     4.5881,
+     0.0061,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0119,
+     0.0061
+    ],
+    "max_box_z_m": 0.1708,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 190913,
+      "min_dist_m": -0.001289,
+      "max_normal_force_n": 1.5732,
+      "contact_s": 47.7283
+     },
+     "finger_cargo": {
+      "steps": 190913,
+      "min_dist_m": -0.001289,
+      "max_normal_force_n": 1.5732,
+      "contact_s": 47.7283
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": [
+     "own_rgb_markerless_face_fits"
+    ]
+   },
+   "skill_summary": {
+    "retreats": 0,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 33,
+     "drives": 43
+    },
+    "grip_checks": [],
+    "placement_detector": "n7_floor_cuboid_fit",
+    "self_occluded_rejections": 0,
+    "self_occluded_samples": [],
+    "mode": "diagnostic",
+    "face_relooks": 0,
+    "face_evidence": [
+     {
+      "relooks": 0,
+      "evidence": {
+       "ready": true,
+       "normal_xy": [
+        -0.9993908270190958,
+        -0.0348994967025009
+       ],
+       "reason": "OWN_RGB_FACE_INLIER_VOTE",
+       "normal_source": "own_rgb_markerless_face_inlier_vote",
+       "evidence": {
+        "window": [
+         2.0,
+         2.0,
+         2.0
+        ],
+        "inliers": 3,
+        "min_inliers": 3,
+        "min_fraction": 0.6,
+        "inlier_tol_deg": 7.0,
+        "frame_accepted": true,
+        "yaw_mod90_deg": 2.0,
+        "selection": "current_own_frame_candidate_nearest_previous_normal"
+       }
+      },
+      "square": {
+       "moves": 16,
+       "turns": 9,
+       "strafes": 7,
+       "last": {
+        "yaw_err_deg": 0.32,
+        "y_m": 0.024
+       },
+       "squared": {
+        "yaw_err_deg": 0.99,
+        "y_m": 0.0094,
+        "x_m": 0.3018
+       }
+      }
+     }
+    ],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 188.6,
+   "load_average_start": [
+    6.52,
+    7.28,
+    10.23
+   ],
+   "load_average_end": [
+    9.81,
+    8.49,
+    10.13
+   ],
+   "artifact_sha256": {
+    "result.json": "f856808b1c0ceff0a71961930fa40bf0458eca74e3360c92e7f9aaf11790f451",
+    "control.jsonl": "3d1e8077eb87e29b5cc0a39bc5c047229458455a61736d6bc5dba61b47614618",
+    "evaluation-only.jsonl": "4c2068908fc69c9b64fa6e88971e60ae9c0488a8fd24a10cdf37bead79cfe7bc",
+    "scene.xml": "f76a1371d6cccda5c120995eecc375839342dc03c87edd64e6e3e46c7fbec77e",
+    "contacts-evaluation-only.json": "ad0911dc81b56ae3213d387a7ef4ca3a7f7bd15a3c56afac9c89e8818de83203",
+    "provenance-start.json": "6f904a0c354e4316d33b094a8eefd40ef5129b247ef659d9b35b812c959c806b"
+   },
+   "input_frames": 286
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/dev-v5/411-25af375",
+   "seed": 411,
+   "development_seed": true,
+   "runner": "zone_owncam_runner_v5",
+   "profile": "wrist_zone_skill_v5",
+   "mode": "diagnostic",
+   "counts_as_m1": false,
+   "m1_success": false,
+   "diagnostic_success": true,
+   "success": false,
+   "pose_source": "gt_stub_eval_only",
+   "pose_sources_seen": [
+    "gt_stub_eval_only"
+   ],
+   "cameras_seen": [
+    "robot_cam"
+   ],
+   "input_contract": {
+    "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+    "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+    "pose_source": "gt_stub_eval_only",
+    "static_map": {
+     "map_id": "zone_wide_door",
+     "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+    },
+    "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+    "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+    "forbidden": [
+     "nav_cam",
+     "cctv_top*",
+     "live object pose",
+     "measured joints",
+     "contacts/success state"
+    ],
+    "runner": "zone_owncam_runner_v5",
+    "skill_profile": "wrist_zone_skill_v5"
+   },
+   "order": {
+    "kind": "cyan",
+    "pickup_bay_id": "E2",
+    "pickup_bay_center_m": [
+     3.7,
+     -1.5
+    ],
+    "pickup_bay_half_m": [
+     0.25,
+     0.25
+    ],
+    "slot_id": "C3",
+    "slot_xy_m": [
+     3.0,
+     -0.44999999999999996
+    ],
+    "contract": "coarse_bay; box position and yaw from own RGB"
+   },
+   "scenario_setup_only": {
+    "box_xy_m": [
+     3.75,
+     -1.38
+    ],
+    "box_yaw_deg": 12.0,
+    "bay": "E2",
+    "offset_in_bay_m": [
+     0.05,
+     0.12
+    ],
+    "robot_start": [
+     2.7,
+     -1.2,
+     0.0
+    ]
+   },
+   "source_sha_start": "25af3754c04bd7cc84a3220cddf352d9aa99490f",
+   "dirty_source_start": false,
+   "source_sha_end": "25af3754c04bd7cc84a3220cddf352d9aa99490f",
+   "source_changed_during_run": false,
+   "dependency_sha256_start": {
+    "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+    "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+    "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+    "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+   },
+   "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+   "steps": 368,
+   "sim_seconds": 170.675,
+   "phase_start_sim_s": {
+    "nav_pregrasp": 1.8,
+    "grasp": 20.0,
+    "to_carry_posture": 80.698,
+    "nav_preplace": 80.748,
+    "pre_release": 159.911,
+    "release": 160.311,
+    "look_back": 170.675
+   },
+   "placement_own_rgb": {
+    "in_slot": true,
+    "reason": "IN_SLOT",
+    "box_base_m": [
+     0.1664,
+     0.016
+    ],
+    "box_map_m": [
+     2.9995,
+     -0.4468
+    ],
+    "slot_error_m": [
+     -0.0005,
+     0.0032
+    ],
+    "pose_source": "gt_stub_eval_only",
+    "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+    "detector": "n7_floor_cuboid_fit",
+    "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED",
+    "observation_validated": true,
+    "frame_id": 368,
+    "frame_sha256": "4eda1d54498fdea94742b74f770eecebf022fec88df4a18f04a359c3438e2a26",
+    "mode": "diagnostic",
+    "counts_as_m1_input": false
+   },
+   "evaluation_only": {
+    "grasp_success_gt": true,
+    "place_in_slot_gt": true,
+    "place_in_zone_gt": true,
+    "box_final_xyz": [
+     2.9953,
+     -0.4474,
+     0.0159
+    ],
+    "box_tilt_deg": 0.0,
+    "slot_error_m": [
+     -0.0047,
+     0.0026
+    ],
+    "max_box_z_m": 0.171,
+    "weld_eq_active_max": 0,
+    "contacts_per_physics_step": {
+     "cargo_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_wall": {
+      "steps": 0,
+      "min_dist_m": null,
+      "max_normal_force_n": 0.0,
+      "contact_s": 0.0
+     },
+     "r1_cargo": {
+      "steps": 379771,
+      "min_dist_m": -0.001731,
+      "max_normal_force_n": 2.1233,
+      "contact_s": 94.9428
+     },
+     "finger_cargo": {
+      "steps": 379771,
+      "min_dist_m": -0.001731,
+      "max_normal_force_n": 2.1233,
+      "contact_s": 94.9428
+     }
+    },
+    "contact_episode_counts": {
+     "cargo_wall": 0,
+     "r1_wall": 0
+    },
+    "skill_claim_in_slot": true,
+    "skill_claim_agrees_with_gt": true,
+    "face_normal_sources": [
+     "own_rgb_markerless_face_fits"
+    ]
+   },
+   "skill_summary": {
+    "retreats": 0,
+    "reseats": 0,
+    "carry_warnings": [],
+    "approach_stats": {
+     "forced_forward": 0,
+     "combined_corrections": 33,
+     "drives": 37
+    },
+    "grip_checks": [],
+    "placement_detector": "n7_floor_cuboid_fit",
+    "self_occluded_rejections": 1,
+    "self_occluded_samples": [
+     {
+      "estimate": [
+       2.9345,
+       -0.663,
+       1.8714
+      ],
+      "self_occluded": true,
+      "reason": "QUAD_INSIDE_HELD_SILHOUETTE",
+      "corners_inside": [
+       true,
+       true,
+       true,
+       true
+      ],
+      "area_ratio_to_anchor": 1.002,
+      "held_fraction": 0.557,
+      "quad_area_px": 183.0,
+      "quad_top_height_m": 0.010520121036164093,
+      "quad_edge_lengths_m": [
+       0.0035235260282342347,
+       0.03983868335841344,
+       0.0033747574093310638,
+       0.04016262837474861
+      ]
+     }
+    ],
+    "mode": "diagnostic",
+    "face_relooks": 0,
+    "face_evidence": [
+     {
+      "relooks": 0,
+      "evidence": {
+       "ready": true,
+       "normal_xy": [
+        -0.9954458079425432,
+        -0.09532913221894604
+       ],
+       "reason": "OWN_RGB_FACE_INLIER_VOTE",
+       "normal_source": "own_rgb_markerless_face_inlier_vote",
+       "evidence": {
+        "window": [
+         4.0,
+         4.0,
+         11.0,
+         3.0
+        ],
+        "inliers": 4,
+        "min_inliers": 3,
+        "min_fraction": 0.6,
+        "inlier_tol_deg": 7.0,
+        "frame_accepted": false,
+        "yaw_mod90_deg": 5.47,
+        "selection": "current_own_frame_candidate_nearest_previous_normal"
+       }
+      },
+      "square": {
+       "moves": 1,
+       "turns": 0,
+       "strafes": 1,
+       "last": {
+        "yaw_err_deg": 3.66,
+        "y_m": 0.0209
+       },
+       "squared": {
+        "yaw_err_deg": 3.66,
+        "y_m": 0.008,
+        "x_m": 0.3994
+       }
+      }
+     }
+    ],
+    "rejected_observations": [],
+    "cameras_seen": [
+     "robot_cam"
+    ],
+    "order_contract": "coarse_bay"
+   },
+   "contact_profile_selected": "cargo_noslip_v1",
+   "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+   "cargo_contact_profile": {
+    "name": "cargo_noslip_v1",
+    "version": 1,
+    "base": "local_contact_fine",
+    "option": {
+     "noslip_iterations": "10"
+    },
+    "scope": "global solver option (all contacts)",
+    "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+    "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+   },
+   "solver_noslip_iterations": 10,
+   "wall_seconds": 240.2,
+   "load_average_start": [
+    8.37,
+    8.25,
+    10.0
+   ],
+   "load_average_end": [
+    8.02,
+    8.15,
+    9.49
+   ],
+   "artifact_sha256": {
+    "result.json": "2b7dd208aa7b7738c787a3888cbfec1994c780fdc17a3e66b78e810161b12959",
+    "control.jsonl": "aa601c97b5da88dda5b8ca4d136b8b40a72ece25eb69e5710334dd85874eea80",
+    "evaluation-only.jsonl": "a347bc5da2526150d15e26bce39f2b3e87fa53acb0d13691745936f8a43b0285",
+    "scene.xml": "409f09b0e0bf5c131b78c6efb7a1831da9034a536a57bca9e09f4524a26bc9e2",
+    "contacts-evaluation-only.json": "4d7e3cf1abfb32ce00ef5e4cd8e628844dd63359374aee9a3d51984891fad71c",
+    "provenance-start.json": "b12dea6f5c53da5b9b6ad4c8a993c9b6ca43ade177119e3f5e961d759e1fa27a"
+   },
+   "input_frames": 368
+  }
+ ],
+ "v5_cohorts": {
+  "cohort-v5-4884226/P": {
+   "arm": "P",
+   "condition": "cargo_noslip_v1 (pending user decision), diagnostic mode (gt_stub pose), coarse bay",
+   "runs": [
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/541",
+     "seed": 541,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E1",
+      "pickup_bay_center_m": [
+       3.55,
+       -2.35
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "B3",
+      "slot_xy_m": [
+       4.6,
+       -1.7000000000000002
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.67,
+       -2.29
+      ],
+      "box_yaw_deg": -18.0,
+      "bay": "E1",
+      "offset_in_bay_m": [
+       0.12,
+       0.06
+      ],
+      "robot_start": [
+       2.55,
+       -2.8,
+       0.05
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 271,
+     "sim_seconds": 137.813,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 22.3,
+      "to_carry_posture": 91.34,
+      "nav_preplace": 91.39,
+      "pre_release": 127.02,
+      "release": 127.42,
+      "look_back": 137.813
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1658,
+       0.0052
+      ],
+      "box_map_m": [
+       4.5904,
+       -1.7034
+      ],
+      "slot_error_m": [
+       -0.0096,
+       -0.0034
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 271,
+      "frame_sha256": "2f52afc35f3c7ae69d6f0ebd878e202024691bd0f51bdbcc90fdc5efe3e9559d",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5867,
+       -1.7037,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0133,
+       -0.0037
+      ],
+      "max_box_z_m": 0.1709,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 205368,
+        "min_dist_m": -0.002193,
+        "max_normal_force_n": 2.8055,
+        "contact_s": 51.342
+       },
+       "finger_cargo": {
+        "steps": 205368,
+        "min_dist_m": -0.002193,
+        "max_normal_force_n": 2.8055,
+        "contact_s": 51.342
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 30,
+       "drives": 45
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9979605533777725,
+          0.06383364239905238
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           81.0,
+           86.0,
+           1.0,
+           87.0,
+           87.0,
+           86.0
+          ],
+          "inliers": 6,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 86.34,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 13,
+         "turns": 5,
+         "strafes": 8,
+         "last": {
+          "yaw_err_deg": -2.18,
+          "y_m": 0.012
+         },
+         "squared": {
+          "yaw_err_deg": -3.18,
+          "y_m": 0.0067,
+          "x_m": 0.3718
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 231.9,
+     "load_average_start": [
+      7.66,
+      8.06,
+      9.43
+     ],
+     "load_average_end": [
+      10.49,
+      9.83,
+      9.91
+     ],
+     "artifact_sha256": {
+      "result.json": "09bd51a3fc7f84c9919bb80033bb7c69f1bdb5e246b34658fae4d91af672c225",
+      "control.jsonl": "18cf3eaff4b27bd8967d5bff4dffe55bf4e4e845fec218b2fcc76b6218a2408d",
+      "evaluation-only.jsonl": "513d7650311c2002532a5de77c00b7d37ea6f2e032f16b49854473bbac650dab",
+      "scene.xml": "b21a1fa04c53b99cbf290cc275193f4b8e44a2828f6d870ed0d2e3209c9f8108",
+      "contacts-evaluation-only.json": "cb5ed8a1b935395c3cbe82e018503d9402e742d12e5b2e1042689fd9f95df729",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 271
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/542",
+     "seed": 542,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E4",
+      "pickup_bay_center_m": [
+       3.6,
+       0.95
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "A2",
+      "slot_xy_m": [
+       4.6,
+       0.4
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.52,
+       0.85
+      ],
+      "box_yaw_deg": 27.0,
+      "bay": "E4",
+      "offset_in_bay_m": [
+       -0.08,
+       -0.1
+      ],
+      "robot_start": [
+       2.6,
+       1.1,
+       0.0
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 266,
+     "sim_seconds": 134.636,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 17.3,
+      "to_carry_posture": 91.74,
+      "nav_preplace": 91.79,
+      "pre_release": 123.84,
+      "release": 124.24,
+      "look_back": 134.636
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1685,
+       -0.0047
+      ],
+      "box_map_m": [
+       4.5872,
+       0.4059
+      ],
+      "slot_error_m": [
+       -0.0128,
+       0.0059
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 266,
+      "frame_sha256": "23eda3fad7d514796e26f0b850fd308aab9b2ef76bad96f67e4dda80571ca870",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5832,
+       0.4059,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0168,
+       0.0059
+      ],
+      "max_box_z_m": 0.1708,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 191561,
+        "min_dist_m": -0.001867,
+        "max_normal_force_n": 2.3203,
+        "contact_s": 47.8903
+       },
+       "finger_cargo": {
+        "steps": 191561,
+        "min_dist_m": -0.001867,
+        "max_normal_force_n": 2.3203,
+        "contact_s": 47.8903
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 35,
+       "drives": 49
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9999957867906105,
+          -0.0029028263861007736
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           1.0,
+           1.0,
+           89.0,
+           89.0,
+           89.0,
+           2.0
+          ],
+          "inliers": 6,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 0.17,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 18,
+         "turns": 9,
+         "strafes": 9,
+         "last": {
+          "yaw_err_deg": 3.33,
+          "y_m": -0.0104
+         },
+         "squared": {
+          "yaw_err_deg": 3.0,
+          "y_m": -0.0065,
+          "x_m": 0.2997
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 227.2,
+     "load_average_start": [
+      7.66,
+      8.06,
+      9.43
+     ],
+     "load_average_end": [
+      10.53,
+      9.83,
+      9.91
+     ],
+     "artifact_sha256": {
+      "result.json": "283905fb04bd0c575da3b1af4544800698b2d96c7e633357e6e40b67507d4c07",
+      "control.jsonl": "158d49433cb8f00560102c7a4ead872f18f429856ea49c369cc98f88ad78a1a7",
+      "evaluation-only.jsonl": "f021867824056ea50de9dd0c31fc38f2c9788eb64791fa3939fdf9d280858229",
+      "scene.xml": "a25b136b0791f9e9ebccc171b85bad9c48dd3165ecb36ef56365b6d593f668ef",
+      "contacts-evaluation-only.json": "1c521cbc4224d7b1a8f649f28a5e1bec3c3cb910f247c4cd00f90db1dcbb0169",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 266
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/543",
+     "seed": 543,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E2",
+      "pickup_bay_center_m": [
+       3.7,
+       -1.5
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "C1",
+      "slot_xy_m": [
+       3.0,
+       -1.25
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.6,
+       -1.62
+      ],
+      "box_yaw_deg": -8.0,
+      "bay": "E2",
+      "offset_in_bay_m": [
+       -0.1,
+       -0.12
+      ],
+      "robot_start": [
+       2.65,
+       -1.8,
+       -0.1
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 288,
+     "sim_seconds": 137.357,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 20.8,
+      "to_carry_posture": 70.27,
+      "nav_preplace": 70.32,
+      "pre_release": 126.583,
+      "release": 126.983,
+      "look_back": 137.357
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.163,
+       -0.0068
+      ],
+      "box_map_m": [
+       3.0007,
+       -1.2562
+      ],
+      "slot_error_m": [
+       0.0007,
+       -0.0062
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 288,
+      "frame_sha256": "01e47974407ea0c9df529c25997cf97402fc05b2adba545c3d73e4c84259d1cf",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9965,
+       -1.2562,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0035,
+       -0.0062
+      ],
+      "max_box_z_m": 0.1709,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 288038,
+        "min_dist_m": -0.002455,
+        "max_normal_force_n": 2.8834,
+        "contact_s": 72.0095
+       },
+       "finger_cargo": {
+        "steps": 288038,
+        "min_dist_m": -0.002455,
+        "max_normal_force_n": 2.8834,
+        "contact_s": 72.0095
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 24,
+       "drives": 32
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9999999137621762,
+          -0.0004153018663007612
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           89.0,
+           2.0,
+           1.0,
+           7.0,
+           4.0,
+           84.0
+          ],
+          "inliers": 5,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 0.02,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 3,
+         "turns": 0,
+         "strafes": 3,
+         "last": {
+          "yaw_err_deg": -3.21,
+          "y_m": -0.0135
+         },
+         "squared": {
+          "yaw_err_deg": 2.4,
+          "y_m": -0.0069,
+          "x_m": 0.3894
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 218.0,
+     "load_average_start": [
+      10.49,
+      9.83,
+      9.91
+     ],
+     "load_average_end": [
+      10.12,
+      9.73,
+      9.85
+     ],
+     "artifact_sha256": {
+      "result.json": "53aecb8d5da6e6b31ee51fd6d5f44cc7b3a1d58a0ea5554bc679505816d56537",
+      "control.jsonl": "5e0aa26a8f2ffac762a45f4adc0db21bccd5f22165fcdfb1922df69f5bfb79d5",
+      "evaluation-only.jsonl": "531163a3374d1f8213540c220200474df845a8d13b51ea7f3d4722e5762d8da6",
+      "scene.xml": "37c34349cea25a01859d0a8e2b5110c21125418d4a96b523f712239425414c63",
+      "contacts-evaluation-only.json": "48f5810de3d9ba151e546e389ce7a0342ebc5d54fa6f8921649a6a2e1e21bc6c",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 288
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/544",
+     "seed": 544,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E3",
+      "pickup_bay_center_m": [
+       3.7,
+       0.35
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "B1",
+      "slot_xy_m": [
+       4.6,
+       -2.5
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.8400000000000003,
+       0.3
+      ],
+      "box_yaw_deg": 22.0,
+      "bay": "E3",
+      "offset_in_bay_m": [
+       0.14,
+       -0.05
+      ],
+      "robot_start": [
+       2.5,
+       0.2,
+       0.1
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 373,
+     "sim_seconds": 190.011,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 21.8,
+      "to_carry_posture": 84.477,
+      "nav_preplace": 84.527,
+      "pre_release": 179.213,
+      "release": 179.628,
+      "look_back": 190.011
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1663,
+       -0.0076
+      ],
+      "box_map_m": [
+       4.5982,
+       -2.5016
+      ],
+      "slot_error_m": [
+       -0.0018,
+       -0.0016
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 373,
+      "frame_sha256": "494874e558b3537e94fa5b52f5bf195a77a187f55c083f2a90433bcca94b6f03",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5943,
+       -2.5011,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0057,
+       -0.0011
+      ],
+      "max_box_z_m": 0.1707,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 441553,
+        "min_dist_m": -0.002183,
+        "max_normal_force_n": 2.8365,
+        "contact_s": 110.3882
+       },
+       "finger_cargo": {
+        "steps": 441553,
+        "min_dist_m": -0.002183,
+        "max_normal_force_n": 2.8365,
+        "contact_s": 110.3882
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 26,
+       "drives": 37
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9999322406944077,
+          -0.011641048915846613
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           1.0,
+           2.0,
+           1.0,
+           89.0,
+           0.0,
+           1.0
+          ],
+          "inliers": 6,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 0.67,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 10,
+         "turns": 5,
+         "strafes": 5,
+         "last": {
+          "yaw_err_deg": 2.99,
+          "y_m": -0.0116
+         },
+         "squared": {
+          "yaw_err_deg": 2.79,
+          "y_m": -0.0091,
+          "x_m": 0.3585
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 327.2,
+     "load_average_start": [
+      10.53,
+      9.83,
+      9.91
+     ],
+     "load_average_end": [
+      21.71,
+      13.05,
+      11.08
+     ],
+     "artifact_sha256": {
+      "result.json": "9df601d0610f42b0b5c7eaff08f2511733c40a754de89337cc992c9bc298e83d",
+      "control.jsonl": "25d749c39e2a2194eef09281766e8e73c3b701f30507e7660c0ef54cbb2251f6",
+      "evaluation-only.jsonl": "1f6d0a2ab4fc9bec0b86ab92290bb97fb5ac9bcba034f400d2cfbbf0ebdf8585",
+      "scene.xml": "449bc70818186d6aa0b8ce34141a376625a641d149aaff2f00fa2ae011db6310",
+      "contacts-evaluation-only.json": "533a28219c0df16aae9458ff2256adb5dc80ff9a69c1359c4512eb0567900e00",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 373
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/545",
+     "seed": 545,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E1",
+      "pickup_bay_center_m": [
+       3.55,
+       -2.35
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "A3",
+      "slot_xy_m": [
+       4.6,
+       0.8
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.42,
+       -2.22
+      ],
+      "box_yaw_deg": 5.0,
+      "bay": "E1",
+      "offset_in_bay_m": [
+       -0.13,
+       0.13
+      ],
+      "robot_start": [
+       2.7,
+       -2.3,
+       0.0
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 394,
+     "sim_seconds": 192.499,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 14.6,
+      "to_carry_posture": 80.87,
+      "nav_preplace": 80.92,
+      "pre_release": 181.725,
+      "release": 182.125,
+      "look_back": 192.499
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1653,
+       -0.0108
+      ],
+      "box_map_m": [
+       4.5993,
+       0.8029
+      ],
+      "slot_error_m": [
+       -0.0007,
+       0.0029
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 394,
+      "frame_sha256": "89559d01184eb7889764b2d4ca0f45b6efa2d5d740aa746de4640b740963991e",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5955,
+       0.8031,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0045,
+       0.0031
+      ],
+      "max_box_z_m": 0.1709,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 465949,
+        "min_dist_m": -0.001826,
+        "max_normal_force_n": 2.248,
+        "contact_s": 116.4873
+       },
+       "finger_cargo": {
+        "steps": 465949,
+        "min_dist_m": -0.001826,
+        "max_normal_force_n": 2.248,
+        "contact_s": 116.4873
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 29,
+       "drives": 45
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9871747053043372,
+          0.1596436694870648
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           86.0,
+           81.0,
+           77.0,
+           86.0,
+           77.0,
+           78.0
+          ],
+          "inliers": 6,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 80.81,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 16,
+         "turns": 9,
+         "strafes": 7,
+         "last": {
+          "yaw_err_deg": 1.26,
+          "y_m": -0.0157
+         },
+         "squared": {
+          "yaw_err_deg": 2.02,
+          "y_m": -0.0095,
+          "x_m": 0.3915
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 374.4,
+     "load_average_start": [
+      10.12,
+      9.73,
+      9.85
+     ],
+     "load_average_end": [
+      15.23,
+      15.13,
+      12.7
+     ],
+     "artifact_sha256": {
+      "result.json": "70d0f02889c8cd62a2421db60629e1b54bc5ddd606ecd52f3d526435208e28e6",
+      "control.jsonl": "1ebcbeab7b31462faf47ba717a13e504956ce827c8cf3e16eca1b8cd1a98e416",
+      "evaluation-only.jsonl": "f2f7c0b86b8d50193987a63468f90b0141e24175b8590a0a361b830eef03b648",
+      "scene.xml": "0c5c1a34114712a63670f60a100a8a6cff8d3989ea3bff006bd29113998bc3e1",
+      "contacts-evaluation-only.json": "04f774e4b5fdd23f1e3dd5eaf907e57586ce732764ce7e5e86ca18d98d4ec95a",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 394
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/546",
+     "seed": 546,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E4",
+      "pickup_bay_center_m": [
+       3.6,
+       0.95
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "C2",
+      "slot_xy_m": [
+       3.0,
+       -0.85
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.66,
+       1.0699999999999998
+      ],
+      "box_yaw_deg": -28.0,
+      "bay": "E4",
+      "offset_in_bay_m": [
+       0.06,
+       0.12
+      ],
+      "robot_start": [
+       2.55,
+       0.6,
+       -0.05
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 388,
+     "sim_seconds": 191.213,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 21.6,
+      "to_carry_posture": 101.728,
+      "nav_preplace": 101.778,
+      "pre_release": 180.449,
+      "release": 180.849,
+      "look_back": 191.213
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1642,
+       0.0087
+      ],
+      "box_map_m": [
+       3.0015,
+       -0.8529
+      ],
+      "slot_error_m": [
+       0.0015,
+       -0.0029
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 388,
+      "frame_sha256": "043db45b53dc9401493bc0c85bf0479c92a48de1034416dcac015030158d99a2",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       2.9978,
+       -0.8533,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0022,
+       -0.0033
+      ],
+      "max_box_z_m": 0.1706,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 377311,
+        "min_dist_m": -0.002144,
+        "max_normal_force_n": 2.7515,
+        "contact_s": 94.3278
+       },
+       "finger_cargo": {
+        "steps": 377311,
+        "min_dist_m": -0.002144,
+        "max_normal_force_n": 2.7515,
+        "contact_s": 94.3278
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 35,
+       "drives": 56
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9999832213035835,
+          0.005792850016029108
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           87.0,
+           2.0,
+           2.0,
+           87.0,
+           1.0,
+           89.0
+          ],
+          "inliers": 6,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 89.67,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 19,
+         "turns": 10,
+         "strafes": 9,
+         "last": {
+          "yaw_err_deg": -2.33,
+          "y_m": 0.0125
+         },
+         "squared": {
+          "yaw_err_deg": -1.84,
+          "y_m": 0.0093,
+          "x_m": 0.2948
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 359.5,
+     "load_average_start": [
+      21.71,
+      13.05,
+      11.08
+     ],
+     "load_average_end": [
+      15.04,
+      15.0,
+      12.89
+     ],
+     "artifact_sha256": {
+      "result.json": "e99f461b3ed3c69cf7f82133bb677b0a863c55a1c288ef5e3f00ff1150361ddf",
+      "control.jsonl": "739038c7aee908cb74a79ae026530110e8c8ad44e5cd57d4c7820012b26c2a25",
+      "evaluation-only.jsonl": "2706f995e3352cb02993243ef31e6c2f71304c58480ca7466453f046fc638e4c",
+      "scene.xml": "4f122d2935e6bb4c69af481da148a168c3686ec175d6f11298b1ebe1c3fc2cfd",
+      "contacts-evaluation-only.json": "b06cef8b0f83b7ce2022c7d8f63d3f849514e5a349059e0400fc9fc26da2c5f5",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 388
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/547",
+     "seed": 547,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E2",
+      "pickup_bay_center_m": [
+       3.7,
+       -1.5
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "B2",
+      "slot_xy_m": [
+       4.6,
+       -2.1
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.8000000000000003,
+       -1.52
+      ],
+      "box_yaw_deg": 16.0,
+      "bay": "E2",
+      "offset_in_bay_m": [
+       0.1,
+       -0.02
+      ],
+      "robot_start": [
+       3.0,
+       -1.0,
+       0.15
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 282,
+     "sim_seconds": 138.718,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 30.9,
+      "to_carry_posture": 92.725,
+      "nav_preplace": 92.775,
+      "pre_release": 127.925,
+      "release": 128.325,
+      "look_back": 138.718
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1658,
+       -0.0097
+      ],
+      "box_map_m": [
+       4.5969,
+       -2.0875
+      ],
+      "slot_error_m": [
+       -0.0031,
+       0.0125
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 282,
+      "frame_sha256": "aae38397f1b7397549d924c1f79b85184b2b663cb121d72f802cfa714e832f9e",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.593,
+       -2.0873,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.007,
+       0.0127
+      ],
+      "max_box_z_m": 0.1708,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 203482,
+        "min_dist_m": -0.001735,
+        "max_normal_force_n": 2.1632,
+        "contact_s": 50.8705
+       },
+       "finger_cargo": {
+        "steps": 203482,
+        "min_dist_m": -0.001735,
+        "max_normal_force_n": 2.1632,
+        "contact_s": 50.8705
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 26,
+       "drives": 37
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 0,
+      "face_evidence": [
+       {
+        "relooks": 0,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9999166875314244,
+          -0.012908059350025092
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           74.0,
+           80.0,
+           89.0,
+           5.0,
+           88.0,
+           1.0
+          ],
+          "inliers": 4,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 0.74,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 9,
+         "turns": 5,
+         "strafes": 4,
+         "last": {
+          "yaw_err_deg": 1.41,
+          "y_m": -0.0303
+         },
+         "squared": {
+          "yaw_err_deg": 0.0,
+          "y_m": -0.0024,
+          "x_m": 0.3659
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 203.6,
+     "load_average_start": [
+      15.23,
+      15.13,
+      12.7
+     ],
+     "load_average_end": [
+      9.38,
+      13.01,
+      12.37
+     ],
+     "artifact_sha256": {
+      "result.json": "cfaf75cd52acea38fcaef9c1bd8d7ae3988a0934dd20992c0f22552c0e490e17",
+      "control.jsonl": "32e298914e2e707168d82a9175ffa8a3d673e49b497c4dada5aaaf4cb8b6050a",
+      "evaluation-only.jsonl": "1d5141a5ca4505dfbf22a8bd93d9e5c4296f227176867fa82cd089815d5fdc5d",
+      "scene.xml": "e9809fb89b872cbcd96ab30dc0c6c617e7caa260024474bbc5bcdde671b89d56",
+      "contacts-evaluation-only.json": "f25915983746e913d7677a861ec5550f1557ac71f80901e75278101ff57942c1",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 282
+    },
+    {
+     "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/P/548",
+     "seed": 548,
+     "development_seed": false,
+     "runner": "zone_owncam_runner_v5",
+     "profile": "wrist_zone_skill_v5",
+     "mode": "diagnostic",
+     "counts_as_m1": false,
+     "m1_success": false,
+     "diagnostic_success": true,
+     "success": false,
+     "pose_source": "gt_stub_eval_only",
+     "pose_sources_seen": [
+      "gt_stub_eval_only"
+     ],
+     "cameras_seen": [
+      "robot_cam"
+     ],
+     "input_contract": {
+      "camera": "robot_cam only; every observation strictly validated (N7 _validate_observation)",
+      "own_commands": "issued servo PWM in actuator_state + own issued chassis commands",
+      "pose_source": "gt_stub_eval_only",
+      "static_map": {
+       "map_id": "zone_wide_door",
+       "sha256": "d62e0f7a99e60566f2d1b6e89fed58cbca2d869828a1414e3f50b364e7c27c57"
+      },
+      "order_sheet": "coarse pickup bay (0.5 m) + slot id/centre; no box position or yaw",
+      "bay_table_sha256": "d15e72d581ac18c32cf47c56bb06670b7d401e3262b55dff54e364312137c9a2",
+      "forbidden": [
+       "nav_cam",
+       "cctv_top*",
+       "live object pose",
+       "measured joints",
+       "contacts/success state"
+      ],
+      "runner": "zone_owncam_runner_v5",
+      "skill_profile": "wrist_zone_skill_v5"
+     },
+     "order": {
+      "kind": "cyan",
+      "pickup_bay_id": "E3",
+      "pickup_bay_center_m": [
+       3.7,
+       0.35
+      ],
+      "pickup_bay_half_m": [
+       0.25,
+       0.25
+      ],
+      "slot_id": "A1",
+      "slot_xy_m": [
+       4.6,
+       0.0
+      ],
+      "contract": "coarse_bay; box position and yaw from own RGB"
+     },
+     "scenario_setup_only": {
+      "box_xy_m": [
+       3.6500000000000004,
+       0.49
+      ],
+      "box_yaw_deg": -22.0,
+      "bay": "E3",
+      "offset_in_bay_m": [
+       -0.05,
+       0.14
+      ],
+      "robot_start": [
+       2.6,
+       0.3,
+       0.0
+      ]
+     },
+     "source_sha_start": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "dirty_source_start": false,
+     "source_sha_end": "4884226317fd4d24fba4266d3575133f2f94b17c",
+     "source_changed_during_run": false,
+     "dependency_sha256_start": {
+      "scripts/run_zone_owncam_skill_v5.py": "dae1fff9a67937448f6ac97368b1db4f7318eb71569d24cfefe736225549bf9f",
+      "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+      "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+      "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+      "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+      "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+      "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+      "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+      "harness/visual_box_surface.py": "bbc04aa79388acfb617145a3b642992bdce08fca0b55fc028cef52635944fbbc",
+      "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+      "harness/markerless_face.py": "1f829650c9f8da508ee521f6721f2c0fb6d80872053b8c622d79bf49037e9134",
+      "harness/approach_geometry.py": "107f1b36bb6ca44f21aa9813218cf5d1fb17a442ec7a4e2165f8708f9347cba4",
+      "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+      "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+      "harness/static_keepouts.py": "2b4faf26317f45cbdd7cb2deab8fae87a9e460f96778c8af185ec2ac00d57aa3",
+      "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+      "sim/zone_arena.py": "8e9e6df8b231b4eaafb5a0f671eaf2d30f425d53a3939d419739ef5c2bf8ae88",
+      "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+      "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+      "sim/multi_masterpi_production.py": "715bf66c7dfe0a4a328a75b3cec46541eaefedd29b8a3dd4a251eb14ed789f7e",
+      "scripts/zone_teacher.py": "fc2756513aeccd6e5624714f648f5c775d69750fd40b1bf08c74ec72703f7f0d"
+     },
+     "reason": "OWN_RGB_PLACEMENT_IN_SLOT",
+     "steps": 334,
+     "sim_seconds": 160.092,
+     "phase_start_sim_s": {
+      "nav_pregrasp": 1.8,
+      "grasp": 19.1,
+      "backoff": 63.444,
+      "to_carry_posture": 118.493,
+      "nav_preplace": 118.543,
+      "pre_release": 149.319,
+      "release": 149.722,
+      "look_back": 160.092
+     },
+     "placement_own_rgb": {
+      "in_slot": true,
+      "reason": "IN_SLOT",
+      "box_base_m": [
+       0.1647,
+       -0.0056
+      ],
+      "box_map_m": [
+       4.5899,
+       0.0032
+      ],
+      "slot_error_m": [
+       -0.0101,
+       0.0032
+      ],
+      "pose_source": "gt_stub_eval_only",
+      "scope": "own wrist RGB floor fit mapped with the pose estimate; the verdict inherits its source",
+      "detector": "n7_floor_cuboid_fit",
+      "fit_reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+      "observation_validated": true,
+      "frame_id": 334,
+      "frame_sha256": "27a9f01746e9a7613515556ab5fd10448e65aae02e2f73e2ba0d1a9ce0b0a79b",
+      "mode": "diagnostic",
+      "counts_as_m1_input": false
+     },
+     "evaluation_only": {
+      "grasp_success_gt": true,
+      "place_in_slot_gt": true,
+      "place_in_zone_gt": true,
+      "box_final_xyz": [
+       4.5861,
+       0.0032,
+       0.0159
+      ],
+      "box_tilt_deg": 0.0,
+      "slot_error_m": [
+       -0.0139,
+       0.0032
+      ],
+      "max_box_z_m": 0.1707,
+      "weld_eq_active_max": 0,
+      "contacts_per_physics_step": {
+       "cargo_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_wall": {
+        "steps": 0,
+        "min_dist_m": null,
+        "max_normal_force_n": 0.0,
+        "contact_s": 0.0
+       },
+       "r1_cargo": {
+        "steps": 185835,
+        "min_dist_m": -0.002296,
+        "max_normal_force_n": 2.9526,
+        "contact_s": 46.4588
+       },
+       "finger_cargo": {
+        "steps": 185835,
+        "min_dist_m": -0.002296,
+        "max_normal_force_n": 2.9526,
+        "contact_s": 46.4588
+       }
+      },
+      "contact_episode_counts": {
+       "cargo_wall": 0,
+       "r1_wall": 0
+      },
+      "skill_claim_in_slot": true,
+      "skill_claim_agrees_with_gt": true,
+      "face_normal_sources": [
+       "own_rgb_markerless_face_fits"
+      ]
+     },
+     "skill_summary": {
+      "retreats": 0,
+      "reseats": 0,
+      "carry_warnings": [],
+      "approach_stats": {
+       "forced_forward": 0,
+       "combined_corrections": 25,
+       "drives": 26
+      },
+      "grip_checks": [],
+      "placement_detector": "n7_floor_cuboid_fit",
+      "self_occluded_rejections": 0,
+      "self_occluded_samples": [],
+      "mode": "diagnostic",
+      "face_relooks": 1,
+      "face_evidence": [
+       {
+        "relooks": 1,
+        "evidence": {
+         "ready": true,
+         "normal_xy": [
+          -0.9853276563141957,
+          0.17067340068790493
+         ],
+         "reason": "OWN_RGB_FACE_INLIER_VOTE",
+         "normal_source": "own_rgb_markerless_face_inlier_vote",
+         "evidence": {
+          "window": [
+           78.0,
+           78.0,
+           86.0,
+           1.0,
+           78.0,
+           81.0
+          ],
+          "inliers": 5,
+          "min_inliers": 3,
+          "min_fraction": 0.6,
+          "inlier_tol_deg": 7.0,
+          "frame_accepted": true,
+          "yaw_mod90_deg": 80.17,
+          "selection": "current_own_frame_candidate_nearest_previous_normal"
+         }
+        },
+        "square": {
+         "moves": 4,
+         "turns": 1,
+         "strafes": 3,
+         "last": {
+          "yaw_err_deg": 1.67,
+          "y_m": -0.0133
+         },
+         "squared": {
+          "yaw_err_deg": 1.67,
+          "y_m": -0.0087,
+          "x_m": 0.3941
+         }
+        }
+       }
+      ],
+      "rejected_observations": [],
+      "cameras_seen": [
+       "robot_cam"
+      ],
+      "order_contract": "coarse_bay"
+     },
+     "contact_profile_selected": "cargo_noslip_v1",
+     "contact_profile_status": "cargo_noslip_v1 primary, pending the user decision",
+     "cargo_contact_profile": {
+      "name": "cargo_noslip_v1",
+      "version": 1,
+      "base": "local_contact_fine",
+      "option": {
+       "noslip_iterations": "10"
+      },
+      "scope": "global solver option (all contacts)",
+      "evidence": "experiments/2026-09-25-zone-cargo-catalogue (section: slip removal)",
+      "sha256": "2e003d85011354676866f0d73b32604c9b5105e919ba3d979687714d62e90ff4"
+     },
+     "solver_noslip_iterations": 10,
+     "wall_seconds": 189.8,
+     "load_average_start": [
+      15.04,
+      15.0,
+      12.89
+     ],
+     "load_average_end": [
+      7.13,
+      11.45,
+      11.83
+     ],
+     "artifact_sha256": {
+      "result.json": "560e7a20823f6e8c8911f1242f93f024641b9a4b2da192e40aefb9e4ba6448e9",
+      "control.jsonl": "6554f39a52da000d0ef1c4a9689c80b461b04a058dd2eaccf64952694e691b83",
+      "evaluation-only.jsonl": "acf14f714d9933f459a021ac08df7cb7b1507989d35066feab5418209432b9b7",
+      "scene.xml": "26a283d248e0fc13e266931215eb52c2f94240ef7e2533d2930aec6fd0c1993d",
+      "contacts-evaluation-only.json": "218a5a02f1f2b36522c92322d3d9482dd850c87092d80c69e9c2ed8097de3477",
+      "provenance-start.json": "f1e5a3a062858cd3f52894265ef3c0de6cd1e91e18be4339689ba3fea5e819de"
+     },
+     "input_frames": 334
+    }
+   ],
+   "missing": [],
+   "summary": {
+    "n": 8,
+    "mode": [
+     "diagnostic"
+    ],
+    "counts_as_m1": 0,
+    "m1_success": 0,
+    "diagnostic_success": 8,
+    "place_in_slot_gt": 8,
+    "grasp_success_gt": 8,
+    "false_success": 0,
+    "skill_claim_agrees_with_gt": 8,
+    "face_normal_sources": [
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ],
+     [
+      "own_rgb_markerless_face_fits"
+     ]
+    ],
+    "face_relooks": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "rejected_observations": 0,
+    "weld_eq_active_max": 0,
+    "cargo_wall_contact_steps": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "r1_wall_contact_steps": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "max_wall_normal_force_n": 0.0,
+    "source_changed_during_run": [],
+    "source_sha_start": [
+     "4884226317fd4d24fba4266d3575133f2f94b17c"
+    ],
+    "sim_seconds": [
+     137.813,
+     134.636,
+     137.357,
+     190.011,
+     192.499,
+     191.213,
+     138.718,
+     160.092
+    ],
+    "steps": [
+     271,
+     266,
+     288,
+     373,
+     394,
+     388,
+     282,
+     334
+    ],
+    "reasons": [
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT",
+     "OWN_RGB_PLACEMENT_IN_SLOT"
+    ]
+   }
+  },
+  "logs": {
+   "cohort-v5-4884226": {
+    "path": "/Users/changmin/projects/ugrp/outputs/zone-owncam-skill-20260925/cohort-v5-4884226/cohort.log",
+    "sha256": "79ce4a7b7325633462c0e78a11f3de3cd8641e6ce58a2107fcd007b2fd3f7607"
+   }
+  }
+ },
  "missing_seeds": {},
  "cohort_report_blocked": false
 }
