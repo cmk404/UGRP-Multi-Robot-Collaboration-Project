@@ -61,7 +61,7 @@ SCENARIOS = {
           'parked': {'r2': (-.28, .28), 'r3': (.05, -.40)}},
     418: {'start': (2.55, 0.50, 0.00), 'bay': 'E3', 'offset': (-.10, .08), 'yaw_deg': 0., 'slot': 'C1',
           'parked': {'r2': (-.40, .22)}},                   # the v6 552 guard layout on another bay
-    419: {'start': (2.60, -1.20, 0.00), 'bay': 'E2', 'offset': (-.05, -.05), 'yaw_deg': 0., 'slot': 'A2',
+    419: {'start': (2.55, 0.70, 0.00), 'bay': 'E4', 'offset': (.05, -.08), 'yaw_deg': 0., 'slot': 'A2',
           'parked': {'r2': (-.25, -.30)}},                  # east-side bay approach (as test 564, other bay)
     # test (pre-registered in experiments/2026-09-25-zone-owncam-skill/README.md before any v7 test run)
     561: {'start': (2.55, -2.30, 0.00), 'bay': 'E1', 'offset': (.08, .05), 'yaw_deg': 0., 'slot': 'B1',
