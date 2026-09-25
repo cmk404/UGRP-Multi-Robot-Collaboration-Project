@@ -1,0 +1,1212 @@
+{
+ "schema": "ugrp.zone_rgb_outcome.results.v2",
+ "date": "2026-09-25/26",
+ "role_note": "2026-09-25 user decision (PR #175 decision_log): TOP removed from robot LLM inputs; this TOP-based check is retired as a robot input and kept as an evaluation-side cross-check and a reference for a future own-camera version",
+ "module": "harness/zone_rgb_outcome.py",
+ "module_sha256": "1c80d3a0fe7e09b0196f495bce6b77248f6db182b897d05702eb0c3b98961775",
+ "module_frozen_commit": "c30091b",
+ "split_file": "split-v2.json",
+ "split_sha256": "d9b23b378012b8339c38f472d49b394997fab1d1aa06132db2b796527e9f6da0",
+ "policy": {
+  "cadence_s": 1.0,
+  "stable_ticks": 2,
+  "deadline_s": 180.0,
+  "close_grace_s": 4.0,
+  "releases_at_source": 3,
+  "commit_confidence": 0.6
+ },
+ "dev_v2": {
+  "file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/dev-final/score/score.json",
+  "sha256": "e1ed55f5d74245100bfcaa244ce8398ee8499ef5d8966aab80f90492a1750e60",
+  "source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+  "jobs": 199,
+  "correct": 182,
+  "unconfirmed_at_run_end": 4,
+  "confirmed_not_seen": 13,
+  "matrix": {
+   "delivered": {
+    "delivered": 147,
+    "still_at_source": 0,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 1
+   },
+   "still_at_source": {
+    "delivered": 0,
+    "still_at_source": 32,
+    "seen_elsewhere": 0,
+    "not_seen": 7,
+    "unconfirmed": 1
+   },
+   "elsewhere": {
+    "delivered": 0,
+    "still_at_source": 0,
+    "seen_elsewhere": 3,
+    "not_seen": 6,
+    "unconfirmed": 2
+   }
+  },
+  "false_delivered_at_decision": [],
+  "false_delivered_vs_final_gt": [],
+  "raw_proven_delivered_observations_on_non_delivered_ticks": 0,
+  "confirm_rules": {
+   "closed_still_at_source_tracked": 28,
+   "delivered_source_proven": 147,
+   "closed_not_seen": 13,
+   "deadline_still_at_source_tracked": 4,
+   "closed_seen_elsewhere": 3
+  },
+  "time_to_detect": {
+   "delivered": {
+    "n": 147,
+    "reference": "first_gt_delivered_t (evaluation only)",
+    "median_s": 5.0,
+    "max_s": 8.0,
+    "p90_s": 6.0,
+    "since_assignment_median_s": 71.2
+   },
+   "non_delivered_confirmed": {
+    "n": 33,
+    "reference": "teacher_end_t (evaluation only)",
+    "median_s": 15.2,
+    "max_s": 148.9,
+    "p90_s": 15.2,
+    "since_assignment_median_s": 37.2
+   }
+  },
+  "by_teacher_outcome": {
+   "grasp_failed_by_teacher": {
+    "delivered": 0,
+    "still_at_source": 11,
+    "seen_elsewhere": 0,
+    "not_seen": 1,
+    "unconfirmed": 0
+   },
+   "placed_by_teacher": {
+    "delivered": 147,
+    "still_at_source": 0,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 0
+   },
+   "box_taken_by_peer": {
+    "delivered": 0,
+    "still_at_source": 15,
+    "seen_elsewhere": 0,
+    "not_seen": 8,
+    "unconfirmed": 1
+   },
+   "teacher_path_blocked": {
+    "delivered": 0,
+    "still_at_source": 2,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 2
+   },
+   "dropped_in_transit": {
+    "delivered": 0,
+    "still_at_source": 2,
+    "seen_elsewhere": 3,
+    "not_seen": 4,
+    "unconfirmed": 1
+   },
+   "unfinished_at_run_end": {
+    "delivered": 0,
+    "still_at_source": 2,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 0
+   }
+  }
+ },
+ "test_v2": {
+  "file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/test-score/score.json",
+  "sha256": "0f781bd92e11fab1ad230cfb0667cdd0c972ba46f1b0b215f403608c62748a28",
+  "source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+  "jobs": 269,
+  "correct": 256,
+  "unconfirmed_at_run_end": 7,
+  "confirmed_not_seen": 5,
+  "matrix": {
+   "delivered": {
+    "delivered": 57,
+    "still_at_source": 0,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 0
+   },
+   "still_at_source": {
+    "delivered": 0,
+    "still_at_source": 196,
+    "seen_elsewhere": 1,
+    "not_seen": 3,
+    "unconfirmed": 6
+   },
+   "elsewhere": {
+    "delivered": 0,
+    "still_at_source": 0,
+    "seen_elsewhere": 3,
+    "not_seen": 2,
+    "unconfirmed": 1
+   }
+  },
+  "false_delivered_at_decision": [],
+  "false_delivered_vs_final_gt": [],
+  "raw_proven_delivered_observations_on_non_delivered_ticks": 0,
+  "confirm_rules": {
+   "closed_seen_elsewhere": 4,
+   "closed_still_at_source_tracked": 195,
+   "delivered_source_proven": 57,
+   "deadline_still_at_source_tracked": 1,
+   "closed_not_seen": 5
+  },
+  "time_to_detect": {
+   "delivered": {
+    "n": 57,
+    "reference": "first_gt_delivered_t (evaluation only)",
+    "median_s": 5.0,
+    "max_s": 6.0,
+    "p90_s": 6.0,
+    "since_assignment_median_s": 69.2
+   },
+   "non_delivered_confirmed": {
+    "n": 199,
+    "reference": "teacher_end_t (evaluation only)",
+    "median_s": 5.0,
+    "max_s": 170.0,
+    "p90_s": 15.0,
+    "since_assignment_median_s": 15.2
+   }
+  },
+  "by_teacher_outcome": {
+   "dropped_in_transit": {
+    "delivered": 0,
+    "still_at_source": 0,
+    "seen_elsewhere": 4,
+    "not_seen": 4,
+    "unconfirmed": 3
+   },
+   "teacher_path_blocked": {
+    "delivered": 0,
+    "still_at_source": 185,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 2
+   },
+   "placed_by_teacher": {
+    "delivered": 57,
+    "still_at_source": 0,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 0
+   },
+   "unfinished_at_run_end": {
+    "delivered": 0,
+    "still_at_source": 0,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 2
+   },
+   "grasp_failed_by_teacher": {
+    "delivered": 0,
+    "still_at_source": 10,
+    "seen_elsewhere": 0,
+    "not_seen": 1,
+    "unconfirmed": 0
+   },
+   "box_taken_by_peer": {
+    "delivered": 0,
+    "still_at_source": 1,
+    "seen_elsewhere": 0,
+    "not_seen": 0,
+    "unconfirmed": 0
+   }
+  }
+ },
+ "test_v2_tracks": [
+  "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/test-a/track",
+  "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/test-b/track"
+ ],
+ "failed_or_superseded_attempts": [
+  {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/dev-a/track",
+   "why": "crashed on a run without issued jobs (dev-fixture-1); fixed ad5fc16"
+  },
+  {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/dev-a2/track",
+   "why": "stopped by me: stale module (before the close grace, c30091b)"
+  },
+  {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/dev-b",
+   "why": "scored with the pre-grace module (dev only, peeked); superseded by dev-final"
+  }
+ ],
+ "recordings": {
+  "dev-o33-dyn": {
+   "runner_source_sha": "079ce5895f62ab7af8d71499a56b2bbdaf3e5d2a",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r1-2",
+    "at": 56.7
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     8.6,
+     6.91,
+     6.12
+    ],
+    [
+     9.28,
+     7.87,
+     6.68
+    ]
+   ],
+   "port_commands_sha256": "2ce3223c0040420bb8694b56c66b2ace1a5a8ccc87ba2fae29ea4814881fa105"
+  },
+  "dev-o34-plan": {
+   "runner_source_sha": "079ce5895f62ab7af8d71499a56b2bbdaf3e5d2a",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r2-1",
+    "at": 34.1
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r3",
+    "box": "cyan-1",
+    "zone": "B",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     8.6,
+     6.91,
+     6.12
+    ],
+    [
+     9.16,
+     7.63,
+     6.54
+    ]
+   ],
+   "port_commands_sha256": "5be7459a12b9c196499d44708919b7ad1fd01c28eb8e798fb006163c190c5200"
+  },
+  "dev-w31-dyn": {
+   "runner_source_sha": "f32e41c71a149298bf4bf34b75d73c39f09c1018",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r1-2",
+    "at": 74.1
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     5.6,
+     5.39,
+     5.47
+    ],
+    [
+     6.53,
+     5.9,
+     5.66
+    ]
+   ],
+   "port_commands_sha256": "571c890ba86b59ae6b0f971e87356e3dc0a7132a013171a8bd9d7bdf98e1df51"
+  },
+  "dev-w31-ind": {
+   "runner_source_sha": "f32e41c71a149298bf4bf34b75d73c39f09c1018",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 69.7
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     5.6,
+     5.39,
+     5.47
+    ],
+    [
+     6.53,
+     6.08,
+     5.75
+    ]
+   ],
+   "port_commands_sha256": "3acfe233f8950f71661fb6a6b8774b47e00f5c67c7209f73075511f11c7a1fca"
+  },
+  "dev-w32-dyn": {
+   "runner_source_sha": "079ce5895f62ab7af8d71499a56b2bbdaf3e5d2a",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r1-1",
+    "at": 32.9
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     6.24,
+     5.85,
+     5.65
+    ],
+    [
+     8.6,
+     6.91,
+     6.12
+    ]
+   ],
+   "port_commands_sha256": "5bb079a58f2cf789df5513af26474e7afddd7f0052aa77b71191be3e19dfb779"
+  },
+  "dev-w32-plan": {
+   "runner_source_sha": "079ce5895f62ab7af8d71499a56b2bbdaf3e5d2a",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 62.8
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     6.53,
+     6.08,
+     5.75
+    ],
+    [
+     8.6,
+     6.91,
+     6.12
+    ]
+   ],
+   "port_commands_sha256": "ffc0a77448ef6b83758fd81b972ae61a481504989accad861a9d480202d82836"
+  },
+  "test-o44-dyn": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r1-2",
+    "at": 50.7
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     10.4,
+     12.51,
+     12.82
+    ],
+    [
+     7.27,
+     10.31,
+     11.86
+    ]
+   ],
+   "port_commands_sha256": "fb09613e75cadb62706ea0e41e7401a94438d57a3ec84707087dd83f51392c8d"
+  },
+  "test-o45-dyn": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "SIM_BUDGET",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r1-1",
+    "at": 30.9
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     20.01,
+     10.73,
+     9.74
+    ],
+    [
+     8.83,
+     13.93,
+     32.35
+    ]
+   ],
+   "port_commands_sha256": "a3e2f8a85c41b0ab98529273fedb9e56374d3c17e25d9c3a3997021395e53469"
+  },
+  "test-o46-dyn": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "SIM_BUDGET",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 5,
+    "job_id": "r2-2",
+    "at": 112.5
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     7.27,
+     10.31,
+     11.86
+    ],
+    [
+     8.11,
+     8.29,
+     8.95
+    ]
+   ],
+   "port_commands_sha256": "23097c699e00a3026375bc025f4854c8742ae807ddf67dbda94243d1b8e3eb3a"
+  },
+  "test-w41-dyna": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 113.9
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     6.45,
+     9.4,
+     11.05
+    ],
+    [
+     10.51,
+     9.78,
+     10.9
+    ]
+   ],
+   "port_commands_sha256": "04ddf894d5c87fed373757c726aa1a2bfdd32b49ccb72c9107885f12e9213c7d"
+  },
+  "test-w41-inde": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r2-1",
+    "at": 27.2
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r3",
+    "box": "cyan-1",
+    "zone": "B",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     6.45,
+     9.4,
+     11.05
+    ],
+    [
+     16.6,
+     16.61,
+     13.8
+    ]
+   ],
+   "port_commands_sha256": "4267776068fa7e9e784dba7a44bddbd172a89d5e1ddef3859d01132d5461bbf3"
+  },
+  "test-w41-plan": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 79.1
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     10.51,
+     9.78,
+     10.9
+    ],
+    [
+     13.33,
+     15.73,
+     13.66
+    ]
+   ],
+   "port_commands_sha256": "93e666ff2be078bba77135a66c104873a2a704cb42d5977e3c93d9f41254f6db"
+  },
+  "test-w42-dyna": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 103.3
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     16.6,
+     16.61,
+     13.8
+    ],
+    [
+     7.94,
+     12.22,
+     12.54
+    ]
+   ],
+   "port_commands_sha256": "7f4cb397a7fdc81f3870ec71a6fe0882e90e40dc9ad5eb9de4da1a55cddddfe8"
+  },
+  "test-w42-inde": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "SIM_BUDGET",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r2-1",
+    "at": 22.5
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r3",
+    "box": "cyan-1",
+    "zone": "B",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     13.33,
+     15.73,
+     13.66
+    ],
+    [
+     7.78,
+     8.43,
+     9.08
+    ]
+   ],
+   "port_commands_sha256": "13d9794a5e938f400565a8cc6061551e8e456417e1997bb11191f67644867530"
+  },
+  "test-w42-plan": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r2-2",
+    "at": 56.0
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r2",
+    "box": "red-2",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     7.94,
+     12.22,
+     12.54
+    ],
+    [
+     19.25,
+     14.83,
+     13.51
+    ]
+   ],
+   "port_commands_sha256": "f949ee9d7afdb3c26b4b1c77fc8c98ffa0536834c4122d094f2e469a7eb66d38"
+  },
+  "test-w43-dyna": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 4,
+    "job_id": "r1-2",
+    "at": 66.8
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 2,
+    "robot": "r1",
+    "box": "red-1",
+    "zone": "A",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     7.78,
+     8.43,
+     9.08
+    ],
+    [
+     8.58,
+     8.31,
+     8.89
+    ]
+   ],
+   "port_commands_sha256": "99646d8de0c7d7ee1d77dba4f67eff54cebe5b4956bbdccdd5c1f6b74fde02ac"
+  },
+  "test-w43-inde": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "FINISHED",
+   "error": null,
+   "exit": 0,
+   "drop_injection": {
+    "job_index": 2,
+    "job_id": "r2-1",
+    "at": 39.4
+   },
+   "grasp_injection": {
+    "kind": "grasp_stays_open",
+    "job_index": 3,
+    "robot": "r3",
+    "box": "cyan-1",
+    "zone": "B",
+    "sim_time_s": 1.8
+   },
+   "load_avg": [
+    [
+     19.25,
+     14.83,
+     13.51
+    ],
+    [
+     10.4,
+     12.51,
+     12.82
+    ]
+   ],
+   "port_commands_sha256": "b60ba17633063d14d43e24b84eedeb26292d24c8f0003d540fc6d20444c80098"
+  },
+  "test-w43-plan": {
+   "runner_source_sha": "c30091bf723fd4c40924711ae2a264a0f9d4f938",
+   "phase": "NEGOTIATE",
+   "error": "StopIteration: ",
+   "exit": 1,
+   "drop_injection": {
+    "job_index": 4
+   },
+   "grasp_injection": null,
+   "load_avg": [
+    [
+     8.58,
+     8.31,
+     8.89
+    ],
+    [
+     20.01,
+     10.73,
+     9.74
+    ]
+   ],
+   "port_commands_sha256": "21c43e8f1ecaf0cbbe8f3c6d357595b3f52dbeed0a70b228e9373ac2d954cf19"
+  }
+ },
+ "synth-dev": {
+  "manifest": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/synth-dev/synth-manifest.json",
+  "sha256": "1224792ad6063467ff3661f7c1d8dfcf388281e7ce60d77b131abead22644603",
+  "confirmed": {
+   "drop_mid_route_visible": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 4
+    }
+   },
+   "drop_under_robot": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 3,
+     "not_seen": 1
+    }
+   },
+   "grasp_fail_robot_at_pregrasp": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "still_at_source": 4
+    }
+   },
+   "grasp_fail_robot_over_source": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "still_at_source": 2,
+     "not_seen": 2
+    }
+   },
+   "placed_robot_over_target": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "not_seen": 4
+    }
+   },
+   "placed_arm_over_target": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "not_seen": 4
+    }
+   },
+   "placed_clear": {
+    "n": 4,
+    "safe": 0,
+    "outcomes": {
+     "not_seen": 4
+    }
+   },
+   "wrong_zone": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 4
+    }
+   },
+   "wrong_kind_in_target_source_occluded": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "still_at_source": 2,
+     "not_seen": 2
+    }
+   },
+   "peer_same_kind_own_slot_source_occluded": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_assignment_box_stays_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_assignment_box_gone_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_reference_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "identity_swap_source_empty_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   }
+  },
+  "confirmed_false_delivered": [],
+  "harness_artifact": "the harness sets assigned_at = t0 - DEADLINE, so the first tick already finalizes at the deadline and a synthetic delivered can never be confirmed; the observation rule (below) is the meaningful safety measure",
+  "observation_rules": {
+   "peer_same_kind_own_slot_source_occluded": {
+    "delivered_source_unproven": 1,
+    "still_at_source_conflict": 1
+   },
+   "placed_robot_over_target": {
+    "not_seen": 2,
+    "delivered_source_proven": 2
+   },
+   "wrong_zone": {
+    "seen_elsewhere": 4
+   },
+   "static_occluder_from_reference_peer_in_target": {
+    "delivered_source_unproven": 2
+   },
+   "placed_clear": {
+    "delivered_source_proven": 4
+   },
+   "drop_under_robot": {
+    "seen_elsewhere": 3,
+    "not_seen": 1
+   },
+   "wrong_kind_in_target_source_occluded": {
+    "not_seen": 2,
+    "still_at_source_tracked": 2
+   },
+   "identity_swap_source_empty_peer_in_target": {
+    "delivered_source_proven": 2
+   },
+   "placed_arm_over_target": {
+    "delivered_source_proven": 4
+   },
+   "static_occluder_from_assignment_box_stays_peer_in_target": {
+    "delivered_source_unproven": 1,
+    "still_at_source_conflict": 1
+   },
+   "grasp_fail_robot_over_source": {
+    "not_seen": 2,
+    "still_at_source_tracked": 2
+   },
+   "drop_mid_route_visible": {
+    "seen_elsewhere": 4
+   },
+   "grasp_fail_robot_at_pregrasp": {
+    "still_at_source_tracked": 4
+   },
+   "static_occluder_from_assignment_box_gone_peer_in_target": {
+    "delivered_source_unproven": 2
+   }
+  },
+  "proven_delivered_observation_on_non_delivered_gt": [
+   [
+    "zone-dispatch-20260925__dev-fixture-7__r1-1",
+    "identity_swap_source_empty_peer_in_target"
+   ],
+   [
+    "zone-communication-20260925__gate-dynamic-nominal__r1-1",
+    "identity_swap_source_empty_peer_in_target"
+   ]
+  ],
+  "load_avg": [
+   [
+    8.83,
+    13.93,
+    32.35
+   ],
+   [
+    7.29,
+    13.15,
+    31.54
+   ]
+  ]
+ },
+ "synth-test": {
+  "manifest": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/synth-test/synth-manifest.json",
+  "sha256": "bb0d967a5525c15902c63edb5b2ca8997ce2d8fb04d3db53de3d453048ee5518",
+  "confirmed": {
+   "drop_mid_route_visible": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 4
+    }
+   },
+   "drop_under_robot": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 3,
+     "not_seen": 1
+    }
+   },
+   "grasp_fail_robot_at_pregrasp": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "still_at_source": 4
+    }
+   },
+   "grasp_fail_robot_over_source": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "not_seen": 2,
+     "still_at_source": 2
+    }
+   },
+   "placed_robot_over_target": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 1,
+     "not_seen": 3
+    }
+   },
+   "placed_arm_over_target": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "not_seen": 4
+    }
+   },
+   "placed_clear": {
+    "n": 4,
+    "safe": 0,
+    "outcomes": {
+     "not_seen": 4
+    }
+   },
+   "wrong_zone": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "seen_elsewhere": 4
+    }
+   },
+   "wrong_kind_in_target_source_occluded": {
+    "n": 4,
+    "safe": 4,
+    "outcomes": {
+     "not_seen": 2,
+     "still_at_source": 2
+    }
+   },
+   "peer_same_kind_own_slot_source_occluded": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_assignment_box_stays_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_assignment_box_gone_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "static_occluder_from_reference_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   },
+   "identity_swap_source_empty_peer_in_target": {
+    "n": 2,
+    "safe": 2,
+    "outcomes": {
+     "not_seen": 2
+    }
+   }
+  },
+  "confirmed_false_delivered": [],
+  "harness_artifact": "the harness sets assigned_at = t0 - DEADLINE, so the first tick already finalizes at the deadline and a synthetic delivered can never be confirmed; the observation rule (below) is the meaningful safety measure",
+  "observation_rules": {
+   "placed_robot_over_target": {
+    "delivered_source_proven": 2,
+    "seen_elsewhere": 1,
+    "not_seen": 1
+   },
+   "wrong_zone": {
+    "seen_elsewhere": 4
+   },
+   "placed_clear": {
+    "delivered_source_proven": 4
+   },
+   "drop_under_robot": {
+    "seen_elsewhere": 3,
+    "not_seen": 1
+   },
+   "wrong_kind_in_target_source_occluded": {
+    "not_seen": 2,
+    "still_at_source_tracked": 2
+   },
+   "placed_arm_over_target": {
+    "delivered_source_proven": 4
+   },
+   "grasp_fail_robot_over_source": {
+    "not_seen": 2,
+    "still_at_source_tracked": 2
+   },
+   "drop_mid_route_visible": {
+    "seen_elsewhere": 4
+   },
+   "grasp_fail_robot_at_pregrasp": {
+    "still_at_source_tracked": 4
+   },
+   "peer_same_kind_own_slot_source_occluded": {
+    "delivered_source_unproven": 1,
+    "still_at_source_conflict": 1
+   },
+   "static_occluder_from_reference_peer_in_target": {
+    "delivered_source_unproven": 1,
+    "delivered_source_proven": 1
+   },
+   "identity_swap_source_empty_peer_in_target": {
+    "delivered_source_proven": 2
+   },
+   "static_occluder_from_assignment_box_stays_peer_in_target": {
+    "delivered_source_unproven": 1,
+    "still_at_source_conflict": 1
+   },
+   "static_occluder_from_assignment_box_gone_peer_in_target": {
+    "delivered_source_unproven": 1,
+    "delivered_source_proven": 1
+   }
+  },
+  "proven_delivered_observation_on_non_delivered_gt": [
+   [
+    "zone-rgb-outcome-runs-20260925__test-w41-dyna__r1-2",
+    "identity_swap_source_empty_peer_in_target"
+   ],
+   [
+    "zone-rgb-outcome-runs-20260925__test-o44-dyn__r1-3",
+    "static_occluder_from_reference_peer_in_target"
+   ],
+   [
+    "zone-rgb-outcome-runs-20260925__test-o44-dyn__r1-3",
+    "identity_swap_source_empty_peer_in_target"
+   ],
+   [
+    "zone-rgb-outcome-runs-20260925__test-o44-dyn__r1-3",
+    "static_occluder_from_assignment_box_gone_peer_in_target"
+   ]
+  ],
+  "load_avg": [
+   [
+    23.7,
+    41.82,
+    39.18
+   ],
+   [
+    21.86,
+    39.64,
+    38.48
+   ]
+  ]
+ },
+ "decision_equivalence": {
+  "file": "/Users/changmin/projects/ugrp/outputs/zone-rgb-outcome-v2-20260925/validate/decision-equivalence.json",
+  "sha256": "e63d03cf49f720bc1a9640332b159d13123af5fb0f924de674e522ce380a80c8",
+  "observations": 3610,
+  "same_rule": 3609,
+  "differences": [
+   {
+    "run": "zone-communication-20260925/ZC2-s14-independent-graspfail",
+    "phase": "solo-17-0",
+    "t": 217.7999999965777,
+    "job_id": "r1-3",
+    "recorded": "not_seen",
+    "rendered": "still_at_source_tracked",
+    "same": false
+   }
+  ]
+ },
+ "load_log": [
+  "2026-09-25 22:39:05 load { 40.70 68.39 60.31 } mine: record(test lane A) + track(dev-final); other owncam-* sessions not mine",
+  "23:30:14 load { 7.71 14.07 32.84 } dev label/score",
+  "23:30:36 load { 8.83 13.93 32.35 } synth-dev",
+  "23:31:13 load { 6.70 12.83 31.21 } test track start",
+  "2026-09-26 00:04:09 load { 51.11 49.76 41.43 } test part1 done",
+  "2026-09-26 00:05:21 load { 24.89 42.36 39.35 } synth-test+validate"
+ ]
+}

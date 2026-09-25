@@ -222,6 +222,54 @@
       }
     },
     {
+      "id": "zone-rgb-outcome-eval",
+      "purpose": "구역 작업 결과(배달·출발지 잔류·다른 곳 발견·미발견) RGB 전용 판정 오프라인 평가(기록 실행 재렌더·합성 사례)",
+      "entry": "scripts/eval_zone_rgb_outcome.py",
+      "docs": "experiments/2026-09-25-zone-rgb-outcome/README.md",
+      "requires": "committed split file (split-v2.json); record runs the unmodified zone runner in fixture mode with an observation-only port command log; track/synth/validate render only from recorded observer replays; ground truth is written by label and read only by score; every subcommand needs a new --out directory",
+      "version": "2.0.0",
+      "runner": "scripts.eval_zone_rgb_outcome",
+      "output_flag": {
+        "record": "--out",
+        "track": "--out",
+        "label": "--out",
+        "score": "--out",
+        "synth": "--out",
+        "validate": "--out"
+      },
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": {
+        "record": [
+          "--seed"
+        ],
+        "track": [
+          "--split"
+        ],
+        "label": [
+          "--track"
+        ],
+        "score": [
+          "--track",
+          "--labels"
+        ],
+        "synth": [
+          "--split"
+        ],
+        "validate": [
+          "--splits"
+        ]
+      },
+      "output_kind": {
+        "record": "directory",
+        "track": "directory",
+        "label": "directory",
+        "score": "directory",
+        "synth": "directory",
+        "validate": "directory"
+      }
+    },
+    {
       "id": "navigation",
       "purpose": "정적 지도·RGB 단독 주행",
       "entry": "scripts/run_known_map_navigation.py",

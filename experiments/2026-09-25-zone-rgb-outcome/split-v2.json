@@ -1,0 +1,314 @@
+{
+ "schema": "ugrp.zone_rgb_outcome.split.v2",
+ "fixed_at": "2026-09-25, before recording or scoring any v2 run",
+ "why": "review of PR #170: the v1 test split was already used; v2 decides on a fixed SIM cadence from assignment and uses logged issued commands, so it needs runs with a port command log and a fresh test split",
+ "recipes": {
+  "dev_cmd": [
+   {
+    "name": "dev-w31-dyn",
+    "variant": "zone_wide",
+    "seed": 31,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "dev-w31-ind",
+    "variant": "zone_wide",
+    "seed": 31,
+    "coordination": "independent",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "dev-w32-dyn",
+    "variant": "zone_wide",
+    "seed": 32,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   },
+   {
+    "name": "dev-w32-plan",
+    "variant": "zone_wide",
+    "seed": 32,
+    "coordination": "plan_first",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "dev-o33-dyn",
+    "variant": "zone_open",
+    "seed": 33,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "dev-o34-plan",
+    "variant": "zone_open",
+    "seed": 34,
+    "coordination": "plan_first",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   }
+  ],
+  "test_v2": [
+   {
+    "name": "test-w41-dyna",
+    "variant": "zone_wide",
+    "seed": 41,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-w41-inde",
+    "variant": "zone_wide",
+    "seed": 41,
+    "coordination": "independent",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   },
+   {
+    "name": "test-w41-plan",
+    "variant": "zone_wide",
+    "seed": 41,
+    "coordination": "plan_first",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-w42-dyna",
+    "variant": "zone_wide",
+    "seed": 42,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-w42-inde",
+    "variant": "zone_wide",
+    "seed": 42,
+    "coordination": "independent",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   },
+   {
+    "name": "test-w42-plan",
+    "variant": "zone_wide",
+    "seed": 42,
+    "coordination": "plan_first",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-w43-dyna",
+    "variant": "zone_wide",
+    "seed": 43,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-w43-inde",
+    "variant": "zone_wide",
+    "seed": 43,
+    "coordination": "independent",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   },
+   {
+    "name": "test-w43-plan",
+    "variant": "zone_wide",
+    "seed": 43,
+    "coordination": "plan_first",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-o44-dyn",
+    "variant": "zone_open",
+    "seed": 44,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 4
+   },
+   {
+    "name": "test-o45-dyn",
+    "variant": "zone_open",
+    "seed": 45,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 3,
+    "inject_drop": 2
+   },
+   {
+    "name": "test-o46-dyn",
+    "variant": "zone_open",
+    "seed": 46,
+    "coordination": "dynamic",
+    "inject_grasp_failure": 2,
+    "inject_drop": 5
+   }
+  ]
+ },
+ "goal": {
+  "A": {
+   "red": 2
+  },
+  "B": {
+   "cyan": 2
+  },
+  "C": {
+   "green": 1,
+   "yellow": 1
+  }
+ },
+ "extra_boxes": {
+  "red": 1,
+  "cyan": 1
+ },
+ "mode": "fixture",
+ "dev_v2": [
+  "zone-communication-20260925/gate-dynamic-graspfail",
+  "zone-communication-20260925/gate-dynamic-nominal",
+  "zone-communication-20260925/gate-independent-graspfail",
+  "zone-communication-20260925/gate-independent-nominal",
+  "zone-communication-20260925/gate-plan_first-graspfail",
+  "zone-communication-20260925/gate-plan_first-nominal",
+  "zone-communication-20260925/gate2-dynamic-graspfail",
+  "zone-communication-20260925/gate2-dynamic-nominal",
+  "zone-communication-20260925/gate2-independent-graspfail",
+  "zone-communication-20260925/gate2-independent-nominal",
+  "zone-communication-20260925/gate2-plan_first-graspfail",
+  "zone-communication-20260925/gate2-plan_first-nominal",
+  "zone-dispatch-20260925/dev-fixture-1",
+  "zone-dispatch-20260925/dev-fixture-2",
+  "zone-dispatch-20260925/dev-fixture-3",
+  "zone-dispatch-20260925/dev-fixture-4",
+  "zone-dispatch-20260925/dev-fixture-5",
+  "zone-dispatch-20260925/dev-fixture-6-planfirst",
+  "zone-dispatch-20260925/dev-fixture-7",
+  "zone-dispatch-20260925/dev-fixture-8",
+  "zone-dispatch-20260925/dev-fixture-9",
+  "zone-dispatch-20260925/diag-plan-replay",
+  "zone-rgb-outcome-runs-20260925/dev-w31-dyn",
+  "zone-rgb-outcome-runs-20260925/dev-w31-ind",
+  "zone-rgb-outcome-runs-20260925/dev-w32-dyn",
+  "zone-rgb-outcome-runs-20260925/dev-w32-plan",
+  "zone-rgb-outcome-runs-20260925/dev-o33-dyn",
+  "zone-rgb-outcome-runs-20260925/dev-o34-plan"
+ ],
+ "test_v2": [
+  "zone-rgb-outcome-runs-20260925/test-w41-dyna",
+  "zone-rgb-outcome-runs-20260925/test-w41-inde",
+  "zone-rgb-outcome-runs-20260925/test-w41-plan",
+  "zone-rgb-outcome-runs-20260925/test-w42-dyna",
+  "zone-rgb-outcome-runs-20260925/test-w42-inde",
+  "zone-rgb-outcome-runs-20260925/test-w42-plan",
+  "zone-rgb-outcome-runs-20260925/test-w43-dyna",
+  "zone-rgb-outcome-runs-20260925/test-w43-inde",
+  "zone-rgb-outcome-runs-20260925/test-w43-plan",
+  "zone-rgb-outcome-runs-20260925/test-o44-dyn",
+  "zone-rgb-outcome-runs-20260925/test-o45-dyn",
+  "zone-rgb-outcome-runs-20260925/test-o46-dyn"
+ ],
+ "synth_dev_v2": [
+  "zone-communication-20260925/gate-dynamic-nominal",
+  "zone-dispatch-20260925/dev-fixture-7"
+ ],
+ "synth_test_v2": [
+  "zone-rgb-outcome-runs-20260925/test-w41-dyna",
+  "zone-rgb-outcome-runs-20260925/test-o44-dyn"
+ ],
+ "validate_v2": [
+  "zone-communication-20260925/gate-dynamic-graspfail",
+  "zone-communication-20260925/gate-dynamic-nominal",
+  "zone-communication-20260925/gate-independent-graspfail",
+  "zone-communication-20260925/gate-independent-nominal",
+  "zone-communication-20260925/gate-plan_first-graspfail",
+  "zone-communication-20260925/gate-plan_first-nominal",
+  "zone-communication-20260925/gate2-dynamic-graspfail",
+  "zone-communication-20260925/gate2-dynamic-nominal",
+  "zone-communication-20260925/gate2-independent-graspfail",
+  "zone-communication-20260925/gate2-independent-nominal",
+  "zone-communication-20260925/gate2-plan_first-graspfail",
+  "zone-communication-20260925/gate2-plan_first-nominal",
+  "zone-dispatch-20260925/dev-fixture-1",
+  "zone-dispatch-20260925/dev-fixture-2",
+  "zone-dispatch-20260925/dev-fixture-3",
+  "zone-dispatch-20260925/dev-fixture-4",
+  "zone-dispatch-20260925/dev-fixture-5",
+  "zone-dispatch-20260925/dev-fixture-6-planfirst",
+  "zone-dispatch-20260925/dev-fixture-7",
+  "zone-dispatch-20260925/dev-fixture-8",
+  "zone-dispatch-20260925/dev-fixture-9",
+  "zone-dispatch-20260925/diag-plan-replay",
+  "zone-communication-20260925/ZC2-s12-dynamic-graspfail",
+  "zone-communication-20260925/ZC2-s12-dynamic-nominal",
+  "zone-communication-20260925/ZC2-s12-independent-graspfail",
+  "zone-communication-20260925/ZC2-s12-independent-nominal",
+  "zone-communication-20260925/ZC2-s12-plan_first-graspfail",
+  "zone-communication-20260925/ZC2-s12-plan_first-nominal",
+  "zone-communication-20260925/ZC2-s13-dynamic-graspfail",
+  "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+  "zone-communication-20260925/ZC2-s13-independent-graspfail",
+  "zone-communication-20260925/ZC2-s13-independent-nominal",
+  "zone-communication-20260925/ZC2-s13-plan_first-graspfail",
+  "zone-communication-20260925/ZC2-s13-plan_first-nominal",
+  "zone-communication-20260925/ZC2-s14-dynamic-graspfail",
+  "zone-communication-20260925/ZC2-s14-dynamic-nominal",
+  "zone-communication-20260925/ZC2-s14-independent-graspfail",
+  "zone-communication-20260925/ZC2-s14-independent-nominal",
+  "zone-communication-20260925/ZC2-s14-plan_first-graspfail",
+  "zone-communication-20260925/ZC2-s14-plan_first-nominal",
+  "zone-dispatch-20260925/Z1-G5-dyn",
+  "zone-dispatch-20260925/Z1-G5-plan",
+  "zone-dispatch-20260925/Z1-G8-dyn",
+  "zone-dispatch-20260925/Z1-G8-plan",
+  "zone-dispatch-20260925/Z2-G5-dyn",
+  "zone-dispatch-20260925/Z2-G5-plan",
+  "zone-dispatch-20260925/Z2-G8-dyn",
+  "zone-dispatch-20260925/Z2-G8-plan",
+  "zone-dispatch-20260925/Z3-G5-dyn",
+  "zone-dispatch-20260925/Z3-G5-plan",
+  "zone-dispatch-20260925/Z3-G8-dyn",
+  "zone-dispatch-20260925/Z3-G8-plan"
+ ],
+ "retired": {
+  "v1_test_runs": [
+   "zone-communication-20260925/ZC2-s12-dynamic-graspfail",
+   "zone-communication-20260925/ZC2-s12-dynamic-nominal",
+   "zone-communication-20260925/ZC2-s12-independent-graspfail",
+   "zone-communication-20260925/ZC2-s12-independent-nominal",
+   "zone-communication-20260925/ZC2-s12-plan_first-graspfail",
+   "zone-communication-20260925/ZC2-s12-plan_first-nominal",
+   "zone-communication-20260925/ZC2-s13-dynamic-graspfail",
+   "zone-communication-20260925/ZC2-s13-dynamic-nominal",
+   "zone-communication-20260925/ZC2-s13-independent-graspfail",
+   "zone-communication-20260925/ZC2-s13-independent-nominal",
+   "zone-communication-20260925/ZC2-s13-plan_first-graspfail",
+   "zone-communication-20260925/ZC2-s13-plan_first-nominal",
+   "zone-communication-20260925/ZC2-s14-dynamic-graspfail",
+   "zone-communication-20260925/ZC2-s14-dynamic-nominal",
+   "zone-communication-20260925/ZC2-s14-independent-graspfail",
+   "zone-communication-20260925/ZC2-s14-independent-nominal",
+   "zone-communication-20260925/ZC2-s14-plan_first-graspfail",
+   "zone-communication-20260925/ZC2-s14-plan_first-nominal",
+   "zone-dispatch-20260925/Z1-G5-dyn",
+   "zone-dispatch-20260925/Z1-G5-plan",
+   "zone-dispatch-20260925/Z1-G8-dyn",
+   "zone-dispatch-20260925/Z1-G8-plan",
+   "zone-dispatch-20260925/Z2-G5-dyn",
+   "zone-dispatch-20260925/Z2-G5-plan",
+   "zone-dispatch-20260925/Z2-G8-dyn",
+   "zone-dispatch-20260925/Z2-G8-plan",
+   "zone-dispatch-20260925/Z3-G5-dyn",
+   "zone-dispatch-20260925/Z3-G5-plan",
+   "zone-dispatch-20260925/Z3-G8-dyn",
+   "zone-dispatch-20260925/Z3-G8-plan"
+  ],
+  "note": "scored once under v1; not reused as a v2 test"
+ },
+ "thresholds_from": "dev_v2 only; test_v2 and synth_test_v2 are tracked and scored once with a frozen module SHA"
+}
