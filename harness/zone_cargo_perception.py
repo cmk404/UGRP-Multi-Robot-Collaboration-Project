@@ -392,6 +392,11 @@ def _beam(hsv, camera, shape):
         row = _row('long_beam', camera, shape, float(centre[0]), float(centre[1]), yaw, conf, foot, c0 or c1,
                    {'visible_length_m': round(length_m, 3), 'fragments': len(group), 'width_px': round(width, 1),
                     'centre_mode': mode})
+        # ``pixel`` is the observation (visible segment middle); ``floor_xy_m``
+        # is the estimated beam centre, which lies off the visible part when an
+        # end is clipped.
+        mid = (p0+p1)/2
+        row['pixel'] = [round(float(mid[0])/shape[1], 4), round(float(mid[1])/shape[0], 4)]
         row['segment_floor_m'] = [_floor(*p0, camera, shape, z), _floor(*p1, camera, shape, z)]
         row['segment_end_clipped'] = [c0, c1]
         out.append(row)

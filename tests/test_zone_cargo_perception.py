@@ -289,3 +289,55 @@ def test_eval_matching_prefers_same_class_and_scores_symmetric_yaw():
     assert ev._cls('box', 'red') == 'box_red' and ev._cls('can') == 'can'
     for a, b in itertools.combinations(ev.CARGO_SET, 2):
         assert a[0] != b[0]
+
+
+# ------------------------------------------------------------ washed-out north TOP views (dev failure modes)
+
+def _bright_floor():
+    frame = np.zeros((720, 960, 3), np.uint8)
+    frame[:] = _bgr((100, 40, 165))       # washed-out floor/pickup paint
+    return frame
+
+
+def test_washed_out_white_crate_with_grey_lugs_is_a_crate_and_white_robot_plate_is_not():
+    frame = _bright_floor()
+    pose = (.4, -1.5, .6)
+    HSV['grey_lug'] = (0, 0, 90)
+    HSV['white'] = (90, 3, 255)
+    for x in (-.09, .09):
+        _rect(frame, SW, pose, (.03, .02), .046, 'grey_lug', (x, 0.))
+    _rect(frame, SW, pose, (.07, .05), .06, 'white')
+    # a white plate of crate size without end lugs (robot-like)
+    _rect(frame, SW, (1.2, -2.2, 0.), (.07, .05), .06, 'white')
+    rows = zc.detect_cargo_top(_jpeg(frame), SW)
+    crates = [r for r in rows if r['kind'] == 'heavy_crate']
+    assert len(crates) == 1, rows
+    assert math.dist(crates[0]['floor_xy_m'], pose[:2]) < .01
+    assert crates[0]['evidence']['pink_fraction'] < .5
+    assert _yaw_err(crates[0]['yaw_rad'], pose[2], 180) < 3
+
+
+def test_washed_out_can_and_tile_are_split_by_shape():
+    frame = _bright_floor()
+    HSV['lavender'] = (147, 90, 250)
+    _disc(frame, SW, (.5, -2.0), .019, .05, 'lavender')
+    _rect(frame, SW, (1.1, -2.0, .4), (.03, .02), .012, 'lavender')
+    rows = zc.detect_cargo_top(_jpeg(frame), SW)
+    kinds = {r['kind']: r for r in rows}
+    assert set(kinds) == {'can', 'tile'}, rows
+    assert math.dist(kinds['can']['floor_xy_m'], (.5, -2.0)) < .01
+    assert math.dist(kinds['tile']['floor_xy_m'], (1.1, -2.0)) < .01
+
+
+def test_yellow_rendered_beam_is_a_beam_and_frame_edges_are_not_beams():
+    frame = _bright_floor()
+    HSV['long_beam_washed'] = (31, 136, 255)
+    pose = (.9, -1.4, -.5)
+    _rect(frame, SW, pose, (.30, .02), .032, 'long_beam_washed')
+    _frame(frame, SW, (.0, -2.2, .3))
+    rows = zc.detect_cargo_top(_jpeg(frame), SW)
+    assert sorted(r['kind'] for r in rows) == ['long_beam', 'tri_frame'], rows
+    beam = _one(rows, 'long_beam')
+    assert math.dist(beam['floor_xy_m'], pose[:2]) < .015
+    # the yellow boxes profile sees box-coloured bits on the bar; the cargo profile hides none of real boxes here
+    assert not [r for r in rows if r['kind'] == 'box']
