@@ -34,6 +34,8 @@ STUDENT_LIMIT_S = 240.
 TEACHER_LIMIT_S = 400.
 DOOR_REGION = (.6, .5)
 CALIBRATION = ROOT/'experiments'/'2026-09-25-zone-owncam-loop'/'calibration_loop.json'
+# Student versions a pre-registration may select (``student`` block); absent = v1.
+DRIVERS = {'v1': ('harness.owncam_drive', 'OwnCamDriver'), 'v2': ('harness.owncam_drive_v2', 'OwnCamDriverV2')}
 KEEPOUT_HALF_M = .06
 
 
@@ -55,11 +57,24 @@ def pickup_keepouts():
             for i, x in enumerate(spec['pickup_columns_x']) for j, y in enumerate(spec['pickup_rows_y'])]
 
 
-def run(spec, out):
+def student_config(student=None):
+    """(driver class, calibration path, record) from a prereg ``student`` block."""
+    import importlib
+    student = dict(student or {})
+    version = student.get('driver', 'v1')
+    module, name = DRIVERS[version]
+    calibration = ROOT/student['calibration'] if student.get('calibration') else CALIBRATION
+    return getattr(importlib.import_module(module), name), calibration, {
+        'driver': version, 'driver_module': module,
+        'calibration': str(calibration.relative_to(ROOT)),
+        'calibration_sha256': hashlib.sha256(calibration.read_bytes()).hexdigest()}
+
+
+def run(spec, out, student_block=None):
     import cv2
     import mujoco
     import numpy as np
-    from harness.owncam_drive import OwnCamDriver
+    driver_cls, calibration_path, student_record = student_config(student_block)
     from scripts.record_owncam_localization import LoggingPort
     from scripts.zone_teacher import ZoneTeacherExecutor
     from sim.camera_robot_port import CameraRobotPort
@@ -86,10 +101,10 @@ def run(spec, out):
     door_xy = door['center_m']
     goal = [door_xy[0] + .45, door_xy[1]]
     loaded = spec['condition'] == 'box'
-    calibration = json.loads(CALIBRATION.read_text())
+    calibration = json.loads(calibration_path.read_text())
     keepouts = pickup_keepouts()
     initial = {int(k): int(v) for k, v in world.robot(rid).servo_command_pulses.items()}
-    student = OwnCamDriver(static, calibration['params'], loaded=loaded, goal_xy=goal, door_xy=door_xy,
+    student = driver_cls(static, calibration['params'], loaded=loaded, goal_xy=goal, door_xy=door_xy,
                            keepouts=keepouts, initial_servo=initial, seed=spec['seed'])
     commands = []
 
@@ -258,7 +273,7 @@ def run(spec, out):
                 'static_map_sha256': digest(static), 'landmarks_sha256': scene.manifest['landmarks_sha256'],
                 'base_static_map_sha256': scene.manifest['base_static_map_sha256'],
                 'scene_xml_sha256': scene.manifest['scene_xml_sha256'],
-                'calibration_sha256': hashlib.sha256(CALIBRATION.read_bytes()).hexdigest(),
+                'calibration_sha256': student_record['calibration_sha256'], 'student': student_record,
                 'keepouts_sha256': digest(keepouts), 'weld': scene.manifest['weld'],
                 'contact_profile': scene.manifest.get('contact_solver_profile'), 'timestep_s': dt,
                 'frame_period_s': FRAME_S, 'control_period_s': .1, 'sync_sim': True,
@@ -283,12 +298,13 @@ def main(argv=None):
     p.add_argument('--only', default='', help='comma-separated episode ids')
     p.add_argument('--output', required=True)
     args = p.parse_args(argv)
-    specs = json.loads(Path(args.prereg).read_text())['episodes']
+    prereg = json.loads(Path(args.prereg).read_text())
+    specs = prereg['episodes']
     only = {s for s in args.only.split(',') if s}
     for spec in specs:
         if only and spec['episode_id'] not in only:
             continue
-        result, manifest = run(spec, Path(args.output)/spec['episode_id'])
+        result, manifest = run(spec, Path(args.output)/spec['episode_id'], prereg.get('student'))
         print(json.dumps({'episode': spec['episode_id'], 'outcome': result['outcome'], 'pass': result['episode_pass'],
                           'gates': {k: v['pass'] for k, v in result['gates'].items()},
                           'student_sim_s': result['student_sim_s'], 'looks': result['looks'],
