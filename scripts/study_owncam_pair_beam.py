@@ -78,8 +78,14 @@ SCENARIOS = {
     # development (tuning allowed, labelled dev, never reported as results)
     601: {'beam': (1.20, -0.80, 0.00), 'offsets': {'r1': (.30, .00, .00), 'r2': (.30, .00, .00)}},
     602: {'beam': (1.40, -0.50, 0.40), 'offsets': {'r1': (.25, .04, .12), 'r2': (.35, -.03, -.10)}},
+    # feasibility cohort (pre-registered in experiments/2026-09-26-zone-owncam-pair/README.md)
+    611: {'beam': (1.00, -1.20, -0.30), 'offsets': {'r1': (.30, .03, .08), 'r2': (.28, -.02, -.06)}},
+    612: {'beam': (1.30, -0.20, 0.20), 'offsets': {'r1': (.34, -.04, -.10), 'r2': (.26, .03, .12)}},
+    613: {'beam': (0.90, -0.60, 0.60), 'offsets': {'r1': (.27, .00, .15), 'r2': (.32, .04, .00)}},
+    614: {'beam': (1.50, -1.00, -0.50), 'offsets': {'r1': (.30, -.03, -.05), 'r2': (.35, .00, .10)}},
 }
 DEV_SEEDS = (601, 602)
+TEST_SEEDS = (611, 612, 613, 614)
 STUB_START_M = .80
 
 
@@ -474,10 +480,13 @@ def main():
         if z > .03:
             stats['max_tilt_deg_lifted'] = max(stats['max_tilt_deg_lifted'], tilt)
             stats['max_pair_distance_dev_m'] = max(stats['max_pair_distance_dev_m'], abs(dist - nominal_pair_dist))
+        fingers = finger_forces()
+        if z > .03 and all(min(v) > 1. for v in fingers.values()):
+            stats['both_gripped_lifted_samples'] = stats.get('both_gripped_lifted_samples', 0) + 1
         truth.write(json.dumps({'t': round(now, 2), 'states': {r: s.state for r, s in students.items()},
                                 'beam_xyz': [round(float(v), 4) for v in beam_body.xpos], 'beam_tilt_deg': round(tilt, 2),
                                 'robots': rp, 'pair_distance_m': round(dist, 4),
-                                'finger_n': {r: [round(x, 2) for x in v] for r, v in finger_forces().items()}}) + '\n')
+                                'finger_n': {r: [round(x, 2) for x in v] for r, v in fingers.items()}}) + '\n')
 
     dt = float(m.opt.timestep)
     next_ctrl, next_sample, next_arm = 0., 0., 0.
@@ -527,7 +536,8 @@ def main():
     forces = finger_forces()
     reached = {r: s.state for r, s in students.items()}
     evaluation = {
-        'both_gripped_gt': None, 'lifted_clear_gt': stats['max_beam_z_m'] > .06,
+        'both_gripped_gt': stats.get('both_gripped_lifted_samples', 0) > 0,
+        'both_gripped_lifted_samples': stats.get('both_gripped_lifted_samples', 0), 'lifted_clear_gt': stats['max_beam_z_m'] > .06,
         'beam_final_xyz': [round(float(x), 4) for x in beam_body.xpos], 'beam_final_tilt_deg': round(tilt, 2),
         'planned_beam_xy': [round(float(x), 4) for x in planned],
         'final_error_m': round(float(np.linalg.norm(final - planned)), 4),
