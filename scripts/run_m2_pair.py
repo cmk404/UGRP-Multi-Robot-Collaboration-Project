@@ -47,6 +47,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from harness import owncam_pair_beam as ob  # noqa: E402
 from harness import owncam_pair_beam_v2 as ob2  # noqa: E402
 from harness import owncam_pair_hold_v3 as hv3  # noqa: E402
 from harness import pair_owncam_approach as pa  # noqa: E402
@@ -215,6 +216,29 @@ class M2Student(study.PairStudent):
             self.report('approach', obs, now, ready=True, reason='at_prestation')
 
 
+def grip_view_m2(image):
+    """Door v2 grip check: black band fills the view AND beam colour at the top OR bottom third.
+
+    ob2.grip_view needs the BOTTOM third; east of the divider the darker lower strip scored 0.038-0.040
+    (< 0.04) on 3 real grasps of the stage 2 cohort (811/815/816, r2 third grasp) while the top strip
+    was 0.92-0.94. Replay on all 125 recorded grasp frames: 0 rejections (ob2: 4+); no recorded missed
+    grasp exists, so specificity is untested -- the lift co-motion check still confirms the hold.
+    """
+    import cv2
+    frame = ob.decode(image)
+    valid = ob2._valid()
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    dark = (hsv[..., 2] <= ob2.BAND_V_MAX) & (hsv[..., 1] < ob2.BAND_S_MAX) & valid
+    beam = ob2.beam_colour_mask(frame) & valid
+    h = frame.shape[0]
+    top = float(beam[:h // 3].sum() / max(valid[:h // 3].sum(), 1))
+    bottom = float(beam[2 * h // 3:].sum() / max(valid[2 * h // 3:].sum(), 1))
+    dark_frac = float(dark.sum() / valid.sum())
+    ok = dark_frac >= ob2.GRIP_MIN_DARK and max(top, bottom) >= ob2.GRIP_MIN_BOTTOM_BEAM
+    return {'seen': ok, 'dark_fraction': round(dark_frac, 4), 'top_beam_fraction': round(top, 4),
+            'bottom_beam_fraction': round(bottom, 4)}
+
+
 class M2DoorStudent(M2Student):
     """Stage 2: the localizer keeps running (own commands) until the grasp; after the lift each robot
     puts its OWN base onto the order-sheet door axis with its own heading target (the pair formation
@@ -293,6 +317,22 @@ class M2DoorStudent(M2Student):
             seen, self.pending_reapproach = self.pending_reapproach, None
             return self._start_reapproach(now, seen)
         return super().tick(now)
+
+    def _grasp(self, now, arm_idle):
+        if self.version != 'v2':
+            return super()._grasp(now, arm_idle)
+        if not arm_idle:
+            return
+        obs = self.look(now)
+        view = ob2.grip_view(obs['image'])
+        m2 = grip_view_m2(obs['image'])
+        self.log(self.rid, 'grip_view', now, **view, m2=m2)
+        if not m2['seen']:
+            return self.fail('GRIP_NOT_SEEN', now)
+        self.anchor = ob2.co_motion_signature(obs['image'])
+        self.anchor_kind = 'co_motion_v2'
+        self.claims['gripped'] = {'grip_view': view, 'grip_view_m2': m2, 'sim_time': now}
+        self.set('wait_lift', now)
 
     def _vo_pose(self):
         """Pose at the grasp from the arrival estimate and own beam views (first grasp, door v2)."""
