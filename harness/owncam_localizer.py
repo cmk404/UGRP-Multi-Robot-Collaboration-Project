@@ -198,6 +198,10 @@ class OwnCamLocalizer:
     # ------------------------------------------------------------ measurement
     def _loglik(self, px, detections, pose):
         mp = self.params['measurement']
+        if self.load.loaded and self.params.get('measurement_loaded'):
+            # Holding cargo sags the arm below its commanded-PWM FK (offline dev
+            # calibration); only the robot's own commands decide 'loaded'.
+            mp = {**mp, **self.params['measurement_loaded']}
         total = np.zeros(len(px))
         used = 0
         floor = math.log(mp['outlier_prob'])
@@ -208,7 +212,8 @@ class OwnCamLocalizer:
             t_obs, n_obs = observed_tag_in_camera(det)
             p_c, n_c = predicted_tag_in_camera(px, tag, pose)
             az = np.arctan2(p_c[:, 0], p_c[:, 2]) - math.atan2(t_obs[0], t_obs[2])
-            el = np.arctan2(p_c[:, 1], p_c[:, 2]) - math.atan2(t_obs[1], t_obs[2])
+            # observed - predicted elevation minus its calibrated bias (0 in v1)
+            el = math.atan2(t_obs[1], t_obs[2]) - np.arctan2(p_c[:, 1], p_c[:, 2]) - mp.get('elevation_bias_rad', 0.)
             r_obs = float(np.linalg.norm(t_obs))
             # Detector range bias (small tags: sub-pixel corner offset), fitted
             # offline on dev as log(r_obs/r_true) = a + b*r_obs.

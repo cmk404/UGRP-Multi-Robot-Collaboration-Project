@@ -41,10 +41,23 @@ OPENCV_DICTIONARY = 'DICT_APRILTAG_36h11'
 DEFAULT_PLACEMENT = {'size_m': .072, 'plate_m': .090, 'center_height_m': .050, 'spacing_m': .50,
                      'end_margin_m': .03, 'plate_thickness_m': .001, 'cell_thickness_m': .001,
                      'faces': 'interior walls: both faces; perimeter walls: inner face'}
+# 2026-09-25 v2 (PR #176 wrist carry-view study): with a box held, the wrist
+# camera sees only a ~10 deg band above the box, so near doors the robot needs
+# tags higher than the 0.10 m wall. Door posts: a 0.09 m wide, 0.30 m high
+# visual plate on the wall end 0.05 m outside each door edge, tags on both
+# faces at 0.15 m and 0.25 m. Wall-face tags stay (0.05 m) but are 0.30 m
+# apart within 1 m of a door. Posts are visual only in SIM; they stand on the
+# wall footprint, which every planner keeps out of anyway.
+PLACEMENT_V2 = {**DEFAULT_PLACEMENT, 'near_door_spacing_m': .30, 'near_door_radius_m': 1.0,
+                'door_posts': {'offset_from_edge_m': .05, 'width_m': .09, 'height_m': .30,
+                               'tag_center_heights_m': [.15, .25]}}
+POST_RGBA = '.23 .28 .33 1'
 TAGGED_MAPS = {
     'zone_wide_door_tags_v1': {'base': 'zone_wide_door', 'placement': DEFAULT_PLACEMENT},
     'zone_wide_two_doors_tags_v1': {'base': 'zone_wide_two_doors', 'placement': DEFAULT_PLACEMENT},
     'zone_wide_corridor_tags_v1': {'base': 'zone_wide_corridor', 'placement': DEFAULT_PLACEMENT},
+    'zone_wide_door_tags_v2': {'base': 'zone_wide_door', 'placement': PLACEMENT_V2},
+    'zone_wide_two_doors_tags_v2': {'base': 'zone_wide_two_doors', 'placement': PLACEMENT_V2},
 }
 PLATE_RGBA = '.95 .95 .95 1'
 CELL_RGBA = '.02 .02 .02 1'
@@ -123,6 +136,7 @@ def place_tags(static, placement=DEFAULT_PLACEMENT):
     if plate < size or placement['center_height_m'] - plate/2 < 0:
         raise ValueError('plate must hold the tag and stay above the floor')
     margin = plate/2 + placement['end_margin_m']
+    doors = [p for p in static.get('passages', []) if p['kind'] == 'door']
     tags = []
     for face in _faces(static):
         wid, axis, coord, normal, _, _ = face
@@ -130,14 +144,82 @@ def place_tags(static, placement=DEFAULT_PLACEMENT):
             a, b = lo + margin, hi - margin
             if b < a:
                 continue
-            count = 1 if b - a < 1e-9 else math.ceil((b - a)/placement['spacing_m']) + 1
-            for i in range(count):
-                s = (a + b)/2 if count == 1 else a + (b - a)*i/(count - 1)
+            for s in _positions(a, b, placement, lambda v: (v, coord) if axis == 'x' else (coord, v),
+                                doors):
                 x, y = (s, coord) if axis == 'x' else (coord, s)
                 tags.append({'id': len(tags), 'wall': wid, 'normal_xy': list(normal),
                              'center_m': [round(x, 4), round(y, 4), placement['center_height_m']],
                              'yaw_rad': round(math.atan2(normal[1], normal[0]), 6), 'size_m': size})
+    for post in door_posts(static, placement):
+        for normal in ((-1, 0), (1, 0)) if post['axis'] == 'x' else ((0, -1), (0, 1)):
+            (cx, cy), (hx, hy) = post['center_m'], post['half_extents_m']
+            fx, fy = cx + normal[0]*hx, cy + normal[1]*hy
+            for z in placement['door_posts']['tag_center_heights_m']:
+                tags.append({'id': len(tags), 'wall': post['wall'], 'mount': 'door_post', 'post': post['id'],
+                             'normal_xy': list(normal), 'center_m': [round(fx, 4), round(fy, 4), z],
+                             'yaw_rad': round(math.atan2(normal[1], normal[0]), 6), 'size_m': size})
     return tags
+
+
+def _door_edges(door):
+    (cx, cy), half = door['center_m'], door['width_m']/2
+    return [(cx, cy - half), (cx, cy + half)] if door['axis'] == 'x' else [(cx - half, cy), (cx + half, cy)]
+
+
+def _positions(a, b, placement, point, doors):
+    """Tag positions along [a, b]: v1 uniform spacing, or v2 denser near doors."""
+    if 'near_door_spacing_m' not in placement:
+        count = 1 if b - a < 1e-9 else math.ceil((b - a)/placement['spacing_m']) + 1
+        return [(a + b)/2 if count == 1 else a + (b - a)*i/(count - 1) for i in range(count)]
+    if b - a < 1e-9:
+        return [(a + b)/2]
+    near = placement['near_door_radius_m']
+
+    def spacing(v):
+        xy = point(v)
+        close = any(math.dist(xy, e) <= near for d in doors for e in _door_edges(d))
+        return placement['near_door_spacing_m'] if close else placement['spacing_m']
+    # walk from the end nearer a door so the dense spacing starts at the door
+    forward = min((math.dist(point(a), e) for d in doors for e in _door_edges(d)), default=0.) <= \
+        min((math.dist(point(b), e) for d in doors for e in _door_edges(d)), default=0.)
+    out, v = [], a if forward else b
+    while (v <= b + 1e-9) if forward else (v >= a - 1e-9):
+        out.append(round(v, 6))
+        v = v + spacing(v) if forward else v - spacing(v)
+    end = b if forward else a
+    if abs(out[-1] - end) > .10:
+        out.append(end)
+    elif len(out) > 1:
+        out[-1] = end
+    return sorted(out)
+
+
+def door_posts(static, placement):
+    """Door-post plates (v2 placement only) on wall ends next to door edges."""
+    spec = placement.get('door_posts')
+    if not spec:
+        return []
+    posts = []
+    walls = [o for o in static['obstacles'] if o.get('kind') == 'wall']
+    for door in (p for p in static.get('passages', []) if p['kind'] == 'door'):
+        cx, cy = door['center_m']
+        half = door['width_m']/2
+        for sign in (-1, 1):
+            if door['axis'] == 'x':
+                center = (cx, cy + sign*(half + spec['offset_from_edge_m']))
+            else:
+                center = (cx + sign*(half + spec['offset_from_edge_m']), cy)
+            wall = next((w for w in walls if abs(center[0] - w['center_m'][0]) < w['half_extents_m'][0] - 1e-9
+                         and abs(center[1] - w['center_m'][1]) < w['half_extents_m'][1] - 1e-9), None)
+            if wall is None:
+                continue  # the opening reaches a perimeter wall: no post there
+            thick = wall['half_extents_m'][0] if door['axis'] == 'x' else wall['half_extents_m'][1]
+            half_xy = [thick, spec['width_m']/2] if door['axis'] == 'x' else [spec['width_m']/2, thick]
+            posts.append({'id': f"post_{door['id']}_{'lo' if sign < 0 else 'hi'}", 'door': door['id'],
+                          'wall': wall['id'], 'axis': door['axis'],
+                          'center_m': [round(center[0], 4), round(center[1], 4)],
+                          'half_extents_m': [round(v, 4) for v in half_xy], 'height_m': spec['height_m']})
+    return posts
 
 
 def build_tagged_map(name):
@@ -156,6 +238,9 @@ def build_tagged_map(name):
                       '(the side a camera sees it from); tag x = image right seen from the front, '
                       'tag y = up; size_m = outer black square'),
         'tags': tags}
+    posts = door_posts(base, spec['placement'])
+    if posts:
+        value['landmarks']['door_posts'] = posts
     return value
 
 
@@ -174,7 +259,7 @@ def write_tagged_maps():
     for name in TAGGED_MAPS:
         path = MAP_DIR/(name+'.json')
         if path.exists():
-            raise FileExistsError(f'{path} exists; create a new version instead of overwriting')
+            continue  # never overwrite a published version (tagged_map() verifies it)
         path.write_text(json.dumps(build_tagged_map(name), indent=2) + '\n')
 
 
@@ -195,6 +280,10 @@ def add_tag_geoms(xml, static):
     block = static['landmarks']
     placement = block['placement']
     count = 0
+    for post in block.get('door_posts', []):
+        (cx, cy), (hx, hy) = post['center_m'], post['half_extents_m']
+        _box(world, f"tag_{post['id']}", (cx, cy, post['height_m']/2), (hx, hy, post['height_m']/2), POST_RGBA)
+        count += 1
     for tag in block['tags']:
         nx, ny = tag['normal_xy']
         cx, cy, cz = tag['center_m']

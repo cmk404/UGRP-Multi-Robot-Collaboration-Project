@@ -102,3 +102,16 @@ $PY scripts/eval_owncam_localization.py score     --data outputs/owncam-loc/raw 
 - 자세한 내용은 실험 기록에 있다.
 
 기록은 동기 SIM 전용이며 weld OFF, `local_contact_fine`을 쓴다. 교사가 주행하므로 기록 자체는 학생 성공이 아니다.
+
+## 폐루프 문 통과 (PR #178)
+- 학생 `harness/owncam_drive.py`는 위치 추정(`OwnCamLocalizer`)을 쓴다. 이어서 `harness.map_goto.plan_path` A*(추정 시작점)로 경로를 잡고, mecanum 추종으로 주행하며 멈춰서 둘러본다.
+- 멈춰 둘러보는 자세는 `LOOK_P20`이고 sweep은 `WIDE_LOOK_PANS`(±48°)다. 공용 `LOOK_PANS`는 #176 값 그대로 둔다.
+- 둘러보는 시점:
+  - 추정 std가 0.05 m 또는 3°를 넘을 때
+  - 문 1.5 m와 0.6 m 앞 checkpoint
+  - 빈 손: 태그를 3 s 못 봤을 때
+  - 상자를 든 상태: 추정 이동 0.35 m마다
+  - 도착 직전 1회
+- 짐 상태(`LoadState`)는 자기 그리퍼·팔 명령만으로 정한다. 짐을 든 상태의 측정·움직임 교정은 `experiments/2026-09-25-zone-owncam-loop/calibration_loop.json`을 따른다.
+- 실행: `python3 scripts/sim_cli.py`의 워크플로 `zone-owncam-loop-run`, 또는 `scripts/run_owncam_closed_loop.py --prereg <prereg.json> --only <ids> --output <dir>`. 학생 입력은 `inputs/`와 `frames/`에, 평가 정답은 `eval_only/`에 따로 기록한다.
+- 결과와 한계는 [실험 기록](../experiments/2026-09-25-zone-owncam-loop/README.md)에 있다.
