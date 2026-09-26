@@ -1,0 +1,22 @@
+{
+ "schema": "ugrp.zone_own_perception_v2_split.v1",
+ "created": "2026-09-26",
+ "purpose": "Offline dev/test split for the v2 wrist-RGB-only zone judgments (package B follow-up): peer_in_lane, team_cargo_identity, team_cargo_handle, held_item.",
+ "rule": "Thresholds and gates are chosen on dev only. The test split is rendered and scored once, after the README pre-registration is committed.",
+ "scene_family": "zones/* (CargoZoneScene, cargo_noslip_v1, weld OFF)",
+ "note": "New seeds, disjoint from the v1 package B split (dev 41-44, test 71-74), so a v1 threshold cannot be re-selected on a seed that v2 scores.",
+ "splits": {
+  "dev": [
+   {"variant": "zone_wide_door", "seed": 141},
+   {"variant": "zone_wide_corridor", "seed": 142},
+   {"variant": "zone_wide_two_doors", "seed": 143},
+   {"variant": "zone_wide_door", "seed": 144}
+  ],
+  "test": [
+   {"variant": "zone_wide_door", "seed": 171},
+   {"variant": "zone_wide_corridor", "seed": 172},
+   {"variant": "zone_wide_two_doors", "seed": 173},
+   {"variant": "zone_wide_corridor", "seed": 174}
+  ]
+ }
+}
