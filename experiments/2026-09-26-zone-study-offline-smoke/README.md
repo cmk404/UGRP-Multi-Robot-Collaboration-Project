@@ -5,6 +5,7 @@
 > 두 버전의 차이·불변 항목은 v2 README의 "v1과 무엇이 다른가"를 본다.
 > Codex 3차 재검토 부분 해결 4건(#1·#11·#12·#16)을 고친 뒤의 재실행은 [`v3/`](v3/README.md)(코드 `eb5572b`)에 있다. v1·v2는 그대로 둔다.
 > Codex 4차 재검토 #16(사용량 미상 끝단 보존)의 남은 반례 3건을 고친 뒤의 재실행과 첫 보고서·TensorBoard 변환은 [`v4/`](v4/README.md)(코드 `c21a6fe9`)에 있다. v1~v3는 그대로 둔다.
+> Codex 5차 검토(P1 1건·P2 2건) 수정 기록은 [`review-r5/`](review-r5/README.md)(코드 `f44ea845`)에 있다. 스모크 출력이 바뀌지 않아 재실행하지 않았고 v5는 없다.
 
 - **상태:** 완료. 30회 전부 통과(`results.json` `ok: true`).
 - **실행 소스:** `d87e0f2bc179d00ad4c8de48e0559408d46d6a0c` (브랜치 `kiro/zone-study-core`, worktree `ugrp-wt/kiro-study-core`)

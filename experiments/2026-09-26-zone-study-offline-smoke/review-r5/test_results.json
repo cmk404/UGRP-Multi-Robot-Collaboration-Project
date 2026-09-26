@@ -1,0 +1,617 @@
+{
+ "schema": "ugrp.review_regression_results.v1",
+ "review": "codex-194-r5 (P1 1건, P2 2건), 검토 기준 4c8f90807f1b44846fe4a551a55aa44a4a91dd64",
+ "test_file": "tests/test_zone_study_review_r5.py",
+ "test_file_sha256": "044d1433f76851c5c0dbc6177517807fb2a0ab702011a3a0a2cf959e1f3b0d5d",
+ "tests": 61,
+ "pre_fix": {
+  "source_sha": "4c8f90807f1b44846fe4a551a55aa44a4a91dd64",
+  "how_ko": "기본 체크아웃 추적 파일의 /tmp 사본에서 harness/zone_event_scheduler.py·harness/zone_study_eval.py·scripts/zone_study_report.py(와 수정한 테스트·문서)를 git show 4c8f908로 되돌리고, f44ea845의 최종 테스트 파일만 올려 실행했다",
+  "counts": {
+   "failed": 61
+  },
+  "junit_sha256": "4ebe5fcb141fd11545d6c30da95cc50f9468ff92a065c991f9fbdc503693ae4b"
+ },
+ "post_fix": {
+  "source_sha": "f44ea845c9c51aaf3c927c6d90288c9426faeb7d",
+  "counts": {
+   "passed": 61
+  },
+  "junit_sha256": "7222550869ce49cc354bdb9ea7fe145c81a7a62df4e78efb102aeb7cf259f7c1"
+ },
+ "related_suite_post_fix": {
+  "source_sha": "f44ea845c9c51aaf3c927c6d90288c9426faeb7d",
+  "modules": [
+   "tests/test_zone_event_scheduler.py",
+   "tests/test_zone_sim_cost.py",
+   "tests/test_zone_study_contract.py",
+   "tests/test_zone_study_eval.py",
+   "tests/test_zone_study_inputs.py",
+   "tests/test_zone_study_offline.py",
+   "tests/test_zone_study_protocol.py",
+   "tests/test_zone_study_review_fixes.py",
+   "tests/test_zone_study_scenarios.py",
+   "tests/test_zone_study_review_r5.py"
+  ],
+  "result": "606 passed in 119.69s",
+  "previous_round": "545 passed (4차, r5 파일 없음)",
+  "load_average_before": [
+   152.32,
+   97.52,
+   66.99
+  ],
+  "load_average_after": [
+   160.31,
+   120.62,
+   80.29
+  ],
+  "junit_sha256": "8e5616e0f96e273d8dea1284bde9ab32b34a6882bc7aacc6e307b6c04dd60e9f"
+ },
+ "without_tensorboard": {
+  "how_ko": "sys.modules['tensorboard']=None로 CI offline-regressions 작업(requirements-test.txt, tensorboard 없음)을 흉내",
+  "modules": [
+   "tests/test_zone_study_review_r5.py",
+   "tests/test_zone_study_review_fixes.py",
+   "tests/test_zone_study_eval.py"
+  ],
+  "result": "227 passed, 3 skipped",
+  "skipped_ko": "이벤트 파일 재읽기 3건(r5 1건 포함)만 건너뛴다. 새 run 이름·중복·경로·기존 run 거절은 tensorboard 없이 검사한다"
+ },
+ "ci_collection": {
+  "runner": "scripts/run_ci_tests.py TEST_PATTERNS",
+  "modules_matched": 210,
+  "includes_r5": true,
+  "r5_collected": 61
+ },
+ "cases": {
+  "test_r5_p1_a_call_censored_at_the_horizon_keeps_its_sent_attempts": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert 1 == 2"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_a_reply_that_declares_its_usage_unknown_keeps_its_reserved_attempts": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert 3 == 2"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_an_unknown_usage_failure_keeps_the_attempts_it_sent[failure_partly_known]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AssertionError: assert (1 == 2)"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_an_unknown_usage_failure_keeps_the_attempts_it_sent[failure_without_attempts]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AssertionError: assert (1 == 2)"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_an_unknown_usage_failure_keeps_the_attempts_it_sent[plain_exception]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AssertionError: assert (1 == 2)"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_boundary_a_known_usage_reply_accounts_for_its_own_attempts": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AttributeError: 'EventScheduler' object has no attribute 'unreported_attempts'"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_boundary_a_refused_retry_reservation_is_not_counted_as_sent": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AttributeError: 'EventScheduler' object has no attribute 'unreported_attempts'"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_boundary_a_single_reserved_attempt_is_one_attempt_and_no_violation": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AttributeError: 'EventScheduler' object has no attribute 'unreported_attempts'"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_boundary_more_attempts_than_reserved_stay_a_budget_breach": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AttributeError: 'EventScheduler' object has no attribute 'unreported_attempts'"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p1_the_team_cap_holds_when_two_actors_fail_after_a_retry": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert 6 == 4"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_contradictory_summary_marker_is_refused[model0]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_contradictory_summary_marker_is_refused[model1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_count_alone_marks_the_summary_incomplete": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert (True is False)"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_duplicate_trial_id_is_refused_by_the_export": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[../outside]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[./a]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[ABSOLUTE]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[None]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "TypeError: unsupported operand type(s) for /: 'PosixPath' and 'NoneType'"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[a//b]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[a\\\\..\\\\outside]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[a\\x00b]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AssertionError: Regex pattern did not match."
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_run_path_outside_the_logdir_is_refused[peer_ko/../../outside]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE ValueError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_summary_next_to_the_call_log_must_agree_on_the_marker": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_a_summary_only_unknown_usage_stays_a_lower_bound": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert (True is False)"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_an_existing_snapshot_run_is_never_written_again": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE FileExistsError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_an_incomplete_summary_must_count_its_unknown_calls": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[-1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[833.5]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[833]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[True]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[inf]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "OverflowError: cannot convert float infinity to integer"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_corrupt_summary_token_count_is_refused[nan]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "ValueError: cannot convert float NaN to integer"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[-1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[1.5]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[False]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[True]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[inf]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[nan]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[value7]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_malformed_unknown_count_is_refused[value8]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[0]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[True]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[false]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[nan]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_non_bool_complete_flag_is_refused[value4]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[../escape]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[.hidden]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[/abs]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[5]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[a b]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[a/b]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[a\\x00b]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[peer_ko-\\ubbf8\\uc0c1]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_a_trial_id_that_is_not_one_safe_path_component_is_refused[x\\\\y]": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE TrialError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_boundary_controls_complete_zero_and_legacy_summaries": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "assert None == 0"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_repeated_trials_of_one_seed_get_separate_runs": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "AssertionError: assert 3 == 2"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_repeated_trials_stay_apart_in_the_tensorboard_event_files": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "tensorboard.backend.event_processing.directory_watcher.DirectoryDeletedError: Directory <tmp>"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  },
+  "test_r5_p2_the_report_refuses_an_existing_run_before_writing_any_file": {
+   "pre_fix": {
+    "status": "failed",
+    "message": "Failed: DID NOT RAISE FileExistsError"
+   },
+   "post_fix": {
+    "status": "passed"
+   }
+  }
+ }
+}

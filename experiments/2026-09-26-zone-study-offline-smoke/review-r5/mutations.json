@@ -1,0 +1,226 @@
+{
+ "schema": "ugrp.review_mutations.v1",
+ "source_sha": "f44ea845c9c51aaf3c927c6d90288c9426faeb7d",
+ "test_file": "tests/test_zone_study_review_r5.py",
+ "how_ko": "수정 조각 하나를 /tmp 사본에서 되돌리고 r5 테스트를 돌린 뒤 원복했다. 원복 후 61/61 통과",
+ "total": 21,
+ "detected": 20,
+ "equivalent": [
+  "M-r5-p2i"
+ ],
+ "mutations": [
+  {
+   "finding": "P1",
+   "file": "harness/zone_event_scheduler.py",
+   "original": "        if reply.usage_known or len(reply.attempts) >= reserved:\n            return reply\n",
+   "mutant": "        return reply\n",
+   "id": "M-r5-p1a",
+   "exit": 1,
+   "summary": "6 failed, 55 passed in 1.10s",
+   "detected": true
+  },
+  {
+   "finding": "P1",
+   "file": "harness/zone_event_scheduler.py",
+   "original": "(Attempt(outcome='error'),) * missing + reply.attempts)",
+   "mutant": "reply.attempts + (Attempt(outcome='error'),) * missing)",
+   "id": "M-r5-p1b",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.13s",
+   "detected": true
+  },
+  {
+   "finding": "P1",
+   "file": "harness/zone_event_scheduler.py",
+   "original": "        self.unreported_attempts.append({",
+   "mutant": "        ({",
+   "id": "M-r5-p1c",
+   "exit": 1,
+   "summary": "6 failed, 55 passed in 1.06s",
+   "detected": true
+  },
+  {
+   "finding": "P1",
+   "file": "harness/zone_event_scheduler.py",
+   "original": "                'unreported_attempts': [dict(row) for row in self.unreported_attempts],\n",
+   "mutant": "",
+   "id": "M-r5-p1d",
+   "exit": 1,
+   "summary": "3 failed, 58 passed in 1.05s",
+   "detected": true
+  },
+  {
+   "finding": "P1",
+   "file": "harness/zone_event_scheduler.py",
+   "original": "        if reply.usage_known or len(reply.attempts) >= reserved:",
+   "mutant": "        if len(reply.attempts) >= reserved:",
+   "id": "M-r5-p1e",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.09s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "                'tokens_complete': marker['tokens_complete'],\n",
+   "mutant": "",
+   "id": "M-r5-p2a",
+   "exit": 1,
+   "summary": "3 failed, 58 passed in 1.10s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "                'usage_unknown_calls': marker['usage_unknown_calls'],\n",
+   "mutant": "",
+   "id": "M-r5-p2b",
+   "exit": 1,
+   "summary": "3 failed, 58 passed in 1.12s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "'tokens': {k: _summary_count(tokens, k) for k in ('input', 'output', 'image', 'cached')},",
+   "mutant": "'tokens': {k: (None if tokens.get(k) is None else int(tokens[k])) for k in ('input', 'output', 'image', 'cached')},",
+   "id": "M-r5-p2c",
+   "exit": 1,
+   "summary": "6 failed, 55 passed in 1.19s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "        if complete is not None and complete != (count == 0):",
+   "mutant": "        if False:",
+   "id": "M-r5-p2d",
+   "exit": 1,
+   "summary": "2 failed, 59 passed in 1.09s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "    if complete is False:\n        raise TrialError(",
+   "mutant": "    if False:\n        raise TrialError(",
+   "id": "M-r5-p2e",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.12s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "    if complete is not None and not isinstance(complete, bool):",
+   "mutant": "    if False:",
+   "id": "M-r5-p2f",
+   "exit": 1,
+   "summary": "6 failed, 55 passed in 1.00s",
+   "detected": true,
+   "note_ko": "첫 실행은 들여쓰기 패턴 오류로 적용되지 않아 패턴을 고쳐 단독 재실행했다"
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "        if isinstance(count, bool) or not isinstance(count, int) or count < 0:",
+   "mutant": "        if False:",
+   "id": "M-r5-p2g",
+   "exit": 1,
+   "summary": "9 failed, 52 passed in 1.09s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "              ('usage_unknown_calls', marker['usage_unknown_calls'], derived['usage_unknown_calls']),\n",
+   "mutant": "",
+   "id": "M-r5-p2h",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.15s",
+   "detected": true
+  },
+  {
+   "finding": "P2-summary",
+   "file": "harness/zone_study_eval.py",
+   "original": "    tokens_complete = model is None or model['tokens_complete'] is True",
+   "mutant": "    tokens_complete = (model or {}).get('tokens_complete', True) is not False",
+   "id": "M-r5-p2i",
+   "exit": 0,
+   "summary": "61 passed in 1.20s",
+   "detected": false,
+   "equivalent_mutant": true,
+   "note_ko": "동치 변이. 두 집계 경로(calls, summary)가 모두 tokens_complete 키를 bool로 돌려주므로 옛 기본값 .get(..., True)는 도달하지 않는다. 이 줄은 수정이 아니라 도달 불가 기본값 정리다"
+  },
+  {
+   "finding": "P2-run",
+   "file": "harness/zone_study_eval.py",
+   "original": "    return f'{eff[\"condition\"]}/{trial_id}'",
+   "mutant": "    return f'{eff[\"condition\"]}/{eff[\"scenario\"]}-s{eff[\"seed\"]}'",
+   "id": "M-r5-p3a",
+   "exit": 1,
+   "summary": "4 failed, 57 passed in 0.61s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "harness/zone_study_eval.py",
+   "original": "    if not isinstance(trial_id, str) or not RUN_COMPONENT.fullmatch(trial_id):",
+   "mutant": "    if False:",
+   "id": "M-r5-p3b",
+   "exit": 1,
+   "summary": "9 failed, 52 passed in 1.20s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "harness/zone_study_eval.py",
+   "original": "    if repeated:\n        raise TrialError(",
+   "mutant": "    if False:\n        raise TrialError(",
+   "id": "M-r5-p3c",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.10s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "scripts/zone_study_report.py",
+   "original": "    if existing:\n        raise FileExistsError(",
+   "mutant": "    if False:\n        raise FileExistsError(",
+   "id": "M-r5-p3d",
+   "exit": 1,
+   "summary": "2 failed, 59 passed in 1.16s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "scripts/zone_study_report.py",
+   "original": "            raise ValueError(f'run name {name!r} is not a relative path inside the logdir')",
+   "mutant": "            pass",
+   "id": "M-r5-p3e",
+   "exit": 1,
+   "summary": "9 failed, 52 passed in 1.07s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "scripts/zone_study_report.py",
+   "original": "        _run_paths(scalars, Path(tb_events))      # refuse before any report file is written\n",
+   "mutant": "        pass\n",
+   "id": "M-r5-p3f",
+   "exit": 1,
+   "summary": "1 failed, 60 passed in 1.01s",
+   "detected": true
+  },
+  {
+   "finding": "P2-run",
+   "file": "scripts/zone_study_report.py",
+   "original": "    paths = _run_paths(scalars, directory)\n    from tensorboard",
+   "mutant": "    from tensorboard",
+   "id": "M-r5-p3g",
+   "exit": 1,
+   "summary": "11 failed, 50 passed in 1.12s",
+   "detected": true
+  }
+ ]
+}
