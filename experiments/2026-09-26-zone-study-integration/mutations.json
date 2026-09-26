@@ -1,12 +1,12 @@
 {
- "source_sha": "673f0460858bde64cefa16b540f0647cd4382079",
+ "source_sha": "418299055139c81083b97080aadd5e085dc50d44",
  "mutations": [
   {
    "mutation": "M1 peer belief leaks into snapshot",
    "tests": "test_peer_private_state_does_not_reach",
    "detected": true,
    "summary": [
-    "4 failed, 76 deselected in 5.58s"
+    "4 failed, 80 deselected in 3.10s"
    ]
   },
   {
@@ -14,7 +14,7 @@
    "tests": "test_peer_private_state_does_not_reach",
    "detected": true,
    "summary": [
-    "2 failed, 2 passed, 76 deselected in 5.98s"
+    "2 failed, 2 passed, 80 deselected in 3.02s"
    ]
   },
   {
@@ -22,7 +22,7 @@
    "tests": "test_peer_private_state_does_not_reach or test_an_executor_event_wakes_only",
    "detected": true,
    "summary": [
-    "5 failed, 75 deselected in 6.33s"
+    "5 failed, 79 deselected in 3.43s"
    ]
   },
   {
@@ -30,7 +30,7 @@
    "tests": "test_host_link_abort_drops",
    "detected": true,
    "summary": [
-    "1 failed, 79 deselected in 1.09s"
+    "1 failed, 83 deselected in 0.64s"
    ]
   },
   {
@@ -38,7 +38,7 @@
    "tests": "test_talk_and_think_cost",
    "detected": true,
    "summary": [
-    "4 failed, 76 deselected in 3.48s"
+    "4 failed, 80 deselected in 1.71s"
    ]
   },
   {
@@ -46,7 +46,15 @@
    "tests": "test_claim_reaches_own_executor",
    "detected": true,
    "summary": [
-    "1 failed, 79 deselected in 1.93s"
+    "1 failed, 83 deselected in 1.07s"
+   ]
+  },
+  {
+   "mutation": "M8 re-ask timer per action (the #194 offline rule)",
+   "tests": "test_at_most_one_pending_own_reask",
+   "detected": true,
+   "summary": [
+    "3 failed, 1 passed, 80 deselected in 4.71s"
    ]
   },
   {
@@ -54,7 +62,7 @@
    "tests": "test_pair_status_channel_is_present",
    "detected": true,
    "summary": [
-    "1 failed, 79 deselected in 1.01s"
+    "1 failed, 83 deselected in 0.57s"
    ]
   }
  ],
