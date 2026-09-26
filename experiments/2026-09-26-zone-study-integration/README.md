@@ -73,8 +73,11 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 ## 사전 등록과 실행
 
 - `prereg.json`: 게이트 P1–P8, 실행 번들 `25d7634a…`(러너가 시작 시 다시 계산해 다르면 거절), 소스 `28addf56`, 기록 `45999d9c`.
-- 스모크: `smoke-i700`(layout seed 700, trial seed 700 → leader r2), 주 4조건 × 1회, horizon 480 SIM s, `cargo_noslip_v1`, weld OFF, 동기 SIM, 스레드 1, 동시 2개.
-- raw: `/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-45999d9c/`(로컬 전용, 원격 백업 아님).
+- `prereg_v2.json`: v1 결함 D1을 고친 뒤 새로 등록했다. 게이트 P1–P9, 번들 `6e949fc8…`, 런타임 `9f7b16f2`, 기록 `cbeb5301`. v1 파일은 보존했다.
+- 스모크: `smoke-i700`/`smoke-i700b`(layout seed 700, trial seed 700 → leader r2), 주 4조건 × 1회, horizon 480 SIM s, `cargo_noslip_v1`, weld OFF, 동기 SIM, 스레드 1, 동시 2개. `leader_ko`·`structured`와 v2 전체는 고정한 detached worktree에서 실행했다(런처는 매 실행 번들을 다시 계산해 prereg와 대조한다).
+- 부하 평균: 실행 시작 13.8–38.9, 종료 5.1–76.2(manifest). 공유 Mac이다. wall 시간은 결과로 쓰지 않는다.
+- raw: `/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-45999d9c/`(v1), `…/smoke-cbeb530/`(v2). 로컬 전용이며 원격 백업이 아니다.
+- 스모크 이후 이 브랜치에서 바뀐 런타임 코드는 없다. 결과·TensorBoard 도구와 문서만 추가했다.
 
 ## dev 배선 실행 (결과 아님)
 
@@ -100,6 +103,24 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 - **입력:** 요청 90×4건이 모두 재해시됐다. 이미지는 그 로봇 자기 프레임 로그의 JPEG 1장(`CURRENT OWN WRIST RGB`)이고, 금지 키·값은 0이다. 스케줄러–물리 시계 차이는 최대 7e-12 s였다.
 - **TensorBoard:** `outputs/tensorboard/0926-zone-study-integration-tags-temporary-v1`(run 8개, scalar 208개 재읽기 일치, run마다 Text `provenance/pose_provider` 라벨). 보기 키는 `zone_study_integration_smoke_v1_20260926`이다. 다른 작업이 소유한 서버(PID 9291)를 재시작하지 않고 `/data` API로 값을 대조했다. 고정 카드 8개는 `outputs/zone-study-integration-20260926/smoke-45999d9c-report/tensorboard-pinned-v1.png`(`tb_capture.py`)에 있다.
 
+## 결과 v2 — `smoke-i700b`, 런타임 `9f7b16f2`, prereg `cbeb5301`, 번들 `6e949fc8`
+
+v1에서 바꾼 것은 세 가지다. 재질문 규칙 `single_pending_own_timer.v1`(D1), 형식이 틀린 실행기 사건의 거절, 진행 로그다. 결과는 `results_v2.json`(`--prereg prereg_v2.json`)에 있다. **사전 등록 게이트 P1–P9가 4조건 모두 통과했다.**
+
+| 조건 | 멈춤 | SIM s | 호출(v1) | 발화 | 사고 SIM s | 발화+전달 SIM s | 재질문 최소 간격 | eval 배송 | wall s |
+|---|---|---:|---:|---:|---:|---:|---:|---|---:|
+| `no_comm` | horizon | 480 | 60 (90) | 0 | 206.5 | 0.0 | 13.5 s | C 337.2 s, B 397.2 s | 2382 |
+| `peer_ko` | horizon | 480 | 63 (90) | 3 | 224.4 | 0.9+0.3 | 13.6 s | C 343.8 s, B 410.0 s | 2298 |
+| `leader_ko` (리더 r2) | horizon | 480 | 61 (90) | 4 | 213.6 | 1.2+0.4 | 13.5 s | C 349.5 s, B 409.1 s | 1681 |
+| `structured` | horizon | 480 | 63 (90) | 3 | 224.7 | 0.9+0.3 | 13.6 s | C 343.8 s, B 410.0 s | 1643 |
+
+- HTTP 예산을 소진하지 않고 horizon까지 갔다. 줄어든 호출은 모두 `continue`(noop)였다(v1 81 → v2 50–53).
+- 물리 결과(배송 시각, 로봇 간 접촉 step, r3 실패)는 조건마다 v1과 **같다.** `continue`는 실행기를 부르지 않으므로, 호출 수가 달라져도 물리가 바뀌지 않는다. 결정적 동기 SIM에서 기대한 결과다.
+- TensorBoard: `outputs/tensorboard/0926-zone-study-integration-tags-temporary-v2`(run 8개, scalar 208개 재읽기 일치). 보기 키 `zone_study_integration_smoke_v2_20260926`은 v1과 v2를 함께 보여 준다. 캡처는 `outputs/zone-study-integration-20260926/smoke-cbeb530-report/tensorboard-pinned-v1-v2.png`에 있다. 명령 수·모델 응답 시간 태그는 이 변환기에 없고, fixture라 응답 시간 자체가 없다.
+- raw: `…/smoke-cbeb530/`(로컬 전용). 해시는 `results_v2.json`의 `raw`에 있다.
+
+**이 두 버전이 입증하지 않는 것:** 언어 이해, 통신 효과·조건 우열, 표식 0개 위치 추정, 2대 운반이다. 조건 사이의 차이(첫 명령 시각, 호출 수)는 fixture 규칙과 비용 설정이 만든 값이다.
+
 ## 경계별로 깨진 것
 
 | # | 경계 | 무엇이 깨졌나 | 처리 |
@@ -112,7 +133,7 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 | B6 | 실행기 → 상태 | 장면 설정이 첫 프레임 전에 SIM을 약 1.3 s 진행한다. `t0 = 0.5` 가정에서는 첫 호출에 자기 프레임이 없었다(dev 첫 실행). | 설정 뒤 첫 0.1 s 경계에서 시작하고 로봇마다 프레임 1장을 찍는다. |
 | B7 | 실행기 → 상태 | 출발 직후(약 5–13 s) r1·r3이 `blockage_seen(UNMAPPED_OBSTRUCTION_IN_LANE)`을 낸다. pickup 상자를 막힘으로 본 것으로 추정되며, 이것이 네 조건 모두에서 `blockage` 호출을 만든다. | 확인하지 않았다. #193/#206의 판단 의미 문제로 남긴다. |
 | B8 | 실행기 → 상태 | r3의 P1-3 `SEARCH_NOT_FOUND`(#206 smoke-s700과 같음). | #221의 관측점 거리 결함. |
-| D1 | 대화 → 비용 | 재질문 타이머가 행동마다 쌓여 영구 연쇄가 생겼다(#194 오프라인 규칙 상속). v1은 4조건 모두 HTTP 90/90을 445–478 s에 소진했고, 81회가 `continue`였다. 채널 조건은 메시지 깨우기로 연쇄가 늘어난다(시뮬레이터 없는 비교: 21/63/42/63). | `single_pending_own_timer.v1`(21/27/24/27). 검사와 변이 M8을 추가했다. v2 물리 재실행 결과는 아래에 있다. #194에 알렸다. |
+| D1 | 대화 → 비용 | 재질문 타이머가 행동마다 쌓여 영구 연쇄가 생겼다(#194 오프라인 규칙 상속). v1은 4조건 모두 HTTP 90/90을 445–478 s에 소진했고, 81회가 `continue`였다. 채널 조건은 메시지 깨우기로 연쇄가 늘어난다(시뮬레이터 없는 비교: 21/63/42/63). | `single_pending_own_timer.v1`(21/27/24/27). 검사와 변이 M8을 추가했다. v2 물리 재실행에서 4조건 모두 horizon까지 진행했다(호출 60–63). #194에 알렸다. |
 | D2 | 대화 → 비용 | fixture는 `own_command_history` 길이로 다음 주문을 고른다. 그래서 메시지 깨우기로 늘어난 거절 명령 수가 조건마다 다른 다음 claim을 만든다. | fixture의 고정 규칙에서 생긴 효과이며 통신 효과가 아니다. 실제 LLM 파일럿에서는 사라진다. |
 | C1 | CI | 병합한 #201의 workflow `zone-m1-owncam-run`의 `docs` 값(`prereg.json (+ prereg_amendments.json)`)이 파일 경로가 아니다. 그래서 `tests/test_simulation_scenes.py::test_workflow_entries_resolve_to_existing_source_and_documentation`가 실패한다. | 소유 밖이라 고치지 않았다. |
 

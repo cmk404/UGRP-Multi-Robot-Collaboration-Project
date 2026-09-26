@@ -1,0 +1,1677 @@
+{
+ "schema": "ugrp.zone_study_integration_results.v1",
+ "episode": "smoke-i700b",
+ "runs_root": "/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-cbeb530",
+ "prereg": "prereg_v2.json",
+ "prereg_sha256": "a3ef97cb4989807f495fe4ba7598ebe0011328fbdec9084ca62a34fd82cb65aa",
+ "plumbing_only": true,
+ "pose_provider": "tags_temporary",
+ "note_ko": "배선 스모크(no-LLM fixture, 1 seed). 통신 효과·연구 결과가 아니다. 임시, 표식 사용, 연구 결과 아님.",
+ "gates": {
+  "per_condition": {
+   "no_comm": {
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true,
+    "P6": true,
+    "P9_reask": true,
+    "P8_records": true
+   },
+   "peer_ko": {
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true,
+    "P6": true,
+    "P9_reask": true,
+    "P8_records": true
+   },
+   "leader_ko": {
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true,
+    "P6": true,
+    "P9_reask": true,
+    "P8_records": true
+   },
+   "structured": {
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true,
+    "P6": true,
+    "P9_reask": true,
+    "P8_records": true
+   }
+  },
+  "P7_pair_status_sha256": {
+   "no_comm": "9dfe20cfd00b466cdcf6302f1d342c5dc98b94b3a704927f7374ddc891c5a6b1",
+   "peer_ko": "9dfe20cfd00b466cdcf6302f1d342c5dc98b94b3a704927f7374ddc891c5a6b1",
+   "leader_ko": "9dfe20cfd00b466cdcf6302f1d342c5dc98b94b3a704927f7374ddc891c5a6b1",
+   "structured": "9dfe20cfd00b466cdcf6302f1d342c5dc98b94b3a704927f7374ddc891c5a6b1"
+  },
+  "summary": {
+   "P1": true,
+   "P2": true,
+   "P3": true,
+   "P4": true,
+   "P5": true,
+   "P6": true,
+   "P8_records": true,
+   "P9_reask": true,
+   "P7": true
+  },
+  "registered": [
+   "P1",
+   "P2",
+   "P3",
+   "P4",
+   "P5",
+   "P6",
+   "P7",
+   "P8_records",
+   "P9_reask"
+  ],
+  "post_hoc": [],
+  "all_registered_pass": true,
+  "note_ko": "P8은 기록 라벨만 여기서 본다. TensorBoard run 라벨은 tb_snapshot.py의 재읽기에서 확인한다."
+ },
+ "gate_detail": {
+  "no_comm": {
+   "p2_problems": [],
+   "p5_problems": [],
+   "min_timer_spacing_s": {
+    "r1": 13.5,
+    "r2": 13.5,
+    "r3": 13.5
+   }
+  },
+  "peer_ko": {
+   "p2_problems": [],
+   "p5_problems": [],
+   "min_timer_spacing_s": {
+    "r1": 13.599999999999966,
+    "r2": 13.599999999999966,
+    "r3": 13.599999999999966
+   }
+  },
+  "leader_ko": {
+   "p2_problems": [],
+   "p5_problems": [],
+   "min_timer_spacing_s": {
+    "r1": 13.5,
+    "r2": 13.599999999999966,
+    "r3": 13.5
+   }
+  },
+  "structured": {
+   "p2_problems": [],
+   "p5_problems": [],
+   "min_timer_spacing_s": {
+    "r1": 13.599999999999966,
+    "r2": 13.599999999999966,
+    "r3": 13.599999999999966
+   }
+  }
+ },
+ "observed": {
+  "no_comm": {
+   "stop": "horizon",
+   "sim_s": 480.0,
+   "end_reason": "sim_horizon",
+   "end_sim_s": 480.0,
+   "calls": 60,
+   "messages": 0,
+   "actions": 59,
+   "dispatch": {
+    "deliver:True": 3,
+    "deliver:False": 6,
+    "None:None": 50
+   },
+   "think_sim_s": 206.5,
+   "talk_sim_s": 0.0,
+   "delivery_sim_s": 0,
+   "follower_to_follower": 0,
+   "free_text_messages": 0,
+   "rejected_messages": 0,
+   "leader_id": null,
+   "eval_only_deliveries": [
+    {
+     "item_id": "box_00",
+     "kind": "cyan",
+     "zone": "C",
+     "sim_s": 337.2
+    },
+    {
+     "item_id": "box_05",
+     "kind": "cyan",
+     "zone": "B",
+     "sim_s": 397.2
+    }
+   ],
+   "eval_only_final_zone": {
+    "box_00": "C",
+    "box_02": null,
+    "box_05": "B"
+   },
+   "orders_by_eval": {
+    "order-1": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-2": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-3": {
+     "ordered": 1,
+     "delivered": 0,
+     "complete": false
+    }
+   },
+   "orders_complete": false,
+   "metrics_success": false,
+   "boundary_status": "clean",
+   "robots": {
+    "r1": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 810740,
+      "peer_robot": 3074
+     }
+    },
+    "r2": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 1085374,
+      "peer_robot": 3074
+     }
+    },
+    "r3": {
+     "jobs": [
+      [
+       "deliver",
+       "SEARCH_NOT_FOUND",
+       "failed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {}
+    }
+   },
+   "wakeups": {
+    "r1": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      12.7,
+      "blockage"
+     ],
+     [
+      64.8,
+      "timer"
+     ],
+     [
+      100.1,
+      "blockage"
+     ],
+     [
+      128.3,
+      "timer"
+     ],
+     [
+      191.8,
+      "timer"
+     ],
+     [
+      255.3,
+      "timer"
+     ],
+     [
+      318.8,
+      "timer"
+     ],
+     [
+      355.4,
+      "idle"
+     ],
+     [
+      382.3,
+      "timer"
+     ],
+     [
+      395.8,
+      "idle"
+     ],
+     [
+      409.3,
+      "idle"
+     ],
+     [
+      422.8,
+      "idle"
+     ],
+     [
+      436.3,
+      "idle"
+     ],
+     [
+      449.8,
+      "idle"
+     ],
+     [
+      463.3,
+      "idle"
+     ],
+     [
+      476.8,
+      "idle"
+     ]
+    ],
+    "r2": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      62.7,
+      "blockage"
+     ],
+     [
+      66.2,
+      "timer"
+     ],
+     [
+      126.2,
+      "timer"
+     ],
+     [
+      189.7,
+      "timer"
+     ],
+     [
+      235.8,
+      "blockage"
+     ],
+     [
+      253.2,
+      "timer"
+     ],
+     [
+      316.7,
+      "timer"
+     ],
+     [
+      380.2,
+      "timer"
+     ],
+     [
+      415.5,
+      "idle"
+     ],
+     [
+      443.7,
+      "timer"
+     ],
+     [
+      457.2,
+      "idle"
+     ],
+     [
+      470.7,
+      "idle"
+     ]
+    ],
+    "r3": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      12.7,
+      "blockage"
+     ],
+     [
+      61.3,
+      "blockage"
+     ],
+     [
+      64.8,
+      "timer"
+     ],
+     [
+      74.8,
+      "failure"
+     ],
+     [
+      128.3,
+      "timer"
+     ],
+     [
+      141.8,
+      "idle"
+     ],
+     [
+      155.3,
+      "idle"
+     ],
+     [
+      168.8,
+      "idle"
+     ],
+     [
+      182.3,
+      "idle"
+     ],
+     [
+      195.8,
+      "idle"
+     ],
+     [
+      209.3,
+      "idle"
+     ],
+     [
+      222.8,
+      "idle"
+     ],
+     [
+      236.3,
+      "idle"
+     ],
+     [
+      249.8,
+      "idle"
+     ],
+     [
+      263.3,
+      "idle"
+     ],
+     [
+      276.8,
+      "idle"
+     ],
+     [
+      290.3,
+      "idle"
+     ],
+     [
+      303.8,
+      "idle"
+     ],
+     [
+      317.3,
+      "idle"
+     ],
+     [
+      330.8,
+      "idle"
+     ],
+     [
+      344.3,
+      "idle"
+     ],
+     [
+      357.8,
+      "idle"
+     ],
+     [
+      371.3,
+      "idle"
+     ],
+     [
+      384.8,
+      "idle"
+     ],
+     [
+      398.3,
+      "idle"
+     ],
+     [
+      411.8,
+      "idle"
+     ],
+     [
+      425.3,
+      "idle"
+     ],
+     [
+      438.8,
+      "idle"
+     ],
+     [
+      452.3,
+      "idle"
+     ]
+    ]
+   },
+   "wall_s": 2381.6,
+   "load_average": {
+    "start": [
+     21.1,
+     31.68,
+     41.03
+    ],
+    "end": [
+     52.64,
+     57.81,
+     52.85
+    ]
+   },
+   "code_sha": "cbeb5301570b2bf41cf3ff48620abdf90c8e7a3d",
+   "bundle_sha256": "6e949fc84f9d5f5eeaa3d3ff4dbc766910d08220a308219171179d9956e76376"
+  },
+  "peer_ko": {
+   "stop": "horizon",
+   "sim_s": 480.0,
+   "end_reason": "sim_horizon",
+   "end_sim_s": 480.0,
+   "calls": 63,
+   "messages": 3,
+   "actions": 62,
+   "dispatch": {
+    "deliver:True": 3,
+    "deliver:False": 6,
+    "None:None": 53
+   },
+   "think_sim_s": 224.4,
+   "talk_sim_s": 0.9,
+   "delivery_sim_s": 0.3,
+   "follower_to_follower": 0,
+   "free_text_messages": 3,
+   "rejected_messages": 0,
+   "leader_id": null,
+   "eval_only_deliveries": [
+    {
+     "item_id": "box_00",
+     "kind": "cyan",
+     "zone": "C",
+     "sim_s": 343.8
+    },
+    {
+     "item_id": "box_05",
+     "kind": "cyan",
+     "zone": "B",
+     "sim_s": 409.95
+    }
+   ],
+   "eval_only_final_zone": {
+    "box_00": "C",
+    "box_02": null,
+    "box_05": "B"
+   },
+   "orders_by_eval": {
+    "order-1": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-2": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-3": {
+     "ordered": 1,
+     "delivered": 0,
+     "complete": false
+    }
+   },
+   "orders_complete": false,
+   "metrics_success": false,
+   "boundary_status": "clean",
+   "robots": {
+    "r1": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 841497,
+      "peer_robot": 2026
+     }
+    },
+    "r2": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 1141917,
+      "peer_robot": 2026
+     }
+    },
+    "r3": {
+     "jobs": [
+      [
+       "deliver",
+       "SEARCH_NOT_FOUND",
+       "failed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {}
+    }
+   },
+   "wakeups": {
+    "r1": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.3,
+      "report"
+     ],
+     [
+      12.9,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      129.3,
+      "timer"
+     ],
+     [
+      192.9,
+      "timer"
+     ],
+     [
+      256.5,
+      "timer"
+     ],
+     [
+      320.1,
+      "timer"
+     ],
+     [
+      362.1,
+      "idle"
+     ],
+     [
+      383.7,
+      "timer"
+     ],
+     [
+      397.3,
+      "idle"
+     ],
+     [
+      410.9,
+      "idle"
+     ],
+     [
+      424.5,
+      "idle"
+     ],
+     [
+      438.1,
+      "idle"
+     ],
+     [
+      451.7,
+      "idle"
+     ],
+     [
+      465.3,
+      "idle"
+     ],
+     [
+      478.9,
+      "idle"
+     ]
+    ],
+    "r2": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.3,
+      "report"
+     ],
+     [
+      63.7,
+      "blockage"
+     ],
+     [
+      67.3,
+      "timer"
+     ],
+     [
+      127.3,
+      "timer"
+     ],
+     [
+      190.9,
+      "timer"
+     ],
+     [
+      254.5,
+      "timer"
+     ],
+     [
+      318.1,
+      "timer"
+     ],
+     [
+      381.7,
+      "timer"
+     ],
+     [
+      405.7,
+      "blockage"
+     ],
+     [
+      428.2,
+      "idle"
+     ],
+     [
+      445.3,
+      "timer"
+     ],
+     [
+      458.9,
+      "idle"
+     ],
+     [
+      472.5,
+      "idle"
+     ]
+    ],
+    "r3": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.3,
+      "report"
+     ],
+     [
+      12.9,
+      "blockage"
+     ],
+     [
+      58.7,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      76.4,
+      "failure"
+     ],
+     [
+      129.3,
+      "timer"
+     ],
+     [
+      142.9,
+      "idle"
+     ],
+     [
+      156.5,
+      "idle"
+     ],
+     [
+      170.1,
+      "idle"
+     ],
+     [
+      183.7,
+      "idle"
+     ],
+     [
+      197.3,
+      "idle"
+     ],
+     [
+      210.9,
+      "idle"
+     ],
+     [
+      224.5,
+      "idle"
+     ],
+     [
+      238.1,
+      "idle"
+     ],
+     [
+      251.7,
+      "idle"
+     ],
+     [
+      265.3,
+      "idle"
+     ],
+     [
+      278.9,
+      "idle"
+     ],
+     [
+      292.5,
+      "idle"
+     ],
+     [
+      306.1,
+      "idle"
+     ],
+     [
+      319.7,
+      "idle"
+     ],
+     [
+      333.3,
+      "idle"
+     ],
+     [
+      346.9,
+      "idle"
+     ],
+     [
+      360.5,
+      "idle"
+     ],
+     [
+      374.1,
+      "idle"
+     ],
+     [
+      387.7,
+      "idle"
+     ],
+     [
+      401.3,
+      "idle"
+     ],
+     [
+      414.9,
+      "idle"
+     ],
+     [
+      428.5,
+      "idle"
+     ]
+    ]
+   },
+   "wall_s": 2297.9,
+   "load_average": {
+    "start": [
+     13.77,
+     23.61,
+     35.78
+    ],
+    "end": [
+     17.37,
+     42.87,
+     47.54
+    ]
+   },
+   "code_sha": "cbeb5301570b2bf41cf3ff48620abdf90c8e7a3d",
+   "bundle_sha256": "6e949fc84f9d5f5eeaa3d3ff4dbc766910d08220a308219171179d9956e76376"
+  },
+  "leader_ko": {
+   "stop": "horizon",
+   "sim_s": 480.0,
+   "end_reason": "sim_horizon",
+   "end_sim_s": 480.0,
+   "calls": 61,
+   "messages": 4,
+   "actions": 60,
+   "dispatch": {
+    "deliver:True": 3,
+    "deliver:False": 6,
+    "None:None": 51
+   },
+   "think_sim_s": 213.60000000000002,
+   "talk_sim_s": 1.2,
+   "delivery_sim_s": 0.4,
+   "follower_to_follower": 0,
+   "free_text_messages": 4,
+   "rejected_messages": 0,
+   "leader_id": "r2",
+   "eval_only_deliveries": [
+    {
+     "item_id": "box_00",
+     "kind": "cyan",
+     "zone": "C",
+     "sim_s": 349.5
+    },
+    {
+     "item_id": "box_05",
+     "kind": "cyan",
+     "zone": "B",
+     "sim_s": 409.05
+    }
+   ],
+   "eval_only_final_zone": {
+    "box_00": "C",
+    "box_02": null,
+    "box_05": "B"
+   },
+   "orders_by_eval": {
+    "order-1": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-2": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-3": {
+     "ordered": 1,
+     "delivered": 0,
+     "complete": false
+    }
+   },
+   "orders_complete": false,
+   "metrics_success": false,
+   "boundary_status": "clean",
+   "robots": {
+    "r1": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 864297
+     }
+    },
+    "r2": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 1127626
+     }
+    },
+    "r3": {
+     "jobs": [
+      [
+       "deliver",
+       "SEARCH_NOT_FOUND",
+       "failed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {}
+    }
+   },
+   "wakeups": {
+    "r1": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      6.7,
+      "report"
+     ],
+     [
+      10.3,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      129.2,
+      "timer"
+     ],
+     [
+      192.7,
+      "timer"
+     ],
+     [
+      256.2,
+      "timer"
+     ],
+     [
+      319.7,
+      "timer"
+     ],
+     [
+      367.8,
+      "idle"
+     ],
+     [
+      383.2,
+      "timer"
+     ],
+     [
+      396.7,
+      "idle"
+     ],
+     [
+      410.2,
+      "idle"
+     ],
+     [
+      423.7,
+      "idle"
+     ],
+     [
+      437.2,
+      "idle"
+     ],
+     [
+      450.7,
+      "idle"
+     ],
+     [
+      464.2,
+      "idle"
+     ],
+     [
+      477.7,
+      "idle"
+     ]
+    ],
+    "r2": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      6.6,
+      "report"
+     ],
+     [
+      63.7,
+      "blockage"
+     ],
+     [
+      67.3,
+      "timer"
+     ],
+     [
+      127.3,
+      "timer"
+     ],
+     [
+      166.9,
+      "blockage"
+     ],
+     [
+      190.9,
+      "timer"
+     ],
+     [
+      254.5,
+      "timer"
+     ],
+     [
+      318.1,
+      "timer"
+     ],
+     [
+      381.7,
+      "timer"
+     ],
+     [
+      427.4,
+      "idle"
+     ],
+     [
+      445.3,
+      "timer"
+     ],
+     [
+      458.9,
+      "idle"
+     ],
+     [
+      472.5,
+      "idle"
+     ]
+    ],
+    "r3": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      6.7,
+      "report"
+     ],
+     [
+      10.3,
+      "blockage"
+     ],
+     [
+      58.7,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      76.4,
+      "failure"
+     ],
+     [
+      129.2,
+      "timer"
+     ],
+     [
+      142.7,
+      "idle"
+     ],
+     [
+      156.2,
+      "idle"
+     ],
+     [
+      169.7,
+      "idle"
+     ],
+     [
+      183.2,
+      "idle"
+     ],
+     [
+      196.7,
+      "idle"
+     ],
+     [
+      210.2,
+      "idle"
+     ],
+     [
+      223.7,
+      "idle"
+     ],
+     [
+      237.2,
+      "idle"
+     ],
+     [
+      250.7,
+      "idle"
+     ],
+     [
+      264.2,
+      "idle"
+     ],
+     [
+      277.7,
+      "idle"
+     ],
+     [
+      291.2,
+      "idle"
+     ],
+     [
+      304.7,
+      "idle"
+     ],
+     [
+      318.2,
+      "idle"
+     ],
+     [
+      331.7,
+      "idle"
+     ],
+     [
+      345.2,
+      "idle"
+     ],
+     [
+      358.7,
+      "idle"
+     ],
+     [
+      372.2,
+      "idle"
+     ],
+     [
+      385.7,
+      "idle"
+     ],
+     [
+      399.2,
+      "idle"
+     ],
+     [
+      412.7,
+      "idle"
+     ],
+     [
+      426.2,
+      "idle"
+     ],
+     [
+      439.7,
+      "idle"
+     ]
+    ]
+   },
+   "wall_s": 1681.0,
+   "load_average": {
+    "start": [
+     23.16,
+     48.41,
+     49.66
+    ],
+    "end": [
+     6.84,
+     6.76,
+     14.86
+    ]
+   },
+   "code_sha": "cbeb5301570b2bf41cf3ff48620abdf90c8e7a3d",
+   "bundle_sha256": "6e949fc84f9d5f5eeaa3d3ff4dbc766910d08220a308219171179d9956e76376"
+  },
+  "structured": {
+   "stop": "horizon",
+   "sim_s": 480.0,
+   "end_reason": "sim_horizon",
+   "end_sim_s": 480.0,
+   "calls": 63,
+   "messages": 3,
+   "actions": 62,
+   "dispatch": {
+    "deliver:True": 3,
+    "deliver:False": 6,
+    "None:None": 53
+   },
+   "think_sim_s": 224.7,
+   "talk_sim_s": 0.9,
+   "delivery_sim_s": 0.3,
+   "follower_to_follower": 0,
+   "free_text_messages": 0,
+   "rejected_messages": 0,
+   "leader_id": null,
+   "eval_only_deliveries": [
+    {
+     "item_id": "box_00",
+     "kind": "cyan",
+     "zone": "C",
+     "sim_s": 343.8
+    },
+    {
+     "item_id": "box_05",
+     "kind": "cyan",
+     "zone": "B",
+     "sim_s": 409.95
+    }
+   ],
+   "eval_only_final_zone": {
+    "box_00": "C",
+    "box_02": null,
+    "box_05": "B"
+   },
+   "orders_by_eval": {
+    "order-1": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-2": {
+     "ordered": 1,
+     "delivered": 1,
+     "complete": true
+    },
+    "order-3": {
+     "ordered": 1,
+     "delivered": 0,
+     "complete": false
+    }
+   },
+   "orders_complete": false,
+   "metrics_success": false,
+   "boundary_status": "clean",
+   "robots": {
+    "r1": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 841497,
+      "peer_robot": 2026
+     }
+    },
+    "r2": {
+     "jobs": [
+      [
+       "deliver",
+       "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+       "own_camera_confirmed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {
+      "box": 1141917,
+      "peer_robot": 2026
+     }
+    },
+    "r3": {
+     "jobs": [
+      [
+       "deliver",
+       "SEARCH_NOT_FOUND",
+       "failed"
+      ]
+     ],
+     "false_confirmations": 0,
+     "dead": false,
+     "exception": null,
+     "aborts": 0,
+     "contact_steps": {}
+    }
+   },
+   "wakeups": {
+    "r1": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.4,
+      "report"
+     ],
+     [
+      13.0,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      129.3,
+      "timer"
+     ],
+     [
+      192.9,
+      "timer"
+     ],
+     [
+      256.5,
+      "timer"
+     ],
+     [
+      320.1,
+      "timer"
+     ],
+     [
+      362.1,
+      "idle"
+     ],
+     [
+      383.7,
+      "timer"
+     ],
+     [
+      397.3,
+      "idle"
+     ],
+     [
+      410.9,
+      "idle"
+     ],
+     [
+      424.5,
+      "idle"
+     ],
+     [
+      438.1,
+      "idle"
+     ],
+     [
+      451.7,
+      "idle"
+     ],
+     [
+      465.3,
+      "idle"
+     ],
+     [
+      478.9,
+      "idle"
+     ]
+    ],
+    "r2": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.4,
+      "report"
+     ],
+     [
+      63.7,
+      "blockage"
+     ],
+     [
+      67.3,
+      "timer"
+     ],
+     [
+      127.3,
+      "timer"
+     ],
+     [
+      190.9,
+      "timer"
+     ],
+     [
+      254.5,
+      "timer"
+     ],
+     [
+      318.1,
+      "timer"
+     ],
+     [
+      381.7,
+      "timer"
+     ],
+     [
+      405.7,
+      "blockage"
+     ],
+     [
+      428.2,
+      "idle"
+     ],
+     [
+      445.3,
+      "timer"
+     ],
+     [
+      458.9,
+      "idle"
+     ],
+     [
+      472.5,
+      "idle"
+     ]
+    ],
+    "r3": [
+     [
+      1.3,
+      "start"
+     ],
+     [
+      5.8,
+      "report"
+     ],
+     [
+      9.4,
+      "report"
+     ],
+     [
+      13.0,
+      "blockage"
+     ],
+     [
+      58.7,
+      "blockage"
+     ],
+     [
+      65.7,
+      "timer"
+     ],
+     [
+      76.4,
+      "failure"
+     ],
+     [
+      129.3,
+      "timer"
+     ],
+     [
+      142.9,
+      "idle"
+     ],
+     [
+      156.5,
+      "idle"
+     ],
+     [
+      170.1,
+      "idle"
+     ],
+     [
+      183.7,
+      "idle"
+     ],
+     [
+      197.3,
+      "idle"
+     ],
+     [
+      210.9,
+      "idle"
+     ],
+     [
+      224.5,
+      "idle"
+     ],
+     [
+      238.1,
+      "idle"
+     ],
+     [
+      251.7,
+      "idle"
+     ],
+     [
+      265.3,
+      "idle"
+     ],
+     [
+      278.9,
+      "idle"
+     ],
+     [
+      292.5,
+      "idle"
+     ],
+     [
+      306.1,
+      "idle"
+     ],
+     [
+      319.7,
+      "idle"
+     ],
+     [
+      333.3,
+      "idle"
+     ],
+     [
+      346.9,
+      "idle"
+     ],
+     [
+      360.5,
+      "idle"
+     ],
+     [
+      374.1,
+      "idle"
+     ],
+     [
+      387.7,
+      "idle"
+     ],
+     [
+      401.3,
+      "idle"
+     ],
+     [
+      414.9,
+      "idle"
+     ],
+     [
+      428.5,
+      "idle"
+     ]
+    ]
+   },
+   "wall_s": 1643.0,
+   "load_average": {
+    "start": [
+     14.87,
+     38.54,
+     45.69
+    ],
+    "end": [
+     5.05,
+     6.31,
+     14.19
+    ]
+   },
+   "code_sha": "cbeb5301570b2bf41cf3ff48620abdf90c8e7a3d",
+   "bundle_sha256": "6e949fc84f9d5f5eeaa3d3ff4dbc766910d08220a308219171179d9956e76376"
+  }
+ },
+ "raw": {
+  "no_comm": {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-cbeb530/no_comm-smoke-i700b",
+   "manifest_sha256": "d0abbf631de77fa87333aad35bac9b70e56b24573a2a81cfd9480db913e22c51",
+   "result_sha256": "96cb0a8107cd067023087da31bf81f39489442e3514b86c26d3a48489126bc54",
+   "trial_record_sha256": "188d3088aa677e3a09b3bff3b629cec46951798fd60fc43846dde7c96c62b00d",
+   "files": 98,
+   "bytes": 90824071
+  },
+  "peer_ko": {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-cbeb530/peer_ko-smoke-i700b",
+   "manifest_sha256": "ef55effb3d59295469d1183853302735ee438fe6563480e4f18a751ed0f2f684",
+   "result_sha256": "21efe0bd3913d460f64969009cc6a828e85ad5ec034657fc66e0e40e07e87f9f",
+   "trial_record_sha256": "13505c6a0cc0893baf61081508d0a0fd58a10f01a364c552f4d6a0f97a5ab2fc",
+   "files": 100,
+   "bytes": 93887128
+  },
+  "leader_ko": {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-cbeb530/leader_ko-smoke-i700b",
+   "manifest_sha256": "96987491d587cabf383aab3a5555e86e35d3352688056d6e76825b939f25a810",
+   "result_sha256": "0e4f1bbf7d6d97b4e1d1fe9c94f4f976b83351407d5828fe3cc1b45fd0ea7a20",
+   "trial_record_sha256": "f85779b2b2baa5e8a1d2c07e26b4b3a29b98565719125d87a0ca3bbb70d6ab43",
+   "files": 100,
+   "bytes": 95840275
+  },
+  "structured": {
+   "dir": "/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-cbeb530/structured-smoke-i700b",
+   "manifest_sha256": "99b4676c887a49b4473f93d59e7bf341dfa65a9f4bafa69cfbfd196ea4ed1685",
+   "result_sha256": "3b0a0670e176920200e35f90fa50ea7f9bbaf8d9b15b4fc010971e09a57daccc",
+   "trial_record_sha256": "9104b59a9f1e49455a63a7c43fb88986bf3e8c3d059b28829e096725843899b7",
+   "files": 100,
+   "bytes": 93941466
+  }
+ }
+}
