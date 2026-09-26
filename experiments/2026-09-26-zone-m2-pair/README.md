@@ -292,3 +292,64 @@ M2에서 새로 쓴 코드는 다음 세 가지다.
 - **정지 경위 정정:** 인계 지시에 따라 코호트 루프(PID 44061)만 멈추려 했다. 그러나 `ugrp_session`은 주 자식이 끝나면 그룹 전체를 정지시키므로, 실행 중이던 825 ON/OFF SIM도 함께 멈췄다. 이 때문에 825에는 `result.json`이 없고 826은 시작하지 않았다. `cohort.log` 12:12:22 줄은 825가 계속 도는 것처럼 읽히는데, 이는 잘못이다. 정정 줄을 같은 로그 끝에 덧붙였고, 원래 줄은 보존했다.
 - **TensorBoard:** snapshot `0926-zone-m2-pair-stage2b-incomplete`(13 run: test 8 + dev 5, `collection.json` SHA-256 `9646bc2d…155`), view key `zone_m2_pair_stage2b_20260926`. 공용 서버(PID 9291)에서 run 13개와 824 ON `reported_success=0`, 821 OFF `sim_s=252.3` 값을 확인했다.
 - **원본:** `outputs/zone-m2-pair-20260926/stage2b-ed15489/`(로컬, gitignore. 원격 백업 아님).
+
+---
+
+# Kiro 인계 이후 (2026-09-26, 브랜치 `kiro/zone-m2-pair-v3`, PR #205, base `claude/zone-m2-pair`)
+
+`kiro/` 접두사는 Kiro의 작업이다. Claude의 worktree(`zone-m2-pair`, `zone-m2-pair-s2b-frozen`)와 원본 `outputs/zone-m2-pair-20260926/`은 읽기만 했다. Kiro의 raw 원본은 `outputs/zone-m2-pair-kiro-20260926/`(로컬, gitignore, 원격 백업 아님)에 있다.
+
+## 2b단계 완료 기록 (동결 ed15489, Kiro 자기 detached worktree `ugrp-wt/kiro-m2-pair-s2b-frozen`)
+
+- **825:** 인계 정지로 t≈206.9 s(두 번째 구간 운반 중)에 멈췄다. `result.json`이 없다. 사전 등록 중단 규칙은 "재실행은 t=0 이전 인프라 오류일 때만"이므로 **재실행하지 않고 `interrupted`로 기록한다.** 결과를 대체하지 않는다.
+- **826:** 한 번도 시작하지 않은 사전 등록 실행이라 재실행이 아니다. 같은 동결 소스 `ed15489`, 같은 명령(`--stage door --approach v2 --door-version v2 --on-failure continue`)으로 ON/OFF 한 번씩 실행했다(12:18:19 시작, 부하 9.21/6.96/6.49, `stage2b-ed15489-completion/cohort.log`). 둘 다 `dirty_source: false`, `gt_at_runtime: false`.
+
+| seed | ON | OFF | 최종 오차 | 도착 r1/r2 (SIM s) | SIM 시간 | 명령 |
+|---|---|---|---|---|---|---|
+| 826 | 성공 | 성공 | 0.120 m | 47.3 / 114.5 | 259.4 s | 2767 |
+
+- 벽·빔-벽·로봇-로봇 접촉 0. 집계: `results-stage2b-ed15489-completion.json`.
+- **2b 최종 판정(팔별, ON과 OFF 같음):** 821·822·823·826 성공, 824 실패, 825 interrupted.
+  - M2-D1(≥ 4/6): 4/6 — 825를 실패로 세어도 **통과**.
+  - M2-D3(≥ 5/6 도착): 5/5 완료분 도착 — 825를 미도착으로 세어도 **통과**.
+  - M2-D2·D4: 완료분 5회에서 통과. 825는 접촉 통계가 없어 판정 불가.
+  - 코호트는 형식상 **미완료(6개 중 1개 interrupted)** 로 남긴다.
+
+## 824 원인 분석 (평가 전용 파일·자기 영상 재생)
+
+- r2의 **세 번째 파지**(체크포인트 2, 로봇 x 2.84, 문 동쪽 어두운 바닥). 파지 전후 GT:
+  - 두 로봇 손가락 5.48 N, 빔 z 0.0607 m까지 들림, 기울기 0.03°.
+  - 빔의 r2 기준 상대 위치 (0.437, −0.011) m가 파지·들기 전후 같다. **파지는 성공했다.**
+- 들기 확인(`ob2.co_motion_signature`, IoU ≥ 0.45)이 IoU **0.0**을 냈다. 영상 하단 60 %의 빔 아래 면이 hue 41, S 166, **V ≈ 103**(5–95 백분위 32–116)으로, v2 빔 색 기준 V ≥ 120 아래였다. 파지 영상 서명 166 px, 들기 영상 0 px. 서쪽 바닥의 같은 면은 V ≈ 221이었다.
+- → **인식 거짓 음성.** 2b의 822 r2(0.479), dev11-811 r2(0.528)도 같은 위치(x ≈ 2.9)의 세 번째 들기에서 기준에 겨우 걸쳤다.
+- 따라서 "체크포인트 다시 잡기 뒤 파지 위치 / 접촉"은 원인이 아니다.
+
+## 문 v3 (`--door-version v3`, dev)
+
+- **변경은 하나:** 들기 co-motion 서명의 빔 색 기준을 V ≥ 60으로 낮췄다(`harness/owncam_pair_lift_v3.py`). hue 25–54, S ≥ 100, 영역·팽창·IoU 기준 0.45는 v2와 같다. 파지 띠(V ≤ 60 and S < 90)는 S 조건 때문에 섞이지 않는다(테스트). 운반 중 hold check(`owncam_pair_hold_v3`), 파지 시야 판정, 나머지 문 v2 구성은 그대로다.
+- **오프라인 재생**(`replay_lift_v3.py`, 기록된 모든 들기, GT 라벨은 채점에만 사용):
+  - M2 원본 64회 186개 들기(모두 GT held): v2 거짓 음성 2(824 ON/OFF), **v3 0**, v3 최솟값 0.558.
+  - pair study(#200) 원본 50회 87개 들기: v2·v3 모두 0, v3 최솟값 0.751.
+  - **특이도(빔 없이 들기)는 기록이 없다.** 그래서 실험자 개입 `--inject-open-at-lift <robot>:<segment>`를 추가했다. 해당 구간의 들기부터 시뮬레이터 집게를 OPEN으로 유지하고, 로봇의 발행 명령 이력은 바꾸지 않는다(CLOSED 그대로, 평가 전용 기록).
+- **러너 정리(사용자 결정 2026-09-26):** `--status-channel` 기본값 `on`, help의 "CANDIDATE … pending user decision" 삭제, `off`는 장벽만 쓰는 진단. 결과의 `contact_profile_note`는 `cargo_noslip_v1` 승인을 적는다. 동결 버전(ed15489 등)은 고치지 않았다.
+- **평가 전용 추가:** `unplanned_drops`(내리기 단계가 아닌데 빔 z가 0.045 m 위에서 0.035 m 아래로), `makespan_sim_s`(두 로봇 종료 상태의 마지막 SIM 시각).
+
+## 2c단계 사전 등록 (문 v3, dev 전에 작성·커밋)
+
+- **seed:** 831–838. `gen_stage2c_seeds.py`(rng 20260930)로 만들었고, 뽑는 범위와 거르는 조건은 2b와 같다. 목록은 `stage2c_test_scenarios.json`에 있다. 821–826과 811–816은 v3의 dev seed로 쓸 수 있다.
+- **팔:**
+  - **주 팔 ON:** 831–836, `--stage door --approach v2 --door-version v3 --status-channel on --on-failure continue`, `fullframe_v3`, `cargo_noslip_v1`, weld OFF. 상태 채널은 모든 조건의 인프라다(사용자 결정).
+  - **진단 팔 OFF:** 같은 seed, `--status-channel off`. 연구 조건이 아니라 장벽만 쓰는 진단이다.
+  - **개입 팔:** 837(`--inject-open-at-lift r2:2`, 문 동쪽 세 번째 들기), 838(`r1:0`, 첫 들기), ON만.
+- **관문**(주·진단 팔별로 판정):
+  - **M2-D1 성공 ≥ 4/6**, **D2** 로봇-벽·빔-벽 접촉 0, **D3** 두 로봇 도착 ≥ 5/6, **D4** GT 없음·깨끗한 소스·로봇-로봇 접촉 0·weld 0. 정의는 2단계와 같다(빔 x ≥ 2.7, 최종 오차 ≤ 0.25 m).
+  - **M2-L1 들기 민감도:** 모든 주·진단 실행의 들기 중 GT held(빔 z > 0.03 m, 자기 손가락 둘 다 > 1 N)인데 IoU < 0.45인 것이 0개.
+  - **M2-L2 특이도:** 개입 2회 모두 개입한 들기에서 피해 로봇이 `LOAD_NOT_HELD_AFTER_LIFT`로 실패.
+  - **M2-L3:** 개입 2회 모두 상대가 ≤ 0.5 s 안에 `PARTNER_ABORT`.
+  - **보고:** seed별·팔별 성공, 도착, 계획 외 낙하, SIM makespan, 명령 수, wall, 부하.
+- **중단 규칙:**
+  - dev 뒤 동결 SHA를 이 README에 적고 detached worktree에서 코호트를 **한 번** 돌린다. 코호트 중 소스를 바꾸지 않는다.
+  - 한 팔의 첫 4회가 모두 실패하면 그 팔을 멈추고 "중단"으로 보고한다.
+  - 예외로 끝난 실행은 실패로 센다. 재실행은 t=0 이전 인프라 오류일 때만 하며 기록한다. 중간에 끊긴 실행은 `interrupted`로 남기고 대체하지 않는다.
+  - dev에서 v3 설계(V ≥ 60, IoU 0.45)를 바꾸면 이 절에 변경과 근거를 덧붙인 뒤 동결한다. seed·관문·중단 규칙은 바꾸지 않는다.
+- **해석 범위:** 문 하나(0.50 m), 빔 한 종류, 서→동 한 방향, 로봇 2대. 2b와 seed가 달라 직접 비교가 아니다. 대화 효과가 아니라 실행 인프라(자기 RGB 문 통과) 검증이다.
