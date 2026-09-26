@@ -21,7 +21,7 @@ EXP = 'experiments/2026-09-26-zone-owncam-memory/'
 RECORDS_ONLY = [EXP + f for f in ('frozen_source.json', 'results.json', 'raw_index.json', 'README.md',
                                   'build_results.py', 'build_tensorboard.py', 'tensorboard_verify.json',
                                   'box_bias_check.py', 'box_bias_check.json', 'planner_equivalence_check.py',
-                                  'planner_equivalence_check.json', 'launch_test.sh')]
+                                  'planner_equivalence_check.json')]
 
 
 def git(*a):
