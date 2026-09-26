@@ -18,7 +18,7 @@
 
 | 호출 | 동작 | 끝 사건 |
 |---|---|---|
-| `deliver(item_ref, zone_slot)` | 주문 줄 하나를 구역 슬롯(`A2`)이나 구역(`A` → 자기 기록상 다음 슬롯)으로 옮긴다. 먼저 넓게 둘러보고, M1 사슬(자기 RGB 탐색 → 파지 → 문 통과 운반 → 배치 → 다시 보기)을 따른다. 탐색은 주문서의 pickup 슬롯(+0.15 m) 안의 청록 검출만 쓴다 | 다시 보기 IN_SLOT → `job_done(own_camera_confirmed)`; 놓았지만 확인 불가 → `job_done(unconfirmed)`; OUTSIDE_SLOT·그 밖 → `job_failed(reason)` |
+| `deliver(item_ref, zone_slot)` | 주문 줄 하나를 구역 슬롯(`A2`)이나 구역(`A` → 자기 기록상 다음 슬롯)으로 옮긴다. 먼저 넓게 둘러보고, M1 사슬(자기 RGB 탐색 → 파지 → 문 통과 운반 → 배치 → 다시 보기)을 따른다. 탐색은 주문서의 pickup 슬롯(+0.15 m) 안의 청록 검출만 쓴다. 서쪽 관측점에서 1 m 넘게 떨어진 bay(P2)는 bay 서쪽 가장자리의 행 사이 통로에서도 본다(`lane_viewpoints`) | 다시 보기 IN_SLOT → `job_done(own_camera_confirmed)`; 놓았지만 확인 불가 → `job_done(unconfirmed)`; OUTSIDE_SLOT·그 밖 → `job_failed(reason)` |
 | `goto(target)` | `[x, y]`, 구역 `A`(칠 서쪽 0.25 m), 구역 슬롯 `A2`(서쪽 0.40 m), pickup 슬롯 `P1-2`(서쪽 관측점 x=−0.47), 문 `door_1`(자기 추정상 반대편 0.45 m). loop driver v2(자기 추정 + 지도 A*, 멈춰서 둘러보기) | 도착 전 마지막 둘러보기 뒤 `ARRIVED` → confirmed; 경로 없음·위치 상실 → failed |
 | `look_around()` | LOOK_P20 자세로 ±48° 둘러보고 원래 자세로 돌아온다 | 불확실도 low/medium → confirmed, 아니면 unconfirmed |
 | `hold(sim_s)` / `wait(sim_s)` | 멈추고 마지막 안전 명령을 유지한다 | `job_done(unconfirmed, HOLD_ELAPSED)` |
