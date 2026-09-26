@@ -530,7 +530,8 @@ def main(argv=None):
         raise SystemExit(f'--only names episodes outside the {args.split} split: {sorted(unknown)}')
     for spec in selected:
         spec = {**spec, 'contact_profile': student.get('contact_profile', spec.get('contact_profile'))}
-        result, manifest = run(spec, Path(args.output)/spec['episode_id'], student, speedups=args.speedups)
+        extra = {} if args.speedups == 'none' else {'speedups': args.speedups}     # 'none' = the unchanged call
+        result, manifest = run(spec, Path(args.output)/spec['episode_id'], student, **extra)
         print(json.dumps({'episode': spec['episode_id'], 'outcome': result['outcome'], 'm1_success': result['m1_success'],
                           'failed': result['m1_failed_checks'], 'diagnostic_success': result['diagnostic_success'],
                           'false_success': result['false_success'], 'sim_s': result['sim_s'], 'looks': result['looks'],
