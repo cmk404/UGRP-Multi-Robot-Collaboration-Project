@@ -126,11 +126,12 @@ Codex가 `origin/kiro/sim-speed@eecd2d6`을 읽기 전용으로 검토했다(P0 
   - NumPy 2.5.2 (BSD-3): `np.dot`의 Accelerate BLAS 합산 순서를 경험적으로 확인하고 자체 검사로 고정. `np.flatnonzero` 마스크 필터.
   - OpenCV 5.0.0 (Apache-2.0): GCD 스레드 진단(`setNumThreads`). TensorBoard 2.21 이벤트 protobuf — 기존 `scripts/tensorboard_tools/export.py`의 `Writer` 재사용.
   - Python 표준 라이브러리 (PSF): `fcntl.flock`, `cProfile`, `resource.getrusage`, `time.thread_time`.
+  - macOS `lsof`(`-F pfn`, `fd=txt` 매핑) / Linux `procfs`(`/proc/<pid>/maps`·`fd`·`stat`): `sim_slots`가 `libmujoco`를 실제로 불러온 프로세스를 세는 근거(검토 3). `lsof(8)`·`proc(5)` 매뉴얼 참고.
   - macOS `proc_pid_rusage(RUSAGE_INFO_V6)` (libproc): instruction·cycle·P 코어 시간. 구조체는 Xcode SDK `sys/resource.h`의 `rusage_info_v6`로 확인.
-  - 채택하지 않음: `filelock`(Unlicense, 단일 잠금이라 계수 세마포어 아님, 미설치), `posix_ipc`(BSD, 이름 있는 세마포어가 비정상 종료 시 해제되지 않음), GNU parallel `sem`(GPL-3, 미설치), util-linux `flock(1)`(macOS에 없음), pyinstrument(BSD-3, 미설치)·py-spy(MIT, macOS에서 root 필요) — 대신 cProfile과 스레드 CPU 구간 계측을 사용.
+  - 채택하지 않음: `filelock`(Unlicense, 단일 잠금이라 계수 세마포어 아님, 미설치), `posix_ipc`(BSD, 이름 있는 세마포어가 비정상 종료 시 해제되지 않음), GNU parallel `sem`(GPL-3, 미설치), util-linux `flock(1)`(macOS에 없음), pyinstrument(BSD-3, 미설치)·py-spy(MIT, macOS에서 root 필요) — 대신 cProfile과 스레드 CPU 구간 계측을 사용. `psutil`(BSD-3, sim 가상환경에 없음) — `memory_maps`로 같은 판정이 가능하지만 새 의존성을 피해 `lsof`·`/proc`을 사용.
 - 내부 모듈·PR
   - `sim/physics_drive_kernel.py`(`_fast_drive_kernel` 훅, `scripts/run_dispatch_skills.py`에서 사용): 재사용·비트 동일 버전으로 확장.
   - `sim/contact_audit_kernel.py`, `scripts/run_zone_owncam_skill_v9.py`의 `d.contact.geom` 벡터 필터: 접촉 사전 필터의 패턴.
   - `scripts/agent_lock.py`(기본 경로·기록 형식), `scripts/ugrp_session.py`(프로세스 그룹 실행) — 대기열 설계에 재사용.
-  - PR #201 `scripts/run_m1_owncam.py`, dev-a8 실행 결과(기준), PR #203/#205 `scripts/run_m2_pair.py`.
+  - PR #201 `scripts/run_m1_owncam.py`, dev-a8 실행 결과(기준), `1b836a1` workflow docs 경로 수정(병합), PR #203/#205 `scripts/run_m2_pair.py`, Codex의 PR #209 검토(2026-09-26).
 - 문서: `docs/execution_versioning.md`, `docs/ubuntu_quickstart.md`, `docs/kaggle_simulation.md`, `docs/colab_simulation.md`, `docs/colab_standard_simulation_review_20260923.md`, `AGENTS.md`.
