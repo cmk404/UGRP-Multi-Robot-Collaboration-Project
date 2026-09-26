@@ -114,13 +114,15 @@ def calibrate(args):
     m1 = mp.load_m1_localizer()
     rows_by_key: dict = {}
     settle_rows = []
+    segments: list = []
     for ep in eps:
         ep_dir = RENDER_ROOT/ep
         labels = {r['frame_id']: r for r in vl.read_jsonl(ep_dir/'eval_only'/'labels.jsonl')}
         own = OwnState(m1)
         frames = vl.read_jsonl(ep_dir/'inputs'/'frames.jsonl')
         cmds = vl.read_jsonl(ep_dir/'inputs'/'commands.jsonl')
-        ci = 0
+        ci = prev_ci = 0
+        seg = None
         for row in frames:
             t = float(row['t'])
             while ci < len(cmds) and float(cmds[ci]['t']) < t - 1e-9:
@@ -138,6 +140,15 @@ def calibrate(args):
             settle_rows.append((dt, abs(math.degrees(az)), fam, state, b))
             if fam is not None and dt >= args.settled_s:
                 rows_by_key.setdefault((state, servo[3], fam), []).append((b, dz, az))
+            # pan -> chassis yaw coupling: hold segments (no wheel command since the last frame)
+            wheels = any(c['kind'] in ('mecanum', 'drive') for c in cmds[prev_ci:ci])
+            prev_ci = ci
+            arm = (servo[3], servo[4], servo[5])
+            if wheels or seg is None or seg['state'] != state or seg['arm'] != arm:
+                seg = {'state': state, 'arm': arm, 'rows': []}
+                segments.append(seg)
+            if dt >= args.settled_s:
+                seg['rows'].append((servo[6], float(lab['base_gt'][2])))
     table: dict = {}
     fits = {}
     for (state, s3, fam), vals in sorted(rows_by_key.items()):
@@ -168,15 +179,41 @@ def calibrate(args):
         settle.append({'since_cmd_s': [lo, None if hi > 1e8 else hi], 'n': len(sel),
                        'az_abs_p95_deg': None if az.size == 0 else round(float(np.percentile(az, 95)), 3),
                        'el_dev_abs_p95_deg': None if el.size == 0 else round(float(np.percentile(el, 95)), 3)})
+    # chassis yaw vs own pan pulse within hold segments (reference: the segment's pan-1500 frames)
+    pan_fit, pan_k = {}, {}
+    for state in ('unloaded', 'loaded'):
+        xs, ys = [], []
+        for sg in segments:
+            if sg['state'] != state:
+                continue
+            ref = [yv for pan, yv in sg['rows'] if pan == 1500]
+            if not ref:
+                continue
+            r0 = float(np.median(ref))
+            for pan, yv in sg['rows']:
+                if pan != 1500:
+                    xs.append(pan - 1500.)
+                    ys.append(((yv - r0 + math.pi) % (2*math.pi)) - math.pi)
+        xs, ys = np.asarray(xs), np.asarray(ys)
+        k = float(np.sum(xs*ys)/np.sum(xs*xs)) if xs.size >= 10 else 0.
+        res = ys - k*xs if xs.size else np.zeros(0)
+        pan_k[state] = round(k, 8)
+        pan_fit[state] = {'n': int(xs.size), 'rad_per_pwm': round(k, 8),
+                          'residual_abs_p95_deg': None if res.size == 0 else round(float(np.degrees(np.percentile(np.abs(res), 95))), 3),
+                          'offset_at_pan_2030_deg': round(math.degrees(k*530.), 3)}
     out = {'schema': 'ugrp.vision_loc.calibration.v1', 'split_used': eps,
            'method': ('true camera pose (MuJoCo, teacher render, eval_only/labels.jsonl) vs commanded-PWM FK '
                       '(harness.wall_tags.camera_in_base) on settled frames (own arm/pan command >= settled_s ago) '
                       'of the named M1 arm poses; median elevation rotation about the FK optical x axis and median '
                       'camera height offset per (own load state, servo 3 pulse); interpolated over servo 3'),
            'settled_s': args.settled_s, 'fits': fits, 'sag': sag, 'settle_analysis': settle,
+           'pan_base_yaw': pan_k, 'pan_base_yaw_fit': pan_fit,
+           'pan_base_yaw_method': ('GT chassis yaw (eval_only/labels.jsonl base_gt) in hold segments (no own wheel '
+                                   'command, same own arm pose and load state) minus the segment median at pan 1500, '
+                                   'regressed through the origin on (pan pulse - 1500), settled frames'),
            'files_sha256': {ep: sha_file(RENDER_ROOT/ep/'eval_only'/'labels.jsonl') for ep in eps}}
     Path(args.output).write_text(json.dumps(out, indent=1))
-    print(json.dumps({'sag': sag, 'settle': settle}, indent=1))
+    print(json.dumps({'sag': sag, 'settle': settle, 'pan_base_yaw_fit': pan_fit}, indent=1))
 
 
 # ----------------------------------------------------------------------------- train
@@ -318,8 +355,7 @@ class Sink:
         n = 0
         if loc.initialized and loc.settled(t):
             und = mp.undistort(bgr)
-            b, dz = vl.sag(loc.sag_table, loc.load.loaded, self.servo)
-            cm = vl.column_model(self.servo, b, dz, self.boundary['columns'])
+            cm = loc.column_model_for(self.servo, self.boundary['columns'])
             self_top = mp.carried_mask_top(und, self.boundary['columns'], int(det['strip_half_px'])) \
                 if loc.load.loaded else None
             scan = mp.detect_boundaries(und, cm, det, self_top)
@@ -352,7 +388,7 @@ def localize(args):
 
         def pf():
             return vl.make_vision_pf(m1, static, params, cfg.get('measurement', {}), cfg.get('obs', {}), cal['sag'],
-                                     seed)
+                                     seed, cal.get('pan_base_yaw') if cfg.get('pan_coupling', True) else None)
         for name in wanted:
             if name == 'vision':
                 obs, meta = load_obs(Path(args.obs)/f'{ep}.obs.npz')

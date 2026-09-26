@@ -87,6 +87,11 @@ DEFAULT_MEASUREMENT = {
     'min_columns': 6,          # fewer informative columns: no update
     'settle_s': .4,            # measurement only this long after the last own arm/pan command
     'top_weight': 1.,
+    # 'all': temper by every observed column; 'discriminative': only columns whose probability differs
+    # across the particle cloud (> discriminative_min) count, so columns every particle explains
+    # (a near wall behind the carried box) do not dilute the few informative ones (door jambs)
+    'scale_by': 'all',
+    'discriminative_min': .1,
 }
 
 
@@ -112,16 +117,25 @@ def column_positions(n: int, half: int) -> np.ndarray:
 # ----------------------------------------------------------------------------- extrinsic correction
 @dataclass
 class ColumnModelDZ(mp.ColumnModel):
-    """PR #210 ``ColumnModel`` with a fixed camera height correction ``dz`` (base frame)."""
+    """PR #210 ``ColumnModel`` with a camera height correction ``dz`` and a base yaw offset ``dyaw``.
+
+    ``dyaw`` rotates the whole FK camera pose about the base z axis: with the box
+    held, a pan sweep turns the chassis against the pan on its wheels (reversibly;
+    ``pan_base_yaw`` in the calibration), so the camera sees the map from the
+    nominal base yaw plus this offset.
+    """
     dz: float = 0.
+    dyaw: float = 0.
 
     def __post_init__(self):
         orig = mp.camera_in_base
         dz = float(self.dz)
+        c, s = math.cos(float(self.dyaw)), math.sin(float(self.dyaw))
+        rz = np.array([[c, -s, 0.], [s, c, 0.], [0., 0., 1.]])
 
         def shifted(pose):
             o, r = orig(pose)
-            return o + np.array([0., 0., dz]), r
+            return rz @ o + np.array([0., 0., dz]), rz @ r
         mp.camera_in_base = shifted
         try:
             super().__post_init__()
@@ -132,14 +146,20 @@ class ColumnModelDZ(mp.ColumnModel):
 _CM_CACHE: dict = {}
 
 
-def column_model(servo: Mapping, bias: float, dz: float, columns: np.ndarray) -> ColumnModelDZ:
+def column_model(servo: Mapping, bias: float, dz: float, columns: np.ndarray, dyaw: float = 0.) -> ColumnModelDZ:
     key = (tuple(sorted((int(k), int(v)) for k, v in servo.items())), round(float(bias), 6), round(float(dz), 5),
-           tuple(int(c) for c in columns))
+           round(float(dyaw), 6), tuple(int(c) for c in columns))
     if key not in _CM_CACHE:
         if len(_CM_CACHE) > 1024:
             _CM_CACHE.clear()
-        _CM_CACHE[key] = ColumnModelDZ(key[0], float(bias), np.asarray(columns), dz=float(dz))
+        _CM_CACHE[key] = ColumnModelDZ(key[0], float(bias), np.asarray(columns), dz=float(dz), dyaw=float(dyaw))
     return _CM_CACHE[key]
+
+
+def pan_yaw(table: Mapping, loaded: bool, servo: Mapping) -> float:
+    """Reversible chassis yaw offset (rad) caused by the own pan pulse (calibration ``pan_base_yaw``)."""
+    k = (table or {}).get('loaded' if loaded else 'unloaded', 0.)
+    return float(k)*(float(servo.get(6, 1500)) - 1500.)
 
 
 def sag(table: Mapping, loaded: bool, servo: Mapping) -> tuple[float, float]:
@@ -372,16 +392,22 @@ def column_loglik(vb_exp: np.ndarray, vt_exp: np.ndarray, obs: ColumnObs, params
     n_cols = int(obs.informative.sum())
     if n_cols < int(m['min_columns']):
         return np.zeros(vb_exp.shape[0])
-    total = np.zeros(vb_exp.shape[0])
+    terms = []
     pb = interval_prob(vb_exp, obs.b_kind, obs.b_lo, obs.b_hi, float(m['sigma_px']))
-    use = obs.b_kind != NONE
-    total += np.log(eps + (1 - eps)*pb[:, use]).sum(1)
-    n_terms = int(use.sum())
+    terms.append((pb[:, obs.b_kind != NONE], 1.))
     if params.get('use_top_edge', True) and (obs.t_kind != NONE).any():
         pt = interval_prob(vt_exp, obs.t_kind, obs.t_lo, obs.t_hi, float(m['sigma_px']))
-        ut = obs.t_kind != NONE
-        total += float(m['top_weight'])*np.log(eps + (1 - eps)*pt[:, ut]).sum(1)
-        n_terms += int(ut.sum())
+        terms.append((pt[:, obs.t_kind != NONE], float(m['top_weight'])))
+    total = np.zeros(vb_exp.shape[0])
+    n_terms = 0
+    for p, w in terms:
+        if p.shape[1] == 0:
+            continue
+        total += w*np.log(eps + (1 - eps)*p).sum(1)
+        if m.get('scale_by', 'all') == 'discriminative':
+            n_terms += int(((p.max(0) - p.min(0)) > float(m['discriminative_min'])).sum())
+        else:
+            n_terms += p.shape[1]
     return total*min(1., float(m['effective_columns'])/max(n_terms, 1))
 
 
@@ -536,7 +562,7 @@ def expected_rows(geometry, poses: np.ndarray, cm: 'ColumnModelDZ', wall_height_
 
 # ----------------------------------------------------------------------------- particle filter
 def make_vision_pf(m1_module, static_map: Mapping, params: Mapping, measurement: Mapping, obs_params: Mapping,
-                   sag_table: Mapping, seed: int):
+                   sag_table: Mapping, seed: int, pan_table: Mapping | None = None):
     """Subclass of the M1 ``OwnCamLocalizer`` whose measurement is the segmentation column scan."""
     base = m1_module.OwnCamLocalizer
 
@@ -548,6 +574,7 @@ def make_vision_pf(m1_module, static_map: Mapping, params: Mapping, measurement:
             self.obs_params = {**DEFAULT_OBS, **obs_params}
             self.columns = column_positions(int(self.obs_params['columns']), int(self.obs_params['strip_half_px']))
             self.sag_table = sag_table
+            self.pan_table = pan_table or {}
             self.last_scan_t = None
             self.own_servo_cmd_t = -1e9            # own arm / pan command time (settle gate)
             self.stats.update(scan_updates=0, scan_columns=0, unsettled_skips=0)
@@ -565,9 +592,19 @@ def make_vision_pf(m1_module, static_map: Mapping, params: Mapping, measurement:
             self.logw = self._map_logprior(self.px)
             self.initialized = True
 
-        def column_model_for(self, pose: Mapping):
+        def column_model_for(self, pose: Mapping, columns: np.ndarray | None = None):
             b, dz = sag(self.sag_table, self.load.loaded, pose)
-            return column_model(pose, b, dz, self.columns)
+            return column_model(pose, b, dz, self.columns if columns is None else columns,
+                                pan_yaw(self.pan_table, self.load.loaded, pose))
+
+        def estimate(self) -> dict:
+            """The M1 estimate of the nominal base, plus the current pan-induced chassis yaw offset."""
+            est = super().estimate()
+            if est.get('initialized') and self.servo:
+                off = pan_yaw(self.pan_table, self.load.loaded, self.servo)
+                est['yaw'] = float(m1_module.wrap(est['yaw'] + off))
+                est['pan_yaw_offset'] = off
+            return est
 
         def expected(self, px: np.ndarray, pose: Mapping):
             return expected_rows(self.geometry, px, self.column_model_for(pose))
