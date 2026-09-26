@@ -1,6 +1,7 @@
 #!/bin/bash
 # Offline PF grid (no simulation): localize + score one config over episodes, at most N configs in parallel.
 # Usage: grid.sh <out root> <calibration> <obs dir|-> <oracle obs dir|-> <filters> "<episodes>" <cfg1.json> [cfg2.json ...]
+# VL_CKPT: segmentation checkpoint of the vision observation caches (required with the vision filter).
 set -euo pipefail
 out=$1; cal=$2; obs=$3; orc=$4; filters=$5; eps=$6; shift 6
 HERE=$(cd "$(dirname "$0")" && pwd)
@@ -13,10 +14,11 @@ run() {
   extra=()
   [ "$obs" != "-" ] && extra+=(--obs "$obs")
   [ "$orc" != "-" ] && extra+=(--oracle-obs "$orc")
+  [ -n "${VL_CKPT:-}" ] && extra+=(--checkpoint "$VL_CKPT")
   echo "$(date -u +%FT%TZ) start $name $(uptime)" >> "$out/grid_load.txt"
   "$PY" "$HERE/vision_loc_cli.py" localize --episodes $eps --calibration "$cal" --config "$cfg" --filters "$filters" \
     "${extra[@]}" --output "$d" > "$d.log" 2>&1
-  "$PY" "$HERE/vision_loc_cli.py" score --episodes $eps --estimates "$d" "${extra[@]}" --output "$d/metrics.json" > "$d.score" 2>&1
+  "$PY" "$HERE/vision_loc_cli.py" score --episodes $eps --estimates "$d" "${extra[@]}" --config "$cfg" --output "$d/metrics.json" > "$d.score" 2>&1
   echo "$(date -u +%FT%TZ) end $name $(uptime)" >> "$out/grid_load.txt"
 }
 for cfg in "$@"; do

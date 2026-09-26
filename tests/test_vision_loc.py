@@ -313,3 +313,171 @@ def test_segmenter_shapes_when_torch_is_available(tmp_path):
     seg = seg_model.Segmenter(path, 'cpu')
     p = seg.probs(np.zeros((vl.HEIGHT, vl.WIDTH, 3), np.uint8))
     assert p.shape == (vl.HEIGHT, vl.WIDTH, 5) and np.allclose(p.sum(2), 1., atol=1e-4)
+
+
+# ----------------------------------------------------------------------------- PR #227 review fixes (CLI guards)
+def _cli():
+    import vision_loc_cli as cli
+    return cli
+
+
+def _obs_fixture(tmp_path, monkeypatch, ep='vl-dev-s910', n=3):
+    """Fake render root with ``n`` own frames and labels; returns (cli, config path, checkpoint path)."""
+    cli = _cli()
+    root = tmp_path/'render'
+    d = root/ep
+    (d/'inputs').mkdir(parents=True)
+    (d/'eval_only').mkdir()
+    rows = [{'frame': k, 't': .2*k, 'file': f'frames/{k:05d}.jpg', 'frame_id': k + 1} for k in range(n)]
+    (d/'inputs'/'frames.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
+    (d/'eval_only'/'labels.jsonl').write_text('{}\n')
+    monkeypatch.setattr(cli, 'RENDER_ROOT', root)
+    cfg = tmp_path/'cfg.json'
+    cfg.write_text(json.dumps({'infer_size': [480, 360], 'obs': {'columns': 8}}))
+    ckpt = tmp_path/'m.pt'
+    ckpt.write_bytes(b'weights')
+    return cli, cfg, ckpt
+
+
+def _write_cache(cli, path, kind, ep, cfg, ckpt, n=3, obs_params=None):
+    op = obs_params or cli.config_obs_params(json.loads(cfg.read_text()))
+    cols = vl.column_positions(8, 2)
+    o = vl.ColumnObs(cols, *(np.zeros(8, int), np.full(8, np.nan), np.full(8, np.nan)) * 2)
+    meta = cli.obs_provenance(kind, ep, op, config_path=cfg, checkpoint_sha256=cli.sha_file(ckpt) if kind == 'vision'
+                              else None, infer_size=(480, 360) if kind == 'vision' else None)
+    cli.save_obs(path, list(range(n)), [o]*n, meta)
+
+
+def test_load_obs_refuses_oracle_cache_as_vision_and_wrong_provenance(tmp_path, monkeypatch):
+    cli, cfg, ckpt = _obs_fixture(tmp_path, monkeypatch)
+    ep = 'vl-dev-s910'
+    op = cli.config_obs_params(json.loads(cfg.read_text()))
+    sha = cli.sha_file(ckpt)
+    _write_cache(cli, tmp_path/'oracle.npz', 'oracle', ep, cfg, ckpt)
+    _write_cache(cli, tmp_path/'vision.npz', 'vision', ep, cfg, ckpt)
+    obs, meta = cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=sha,
+                             infer_size=(480, 360))
+    assert sorted(obs) == [0, 1, 2] and meta['kind'] == 'vision'
+    with pytest.raises(SystemExit, match='kind'):          # oracle observations passed as the student's
+        cli.load_obs(tmp_path/'oracle.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=sha,
+                     infer_size=(480, 360))
+    with pytest.raises(SystemExit, match='checkpoint'):
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256='0'*64,
+                     infer_size=(480, 360))
+    with pytest.raises(SystemExit, match='checkpoint'):     # None is not a wildcard
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=None,
+                     infer_size=(480, 360))
+    with pytest.raises(SystemExit, match='inference size'):
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=sha,
+                     infer_size=(320, 240))
+    with pytest.raises(SystemExit, match='parameters'):
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params={**op, 'refine_px': 6},
+                     checkpoint_sha256=sha, infer_size=(480, 360))
+    with pytest.raises(SystemExit, match='episode'):
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode='vl-dev-s909', obs_params=op,
+                     checkpoint_sha256=sha, infer_size=(480, 360))
+    _write_cache(cli, tmp_path/'short.npz', 'vision', ep, cfg, ckpt, n=2)     # a frame missing from the cache
+    with pytest.raises(SystemExit, match='frame index sequence'):
+        cli.load_obs(tmp_path/'short.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=sha,
+                     infer_size=(480, 360))
+    # frame correspondence: the episode's own frame list changed after the cache was made
+    frames = cli.RENDER_ROOT/ep/'inputs'/'frames.jsonl'
+    frames.write_text(frames.read_text() + json.dumps({'frame': 3, 't': .6, 'file': 'frames/00003.jpg'}) + '\n')
+    with pytest.raises(SystemExit, match='frames.jsonl hash'):
+        cli.load_obs(tmp_path/'vision.npz', kind='vision', episode=ep, obs_params=op, checkpoint_sha256=sha,
+                     infer_size=(480, 360))
+    with pytest.raises(SystemExit, match='overwrite'):
+        _write_cache(cli, tmp_path/'vision.npz', 'vision', ep, cfg, ckpt)
+
+
+def test_load_obs_refuses_round2_caches_without_provenance(tmp_path, monkeypatch):
+    cli, cfg, ckpt = _obs_fixture(tmp_path, monkeypatch)
+    cols = vl.column_positions(8, 2)
+    z = {k: np.zeros((3, 8), np.int8 if 'kind' in k else np.float32)
+         for k in ('b_kind', 'b_lo', 'b_hi', 't_kind', 't_lo', 't_hi')}
+    np.savez_compressed(tmp_path/'old.npz', frame=np.arange(3, dtype=np.int32), columns=cols, **z,
+                        meta=np.asarray(json.dumps({'episode': 'vl-dev-s910', 'source': 'own frames only'})))
+    with pytest.raises(SystemExit, match='schema'):
+        cli.load_obs(tmp_path/'old.npz', kind='vision', episode='vl-dev-s910',
+                     obs_params=cli.config_obs_params({}), checkpoint_sha256=cli.sha_file(ckpt), infer_size=(480, 360))
+
+
+@pytest.mark.parametrize('size', [None, [], [480], [0, 360], [480.0, 360], ['480', 360], [480, -1]])
+def test_config_infer_size_rejects_missing_or_bad_values(size):
+    cli = _cli()
+    with pytest.raises(SystemExit):
+        cli.config_infer_size({} if size is None else {'infer_size': size})
+    assert cli.config_infer_size({'infer_size': [480, 360]}) == (480, 360)
+
+
+def test_test_runs_need_every_registered_file(tmp_path):
+    cli = _cli()
+    # no config / calibration on a test episode: refused before any hash comparison
+    with pytest.raises(SystemExit, match='registered files'):
+        cli.require_frozen(['vl-test-s912'], calibration=None, config=None, needs=('config', 'calibration'))
+    with pytest.raises(SystemExit, match='registered files'):
+        cli.require_frozen(['vl-test-s912'], config=cli.HERE/'selected_config.json', needs=('config', 'checkpoint'))
+    assert cli.require_frozen(['vl-dev-s910'], needs=('config',)) is None     # dev: no registration needed
+    with pytest.raises(SystemExit):
+        cli.main(['localize', '--episodes', 'vl-dev-s910', '--calibration', 'c.json', '--output', str(tmp_path)])
+
+
+def test_score_refuses_overwrite_and_a_second_test_scoring(tmp_path):
+    cli = _cli()
+    out = tmp_path/'metrics.json'
+    out.write_text('{}')
+    with pytest.raises(SystemExit, match='overwrite'):
+        cli.main(['score', '--episodes', 'vl-dev-s910', '--estimates', str(tmp_path), '--output', str(out)])
+    assert cli.TEST_METRICS.exists()                  # round 2 test scored once (results/metrics_test.json)
+    with pytest.raises(SystemExit, match="already scored"):
+        cli.main(['score', '--episodes', 'vl-test-s912', '--estimates', str(tmp_path),
+                  '--output', str(tmp_path/'again.json')])
+
+
+def test_vision_loc_tests_are_collected_by_ci():
+    import fnmatch
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('run_ci_tests', ROOT/'scripts'/'run_ci_tests.py')
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert any(fnmatch.fnmatch('tests/test_vision_loc.py', p) for p in mod.TEST_PATTERNS)
+
+
+def _overlap_episode(root, name, poses, jpeg_bytes, servo=None):
+    d = root/name
+    for sub in ('inputs', 'eval_only', 'frames'):
+        (d/sub).mkdir(parents=True)
+    rows, ev = [], []
+    for k, (p, b) in enumerate(zip(poses, jpeg_bytes)):
+        (d/'frames'/f'{k:05d}.jpg').write_bytes(b)
+        rows.append({'frame': k, 't': .2*k, 'file': f'frames/{k:05d}.jpg', 'commanded_servo': servo or SEARCH})
+        ev.append({'frame': k, 'gt': list(p)})
+    (d/'inputs'/'frames.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in rows))
+    (d/'eval_only'/'frames_eval.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in ev))
+
+
+def test_overlap_check_flags_replayed_trajectories_and_identical_jpegs(tmp_path):
+    import overlap_check as oc
+    track = [(-.85 + .05*k, -2.25, 0.) for k in range(10)]
+    _overlap_episode(tmp_path, 'train', track, [b'a%d' % k for k in range(10)])
+    _overlap_episode(tmp_path, 'replay', [(x + 1e-5, y, t) for x, y, t in track], [b'z%d' % k for k in range(10)])
+    _overlap_episode(tmp_path, 'jpeg', [(x, y + .3, t) for x, y, t in track], [b'q'] * 9 + [b'a3'])
+    _overlap_episode(tmp_path, 'shifted', [(x, y + .03, t) for x, y, t in track], [b'r%d' % k for k in range(10)])
+    _overlap_episode(tmp_path, 'other_arm', [(x + 1e-5, y, t) for x, y, t in track], [b's%d' % k for k in range(10)],
+                     servo=LOOK_P20)
+    ref = [oc.load_episode(tmp_path/'train')]
+    rep = oc.compare(oc.load_episode(tmp_path/'replay'), ref)
+    assert not rep['independent'] and rep['replay_frames'] == 10 and rep['aligned_min_max_pos_diff_m'] < 1e-3
+    jp = oc.compare(oc.load_episode(tmp_path/'jpeg'), ref)
+    assert not jp['independent'] and jp['jpeg_overlap_frames'] == 1 and jp['replay_frames'] == 0
+    sh = oc.compare(oc.load_episode(tmp_path/'shifted'), ref)
+    assert sh['independent'] and sh['replay_frames'] == 0 and sh['near_share'] == 0.
+    assert oc.compare(oc.load_episode(tmp_path/'other_arm'), ref)['replay_frames'] == 0
+    out = tmp_path/'o.json'
+    with pytest.raises(SystemExit) as e:
+        oc.main(['--render-root', str(tmp_path), '--candidates', 'replay', 'shifted', '--references', 'train',
+                 '--output', str(out), '--fail'])
+    assert e.value.code == 3 and json.loads(out.read_text())['all_independent'] is False
+    with pytest.raises(SystemExit, match='overwrite'):
+        oc.main(['--render-root', str(tmp_path), '--candidates', 'shifted', '--references', 'train',
+                 '--output', str(out)])

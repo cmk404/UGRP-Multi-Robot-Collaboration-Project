@@ -30,6 +30,7 @@ import math
 import os
 import sys
 import time
+from collections.abc import Mapping
 from pathlib import Path
 
 import cv2
@@ -73,8 +74,16 @@ def load_json(path):
     return json.loads(Path(path).read_text()) if path else {}
 
 
-def require_frozen(episodes, *, checkpoint=None, config=None, calibration=None):
-    """Test episodes only with the pre-registered student: prereg.json present and every frozen hash unchanged."""
+TEST_METRICS = HERE/'results'/'metrics_test.json'      # the one registered test scoring (round 2)
+
+
+def require_frozen(episodes, *, checkpoint=None, config=None, calibration=None, needs=()):
+    """Test episodes only with the pre-registered student: prereg.json present and every frozen hash unchanged.
+
+    ``needs`` names the inputs this subcommand uses ('checkpoint', 'config',
+    'calibration'); each must be given for a test run (an omitted file would
+    silently fall back to code defaults that differ from the frozen values).
+    """
     if not any(split_of(e) == 'test' for e in episodes):
         return None
     path = HERE/'prereg.json'
@@ -82,6 +91,10 @@ def require_frozen(episodes, *, checkpoint=None, config=None, calibration=None):
         raise SystemExit('test refused: no prereg.json (register the gate and the frozen student first)')
     pre = json.loads(path.read_text())
     st = pre['student']
+    given = {'checkpoint': checkpoint, 'config': config, 'calibration': calibration}
+    missing = [k for k in needs if given[k] is None]
+    if missing:
+        raise SystemExit(f'test refused: {missing} must be the registered files (no code defaults on test)')
     bad = [f for f, h in st['frozen_files_sha256'].items() if sha_file(HERE/f) != h]
     if checkpoint is not None and sha_file(checkpoint) != st['model']['sha256']:
         bad.append('checkpoint')
@@ -316,7 +329,33 @@ def train_cmd(args):
 
 
 # ----------------------------------------------------------------------------- observations
+OBS_SCHEMA = 'ugrp.vision_loc.obs.v2'
+OBS_KINDS = {'vision': 'own frames only (inputs/frames.jsonl + frames/) through the segmentation network',
+             'oracle': 'EVAL-ONLY teacher segmentation renders (diagnostic, never a student input)'}
+
+
+def obs_provenance(kind: str, ep: str, obs_params: dict, *, config_path, checkpoint_sha256=None, infer_size=None) -> dict:
+    """Provenance an observation cache must carry (checked again by ``load_obs`` before any use)."""
+    if kind not in OBS_KINDS:
+        raise ValueError(f'unknown observation kind {kind!r}')
+    ep_dir = RENDER_ROOT/ep
+    meta = {'schema': OBS_SCHEMA, 'kind': kind, 'source': OBS_KINDS[kind], 'episode': ep,
+            'frames_jsonl_sha256': sha_file(ep_dir/'inputs'/'frames.jsonl'), 'obs_params': obs_params,
+            'config_sha256': sha_file(config_path)}
+    if kind == 'vision':
+        if not checkpoint_sha256 or infer_size is None:
+            raise ValueError('vision observations need the checkpoint hash and the inference size')
+        meta.update(checkpoint_sha256=checkpoint_sha256, infer_size=[int(v) for v in infer_size])
+    else:
+        meta['labels_jsonl_sha256'] = sha_file(ep_dir/'eval_only'/'labels.jsonl')
+    return meta
+
+
 def save_obs(path: Path, frames_idx, obs_list, extra: dict):
+    if Path(path).exists():
+        raise SystemExit(f'refusing to overwrite {path}')
+    if not obs_list:
+        raise SystemExit(f'no frames for {path}')
     arr = {k: np.stack([getattr(o, k) for o in obs_list]) for k in ('b_kind', 'b_lo', 'b_hi', 't_kind', 't_lo', 't_hi')}
     arr['b_kind'] = arr['b_kind'].astype(np.int8)
     arr['t_kind'] = arr['t_kind'].astype(np.int8)
@@ -326,23 +365,66 @@ def save_obs(path: Path, frames_idx, obs_list, extra: dict):
                         meta=np.asarray(json.dumps(extra)))
 
 
-def load_obs(path: Path) -> tuple[dict, dict]:
+def load_obs(path: Path, *, kind: str, episode: str, obs_params: Mapping, checkpoint_sha256: str | None = None,
+             infer_size=None) -> tuple[dict, dict]:
+    """Observation cache of one episode, refused unless its provenance matches the requested use.
+
+    Checked: schema, observation kind (an oracle cache passed as vision observations
+    is refused), episode, the episode's current ``inputs/frames.jsonl`` hash and the
+    exact frame index sequence, the observation parameters and, for vision caches,
+    the segmentation checkpoint hash and inference size.
+    """
     z = np.load(path, allow_pickle=False)
+    meta = json.loads(str(z['meta']))
+    problems = []
+    if meta.get('schema') != OBS_SCHEMA:
+        problems.append(f"schema {meta.get('schema')!r} (regenerate the cache)")
+    if meta.get('kind') != kind:
+        problems.append(f"kind {meta.get('kind')!r} != {kind!r}")
+    if meta.get('episode') != episode:
+        problems.append(f"episode {meta.get('episode')!r} != {episode!r}")
+    frames_path = RENDER_ROOT/episode/'inputs'/'frames.jsonl'
+    if not frames_path.exists():
+        problems.append(f'no {frames_path}')
+    elif meta.get('frames_jsonl_sha256') != sha_file(frames_path):
+        problems.append('frames.jsonl hash differs')
+    elif [int(f) for f in z['frame']] != [int(r['frame']) for r in vl.read_jsonl(frames_path)]:
+        problems.append('frame index sequence differs from frames.jsonl')
+    if meta.get('obs_params') != json.loads(json.dumps(dict(obs_params))):
+        problems.append('observation parameters differ')
+    if kind == 'vision':
+        if not checkpoint_sha256 or meta.get('checkpoint_sha256') != checkpoint_sha256:
+            problems.append('segmentation checkpoint hash differs or was not given')
+        if infer_size is None or meta.get('infer_size') != [int(v) for v in infer_size]:
+            problems.append('inference size differs')
+    if problems:
+        raise SystemExit(f'observation cache {path} refused: {problems}')
     cols = z['columns']
     out = {}
     for i, f in enumerate(z['frame']):
         out[int(f)] = vl.ColumnObs(cols, z['b_kind'][i].astype(int), z['b_lo'][i].astype(float),
                                    z['b_hi'][i].astype(float), z['t_kind'][i].astype(int), z['t_lo'][i].astype(float),
                                    z['t_hi'][i].astype(float))
-    return out, json.loads(str(z['meta']))
+    return out, meta
+
+
+def config_obs_params(cfg: Mapping) -> dict:
+    return {**vl.DEFAULT_OBS, **cfg.get('obs', {})}
+
+
+def config_infer_size(cfg: Mapping) -> tuple[int, int]:
+    size = cfg.get('infer_size')
+    if not (isinstance(size, (list, tuple)) and len(size) == 2 and all(isinstance(v, int) and v > 0 for v in size)):
+        raise SystemExit(f'config needs infer_size [w, h] (positive integers), got {size!r}')
+    return int(size[0]), int(size[1])
 
 
 def segment(args):
     import seg_model
-    require_frozen(args.episodes, checkpoint=args.checkpoint, config=args.config)
+    require_frozen(args.episodes, checkpoint=args.checkpoint, config=args.config, needs=('checkpoint', 'config'))
     cfg = load_json(args.config)
-    seg = seg_model.Segmenter(Path(args.checkpoint), args.device, tuple(cfg.get('infer_size', (320, 240))))
-    obs_params = {**vl.DEFAULT_OBS, **cfg.get('obs', {})}
+    seg = seg_model.Segmenter(Path(args.checkpoint), args.device, config_infer_size(cfg))
+    obs_params = config_obs_params(cfg)
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -353,16 +435,18 @@ def segment(args):
         t0 = time.time()
         for row in frames:
             bgr = cv2.imread(str(ep_dir/row['file']), cv2.IMREAD_COLOR)
+            if bgr is None:
+                raise SystemExit(f'{ep}: unreadable own frame {row["file"]}')
             probs = seg.probs(bgr)
             und = vl.mp.undistort(bgr) if obs_params.get('refine_px') else None
             obs.append(vl.column_observations(probs, cols, obs_params, und))
             idx.append(int(row['frame']))
             counts.append(np.bincount(probs.argmax(2).ravel(), minlength=5).tolist())
         wall = time.time() - t0
-        meta = {'episode': ep, 'checkpoint_sha256': seg.sha256, 'obs_params': obs_params, 'device': str(seg.dev),
-                'infer_size': list(seg.infer_size),
-                'frames': len(idx), 'wall_s': round(wall, 1), 'load_average': list(os.getloadavg()),
-                'source': 'own frames only (inputs/frames.jsonl + frames/)'}
+        meta = {**obs_provenance('vision', ep, obs_params, config_path=args.config, checkpoint_sha256=seg.sha256,
+                                 infer_size=seg.infer_size),
+                'device': str(seg.dev), 'frames': len(idx), 'wall_s': round(wall, 1),
+                'load_average': list(os.getloadavg())}
         save_obs(out/f'{ep}.obs.npz', idx, obs, meta)
         (out/f'{ep}.classcounts.json').write_text(json.dumps(counts))
         print(f'{ep}: {len(idx)} frames, {wall:.0f} s ({1000*wall/max(len(idx),1):.0f} ms/frame incl. decode)', flush=True)
@@ -370,7 +454,7 @@ def segment(args):
 
 def oracle(args):
     """EVAL-ONLY DIAGNOSTIC: observations from the teacher's segmentation renders."""
-    obs_params = {**vl.DEFAULT_OBS, **load_json(args.config).get('obs', {})}
+    obs_params = config_obs_params(load_json(args.config))
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -381,10 +465,11 @@ def oracle(args):
         obs, idx = [], []
         for row in frames:
             lab = cv2.imread(str(ep_dir/labels[row['frame_id']]['label']), cv2.IMREAD_UNCHANGED)
+            if lab is None:
+                raise SystemExit(f'{ep}: unreadable label for frame {row["frame"]}')
             obs.append(vl.column_observations(vl.one_hot(lab), cols, obs_params))
             idx.append(int(row['frame']))
-        save_obs(out/f'{ep}.obs.npz', idx, obs, {'episode': ep, 'obs_params': obs_params,
-                                                 'source': 'EVAL-ONLY teacher segmentation renders (diagnostic)'})
+        save_obs(out/f'{ep}.obs.npz', idx, obs, obs_provenance('oracle', ep, obs_params, config_path=args.config))
         print(f'{ep}: oracle {len(idx)} frames', flush=True)
 
 
@@ -449,7 +534,12 @@ class Sink:
 
 
 def localize(args):
-    frozen = require_frozen(args.episodes, config=args.config, calibration=args.calibration)
+    wanted = args.filters.split(',')
+    if 'vision' in wanted and not args.checkpoint:
+        raise SystemExit('the vision filter needs --checkpoint (its hash must match the observation cache)')
+    frozen = require_frozen(args.episodes, config=args.config, calibration=args.calibration,
+                            checkpoint=args.checkpoint if 'vision' in wanted else None,
+                            needs=('config', 'calibration') + (('checkpoint',) if 'vision' in wanted else ()))
     if frozen and args.motion:
         raise SystemExit('test refused: the registered student uses the M1 motion model')
     m1 = mp.load_m1_localizer()
@@ -462,11 +552,14 @@ def localize(args):
     static = load_map()
     cal = load_json(args.calibration)
     cfg = load_json(args.config)
-    wanted = args.filters.split(',')
+    obs_params = config_obs_params(cfg)
+    ckpt_sha = sha_file(args.checkpoint) if args.checkpoint else None
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
     pr210 = json.loads((mp.ROOT/'experiments'/'2026-09-26-markerless-probe'/'calibration_dev.json').read_text())
     for ep in args.episodes:
+        if (out/f'{ep}.estimates.jsonl').exists():
+            raise SystemExit(f'refusing to overwrite {out/ep}.estimates.jsonl')
         seed = int(next(e['seed'] for e in episodes_table()['episodes'] if e['episode_id'] == ep))
         sinks = {}
 
@@ -475,10 +568,16 @@ def localize(args):
                                      seed, cal.get('pan_base_yaw') if cfg.get('pan_coupling', True) else None)
         for name in wanted:
             if name == 'vision':
-                obs, meta = load_obs(Path(args.obs)/f'{ep}.obs.npz')
+                if not args.obs:
+                    raise SystemExit('the vision filter needs --obs')
+                obs, _ = load_obs(Path(args.obs)/f'{ep}.obs.npz', kind='vision', episode=ep, obs_params=obs_params,
+                                  checkpoint_sha256=ckpt_sha, infer_size=config_infer_size(cfg))
                 sinks[name] = Sink(pf(), 'vision', obs)
             elif name == 'oracle':
-                obs, _ = load_obs(Path(args.oracle_obs)/f'{ep}.obs.npz')
+                if not args.oracle_obs:
+                    raise SystemExit('the oracle filter needs --oracle-obs')
+                obs, _ = load_obs(Path(args.oracle_obs)/f'{ep}.obs.npz', kind='oracle', episode=ep,
+                                  obs_params=obs_params)
                 sinks[name] = Sink(pf(), 'oracle', obs)
             elif name == 'boundary':
                 det = {**mp.DEFAULT_DETECTOR, **pr210.get('detector', {}), 'wall_height_m': vl.WALL_HEIGHT_M}
@@ -517,8 +616,8 @@ def localize(args):
                 'm1_calibration': m1_prov,
                 'm1_localizer': {'source': f'{mp.M1_SHA}:{mp.M1_LOCALIZER}', 'sha256': mp.M1_LOCALIZER_SHA256},
                 'calibration': {'path': str(args.calibration), 'sha256': sha_file(args.calibration)},
-                'config': {'path': str(args.config) if args.config else None,
-                           'sha256': sha_file(args.config) if args.config else None, 'value': cfg},
+                'config': {'path': str(args.config), 'sha256': sha_file(args.config), 'value': cfg},
+                'checkpoint_sha256': ckpt_sha,
                 'obs_dirs': {'vision': args.obs, 'oracle': args.oracle_obs},
                 'module_sha256': {f: sha_file(HERE/f) for f in ('vision_loc.py', 'vision_loc_cli.py')},
                 'pr210_probe_sha256': sha_file(vl._PROBE)}
@@ -583,7 +682,18 @@ def false_detections(vis: vl.ColumnObs, orc: vl.ColumnObs, tol_px: float) -> dic
 
 
 def score(args):
+    """GT metrics. The registered test set is scored once: a second test scoring is refused."""
+    out_path = Path(args.output)
+    if out_path.exists():
+        raise SystemExit(f'refusing to overwrite {out_path}')
+    if any(split_of(e) == 'test' for e in args.episodes) and TEST_METRICS.exists():
+        raise SystemExit(f'test refused: the registered test set was already scored ({TEST_METRICS.name})')
     require_frozen(args.episodes)
+    if bool(args.obs) != bool(args.oracle_obs):
+        raise SystemExit('false-detection scoring needs both --obs and --oracle-obs (or neither)')
+    if args.obs and not (args.config and args.checkpoint):
+        raise SystemExit('--obs scoring needs --config and --checkpoint (observation provenance check)')
+    cfg = load_json(args.config) if args.config else {}
     est_dir = Path(args.estimates)
     report = {'schema': 'ugrp.vision_loc.metrics.v1', 'episodes': {}, 'pooled': {}, 'false_detections': {}}
     pooled: dict = {}
@@ -604,8 +714,10 @@ def score(args):
                     pooled.setdefault(fname, {}).setdefault(key, []).append(err)
         report['episodes'][ep] = {f: {g: summary(v) for g, v in d.items()} for f, d in per.items()}
         if args.obs and args.oracle_obs:
-            vis, _ = load_obs(Path(args.obs)/f'{ep}.obs.npz')
-            orc, _ = load_obs(Path(args.oracle_obs)/f'{ep}.obs.npz')
+            op = config_obs_params(cfg)
+            vis, _ = load_obs(Path(args.obs)/f'{ep}.obs.npz', kind='vision', episode=ep, obs_params=op,
+                              checkpoint_sha256=sha_file(args.checkpoint), infer_size=config_infer_size(cfg))
+            orc, _ = load_obs(Path(args.oracle_obs)/f'{ep}.obs.npz', kind='oracle', episode=ep, obs_params=op)
             tot = {'b': {}, 't': {}}
             for f in vis:
                 d = false_detections(vis[f], orc[f], args.tol_px)
@@ -649,10 +761,10 @@ def bench(args):
     cfg = load_json(args.config)
     obs_params = {**vl.DEFAULT_OBS, **cfg.get('obs', {})}
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
-    res = {'episode': args.episodes[0], 'infer_size': cfg.get('infer_size', (320, 240)), 'n': len(imgs), 'torch': torch.__version__,
+    res = {'episode': args.episodes[0], 'infer_size': list(config_infer_size(cfg)), 'n': len(imgs), 'torch': torch.__version__,
            'threads': torch.get_num_threads(), 'load_average_start': list(os.getloadavg())}
     for dev in args.devices.split(','):
-        seg = seg_model.Segmenter(Path(args.checkpoint), dev, tuple(cfg.get('infer_size', (320, 240))))
+        seg = seg_model.Segmenter(Path(args.checkpoint), dev, config_infer_size(cfg))
         for im in imgs[:5]:
             seg.probs(im)
         t_net, t_obs = [], []
@@ -694,7 +806,7 @@ def main(argv=None):
     for name, fn in (('segment', segment), ('oracle', oracle)):
         s = sub.add_parser(name)
         s.add_argument('--episodes', nargs='+', required=True)
-        s.add_argument('--config')
+        s.add_argument('--config', required=True)
         s.add_argument('--output', required=True)
         if name == 'segment':
             s.add_argument('--checkpoint', required=True)
@@ -702,7 +814,8 @@ def main(argv=None):
     lz = sub.add_parser('localize')
     lz.add_argument('--episodes', nargs='+', required=True)
     lz.add_argument('--calibration', required=True)
-    lz.add_argument('--config')
+    lz.add_argument('--config', required=True)
+    lz.add_argument('--checkpoint', help='segmentation checkpoint of the vision observations (hash check)')
     lz.add_argument('--filters', default='vision,boundary,deadreck')
     lz.add_argument('--motion', help='motion refit JSON (fit-motion); default: the M1 calibration')
     lz.add_argument('--obs')
@@ -713,12 +826,14 @@ def main(argv=None):
     sc.add_argument('--estimates', required=True)
     sc.add_argument('--obs')
     sc.add_argument('--oracle-obs')
+    sc.add_argument('--config', help='config of the observation caches (with --obs)')
+    sc.add_argument('--checkpoint', help='segmentation checkpoint of the vision observations (with --obs)')
     sc.add_argument('--tol-px', type=float, default=5.)
     sc.add_argument('--output', required=True)
     b = sub.add_parser('bench')
     b.add_argument('--episodes', nargs=1, required=True)
     b.add_argument('--checkpoint', required=True)
-    b.add_argument('--config')
+    b.add_argument('--config', required=True)
     b.add_argument('--devices', default='cpu,mps')
     b.add_argument('--n', type=int, default=200)
     b.add_argument('--output', required=True)
