@@ -45,6 +45,17 @@ PROFILES: dict[str, dict[str, Any]] = {
     'zone_eval_top_v1': {
         'version': 1, 'overrides': {},
         'scope': 'authored TOP cameras of every zone map, unchanged (all records before 2026-09-26 #218)'},
+    # 2026-09-26 #218: cctv_top_north_east moved from (3.85, 0.30, 2.50) over the corridor bay
+    # so the 0.40 m walls hide no lane/bay grid point; same lens, still straight down.
+    # Selected by experiments/2026-09-26-zone-eval-topcam/prereg.json + amendment A1 (G1b).
+    'zone_eval_top_v2': {
+        'version': 2,
+        'overrides': {'zone_wide_corridor': {
+            'base_static_map_sha256': CORRIDOR_BASE_SHA256,
+            'cameras': {'cctv_top_north_east': {'position_m': [3.40, 0.80, 3.00], 'fov_y_deg': 55.}}}},
+        'scope': ('v1 on every map except the zone_wide_corridor family (authored, tags_v1, tags_v3), '
+                  'where cctv_top_north_east is moved; evaluation-only'),
+        'evidence': 'experiments/2026-09-26-zone-eval-topcam'},
 }
 OVERRIDE_KEYS = ('position_m', 'fov_y_deg')
 
