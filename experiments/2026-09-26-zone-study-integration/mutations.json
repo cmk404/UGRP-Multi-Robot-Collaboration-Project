@@ -1,0 +1,62 @@
+{
+ "source_sha": "673f0460858bde64cefa16b540f0647cd4382079",
+ "mutations": [
+  {
+   "mutation": "M1 peer belief leaks into snapshot",
+   "tests": "test_peer_private_state_does_not_reach",
+   "detected": true,
+   "summary": [
+    "4 failed, 76 deselected in 5.58s"
+   ]
+  },
+  {
+   "mutation": "M2 shared board: peer job state in history",
+   "tests": "test_peer_private_state_does_not_reach",
+   "detected": true,
+   "summary": [
+    "2 failed, 2 passed, 76 deselected in 5.98s"
+   ]
+  },
+  {
+   "mutation": "M3 peer-job-end wake",
+   "tests": "test_peer_private_state_does_not_reach or test_an_executor_event_wakes_only",
+   "detected": true,
+   "summary": [
+    "5 failed, 75 deselected in 6.33s"
+   ]
+  },
+  {
+   "mutation": "M4 abort keeps host macros",
+   "tests": "test_host_link_abort_drops",
+   "detected": true,
+   "summary": [
+    "1 failed, 79 deselected in 1.09s"
+   ]
+  },
+  {
+   "mutation": "M5 action released at call start, not charged time",
+   "tests": "test_talk_and_think_cost",
+   "detected": true,
+   "summary": [
+    "4 failed, 76 deselected in 3.48s"
+   ]
+  },
+  {
+   "mutation": "M6 host arbitration: refuse a claim another robot holds",
+   "tests": "test_claim_reaches_own_executor",
+   "detected": true,
+   "summary": [
+    "1 failed, 79 deselected in 1.93s"
+   ]
+  },
+  {
+   "mutation": "M7 pair status only with a channel",
+   "tests": "test_pair_status_channel_is_present",
+   "detected": true,
+   "summary": [
+    "1 failed, 79 deselected in 1.01s"
+   ]
+  }
+ ],
+ "all_detected": true
+}
