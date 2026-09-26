@@ -1,0 +1,166 @@
+{
+  "schema": "ugrp.m1_owncam_prereg_amendments.v1",
+  "rule": "Amendments change only the student (source/calibration/skill) and only on dev evidence, BEFORE the test split is run. Seeds, primary metric, claim rule, stop/retry/exclusion rules of prereg.json are unchanged. The runner applies every student_patch in order and records the applied ids and this file's sha256 in each manifest.",
+  "amendments": [
+    {
+      "id": "A1-dev-a1-s91",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a1 m1dev-s91 (outputs/m1-owncam-20260926/dev-a1): CARRY_REANCHOR_UNCONFIRMED at 231 s. (1) Grasp phase (arm lowered, no tags): 29 own drive commands dead-reckoned with the navigation plant (gain 1.47, tau 0.3 s, particle slip scale 1.27) moved the estimate 0.95 m while GT moved 0.22 m (real plant: forward tau ~1.3 s); std stayed 0.07 m. (2) The loaded looks after the grasp saw tags but never re-localized: the loop v2 reset threshold (-12) is below the single-tag robust floor (-9). (3) N7's strict co-motion re-anchor rejected the held box after a loaded look (the box re-seated in the gripper; GT z 0.17 m, still held). (4) v4 used the static-map face-normal fallback (5 nudges), which this prereg counts as an M1 failure; PR #181 asked M1 to use v5 (no fallback, coarse bay order).",
+      "changes": [
+        "skill v4 -> wrist_zone_skill_v5 in mode='m1' (PR #181 source frozen at 4884226 for its own test cohort 541-548, merged read-only; v5's own cohort result is pending and is not pooled here)",
+        "order sheet for v5: CoarseOrderSheet whose 0.5 m bay (half 0.25 m) is centred on the own-RGB search cluster; still no scenario position (pickup_source=own_rgb_search); the approach leg ends at v5's bay approach point (bay west edge - 0.25 m)",
+        "calibration: calibration_m1_dev.json = loop v2 calibration + settled-frame kidnap reset (per-tag best log-likelihood < -8.5 on 2 consecutive tag frames >= 0.3 s after an own servo command) + motion profile 'fine' (forward tau 1.28 s gain 1.95, turn tau 0.05 s gain 0.95, stop tau 0.05 s, particle slip scales not applied; fit_fine_motion.py on dev s91 grasp commands)",
+        "controller: the 'fine' profile is selected while the skill is in grasp / backoff / reseat_*; the carry leg starts only after a fresh own look (post_manipulation); after a loaded look the held box is re-anchored by N7's strict test, else by an own pan probe (+60/-60/home PWM, the skill's own attachment comparison, same evidence as N7's post-lift probe)",
+        "module rename harness/m1_contract.py -> harness/m1_owncam_contract.py (same judge code; PR #181 owns harness/m1_contract.py). Results also carry PR #181's outcome_fields and pass its validate_outcome; success = m1_success = this prereg's strict checks AND #181's outcome block"
+      ],
+      "student_patch": {
+        "skill": "v5",
+        "skill_module": "harness/wrist_zone_skill_v5.py (PR #181 branch at 4884226, imported read-only, mode='m1')",
+        "order_kind": "own_rgb_bay",
+        "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+        "controller_schema": "ugrp.m1_owncam_delivery.v2"
+      },
+      "offline_check": "replay of dev-a1 s91 own inputs through the amended pose source: error during the grasp 3 cm (was up to 0.95 m), first loaded look 2.7 cm; normal-operation error unchanged (in-sample on s91; dev-a2 s91-s93 is the live check)"
+    },
+    {
+      "id": "A2-dev-a2-s91-s92",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a2 (32c7069) s91 and s92: both SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS. Search found the target (GT error 3.1 / 2.3 cm), the localizer held (s91: one kidnap reset), but v5's RobustFaceAligner never became ready: the pickup-grid boxes are axis-aligned (yaw 0) and the wrist camera sees one face head-on; offline replay of the grasp frames through the same floor-cuboid fit gives yaw errors (mod 90) with |err| > 7 deg in 35 % (s91) / 53 % (s92) of frames, p10/p90 -25/+21 deg (s92), below v5's 60 % inlier rule. v5's own cohort used boxes yawed 5-28 deg. This is a skill-side perception limit (PR #181 owns it; reported there). s91 also had 226 peer-robot contact steps: v5's bay approach point (bay west edge - 0.25 m) with bay half 0.25 m lies at x -0.69, next to an idle peer at its spawn (-0.85, -2.25).",
+      "changes": [
+        "controller: bay half extent (0.15, 0.25) m instead of (0.25, 0.25): v5's approach point becomes the own-RGB target x - 0.40 m (the v1 standoff), clear of the spawn column; still a coarse bay (>= 0.15 m, no box position)",
+        "runner: dev-only setup field box_yaw_deg (rotates the cyan box in place; setup-only, recorded under evaluation_only.setup_diagnostic; refused for test episodes)",
+        "adds two DEV DIAGNOSTIC episodes with rotated boxes to exercise carry / door / place / look-back with v5 while the face-on limit is open; they are dev evidence only and never M1 cohort evidence"
+      ],
+      "student_patch": {
+        "controller_schema": "ugrp.m1_owncam_delivery.v2",
+        "bay_half_m": [
+          0.15,
+          0.25
+        ]
+      },
+      "add_episodes": [
+        {
+          "episode_id": "m1devdiag-s94",
+          "split": "dev",
+          "seed": 94,
+          "spawn_y": 0.55,
+          "slot_id": "A1",
+          "map": "zone_wide_door_tags_v2",
+          "goal": {
+            "A": {
+              "cyan": 1
+            }
+          },
+          "extra_boxes": {
+            "red": 2,
+            "green": 1
+          },
+          "contact_profile": "local_contact_fine",
+          "box_yaw_deg": 15.0,
+          "label": "dev diagnostic (rotated box), not an M1 cohort episode"
+        },
+        {
+          "episode_id": "m1devdiag-s95",
+          "split": "dev",
+          "seed": 95,
+          "spawn_y": -0.85,
+          "slot_id": "C2",
+          "map": "zone_wide_door_tags_v2",
+          "goal": {
+            "C": {
+              "cyan": 1
+            }
+          },
+          "extra_boxes": {
+            "red": 2,
+            "green": 1
+          },
+          "contact_profile": "local_contact_fine",
+          "box_yaw_deg": -20.0,
+          "label": "dev diagnostic (rotated box), not an M1 cohort episode"
+        }
+      ],
+      "test_status": "The registered test (101-106, axis-aligned boxes) is NOT run while the face-on grasp limit is open: dev 0/2 at the grasp predicts a blocked test; freezing now would spend the one-shot cohort on a known skill blocker."
+    },
+    {
+      "id": "A3-dev-a3-s93-runner-robot-id",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a3 (ce33ffd) m1dev-s93 spawned as r3; the runner built the skill without robot_id (skill default 'r1'), so v5's strict gate rejected the first own frame: SKILL_OBSERVATION_REJECTED 'observation belongs to another sensor' at 134.5 s (the skill contract working as intended; a runner bug). s91/s92 spawned as r1 and were unaffected.",
+      "changes": [
+        "runner: the skill is constructed with robot_id = the episode's own robot id"
+      ],
+      "student_patch": {}
+    },
+    {
+      "id": "A4-dev-a4-s94-carry-to-preplace",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a4 (ea45e3d): m1devdiag-s94 (box yaw +15 deg) grasped with own-RGB face fits after one relook, the driver carried the box through the door (13 looks, 186 s, |yaw err| p90 1.0 deg, err/std p90 1.02, no contacts; the own pan-probe re-anchor passed after every loaded look while N7's strict test failed every time), but after the door the skill's own loaded mecanum navigation drifted in yaw (|err| p90 5.4 deg, max 11.2 deg; err/std p90 2.1) and the nav_loaded std_yaw gate (3 deg) stopped it for a look 19 times until SIM_LIMIT at 720 s (box still held, z 0.155 m). m1dev-s93 (axis-aligned) and m1devdiag-s95 (yaw -20 deg) ended SKILL_GRASP_TARGET_NOT_VISIBLE after v5 face squaring turned the chassis (s93 GT yaw to 27 deg): skill-side, reported on PR #181.",
+      "changes": [
+        "controller: the loaded carry leg (OwnCamDriverV2, east-facing mecanum pursuit, arrive tolerance 0.03 m) goes through the door to the skill's pre-place goal instead of stopping at the door exit; the skill's nav_preplace then only corrects the residual (place tolerance 0.012 m) after the pre-place look. Pose limits unchanged."
+      ],
+      "student_patch": {}
+    },
+    {
+      "id": "A5-codex-prereview-and-skill-v6",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "Codex pre-review of PR #201 at ea45e3d (scratchpad codex-m1-prereview.md, forwarded by the coordinator): no runtime GT leak; blockers 1 (test launchable by default, freeze not enforced) and 2 (cargo_noslip_v1 not wired into the M1 path; every registered episode ran local_contact_fine); HIGH 3 (look-back sigma gate not applied to the actual confirmation frames), 4 (no full-seed aggregation / exception handling), 5 (success formula without retention / physical grasp); MEDIUM 6 (A2 bay 0.30 x 0.50 m, not the 0.5 m square); LOW 7 (timestep typo). PR #181 skill v6 (source ac34651, interface frozen): top-edge own-RGB face yaw for head-on boxes, public reanchor_after_probe, static keep-out approach point + guard; their own diagnostic cohort 551-560 is not M1 and is not pooled.",
+      "scope_note": "This amendment also changes an episode CONDITION (contact profile) and the judge, not only the student: directed by the coordinator per the Codex pre-review, before any test data. cargo_noslip_v1 is the primary condition while the user's decision on it is still pending (PR #181 / #189); it is recorded per run and changing it again requires a new amendment before the test.",
+      "changes": [
+        "skill v5 -> wrist_zone_skill_v6 (mode='m1', robot_id=episode robot, static_keepouts = the three idle-spawn spots of the static layout zone_wide_door (x -0.85; y -2.25/-0.85/0.55; radius 0.17 m, source static_layout_idle_spawn), static_bounds_m = map bounds); the controller drives its approach leg to v6's approach_point() and uses v6's public reanchor_after_probe (no private anchor writes)",
+        "order sheet: CoarseOrderSheet bay back to the 0.5 m square (half 0.25 m) centred on the own-RGB search cluster; A2's 0.30 m narrowing is withdrawn (Codex #6), the approach side/standoff comes from v6 around the static keep-outs",
+        "contact profile explicit for every episode: cargo_noslip_v1 (base local_contact_fine + sim/zone_cargo_contact.apply); each run records the profile record, the built model's noslip_iterations, timestep and the final scene XML sha256, and refuses cargo_noslip_v1 if noslip_iterations is 0",
+        "look-back: every own-RGB confirmation step (look_back_steps 0 and the retry step) is gated on the CURRENT estimate (own look <= 3 s old, look_back sigma limits); violation -> re-look, after 3 gate looks POSE_UNCERTAIN without a claim; the judge requires the gate recorded for the placement frame_id",
+        "judge (evaluation only, added to m1_success): no_exception; grasp_physical_both_fingers (both finger geoms touch the box in >= 95 % of physics steps while the skill is in to_carry_posture / nav_preplace / grip_check / pre_release); box_retained_in_carry (box centre z >= 0.04 m on every such step; intended set-downs reseat_* / release excluded); wall contact counted per physics step; max box penetration and normal force recorded",
+        "runner: dev split by default; --split test requires --frozen frozen_source.json, a clean tree under the frozen paths, no change since the frozen source (records-only paths listed in the freeze), matching per-file hashes and the same skill / calibration / contact profile; attempt_started.json is written before physics; a controller/skill exception is a FAILED episode with its logs kept",
+        "results: exactly one adopted attempt per test episode 101-106 sharing one frozen source; a test run dir without result.json is an infrastructure failure and only then may test-rerun/<ep> run once; missing, duplicate or disallowed attempts block the claim",
+        "records: loc README timestep corrected (cherry-pick of PR #198 09be45c)"
+      ],
+      "prior_dev_results": "dev-a1..a5 ran local_contact_fine (default of every registered episode) and were judged without the A5 retention/grasp/exception/per-frame gate checks; they stay recorded as dev evidence under those conditions",
+      "student_patch": {
+        "skill": "v6",
+        "skill_module": "harness/wrist_zone_skill_v6.py (PR #181 source ac34651, read-only, mode='m1')",
+        "contact_profile": "cargo_noslip_v1",
+        "bay_half_m": [
+          0.25,
+          0.25
+        ],
+        "controller_schema": "ugrp.m1_owncam_delivery.v3",
+        "runner_schema": "ugrp.m1_owncam_run.v3"
+      }
+    },
+    {
+      "id": "A6-skill-v9",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a6 (A5, v6, cargo_noslip_v1): s93 and s95 GRASP_TARGET_NOT_VISIBLE - N7's approach-stage cyan cut (min_saturation 65) on the pale-blue west pickup floor missed the box (s93) or detected floor (s95 frame 371 at (0.98, -0.32) m); dev-a6 s94 (other floor patch) completed with every A5 check. PR #181 skill v9 (frozen 04a5e3c): frame-relative floor saturation cut (v8, after Kiro B PR #193), fit-model-independent vertical error and close-range re-fit sweep (v9); their diagnostic cohort 601-610 (GT stub, not M1, not pooled) 10/10, west floor 8/8.",
+      "changes": [
+        "skill v6 -> wrist_zone_skill_v9 (drop-in API: mode='m1', robot_id, static_keepouts, static_bounds_m, approach_point(), reanchor_after_probe()); merged read-only at 04a5e3c, only new files (v7-v9 skill modules and their runners)",
+        "no other change: A5 conditions, controller, calibration, judge and test guard unchanged",
+        "contact profile stays cargo_noslip_v1, labelled PENDING USER APPROVAL (the user's decision on cargo_noslip_v1 is still open, PR #181 / #189)"
+      ],
+      "dev_check_rule": "registered here BEFORE the check: dev-a7 runs m1dev-s93 (axis-aligned) and m1devdiag-s95 (box yaw -20 deg) once each with v9 under A5 conditions; PASS = m1_success true for BOTH (every A5 check incl. retention, both-finger grasp, per-frame look-back gate, no exception, no wall contact). PASS -> freeze with make_frozen.py and run test 101-106 once with the guard; any FAIL -> stop and report, no freeze, no test.",
+      "student_patch": {
+        "skill": "v9",
+        "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only, mode='m1')",
+        "contact_profile": "cargo_noslip_v1",
+        "contact_profile_status": "pending user approval"
+      }
+    },
+    {
+      "id": "A6b-runner-keepout-import",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a7 (source e10f88d) s93 and s95 both crashed at setup, before physics (only attempt_started.json written): AttributeError: module 'harness.wrist_zone_skill_v9' has no attribute 'StaticKeepout'. The runner built keep-outs via skill_mod.StaticKeepout; v9 inherits v6's isinstance check but does not re-export the class. No episode ran, so dev-a7 produced no outcome.",
+      "changes": [
+        "runner only: static_layout_keepouts() builds the same spawn-row discs with harness.wrist_zone_skill_v6.StaticKeepout (identical ids, centres, radius 0.17 m, source tag) for v6 and v9",
+        "new unit test constructs every STATIC_KEEPOUT_SKILLS skill through the runner's keep-out path",
+        "no behaviour change: skill v9, A5 conditions, contact profile, controller, calibration, judge and test guard unchanged; A6 dev_check_rule applies unchanged to the relaunch dev-a8 (s93 + s95 once each)"
+      ]
+    }
+  ]
+}
