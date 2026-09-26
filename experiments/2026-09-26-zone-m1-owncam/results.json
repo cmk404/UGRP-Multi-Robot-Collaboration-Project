@@ -1,0 +1,1283 @@
+{
+  "schema": "ugrp.m1_owncam_results.v2",
+  "attempts": {
+    "dev-a1": "969e03e, skill v4, loop v2 calibration (before amendment A1)",
+    "dev-a2": "32c7069, amendment A1: skill v5 m1 mode, fine motion + kidnap reset, post-manipulation look, pan-probe re-anchor",
+    "dev-a3": "ce33ffd, amendment A2: bay half 0.15 m, rotated-box dev diagnostics (runner robot_id bug: non-r1 robots rejected)",
+    "dev-a4": "ea45e3d, amendment A3: skill gets the episode robot id",
+    "dev-a5": "6352fde, amendment A4: loaded carry leg through the door to the pre-place goal",
+    "dev-a6": "amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge",
+    "dev-a7": "amendment A6: skill v9 (A5 conditions); pre-freeze dev check s93 + s95 - crashed at setup (runner StaticKeepout import, e10f88d), no physics",
+    "dev-a8": "amendment A6b: runner keep-out import fix only; A6 dev check s93 + s95 relaunched"
+  },
+  "test_status": "not run",
+  "test_expected": [
+    "m1test-s101",
+    "m1test-s102",
+    "m1test-s103",
+    "m1test-s104",
+    "m1test-s105",
+    "m1test-s106"
+  ],
+  "test_missing": [
+    "m1test-s101",
+    "m1test-s102",
+    "m1test-s103",
+    "m1test-s104",
+    "m1test-s105",
+    "m1test-s106"
+  ],
+  "test_problems": [],
+  "test_adopted": [],
+  "claim": null,
+  "runs": [
+    {
+      "attempt": "dev-a1",
+      "episode": "m1dev-s91",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "969e03e8b9897f882f51052dad13b94f47b20178",
+      "code_dirty": false,
+      "skill": "v4",
+      "amendments": [],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "CARRY_REANCHOR_UNCONFIRMED",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "no_face_normal_map_fallback",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0307,
+      "gt_box_final_xyz": [
+        -0.2155,
+        -2.4669,
+        0.17
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 231.33,
+      "looks": 1,
+      "commands": 3603,
+      "localizer_stats": null,
+      "load_average": {
+        "start": [
+          7.56,
+          8.07,
+          9.91
+        ],
+        "end": [
+          10.83,
+          10.07,
+          10.0
+        ]
+      },
+      "wall_s": 517.6,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "ca54d946dd76fc333d1bf4e443c416cc8d75a7d84429daab8bd8fff5ae484558",
+      "pose_source": "owncam_pf_v2:04f56834",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "0193abefa0140b9f401766f54975de8ece49aeee90220ad1bbe064e9fd6ec4a9",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a2",
+      "episode": "m1dev-s91",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "32c70698cf560a9a2b367109d552194d6e830875",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0307,
+      "gt_box_final_xyz": [
+        -0.2,
+        -2.45,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 226,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 262.66,
+      "looks": 1,
+      "commands": 2915,
+      "localizer_stats": {
+        "updates": 1015,
+        "resets": 1,
+        "resamples": 238,
+        "kidnap_resets": 1
+      },
+      "load_average": {
+        "start": [
+          4.57,
+          6.26,
+          8.29
+        ],
+        "end": [
+          6.96,
+          7.41,
+          8.05
+        ]
+      },
+      "wall_s": 463.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "0193abefa0140b9f401766f54975de8ece49aeee90220ad1bbe064e9fd6ec4a9",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a2",
+      "episode": "m1dev-s92",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "32c70698cf560a9a2b367109d552194d6e830875",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_GRASP_FACE_UNOBSERVABLE_AFTER_RELOOKS",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0227,
+      "gt_box_final_xyz": [
+        1.6,
+        0.75,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 212.7,
+      "looks": 1,
+      "commands": 2242,
+      "localizer_stats": {
+        "updates": 786,
+        "resets": 0,
+        "resamples": 269
+      },
+      "load_average": {
+        "start": [
+          4.57,
+          6.26,
+          8.29
+        ],
+        "end": [
+          8.4,
+          7.62,
+          8.18
+        ]
+      },
+      "wall_s": 387.6,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "ccb93ffb16bff3ebee61bd48002e53fbb79f75da0e5a457b0810d195965fff4a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "ce33ffdc99e23382aad29c0ad43b122598258e16",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_OBSERVATION_REJECTED:observation belongs to another sensor",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0481,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.05,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 134.5,
+      "looks": 1,
+      "commands": 1738,
+      "localizer_stats": {
+        "updates": 657,
+        "resets": 0,
+        "resamples": 154
+      },
+      "load_average": {
+        "start": [
+          5.31,
+          4.62,
+          3.77
+        ],
+        "end": [
+          7.11,
+          5.92,
+          4.5
+        ]
+      },
+      "wall_s": 197.1,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a4603f36c02bd9385acb8c5ff60c70bb3a41387fdfc05c1fad91a092fa08a9bf",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "m1devdiag-s94",
+      "split": "dev",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "ce33ffdc99e23382aad29c0ad43b122598258e16",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_OBSERVATION_REJECTED:observation belongs to another sensor",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {
+        "box_yaw_deg": 15.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0228,
+      "gt_box_final_xyz": [
+        1.6,
+        -2.45,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 180.7,
+      "looks": 1,
+      "commands": 2298,
+      "localizer_stats": {
+        "updates": 876,
+        "resets": 0,
+        "resamples": 239
+      },
+      "load_average": {
+        "start": [
+          5.31,
+          4.62,
+          3.77
+        ],
+        "end": [
+          6.92,
+          6.13,
+          4.68
+        ]
+      },
+      "wall_s": 261.0,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0481,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.05,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 156.25,
+      "looks": 1,
+      "commands": 1923,
+      "localizer_stats": {
+        "updates": 746,
+        "resets": 0,
+        "resamples": 173
+      },
+      "load_average": {
+        "start": [
+          7.09,
+          6.15,
+          4.68
+        ],
+        "end": [
+          8.88,
+          7.26,
+          5.54
+        ]
+      },
+      "wall_s": 278.1,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a4603f36c02bd9385acb8c5ff60c70bb3a41387fdfc05c1fad91a092fa08a9bf",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "m1devdiag-s94",
+      "split": "dev",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SIM_LIMIT",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "within_sim_limit",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {
+        "box_yaw_deg": 15.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0228,
+      "gt_box_final_xyz": [
+        3.3904,
+        0.0124,
+        0.1553
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 720.56,
+      "looks": 21,
+      "commands": 9865,
+      "localizer_stats": {
+        "updates": 2258,
+        "resets": 0,
+        "resamples": 1184
+      },
+      "load_average": {
+        "start": [
+          6.09,
+          6.03,
+          4.7
+        ],
+        "end": [
+          3.27,
+          4.59,
+          5.03
+        ]
+      },
+      "wall_s": 1006.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "ea45e3de31e75d4d2e8c54a1d0ef1983cca8196a",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok"
+      ],
+      "setup_diagnostic": {
+        "box_yaw_deg": -20.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": null,
+      "search_target_error_m": 0.0578,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.85,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 124.39,
+      "looks": 1,
+      "commands": 1511,
+      "localizer_stats": {
+        "updates": 534,
+        "resets": 0,
+        "resamples": 98
+      },
+      "load_average": {
+        "start": [
+          7.89,
+          7.1,
+          5.5
+        ],
+        "end": [
+          6.39,
+          6.91,
+          5.75
+        ]
+      },
+      "wall_s": 199.4,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a5",
+      "episode": "m1devdiag-s94",
+      "split": "dev",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "6352fdee997704af033dd4f5e45f6a2bab07c1a2",
+      "code_dirty": false,
+      "skill": "v5",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace"
+      ],
+      "freeze": null,
+      "contact_profile": "local_contact_fine",
+      "noslip_iterations": null,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {
+        "box_yaw_deg": 15.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": null,
+      "search_target_error_m": 0.0228,
+      "gt_box_final_xyz": [
+        4.5771,
+        -0.0129,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": null,
+      "max_eq_active": 0,
+      "sim_s": 544.06,
+      "looks": 5,
+      "commands": 8368,
+      "localizer_stats": {
+        "updates": 1816,
+        "resets": 0,
+        "resamples": 866
+      },
+      "load_average": {
+        "start": [
+          3.94,
+          4.45,
+          4.93
+        ],
+        "end": [
+          4.71,
+          5.28,
+          5.25
+        ]
+      },
+      "wall_s": 814.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "aa2dced46c506ae3b60cf0d2a898eeed1544d967",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "grasp_physical_both_fingers",
+        "box_retained_in_carry"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 0,
+        "both_finger_steps": 0,
+        "min_box_z_m": null,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.00010775542089962523,
+        "max_box_normal_force_n": 0.07357500374178916,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0803,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.05,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 144.83,
+      "looks": 1,
+      "commands": 1696,
+      "localizer_stats": {
+        "updates": 691,
+        "resets": 0,
+        "resamples": 161
+      },
+      "load_average": {
+        "start": [
+          4.58,
+          4.61,
+          4.87
+        ],
+        "end": [
+          6.75,
+          6.21,
+          5.54
+        ]
+      },
+      "wall_s": 315.7,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a4603f36c02bd9385acb8c5ff60c70bb3a41387fdfc05c1fad91a092fa08a9bf",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
+      "episode": "m1devdiag-s94",
+      "split": "dev",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "1ff646e52a2d7e779e4e6a3a8000e45e5c72da31",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {
+        "box_yaw_deg": 15.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 913572,
+        "both_finger_steps": 913572,
+        "min_box_z_m": 0.08474455234157799,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.002402817537448813,
+        "max_box_normal_force_n": 3.1153935493581892,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0095,
+      "gt_box_final_xyz": [
+        4.5759,
+        -0.0108,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 503.0,
+      "looks": 4,
+      "commands": 7988,
+      "localizer_stats": {
+        "updates": 1652,
+        "resets": 0,
+        "resamples": 699
+      },
+      "load_average": {
+        "start": [
+          6.38,
+          5.82,
+          5.48
+        ],
+        "end": [
+          6.79,
+          7.44,
+          7.1
+        ]
+      },
+      "wall_s": 1069.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "e2d802eedd6739337cea7c049dbc1b153acdec59f9e78b04bb7a57e0fff64e13",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a6",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "aa2dced46c506ae3b60cf0d2a898eeed1544d967",
+      "code_dirty": false,
+      "skill": "v6",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+      "exception": null,
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "grasp_physical_both_fingers",
+        "box_retained_in_carry"
+      ],
+      "setup_diagnostic": {
+        "box_yaw_deg": -20.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": false,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 0,
+        "both_finger_steps": 0,
+        "min_box_z_m": null,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.00010775542107669539,
+        "max_box_normal_force_n": 0.07357500656215206,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0706,
+      "gt_box_final_xyz": [
+        0.4,
+        -0.85,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 99.43,
+      "looks": 1,
+      "commands": 1363,
+      "localizer_stats": {
+        "updates": 440,
+        "resets": 0,
+        "resamples": 86
+      },
+      "load_average": {
+        "start": [
+          4.58,
+          4.61,
+          4.87
+        ],
+        "end": [
+          8.18,
+          6.23,
+          5.48
+        ]
+      },
+      "wall_s": 234.0,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a7",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "outcome": "INFRASTRUCTURE_FAILURE",
+      "infrastructure_failure": true,
+      "m1_success": false,
+      "counts_as_m1": false,
+      "diagnostic_success": false,
+      "false_success": false,
+      "code_sha": "e10f88d4981598841f7a8f9a33c3860a4c38336d",
+      "freeze": null
+    },
+    {
+      "attempt": "dev-a7",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "outcome": "INFRASTRUCTURE_FAILURE",
+      "infrastructure_failure": true,
+      "m1_success": false,
+      "counts_as_m1": false,
+      "diagnostic_success": false,
+      "false_success": false,
+      "code_sha": "e10f88d4981598841f7a8f9a33c3860a4c38336d",
+      "freeze": null
+    },
+    {
+      "attempt": "dev-a8",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "16b41e27ec18668b89494ab2efe28a4082710114",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 807686,
+        "both_finger_steps": 807686,
+        "min_box_z_m": 0.08480661323169049,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.0020156027793934834,
+        "max_box_normal_force_n": 2.7673530971318385,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0803,
+      "gt_box_final_xyz": [
+        4.5919,
+        -1.6903,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 397.22,
+      "looks": 4,
+      "commands": 6541,
+      "localizer_stats": {
+        "updates": 1300,
+        "resets": 0,
+        "resamples": 610
+      },
+      "load_average": {
+        "start": [
+          3.66,
+          6.11,
+          6.21
+        ],
+        "end": [
+          7.08,
+          7.18,
+          7.04
+        ]
+      },
+      "wall_s": 916.7,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a4603f36c02bd9385acb8c5ff60c70bb3a41387fdfc05c1fad91a092fa08a9bf",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a8",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "16b41e27ec18668b89494ab2efe28a4082710114",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": null,
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {
+        "box_yaw_deg": -20.0
+      },
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 736160,
+        "both_finger_steps": 736160,
+        "min_box_z_m": 0.08448729664775824,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.002679111702850608,
+        "max_box_normal_force_n": 3.2780670415596864,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0706,
+      "gt_box_final_xyz": [
+        2.9838,
+        -0.8219,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 424.66,
+      "looks": 5,
+      "commands": 6910,
+      "localizer_stats": {
+        "updates": 1110,
+        "resets": 0,
+        "resamples": 544
+      },
+      "load_average": {
+        "start": [
+          3.66,
+          6.11,
+          6.21
+        ],
+        "end": [
+          6.25,
+          6.97,
+          6.97
+        ]
+      },
+      "wall_s": 938.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
+      "weld": "off"
+    }
+  ]
+}

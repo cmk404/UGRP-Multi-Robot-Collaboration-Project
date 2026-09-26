@@ -1,0 +1,61 @@
+{
+  "schema": "ugrp.zone_own_executor_smoke_prereg.v2",
+  "version": "zone-own-executor-smoke-v2",
+  "registered": "2026-09-26, before any smoke-v2 data; v1 (prereg.json, smoke-4371f36) is kept unchanged",
+  "question": "After the issue #221 fixes (Codex review 2 of PR #206), does the package F executor still run three robots in one sync-SIM world on their own cameras only, end every accepted job with exactly one terminal event (also at the episode horizon), never claim own_camera_confirmed while its own pose-uncertainty gate is uncertain, and report its deliver jobs honestly against evaluation-only GT? Same frozen scenario as v1 (seeds 700/701, same map, cargo, assignment, hold times, limits). This tests the executor, not the dialogue.",
+  "changes_since_v1": [
+    "one host cancel path: abort / local deadline (also during macros) / episode end / controller exception drop the scheduled macro commands, hold at once, end the job once; a stopped robot refuses new jobs",
+    "pose-uncertainty gate (two thresholds + dwell) blocks driving and every own_camera_confirmed claim; pose_uncertain fires once per gate entry with scheduler trigger 'failure'",
+    "look sweeps keep only the collision-free pan interval of the own arm/finger/box body model against the static map walls and door posts (with heights), or back off first (driver legs, look_around, pre-deliver look); M1 sweeps restricted only",
+    "Nav2-style progress monitor on every leg: no trusted progress for 6 s of commanded driving -> back off + keep-out ahead + re-look, at most 2 recoveries, then '<leg>_blocked' + blockage_seen(own_progress_stall)",
+    "near-range truncation: a cyan region cut by the lower fisheye rim in a search frame (>= 2 frames, >= 40 px) -> one retreat re-look per viewpoint (0.20 m west if clear of the static spawn discs, else the lane 0.40 m aside inside the slot)",
+    "route-blockage streak per location (passage, 0.5 m cell, heading sector) with a 2.5 s gap limit",
+    "package A/D contracts imported from main; action records validated by package A with condition 'no_comm' (the scripted layer has no dialogue channel; A has no scripted-layer condition)"
+  ],
+  "input_contract": "per robot: own robot_cam JPEG + own issued commands + static tagged map v2 + fixed calibrations (camera/motion, own body model body_model_calibration.json) + static layout idle-spawn discs + order sheet (kind, count, destination zone, coarse pickup slot P{c}-{r} from the scenario config); no pose stub; no peer state; GT only in eval_only/",
+  "student": {
+    "executor": "harness/zone_own_executor.py (+ zone_own_guards.py, zone_own_deliver.py, zone_own_status.py, zone_own_contract.py); host harness/zone_own_team_host.py",
+    "mode": "m1",
+    "controller": "harness/m1_owncam_delivery.py (PR #201, read-only)",
+    "skill_module": "harness.wrist_zone_skill_v9",
+    "skill_class": "WristZoneDeliveryV9",
+    "skill_note": "PR #181 frozen 04a5e3c, read-only, mode='m1'",
+    "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+    "body_calibration": "experiments/2026-09-26-zone-own-executor/body_model_calibration.json",
+    "perception": "harness/zone_own_perception.py (PR #193, read-only): judge_route_blockage, judge_holding_item"
+  },
+  "scripted_study_layer": {
+    "chosen_by": "experimenter (Kiro), identical to v1; not an LLM",
+    "assignment_rule": "robots sorted by spawn y north->south; cyan boxes sorted by setup y north->south (ties by x); zip. Destinations north->south: A2, C2, B2. The first robot delivers at once; the second holds 120 SIM s, the third 240 SIM s, then deliver.",
+    "reads": "executor events only (job_started/job_done/job_failed); never eval_only",
+    "order_sheet": "as v1"
+  },
+  "episodes": [
+    {"episode_id": "smoke-v2-s700", "split": "smoke", "seed": 700, "map": "zone_wide_door_tags_v2", "base_map": "zone_wide_door",
+     "goal": {"A": {"cyan": 1}, "B": {"cyan": 1}, "C": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1},
+     "contact_profile": "cargo_noslip_v1", "job_sim_limit_s": 720,
+     "assignment": {"zone_slots_north_to_south": ["A2", "C2", "B2"], "hold_s_north_to_south": [0, 120, 240]}},
+    {"episode_id": "smoke-v2-s701", "split": "smoke", "seed": 701, "map": "zone_wide_door_tags_v2", "base_map": "zone_wide_door",
+     "goal": {"A": {"cyan": 1}, "B": {"cyan": 1}, "C": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1},
+     "contact_profile": "cargo_noslip_v1", "job_sim_limit_s": 720,
+     "assignment": {"zone_slots_north_to_south": ["A2", "C2", "B2"], "hold_s_north_to_south": [0, 120, 240]}},
+    {"episode_id": "dev-v2-s703", "split": "dev", "seed": 703, "map": "zone_wide_door_tags_v2", "base_map": "zone_wide_door",
+     "goal": {"A": {"cyan": 1}, "B": {"cyan": 1}, "C": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1},
+     "contact_profile": "cargo_noslip_v1", "job_sim_limit_s": 720, "note": "plumbing only (short --sim-limit-s), never pooled",
+     "assignment": {"zone_slots_north_to_south": ["A2", "C2", "B2"], "hold_s_north_to_south": [0, 120, 240]}}
+  ],
+  "sim_limit_s": 1200,
+  "gates": {
+    "E1": "both episodes produce result.json without a host exception",
+    "E2": "every accepted job of every robot has exactly one job_started and exactly one terminal event (job_done or job_failed), including jobs still open at the episode end (EPISODE_END:*); every robot receives its deliver job",
+    "E3": "isolation audit: every frame fed to executor k has robot_id k and camera robot_cam; executor cameras_seen = [robot_cam]",
+    "E4": "M1 inputs: pose_sources_seen of every robot are own-camera (owncam_pf_v2:<sha8>) only. AMENDED from v1: the v1 clause 'counts_as_m1 true for every robot whose deliver reached the search' contradicted the M1 judge (counts_as_m1 requires a found pickup); it is dropped and counts_as_m1 is reported only",
+    "E5": "weld OFF: max eq_active 0; cargo_noslip_v1 noslip_iterations > 0",
+    "E6": "no false confirmation: no job_done(own_camera_confirmed) for a deliver job whose ordered zone slot holds no cyan box in eval-only GT",
+    "E7": "no own_camera_confirmed job_done at a SIM time where the robot's own gate (gate_transitions) was uncertain"
+  },
+  "reported_not_gated": ["per-robot m1-style success (v1 checks)", "m1-style success and own-camera confirmations out of 6, next to v1 (3/6, 3/6)", "pose_uncertain events per robot (v1 s701 r1: 66)", "stall recoveries and blocked legs", "sweep-guard restricted/backed-off looks", "near-clip retreat re-looks", "peer-robot and wall contact steps", "SIM time per job", "evaluation-only localisation error p50/p90", "cancellations (dropped macro commands)"],
+  "pass_rule": "the executor smoke v2 passes when E1-E7 all hold. Delivery success is reported, not gated; no success rate is claimed from 6 robot-episodes and v1/v2 are not pooled",
+  "stop_rule": "each episode once, both in parallel (2 concurrent sim processes), from one committed source SHA recorded in each manifest; no code change between or during them. An infrastructure failure (no result.json) may be re-run once from the same SHA and is reported. A robot-level failure is a result, never re-run.",
+  "conditions": "sync SIM (timestep 0.00025 s), OMP/OPENBLAS/VECLIB/MKL threads 1, at most 2 concurrent own sim processes, machine-wide sim-process count < 6 at launch, load average logged at launch and in each manifest; weld OFF; contact profile cargo_noslip_v1 (approved by the user 2026-09-26 as the study-wide profile)"
+}

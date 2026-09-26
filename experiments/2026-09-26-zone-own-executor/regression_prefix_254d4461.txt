@@ -1,0 +1,62 @@
+# pre-fix run: source 254d4461 (= c8a2355a executor + origin/main 1817b070), new tests copied in; boundaries MAX_HOLD_S param replaced by 3601. (attribute absent pre-fix)
+        failed = [e for e in ev if e['event'] == 'job_failed']
+>       assert len(failed) == 1 and failed[0]['detail']['reason'] == 'GOTO_blocked', failed
+        assert ev[-1]['event'] == 'job_failed' and ev[-1]['detail']['reason'] == 'LOCAL_TIMEOUT'
+>       assert all(zox.EVENT_TO_TRIGGER[e] is not None for e in ('job_done', 'job_failed', 'blockage_seen', 'pose_uncertain'))
+FAILED tests/test_zone_own_executor_guards.py::test_gate_two_thresholds_and_dwell
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[None]
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[nan]
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[inf]
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[-inf]
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[x]
+FAILED tests/test_zone_own_executor_guards.py::test_gate_bad_sigma_counts_as_high_and_bad_time_is_ignored[True]
+FAILED tests/test_zone_own_executor_guards.py::test_p1_forward_motion_and_arrival_blocked_under_large_uncertainty
+FAILED tests/test_zone_own_executor_guards.py::test_p1_pose_uncertain_fires_once_per_entry_not_per_frame
+FAILED tests/test_zone_own_executor_guards.py::test_body_model_matches_the_calibration_record
+FAILED tests/test_zone_own_executor_guards.py::test_sweep_guard_restricts_pans_near_a_tall_wall_and_backs_off
+FAILED tests/test_zone_own_executor_guards.py::test_p1_look_around_near_a_tall_wall_never_commands_a_colliding_pan
+FAILED tests/test_zone_own_executor_guards.py::test_progress_monitor_is_nav2_style
+FAILED tests/test_zone_own_executor_guards.py::test_p1_blocked_leg_recovers_a_bounded_number_of_times_then_fails
+FAILED tests/test_zone_own_executor_guards.py::test_blockage_streak_is_per_location_and_gap_limited
+FAILED tests/test_zone_own_executor_guards.py::test_p2_blockage_needs_two_judgments_at_the_same_place
+FAILED tests/test_zone_own_executor_host.py::test_p1_abort_drops_scheduled_macro_commands_and_holds_at_once
+FAILED tests/test_zone_own_executor_host.py::test_p1_local_deadline_is_enforced_while_a_macro_runs
+FAILED tests/test_zone_own_executor_host.py::test_p1_episode_horizon_ends_every_active_job_once_and_refuses_later_calls
+FAILED tests/test_zone_own_executor_host.py::test_p1_a_stopped_robot_refuses_new_jobs
+FAILED tests/test_zone_own_executor_host.py::test_every_accepted_job_has_exactly_one_terminal_event
+FAILED tests/test_zone_own_executor_host.py::test_contact_log_dedupes_per_robot_and_kind
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target0]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[None]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target2]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target3]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target4]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target5]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[True]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[0]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[1.5]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target9]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target10]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target11]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[target12]
+FAILED tests/test_zone_own_executor_boundaries.py::test_goto_refuses_bad_targets[A2]
+FAILED tests/test_zone_own_executor_boundaries.py::test_hold_refuses_bad_durations[None]
+FAILED tests/test_zone_own_executor_boundaries.py::test_hold_refuses_bad_durations[True]
+FAILED tests/test_zone_own_executor_boundaries.py::test_hold_refuses_bad_durations[False]
+FAILED tests/test_zone_own_executor_boundaries.py::test_hold_refuses_bad_durations[duration9]
+FAILED tests/test_zone_own_executor_boundaries.py::test_hold_refuses_bad_durations[3601.0]
+FAILED tests/test_zone_own_executor_boundaries.py::test_deliver_refuses_bad_arguments[item1-A2-UNKNOWN_ORDER]
+FAILED tests/test_zone_own_executor_boundaries.py::test_deliver_refuses_bad_arguments[o1-slot6-UNKNOWN_ZONE_SLOT]
+FAILED tests/test_zone_own_executor_boundaries.py::test_abort_refuses_bad_reason_codes[None]
+FAILED tests/test_zone_own_executor_boundaries.py::test_abort_refuses_bad_reason_codes[]
+FAILED tests/test_zone_own_executor_boundaries.py::test_abort_refuses_bad_reason_codes[7]
+FAILED tests/test_zone_own_executor_boundaries.py::test_abort_refuses_bad_reason_codes[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]
+FAILED tests/test_zone_own_executor_boundaries.py::test_abort_refuses_bad_reason_codes[code4]
+FAILED tests/test_zone_own_executor_boundaries.py::test_corrupted_or_foreign_frames_are_refused_without_state_change
+FAILED tests/test_zone_own_executor_boundaries.py::test_executor_constructor_refuses_bad_limits_and_non_static_keepouts
+FAILED tests/test_zone_own_executor_boundaries.py::test_near_clip_fixture_real_frames
+FAILED tests/test_zone_own_executor_boundaries.py::test_near_clip_leads_to_one_retreat_relook_then_the_next_viewpoint
+FAILED tests/test_zone_own_executor_boundaries.py::test_executor_tests_are_collected_by_ci
+FAILED tests/test_zone_own_executor.py::test_executor_source_reads_no_simulator_state
+FAILED tests/test_zone_own_executor.py::test_local_timeout_is_a_timeout_wake
+FAILED tests/test_zone_own_executor.py::test_action_record_adapter_is_validated_by_package_a
+56 failed, 35 passed, 1 deselected in 45.22s

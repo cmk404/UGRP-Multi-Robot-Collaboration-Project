@@ -1,0 +1,21 @@
+{
+ "schema": "ugrp.zone_own_perception_split.v1",
+ "created": "2026-09-26",
+ "purpose": "Offline dev/test split for the four wrist-RGB-only zone judgments (package B).",
+ "rule": "Thresholds and gates are chosen on dev only. The test split is rendered and scored once, after the README pre-registration is committed.",
+ "scene_family": "zones/* (ZoneScene, local_contact_fine, weld OFF)",
+ "splits": {
+  "dev": [
+   {"variant": "zone_wide_door", "seed": 41},
+   {"variant": "zone_wide_corridor", "seed": 42},
+   {"variant": "zone_wide_two_doors", "seed": 43},
+   {"variant": "zone_wide_door", "seed": 44}
+  ],
+  "test": [
+   {"variant": "zone_wide_door", "seed": 71},
+   {"variant": "zone_wide_corridor", "seed": 72},
+   {"variant": "zone_wide_two_doors", "seed": 73},
+   {"variant": "zone_wide_corridor", "seed": 74}
+  ]
+ }
+}
