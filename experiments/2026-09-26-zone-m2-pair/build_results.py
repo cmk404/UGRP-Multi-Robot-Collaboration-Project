@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RAW = Path('/Users/changmin/projects/ugrp/outputs/zone-m2-pair-20260926')
 TB = Path('/Users/changmin/projects/ugrp/outputs/tensorboard')
-STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': ()}
+STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': tuple(range(811, 817))}
 ARMS = ('on', 'off')
 
 
@@ -124,6 +124,28 @@ def gates_stage3(runs):
     return out
 
 
+def gates_stage2(runs):
+    out = {}
+    for arm in ARMS:
+        rs = [x for x in runs if x['arm'] == arm]
+        succ = sum(x['success_gt'] for x in rs)
+        walls = [x['seed'] for x in rs if x['robot_wall_contact_samples'] or x['beam_wall_contact_samples']]
+        arrived = sum(x['arrived_both'] for x in rs)
+        clean = all(x['gt_at_runtime'] is False and x['dirty_source'] is False and x['robot_robot_contact_samples'] == 0
+                    and x['weld_eq_active_max'] == 0 for x in rs)
+        out[arm] = {'M2-D1_success': {'value': f'{succ}/{len(rs)}', 'pass': succ >= 4},
+                    'M2-D2_no_wall_contact': {'seeds_with_contact': walls, 'pass': not walls},
+                    'M2-D3_approach': {'arrived_both': f'{arrived}/{len(rs)}', 'pass': arrived >= 5},
+                    'M2-D4_inputs_safety': {'pass': clean},
+                    'crossing_offset_m': {x['seed']: (x['door'] or {}).get('beam_y_offset_at_crossing_m') for x in rs},
+                    'final_error_m': {x['seed']: x['final_error_m'] for x in rs},
+                    'failures': {x['seed']: x['failures'] for x in rs},
+                    'cost': {'sim_s_mean': round(sum(x['sim_seconds'] for x in rs) / len(rs), 1),
+                             'commands_mean': round(sum(x['commands'] for x in rs) / len(rs), 1),
+                             'wall_s_mean': round(sum(x['wall_seconds'] for x in rs) / len(rs), 1)}}
+    return out
+
+
 def collect(stage, cohort):
     runs, missing = [], []
     for seed in STAGES[stage]:
@@ -133,8 +155,6 @@ def collect(stage, cohort):
                 runs.append(summarise(folder))
             else:
                 missing.append({'seed': seed, 'arm': arm, 'status': 'missing/infrastructure_failure'})
-    if not STAGES[stage]:
-        runs = [summarise(p.parent) for p in sorted((RAW / cohort).glob('*/result.json'))]
     return runs, missing
 
 
@@ -144,7 +164,7 @@ def main():
     if missing and '--allow-incomplete' not in sys.argv:
         raise SystemExit(f'pre-registered runs missing {missing}; the cohort report is blocked')
     log = RAW / cohort / 'cohort.log'
-    gates = gates_stage1(runs) if stage == 'stage1' else gates_stage3(runs) if stage == 'stage3' else None
+    gates = {'stage1': gates_stage1, 'stage2': gates_stage2, 'stage3': gates_stage3}[stage](runs)
     dev = [summarise(p.parent) for p in sorted(RAW.glob('dev*/result.json'))]
     out = {'experiment_id': '2026-09-26-zone-m2-pair', 'stage': stage, 'cohort': cohort,
            'raw_root_local_only': str(RAW), 'raw_note': 'raw outputs are local (gitignored); not a remote backup',

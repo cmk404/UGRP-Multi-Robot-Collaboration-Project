@@ -110,8 +110,16 @@ DOOR_SCENARIOS = {
     801: {'beam': (1.00, .08, .04), 'start': {'r1': (.00, .00, .00), 'r2': (.00, .00, .00)}},
     802: {'beam': (0.93, -.02, -.07), 'start': {'r1': (.06, -.04, .25), 'r2': (-.05, .06, -.20)}},
     803: {'beam': (1.07, .12, .06), 'start': {'r1': (-.04, .07, -.30), 'r2': (.07, .03, .15)}},
+    # stage 2 test (pre-registered; gen_stage2_seeds.py, rng 20260928; #202 checker feasible)
+    811: {'beam': (1.01, 0.01, -0.04), 'start': {'r1': (0.07, -0.1, -0.12), 'r2': (0.03, 0.03, 0.03)}},
+    812: {'beam': (0.97, 0.06, 0.08), 'start': {'r1': (0.05, -0.07, 0.29), 'r2': (0.05, -0.04, 0.26)}},
+    813: {'beam': (0.98, 0.08, 0.04), 'start': {'r1': (0.05, 0.09, 0.23), 'r2': (0.03, -0.03, -0.11)}},
+    814: {'beam': (1.06, 0.01, -0.04), 'start': {'r1': (0.02, -0.05, 0.1), 'r2': (0.1, 0.09, -0.13)}},
+    815: {'beam': (0.94, 0.08, -0.0), 'start': {'r1': (0.08, 0.06, -0.15), 'r2': (0.03, -0.1, -0.18)}},
+    816: {'beam': (0.97, 0.1, 0.05), 'start': {'r1': (0.08, 0.0, 0.11), 'r2': (0.09, -0.07, -0.08)}},
 }
 SCENARIOS.update(DOOR_SCENARIOS)
+STAGE2_TEST_SEEDS = tuple(range(811, 817))
 
 
 def git(*args):
@@ -687,7 +695,8 @@ def main():
         'weld': 'off', 'pose_source': 'owncam_pf_v2 localizer (own RGB + static tag map + own commands); no GT',
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
-        'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS,
+        'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS,
+        'approach_version': a.approach,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': drivers['r1'].version,
