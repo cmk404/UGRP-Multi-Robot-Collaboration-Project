@@ -17,3 +17,8 @@ if (( failed )); then
   echo 'Move the file to runtime storage, add it to .gitignore, or explicitly adopt Git LFS.' >&2
   exit 1
 fi
+
+# Media budget for experiments/ (docs/disk_management.md). Warning only; never blocks.
+if command -v python3 >/dev/null 2>&1 && [[ -f scripts/check_media_size.py ]]; then
+  python3 scripts/check_media_size.py --staged || true
+fi

@@ -23,7 +23,7 @@ SESSION_SPEC.loader.exec_module(SESSION_MODULE)
 class UgrpSessionTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.env = {**os.environ, "UGRP_SESSION_DIR": self.temp.name}
+        self.env = {**os.environ, "UGRP_SESSION_DIR": self.temp.name, "UGRP_MIN_FREE_GIB": "0"}
 
     def tearDown(self):
         self.temp.cleanup()
@@ -232,6 +232,52 @@ class UgrpSessionTests(unittest.TestCase):
         self.assertEqual(stopped.returncode, 2)
         self.assertIn("refusing an unverified kill", stopped.stderr)
         self.assertEqual(json.loads(record_path.read_text()), record)
+
+    def run_marker_session(self, *options, env=None, after_name=()):
+        marker = Path(self.temp.name) / "spawned"
+        if marker.exists():
+            marker.unlink()
+        result = subprocess.run(
+            [sys.executable, str(SESSION), "run", *options, "disk", *after_name, "--", sys.executable, "-c",
+             f"from pathlib import Path; Path({str(marker)!r}).touch()"],
+            env={**self.env, **(env or {})}, capture_output=True, text=True, timeout=10,
+        )
+        return result, marker.exists()
+
+    def test_free_space_floor_refuses_before_spawning(self):
+        impossible = {"UGRP_MIN_FREE_GIB": str(10**9)}
+        result, spawned = self.run_marker_session(env=impossible)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("refusing to start", result.stderr)
+        self.assertIn("--allow-low-disk", result.stderr)
+        self.assertFalse(spawned)
+        self.assertFalse((Path(self.temp.name) / "disk.json").exists())
+        result, spawned = self.run_marker_session("--min-free-gib", str(10**9))
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(spawned)
+
+    def test_allow_low_disk_and_explicit_floor_override(self):
+        impossible = {"UGRP_MIN_FREE_GIB": str(10**9)}
+        for options, after_name in ((("--allow-low-disk",), ()), ((), ("--allow-low-disk",)),
+                                    (("--min-free-gib", "0"), ()), ((), ("--min-free-gib=0",))):
+            result, spawned = self.run_marker_session(*options, env=impossible, after_name=after_name)
+            self.assertEqual(result.returncode, 0, (options, after_name, result.stderr))
+            self.assertTrue(spawned)
+
+    def test_default_floor_and_refusal_message(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(SESSION_MODULE.default_min_free_gib(), 10.0)
+        with mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true"}, clear=True):
+            self.assertEqual(SESSION_MODULE.default_min_free_gib(), 0.0)
+        with mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true", "UGRP_MIN_FREE_GIB": "3"}, clear=True):
+            self.assertEqual(SESSION_MODULE.default_min_free_gib(), 3.0)
+        usage = mock.Mock(free=5 * 2**30)
+        with mock.patch.object(SESSION_MODULE.shutil, "disk_usage", return_value=usage):
+            message = SESSION_MODULE.free_space_refusal(Path("/data"), 10.0)
+            self.assertIn("5.0 GiB free", message)
+            self.assertIn("floor 10 GiB", message)
+            self.assertIsNone(SESSION_MODULE.free_space_refusal(Path("/data"), 4.0))
+            self.assertIsNone(SESSION_MODULE.free_space_refusal(Path("/data"), 0.0))
 
 
 if __name__ == "__main__":

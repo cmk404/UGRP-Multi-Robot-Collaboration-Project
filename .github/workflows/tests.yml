@@ -78,6 +78,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: python -m harness.rgb_execution_bundle verify-registry --base "${{ github.event.pull_request.base.sha }}"
 
+      - name: Warn about heavy media added to experiments/ (warning only, docs/disk_management.md)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: python scripts/check_media_size.py --base "${{ github.event.pull_request.base.sha }}" --github-annotations
+
       - name: Run offline regression suite
         run: python scripts/run_ci_tests.py
 
