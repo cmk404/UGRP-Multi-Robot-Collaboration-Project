@@ -1,0 +1,664 @@
+{
+ "schema": "ugrp.vision_loc_episodes.v2",
+ "registered": "2026-09-26, Kiro, round 3: before any round-3 render, filter change evaluation or scoring",
+ "base_map": "zone_wide_door",
+ "map": "zone_wide_door_walls_v3_notags (maps/, base + walls_v3 + zero tags)",
+ "controller": {
+  "controller": "harness/m1_owncam_delivery.py",
+  "skill": "v9",
+  "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only), run with mode='diagnostic' (teacher pose)",
+  "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+  "pose_source": "teacher_gt_eval_only (simulator truth; run_vl_teacher_render.TeacherPoseSource) -- the M1 student used owncam_pf_v2",
+  "order_kind": "own_rgb_bay",
+  "controller_schema": "ugrp.m1_owncam_delivery.v3",
+  "bay_half_m": [
+   0.25,
+   0.25
+  ],
+  "contact_profile": "cargo_noslip_v1",
+  "runner_schema": "ugrp.m1_owncam_run.v3",
+  "contact_profile_status": "approved by the user 2026-09-26 (study-wide)",
+  "source_note": "M1 effective student (A1-A6b) as copied in kiro/zone-map-v3 experiments/2026-09-26-zone-env-v3/m1/prereg.json; used here as the TEACHER controller: pose source replaced by the simulator truth (run_vl_teacher_render.py), skill v9 mode diagnostic"
+ },
+ "design_rule": "Why: round-2 seeds were distinct but the episodes were not. Test ``vl-test-s917``\nre-drove train ``vl-train-s903`` (same spawn row, slot and cyan pickup cell; the\nGT teacher and the physics are deterministic), and every episode sharing a spawn\nrow shared its first leg exactly. Door passages to one slot converged within\n1 mm (``results/overlap_round2_vs_train.json``). Round 3 therefore changes the\ntrajectories themselves, not only the seeds:\n\n1. scenario: new seeds; each assignment (spawn row, destination slot) takes the\n   first seed from its range whose cyan pickup cell (``sim.zone_arena.episode``,\n   the setup-only scenario config) gives a (spawn row, cyan cell) pair and a\n   (cyan cell, slot) pair used by no round-2 episode (train, dev or test) and by\n   no round-3 episode designed before it;\n2. start pose: a setup-only spawn offset of the own robot (dx, dy, dyaw), drawn\n   per seed; the student's prior stays the nominal dock (within its std);\n3. path: a constant teacher pose bias (DART-style noise injection, the teacher\n   believes truth + bias), 1.2-3.0 cm in a random direction and up to 1 deg.\n\nOnly the scenario config is read (no simulator state, no render). The rendered\nepisodes are then audited with ``overlap_check.py`` (JPEG bytes, replay poses,\naligned trajectories); the exclusion rule is registered here, before rendering.",
+ "design_parameters": {
+  "dev_plan": [
+   [
+    0.55,
+    "C2"
+   ],
+   [
+    -0.85,
+    "A2"
+   ],
+   [
+    -2.25,
+    "B3"
+   ],
+   [
+    0.55,
+    "A1"
+   ],
+   [
+    -0.85,
+    "C3"
+   ],
+   [
+    -2.25,
+    "B2"
+   ]
+  ],
+  "test_plan": [
+   [
+    0.55,
+    "B1"
+   ],
+   [
+    -0.85,
+    "A1"
+   ],
+   [
+    -2.25,
+    "A2"
+   ],
+   [
+    0.55,
+    "C3"
+   ],
+   [
+    -0.85,
+    "B3"
+   ],
+   [
+    -2.25,
+    "C2"
+   ],
+   [
+    0.55,
+    "A3"
+   ],
+   [
+    -0.85,
+    "C1"
+   ]
+  ],
+  "seed_ranges": {
+   "dev": [
+    941,
+    950
+   ],
+   "test": [
+    951,
+    970
+   ]
+  },
+  "spawn_offset": {
+   "dx_m": [
+    -0.04,
+    0.06
+   ],
+   "dy_m": [
+    -0.08,
+    0.08
+   ],
+   "dyaw_deg": [
+    -6.0,
+    6.0
+   ]
+  },
+  "teacher_pose_bias": {
+   "r_m": [
+    0.012,
+    0.03
+   ],
+   "dyaw_deg": [
+    -1.0,
+    1.0
+   ]
+  },
+  "rng": "random.Random('vl3-spawn-<seed>') / random.Random('vl3-bias-<seed>')"
+ },
+ "units": {
+  "spawn_offset": "[dx m, dy m, dyaw deg] added to the own robot spawn (setup-only)",
+  "teacher_pose_bias": "[dx m, dy m, dyaw deg] added to the truth the teacher controller receives"
+ },
+ "independence": {
+  "tool": "overlap_check.py (JPEG bytes, replay poses within 1 mm / 0.1 deg with the same commanded pulses, aligned trajectories)",
+  "references": "dev: every round-2 episode (train, dev, test); test: every round-2 episode and every round-3 dev episode",
+  "rule": "a round-3 episode that is not independent is excluded from its split before any segmentation, localization or scoring of it; the exclusion is recorded"
+ },
+ "splits": {
+  "train": "round-2 train only (vl-train-s901..s908), model and calibration unchanged",
+  "dev": "round-2 dev (vl-dev-s909..s911) + round-3 dev (vl3-dev-*); round-2 test s912-s917 is a post-hoc diagnosis record (contaminated: s917 = train s903) and is not used for tuning",
+  "test": "round-3 test (vl3-test-*) only, scored once after prereg_v3.json is committed"
+ },
+ "episodes": [
+  {
+   "episode_id": "vl3-dev-s941",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 941,
+   "spawn_y": 0.55,
+   "slot_id": "C2",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    -0.2,
+    -0.85
+   ],
+   "spawn_offset": [
+    0.0314,
+    0.0072,
+    5.185
+   ],
+   "teacher_pose_bias": [
+    -0.0121,
+    -0.0239,
+    -0.927
+   ]
+  },
+  {
+   "episode_id": "vl3-dev-s942",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 942,
+   "spawn_y": -0.85,
+   "slot_id": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -0.05
+   ],
+   "spawn_offset": [
+    0.0403,
+    -0.0495,
+    -1.321
+   ],
+   "teacher_pose_bias": [
+    0.0195,
+    0.0153,
+    -0.949
+   ]
+  },
+  {
+   "episode_id": "vl3-dev-s943",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 943,
+   "spawn_y": -2.25,
+   "slot_id": "B3",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    -0.2,
+    -0.05
+   ],
+   "spawn_offset": [
+    0.0208,
+    0.0717,
+    -5.899
+   ],
+   "teacher_pose_bias": [
+    -0.0197,
+    0.016,
+    -0.622
+   ]
+  },
+  {
+   "episode_id": "vl3-dev-s945",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 945,
+   "spawn_y": 0.55,
+   "slot_id": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    -0.2,
+    -2.45
+   ],
+   "spawn_offset": [
+    0.0234,
+    0.0576,
+    -1.047
+   ],
+   "teacher_pose_bias": [
+    -0.017,
+    0.0159,
+    -0.259
+   ]
+  },
+  {
+   "episode_id": "vl3-dev-s946",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 946,
+   "spawn_y": -0.85,
+   "slot_id": "C3",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    0.4,
+    -1.65
+   ],
+   "spawn_offset": [
+    -0.0155,
+    0.0701,
+    0.825
+   ],
+   "teacher_pose_bias": [
+    -0.0104,
+    -0.0101,
+    0.211
+   ]
+  },
+  {
+   "episode_id": "vl3-dev-s947",
+   "split": "dev",
+   "role": "pf_dev_round3",
+   "seed": 947,
+   "spawn_y": -2.25,
+   "slot_id": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -0.05
+   ],
+   "spawn_offset": [
+    -0.0177,
+    -0.072,
+    2.03
+   ],
+   "teacher_pose_bias": [
+    -0.0021,
+    -0.0173,
+    0.33
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s951",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 951,
+   "spawn_y": 0.55,
+   "slot_id": "B1",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -0.05
+   ],
+   "spawn_offset": [
+    -0.04,
+    -0.0098,
+    4.243
+   ],
+   "teacher_pose_bias": [
+    0.0053,
+    -0.027,
+    0.493
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s954",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 954,
+   "spawn_y": -0.85,
+   "slot_id": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    0.4,
+    -0.85
+   ],
+   "spawn_offset": [
+    0.0412,
+    0.0765,
+    -5.871
+   ],
+   "teacher_pose_bias": [
+    0.0253,
+    -0.0039,
+    -0.013
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s955",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 955,
+   "spawn_y": -2.25,
+   "slot_id": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    0.4,
+    -1.65
+   ],
+   "spawn_offset": [
+    0.0042,
+    -0.0632,
+    2.918
+   ],
+   "teacher_pose_bias": [
+    -0.0132,
+    0.0218,
+    0.407
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s956",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 956,
+   "spawn_y": 0.55,
+   "slot_id": "C3",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -1.65
+   ],
+   "spawn_offset": [
+    -0.0248,
+    0.0649,
+    -5.576
+   ],
+   "teacher_pose_bias": [
+    0.0027,
+    0.022,
+    0.16
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s959",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 959,
+   "spawn_y": -0.85,
+   "slot_id": "B3",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -2.45
+   ],
+   "spawn_offset": [
+    -0.0271,
+    0.0571,
+    0.995
+   ],
+   "teacher_pose_bias": [
+    0.0084,
+    -0.0197,
+    0.243
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s961",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 961,
+   "spawn_y": -2.25,
+   "slot_id": "C2",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.0,
+    -0.85
+   ],
+   "spawn_offset": [
+    0.0024,
+    0.0023,
+    -0.008
+   ],
+   "teacher_pose_bias": [
+    -0.0114,
+    0.012,
+    0.677
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s962",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 962,
+   "spawn_y": 0.55,
+   "slot_id": "A3",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    0.4,
+    -0.85
+   ],
+   "spawn_offset": [
+    -0.018,
+    0.0542,
+    5.76
+   ],
+   "teacher_pose_bias": [
+    -0.0106,
+    0.0133,
+    0.198
+   ]
+  },
+  {
+   "episode_id": "vl3-test-s964",
+   "split": "test",
+   "role": "test_once_round3",
+   "seed": 964,
+   "spawn_y": -0.85,
+   "slot_id": "C1",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "cyan_cell": [
+    1.6,
+    0.75
+   ],
+   "spawn_offset": [
+    -0.0215,
+    0.0445,
+    -0.737
+   ],
+   "teacher_pose_bias": [
+    -0.0177,
+    -0.0066,
+    0.163
+   ]
+  }
+ ],
+ "rejected_seeds": [
+  {
+   "seed": 944,
+   "split": "dev",
+   "spawn_y": 0.55,
+   "slot_id": "A1",
+   "cyan_cell": [
+    1.6,
+    -0.85
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 952,
+   "split": "test",
+   "spawn_y": -0.85,
+   "slot_id": "A1",
+   "cyan_cell": [
+    -0.2,
+    0.75
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 953,
+   "split": "test",
+   "spawn_y": -0.85,
+   "slot_id": "A1",
+   "cyan_cell": [
+    -0.2,
+    0.75
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 957,
+   "split": "test",
+   "spawn_y": -0.85,
+   "slot_id": "B3",
+   "cyan_cell": [
+    -0.2,
+    0.75
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 958,
+   "split": "test",
+   "spawn_y": -0.85,
+   "slot_id": "B3",
+   "cyan_cell": [
+    1.0,
+    -1.65
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 960,
+   "split": "test",
+   "spawn_y": -2.25,
+   "slot_id": "C2",
+   "cyan_cell": [
+    1.0,
+    -2.45
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  },
+  {
+   "seed": 963,
+   "split": "test",
+   "spawn_y": -0.85,
+   "slot_id": "C1",
+   "cyan_cell": [
+    1.0,
+    -0.05
+   ],
+   "reasons": [
+    "spawn_row_and_cyan_cell_used"
+   ]
+  }
+ ]
+}
