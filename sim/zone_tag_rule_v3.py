@@ -330,20 +330,101 @@ def zone_sites(static, faces_, sites):
                   distance_m=_round(face['coord'] - x))
 
 
+# --------------------------------------------------------------------------- amendment A1
+# 2026-09-26, written AFTER the v3 loop test failed (experiments/2026-09-26-zone-env-v3/
+# prereg_amendments.json A1) and BEFORE any run on the amended maps. It only ADDS sites,
+# after every v3 site (v3 tag ids 0..n-1 keep their poses), with the same column and merge
+# rule. Why (post hoc evidence, loop/failure_analysis.json and st6_candidates.json):
+#  S6 the loaded robot reaches a door along the pickup-side face of the wall that ends at
+#     the door edge facing the pickup region; there v2 fixes came from tags seen OVER the
+#     0.10 m wall (1149 of 1257 sightings), which the 0.40 m wall hides, and a tag on that
+#     face is readable only 0.4-0.9 m along it (wide pans), so sites every 0.30 m.
+#  S7 in the door the only v3 tags are the far east-wall sites (2.7-3.2 m, all near the
+#     optical axis, 0.2-0.4 m PnP range error): y and yaw couple. One site on the nearer
+#     lateral perimeter wall, 45 deg from the door centre on the zone side, is seen from
+#     the whole door region at 1.4-1.9 m.
+RULE_ID_A1 = 'ugrp.zone_tag_rule.v3a1'
+APPROACH_STEP_M = .30
+APPROACH_REACH_M = 1.20
+FLANK_BEARING_DEG = 45.
+PLACEMENT_V3A1 = {
+    **PLACEMENT_V3, 'rule': RULE_ID_A1, 'base_rule': RULE_ID, 'amendment': 'A1',
+    'approach_step_m': APPROACH_STEP_M, 'approach_reach_m': APPROACH_REACH_M, 'flank_bearing_deg': FLANK_BEARING_DEG,
+    'sites': PLACEMENT_V3['sites'] + (
+        '; amendment A1 adds S6 door approach lane (pickup-side face of the wall at the door edge that faces '
+        'the pickup region, every 0.30 m up to 1.20 m from the door-frame site) and S7 door exit flank (nearer '
+        'lateral perimeter wall, 45 deg from the door centre on the zone side)'),
+    'rule_doc': 'experiments/2026-09-26-zone-env-v3/prereg_amendments.json',
+}
+
+
+def _pickup_side(static, door):
+    """(normal of the pickup-side face, centre line of the pickup region across the door axis)."""
+    (px, py) = static['regions']['pickup']['center_m']
+    if door['axis'] != 'x':
+        raise ValueError('door approach rule implemented for x-axis doors')
+    return ((-1, 0) if px < door['center_m'][0] else (1, 0)), py
+
+
+def door_approach_sites(static, faces_, sites):
+    half = sites.plate/2
+    for door in (p for p in static.get('passages', []) if p['kind'] == 'door'):
+        normal, centre_line = _pickup_side(static, door)
+        cy, width = door['center_m'][1], door['width_m']
+        if abs(centre_line - cy) <= width/2:
+            continue                                   # the pickup centre line runs through the opening
+        direction = -1 if centre_line < cy else 1
+        edge = cy + direction*width/2
+        s0 = edge + direction*FRAME_OFFSET_M
+        probe = (door['center_m'][0], s0)
+        wall = next((w for w in walls(static) if w['id'] not in ('wall_north', 'wall_south', 'wall_west', 'wall_east')
+                     and _box(w)[0] < probe[0] < _box(w)[1] and _box(w)[2] < probe[1] < _box(w)[3]), None)
+        if wall is None:
+            continue                                   # that edge is a perimeter wall
+        face = _face_at(faces_, wall['id'], normal)
+        k = 1
+        while k*APPROACH_STEP_M <= APPROACH_REACH_M + 1e-9:
+            s = s0 + direction*k*APPROACH_STEP_M
+            if not _fits(face, s, half + END_MARGIN_M):
+                break
+            sites.add('door_approach', face, s, f"{door['id']} approach lane {k*APPROACH_STEP_M:.2f} m from the frame",
+                      passage=door['id'])
+            k += 1
+
+
+def door_flank_sites(static, faces_, sites):
+    half = sites.plate/2
+    for door in (p for p in static.get('passages', []) if p['kind'] == 'door'):
+        normal, _ = _pickup_side(static, door)
+        zone_dir = -normal[0]                          # +1: the zone side is east of the door
+        cx, cy = door['center_m']
+        lateral = [f for f in faces_ if f['axis'] == 'x' and f['wall'] in ('wall_north', 'wall_south')]
+        face = min(lateral, key=lambda f: abs(f['coord'] - cy))
+        x = cx + zone_dir*abs(face['coord'] - cy)*math.tan(math.radians(FLANK_BEARING_DEG))
+        eye = (x, face['coord'] + face['normal'][1]*.01)
+        if not (_fits(face, x, half + END_MARGIN_M) and line_of_sight(static, (cx + zone_dir*.05, cy), eye)):
+            raise ValueError(f"no door flank site for {door['id']}")
+        sites.add('door_flank', face, x, f"{door['id']} exit flank ({FLANK_BEARING_DEG:.0f} deg, zone side)",
+                  passage=door['id'], distance_m=_round(math.dist((cx, cy), (x, face['coord']))))
+
+
 def place_sites(static, placement=PLACEMENT_V3):
-    """(sites, merged) of the v3 rule for a static map (deterministic, map only)."""
+    """(sites, merged) of the v3 rule (or v3 + amendment A1) for a static map (deterministic, map only)."""
     faces_ = faces(static)
     sites = _Sites(placement['plate_m'])
     door_frame_sites(static, faces_, sites)
     corridor_sites(static, faces_, sites)
     pickup_sites(static, faces_, sites)
     zone_sites(static, faces_, sites)
+    if placement.get('rule') == RULE_ID_A1:
+        door_approach_sites(static, faces_, sites)
+        door_flank_sites(static, faces_, sites)
     return sites.sites, sites.merged
 
 
 def place_tags_v3(static, placement=PLACEMENT_V3):
     """(tags, sites, merged): one tag per (site, column height), ids in site order."""
-    if placement.get('rule') != RULE_ID:
+    if placement.get('rule') not in (RULE_ID, RULE_ID_A1):
         raise ValueError('not a v3 placement')
     plate, size = placement['plate_m'], placement['size_m']
     heights = placement['column_heights_m']

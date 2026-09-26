@@ -28,7 +28,7 @@ from sim.research_dispatch_arena import digest
 from sim.session_scenes import ROOT
 from sim.zone_arena import MAP_DIR, apply_wall_profile, authored_map, episode
 from sim.zone_scene import ZoneScene
-from sim.zone_tag_rule_v3 import PLACEMENT_V3, RULE_ID as RULE_V3
+from sim.zone_tag_rule_v3 import PLACEMENT_V3, PLACEMENT_V3A1, RULE_ID as RULE_V3, RULE_ID_A1 as RULE_V3A1
 from sim.zone_tag_rule_v3 import pickup_bays as rule_v3_pickup_bays
 from sim.zone_tag_rule_v3 import place_tags_v3
 
@@ -76,7 +76,17 @@ ENV_V3_TAGGED_MAPS = {
     'zone_wide_corridor_tags_v3': {'base': 'zone_wide_corridor', 'placement': PLACEMENT_V3,
                                    'wall_profile': 'walls_v3', 'version': 3},
 }
-ALL_TAGGED_MAPS = {**TAGGED_MAPS, **ENV_V3_TAGGED_MAPS}
+# 2026-09-26 amendment A1 (experiments/2026-09-26-zone-env-v3/prereg_amendments.json), written after
+# the v3 loop test failed: the v3 sites unchanged (same tag ids and poses) plus door-approach and
+# door-flank sites (sim/zone_tag_rule_v3.PLACEMENT_V3A1). New files; the v3 files stay as published.
+# The corridor map has no door, so A1 would equal v3 there and gets no A1 file.
+ENV_V3A1_TAGGED_MAPS = {
+    'zone_wide_door_tags_v3a1': {'base': 'zone_wide_door', 'placement': PLACEMENT_V3A1, 'wall_profile': 'walls_v3',
+                                 'version': 3, 'amends': 'zone_wide_door_tags_v3'},
+    'zone_wide_two_doors_tags_v3a1': {'base': 'zone_wide_two_doors', 'placement': PLACEMENT_V3A1,
+                                      'wall_profile': 'walls_v3', 'version': 3, 'amends': 'zone_wide_two_doors_tags_v3'},
+}
+ALL_TAGGED_MAPS = {**TAGGED_MAPS, **ENV_V3_TAGGED_MAPS, **ENV_V3A1_TAGGED_MAPS}
 PLATE_RGBA = '.95 .95 .95 1'
 CELL_RGBA = '.02 .02 .02 1'
 
@@ -150,7 +160,7 @@ def _free_intervals(static, face):
 
 def place_tags(static, placement=DEFAULT_PLACEMENT):
     """Deterministic tag list for a static map (ids in wall/face/position order)."""
-    if placement.get('rule') == RULE_V3:
+    if placement.get('rule') in (RULE_V3, RULE_V3A1):
         return place_tags_v3(static, placement)[0]
     size, plate = placement['size_m'], placement['plate_m']
     if plate < size or placement['center_height_m'] - plate/2 < 0:
@@ -247,7 +257,7 @@ def build_tagged_map(name):
     base = authored_map(spec['base'])
     # v3: the wall profile raises the walls of a copy; the base map file stays unchanged.
     static = apply_wall_profile(base, spec['wall_profile']) if spec.get('wall_profile') else base
-    v3 = spec['placement'].get('rule') == RULE_V3
+    v3 = spec['placement'].get('rule') in (RULE_V3, RULE_V3A1)
     if v3:
         tags, sites, merged = place_tags_v3(static, spec['placement'])
     else:
@@ -256,6 +266,9 @@ def build_tagged_map(name):
     value.update(map_id=name, version=spec.get('version', 1),
                  base_map={'map_id': base['map_id'], 'version': base['version'],
                            'static_map_sha256': digest(base)})
+    if spec.get('amends'):
+        amended = json.loads((MAP_DIR/(spec['amends']+'.json')).read_text())
+        value['amends'] = {'map_id': spec['amends'], 'static_map_sha256': digest(amended)}
     value['landmarks'] = {
         'schema': LANDMARK_SCHEMA, 'family': FAMILY, 'opencv_dictionary': OPENCV_DICTIONARY,
         'dictionary_bits_sha256': dictionary_digest([t['id'] for t in tags]),

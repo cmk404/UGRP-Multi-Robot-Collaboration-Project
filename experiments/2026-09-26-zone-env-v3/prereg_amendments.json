@@ -1,0 +1,63 @@
+{
+  "schema": "ugrp.zone_env_v3_amendments.v1",
+  "amendments": [
+    {
+      "id": "A1",
+      "registered": "2026-09-26, Kiro (account 2, continuing the account-1 session), after the v3 loop test (loop/prereg.json, once, source 8b361441) failed its gates and BEFORE any run on the amended maps",
+      "policy_used": "prereg.json amendment_policy: one round, ADD tags only, each added site with where and why, new map version (v3 files unchanged), fresh seeds (loop test nobox s741-s743, box s744-s749; M1 s751-s753). No seed-by-seed tuning: the added sites follow two map-level rules, not episode positions",
+      "trigger": {
+        "result": "loop/results.json (sha256 26242139619c8534aaccfd32efbc1fe18be02b33d58b81cf41101da7bcd72cdc): LG1 box 3/6, LG2 nobox 0/3, LG3 223 wall contacts, 0 box drops -> gate FAIL",
+        "failures": {
+          "s721_nobox": "R3 door-region p90 0.087 m (y/yaw offset inside the door; only far east-wall tags seen)",
+          "s722_nobox": "R2 4 contacts: right finger vs wall_divider_1 during a look pan inside the door (estimate error 0.013 m)",
+          "s723_nobox": "R2 3 contacts: right finger vs wall_divider_1 during a look pan inside the door (estimate error 0.002 m)",
+          "s724_box": "time limit 240 s (18 looks, 12 'uncertain'); R2/R3/R4 pass",
+          "s727_box": "R2 110 contacts (box, then wheel and finger vs the divider_1 jamb), R3 p90 0.235 m after ~0.11 m drift along the divider without any tag",
+          "s728_box": "time limit and R2 106 contacts, R3 p90 0.160 m: 570 of 570 loaded-strip frames without a tag, x error -0.11 m",
+          "dev_s711_s712": "R3 (door region) fail, not gated"
+        }
+      },
+      "mechanisms": {
+        "M1_loaded_strip_blind": "The loaded robot reaches door_1 from the pickup region along the west face of wall_divider_1 (GT x 1.80-2.05, y -1.30..-0.30). In the v2 baseline test 559 of 944 strip frames had a tag; of 1257 sightings 1149 were tags seen OVER the 0.10 m divider (east room), which the 0.40 m walls hide (loop/failure_analysis.json v2_sightings_under_v3_total). With v3 only 31 sightings would remain. The camera is 0.05-0.2 m from the divider and the held box fills the lower image: a tag on that face is readable only 0.4-0.9 m along it with the wide pans 970/2030 (st6_candidates.json strip_loaded, z 0.15). Loaded odometry then drifts in x (s728 -0.11 m) with false confidence (std 0.03 m)",
+        "M2_door_y_yaw": "Inside door_1 the only v3 tags ahead are the east-wall zone sites 2.7-3.2 m away, all within a narrow bearing band near the optical axis, with 0.2-0.4 m PnP range error (st6_candidates.json door_*). y and yaw are then poorly separated (s711, s721). In v2 the north-wall tags x 3.3-4.3 separated them (PR #178 dev a3); st6 shows north-wall positions x 3.05-3.95 are read from 10-15 of 15 unloaded and 3-5 of 5 loaded door stations at 1.4-1.9 m",
+        "M3_taller_walls_physical": "NOT addressable by tags. With 0.10 m walls only the chassis below 0.10 m (x +0.094 m, |y| 0.081 m from the base) could touch a wall; the arm, fingers and held box passed over it. With 0.40 m walls the parts above 0.10 m count: loaded x up to +0.167 m, unloaded look pans |y| up to 0.141 m (mj_forward, posture library). The planner (harness/map_goto.plan_path with escape_start_m=0.25 in harness/owncam_drive) lets a path leave through blocked cells within 0.25 m of the start, and its 2-D envelope +-0.15 m plus 0.02 m margin in the 0.50 m door leaves ~0.08 m per side; s722/s723 finger contacts happened at estimate error 2-13 mm. The student is fixed for this validation, so M3 stays open",
+        "M4_pickup_area_looks": "More 'uncertain' looks in the pickup area (s724 12, s728 16) push two box episodes to the 240 s limit. Partly M1; not specifically addressed"
+      },
+      "added_sites": {
+        "rule_id": "ugrp.zone_tag_rule.v3a1 (sim/zone_tag_rule_v3.PLACEMENT_V3A1, door_approach_sites, door_flank_sites)",
+        "S6_door_approach": {
+          "where": "for every door: at the door edge that faces the centre line of the pickup region, if that edge ends an interior wall, on that wall's pickup-side face, one site (3 tags, z 0.05/0.15/0.25) every 0.30 m from the door-frame site up to 1.20 m, merged with existing sites within 0.30 m",
+          "why": "M1: gives the loaded robot a tag 0.3-0.6 m along the face it drives next to, inside the 0.4-0.9 m window where st6 detects a tag from the strip (0.30 m spacing keeps one site in the window in some direction from every point)",
+          "zone_wide_door_tags_v3a1": "site_11 (2.175, -0.55), site_12 (2.175, -1.15), site_13 (2.175, -1.45) on wall_divider_1 west face; 0.60 m (2.175, -0.85) merged into v3 site_05"
+        },
+        "S7_door_flank": {
+          "where": "for every door: one site on the nearer lateral perimeter wall face (north or south wall), on the zone side, at 45 deg from the door centre",
+          "why": "M2: a tag off the door axis at 1.4-1.9 m that the door region sees with the wide pans, to separate y from yaw where only the far east wall is in view",
+          "zone_wide_door_tags_v3a1": "site_14 (3.575, 1.425) on wall_north inner face"
+        },
+        "expected_coverage_posthoc_st6": "nearest 0.15 m candidate within 0.075 m: strip stations with a readable divider-face site 1/10 (v3) -> 6/10 (v3a1; all five at base x 1.85, one of five at x 1.95); door stations with the flank position 14/15 unloaded, 5/5 loaded"
+      },
+      "maps": {
+        "zone_wide_door_tags_v3a1": {"tags": 45, "sites": 15, "v3_tags_unchanged": "ids 0-32 identical to zone_wide_door_tags_v3", "file_sha256": "23de1456e5d38a89bd8cf0b0e7e31521599bb71d39272f80d5d295ae46d8bd3c", "static_map_sha256": "79e1fdc64099039b357853db98ad747457c8473d167028bc8d2d4e0143e0fdea", "amends": "zone_wide_door_tags_v3 static_map_sha256 90561b95a559eec8631347256870af2c457879912edd4ae27d484a679d947491", "validated": "loop test (loop/prereg_a1.json); M1 dev check only if the loop gates pass (m1/prereg_a1.json)"},
+        "zone_wide_two_doors_tags_v3a1": {"tags": 54, "sites": 18, "v3_tags_unchanged": "ids 0-35 identical to zone_wide_two_doors_tags_v3", "file_sha256": "6088284c6a590b3f9573ac58ba0b6e67661320735fbd61ddf99d6ca4bd58351a", "static_map_sha256": "53d8f00c374a1a3b0de989ec1bdcccc862bd14dbd6273a98ec44ab142b249116", "validated": "file/rule/compile tests only"},
+        "zone_wide_corridor": "no door: A1 adds nothing, no A1 file (zone_wide_corridor_tags_v3 stays the corridor map)",
+        "tag_counts_vs_earlier": "door 45 (v1 70, v2 80, v3 33); two_doors 54 (v1 65, v2 84, v3 36)"
+      },
+      "unchanged": "walls_v3 (0.40 m), tag size/plate/column, v3 sites and ids, runner scripts/run_owncam_closed_loop.py, student driver v2 + calibration_loop_v2.json, gates R1-R4 and LG1-LG3, stop rules, observer wrapper, contact profile cargo_noslip_v1, weld OFF, thread caps, at most 2 concurrent sims, disk >= 30 GiB",
+      "cohorts": {
+        "loop": "loop/prereg_a1.json: a1test-nobox-s741/742/743, a1test-box-s744..s749 (spawn rows 0.55/-0.85/-2.25 in turn), map zone_wide_door_tags_v3a1, test once, raw outputs/zone-env-v3-20260926/loop/a1-test",
+        "m1": "m1/prereg_a1.json: m1a1-s751 (0.55, A2), m1a1-s752 (-0.85, C2), m1a1-s753 (-2.25, B2); only if LG1 and LG2 and LG3 of the A1 loop test pass"
+      },
+      "prediction_before_running": "M1 and M2 should improve (fewer tag-less strip frames, lower door-region p90). M3 is unchanged, so wall contacts (R2) inside the door and at the divider jamb are expected to remain in some episodes; LG3 may fail for that reason alone. The localization-only readout (R1, R3, R4) is reported separately, not as a gate",
+      "evidence": {
+        "loop/results.json": "26242139619c8534aaccfd32efbc1fe18be02b33d58b81cf41101da7bcd72cdc",
+        "loop/failure_analysis.json": "196703c1ba10f4f068537f337cab4ef48695286356109a845f4791527623f47b",
+        "st6_candidates.json": "920fbca800ae48efad065ed08bea3cca53f88ad4add58a75d22c58092f015e84",
+        "loop/prereg.json": "1b982d32bacaec220bc8838dc97d2537dc1f8874253fd75409d07827edd8f950",
+        "prereg.json": "15310deae07c39e4df56407f0a6387942cd482b3ed76fbff503a1264fd97722d",
+        "tag_rule_v3.md": "ed778bcbb8bb40ce4fae38cd6934d6a40540d7fc3c69d7c98c3f1e21ba559eb4",
+        "st6_note": "st6_candidates.json code.dirty=true only because experiments/2026-09-26-zone-env-v3/build_tensorboard.py (not imported) was untracked; the first ST6 run overflowed the 10000-geom render buffer and is kept as outputs/.../st6-overflowed, not used"
+      }
+    }
+  ]
+}

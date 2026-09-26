@@ -31,6 +31,9 @@ PUBLISHED_SHA256 = {
     'zone_wide_door_tags_v3': '74a3a95925a9531878b43a9c63d26f34ce391ede852d90b4f592e54c793fee0e',
     'zone_wide_two_doors_tags_v3': '9a1391762661c0303105878caa7854a031896bed68b5c2651031d29dc9a8d290',
     'zone_wide_corridor_tags_v3': '1414781ac689012dc5d679266da625c36ab9d5362ebeddbbd342a3ad81ba5243',
+    # amendment A1 (experiments/2026-09-26-zone-env-v3/prereg_amendments.json)
+    'zone_wide_door_tags_v3a1': '23de1456e5d38a89bd8cf0b0e7e31521599bb71d39272f80d5d295ae46d8bd3c',
+    'zone_wide_two_doors_tags_v3a1': '6088284c6a590b3f9573ac58ba0b6e67661320735fbd61ddf99d6ca4bd58351a',
 }
 # Robot prompt text of the walled base maps (sim.zone_arena.static_map_text) before v3.
 BASE_TEXT_SHA256 = {
@@ -39,6 +42,8 @@ BASE_TEXT_SHA256 = {
     'zone_wide_corridor': '2df40afbd13c1bdd09baa89178d53f94ae3f80d289ed98a5ce2fb426a0bb1a9d',
 }
 V3 = ('zone_wide_door_tags_v3', 'zone_wide_two_doors_tags_v3', 'zone_wide_corridor_tags_v3')
+V3A1 = ('zone_wide_door_tags_v3a1', 'zone_wide_two_doors_tags_v3a1')
+V3A1_COUNTS = {'zone_wide_door_tags_v3a1': (45, 15), 'zone_wide_two_doors_tags_v3a1': (54, 18)}
 V3_COUNTS = {'zone_wide_door_tags_v3': (33, 11), 'zone_wide_two_doors_tags_v3': (36, 12),
              'zone_wide_corridor_tags_v3': (33, 11)}
 # zone_wide_door_tags_v3 sites of tag_rule_v3.md: (kind, wall, normal, centre).
@@ -68,12 +73,13 @@ class PublishedMapTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(static_map_text(authored_map(name)).encode()).hexdigest(), digest)
 
     def test_v1_v2_registry_is_unchanged(self):
-        from sim.zone_landmarks import ALL_TAGGED_MAPS, ENV_V3_TAGGED_MAPS, TAGGED_MAPS
+        from sim.zone_landmarks import ALL_TAGGED_MAPS, ENV_V3_TAGGED_MAPS, ENV_V3A1_TAGGED_MAPS, TAGGED_MAPS
         self.assertEqual(set(TAGGED_MAPS), {'zone_wide_door_tags_v1', 'zone_wide_two_doors_tags_v1',
                                             'zone_wide_corridor_tags_v1', 'zone_wide_door_tags_v2',
                                             'zone_wide_two_doors_tags_v2'})
         self.assertEqual(set(ENV_V3_TAGGED_MAPS), set(V3))
-        self.assertEqual(set(ALL_TAGGED_MAPS), set(TAGGED_MAPS) | set(V3))
+        self.assertEqual(set(ENV_V3A1_TAGGED_MAPS), set(V3A1))
+        self.assertEqual(set(ALL_TAGGED_MAPS), set(TAGGED_MAPS) | set(V3) | set(V3A1))
 
 
 class WallProfileTests(unittest.TestCase):
@@ -214,6 +220,67 @@ class TagRuleV3Tests(unittest.TestCase):
                                ('passing_bay', 'wall_bay_south', (0, 1), (3.1, .375))})
 
 
+class AmendmentA1Tests(unittest.TestCase):
+    """prereg_amendments.json A1: v3 unchanged, tags only added, by two map-level rules."""
+
+    def test_a1_only_adds_sites_after_the_unchanged_v3_sites(self):
+        from sim.research_dispatch_arena import digest
+        from sim.zone_landmarks import ENV_V3A1_TAGGED_MAPS, tagged_map
+        for name in V3A1:
+            a1 = tagged_map(name)                                 # refuses drift from the definition
+            v3 = tagged_map(ENV_V3A1_TAGGED_MAPS[name]['amends'])
+            self.assertEqual(a1['amends'], {'map_id': v3['map_id'], 'static_map_sha256': digest(v3)})
+            n_tags, n_sites = len(v3['landmarks']['tags']), len(v3['landmarks']['sites'])
+            self.assertEqual(a1['landmarks']['tags'][:n_tags], v3['landmarks']['tags'])
+            self.assertEqual(a1['landmarks']['sites'][:n_sites], v3['landmarks']['sites'])
+            self.assertEqual(a1['landmarks']['merged_sites'][:len(v3['landmarks']['merged_sites'])],
+                             v3['landmarks']['merged_sites'])
+            self.assertEqual((len(a1['landmarks']['tags']), len(a1['landmarks']['sites'])), V3A1_COUNTS[name])
+            self.assertEqual({s['kind'] for s in a1['landmarks']['sites'][n_sites:]}, {'door_approach', 'door_flank'})
+            same = lambda m: {k: v for k, v in m.items() if k not in ('map_id', 'landmarks', 'amends')}
+            self.assertEqual(same(a1), same(v3))                  # walls, doors, zones, cameras unchanged
+            self.assertEqual(a1['landmarks']['placement']['rule'], 'ugrp.zone_tag_rule.v3a1')
+            self.assertEqual(a1['landmarks']['placement']['base_rule'], 'ugrp.zone_tag_rule.v3')
+
+    def test_a1_sites_of_the_validated_door_map(self):
+        from sim.zone_landmarks import tagged_map
+        added = tagged_map('zone_wide_door_tags_v3a1')['landmarks']['sites'][11:]
+        self.assertEqual([(s['kind'], s['wall'], s['normal_xy'], s['center_m']) for s in added], [
+            ('door_approach', 'wall_divider_1', [-1, 0], [2.175, -.55]),
+            ('door_approach', 'wall_divider_1', [-1, 0], [2.175, -1.15]),
+            ('door_approach', 'wall_divider_1', [-1, 0], [2.175, -1.45]),
+            ('door_flank', 'wall_north', [0, -1], [3.575, 1.425])])
+        merged = tagged_map('zone_wide_door_tags_v3a1')['landmarks']['merged_sites']
+        self.assertIn({'kind': 'door_approach', 'purpose': 'door_1 approach lane 0.60 m from the frame',
+                       'wall': 'wall_divider_1', 'normal_xy': [-1, 0], 'center_m': [2.175, -.85],
+                       'served_by': 'site_05', 'passage': 'door_1'}, merged)
+
+    def test_a1_is_map_only_and_leaves_v3_placement_alone(self):
+        from sim.zone_arena import apply_wall_profile, authored_map
+        from sim.zone_tag_rule_v3 import PLACEMENT_V3, PLACEMENT_V3A1, place_tags_v3
+        static = apply_wall_profile(authored_map('zone_wide_corridor'), 'walls_v3')
+        self.assertEqual(place_tags_v3(static, PLACEMENT_V3A1), place_tags_v3(static, PLACEMENT_V3))  # no door
+        self.assertEqual(PLACEMENT_V3['rule'], 'ugrp.zone_tag_rule.v3')
+        self.assertNotIn('amendment', PLACEMENT_V3)
+
+    def test_a1_prereg_uses_fresh_seeds_and_the_same_gates(self):
+        import json
+        x = ROOT/'experiments'/'2026-09-26-zone-env-v3'
+        base, a1 = (json.loads((x/'loop'/f).read_text()) for f in ('prereg.json', 'prereg_a1.json'))
+        self.assertEqual([e['seed'] for e in a1['episodes']], list(range(741, 750)))
+        self.assertEqual({e['map'] for e in a1['episodes']}, {'zone_wide_door_tags_v3a1'})
+        self.assertEqual({e['split'] for e in a1['episodes']}, {'test'})
+        self.assertFalse({e['seed'] for e in a1['episodes']} & {e['seed'] for e in base['episodes']})
+        for key in ('student', 'gates', 'cohort_gate', 'goal', 'teacher_part'):
+            self.assertEqual(a1[key], base[key], key)
+        m1 = json.loads((x/'m1'/'prereg_a1.json').read_text())
+        self.assertEqual([e['seed'] for e in m1['episodes']], [751, 752, 753])
+        self.assertEqual({e['map'] for e in m1['episodes']}, {'zone_wide_door_tags_v3a1'})
+        amend = json.loads((x/'prereg_amendments.json').read_text())['amendments'][0]
+        self.assertEqual(amend['maps']['zone_wide_door_tags_v3a1']['file_sha256'],
+                         PUBLISHED_SHA256['zone_wide_door_tags_v3a1'])
+
+
 @unittest.skipUnless(importlib.util.find_spec('mujoco'), 'mujoco is not installed')
 class V3SceneTests(unittest.TestCase):
     GOAL, EXTRA = {'A': {'cyan': 1}}, {'red': 1}
@@ -253,6 +320,23 @@ class V3SceneTests(unittest.TestCase):
             self.assertEqual(scene.manifest['contact_solver_profile'], 'cargo_noslip_v1')
             self.assertEqual(scene.manifest['wall_profile']['id'], 'walls_v3')
             self.assertEqual(scene.manifest['tag_count'], 33)
+        finally:
+            world.close()
+
+    def test_a1_door_map_compiles_with_0p40_m_walls_and_45_visual_only_tags(self):
+        import mujoco
+        scene, world = self.world('zone_wide_door_tags_v3a1', 'cargo_noslip_v1')
+        try:
+            model = world.model
+            names = [mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_GEOM, g) or '' for g in range(model.ngeom)]
+            for g, n in enumerate(names):
+                if n.startswith('zone_wall_'):
+                    self.assertAlmostEqual(float(model.geom_size[g][2]), .20, places=6)
+                if n.startswith('tag_'):
+                    self.assertEqual((int(model.geom_contype[g]), int(model.geom_conaffinity[g])), (0, 0))
+            self.assertEqual(scene.manifest['tag_count'], 45)
+            self.assertLess(model.ngeom, 9000)                     # below the 10000 render-geom buffer
+            self.assertEqual(int(model.opt.noslip_iterations), 10)
         finally:
             world.close()
 
