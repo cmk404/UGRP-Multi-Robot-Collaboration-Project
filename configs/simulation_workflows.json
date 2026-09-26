@@ -627,6 +627,23 @@
         "--prereg"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-m1-owncam-memory-run",
+      "purpose": "M1 자기 카메라 배달의 관측 기억 ON/OFF 비교(같은 M1 러너, 조건별 제어기만 교체: off = 동결 M1, memory_v1 = 한 번 보고 기억하기)",
+      "entry": "scripts/run_m1_owncam_memory.py",
+      "docs": "experiments/2026-09-26-zone-owncam-memory/prereg.json, docs/design/2026-09-26-owncam-memory-reuse.md",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; thread caps 1 and >= 30 GiB free are enforced; M1 contract rejects any non own-camera pose source; GT only in eval_only/; weld OFF",
+      "version": "1.0.0",
+      "runner": "scripts.run_m1_owncam_memory",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg",
+        "--condition"
+      ],
+      "output_kind": "directory"
     }
   ]
 }
