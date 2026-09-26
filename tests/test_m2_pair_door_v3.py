@@ -88,3 +88,11 @@ def test_jaw_override_port_replaces_only_servo1_after_activation():
     assert fake.got[-2]['pulse'] == 2000 and fake.got[-1]['pulse'] == 1400 and port.replaced == 1
     port.hold(2.)
     assert fake.got[-1] == {'kind': 'hold'}
+
+
+def test_door_v3_takes_every_door_v2_branch():
+    # dev13-813 at 9b0ca56: the depot-slot rule was gated on door_version == 'v2' only, so v3 ran without
+    # it (crossing approach paths, 105 robot-robot contact samples). v3 must be v2 + the lift check.
+    src = (ROOT / 'scripts' / 'run_m2_pair.py').read_text()
+    assert "door_version == 'v2'" not in src and "version == 'v2'" not in src
+    assert "a.door_version in ('v2', 'v3')" in src

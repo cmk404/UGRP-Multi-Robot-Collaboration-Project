@@ -693,7 +693,7 @@ def main():
     stations_true = {r: list(true_grasps[role]['base_xyyaw']) for r, role in ROLES.items()}
     # ---- setup-only start poses --------------------------------------------------------------
     depot = {r: r for r in ROLES}
-    if a.stage == 'door' and a.door_version == 'v2':
+    if a.stage == 'door' and a.door_version in ('v2', 'v3'):   # v3 = v2 + lift check (dev13-813 at 9b0ca56 missed this)
         depot = depot_assignment(static, spawns, prestations)
     for rid in ROLES:
         sx, sy, _z, syaw = spawns[depot[rid]]
