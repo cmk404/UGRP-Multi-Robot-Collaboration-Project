@@ -260,12 +260,16 @@ def tensorboard(runs, dev, stage, cohort, snapshot):
     view = RAW / 'tensorboard-view' / snapshot
     names = {}
     for x, label in [(r, 'test') for r in runs] + [(d, 'dev') for d in dev if d['stage'] == runs[0]['stage']
-                                                   and (d['drop_injection'] is not None) == (stage == 'stage3')]:
+                                                   and (d['drop_injection'] is not None) == (stage == 'stage3')
+                                                   and stage != 'stage2b-completion']:
         name = (f"m2{x['stage'][0]}{'' if label == 'test' else 'dev'}-{x['arm']}-s{x['seed']}"
                 + ('-drop' if x['drop_injection'] else ''))
         if stage == 'stage2c':
-            name = (f"m2c{'' if label == 'test' else 'dev'}-{x['door_version'] or 'v?'}-{x['arm']}-s{x['seed']}"
+            tag = '' if label == 'test' else Path(x['raw_dir']).name.split('-')[0]      # dev12/dev13/dev14 (same seeds)
+            name = (f"m2c{tag}-{x['door_version'] or 'v?'}-{x['arm']}-s{x['seed']}"
                     + ('-openlift' if x['open_at_lift_injection'] else ''))
+        if stage == 'stage2b-completion':
+            name = f"m2d-{x['arm']}-s{x['seed']}-completion"
         derived = {'derived_view_only': True, 'derived_from': x['raw_dir'], 'source_result_sha256': x['result_sha256'],
                    'success': bool(x['success_gt']),
                    'success_definition': ('GT evaluation only: both done, lifted > 0.06 m, released on floor, '
@@ -297,7 +301,8 @@ def tensorboard(runs, dev, stage, cohort, snapshot):
                    'seed': x['seed'], 'source_sha': x['source_sha']}
         (view / name).mkdir(parents=True, exist_ok=True)
         (view / name / 'result.json').write_text(json.dumps(derived, indent=1, default=str) + '\n')
-        names[name] = (f"2c door {x['door_version']} {label} status_channel={x['arm']}"
+        names[name] = (f"2b completion door {x['door_version']} {label} status_channel={x['arm']} (frozen ed15489)"
+                       if stage == 'stage2b-completion' else None) or (f"2c door {x['door_version']} {label} status_channel={x['arm']}"
                        + (' +open-at-lift' if x['open_at_lift_injection'] else '') if stage == 'stage2c' else
                        f"{x['stage']} {label} status_channel={x['arm']} (candidate, pending user decision)")
     target = TB / snapshot

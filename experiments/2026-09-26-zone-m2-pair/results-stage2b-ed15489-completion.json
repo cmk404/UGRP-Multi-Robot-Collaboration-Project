@@ -924,5 +924,96 @@
    }
   }
  },
- "development_runs": []
+ "development_runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev12-811-v3-on-openlift",
+   "result_sha256": "a02db7bd70990832c1cf45b6e74b2f4c487a49d070fe0fd276e037524f63029c",
+   "seed": 811,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 0.7321,
+   "failures": {
+    "r1": "PARTNER_ABORT",
+    "r2": "LOAD_NOT_HELD_AFTER_LIFT"
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev12-824-v3-on",
+   "result_sha256": "02cae6ea78e574e10b0c5d1b34d9bbe1412db4d730241ee8ce8eeca65d8eba35",
+   "seed": 824,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.0711,
+   "failures": {
+    "r1": null,
+    "r2": null
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev13-813-v3-on-openlift",
+   "result_sha256": "f0dec1097d0b9e2e39310a1216883f649b1b9a1bc7417fec80c4d7205217fa10",
+   "seed": 813,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 2.2172,
+   "failures": {
+    "r1": "PARTNER_ABORT",
+    "r2": "BARRIER_LIFT_BARRIER_LIMIT"
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev13-822-v3-off",
+   "result_sha256": "fb6bf4fb620cbfb65b0a528148bfb5c50805e4d8f6edf899d34f5c2984f02e05",
+   "seed": 822,
+   "stage": "door",
+   "arm": "off",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.1296,
+   "failures": {
+    "r1": null,
+    "r2": null
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev14-813-v3-on-openlift",
+   "result_sha256": "d151cff6b6f945b85f1b1df1f1beea3c15e8fa6450b4abb7be8974a40eb61ad4",
+   "seed": 813,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "2b14185268b154ccd9610f1a87898f4b9ee48907",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 2.2193,
+   "failures": {
+    "r1": "LOAD_NOT_HELD_AFTER_LIFT",
+    "r2": "PARTNER_ABORT"
+   }
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev14-824-v3-on",
+   "result_sha256": "07dd92bbff7d4c88560dc97451ade03bd86580232fa0e1a08a10ff4995c39c63",
+   "seed": 824,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "2b14185268b154ccd9610f1a87898f4b9ee48907",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.0824,
+   "failures": {
+    "r1": null,
+    "r2": null
+   }
+  }
+ ]
 }
