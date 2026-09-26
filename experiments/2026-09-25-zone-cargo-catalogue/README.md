@@ -194,3 +194,7 @@
 - `cargo_noslip_v1`에서 구역 교사·RGB 스킬·ACT를 돌리지 않았다. 과거 기록(ZC1/ZC2, v61 등)은 `local_contact_fine`이라 이 profile의 결과와 섞어 비교하지 않는다.
 - 실물 집게의 미끄러짐과 비교하지 않았다. 실물 파지가 이 정도로 미끄러지지 않는다는 보장은 실측 전까지 없다.
 - noslip의 계산 비용은 측정하지 않았다(부하 탓에 wall 시간 비교 불가).
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 `…/zone-cargo/outputs/zone-cargo/`의 원본(`final-d81514a` 83개, `slip-8886cf5` 168개, 개발 실행)이 지워졌다. 이 중 영상·그림 20개는 `media/`에 바이트 그대로 남아 있다. 나머지 231개는 `results.json`·`results-slip.json`에 해시만 남았고 복구할 수 없다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.

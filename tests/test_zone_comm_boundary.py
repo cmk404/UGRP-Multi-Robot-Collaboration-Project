@@ -193,11 +193,11 @@ def test_request_body_holds_only_declared_channels_per_condition():
     assert solo['images'] == claim['images']
 
 
-# --- known leak, not fixed here (audit L1) ---------------------------------
+# --- audit L1 (fixed 2026-09-25, zone team A2) ------------------------------
 
-@pytest.mark.xfail(strict=True, reason='audit L1: the teacher stops a robot because a peer merely INTENDS the '
-                   'same box (earlier to_box job), at the assignment tick; needs a SIM-gated fix')
 def test_a_peer_intent_alone_does_not_stop_a_robot():
+    """Formerly a strict xfail: the teacher stopped a robot because a peer merely
+    INTENDED the same box (earlier to_box job). Now only a visible event stops it."""
     from scripts.zone_teacher import TeacherRobot
     def robot(rid, phase, assigned_at):
         r = TeacherRobot.__new__(TeacherRobot)
@@ -207,3 +207,41 @@ def test_a_peer_intent_alone_does_not_stop_a_robot():
     me.team = peer.team = {'r2': me, 'r3': peer}
     # The peer has not reached the box; nothing r2 could observe says it is taken.
     assert not me._taken_by_peer('cargo_box_00')
+
+
+def test_only_a_nearer_body_at_the_station_stops_a_robot():
+    """L1 fix, physical rule: r2 is stopped only when another robot stands nearer
+    the box's grasp station while r2 is near it. The peer's job is never read."""
+    from types import SimpleNamespace
+    from scripts.zone_teacher import GRASP_RADIUS_M, TeacherRobot
+    poses = {'r1': [0., 0., 0.], 'r2': [-1.5, 0., 0.]}
+    box = (1., 0., .016)
+    world = SimpleNamespace(robot=lambda rid: SimpleNamespace(base_xyz=lambda: (poses[rid][0], poses[rid][1], .03),
+                                                              base_rpy=lambda: (0., 0., poses[rid][2])),
+                            data=SimpleNamespace(body=lambda name: SimpleNamespace(xpos=box)))
+    robots = {}
+    for rid in poses:
+        r = TeacherRobot.__new__(TeacherRobot)
+        r.rid, r.world, r.phase, r.outcome, r.job = rid, world, 'to_box', None, {'box_body': 'b'}
+        robots[rid] = r
+    for r in robots.values():
+        r.team = robots
+    station = (box[0] - GRASP_RADIUS_M, box[1])
+    # Both far from the station: nobody is blocked, whoever was assigned first.
+    assert not robots['r2']._station_blocked('b') and not robots['r1']._station_blocked('b')
+    # r1 stands at the station; r2 still 1.5 m away: r2 is not blocked yet (no visible event).
+    poses['r1'][:2] = station
+    assert not robots['r2']._station_blocked('b')
+    # r2 comes within 0.5 m of the station: blocked by the nearer body, not by r1's job.
+    poses['r2'][:2] = (station[0] - .40, station[1])
+    assert robots['r2']._station_blocked('b') and not robots['r1']._station_blocked('b')
+    robots['r1'].job, robots['r1'].phase = None, 'idle'   # an idle robot blocks just the same
+    assert robots['r2']._station_blocked('b')
+    # Relabelling the robots relabels the outcome (ids never decide).
+    swapped = {'r1': robots['r2'], 'r2': robots['r1']}
+    robots['r1'].rid, robots['r2'].rid = 'r2', 'r1'
+    for r in swapped.values():
+        r.team = swapped
+    poses['r1'], poses['r2'] = poses['r2'], poses['r1']
+    # now r1 is the robot 0.40 m back and r2 stands at the station
+    assert swapped['r1']._station_blocked('b') is True and swapped['r2']._station_blocked('b') is False

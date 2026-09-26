@@ -1,0 +1,69 @@
+{
+ "ref": "b7fedceea55a858db24c18a5e4c4c87f0138c7b7",
+ "search_roots": 50,
+ "references_checked": 3655,
+ "missing_total": 872,
+ "missing_in_0924_0926_records": 270,
+ "note": "missing_total also counts placeholders, CI/remote paths and data removed by earlier approved cleanups; only the rows below are linked to the 2026-09-26 worktree removal",
+ "linked_to_incident": [
+  {
+   "removed_worktree": "post-run-replay",
+   "references": 1,
+   "examples": [
+    "outputs/simulation-runs/20260925-000852-dispatch-ee5eac42"
+   ],
+   "records": [
+    "2026-09-25-dynamic-coordination",
+    "2026-09-25-plan-guidance"
+   ]
+  },
+  {
+   "removed_worktree": "zone-cargo (ugrp-worktrees/zone-cargo)",
+   "references": 12,
+   "examples": [
+    "outputs/zone-cargo",
+    "outputs/zone-cargo/catalogue",
+    "outputs/zone-cargo/diag-1",
+    "outputs/zone-cargo/diag-2"
+   ],
+   "records": [
+    "2026-09-25-zone-cargo-catalogue"
+   ]
+  },
+  {
+   "removed_worktree": "zone-cargo-perception",
+   "references": 3,
+   "examples": [
+    "outputs/zone-cargo-perception-20260925",
+    "outputs/zone-cargo-perception-20260925/dev-r1",
+    "outputs/zone-cargo-perception-20260925/test-07a958d"
+   ],
+   "records": [
+    "2026-09-25-zone-cargo-perception"
+   ]
+  },
+  {
+   "removed_worktree": "zone-cargo-perception-v2",
+   "references": 1,
+   "examples": [
+    "outputs/zone-cargo-perception-v2-20260925"
+   ],
+   "records": [
+    "2026-09-25-zone-cargo-perception-v2"
+   ]
+  },
+  {
+   "removed_worktree": "zone-dialogue-ko",
+   "references": 249,
+   "examples": [
+    "outputs/zone-dialogue-ko-pilot-20260925",
+    "outputs/zone-dialogue-ko-pilot-20260925/dialogue_M1_V2_t1_r1-a0-response.json",
+    "outputs/zone-dialogue-ko-pilot-20260925/dialogue_M1_V2_t1_r1-a0-wire.json",
+    "outputs/zone-dialogue-ko-pilot-20260925/dialogue_M1_V2_t2_r2-a0-response.json"
+   ],
+   "records": [
+    "2026-09-25-zone-dialogue-ko-pilot"
+   ]
+  }
+ ]
+}

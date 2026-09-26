@@ -24,7 +24,7 @@ import math
 import numpy as np
 
 from harness.visual_arm import solve_grip_ik, tool_pose
-from harness.zone_goal_v2 import formation
+from harness.zone_goal_v2 import fills_formation, formations
 from harness.zone_team_footprint import grasps, station_offset
 from scripts.cargo_formation_teacher import (APPROACH_TOL_M, APPROACH_TOL_RAD, FORWARD_GAIN, HOVER_Z_M, LEFT_GAIN,
                                              LIMITS, PAUSE_ERR_M, PAUSE_ERR_RAD, TURN_GAIN, Reference, compose, wrap)
@@ -66,8 +66,8 @@ class FormationPlan:
 
     def __init__(self, kind, role_by_robot):
         roles = sorted(role_by_robot.values())
-        if roles != sorted(formation(kind)):
-            raise ValueError(f'roles {roles} do not fill the {kind} formation {sorted(formation(kind))}')
+        if not fills_formation(kind, roles):
+            raise ValueError(f'roles {roles} do not fill a {kind} formation {[sorted(f) for f in formations(kind)]}')
         self.kind = kind
         self.role_by_robot = dict(sorted(role_by_robot.items()))
         self.offsets = {rid: station_offset(kind, role) for rid, role in self.role_by_robot.items()}

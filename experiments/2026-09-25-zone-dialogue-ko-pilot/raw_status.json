@@ -1,0 +1,22 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "outputs/zone-dialogue-ko-pilot-20260925/*-wire.json and *-response.json (calls.jsonl response.raw_path, wire.raw_path) in the worktree /Users/changmin/projects/ugrp-worktrees/zone-dialogue-ko",
+      "used_as": "raw HTTP bodies of the 124 pilot calls (88 single, 36 dialogue)",
+      "status": "partially_preserved",
+      "removed_with": "git worktree remove ugrp-worktrees/zone-dialogue-ko, 2026-09-26 about 13:50 KST; no backup",
+      "preserved": [
+        "responses: calls.jsonl holds all 124 response.http_body values; sha256 of each equals response.sha256",
+        "request text and settings: calls.jsonl request.messages and settings",
+        "request images: all 620 request.images bytes_sha256 values are found in the 124 source requests under /Users/changmin/projects/ugrp/outputs/zone-communication-20260925/ (124/124 files present, sha256 equal to source_request_sha256)"
+      ],
+      "lost": "the 124 wire files themselves (46.7 MB); only wire.body_sha256 and wire.bytes remain",
+      "reconstruction": "wire bodies can probably be rebuilt from messages, images and settings and checked against wire.body_sha256; not attempted"
+    }
+  ]
+}
