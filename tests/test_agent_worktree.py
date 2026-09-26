@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts import agent_worktree as aw  # noqa: E402
+from scripts import tree_manifest  # noqa: E402
+from scripts import worktree_guard as guard  # noqa: E402
 
 needs_lsof = pytest.mark.skipif(shutil.which("lsof") is None, reason="lsof is required for the busy check")
 
@@ -122,13 +124,15 @@ def test_sparsify_existing_full_worktree(repo):
     run(repo, "worktree", "add", "-q", "-b", "kiro/full", str(path), "main")
     assert "experiments/a/evidence.zip" in files_in(path)
     (path / "experiments/a/README.md").write_text("changed\n")
-    assert aw.main(["--primary", str(repo), "sparsify", str(path)]) == 2  # tracked change present
+    assert aw.main(["--primary", str(repo), "sparsify", str(path), "--idle-minutes", "0"]) == 2  # tracked change
     run(path, "checkout", "--", "experiments/a/README.md")
-    assert aw.main(["--primary", str(repo), "sparsify", str(path)]) == 0
+    assert aw.main(["--primary", str(repo), "sparsify", str(path)]) == 2  # just modified: not idle
+    assert aw.main(["--primary", str(repo), "sparsify", str(path), "--idle-minutes", "0"]) == 0
     present = files_in(path)
     assert "experiments/a/evidence.zip" not in present and "experiments/a/results.json" in present
     assert run(path, "status", "--porcelain") == ""
-    assert aw.main(["--primary", str(repo), "sparsify", str(repo)]) == 2  # primary stays full
+    assert aw.main(["--primary", str(repo), "sparsify", str(repo), "--idle-minutes", "0"]) == 2  # primary full
+    assert not aw.sparse_enabled(repo) and "experiments/a/evidence.zip" in files_in(repo)
 
 
 def make_worktree_with_outputs(repo: Path, name: str, branch: str) -> Path:
@@ -144,23 +148,39 @@ def make_worktree_with_outputs(repo: Path, name: str, branch: str) -> Path:
     return path
 
 
+RETIRE = ["--no-fetch", "--no-pr-check", "--base", "main", "--idle-minutes", "0"]
+
+
+def retire(repo: Path, path: Path, *extra: str) -> int:
+    return aw.main(["--primary", str(repo), "retire", str(path), *RETIRE, *extra])
+
+
 @needs_lsof
 def test_retire_moves_ignored_data_verifies_and_removes(repo, capsys):
     path = make_worktree_with_outputs(repo, "kiro-done", "kiro/done")
-    assert aw.main(["--primary", str(repo), "retire", str(path), "--no-fetch", "--no-pr-check", "--base", "main"]) == 0
+    assert retire(repo, path) == 0
     plan = json.loads(capsys.readouterr().out)
     assert plan["dry_run"] and path.exists() and (path / "outputs/run-1/result.json").exists()
-    assert sorted(p["path"] for p in plan["moved"]) == ["MUJOCO_LOG.TXT", "outputs"]
+    assert sorted(p["path"] for p in plan["moved"]) == ["MUJOCO_LOG.TXT", "outputs/run-1"]
     assert plan["deleted_caches"] == ["scripts/__pycache__"]
-    assert aw.main(["--primary", str(repo), "retire", str(path), "--no-fetch", "--no-pr-check", "--base", "main", "--execute"]) == 0
+    assert retire(repo, path, "--execute") == 0
     receipt = json.loads(capsys.readouterr().out)
-    dest = repo / "outputs/retired-worktrees/kiro-done"
+    archive = repo / "outputs/retired-worktrees/kiro-done"
     assert receipt["verified"] and receipt["worktree_remove_exit"] == 0
-    assert (dest / "outputs/run-1/frames/00001.jpg").read_bytes() == b"\xff" * 5000
-    assert (dest / "outputs/run-1/link").is_symlink()
-    assert (dest / "MUJOCO_LOG.TXT").read_text() == "warn\n"
+    # outputs/<name> keeps its relative path in the primary; other ignored files go to the archive folder.
+    assert (repo / "outputs/run-1/frames/00001.jpg").read_bytes() == b"\xff" * 5000
+    assert (repo / "outputs/run-1/link").is_symlink()
+    assert (archive / "MUJOCO_LOG.TXT").read_text() == "warn\n"
+    placements = {m["path"]: m["placement"] for m in receipt["moved"]}
+    assert placements == {"outputs/run-1": "same-path", "MUJOCO_LOG.TXT": "retired-worktrees"}
     assert receipt["moved_entries"] == 4
-    assert json.loads((dest / "RETIRED.json").read_text())["head"] == receipt["head"]
+    run1 = next(m for m in receipt["moved"] if m["path"] == "outputs/run-1")
+    assert run1["files"] == 2 and run1["links"] == 1
+    assert run1["manifest_sha256"] == tree_manifest.digest(tree_manifest.build(repo / "outputs/run-1"))
+    rows = (archive / "MANIFEST.tsv").read_text().splitlines()
+    jpg = next(r.split("\t") for r in rows if r.endswith(tree_manifest.file_sha256(repo / "outputs/run-1/frames/00001.jpg")))
+    assert jpg[0] == "outputs/run-1" and jpg[2] == "frames/00001.jpg" and jpg[4] == "5000"
+    assert json.loads((archive / "RETIRED.json").read_text())["head"] == receipt["head"]
     log = (repo / "outputs/retired-worktrees/retirements.jsonl").read_text().splitlines()
     assert json.loads(log[-1])["worktree"] == str(path)
     assert not path.exists()
@@ -169,18 +189,65 @@ def test_retire_moves_ignored_data_verifies_and_removes(repo, capsys):
 
 
 @needs_lsof
+def test_retire_colliding_output_name_goes_to_archive_folder(repo, capsys):
+    (repo / "outputs/run-1").mkdir(parents=True)
+    (repo / "outputs/run-1/other.json").write_text("{}\n")
+    path = make_worktree_with_outputs(repo, "kiro-clash", "kiro/clash")
+    assert retire(repo, path, "--execute") == 0
+    receipt = json.loads(capsys.readouterr().out)
+    assert {m["path"]: m["placement"] for m in receipt["moved"]}["outputs/run-1"] == "retired-worktrees"
+    assert sorted(p.name for p in (repo / "outputs/run-1").iterdir()) == ["other.json"]  # untouched
+    moved = repo / "outputs/retired-worktrees/kiro-clash/outputs/run-1/result.json"
+    assert moved.read_text() == '{"ok": true}\n'
+
+
+@needs_lsof
+def test_retire_archive_layout_keeps_everything_under_label(repo, capsys):
+    path = make_worktree_with_outputs(repo, "kiro-arch", "kiro/arch")
+    assert retire(repo, path, "--execute", "--archive-layout") == 0
+    receipt = json.loads(capsys.readouterr().out)
+    assert {m["placement"] for m in receipt["moved"]} == {"retired-worktrees"}
+    assert (repo / "outputs/retired-worktrees/kiro-arch/outputs/run-1/result.json").exists()
+    assert not (repo / "outputs/run-1").exists()
+
+
+@needs_lsof
+def test_retire_hash_mismatch_keeps_worktree_and_writes_failure_receipt(repo, capsys, monkeypatch):
+    path = make_worktree_with_outputs(repo, "kiro-corrupt", "kiro/corrupt")
+    real_build = tree_manifest.build
+    calls = {"n": 0}
+
+    def corrupted_after(root):
+        calls["n"] += 1
+        manifest = real_build(root)
+        if calls["n"] == 2:  # the first "after" manifest: pretend one byte changed on disk
+            rel = next(r for r, e in manifest.items() if e["type"] == "file")
+            manifest[rel] = {**manifest[rel], "sha256": "0" * 64}
+        return manifest
+
+    monkeypatch.setattr(tree_manifest, "build", corrupted_after)
+    assert retire(repo, path, "--execute") == 1
+    out = json.loads(capsys.readouterr().out)
+    assert out["verified"] is False and "verification failed" in out["error"]
+    assert path.exists() and str(path) in run(repo, "worktree", "list")
+    receipt = json.loads((repo / "outputs/retired-worktrees/kiro-corrupt/RETIRED.json").read_text())
+    assert receipt["verified"] is False
+    log = (repo / "outputs/retired-worktrees/retirements.jsonl").read_text().splitlines()
+    assert json.loads(log[-1])["verified"] is False
+
+
+@needs_lsof
 def test_retire_refuses_unmerged_dirty_busy_and_existing_destination(repo):
-    args = ["--no-fetch", "--no-pr-check", "--base", "main", "--execute"]
     unmerged = make_worktree_with_outputs(repo, "kiro-open", "kiro/open")
     (unmerged / "new.txt").write_text("work\n")
     run(unmerged, "add", "new.txt")
     run(unmerged, "commit", "-q", "-m", "open work")
-    assert aw.main(["--primary", str(repo), "retire", str(unmerged), *args]) == 2
+    assert retire(repo, unmerged, "--execute") == 2
     assert (unmerged / "outputs/run-1/result.json").exists()
 
     dirty = make_worktree_with_outputs(repo, "kiro-dirty", "kiro/dirty")
     (dirty / "notes.txt").write_text("untracked\n")
-    assert aw.main(["--primary", str(repo), "retire", str(dirty), *args]) == 2
+    assert retire(repo, dirty, "--execute") == 2
     assert (dirty / "outputs/run-1/result.json").exists()
 
     busy = make_worktree_with_outputs(repo, "kiro-busy", "kiro/busy")
@@ -189,7 +256,7 @@ def test_retire_refuses_unmerged_dirty_busy_and_existing_destination(repo):
         deadline = time.monotonic() + 5
         while not aw.processes_using(busy) and time.monotonic() < deadline:
             time.sleep(0.1)
-        assert aw.main(["--primary", str(repo), "retire", str(busy), *args]) == 2
+        assert retire(repo, busy, "--execute") == 2
         assert (busy / "outputs/run-1/result.json").exists()
     finally:
         sleeper.kill()
@@ -197,21 +264,95 @@ def test_retire_refuses_unmerged_dirty_busy_and_existing_destination(repo):
 
     taken = make_worktree_with_outputs(repo, "kiro-taken", "kiro/taken")
     (repo / "outputs/retired-worktrees/kiro-taken").mkdir(parents=True)
-    assert aw.main(["--primary", str(repo), "retire", str(taken), *args]) == 2
+    assert retire(repo, taken, "--execute") == 2
     assert (taken / "outputs/run-1/result.json").exists()
-    assert aw.main(["--primary", str(repo), "retire", str(repo), *args]) == 2
+    assert retire(repo, repo, "--execute") == 2
+
+
+@needs_lsof
+def test_retire_refuses_worktree_named_by_a_running_command(repo):
+    path = make_worktree_with_outputs(repo, "kiro-named", "kiro/named")
+    # cwd elsewhere; only the command line names the worktree (e.g. an agent job's prompt).
+    sleeper = subprocess.Popen([sys.executable, "-c", "import time, sys; time.sleep(60)", f"{path}/x"], cwd=repo.parent)
+    try:
+        deadline = time.monotonic() + 5
+        while not guard.processes_naming(path) and time.monotonic() < deadline:
+            time.sleep(0.1)
+        assert retire(repo, path, "--execute") == 2
+        assert (path / "outputs/run-1/result.json").exists()
+    finally:
+        sleeper.kill()
+        sleeper.wait()
+    assert retire(repo, path, "--execute") == 0
+
+
+@needs_lsof
+@pytest.mark.parametrize("value", ["nan", "inf", "-1"])
+def test_idle_window_must_be_finite_and_non_negative(repo, value):
+    path = make_worktree_with_outputs(repo, "kiro-idle", "kiro/idle")
+    args = ["--primary", str(repo), "retire", str(path), "--no-fetch", "--no-pr-check", "--base", "main",
+            "--execute", "--idle-minutes", value]
+    assert aw.main(args) == 2 and (path / "outputs/run-1/result.json").exists()
+
+
+@needs_lsof
+def test_recently_modified_worktree_is_refused_by_default(repo):
+    path = make_worktree_with_outputs(repo, "kiro-fresh", "kiro/fresh")
+    args = ["--primary", str(repo), "retire", str(path), "--no-fetch", "--no-pr-check", "--base", "main", "--execute"]
+    assert aw.main(args) == 2 and (path / "outputs/run-1/result.json").exists()
+    old = time.time() - 2 * 3600
+    gitdir = Path(run(path, "rev-parse", "--absolute-git-dir").strip())
+    for target in [*path.rglob("*"), gitdir / "index", gitdir / "HEAD", gitdir / "logs/HEAD"]:
+        if target.exists() or target.is_symlink():
+            os.utime(target, (old, old), follow_symlinks=False)
+    assert aw.main(args) == 0 and not path.exists()
+
+
+@needs_lsof
+def test_unmerged_worktree_retires_only_after_exact_head_is_archived(repo, tmp_path, capsys):
+    remote = tmp_path / "remote.git"
+    run(tmp_path, "init", "-q", "--bare", str(remote))
+    run(repo, "remote", "add", "origin", str(remote))
+    path = make_worktree_with_outputs(repo, "codex-work", "codex/work")
+    (path / "work.txt").write_text("unmerged\n")
+    run(path, "add", "work.txt")
+    run(path, "commit", "-q", "-m", "unmerged work")
+    head = run(path, "rev-parse", "HEAD").strip()
+    assert retire(repo, path, "--execute") == 2  # not merged, no archive
+    assert retire(repo, path, "--execute", "--archive-ref", "codex/archive-work-0926") == 2  # ref missing
+    run(repo, "push", "-q", "origin", "main:refs/heads/codex/archive-work-0926")  # wrong commit
+    assert retire(repo, path, "--execute", "--archive-ref", "codex/archive-work-0926") == 2
+    assert (path / "outputs/run-1/result.json").exists()
+    run(repo, "push", "-q", "-f", "origin", f"{head}:refs/heads/codex/archive-work-0926")
+    capsys.readouterr()
+    assert retire(repo, path, "--execute", "--archive-ref", "codex/archive-work-0926") == 0
+    receipt = json.loads(capsys.readouterr().out)
+    assert "archived at origin refs/heads/codex/archive-work-0926" in receipt["merged_evidence"]
+    assert not path.exists() and (repo / "outputs/run-1/result.json").exists()
 
 
 @needs_lsof
 def test_retire_respects_open_pull_requests(repo, monkeypatch):
     path = make_worktree_with_outputs(repo, "kiro-pr", "kiro/pr")
-    args = ["--primary", str(repo), "retire", str(path), "--no-fetch", "--base", "main", "--execute"]
+    args = ["--primary", str(repo), "retire", str(path), "--no-fetch", "--base", "main", "--execute",
+            "--idle-minutes", "0"]
     monkeypatch.setattr(aw, "open_pr_numbers", lambda primary, branch: [123])
     assert aw.main(args) == 2 and (path / "outputs/run-1/result.json").exists()
     monkeypatch.setattr(aw, "open_pr_numbers", lambda primary, branch: None)  # gh cannot answer
     assert aw.main(args) == 2 and (path / "outputs/run-1/result.json").exists()
     monkeypatch.setattr(aw, "open_pr_numbers", lambda primary, branch: [])
     assert aw.main(args) == 0 and not path.exists()
+
+
+def test_names_path_matches_whole_paths_only():
+    target = "/p/ugrp-wt/zone-owncam-loop"
+    assert guard.names_path(f"run --cwd {target} x", target)
+    assert guard.names_path(f"cd {target}/outputs && go", target)
+    assert guard.names_path(target, target)
+    assert not guard.names_path(f"cd {target}-v2 && go", target)
+    assert not guard.names_path(f"cd {target}.frozen", target)
+    assert guard.names_path(f"{target}-v2 and {target} both", target)
+    assert not guard.names_path("", target)
 
 
 def test_codex_app_worktree_label_and_owner():

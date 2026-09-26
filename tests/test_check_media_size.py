@@ -96,7 +96,7 @@ def test_pre_commit_hook_warns_but_keeps_20_mib_block(repo):
     hooks.mkdir()
     shutil.copy2(ROOT / ".githooks/pre-commit", hooks / "pre-commit")
     (repo / "scripts").mkdir()
-    for name in ("check_media_size.py", "agent_worktree.py"):
+    for name in ("check_media_size.py", "agent_worktree.py", "tree_manifest.py", "worktree_guard.py"):
         shutil.copy2(ROOT / "scripts" / name, repo / "scripts" / name)
     git(repo, "config", "core.hooksPath", ".githooks")
     git(repo, "add", "-A")
