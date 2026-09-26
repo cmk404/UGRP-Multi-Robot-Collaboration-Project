@@ -1,0 +1,24 @@
+{
+ "schema": "ugrp.zone_own_perception_v3_1_split.v1",
+ "created": "2026-09-26",
+ "purpose": "New held-out split for the v3.1 wrist-RGB-only judgments (v3 behind an image information gate, PR #193 Codex review P1). The v3 test split (271-274) was already scored once on v3 and is not re-scored.",
+ "rule": "Gate thresholds were chosen on the v3 dev frames (241-244) and synthetic frames only. test and stress are rendered and scored once, after the README pre-registration is committed.",
+ "scene_family": "zones/* (CargoZoneScene, cargo_noslip_v1, weld OFF)",
+ "note": "New seeds, disjoint from v1 (41-44/71-74), v2 (141-144/171-174) and v3 (241-244/271-274).",
+ "stress_lighting": ["dim_all", "ceiling_only", "low_side_key"],
+ "splits": {
+  "test": [
+   {"variant": "zone_wide_door", "seed": 371},
+   {"variant": "zone_wide_corridor", "seed": 372},
+   {"variant": "zone_wide_two_doors", "seed": 373},
+   {"variant": "zone_wide_two_doors", "seed": 374}
+  ],
+  "stress": [
+   {"variant": "zone_wide_door", "seed": 381},
+   {"variant": "zone_wide_corridor", "seed": 382}
+  ],
+  "smoke": [
+   {"variant": "zone_wide_door", "seed": 391}
+  ]
+ }
+}
