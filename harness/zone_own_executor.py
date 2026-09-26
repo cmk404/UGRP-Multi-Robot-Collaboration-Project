@@ -1042,6 +1042,8 @@ class OwnCamTeamHost:
             return None
         try:
             return fn(rid, now, *args)
+        except OSError:
+            raise                                  # host I/O (disk full, render device): infrastructure, not the robot
         except Exception as exc:                  # noqa: BLE001 - recorded as a failed job, never swallowed
             import traceback
             slot.exception = {'t': round(now, 3), 'type': type(exc).__name__, 'message': str(exc)[:2000],
