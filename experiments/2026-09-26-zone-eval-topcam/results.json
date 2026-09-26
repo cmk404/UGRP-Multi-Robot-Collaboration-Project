@@ -1,0 +1,585 @@
+{
+ "schema": "ugrp.zone_eval_topcam.results.v1",
+ "raw": {
+  "search": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/search/search.json",
+   "sha256": "df0ec34336256bb361d5d601936e40af615d6d70d5e08cc6a198e80760337aaf",
+   "code": {
+    "sha": "733197b64939c5c7cab49bd5b38196767ef080bb",
+    "dirty": false
+   },
+   "load_average_start": [
+    3.89,
+    3.83,
+    4.55
+   ],
+   "load_average_end": null
+  },
+  "select": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/select/selection.json",
+   "sha256": "828f892e2e571b48a7b2d43a28685d75599685604d7f9831e102e5f1ec785d42",
+   "code": {
+    "sha": "90d6e9a38fb5c96c785c91cc9bc267506f2a2d54",
+    "dirty": false
+   },
+   "load_average_start": [
+    3.47,
+    3.81,
+    4.45
+   ],
+   "load_average_end": null
+  },
+  "coverage_v1": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/coverage_zone_eval_top_v1/coverage.json",
+   "sha256": "c15c19a74fc7a3580602c3fe2376577ea30beb6e21f5934903ea4b9287fa8dee",
+   "code": {
+    "sha": "d9eb589517bdbf78bf8d31dafb10a3f3945b8d64",
+    "dirty": false
+   },
+   "load_average_start": [
+    3.02,
+    3.42,
+    4.15
+   ],
+   "load_average_end": [
+    3.02,
+    3.42,
+    4.15
+   ]
+  },
+  "coverage_v2": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/coverage_zone_eval_top_v2/coverage.json",
+   "sha256": "b530fd4ad0bb9f22db7abaecce8d272d29797b15c48c7f5e8d87b3e1988b33d0",
+   "code": {
+    "sha": "d9eb589517bdbf78bf8d31dafb10a3f3945b8d64",
+    "dirty": false
+   },
+   "load_average_start": [
+    3.02,
+    3.42,
+    4.15
+   ],
+   "load_average_end": [
+    3.02,
+    3.42,
+    4.15
+   ]
+  },
+  "stills_superseded": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/stills/stills.json",
+   "sha256": "8a07454eb0cbece287bec0763d1b91cfb5f394e84e7e1525664633d08b806062",
+   "code": {
+    "sha": "d9eb589517bdbf78bf8d31dafb10a3f3945b8d64",
+    "dirty": false
+   },
+   "load_average_start": [
+    3.69,
+    3.58,
+    4.15
+   ],
+   "load_average_end": [
+    3.69,
+    3.58,
+    4.15
+   ]
+  },
+  "stills": {
+   "path": "/Users/changmin/projects/ugrp/outputs/zone-eval-topcam-20260926/stills2/stills.json",
+   "sha256": "aa0a33f79ecf871ff17fb5d26144687d21cb8fab9857666cb387edeaab964402",
+   "code": {
+    "sha": "11fe9cffb2b21f6e1a578d4f511e6922ee94cb43",
+    "dirty": false
+   },
+   "load_average_start": [
+    4.17,
+    3.68,
+    4.11
+   ],
+   "load_average_end": [
+    4.17,
+    3.68,
+    4.11
+   ]
+  }
+ },
+ "static_checks_sha256": "b1dea143050155656fd2ae7c4d5ffdb6dcf20a1f305e8add577fc6fbae3bd929",
+ "profiles": {
+  "zone_eval_top_v1": {
+   "schema": "ugrp.zone_eval_top.v1",
+   "id": "zone_eval_top_v1",
+   "version": 1,
+   "overrides": {},
+   "scope": "authored TOP cameras of every zone map, unchanged (all records before 2026-09-26 #218)",
+   "sha256": "070d159a0badcefd9dafd1bbc9ed32d16dc9077a9f16e72a70f6dbabefe63439"
+  },
+  "zone_eval_top_v2": {
+   "schema": "ugrp.zone_eval_top.v1",
+   "id": "zone_eval_top_v2",
+   "version": 2,
+   "overrides": {
+    "zone_wide_corridor": {
+     "base_static_map_sha256": "262b8d7c3e73bcc6b8ff21d5ab64204ae869670c82141312593e99e590e96a20",
+     "cameras": {
+      "cctv_top_north_east": {
+       "position_m": [
+        3.4,
+        0.8,
+        3.0
+       ],
+       "fov_y_deg": 55.0
+      }
+     }
+    }
+   },
+   "scope": "v1 on every map except the zone_wide_corridor family (authored, tags_v1, tags_v3), where cctv_top_north_east is moved; evaluation-only",
+   "evidence": "experiments/2026-09-26-zone-eval-topcam",
+   "sha256": "03ad04df6be078f7bae15b9e10543324f3fa7c58849ec73b1561f237c8afa571"
+  }
+ },
+ "search": {
+  "passing_G1_G4": 103,
+  "passing_G1_G4_and_G1b": 53,
+  "prereg_rule_selection": {
+   "position_m": [
+    3.4,
+    0.7,
+    2.9
+   ],
+   "gate": {
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+   },
+   "v3": {
+    "z0.003": {
+     "corridor_corridor_1": 0.97418,
+     "passing_bay_bay_1": 1.0,
+     "floor_all": 0.99603,
+     "within_0.30m_of_interior_walls": 0.97246
+    },
+    "z0.032": {
+     "corridor_corridor_1": 0.97418,
+     "passing_bay_bay_1": 1.0,
+     "floor_all": 0.99608,
+     "within_0.30m_of_interior_walls": 0.97275
+    }
+   },
+   "box_area_px_960x720": 79.1,
+   "hidden_strip_north_of_corridor_walls_m": 0.0357
+  },
+  "amended_selection": {
+   "position_m": [
+    3.4,
+    0.8,
+    3.0
+   ],
+   "gate": {
+    "G1": true,
+    "G2": true,
+    "G3": true,
+    "G4": true
+   },
+   "v3": {
+    "z0.003": {
+     "corridor_corridor_1": 1.0,
+     "passing_bay_bay_1": 1.0,
+     "floor_all": 0.9963,
+     "within_0.30m_of_interior_walls": 0.9743
+    },
+    "z0.032": {
+     "corridor_corridor_1": 1.0,
+     "passing_bay_bay_1": 1.0,
+     "floor_all": 0.99676,
+     "within_0.30m_of_interior_walls": 0.9775
+    }
+   },
+   "box_area_px_960x720": 73.8,
+   "hidden_strip_north_of_corridor_walls_m": 0.0191
+  },
+  "authored_hidden_strip_m": 0.1182,
+  "candidates": 6384
+ },
+ "v1_reproduces_env_v3_ST5_tables": true,
+ "ST5_changed_regions_v1_to_v2_z0.003": {
+  "zone_wide_door walls_0.10_v1": {},
+  "zone_wide_door walls_0.40_v3": {},
+  "zone_wide_two_doors walls_0.10_v1": {},
+  "zone_wide_two_doors walls_0.40_v3": {},
+  "zone_wide_corridor walls_0.10_v1": {
+   "floor_all": [
+    0.99806,
+    0.99961
+   ],
+   "corridor_corridor_1": [
+    0.97274,
+    1.0
+   ],
+   "passing_bay_bay_1": [
+    0.96296,
+    1.0
+   ],
+   "within_0.30m_of_interior_walls": [
+    0.98652,
+    0.99728
+   ]
+  },
+  "zone_wide_corridor walls_0.40_v3": {
+   "floor_all": [
+    0.9905,
+    0.9963
+   ],
+   "corridor_corridor_1": [
+    0.86896,
+    1.0
+   ],
+   "passing_bay_bay_1": [
+    0.81778,
+    1.0
+   ],
+   "within_0.30m_of_interior_walls": [
+    0.93406,
+    0.9743
+   ]
+  }
+ },
+ "corridor_both_levels": {
+  "walls_0.10_v1 zone_eval_top_v1": {
+   "z0.003": {
+    "corridor_corridor_1": 0.97274,
+    "passing_bay_bay_1": 0.96296,
+    "floor_all": 0.99806,
+    "within_0.30m_of_interior_walls": 0.98652
+   },
+   "z0.032": {
+    "corridor_corridor_1": 0.99952,
+    "passing_bay_bay_1": 0.96296,
+    "floor_all": 0.99885,
+    "within_0.30m_of_interior_walls": 0.99205
+   }
+  },
+  "walls_0.10_v1 zone_eval_top_v2": {
+   "z0.003": {
+    "corridor_corridor_1": 1.0,
+    "passing_bay_bay_1": 1.0,
+    "floor_all": 0.99961,
+    "within_0.30m_of_interior_walls": 0.99728
+   },
+   "z0.032": {
+    "corridor_corridor_1": 1.0,
+    "passing_bay_bay_1": 1.0,
+    "floor_all": 0.99961,
+    "within_0.30m_of_interior_walls": 0.99728
+   }
+  },
+  "walls_0.40_v3 zone_eval_top_v1": {
+   "z0.003": {
+    "corridor_corridor_1": 0.86896,
+    "passing_bay_bay_1": 0.81778,
+    "floor_all": 0.9905,
+    "within_0.30m_of_interior_walls": 0.93406
+   },
+   "z0.032": {
+    "corridor_corridor_1": 0.86705,
+    "passing_bay_bay_1": 0.81778,
+    "floor_all": 0.99083,
+    "within_0.30m_of_interior_walls": 0.93629
+   }
+  },
+  "walls_0.40_v3 zone_eval_top_v2": {
+   "z0.003": {
+    "corridor_corridor_1": 1.0,
+    "passing_bay_bay_1": 1.0,
+    "floor_all": 0.9963,
+    "within_0.30m_of_interior_walls": 0.9743
+   },
+   "z0.032": {
+    "corridor_corridor_1": 1.0,
+    "passing_bay_bay_1": 1.0,
+    "floor_all": 0.99676,
+    "within_0.30m_of_interior_walls": 0.9775
+   }
+  }
+ },
+ "v2_corridor_v3_unseen_z0.003": {
+  "floor_all": {
+   "unseen_points": 265,
+   "unseen_bbox_m": [
+    2.685,
+    4.005,
+    0.265,
+    0.925
+   ],
+   "blocking_geoms": {
+    "zone_wall_bay_west": 148,
+    "zone_wall_bay_south": 97,
+    "zone_wall_corridor_2": 11,
+    "zone_wall_bay_east": 9
+   }
+  },
+  "within_0.30m_of_interior_walls": {
+   "unseen_points": 265,
+   "unseen_bbox_m": [
+    2.685,
+    4.005,
+    0.265,
+    0.925
+   ],
+   "blocking_geoms": {
+    "zone_wall_bay_west": 148,
+    "zone_wall_bay_south": 97,
+    "zone_wall_corridor_2": 11,
+    "zone_wall_bay_east": 9
+   }
+  }
+ },
+ "stills": [
+  {
+   "layout": "hidden_bands",
+   "profile": "zone_eval_top_v1",
+   "boxes": [
+    {
+     "object": "box_00",
+     "kind": "cyan",
+     "xy_m": [
+      3.65,
+      0.965
+     ]
+    },
+    {
+     "object": "box_01",
+     "kind": "green",
+     "xy_m": [
+      2.5,
+      0.965
+     ]
+    },
+    {
+     "object": "box_02",
+     "kind": "red",
+     "xy_m": [
+      3.335,
+      0.5
+     ]
+    },
+    {
+     "object": "box_03",
+     "kind": "red",
+     "xy_m": [
+      2.7,
+      0.6
+     ]
+    }
+   ],
+   "found_by": {
+    "zone_perception_v1": {
+     "box_00": [],
+     "box_01": [],
+     "box_02": [],
+     "box_03": []
+    },
+    "top_zone_v2": {
+     "box_00": [],
+     "box_01": [],
+     "box_02": [],
+     "box_03": []
+    }
+   }
+  },
+  {
+   "layout": "hidden_bands",
+   "profile": "zone_eval_top_v2",
+   "boxes": [
+    {
+     "object": "box_00",
+     "kind": "cyan",
+     "xy_m": [
+      3.65,
+      0.965
+     ]
+    },
+    {
+     "object": "box_01",
+     "kind": "green",
+     "xy_m": [
+      2.5,
+      0.965
+     ]
+    },
+    {
+     "object": "box_02",
+     "kind": "red",
+     "xy_m": [
+      3.335,
+      0.5
+     ]
+    },
+    {
+     "object": "box_03",
+     "kind": "red",
+     "xy_m": [
+      2.7,
+      0.6
+     ]
+    }
+   ],
+   "found_by": {
+    "zone_perception_v1": {
+     "box_00": [],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [],
+     "box_03": []
+    },
+    "top_zone_v2": {
+     "box_00": [],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [
+      "cctv_top_north_east"
+     ],
+     "box_03": []
+    }
+   }
+  },
+  {
+   "layout": "open_floor",
+   "profile": "zone_eval_top_v1",
+   "boxes": [
+    {
+     "object": "box_00",
+     "kind": "cyan",
+     "xy_m": [
+      4.6,
+      0.4
+     ]
+    },
+    {
+     "object": "box_01",
+     "kind": "green",
+     "xy_m": [
+      4.6,
+      -0.2
+     ]
+    },
+    {
+     "object": "box_02",
+     "kind": "red",
+     "xy_m": [
+      3.0,
+      -0.4
+     ]
+    },
+    {
+     "object": "box_03",
+     "kind": "red",
+     "xy_m": [
+      4.0,
+      0.2
+     ]
+    }
+   ],
+   "found_by": {
+    "zone_perception_v1": {
+     "box_00": [
+      "cctv_top_north_east"
+     ],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [
+      "cctv_top_north_east"
+     ],
+     "box_03": [
+      "cctv_top_north_east"
+     ]
+    },
+    "top_zone_v2": {
+     "box_00": [
+      "cctv_top_north_east"
+     ],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [
+      "cctv_top_north_east"
+     ],
+     "box_03": [
+      "cctv_top_north_east"
+     ]
+    }
+   }
+  },
+  {
+   "layout": "open_floor",
+   "profile": "zone_eval_top_v2",
+   "boxes": [
+    {
+     "object": "box_00",
+     "kind": "cyan",
+     "xy_m": [
+      4.6,
+      0.4
+     ]
+    },
+    {
+     "object": "box_01",
+     "kind": "green",
+     "xy_m": [
+      4.6,
+      -0.2
+     ]
+    },
+    {
+     "object": "box_02",
+     "kind": "red",
+     "xy_m": [
+      3.0,
+      -0.4
+     ]
+    },
+    {
+     "object": "box_03",
+     "kind": "red",
+     "xy_m": [
+      4.0,
+      0.2
+     ]
+    }
+   ],
+   "found_by": {
+    "zone_perception_v1": {
+     "box_00": [
+      "cctv_top_north_east"
+     ],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [
+      "cctv_top_north_east"
+     ],
+     "box_03": [
+      "cctv_top_north_east"
+     ]
+    },
+    "top_zone_v2": {
+     "box_00": [
+      "cctv_top_north_east"
+     ],
+     "box_01": [
+      "cctv_top_north_east"
+     ],
+     "box_02": [
+      "cctv_top_north_east"
+     ],
+     "box_03": [
+      "cctv_top_north_east"
+     ]
+    }
+   }
+  }
+ ],
+ "stills_superseded_note": "first stills run (source d9eb5895): one layout, detector kinds passed with a duplicate (red twice) so top_zone_v2 listed one red box twice; kept, superseded by stills2"
+}

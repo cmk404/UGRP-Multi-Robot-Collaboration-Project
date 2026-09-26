@@ -9,6 +9,7 @@ Subcommands (raw outputs go to the PRIMARY checkout's outputs/, never a worktree
             apply ``sim.zone_eval_top`` after scene.setup), all maps x both wall families
   stills    corridor v3 TOP mosaics under v1 and v2 with boxes and a robot placed in
             the bands v1 cannot see, plus the existing TOP colour detectors
+  record    compact results.json for the experiment record from the raw outputs (hashes)
 
 Simulator state is used only to place things and to measure what the TOP cameras
 can see; nothing here is a robot input or a student result.
@@ -365,9 +366,51 @@ def run_stills(out, log):
     return result
 
 
+def run_record(out, log):
+    """Compact results.json for the experiment record, built only from the raw outputs (hashes kept)."""
+    raw = {'search': RAW/'search'/'search.json', 'select': RAW/'select'/'selection.json',
+           'coverage_v1': RAW/'coverage_zone_eval_top_v1'/'coverage.json',
+           'coverage_v2': RAW/'coverage_zone_eval_top_v2'/'coverage.json',
+           'stills_superseded': RAW/'stills'/'stills.json', 'stills': RAW/'stills2'/'stills.json'}
+    data = {k: json.loads(p.read_text()) for k, p in raw.items()}
+    recorded = json.loads((ENV_V3/'static_results.json').read_text())['tables']['ST5']
+    v1, v2 = data['coverage_v1']['tables'], data['coverage_v2']['tables']
+    changed = {k: {r: [v1[k][r], v2[k][r]] for r in v1[k] if v1[k][r] != v2[k][r]} for k in v1}
+    levels = {}
+    for fam in ('walls_0.10_v1', 'walls_0.40_v3'):
+        for pid, key in (('zone_eval_top_v1', 'coverage_v1'), ('zone_eval_top_v2', 'coverage_v2')):
+            res = data[key]['ST5']['results']['zone_wide_corridor'][fam]
+            levels[f'{fam} {pid}'] = {lv: {r: res[lv][r]['top_visible_fraction'] for r in (
+                LANE, BAY, 'floor_all', 'within_0.30m_of_interior_walls')} for lv in res}
+    unseen = {k: {f: v for f, v in row.items() if f in ('unseen_points', 'unseen_bbox_m', 'blocking_geoms')}
+              for k, row in data['coverage_v2']['ST5']['results']['zone_wide_corridor']['walls_0.40_v3']['z0.003'].items()
+              if 'unseen_points' in row}
+    stills = [{k: r[k] for k in ('layout', 'profile', 'boxes')} | {
+        'found_by': {d: v['placed_found_by'] for d, v in r['detectors'].items()}} for r in data['stills']['rows']]
+    result = {'schema': 'ugrp.zone_eval_topcam.results.v1',
+              'raw': {k: {'path': str(p), 'sha256': sha_file(p), 'code': data[k]['code'],
+                          'load_average_start': data[k].get('load_average_start'),
+                          'load_average_end': data[k].get('load_average_end')} for k, p in raw.items()},
+              'static_checks_sha256': data['coverage_v1']['static_checks_sha256'],
+              'profiles': {pid: data[key]['profile'] for pid, key in (('zone_eval_top_v1', 'coverage_v1'),
+                                                                       ('zone_eval_top_v2', 'coverage_v2'))},
+              'search': {k: data['select'][k] for k in ('passing_G1_G4', 'passing_G1_G4_and_G1b', 'prereg_rule_selection',
+                                                         'amended_selection', 'authored_hidden_strip_m')}
+              | {'candidates': data['search']['candidates']},
+              'v1_reproduces_env_v3_ST5_tables': v1 == recorded,
+              'ST5_changed_regions_v1_to_v2_z0.003': changed, 'corridor_both_levels': levels,
+              'v2_corridor_v3_unseen_z0.003': unseen, 'stills': stills,
+              'stills_superseded_note': ('first stills run (source d9eb5895): one layout, detector kinds passed with a '
+                                         'duplicate (red twice) so top_zone_v2 listed one red box twice; kept, superseded by stills2')}
+    (X/'results.json').write_text(json.dumps(result, indent=1, ensure_ascii=False) + '\n')
+    (out/'record.json').write_text(json.dumps({'results_sha256': sha_file(X/'results.json')}) + '\n')
+    log(f"v1 reproduces env v3: {result['v1_reproduces_env_v3_ST5_tables']}")
+    return result
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    p.add_argument('command', choices=('search', 'select', 'coverage', 'stills'))
+    p.add_argument('command', choices=('search', 'select', 'coverage', 'stills', 'record'))
     p.add_argument('--profile', default=None, help='coverage: evaluation TOP profile id (required)')
     p.add_argument('--output', default=None)
     args = p.parse_args(argv)
@@ -387,6 +430,8 @@ def main(argv=None):
             run_select(out, log)
         elif args.command == 'coverage':
             run_coverage(out, args.profile, log)
+        elif args.command == 'record':
+            run_record(out, log)
         else:
             run_stills(out, log)
     except BaseException as exc:
