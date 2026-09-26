@@ -431,6 +431,113 @@ def summarize_adversarial(matrix, records):
     return res
 
 
+# ------------------------------------------------------------------ pre-registered gates
+
+NEW_RULE_REASONS = ('INSUFFICIENT_IMAGE_INFORMATION', 'SHAPE_BOUNDARY_NOT_IN_FRAME', 'AT_GRIP_BAND_NOT_LIT')
+
+
+def _read_jsonl(path):
+    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+
+
+def compute_gates(test_records, adversarial_records, adversarial_matrix, stress_records):
+    """Gates T1-T7, A1-A3, S1-S2 exactly as the README pre-registered them (U is the test run)."""
+    views = [r for r in test_records if r['record'] == 'view']
+    v31 = [r for r in views if r['version'] == 'v3_1']
+
+    def confident_wrong(sel):
+        return sum(1 for r in sel if r['answer'] not in ('unknown', r['truth']) and r['confidence'] >= CONFIDENT)
+
+    def case(name, judgment=None):
+        return [r for r in v31 if r['case'] == name and (judgment is None or r['judgment'] == judgment)]
+
+    def acc(sel):
+        return round(sum(r['answer'] == r['truth'] for r in sel)/len(sel), 4) if sel else None
+
+    def unk(sel):
+        return round(sum(r['answer'] == 'unknown' for r in sel)/len(sel), 4) if sel else None
+
+    held_carry_obs = [r for r in v31 if r['judgment'] == 'held_item_at_grip' and r['posture'] == 'carry'
+                      and r['observable']]
+    carry = [r for r in v31 if r['judgment'] == 'team_cargo_at_grip']
+    gid = [r for r in v31 if r['judgment'] == 'team_cargo_identity' and r['observable']]
+    ghd = [r for r in v31 if r['judgment'] == 'team_cargo_handle' and r['observable']]
+    w7 = case('held_can_carry')+case('held_box_held_check')
+    by_key = {(r['view_id'], r['judgment'], r['version']): r for r in views}
+    new_rule = {(r['view_id'], r['judgment']) for r in test_records
+                if r['record'] == 'tick' and r['version'] == 'v3_1' and r['reason'] in NEW_RULE_REASONS}
+    differ = [k for k in by_key if k[2] == 'v3_1' and by_key[k]['answer'] != by_key[(k[0], k[1], 'v3')]['answer']]
+    adv_views = [r for r in adversarial_records if r['record'] == 'view' and r['version'] == 'v3_1']
+    matrix_v31 = [r for r in adversarial_matrix if r['version'] == 'v3_1']
+    stress_v31 = {p: [r for r in rows if r['record'] == 'view' and r['version'] == 'v3_1']
+                  for p, rows in stress_records.items()}
+    stress_v3 = {p: [r for r in rows if r['record'] == 'view' and r['version'] == 'v3']
+                 for p, rows in stress_records.items()}
+
+    def confirmed_wrong(sel):
+        return sum(1 for r in sel if r['status'] == 'confirmed' and r['answer'] != r['truth'])
+
+    values = {
+        'T1_confident_errors': confident_wrong(v31), 'T1_views': len(v31),
+        'T2_w7_confident_answers': sum(1 for r in w7 if r['answer'] != 'unknown' and r['confidence'] >= CONFIDENT),
+        'T3_held_carry_observable_accuracy': acc(held_carry_obs), 'T3_held_carry_observable_unknown': unk(held_carry_obs),
+        'T4_nothing_carry_no': sum(r['answer'] == 'no' for r in case('held_nothing_carry')),
+        'T5_carry_accuracy': acc(carry), 'T5_carry_crate_yes': sum(r['answer'] == 'yes' for r in case('carry_heavy_crate')),
+        'T6_tri_frame_identity_yes': sum(r['answer'] == 'yes' for r in case('grasp_tri_frame', 'team_cargo_identity')),
+        'T6_identity_observable_accuracy': acc(gid), 'T6_handle_observable_accuracy': acc(ghd),
+        'T7_views_differing_from_v3': len(differ),
+        'T7_differing_explained_by_new_rules': sum(1 for k in differ if (k[0], k[1]) in new_rule),
+        'A1_matrix_not_unknown': sum(1 for r in matrix_v31 if r['answer'] != 'unknown'),
+        'A1_matrix_answers': len(matrix_v31),
+        'A1_confirmed_views': sum(1 for r in adv_views if r['transform'] in INFO_FREE and r['status'] == 'confirmed'),
+        'A2_partial_dark_confirmed_wrong': confirmed_wrong([r for r in adv_views if r['transform'] in OCCLUDED]),
+        'A3_partial_lit_confirmed_wrong_v3_1': confirmed_wrong([r for r in adv_views if r['transform'] in OCCLUDED_LIT]),
+        'A3_partial_lit_confirmed_wrong_v3': confirmed_wrong([r for r in adversarial_records if r['record'] == 'view'
+                                                              and r['version'] == 'v3'
+                                                              and r['transform'] in OCCLUDED_LIT]),
+        'S1_stress_confident_errors': sum(confident_wrong(rows) for rows in stress_v31.values()),
+        'S1_stress_views': sum(len(rows) for rows in stress_v31.values()),
+    }
+    for profile in stress_records:
+        values[f'S2_{profile}_v3_1_confident_errors'] = confident_wrong(stress_v31[profile])
+        values[f'S2_{profile}_v3_confident_errors'] = confident_wrong(stress_v3[profile])
+        values[f'S2_{profile}_v3_1_accuracy'] = acc(stress_v31[profile])
+        values[f'S2_{profile}_v3_1_unknown'] = unk(stress_v31[profile])
+        values[f'S2_{profile}_v3_accuracy'] = acc(stress_v3[profile])
+        values[f'S2_{profile}_v3_unknown'] = unk(stress_v3[profile])
+    gates = {
+        'T1': values['T1_confident_errors'] == 0,
+        'T2': values['T2_w7_confident_answers'] == 0,
+        'T3': (values['T3_held_carry_observable_accuracy'] or 0) >= .80
+              and (values['T3_held_carry_observable_unknown'] or 1) <= .25,
+        'T4': values['T4_nothing_carry_no'] >= 3,
+        'T5': (values['T5_carry_accuracy'] or 0) >= .85 and values['T5_carry_crate_yes'] >= 3,
+        'T6': values['T6_tri_frame_identity_yes'] >= 3 and (values['T6_identity_observable_accuracy'] or 0) >= .70
+              and (values['T6_handle_observable_accuracy'] or 0) >= .75,
+        'T7': values['T7_views_differing_from_v3'] == values['T7_differing_explained_by_new_rules'],
+        'A1': values['A1_matrix_not_unknown'] == 0 and values['A1_confirmed_views'] == 0,
+        'A2': values['A2_partial_dark_confirmed_wrong'] == 0,
+        'S1': values['S1_stress_confident_errors'] == 0,
+    }
+    return {'gates': gates, 'passed': sum(gates.values()), 'total': len(gates), 'values': values,
+            'report_only': ['A3', 'S2'], 'not_recomputed': {'U': 'unit tests, recorded in the README'}}
+
+
+def gates(args):
+    root = Path(args.root)
+    stress = {p: _read_jsonl(root/f'stress-{p}-score/records.jsonl') for p in load_split()['stress_lighting']}
+    result = compute_gates(_read_jsonl(root/'test-score/records.jsonl'),
+                           _read_jsonl(root/'test-adversarial/records.jsonl'),
+                           _read_jsonl(root/'test-adversarial/matrix.jsonl'), stress)
+    sources = {str(p.relative_to(root)): sha256(p) for p in
+               [root/'test-score/records.jsonl', root/'test-adversarial/records.jsonl',
+                root/'test-adversarial/matrix.jsonl'] + [root/f'stress-{p}-score/records.jsonl' for p in stress]}
+    result.update(schema=SCHEMA+'.gates', sources_sha256=sources, source_sha=_git('rev-parse', 'HEAD'),
+                  source_dirty=bool(_git('status', '--porcelain')))
+    Path(args.output).write_text(json.dumps(result, indent=1))
+    print(json.dumps({'passed': result['passed'], 'total': result['total'], 'gates': result['gates']}))
+
+
 # ------------------------------------------------------------------ cli
 
 def parser():
@@ -449,12 +556,15 @@ def parser():
     a = sub.add_parser('adversarial', help='information-free / occluded versions of a rendered split')
     a.add_argument('--frames', type=Path, required=True)
     a.add_argument('--output', type=Path, required=True)
+    g = sub.add_parser('gates', help='recompute the pre-registered gates from the scored records')
+    g.add_argument('--root', type=Path, required=True, help='outputs folder with test-score, test-adversarial, stress-*')
+    g.add_argument('--output', type=Path, required=True)
     return p
 
 
 def main(argv=None):
     args = parser().parse_args(argv)
-    {'render': render, 'score': score, 'adversarial': adversarial}[args.command](args)
+    {'render': render, 'score': score, 'adversarial': adversarial, 'gates': gates}[args.command](args)
     return 0
 
 
