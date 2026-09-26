@@ -62,7 +62,10 @@ def summarise(bundle) -> dict:
                                                       'censored_trials', 'seeds', 'leader_ids',
                                                       'metrics', 'dialogue',
                                                       'boundary_clean_trials',
-                                                      'boundary_violation_trials')}
+                                                      'boundary_violation_trials',
+                                                      'usage_unknown_calls',
+                                                      'tokens_incomplete_trials',
+                                                      'cohort_tokens_total')}
                           for name, row in summary['conditions'].items()},
             'scenarios': summary['scenarios'], 'trials': summary['trials'],
             'provenance': summary['provenance']}

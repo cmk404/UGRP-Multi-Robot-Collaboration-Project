@@ -1524,6 +1524,13 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
             'cohort_model_calls_per_delivered': (
                 None if not delivered or any(e['model_calls'] is None for e in eff)
                 else round(sum(e['model_calls'] for e in eff) / delivered, 4)),
+            # third review, finding 16: the cohort mean of ``tokens_total``
+            # drops None, so an unknown usage would vanish here. It is counted,
+            # and the cohort token total is None whenever any trial is incomplete.
+            'usage_unknown_calls': sum(int(e.get('usage_unknown_calls') or 0) for e in eff),
+            'tokens_incomplete_trials': sum(1 for e in eff if int(e.get('usage_unknown_calls') or 0) > 0),
+            'cohort_tokens_total': (None if any(e.get('tokens_total') is None for e in eff)
+                                    else sum(e['tokens_total'] for e in eff)),
             'idle_by_reason': _sum_dicts(e['idle_by_reason'] for e in eff),
             'replans_by_kind': _sum_dicts(e['replans_by_kind'] for e in eff),
             'conflicts_by_kind': _sum_dicts(e['conflicts_by_kind'] for e in eff),

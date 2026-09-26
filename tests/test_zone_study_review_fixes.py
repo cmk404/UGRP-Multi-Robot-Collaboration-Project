@@ -1494,6 +1494,11 @@ def test_r3_f16_a_completed_unknown_usage_call_makes_the_token_totals_incomplete
     assert metrics['usage_unknown_calls'] >= 1
     assert metrics['tokens_total'] is None and metrics['tokens_input'] is None
     assert metrics['tokens_input_lower_bound'] == 0
+    # ... and the cohort does not average the unknown away
+    known = _delivery_trial(trial_id='peer_ko-mixed-s602', seed=602)
+    row = ev.summarise([trial, known])['conditions']['peer_ko']
+    assert row['usage_unknown_calls'] == metrics['usage_unknown_calls']
+    assert row['tokens_incomplete_trials'] == 1 and row['cohort_tokens_total'] is None
 
 
 def test_r3_provider_usage_is_kept_apart_from_the_billed_size():
