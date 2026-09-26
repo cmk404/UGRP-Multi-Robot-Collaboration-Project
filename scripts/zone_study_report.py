@@ -305,19 +305,45 @@ def markdown(summary, comparisons, sources, generated_at):
     return '\n'.join(lines)
 
 
+def _run_paths(scalars, directory):
+    """Resolve every run directory BEFORE anything is written (fifth review, P2).
+
+    A run name is a relative path of non-empty components without ``.``, ``..``,
+    a backslash or a NUL, so it cannot leave the logdir. A run that already
+    exists under the logdir is refused, never appended to or rewritten: an old
+    snapshot (e.g. v4's ``<condition>/<scenario>-s<seed>`` runs) stays as it was.
+    """
+    paths, existing = [], []
+    for run in scalars['runs']:
+        name = run.get('run')
+        parts = name.split('/') if isinstance(name, str) else []
+        if (not parts or any(p in ('', '.', '..') or '\\' in p or '\x00' in p for p in parts)
+                or Path(name).is_absolute()):
+            raise ValueError(f'run name {name!r} is not a relative path inside the logdir')
+        paths.append(directory.joinpath(*parts))
+        if paths[-1].exists():
+            existing.append(name)
+    if len(set(paths)) != len(paths):
+        raise ValueError('duplicate run name in the scalar payload')
+    if existing:
+        raise FileExistsError(f'TensorBoard run(s) already exist under {directory}: {existing}; '
+                              'write a new snapshot directory instead of rewriting them')
+    return paths
+
+
 def write_events(scalars, directory, at):
-    """Optional: real TensorBoard event files, one run per entry. No server change."""
+    """Optional: real TensorBoard event files, one NEW run per entry. No server change."""
+    directory = Path(directory)
+    paths = _run_paths(scalars, directory)
     from tensorboard.compat.proto.event_pb2 import Event
     from tensorboard.compat.proto.summary_pb2 import Summary
     from tensorboard.plugins.hparams import api_pb2, metadata, plugin_data_pb2
     from tensorboard.summary.writer.event_file_writer import EventFileWriter
     from tensorboard.util.tensor_util import make_tensor_proto
 
-    directory = Path(directory)
     written = 0
-    for run in scalars['runs']:
-        path = directory / run['run']
-        path.mkdir(parents=True, exist_ok=True)
+    for run, path in zip(scalars['runs'], paths):
+        path.mkdir(parents=True)
         writer = EventFileWriter(str(path), max_queue_size=50, flush_secs=5)
 
         def add(summary, step=0):
@@ -356,6 +382,8 @@ def build(paths, output, penalty_factor=ev.DEFAULT_PENALTY_FACTOR,
     comparisons = ev.compare_all(trials, include_reference=include_reference,
                                  resamples=resamples, seed=seed, penalty_factor=penalty_factor)
     scalars = ev.scalar_export(summary)
+    if tb_events:
+        _run_paths(scalars, Path(tb_events))      # refuse before any report file is written
     sources = sorted((t['source_path'], sha256_file(t['source_path'])) for t in trials)
     at = now if now is not None else time.time()
     generated_at = time.strftime('%Y-%m-%dT%H:%M:%S%z', time.localtime(at))

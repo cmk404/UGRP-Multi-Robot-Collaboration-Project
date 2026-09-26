@@ -119,6 +119,12 @@
   제외할 literal 집합을 만드는 데 쓴다.
 - `claims`를 직접 기록하면 규칙 추출보다 우선한다.
 - `utterances[].encoding`은 `free_ko` 또는 `schema`다(과거 `ko_free`/`structured`도 받아 정규화한다).
+- `model` 요약만 있고 `calls`가 없는 기록은 요약에 `usage_unknown_calls`(0 이상 정수)와
+  `tokens_complete`(bool)를 적을 수 있다(Codex 5차 검토 P2). 둘 다 있으면 서로 맞아야 하고,
+  `tokens_complete=false`면 `usage_unknown_calls`가 필요하다. 이 표지는 `calls` 기록과 똑같이
+  시행 지표 → 코호트 → 보고서·TensorBoard로 간다. 둘 다 없는 과거 요약은 확정으로 읽고 미상 호출 수는
+  `null`이다. 토큰 수는 `null` 또는 0 이상 정수만 받는다(NaN·Inf·음수·문자열·bool 거절).
+  `calls`와 요약이 같이 있으면 요약의 `usage_unknown_calls`도 호출 기록과 대조한다.
 
 ## 효율 지표
 
@@ -269,13 +275,19 @@ PYTHONPATH=. .venv-sim-worker-mac/bin/python scripts/zone_study_report.py \
 |---|---|
 | `summary.md` | 한국어 요약: 조건별 효율, 대화 지표, 행위 유형, 결정 변경 직전 발화, 지표별 짝 비교, 입력 경계 감사, 원본 SHA-256 |
 | `metrics.json` | 시행별·조건별 전체 지표와 모든 짝 비교, 원본 경로·해시 |
-| `scalars.json` | `ugrp.zone_study_scalars.v1`. run별 scalar와 HParams 열 |
+| `scalars.json` | `ugrp.zone_study_scalars.v2`. run별 scalar와 HParams 열(v1은 옛 run 이름) |
 | `tensorboard.json` | `--tb-events`를 준 경우의 기록된 run·scalar 수와 logdir |
 
 - `--tb-events`는 TensorBoard 자체 protobuf로 이벤트 파일만 새로 쓴다. 뷰어·서버 설정,
-  `outputs/tensorboard-view.json`, 기존 스냅샷은 건드리지 않는다. 공용 뷰어 등록과 화면 확인은
-  [TensorBoard 안내](tensorboard.md)의 절차를 따로 따른다.
-- run 이름은 `<condition>/<scenario>-s<seed>`와 조건별 `cohort/<condition>`이다.
+  `outputs/tensorboard-view.json`, 기존 스냅샷은 건드리지 않는다. logdir에 이미 있는 run은
+  거절하며(`FileExistsError`, 보고서 파일을 쓰기 전에 검사), logdir 밖을 가리키는 run 이름도
+  거절한다. 공용 뷰어 등록과 화면 확인은 [TensorBoard 안내](tensorboard.md)의 절차를 따로 따른다.
+- run 이름은 시행마다 `<condition>/<trial_id>`, 조건별로 `cohort/<condition>`이다(Codex 5차 검토 P2).
+  같은 조건·시나리오·seed의 반복 시행도 run이 따로 생긴다. `trial_id`는 경로 한 칸이어야 하므로
+  ASCII 영숫자와 `_`·`-`·`.`(첫 글자 제외)만 받고, run 이름이 겹치면 거절한다. 시나리오·seed는
+  HParams에 있다. v4 스냅샷(`0926-zone-study-offline-smoke-v4`)은 옛 이름
+  `<condition>/<scenario>-s<seed>`(scalars v1)를 그대로 둔다. 그 코호트는 조건·시나리오·seed마다
+  시행이 하나라 run이 합쳐지지 않았다.
 - scalar 태그: `evaluation/success`, `result/*`(PAR makespan·makespan·발화/추론 비용·배송·idle·
   충돌·교착·재계획·호출·토큰·wall 지연), `dialogue/*`(발화 수·한국어 준수·코드전환·ID 손상·
   사실/거짓·사실성·채널 위반), `cohort/*`.

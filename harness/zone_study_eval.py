@@ -381,16 +381,20 @@ def model_aggregate(trial):
     """
     calls = _rows(trial, 'calls')
     summary = trial.get('model') if isinstance(trial.get('model'), dict) else None
+    marker = None if summary is None else _summary_usage_marker(summary)
     if not calls:
         if summary is None:
             return None
         tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
         cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
+        # fifth review, P2: the unknown marker of a summary-only record travels
+        # with its counts, so the known 833 + 40 stay a LOWER bound of 873
         return {'source': 'summary', 'logical_calls': summary.get('logical_calls'),
                 'http_attempts': summary.get('http_attempts'),
                 'censored_calls': summary.get('censored_calls'),
-                'tokens': {k: (None if tokens.get(k) is None else int(tokens[k]))
-                           for k in ('input', 'output', 'image', 'cached')},
+                'usage_unknown_calls': marker['usage_unknown_calls'],
+                'tokens_complete': marker['tokens_complete'],
+                'tokens': {k: _summary_count(tokens, k) for k in ('input', 'output', 'image', 'cached')},
                 'call_sim_s': _opt_float(cost.get('call')),
                 'think_sim_s': _opt_float(cost.get('think')),
                 'talk_sim_s': _opt_float(cost.get('talk')),
@@ -439,9 +443,49 @@ def model_aggregate(trial):
            'think_sim_s': round(call_total - talk, 6), 'talk_sim_s': round(talk, 6),
            'delivery_sim_s': round(delivery, 6), 'wall_latency_ms': latencies, 'mismatch': []}
     if summary is not None:
-        out['mismatch'] = _summary_mismatch(summary, out)
+        out['mismatch'] = _summary_mismatch(summary, out, marker)
         out['source'] = 'calls+summary'
     return out
+
+
+def _summary_count(tokens, key):
+    """A summary token count: None, or a non-negative integral number.
+
+    Fifth review, P2: ``int(tokens[k])`` turned ``NaN`` into a crash, ``-1`` into
+    a negative lower bound and ``'833'`` into a silent cast; they are refused.
+    """
+    value = tokens.get(key)
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) \
+            or value < 0 or value != int(value):
+        raise TrialError(f'model.tokens.{key} must be a non-negative integer or null, got {value!r}')
+    return int(value)
+
+
+def _summary_usage_marker(summary):
+    """``tokens_complete`` / ``usage_unknown_calls`` of a model summary, validated.
+
+    Fifth review, P2: a summary-only record lost both, so its known tokens were
+    reported as a confirmed total. A summary may state either or both; when both
+    are present they must agree, and an incomplete summary must count its
+    unknown calls. A legacy summary with neither is complete, count unreported.
+    """
+    complete = summary.get('tokens_complete')
+    count = summary.get('usage_unknown_calls')
+    if complete is not None and not isinstance(complete, bool):
+        raise TrialError(f'model.tokens_complete must be true, false or absent, got {complete!r}')
+    if count is not None:
+        if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+            raise TrialError(f'model.usage_unknown_calls must be a non-negative int, got {count!r}')
+        if complete is not None and complete != (count == 0):
+            raise TrialError(f'model.tokens_complete={complete} and usage_unknown_calls={count} '
+                             'contradict each other')
+        return {'tokens_complete': count == 0, 'usage_unknown_calls': count}
+    if complete is False:
+        raise TrialError('model.tokens_complete=false needs model.usage_unknown_calls (how many '
+                         'calls have an unknown usage)')
+    return {'tokens_complete': True, 'usage_unknown_calls': None}
 
 
 def _usage_unknown(call):
@@ -456,24 +500,26 @@ def _usage_unknown(call):
     return call.get('status') == CENSORED_STATUS and 'usage_known' not in terms
 
 
-def _summary_mismatch(summary, derived):
+def _summary_mismatch(summary, derived, marker):
     """Where a separate ``model`` summary disagrees with the call log.
 
     Second review: image/cache tokens and the delivery and call-total SIM cost
-    are compared too, so a summary cannot disagree with the log on them.
+    are compared too, so a summary cannot disagree with the log on them. Fifth
+    review: so is a stated unknown-usage count.
     """
     tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
     cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
     out = []
     checks = [('logical_calls', summary.get('logical_calls'), derived['logical_calls']),
+              ('usage_unknown_calls', marker['usage_unknown_calls'], derived['usage_unknown_calls']),
               ('censored_calls', summary.get('censored_calls'), derived['censored_calls']),
               ('http_attempts', summary.get('http_attempts'), derived['http_attempts']),
               ('sim_cost_s.censored_elapsed', cost.get('censored_elapsed'),
                derived['censored_elapsed_sim_s']),
-              ('tokens.input', tokens.get('input'), derived['tokens']['input']),
-              ('tokens.output', tokens.get('output'), derived['tokens']['output']),
-              ('tokens.image', tokens.get('image'), derived['tokens']['image']),
-              ('tokens.cached', tokens.get('cached'), derived['tokens']['cached']),
+              ('tokens.input', _summary_count(tokens, 'input'), derived['tokens']['input']),
+              ('tokens.output', _summary_count(tokens, 'output'), derived['tokens']['output']),
+              ('tokens.image', _summary_count(tokens, 'image'), derived['tokens']['image']),
+              ('tokens.cached', _summary_count(tokens, 'cached'), derived['tokens']['cached']),
               ('sim_cost_s.call', cost.get('call'), derived['call_sim_s']),
               ('sim_cost_s.think', cost.get('think'), derived['think_sim_s']),
               ('sim_cost_s.talk', cost.get('talk'), derived['talk_sim_s']),
@@ -859,7 +905,9 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
                          f'({"; ".join(model["mismatch"])}); calls/messages are the only aggregation '
                          'source (review finding 10)')
     tokens = (model or {}).get('tokens') or {}
-    tokens_complete = (model or {}).get('tokens_complete', True) is not False
+    # both aggregation sources now state the marker (fifth review, P2: the
+    # summary-only source did not, and this default turned it into "complete")
+    tokens_complete = model is None or model['tokens_complete'] is True
     # Second review, finding 10: a missing cost source stays None in the FINAL
     # metrics too (it used to become 0 here), and the terms do not overlap:
     # think + utterance == call total; delivery is the transport delay.
@@ -1842,6 +1890,29 @@ HPARAM_KEYS = ('condition', 'scenario', 'seed', 'leader_id', 'end_reason',
                'penalty_factor', 'sim_horizon_s', 'tokens_complete')
 
 
+#: A trial_id used as ONE TensorBoard run path component (fifth review, P2).
+RUN_COMPONENT = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*')
+#: v2 (fifth review, P2): trial runs are ``<condition>/<trial_id>``. v1 payloads
+#: (e.g. the v4 smoke report) named them ``<condition>/<scenario>-s<seed>``.
+SCALARS_SCHEMA = 'ugrp.zone_study_scalars.v2'
+
+
+def trial_run_name(eff):
+    """``<condition>/<trial_id>``: one TensorBoard run per trial.
+
+    Fifth review, P2: ``<condition>/<scenario>-s<seed>`` merged repeated trials
+    of one seed into one run, so the viewer showed the values of whichever was
+    written last. The trial_id is unique per cohort (``load_trials`` refuses a
+    duplicate), and it must be one safe path component because the run name
+    becomes a directory under the logdir. Scenario and seed stay in HParams.
+    """
+    trial_id = eff['trial_id']
+    if not isinstance(trial_id, str) or not RUN_COMPONENT.fullmatch(trial_id):
+        raise TrialError(f'trial_id {trial_id!r} cannot name a TensorBoard run: use ASCII letters, '
+                         'digits, "_", "-" and "." (not first), one path component')
+    return f'{eff["condition"]}/{trial_id}'
+
+
 def scalar_export(summary):
     """TB-friendly scalar payload: one run per trial plus per-condition runs.
 
@@ -1855,7 +1926,7 @@ def scalar_export(summary):
         scalars = {tag: _num(eff.get(key)) for tag, key in SCALAR_TAGS.items()}
         scalars.update({tag: _num(dia.get(key)) for tag, key in DIALOGUE_TAGS.items()})
         runs.append({
-            'run': f'{eff["condition"]}/{eff["scenario"]}-s{eff["seed"]}',
+            'run': trial_run_name(eff),
             'step': index,
             'hparams': {k: _hparam(eff.get(k, summary.get(k))) for k in HPARAM_KEYS},
             'scalars': {k: v for k, v in scalars.items() if v is not None},
@@ -1882,7 +1953,12 @@ def scalar_export(summary):
                                  'tokens_complete': row.get('cohort_tokens_total') is not None},
                      'scalars': {k: v for k, v in scalars.items() if v is not None},
                      'boundary_clean': row['boundary_violation_trials'] == 0})
-    return {'schema': 'ugrp.zone_study_scalars.v1',
+    names = collections.Counter(run['run'] for run in runs)
+    repeated = sorted(name for name, count in names.items() if count > 1)
+    if repeated:
+        raise TrialError(f'duplicate TensorBoard run name(s) {repeated}: each trial needs its own '
+                         'trial_id, or the viewer would merge their values')
+    return {'schema': SCALARS_SCHEMA,
             'note': 'EVALUATION-ONLY. 실패·중단·예산 소진을 분모에 유지한 값이다.',
             'hparam_columns': list(HPARAM_KEYS), 'runs': runs}
 

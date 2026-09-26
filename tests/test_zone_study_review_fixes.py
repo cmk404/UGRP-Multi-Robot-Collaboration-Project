@@ -1700,7 +1700,7 @@ def test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total(tmp_pa
     assert cohort['scalars']['cohort/tokens_incomplete_trials'] == 1.0
     assert cohort['scalars']['cohort/tokens_total_lower_bound'] == 60.0
     assert cohort['hparams']['tokens_complete'] is False
-    unknown, known = scalars['peer_ko/mixed-s2'], scalars['peer_ko/mixed-s1']
+    unknown, known = scalars['peer_ko/peer_ko-mixed-s2'], scalars['peer_ko/peer_ko-mixed-s1']
     assert 'result/tokens_total' not in unknown['scalars']
     assert unknown['scalars']['result/usage_unknown_calls'] == 1.0
     assert unknown['hparams']['tokens_complete'] is False
@@ -1715,10 +1715,10 @@ def test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker(tmp_path):
     tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'cohort/peer_ko')
     assert 'cohort/tokens_total' not in tb_scalars
     assert tb_scalars['cohort/usage_unknown_calls'] == 1.0 and tb_hparams['tokens_complete'] == 'False'
-    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/mixed-s2')
+    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/peer_ko-mixed-s2')
     assert 'result/tokens_total' not in tb_scalars and tb_scalars['result/usage_unknown_calls'] == 1.0
     assert tb_hparams['tokens_complete'] == 'False'
-    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/mixed-s1')
+    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/peer_ko-mixed-s1')
     assert tb_scalars['result/tokens_total'] == 120.0 and tb_hparams['tokens_complete'] == 'True'
 
 

@@ -637,9 +637,10 @@ class SummaryTest(unittest.TestCase):
                                        utterances=[utter(text='A 구역으로 갑니다.')]))]
         scalars = ev.scalar_export(ev.summarise(trials))
         runs = {r['run'] for r in scalars['runs']}
-        self.assertIn('no_comm/mixed-s1', runs)
+        # fifth review: ``<condition>/<trial_id>``, one run per trial
+        self.assertIn('no_comm/no_comm-mixed-s1', runs)
         self.assertIn('cohort/peer_ko', runs)
-        trial_run = next(r for r in scalars['runs'] if r['run'] == 'peer_ko/mixed-s1')
+        trial_run = next(r for r in scalars['runs'] if r['run'] == 'peer_ko/peer_ko-mixed-s1')
         self.assertIn('result/par_makespan_sim_s', trial_run['scalars'])
         self.assertIn('dialogue/utterances', trial_run['scalars'])
         self.assertEqual(trial_run['hparams']['condition'], 'peer_ko')
@@ -696,7 +697,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(metrics['summary']['conditions']['peer_ko']['trials'], 3)
         self.assertEqual(len(metrics['sources']), 12)
         scalars = json.loads((self.dir / 'report' / 'scalars.json').read_text())
-        self.assertEqual(scalars['schema'], 'ugrp.zone_study_scalars.v1')
+        self.assertEqual(scalars['schema'], 'ugrp.zone_study_scalars.v2')
         self.assertTrue(any(r['run'].startswith('cohort/') for r in scalars['runs']))
 
     def test_report_records_source_hashes(self):

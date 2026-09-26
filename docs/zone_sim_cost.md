@@ -73,6 +73,7 @@ d_q   = quantum * ceil(raw_q / quantum)
 - **표지를 바꾸지 않는다.** 재시도 예산 거절로 재생 응답을 자를 때도 원래 응답의 표지를 물려받는다. 잘린 응답의 `provider_usage`는 보내지 않은 시도까지 포함한 보고이므로 버린다(`None`).
 - **알려진 하한을 지우지 않는다.** 일부 시도의 사용량만 알면 그 수(예: 입력 833·출력 40)를 기록하고 `usage_bound='lower_bound'`로 표시한다. horizon에서 censor된 호출도 같다. 스케줄러가 계산한 청구 SIM 비용(`charged_sim_s`, `would_release_sim_s`)도 비용 모형의 사실이므로 남긴다.
 - 실제 전송 계층은 `TransportFailure(..., attempts=..., usage_known=False)`로 "아는 것이 전부가 아니다"를 알린다. 시도를 하나도 밝히지 않은 `TransportFailure`는 미상으로 기록한다.
+- **보낸 시도와 그 예산을 돌려주지 않는다(Codex 5차 검토 P1).** 준수하는 전송 계층은 시도마다 보내기 직전에 `PendingCall.reserve`로 예약한다. 사용량 미상 응답(예외, `TransportFailure`, `usage_known=False`인 `CallReply`)이 예약보다 적은 시도를 밝히면, 스케줄러는 **예약한 시도를 모두 보낸 것으로 센다.** 빠진 시도는 비용을 내는 `error` 시도로 채워 앞에 두고(응답의 마지막 시도가 호출 결과로 남는다), `unreported_attempts`(`contract_log()`에도 포함)와 `attempts_unreported` 사건에 기록한다. 그래서 `commit`이 예약을 돌려주지 않고, 스케줄러 재시도가 이미 쓴 예산을 다시 쓰지 못한다. 사용량을 **아는** 응답은 자기 시도 수를 밝히는 것으로 보고, 쓰지 않은 예약은 전처럼 반환한다. 예약보다 많은 시도는 전처럼 예산 위반(`over_budget_attempts`)이다.
 
 ## 3. 실행 의미 (스케줄러 계약)
 

@@ -38,7 +38,7 @@ from __future__ import annotations
 import collections
 import heapq
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 
 from harness.zone_sim_cost import (Attempt, CallCostRecord, FAILED_OUTCOMES, MessageCostRecord,
@@ -407,6 +407,9 @@ class EventScheduler:
         self.discarded = []
         self.transport_errors = []
         self.over_budget_attempts = []
+        #: Fifth review, P1: calls whose unknown-usage reply accounted for fewer
+        #: attempts than they reserved; every reserved attempt was counted as sent.
+        self.unreported_attempts = []
         #: Robot-facing inbox: package A's closed envelope (``ENVELOPE_KEYS``),
         #: the SAME shape as package C's ``Transport.inbox`` (second review,
         #: finding 2). Delivery times live in ``deliveries`` (evaluation).
@@ -530,6 +533,7 @@ class EventScheduler:
             if envelopes else []
         return {'schema': SCHEDULER_SCHEMA, 'calls': calls, 'messages': messages,
                 'censored_calls': [dict(row) for row in self.censored],
+                'unreported_attempts': [dict(row) for row in self.unreported_attempts],
                 'attempt_budget': self.budget.to_dict()}
 
     def run(self, until_s=None, max_events=None, *, close_at_horizon=True):
@@ -684,7 +688,35 @@ class EventScheduler:
         return True
 
     def _reply_of(self, call):
-        """Fetch the reply; a transport exception is itself a costed error attempt."""
+        """Fetch the reply and account for every attempt the call reserved.
+
+        Fifth review, P1: a transport that sent a RESERVED internal retry and
+        then failed without a usage report was counted as the one attempt its
+        exception implied, and ``commit`` refunded the other reservation, so the
+        scheduler's own retry could spend it again (3 real sends, 2 in the
+        ledger, no violation). A compliant transport reserves each attempt just
+        before sending it, so when the reply cannot say what it sent
+        (``usage_known=False``) every reserved attempt is counted as sent: the
+        missing ones are costed ``error`` attempts placed BEFORE the reported
+        ones (the reply's last attempt stays the call outcome) and the gap is
+        recorded in ``unreported_attempts``. A reply with a KNOWN usage states
+        its own attempts; an unused reservation of it is still refunded.
+        """
+        reply, reported = self._fetch_reply(call)
+        reserved = self.ledger[call.call_id]['reserved_attempts']
+        if reply.usage_known or len(reply.attempts) >= reserved:
+            return reply
+        missing = reserved - len(reply.attempts)
+        self.unreported_attempts.append({'call_id': call.call_id, 'actor': call.actor,
+                                         'reserved': reserved, 'reported': reported,
+                                         'counted': reserved})
+        self._log(f'attempts_unreported {call.actor} {call.call_id} reserved={reserved} '
+                  f'reported={reported}', kind='attempts_unreported', actor=call.actor,
+                  call_id=call.call_id)
+        return replace(reply, attempts=(Attempt(outcome='error'),) * missing + reply.attempts)
+
+    def _fetch_reply(self, call):
+        """``(reply, reported attempts)``; a transport exception is a costed error attempt."""
         try:
             reply = self.transport.reply(call.token)
         except TransportFailure as exc:
@@ -702,14 +734,14 @@ class EventScheduler:
                                                     output_tokens=attempts[-1].output_tokens,
                                                     utterances=attempts[-1].utterances),)
             return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances,
-                             provider_usage=exc.provider_usage, usage_known=usage_known)
+                             provider_usage=exc.provider_usage, usage_known=usage_known), len(exc.attempts)
         except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
             self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
                                          'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
-            return CallReply(attempts=(Attempt(outcome='error'),), usage_known=False)
+            return CallReply(attempts=(Attempt(outcome='error'),), usage_known=False), 0
         if not isinstance(reply, CallReply):
             raise TypeError(f'transport returned {type(reply).__name__}, expected CallReply')
-        return reply
+        return reply, len(reply.attempts)
 
     # -- dispatch ----------------------------------------------------------
 
