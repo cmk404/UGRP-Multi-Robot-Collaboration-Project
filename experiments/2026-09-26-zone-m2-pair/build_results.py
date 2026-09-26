@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RAW = Path('/Users/changmin/projects/ugrp/outputs/zone-m2-pair-20260926')
 TB = Path('/Users/changmin/projects/ugrp/outputs/tensorboard')
-STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': tuple(range(811, 817))}
+STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': tuple(range(811, 817)), 'stage2b': tuple(range(821, 827))}
 ARMS = ('on', 'off')
 
 
@@ -164,7 +164,7 @@ def main():
     if missing and '--allow-incomplete' not in sys.argv:
         raise SystemExit(f'pre-registered runs missing {missing}; the cohort report is blocked')
     log = RAW / cohort / 'cohort.log'
-    gates = {'stage1': gates_stage1, 'stage2': gates_stage2, 'stage3': gates_stage3}[stage](runs)
+    gates = {'stage1': gates_stage1, 'stage2': gates_stage2, 'stage2b': gates_stage2, 'stage3': gates_stage3}[stage](runs)
     dev = [summarise(p.parent) for p in sorted(RAW.glob('dev*/result.json'))]
     out = {'experiment_id': '2026-09-26-zone-m2-pair', 'stage': stage, 'cohort': cohort,
            'raw_root_local_only': str(RAW), 'raw_note': 'raw outputs are local (gitignored); not a remote backup',

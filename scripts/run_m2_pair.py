@@ -131,9 +131,17 @@ DOOR_SCENARIOS = {
     814: {'beam': (1.06, 0.01, -0.04), 'start': {'r1': (0.02, -0.05, 0.1), 'r2': (0.1, 0.09, -0.13)}},
     815: {'beam': (0.94, 0.08, -0.0), 'start': {'r1': (0.08, 0.06, -0.15), 'r2': (0.03, -0.1, -0.18)}},
     816: {'beam': (0.97, 0.1, 0.05), 'start': {'r1': (0.08, 0.0, 0.11), 'r2': (0.09, -0.07, -0.08)}},
+    # stage 2b test (door v2; pre-registered; gen_stage2b_seeds.py, rng 20260929)
+    821: {'beam': (0.95, 0.03, 0.07), 'start': {'r1': (0.07, 0.08, -0.17), 'r2': (0.1, -0.08, 0.29)}},
+    822: {'beam': (1.01, -0.02, 0.08), 'start': {'r1': (0.08, -0.0, 0.12), 'r2': (0.09, -0.08, -0.01)}},
+    823: {'beam': (1.1, -0.04, 0.02), 'start': {'r1': (0.02, -0.05, -0.1), 'r2': (0.08, 0.04, -0.31)}},
+    824: {'beam': (1.06, 0.04, -0.06), 'start': {'r1': (0.02, 0.1, 0.09), 'r2': (0.07, 0.03, 0.02)}},
+    825: {'beam': (1.07, 0.12, 0.05), 'start': {'r1': (0.08, -0.0, -0.22), 'r2': (0.06, 0.02, 0.03)}},
+    826: {'beam': (1.02, 0.1, -0.02), 'start': {'r1': (0.02, 0.01, 0.09), 'r2': (0.08, -0.07, -0.04)}},
 }
 SCENARIOS.update(DOOR_SCENARIOS)
 STAGE2_TEST_SEEDS = tuple(range(811, 817))
+STAGE2B_TEST_SEEDS = tuple(range(821, 827))
 
 
 def git(*args):
@@ -901,7 +909,7 @@ def main():
         'weld': 'off', 'pose_source': 'owncam_pf_v2 localizer (own RGB + static tag map + own commands); no GT',
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
-        'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS,
+        'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS, 'stage2b_test_seed': a.seed in STAGE2B_TEST_SEEDS,
         'approach_version': a.approach, 'door_version': a.door_version if a.stage == 'door' else None, 'depot_slots': depot,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
