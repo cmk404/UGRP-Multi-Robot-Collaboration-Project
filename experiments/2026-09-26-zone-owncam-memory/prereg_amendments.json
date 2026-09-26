@@ -1,0 +1,41 @@
+{
+  "schema": "ugrp.m1_owncam_memory_prereg_amendments.v1",
+  "prereg": "experiments/2026-09-26-zone-owncam-memory/prereg.json",
+  "prereg_sha256": "b2dc241a150a64527d6e353615258af8a2b43825814fa97eb08ffc6f15f63770",
+  "registered": "2026-09-26, Kiro (account 2, continuing the first session's work), branch kiro/zone-owncam-memory; committed BEFORE the freeze and before any test episode of either condition. Only dev-a1 (memory_v1 and off on m1mem-dev-s151, commit ad78ef2) had run.",
+  "unchanged": "seeds, episodes, off condition (frozen M1 student), physics runner, skill v9, calibration, cargo_noslip_v1, weld OFF, sync SIM, SIM limit, map zone_wide_door_tags_v1, primary metric, secondary metrics, stop and exclusion rules, map_v3_rule",
+  "amendments": [
+    {
+      "id": "A1",
+      "title": "landmark-agnostic memory (user amendment 2026-09-26: tags are being removed)",
+      "user_request": "표식은 없애기로 했잖아. 그걸 기억하면 안 되지 않을까? (zone-entrance tags removed now; wall/door-post tags to be replaced by vision recognition of doors, door posts and wall corners, branch kiro/zone-vision-loc)",
+      "change": "memory_v1 (commit ad78ef2) is replaced by memory_v2. The memory no longer reads the tag list: it stores generic landmark observations (landmark id and type from a catalogue derived from the static map geometry: wall_corner, wall_end, door_post, door_gap, wall_face; bearing / range; own pose estimate and sigma at that time; frame id; provider) and plans where to look from that catalogue (harness/owncam_landmarks.py). Observations come from a landmark provider. The only provider with a detector today is the INTERIM tag provider (harness/owncam_landmark_tags.py), which re-labels the pose source's tag detections as observations of the catalogue landmarks the tags are mounted next to and supplies the PF's tag noise. The tag-free GeometricLandmarkProvider has a detector hook for the vision detector (kiro/zone-vision-loc); without it the memory keeps its box and floor memories and plans full looks. The pose source (frozen M1 own-camera PF) is unchanged and still uses tags; that is outside the memory.",
+      "conditions": {"off": "unchanged", "memory_v2": "harness/m1_owncam_memory.py M1OwnCamDeliveryMem v2 (memory v2 + interim tag provider)"},
+      "test_comparison": "memory_v2 vs off on the registered test seeds 161-166; the prereg's primary metric, claim rule and false-confirmation checks apply to memory_v2 in place of memory_v1",
+      "result_label": "every memory_v2 result is reported as 'interim, tag provider'; tags are never a requirement of the memory",
+      "evidence_before_freeze": "planner_equivalence_check.json: on 400 random own estimates the v2 planner (catalogue + interim tag provider) chose the same look mode as memory_v1 in 400/400 and the same first pan in 385/392 short looks (offline, no simulator, no GT)"
+    },
+    {
+      "id": "A2",
+      "title": "own-RGB box positions re-projected with the PF's calibrated camera model; track sigma floor",
+      "dev_evidence": "dev-a1 memory_v1 s151: the target track r2-box-000 was confirmed 0.123 m from the GT box (prereg false-confirmation threshold 0.10 m) with sigma 0.029 m; near detections at 1.0-1.3 m carried a +0.10 m range bias with the GT pose (box_bias_check.json, evaluation only)",
+      "root_cause": "harness.zone_color_boxes.detect_own inverts the pixel ray with the nominal commanded-PWM camera; the frozen own-camera PF calibration (calibration_m1_dev.json) already estimates the unloaded camera elevation bias (-0.01868 rad) for the tag measurements. At a 0.2 m camera height that bias is about 0.1 m of range at 1.1 m.",
+      "change": "harness.owncam_memory.correct_box_detection maps every own-RGB box detection back through the PF's camera model (elevation bias, and the loaded camera_correction when loaded) and intersects it with the box-centre plane. Nothing is fitted; the calibration file is unchanged. A track's covariance is floored at max(0.02 m, the smallest own pose sigma among its updates)^2 because frames share the pose error.",
+      "offline_check": "box_bias_check.json (dev-a1 frames and M1 test s101/s102/s105/s106 frames, GT for scoring only): median range bias of near detections +0.02..+0.105 m -> about 0 after the correction"
+    },
+    {
+      "id": "A3",
+      "title": "stale pose fix: re-verify before manipulation",
+      "dev_evidence": "dev-a1 memory_v1 s151: tags were detected while driving in SEARCH_POSE, yet the own pose error grew from 0.02 m to 0.16 m (yaw 4 deg) during the approach leg with PF sigma 0.033 m; the arrival check was skipped (sigma small) and the grasp started 0.15 m off (grasp phase 127 s vs 44 s in off). off did a full arrival-check look.",
+      "change": "the memory keeps the last stationary look-posture fix (settled LOOK_P20 frame with a landmark observation). The driver skips an arrival check only if that fix is fresh (<= 0.5 m of own travel, <= 60 s); otherwise it does the (planned) look. A short look (driver or gate) stops early only after a look-posture fix obtained in the current dwell.",
+      "thresholds_source": "0.5 m = the loop v2 loaded travel-look distance (LOADED_LOOK_EVERY_M_V2); 60 s = the memory's STALE_AGE_S; chosen before dev-a2"
+    }
+  ],
+  "dev_check": {
+    "attempt": "dev-a2",
+    "runs": "memory_v2 on m1mem-dev-s151 and m1mem-dev-s152 (both at once, 2 sims); off is not rerun (off s151 exists in dev-a1; off is the unchanged frozen M1 student)",
+    "pass_rule": "both memory_v2 dev episodes reach m1_success with false_success false, no confirmed box track farther than 0.10 m from every GT box of its kind at confirmation, and the chosen target track within 0.10 m of the target GT box",
+    "if_fail": "diagnose from the dev records, register a further amendment here, and rerun the dev check as a new attempt (dev-a3, ...). The test split is never run on a version that failed its dev check. If no version passes, the test is not run and the memory is reported as not ready.",
+    "freeze": "after a passing dev check: make_frozen.py writes frozen_source.json on a clean tree; the test split runs only on that source (scripts/run_m1_owncam_memory.py --split test --frozen)"
+  }
+}

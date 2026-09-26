@@ -1,0 +1,22 @@
+{
+ "schema": "ugrp.owncam_memory_planner_equivalence.v1",
+ "v1_sha": "ad78ef2bafdcd3f1669aa0d8c2eb80f5cb01f151",
+ "v2_files_sha256": {
+  "harness/owncam_memory.py": "f9cebe9ecdb611590084325f0618e46c25b2957516467d0b6807644d147a30d8",
+  "harness/owncam_landmarks.py": "85e5f9aedd2eae74884f3f8839cf9e198d4d6650954e5479fddcb55e228390ed",
+  "harness/owncam_landmark_tags.py": "5613ac56f530b34b82ab1738a95802139e510ec5cf7ad019032acc9179b19bc3"
+ },
+ "map": "zone_wide_door_tags_v1",
+ "estimates": 400,
+ "same_mode": 400,
+ "both_short": 392,
+ "same_first_pan": 385,
+ "same_pan_set": 327,
+ "mode_pairs": {
+  "short/short": 392,
+  "short/full": 0,
+  "full/short": 0,
+  "full/full": 8
+ },
+ "result_label": "interim, tag provider"
+}

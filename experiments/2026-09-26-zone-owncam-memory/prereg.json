@@ -1,0 +1,45 @@
+{
+  "schema": "ugrp.m1_owncam_memory_prereg.v1",
+  "registered": "2026-09-26, Kiro, branch kiro/zone-owncam-memory; committed together with the memory source BEFORE any memory ON or OFF episode of this experiment ran. The test source is frozen separately (frozen_source.json) before the test split.",
+  "question": "Does an own-camera observation memory ('look once, remember') reduce the SIM time an M1 own-camera delivery spends looking around, without losing M1 success or adding false confirmations, compared with the unchanged baseline on the same new seeds?",
+  "conditions": {
+    "off": "harness/m1_owncam_delivery.py M1OwnCamDelivery, the frozen M1 student (PR #201, frozen ca2fdb8 hashes), no memory",
+    "memory_v1": "harness/m1_owncam_memory.py M1OwnCamDeliveryMem = the same student + harness/owncam_memory.py (one memory per robot, own inputs only) + harness/owncam_drive_mem.py look policy"
+  },
+  "same_for_both": "physics runner scripts/run_m1_owncam.run (via scripts/run_m1_owncam_memory.py), skill v9, calibration experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json, pose source owncam_pf_v2, pose limits and gate rules of M1, contact profile cargo_noslip_v1 (approved by the user 2026-09-26), weld OFF, sync SIM (timestep as built), own robot_cam 5 Hz, SIM limit 720 s, map zone_wide_door_tags_v1, identical seeds/spawn/slot/boxes",
+  "student": {
+    "skill": "v9",
+    "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+    "contact_profile": "cargo_noslip_v1",
+    "map_note": "develop on zone_wide_door_tags_v1 (the study scenario map family; v1 has wall tags at 0.05 m only, no door posts). The M1 baseline was validated on tags_v2; its behaviour on v1 is part of this comparison."
+  },
+  "memory_model_calibration": "the view model's detection table (tag side / obliquity -> detection probability), the held-box image band and the strict expectation margins were set from OWN inputs of the M1 test episodes s102/s105 (recorded frames, own PF estimates, own detections; no GT) and checked on s101/s106 (outputs/m1-owncam-20260926/test). No episode of this experiment was used.",
+  "episodes": [
+    {"episode_id": "m1mem-dev-s151", "split": "dev", "seed": 151, "spawn_y": 0.55, "slot_id": "A1", "map": "zone_wide_door_tags_v1", "goal": {"A": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-dev-s152", "split": "dev", "seed": 152, "spawn_y": -0.85, "slot_id": "B2", "map": "zone_wide_door_tags_v1", "goal": {"B": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s161", "split": "test", "seed": 161, "spawn_y": 0.55, "slot_id": "A2", "map": "zone_wide_door_tags_v1", "goal": {"A": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s162", "split": "test", "seed": 162, "spawn_y": -0.85, "slot_id": "B1", "map": "zone_wide_door_tags_v1", "goal": {"B": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s163", "split": "test", "seed": 163, "spawn_y": -2.25, "slot_id": "C1", "map": "zone_wide_door_tags_v1", "goal": {"C": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s164", "split": "test", "seed": 164, "spawn_y": 0.55, "slot_id": "A3", "map": "zone_wide_door_tags_v1", "goal": {"A": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s165", "split": "test", "seed": 165, "spawn_y": -0.85, "slot_id": "B2", "map": "zone_wide_door_tags_v1", "goal": {"B": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}},
+    {"episode_id": "m1mem-s166", "split": "test", "seed": 166, "spawn_y": -2.25, "slot_id": "C3", "map": "zone_wide_door_tags_v1", "goal": {"C": {"cyan": 1}}, "extra_boxes": {"red": 2, "green": 1}}
+  ],
+  "primary_metric": "per test seed, SIM makespan (result.sim_s) of memory_v1 minus off, over the seeds where both conditions reach m1_success; reported with both conditions' m1_success k/6",
+  "claim_rule": "memory ON is reported as faster only if (a) m1_success(memory_v1) >= m1_success(off) on the 6 test seeds, (b) false_success == 0 in memory_v1, (c) at least 3 seeds succeed in both conditions and memory_v1 is faster on every one of them. Otherwise report the numbers without a claim.",
+  "secondary": [
+    "looks: LOOK_P20 look sweeps (entries into the look posture from the issued commands), pan dwell positions, time in the look posture, search sweeps and their pans",
+    "commands issued (result.commands)",
+    "evaluation-only localization error (eval_only/frames_eval.jsonl): p50/p90 position and yaw error over all initialized frames and at the look-back / placement gate frames",
+    "false confirmations: M1 false_success (both conditions); memory_v1 only: confirmed box tracks with no GT box of that kind within 0.10 m at confirmation, the chosen target track's GT error > 0.10 m, and remembered-free cells (log-odds <= -0.6 at the end) within 0.05 m of a non-target GT box",
+    "memory decisions: short / full / skipped looks, early stops, escalations, expected-view-missing events, skipped viewpoints and pans, re-verifications, slot checks",
+    "wall time and load average (sync SIM: not a result)"
+  ],
+  "stop_rule": {
+    "episode": "M1 controller / skill outcome or SIM 720 s (the frozen runner)",
+    "dev": "dev seeds 151-152 may be rerun while debugging memory_v1; every attempt is kept in its own output folder and reported; fixes go into prereg_amendments.json (student side only) before the freeze",
+    "test": "seeds 161-166 run ONCE per condition on the frozen source (frozen_source.json); both conditions of one seed run concurrently (at most 2 sims)",
+    "exclusion": "only an infrastructure failure (killed process / host error with no result.json) may be rerun once, kept and labelled; a controller, skill or runner exception with result.json counts as a failed episode"
+  },
+  "guards": "thread caps OMP/OPENBLAS/VECLIB/MKL=1 enforced by the runner; >= 30 GiB free on the output disk before every episode; load average recorded per episode; no live LLM/API calls; GT only in eval_only/",
+  "map_v3_rule": "if kiro/zone-map-v3 publishes a passing own-camera localization gate for zone_wide_door_tags_v3 before this test cohort finishes, the same 6 test seeds are also run on v3 for both conditions as a secondary comparison; otherwise v3 is reported as not compared"
+}
