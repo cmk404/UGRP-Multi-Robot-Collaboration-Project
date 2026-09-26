@@ -22,6 +22,7 @@ from harness import zone_study_eval as ev  # noqa: E402
 HERE = Path(__file__).resolve().parent
 CONDITIONS = A.MAIN_CONDITIONS
 WRIST_LABEL = 'CURRENT OWN WRIST RGB'
+IDLE_REASK_S = 10.0   # harness.zone_event_scheduler.CallPolicy().idle_reask_s, identical in every condition
 
 
 def sha(path):
@@ -93,11 +94,21 @@ def gates_for(run):
                    and all(s.startswith('owncam_pf_v2:') for s in r['pose_sources_seen']) for r in robots.values())
                and res['eval_only']['weld_max_eq_active'] == 0
                and res['eval_only']['contact_profile']['noslip_iterations'] > 0)
+    reask = {}
+    events = rows(d / 'study' / 'scheduler_events.jsonl')
+    for rid in A.ROBOTS:
+        timers = [e['sim_s'] for e in events if e.get('kind') == 'timer' and e.get('actor') == rid]
+        reask[rid] = min((b - a for a, b in zip(timers, timers[1:])), default=None)
+    g['P9_reask'] = all(v is None or v >= trial_policy_idle(res) - 1e-9 for v in reask.values())
     label = {'pose_provider': 'tags_temporary', 'temporary': True, 'research_result': False,
              'note_ko': '임시, 표식 사용, 연구 결과 아님'}
     g['P8_records'] = res['pose_provider'] == label and man['pose_provider'] == label and \
         trial.get('pose_provider') == label
-    return g, {'p2_problems': p2[:10], 'p5_problems': p5[:10]}
+    return g, {'p2_problems': p2[:10], 'p5_problems': p5[:10], 'min_timer_spacing_s': reask}
+
+
+def trial_policy_idle(res):
+    return float(res['study'].get('call_policy_idle_reask_s') or IDLE_REASK_S)
 
 
 def observed(run):
@@ -145,7 +156,7 @@ def main(argv=None):
         obs[c] = observed(run)
     shas = {c: (r['result'] or {}).get('study', {}).get('pair_status_sha256') for c, r in runs.items()}
     p7 = len(set(shas.values())) == 1 and None not in shas.values()
-    names = ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P8_records')
+    names = ('P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P8_records', 'P9_reask')
     summary = {n: all(gates[c].get(n, False) for c in CONDITIONS) for n in names}
     summary['P7'] = p7
     raw = {}
