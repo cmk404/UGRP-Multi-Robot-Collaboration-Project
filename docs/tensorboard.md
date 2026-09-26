@@ -75,6 +75,11 @@ HParams의 **session status=success는 이벤트 가져오기 완료**를 뜻한
 - ACT 최종화 관리 실행 루트: `artifacts/report.json`과 `manifest.json`의 출처·종료 상태를 검증하고 `finalization/*`에 기록한다. 추가 optimizer update가 0인 검증 실행이며 학습 곡선·로봇 실패로 표시하지 않는다.
 - `runtime-benchmark-comparison.json`: 직접 파일 또는 부모 폴더를 지정한다. 고정된 4개 ABBA 요청 기록의 해시·모델·입력·측정값을 대조하고 `benchmark/*`에 표시한다. 요청 지연을 전체 임무 시간이나 로봇 성공으로 바꾸지 않는다.
 - 기타 `result.json`: 명시된 결과 지표와 출처만 변환. 형식을 모르는 내부 로그를 임의로 해석하지 않음.
+- 파생 뷰가 선언한 오프라인 평가 수치: `derived_view_only: true`인 `result.json`이 `offline_scalars`로
+  태그와 값을, `offline_source`로 원본 기록의 경로·SHA-256을, `offline_scalar_scope`로 그 수치의 범위를
+  적으면 `offline/*` 스칼라로 변환한다. 원본이 없거나 해시가 다르면 변환을 거부하고, 태그 형식(`offline/<이름>`)과
+  유한 수치만 허용한다. 어떤 수치를 보여줄지는 변환기가 아니라 파생 뷰가 정하며, 이 값은 오프라인 측정이므로
+  로봇 임무 성공·실행 시간으로 읽지 않는다. HParams에는 그 실행이 선언한 태그만 등록된다.
 
 `--source`는 한 실행/학습 폴더를 지정한다. 코호트 상위 폴더의 `results.json`이나 `report.json.runs`를 자동으로 따라가지 않는다. 원하는 하위 실행을 명시적으로 반복 지정한다. 현재 실행 중인 폴더보다 결과가 완성된 폴더를 선택한다.
 
