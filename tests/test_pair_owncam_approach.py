@@ -109,15 +109,23 @@ def _driver_v2(goal, pose):
     return drv
 
 
-def test_v2_rotates_in_place_before_translating():
-    drv = _driver_v2((1.0, -1.0, math.pi - .1), (0., -1., 0.))
+def test_v2_translates_with_heading_held_far_from_the_goal():
+    drv = _driver_v2((1.5, -1.0, math.pi - .1), (0., -1., 0.))
+    cmds = drv.tick(0.)
+    assert cmds[0]['kind'] == 'mecanum' and cmds[0]['forward'] > 0
+    assert abs(cmds[0]['turn']) < 1e-3                    # holds the start heading, no turn toward pi
+    assert drv.hold_yaw is not None and not drv.rotated
+
+
+def test_v2_rotates_in_place_near_the_goal():
+    drv = _driver_v2((.2, -1.0, math.pi - .1), (0., -1., 0.))
     cmds = drv.tick(0.)
     assert cmds[0]['kind'] == 'mecanum' and cmds[0]['forward'] == 0. and cmds[0]['left'] == 0.
-    assert abs(cmds[0]['turn']) == pa.TURN_IN_PLACE
+    assert abs(cmds[0]['turn']) == pa.TURN_IN_PLACE and drv.rotated
 
 
 def test_v2_looks_after_each_rotation_step():
-    drv = _driver_v2((1.0, -1.0, math.pi - .1), (0., -1., 0.))
+    drv = _driver_v2((.2, -1.0, math.pi - .1), (0., -1., 0.))
     drv.tick(0.)                                  # sets the step reference
     drv.loc.px[:, 2] = pa.TURN_STEP_RAD + .01     # estimated rotation reached one step
     cmds = drv.tick(.1)
