@@ -595,6 +595,38 @@
         "--episodes"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-owncam-loop-run",
+      "purpose": "자기 카메라 폐루프 문 통과(학생은 자기 RGB·정적 태그 지도·자기 명령만 사용, 평가 정답 분리)",
+      "entry": "scripts/run_owncam_closed_loop.py",
+      "docs": "docs/zone_owncam_localization.md",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; the student never receives live poses (GT only in eval_only/ and for the box-condition teacher grasp, reported separately); weld OFF",
+      "version": "1.0.0",
+      "runner": "scripts.run_owncam_closed_loop",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg"
+      ],
+      "output_kind": "directory"
+    },
+    {
+      "id": "zone-m1-owncam-run",
+      "purpose": "M1 자기 카메라 배달(자기 RGB 탐색·손목 스킬 파지·추정 기반 문 통과·배치·다시 보기, pose stub 없음)",
+      "entry": "scripts/run_m1_owncam.py",
+      "docs": "experiments/2026-09-26-zone-m1-owncam/prereg.json (+ prereg_amendments.json)",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; M1 contract rejects any non own-camera pose source; GT only in eval_only/; weld OFF",
+      "version": "1.1.0",
+      "runner": "scripts.run_m1_owncam",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg"
+      ],
+      "output_kind": "directory"
     }
   ]
 }
