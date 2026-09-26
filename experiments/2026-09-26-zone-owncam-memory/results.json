@@ -1,0 +1,2912 @@
+{
+ "schema": "ugrp.m1_owncam_memory_results.v1",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926",
+ "prereg_sha256": "b2dc241a150a64527d6e353615258af8a2b43825814fa97eb08ffc6f15f63770",
+ "amendments_sha256": "31ec9d638b7357084dc11938205a71847288a620e5236c3db49a1444ebb3741c",
+ "attempts": [
+  "dev-a1",
+  "dev-a2",
+  "test-a1"
+ ],
+ "episodes": [
+  {
+   "attempt": "dev-a1",
+   "condition": "off",
+   "episode": "m1mem-dev-s151",
+   "seed": 151,
+   "split": "dev",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/dev-a1/off/m1mem-dev-s151",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 315.69,
+   "commands": 5520,
+   "frames": 1664,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "ad78ef2bafdcd3f1669aa0d8c2eb80f5cb01f151",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0592,
+   "slot_xy": [
+    4.6,
+    0.0
+   ],
+   "gt_box_final_xyz": [
+    4.5766,
+    0.0035,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     82.88,
+     48.39,
+     37.23
+    ],
+    "end": [
+     16.07,
+     30.33,
+     51.03
+    ]
+   },
+   "wall_s": 1502.2,
+   "free_gib_before": 45.83,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 34.1,
+    "approach_leg:nav_pregrasp": 85.4,
+    "skill:nav_pregrasp": 103.5,
+    "skill:grasp": 104.2,
+    "skill:to_carry_posture": 149.39,
+    "skill:nav_preplace": 149.44,
+    "skill:pre_release": 283.19,
+    "skill:release": 294.59,
+    "skill:look_back": 304.99
+   },
+   "look_sweeps": 16,
+   "look_dwells": 96,
+   "look_time_s": 130.1,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 2,
+   "search_dwells": 12,
+   "localization": {
+    "frames": 1664,
+    "pos_err_m_p50": 0.02509,
+    "pos_err_m_p90": 0.07593,
+    "yaw_err_deg_p50": 0.4181,
+    "yaw_err_deg_p90": 1.7322,
+    "carry_pos_err_m_p90": 0.03774,
+    "carry_yaw_err_deg_p90": 1.2912,
+    "gate_pos_err_m": 0.00298,
+    "gate_yaw_err_deg": 0.1444
+   }
+  },
+  {
+   "attempt": "dev-a1",
+   "condition": "memory_v1",
+   "episode": "m1mem-dev-s151",
+   "seed": 151,
+   "split": "dev",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/dev-a1/memory_v1/m1mem-dev-s151",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 252.54,
+   "commands": 4327,
+   "frames": 1438,
+   "controller_schema": "ugrp.m1_owncam_memory.v1",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "ad78ef2bafdcd3f1669aa0d8c2eb80f5cb01f151",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.1228,
+   "slot_xy": [
+    4.6,
+    0.0
+   ],
+   "gt_box_final_xyz": [
+    4.5896,
+    -0.008,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     82.88,
+     48.39,
+     37.23
+    ],
+    "end": [
+     17.11,
+     43.08,
+     59.77
+    ]
+   },
+   "wall_s": 1313.7,
+   "free_gib_before": 45.83,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "approach_leg:nav_pregrasp": 14.7,
+    "skill:nav_pregrasp": 27.8,
+    "skill:grasp": 28.2,
+    "skill:backoff": 77.99,
+    "skill:to_carry_posture": 155.86,
+    "skill:nav_preplace": 155.91,
+    "skill:pre_release": 231.56,
+    "skill:release": 238.76,
+    "skill:look_back": 249.14
+   },
+   "look_sweeps": 12,
+   "look_dwells": 26,
+   "look_time_s": 32.2,
+   "dwells_per_look": [
+    6,
+    6,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    3,
+    1
+   ],
+   "search_sweeps": 0,
+   "search_dwells": 0,
+   "skipped_search_pans": 0,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1438,
+    "pos_err_m_p50": 0.10151,
+    "pos_err_m_p90": 0.15541,
+    "yaw_err_deg_p50": 0.94315,
+    "yaw_err_deg_p90": 3.95679,
+    "carry_pos_err_m_p90": 0.04128,
+    "carry_yaw_err_deg_p90": 1.80495,
+    "gate_pos_err_m": 0.0093,
+    "gate_yaw_err_deg": 0.4678
+   },
+   "memory": {
+    "confirmed_tracks": 2,
+    "false_confirmed_tracks": [
+     {
+      "track_id": "r2-box-000",
+      "kind": "cyan",
+      "xy": [
+       0.511,
+       -0.1026
+      ],
+      "nearest_same_kind_m": 0.1228,
+      "t": 14.5
+     }
+    ],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 7,
+     "driver_look_skipped": 2,
+     "driver_short_look_early_stop": 7,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 0,
+     "view_missing": 0,
+     "look_plan": 10,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 2,
+     "track_confirmed": 2,
+     "track_absent": 0
+    },
+    "driver_look_modes": {
+     "short": 7
+    },
+    "gate_look_modes": {
+     "short": 3,
+     "full": 1,
+     "skipped": 0
+    },
+    "early_stops_gate": 1,
+    "memory_counts": {
+     "frames": 1438,
+     "settled_frames": 411,
+     "box_frames": 125,
+     "box_detections": 134,
+     "free_updates": 24471,
+     "occupied_updates": 410,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 10,
+     "looks_full": 0
+    }
+   },
+   "result_label": null,
+   "landmark_provider": null
+  },
+  {
+   "attempt": "dev-a2",
+   "condition": "memory_v2",
+   "episode": "m1mem-dev-s151",
+   "seed": 151,
+   "split": "dev",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/dev-a2/memory_v2/m1mem-dev-s151",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 251.73,
+   "commands": 4347,
+   "frames": 1439,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "de6b520cea7e9869b4fff99c1805749974133157",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0072,
+   "slot_xy": [
+    4.6,
+    0.0
+   ],
+   "gt_box_final_xyz": [
+    4.5872,
+    0.0001,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     27.27,
+     34.46,
+     38.96
+    ],
+    "end": [
+     55.11,
+     67.44,
+     58.07
+    ]
+   },
+   "wall_s": 987.3,
+   "free_gib_before": 45.35,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "approach_leg:nav_pregrasp": 14.7,
+    "skill:nav_pregrasp": 30.2,
+    "skill:grasp": 32.1,
+    "skill:backoff": 85.63,
+    "skill:to_carry_posture": 159.79,
+    "skill:nav_preplace": 159.84,
+    "skill:pre_release": 232.24,
+    "skill:release": 236.74,
+    "skill:look_back": 247.13
+   },
+   "look_sweeps": 13,
+   "look_dwells": 27,
+   "look_time_s": 33.4,
+   "dwells_per_look": [
+    6,
+    2,
+    6,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    2
+   ],
+   "search_sweeps": 0,
+   "search_dwells": 0,
+   "skipped_search_pans": 0,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1439,
+    "pos_err_m_p50": 0.05047,
+    "pos_err_m_p90": 0.09664,
+    "yaw_err_deg_p50": 0.9688,
+    "yaw_err_deg_p90": 2.32112,
+    "carry_pos_err_m_p90": 0.03562,
+    "carry_yaw_err_deg_p90": 2.1978,
+    "gate_pos_err_m": 0.01986,
+    "gate_yaw_err_deg": 1.0698
+   },
+   "memory": {
+    "confirmed_tracks": 2,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 8,
+     "driver_look_skipped": 1,
+     "driver_short_look_early_stop": 8,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 1,
+     "view_missing": 0,
+     "look_plan": 11,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 2,
+     "track_confirmed": 2,
+     "track_absent": 0
+    },
+    "driver_look_modes": {
+     "short": 8
+    },
+    "gate_look_modes": {
+     "short": 3,
+     "full": 1,
+     "skipped": 0
+    },
+    "early_stops_gate": 3,
+    "memory_counts": {
+     "frames": 1439,
+     "settled_frames": 408,
+     "box_frames": 155,
+     "box_detections": 160,
+     "free_updates": 30089,
+     "occupied_updates": 528,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 11,
+     "looks_full": 0,
+     "landmark_observations": 1221,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "dev-a2",
+   "condition": "memory_v2",
+   "episode": "m1mem-dev-s152",
+   "seed": 152,
+   "split": "dev",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/dev-a2/memory_v2/m1mem-dev-s152",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 316.12,
+   "commands": 5365,
+   "frames": 1674,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "de6b520cea7e9869b4fff99c1805749974133157",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0626,
+   "slot_xy": [
+    4.6,
+    -2.1
+   ],
+   "gt_box_final_xyz": [
+    4.5928,
+    -2.077,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 64
+   },
+   "load_average": {
+    "start": [
+     27.27,
+     34.46,
+     38.96
+    ],
+    "end": [
+     46.46,
+     51.26,
+     52.62
+    ]
+   },
+   "wall_s": 1161.7,
+   "free_gib_before": 45.35,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 15.8,
+    "approach_leg:nav_pregrasp": 88.7,
+    "skill:nav_pregrasp": 100.2,
+    "skill:grasp": 100.3,
+    "skill:to_carry_posture": 148.54,
+    "skill:nav_preplace": 148.59,
+    "skill:pre_release": 300.55,
+    "skill:release": 300.95,
+    "skill:look_back": 311.32
+   },
+   "look_sweeps": 24,
+   "look_dwells": 41,
+   "look_time_s": 48.8,
+   "dwells_per_look": [
+    6,
+    2,
+    1,
+    1,
+    6,
+    1,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    2
+   ],
+   "search_sweeps": 3,
+   "search_dwells": 10,
+   "skipped_search_pans": 5,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1674,
+    "pos_err_m_p50": 0.03809,
+    "pos_err_m_p90": 0.19626,
+    "yaw_err_deg_p50": 1.4622,
+    "yaw_err_deg_p90": 3.91537,
+    "carry_pos_err_m_p90": 0.20059,
+    "carry_yaw_err_deg_p90": 4.30533,
+    "gate_pos_err_m": 0.00702,
+    "gate_yaw_err_deg": 0.2893
+   },
+   "memory": {
+    "confirmed_tracks": 2,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 20,
+     "driver_look_skipped": 1,
+     "driver_short_look_early_stop": 20,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 4,
+     "view_missing": 0,
+     "look_plan": 22,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 4,
+     "track_confirmed": 2,
+     "track_absent": 0
+    },
+    "driver_look_modes": {
+     "short": 20
+    },
+    "gate_look_modes": {
+     "short": 2,
+     "full": 1,
+     "skipped": 0
+    },
+    "early_stops_gate": 2,
+    "memory_counts": {
+     "frames": 1674,
+     "settled_frames": 919,
+     "box_frames": 379,
+     "box_detections": 251,
+     "free_updates": 76163,
+     "occupied_updates": 551,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 22,
+     "looks_full": 0,
+     "landmark_observations": 2586,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s161",
+   "seed": 161,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s161",
+   "infrastructure_failure": false,
+   "outcome": "SEARCH_NOT_FOUND",
+   "m1_success": false,
+   "m1_failed_checks": [
+    "all_pose_sources_owncam",
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "false_success": false,
+   "diagnostic_success": false,
+   "sim_s": 200.7,
+   "commands": 2536,
+   "frames": 997,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": null,
+   "slot_xy": [
+    4.6,
+    0.4
+   ],
+   "gt_box_final_xyz": [
+    -0.2,
+    0.75,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     69.2,
+     41.85,
+     43.56
+    ],
+    "end": [
+     172.48,
+     116.59,
+     76.99
+    ]
+   },
+   "wall_s": 657.7,
+   "free_gib_before": 45.29,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 33.3
+   },
+   "look_sweeps": 6,
+   "look_dwells": 36,
+   "look_time_s": 47.8,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 5,
+   "search_dwells": 30,
+   "localization": {
+    "frames": 997,
+    "pos_err_m_p50": 0.0394,
+    "pos_err_m_p90": 0.16641,
+    "yaw_err_deg_p50": 0.7483,
+    "yaw_err_deg_p90": 3.40358,
+    "carry_pos_err_m_p90": null,
+    "carry_yaw_err_deg_p90": null
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s162",
+   "seed": 162,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s162",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 426.51,
+   "commands": 7118,
+   "frames": 2226,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0245,
+   "slot_xy": [
+    4.6,
+    -2.5
+   ],
+   "gt_box_final_xyz": [
+    4.5909,
+    -2.4985,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     172.48,
+     116.59,
+     76.99
+    ],
+    "end": [
+     26.44,
+     56.08,
+     78.26
+    ]
+   },
+   "wall_s": 1785.9,
+   "free_gib_before": 43.1,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 24.6,
+    "approach_leg:nav_pregrasp": 91.0,
+    "skill:nav_pregrasp": 120.2,
+    "skill:grasp": 120.3,
+    "skill:to_carry_posture": 169.56,
+    "skill:nav_preplace": 169.61,
+    "skill:pre_release": 393.83,
+    "skill:release": 405.23,
+    "skill:look_back": 415.61
+   },
+   "look_sweeps": 24,
+   "look_dwells": 144,
+   "look_time_s": 195.5,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 2,
+   "search_dwells": 12,
+   "localization": {
+    "frames": 2226,
+    "pos_err_m_p50": 0.02048,
+    "pos_err_m_p90": 0.05434,
+    "yaw_err_deg_p50": 0.45165,
+    "yaw_err_deg_p90": 1.51485,
+    "carry_pos_err_m_p90": 0.0454,
+    "carry_yaw_err_deg_p90": 1.25127,
+    "gate_pos_err_m": 0.00689,
+    "gate_yaw_err_deg": 0.2021
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s163",
+   "seed": 163,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s163",
+   "infrastructure_failure": false,
+   "outcome": "SEARCH_NOT_FOUND",
+   "m1_success": false,
+   "m1_failed_checks": [
+    "all_pose_sources_owncam",
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "false_success": false,
+   "diagnostic_success": false,
+   "sim_s": 161.3,
+   "commands": 2142,
+   "frames": 800,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": null,
+   "slot_xy": [
+    3.0,
+    -1.25
+   ],
+   "gt_box_final_xyz": [
+    -0.2,
+    0.75,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     26.44,
+     56.08,
+     78.26
+    ],
+    "end": [
+     41.76,
+     59.18,
+     69.63
+    ]
+   },
+   "wall_s": 501.5,
+   "free_gib_before": 40.62,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 27.6
+   },
+   "look_sweeps": 6,
+   "look_dwells": 36,
+   "look_time_s": 47.7,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 5,
+   "search_dwells": 30,
+   "localization": {
+    "frames": 800,
+    "pos_err_m_p50": 0.02232,
+    "pos_err_m_p90": 0.05566,
+    "yaw_err_deg_p50": 0.41935,
+    "yaw_err_deg_p90": 1.1779,
+    "carry_pos_err_m_p90": null,
+    "carry_yaw_err_deg_p90": null
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s164",
+   "seed": 164,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s164",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 395.12,
+   "commands": 6680,
+   "frames": 2062,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0133,
+   "slot_xy": [
+    4.6,
+    0.8
+   ],
+   "gt_box_final_xyz": [
+    4.598,
+    0.7896,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     41.76,
+     59.18,
+     69.63
+    ],
+    "end": [
+     69.89,
+     36.47,
+     38.63
+    ]
+   },
+   "wall_s": 1294.8,
+   "free_gib_before": 77.93,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 38.7,
+    "approach_leg:nav_pregrasp": 128.8,
+    "skill:nav_pregrasp": 154.1,
+    "skill:grasp": 154.2,
+    "skill:to_carry_posture": 198.66,
+    "skill:nav_preplace": 198.71,
+    "skill:pre_release": 373.45,
+    "skill:release": 373.85,
+    "skill:look_back": 384.22
+   },
+   "look_sweeps": 22,
+   "look_dwells": 132,
+   "look_time_s": 178.9,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 3,
+   "search_dwells": 18,
+   "localization": {
+    "frames": 2062,
+    "pos_err_m_p50": 0.0189,
+    "pos_err_m_p90": 0.0595,
+    "yaw_err_deg_p50": 0.357,
+    "yaw_err_deg_p90": 1.40389,
+    "carry_pos_err_m_p90": 0.03979,
+    "carry_yaw_err_deg_p90": 1.48242,
+    "gate_pos_err_m": 0.0064,
+    "gate_yaw_err_deg": 0.2683
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s165",
+   "seed": 165,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s165",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 366.78,
+   "commands": 6354,
+   "frames": 1932,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0411,
+   "slot_xy": [
+    4.6,
+    -2.1
+   ],
+   "gt_box_final_xyz": [
+    4.5961,
+    -2.109,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     69.89,
+     36.47,
+     38.63
+    ],
+    "end": [
+     16.17,
+     32.46,
+     41.96
+    ]
+   },
+   "wall_s": 1651.4,
+   "free_gib_before": 109.41,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 25.8,
+    "approach_leg:nav_pregrasp": 58.9,
+    "skill:nav_pregrasp": 72.4,
+    "skill:grasp": 72.8,
+    "skill:to_carry_posture": 120.28,
+    "skill:nav_preplace": 120.33,
+    "skill:pre_release": 334.08,
+    "skill:release": 345.48,
+    "skill:look_back": 355.88
+   },
+   "look_sweeps": 21,
+   "look_dwells": 126,
+   "look_time_s": 170.8,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 2,
+   "search_dwells": 12,
+   "localization": {
+    "frames": 1932,
+    "pos_err_m_p50": 0.02532,
+    "pos_err_m_p90": 0.07533,
+    "yaw_err_deg_p50": 0.50085,
+    "yaw_err_deg_p90": 2.79905,
+    "carry_pos_err_m_p90": 0.05084,
+    "carry_yaw_err_deg_p90": 2.14415,
+    "gate_pos_err_m": 0.00506,
+    "gate_yaw_err_deg": 0.2119
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "off",
+   "episode": "m1mem-s166",
+   "seed": 166,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/off/m1mem-s166",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 449.97,
+   "commands": 7497,
+   "frames": 2343,
+   "controller_schema": "ugrp.m1_owncam_delivery.v3",
+   "controller_class": "harness.m1_owncam_delivery.M1OwnCamDelivery",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0531,
+   "slot_xy": [
+    3.0,
+    -0.44999999999999996
+   ],
+   "gt_box_final_xyz": [
+    2.9806,
+    -0.4314,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 242
+   },
+   "load_average": {
+    "start": [
+     16.17,
+     32.46,
+     41.96
+    ],
+    "end": [
+     61.2,
+     56.3,
+     47.19
+    ]
+   },
+   "wall_s": 1320.4,
+   "free_gib_before": 113.17,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 27.2,
+    "approach_leg:nav_pregrasp": 206.1,
+    "skill:nav_pregrasp": 224.7,
+    "skill:grasp": 224.8,
+    "skill:to_carry_posture": 272.05,
+    "skill:nav_preplace": 272.1,
+    "skill:pre_release": 417.51,
+    "skill:release": 428.91,
+    "skill:look_back": 439.27
+   },
+   "look_sweeps": 26,
+   "look_dwells": 156,
+   "look_time_s": 211.9,
+   "dwells_per_look": [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6
+   ],
+   "search_sweeps": 3,
+   "search_dwells": 18,
+   "localization": {
+    "frames": 2343,
+    "pos_err_m_p50": 0.02202,
+    "pos_err_m_p90": 0.09261,
+    "yaw_err_deg_p50": 0.2977,
+    "yaw_err_deg_p90": 1.63864,
+    "carry_pos_err_m_p90": 0.02924,
+    "carry_yaw_err_deg_p90": 0.85908,
+    "gate_pos_err_m": 0.00696,
+    "gate_yaw_err_deg": 0.0979
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s161",
+   "seed": 161,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s161",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+   "m1_success": false,
+   "m1_failed_checks": [
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "false_success": false,
+   "diagnostic_success": false,
+   "sim_s": 33.8,
+   "commands": 297,
+   "frames": 183,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0265,
+   "slot_xy": [
+    4.6,
+    0.4
+   ],
+   "gt_box_final_xyz": [
+    -0.2,
+    0.75,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     69.2,
+     41.85,
+     43.56
+    ],
+    "end": [
+     49.8,
+     46.29,
+     45.31
+    ]
+   },
+   "wall_s": 114.0,
+   "free_gib_before": 45.29,
+   "phase_times": {
+    "init:": 1.8,
+    "approach_leg:nav_pregrasp": 11.1,
+    "skill:nav_pregrasp": 21.2,
+    "skill:grasp": 21.3
+   },
+   "look_sweeps": 1,
+   "look_dwells": 6,
+   "look_time_s": 7.9,
+   "dwells_per_look": [
+    6
+   ],
+   "search_sweeps": 0,
+   "search_dwells": 0,
+   "skipped_search_pans": 0,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 183,
+    "pos_err_m_p50": 0.03175,
+    "pos_err_m_p90": 0.1345,
+    "yaw_err_deg_p50": 0.7559,
+    "yaw_err_deg_p90": 2.46798,
+    "carry_pos_err_m_p90": null,
+    "carry_yaw_err_deg_p90": null
+   },
+   "memory": {
+    "confirmed_tracks": 1,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 0,
+     "driver_look_skipped": 1,
+     "driver_short_look_early_stop": 0,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 0,
+     "view_missing": 0,
+     "look_plan": 0,
+     "reverify": 1,
+     "slot_check": 0,
+     "track_new": 2,
+     "track_confirmed": 1,
+     "track_absent": 0
+    },
+    "driver_look_modes": {},
+    "gate_look_modes": {
+     "short": 0,
+     "full": 0,
+     "skipped": 0
+    },
+    "early_stops_gate": 0,
+    "memory_counts": {
+     "frames": 183,
+     "settled_frames": 150,
+     "box_frames": 150,
+     "box_detections": 55,
+     "free_updates": 26260,
+     "occupied_updates": 193,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 0,
+     "looks_full": 0,
+     "landmark_observations": 479,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s162",
+   "seed": 162,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s162",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 252.29,
+   "commands": 4596,
+   "frames": 1368,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0506,
+   "slot_xy": [
+    4.6,
+    -2.5
+   ],
+   "gt_box_final_xyz": [
+    4.5928,
+    -2.4884,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     172.48,
+     116.59,
+     76.99
+    ],
+    "end": [
+     67.4,
+     96.55,
+     101.43
+    ]
+   },
+   "wall_s": 1224.0,
+   "free_gib_before": 43.1,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 15.8,
+    "approach_leg:nav_pregrasp": 41.3,
+    "skill:nav_pregrasp": 50.4,
+    "skill:grasp": 50.5,
+    "skill:to_carry_posture": 102.2,
+    "skill:nav_preplace": 102.25,
+    "skill:grip_check": 114.95,
+    "skill:pre_release": 223.31,
+    "skill:release": 238.31,
+    "skill:look_back": 248.69
+   },
+   "look_sweeps": 19,
+   "look_dwells": 39,
+   "look_time_s": 49.3,
+   "dwells_per_look": [
+    6,
+    1,
+    6,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    3,
+    1,
+    1,
+    2,
+    1,
+    1,
+    1,
+    6,
+    1
+   ],
+   "search_sweeps": 1,
+   "search_dwells": 4,
+   "skipped_search_pans": 1,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1368,
+    "pos_err_m_p50": 0.01435,
+    "pos_err_m_p90": 0.05514,
+    "yaw_err_deg_p50": 0.94995,
+    "yaw_err_deg_p90": 2.24316,
+    "carry_pos_err_m_p90": 0.05934,
+    "carry_yaw_err_deg_p90": 2.50476,
+    "gate_pos_err_m": 0.01203,
+    "gate_yaw_err_deg": 0.7564
+   },
+   "memory": {
+    "confirmed_tracks": 1,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 13,
+     "driver_look_skipped": 5,
+     "driver_short_look_early_stop": 12,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 2,
+     "view_missing": 0,
+     "look_plan": 16,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 4,
+     "track_confirmed": 1,
+     "track_absent": 0
+    },
+    "driver_look_modes": {
+     "short": 13
+    },
+    "gate_look_modes": {
+     "short": 3,
+     "full": 2,
+     "skipped": 0
+    },
+    "early_stops_gate": 3,
+    "memory_counts": {
+     "frames": 1368,
+     "settled_frames": 627,
+     "box_frames": 195,
+     "box_detections": 123,
+     "free_updates": 37569,
+     "occupied_updates": 183,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 16,
+     "looks_full": 0,
+     "landmark_observations": 1532,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s163",
+   "seed": 163,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s163",
+   "infrastructure_failure": false,
+   "outcome": "SEARCH_NOT_FOUND",
+   "m1_success": false,
+   "m1_failed_checks": [
+    "all_pose_sources_owncam",
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "false_success": false,
+   "diagnostic_success": false,
+   "sim_s": 106.6,
+   "commands": 1375,
+   "frames": 527,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": null,
+   "slot_xy": [
+    3.0,
+    -1.25
+   ],
+   "gt_box_final_xyz": [
+    -0.2,
+    0.75,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     26.44,
+     56.08,
+     78.26
+    ],
+    "end": [
+     91.65,
+     65.59,
+     72.75
+    ]
+   },
+   "wall_s": 390.5,
+   "free_gib_before": 40.62,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 18.8
+   },
+   "look_sweeps": 5,
+   "look_dwells": 12,
+   "look_time_s": 16.1,
+   "dwells_per_look": [
+    6,
+    2,
+    2,
+    1,
+    1
+   ],
+   "search_sweeps": 5,
+   "search_dwells": 8,
+   "skipped_search_pans": 17,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 527,
+    "pos_err_m_p50": 0.0374,
+    "pos_err_m_p90": 0.07895,
+    "yaw_err_deg_p50": 0.7865,
+    "yaw_err_deg_p90": 1.6147,
+    "carry_pos_err_m_p90": null,
+    "carry_yaw_err_deg_p90": null
+   },
+   "memory": {
+    "confirmed_tracks": 2,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 4,
+     "driver_look_skipped": 1,
+     "driver_short_look_early_stop": 4,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 4,
+     "view_missing": 0,
+     "look_plan": 4,
+     "reverify": 0,
+     "slot_check": 0,
+     "track_new": 3,
+     "track_confirmed": 2,
+     "track_absent": 1
+    },
+    "driver_look_modes": {
+     "short": 4
+    },
+    "gate_look_modes": {
+     "short": 0,
+     "full": 0,
+     "skipped": 0
+    },
+    "early_stops_gate": 0,
+    "memory_counts": {
+     "frames": 527,
+     "settled_frames": 365,
+     "box_frames": 365,
+     "box_detections": 176,
+     "free_updates": 69132,
+     "occupied_updates": 288,
+     "view_missing_events": 0,
+     "ambiguous_detections": 2,
+     "looks_planned_short": 4,
+     "looks_full": 0,
+     "landmark_observations": 2087,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s164",
+   "seed": 164,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s164",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 225.14,
+   "commands": 4090,
+   "frames": 1221,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0429,
+   "slot_xy": [
+    4.6,
+    0.8
+   ],
+   "gt_box_final_xyz": [
+    4.5966,
+    0.7941,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     41.76,
+     59.18,
+     69.63
+    ],
+    "end": [
+     16.44,
+     24.2,
+     42.17
+    ]
+   },
+   "wall_s": 775.6,
+   "free_gib_before": 77.93,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "search_sweep:": 22.8,
+    "approach_leg:nav_pregrasp": 57.7,
+    "skill:nav_pregrasp": 67.0,
+    "skill:grasp": 67.1,
+    "skill:to_carry_posture": 117.45,
+    "skill:nav_preplace": 117.5,
+    "skill:pre_release": 210.75,
+    "skill:release": 211.15,
+    "skill:look_back": 221.54
+   },
+   "look_sweeps": 16,
+   "look_dwells": 31,
+   "look_time_s": 41.3,
+   "dwells_per_look": [
+    6,
+    1,
+    2,
+    1,
+    6,
+    1,
+    1,
+    2,
+    1,
+    2,
+    1,
+    1,
+    1,
+    3,
+    1,
+    1
+   ],
+   "search_sweeps": 2,
+   "search_dwells": 3,
+   "skipped_search_pans": 7,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1221,
+    "pos_err_m_p50": 0.01372,
+    "pos_err_m_p90": 0.04848,
+    "yaw_err_deg_p50": 0.379,
+    "yaw_err_deg_p90": 2.1838,
+    "carry_pos_err_m_p90": 0.0311,
+    "carry_yaw_err_deg_p90": 2.83223,
+    "gate_pos_err_m": 0.0073,
+    "gate_yaw_err_deg": 0.4012
+   },
+   "memory": {
+    "confirmed_tracks": 3,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 12,
+     "driver_look_skipped": 4,
+     "driver_short_look_early_stop": 10,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 3,
+     "view_missing": 0,
+     "look_plan": 14,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 3,
+     "track_confirmed": 3,
+     "track_absent": 0
+    },
+    "driver_look_modes": {
+     "short": 12
+    },
+    "gate_look_modes": {
+     "short": 2,
+     "full": 1,
+     "skipped": 0
+    },
+    "early_stops_gate": 2,
+    "memory_counts": {
+     "frames": 1221,
+     "settled_frames": 580,
+     "box_frames": 250,
+     "box_detections": 142,
+     "free_updates": 51425,
+     "occupied_updates": 383,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 14,
+     "looks_full": 0,
+     "landmark_observations": 1572,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s165",
+   "seed": 165,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s165",
+   "infrastructure_failure": false,
+   "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "false_success": false,
+   "diagnostic_success": true,
+   "sim_s": 205.75,
+   "commands": 4000,
+   "frames": 1128,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0681,
+   "slot_xy": [
+    4.6,
+    -2.1
+   ],
+   "gt_box_final_xyz": [
+    4.5965,
+    -2.1187,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 0
+   },
+   "load_average": {
+    "start": [
+     69.89,
+     36.47,
+     38.63
+    ],
+    "end": [
+     15.47,
+     28.84,
+     42.99
+    ]
+   },
+   "wall_s": 977.0,
+   "free_gib_before": 109.41,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "approach_leg:nav_pregrasp": 17.1,
+    "skill:nav_pregrasp": 25.0,
+    "skill:grasp": 25.1,
+    "skill:to_carry_posture": 76.45,
+    "skill:nav_preplace": 76.5,
+    "skill:pre_release": 184.46,
+    "skill:release": 190.86,
+    "skill:look_back": 201.25
+   },
+   "look_sweeps": 15,
+   "look_dwells": 30,
+   "look_time_s": 37.8,
+   "dwells_per_look": [
+    6,
+    1,
+    6,
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    1,
+    2,
+    2
+   ],
+   "search_sweeps": 0,
+   "search_dwells": 0,
+   "skipped_search_pans": 0,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 1128,
+    "pos_err_m_p50": 0.05082,
+    "pos_err_m_p90": 0.09285,
+    "yaw_err_deg_p50": 1.25495,
+    "yaw_err_deg_p90": 3.32808,
+    "carry_pos_err_m_p90": 0.09496,
+    "carry_yaw_err_deg_p90": 2.7161,
+    "gate_pos_err_m": 0.00681,
+    "gate_yaw_err_deg": 0.4043
+   },
+   "memory": {
+    "confirmed_tracks": 2,
+    "false_confirmed_tracks": [],
+    "false_free_cells_near_boxes": [],
+    "event_counts": {
+     "driver_look": 10,
+     "driver_look_skipped": 1,
+     "driver_short_look_early_stop": 9,
+     "driver_short_look_escalated": 0,
+     "driver_stale_fix_recheck": 2,
+     "view_missing": 0,
+     "look_plan": 13,
+     "reverify": 1,
+     "slot_check": 1,
+     "track_new": 4,
+     "track_confirmed": 2,
+     "track_absent": 1
+    },
+    "driver_look_modes": {
+     "short": 10
+    },
+    "gate_look_modes": {
+     "short": 3,
+     "full": 1,
+     "skipped": 0
+    },
+    "early_stops_gate": 3,
+    "memory_counts": {
+     "frames": 1128,
+     "settled_frames": 498,
+     "box_frames": 86,
+     "box_detections": 128,
+     "free_updates": 12048,
+     "occupied_updates": 172,
+     "view_missing_events": 0,
+     "ambiguous_detections": 0,
+     "looks_planned_short": 13,
+     "looks_full": 0,
+     "landmark_observations": 926,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  },
+  {
+   "attempt": "test-a1",
+   "condition": "memory_v2",
+   "episode": "m1mem-s166",
+   "seed": 166,
+   "split": "test",
+   "folder": "/Users/changmin/projects/ugrp/outputs/owncam-memory-20260926/test-a1/memory_v2/m1mem-s166",
+   "infrastructure_failure": false,
+   "outcome": "SIM_LIMIT",
+   "m1_success": false,
+   "m1_failed_checks": [
+    "all_pose_sources_owncam",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "within_sim_limit",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "false_success": false,
+   "diagnostic_success": false,
+   "sim_s": 720.5,
+   "commands": 11538,
+   "frames": 3596,
+   "controller_schema": "ugrp.m1_owncam_memory.v2",
+   "controller_class": "harness.m1_owncam_memory.M1OwnCamDeliveryMem",
+   "code_sha": "48d51391f29641f36fc1f84a008d240f1c1bc3f8",
+   "code_dirty": false,
+   "map": "zone_wide_door_tags_v1",
+   "static_map_sha256": "238edb6764582bc69812f5b46cc5edaa48943ef37348e59a71f72e1b9ad824aa",
+   "contact_profile": "cargo_noslip_v1",
+   "noslip_iterations": 10,
+   "weld": "off",
+   "search_target_error_m": 0.0799,
+   "slot_xy": [
+    3.0,
+    -0.44999999999999996
+   ],
+   "gt_box_final_xyz": [
+    0.4,
+    -0.05,
+    0.0159
+   ],
+   "contacts": {
+    "wall": 0,
+    "peer_robot": 0,
+    "other_box": 3609
+   },
+   "load_average": {
+    "start": [
+     16.17,
+     32.46,
+     41.96
+    ],
+    "end": [
+     61.85,
+     47.29,
+     47.82
+    ]
+   },
+   "wall_s": 2133.1,
+   "free_gib_before": 113.17,
+   "phase_times": {
+    "init:": 1.8,
+    "search_leg:": 11.1,
+    "approach_leg:nav_pregrasp": 57.6
+   },
+   "look_sweeps": 111,
+   "look_dwells": 329,
+   "look_time_s": 382.7,
+   "dwells_per_look": [
+    6,
+    1,
+    2,
+    1,
+    9,
+    9,
+    9,
+    3,
+    1,
+    2,
+    2,
+    2,
+    1,
+    9,
+    2,
+    3,
+    9,
+    3,
+    1,
+    3,
+    1,
+    3,
+    3,
+    1,
+    3,
+    3,
+    1,
+    2,
+    2,
+    2,
+    9,
+    1,
+    3,
+    2,
+    2,
+    2,
+    9,
+    1,
+    3,
+    9,
+    3,
+    2,
+    3,
+    2,
+    2,
+    1,
+    2,
+    9,
+    1,
+    2,
+    3,
+    1,
+    1,
+    9,
+    9,
+    3,
+    3,
+    2,
+    2,
+    3,
+    1,
+    2,
+    2,
+    1,
+    2,
+    3,
+    2,
+    3,
+    2,
+    1,
+    3,
+    2,
+    2,
+    3,
+    1,
+    3,
+    2,
+    2,
+    3,
+    2,
+    3,
+    1,
+    2,
+    2,
+    9,
+    3,
+    1,
+    3,
+    3,
+    1,
+    2,
+    3,
+    9,
+    1,
+    2,
+    9,
+    3,
+    1,
+    2,
+    3,
+    2,
+    3,
+    2,
+    1,
+    2,
+    3,
+    2,
+    3,
+    1,
+    1,
+    1
+   ],
+   "search_sweeps": 0,
+   "search_dwells": 0,
+   "skipped_search_pans": 0,
+   "skipped_viewpoints": 0,
+   "reverify_sweeps": 0,
+   "localization": {
+    "frames": 3596,
+    "pos_err_m_p50": 0.0782,
+    "pos_err_m_p90": 0.21399,
+    "yaw_err_deg_p50": 1.7201,
+    "yaw_err_deg_p90": 5.14295,
+    "carry_pos_err_m_p90": null,
+    "carry_yaw_err_deg_p90": null
+   },
+   "memory": {
+    "confirmed_tracks": 6,
+    "false_confirmed_tracks": [
+     {
+      "track_id": "r3-box-002",
+      "kind": "cyan",
+      "xy": [
+       0.4511,
+       -0.1568
+      ],
+      "nearest_same_kind_m": 0.1184,
+      "t": 48.3
+     },
+     {
+      "track_id": "r3-box-003",
+      "kind": "green",
+      "xy": [
+       0.4887,
+       -1.791
+      ],
+      "nearest_same_kind_m": 0.1666,
+      "t": 50.9
+     },
+     {
+      "track_id": "r3-box-004",
+      "kind": "green",
+      "xy": [
+       0.4195,
+       -1.946
+      ],
+      "nearest_same_kind_m": 0.2966,
+      "t": 276.9
+     },
+     {
+      "track_id": "r3-box-005",
+      "kind": "cyan",
+      "xy": [
+       0.2466,
+       -0.2265
+      ],
+      "nearest_same_kind_m": 0.2338,
+      "t": 285.5
+     },
+     {
+      "track_id": "r3-box-006",
+      "kind": "cyan",
+      "xy": [
+       0.5986,
+       0.1091
+      ],
+      "nearest_same_kind_m": 0.2545,
+      "t": 310.7
+     }
+    ],
+    "false_free_cells_near_boxes": [
+     {
+      "cell": 3898,
+      "xy": [
+       0.375,
+       -1.625
+      ],
+      "box": "box_00",
+      "kind": "green",
+      "log_odds": -1.573
+     }
+    ],
+    "event_counts": {
+     "driver_look": 124,
+     "driver_look_skipped": 0,
+     "driver_short_look_early_stop": 64,
+     "driver_short_look_escalated": 14,
+     "driver_stale_fix_recheck": 0,
+     "view_missing": 0,
+     "look_plan": 110,
+     "reverify": 0,
+     "slot_check": 0,
+     "track_new": 7,
+     "track_confirmed": 6,
+     "track_absent": 11
+    },
+    "driver_look_modes": {
+     "short": 110,
+     "full": 14
+    },
+    "gate_look_modes": {
+     "short": 0,
+     "full": 0,
+     "skipped": 0
+    },
+    "early_stops_gate": 0,
+    "memory_counts": {
+     "frames": 3596,
+     "settled_frames": 1690,
+     "box_frames": 1690,
+     "box_detections": 1316,
+     "free_updates": 202978,
+     "occupied_updates": 1228,
+     "view_missing_events": 0,
+     "ambiguous_detections": 35,
+     "looks_planned_short": 110,
+     "looks_full": 0,
+     "landmark_observations": 14776,
+     "observations_uninitialized": 0
+    }
+   },
+   "result_label": "interim, tag provider",
+   "landmark_provider": {
+    "name": "tags_interim",
+    "interim": true,
+    "label": "interim, tag provider",
+    "schema": "ugrp.owncam_landmark_tags.v1",
+    "tags": 70,
+    "tags_anchored_by_type": {
+     "wall_corner": 16,
+     "wall_face": 50,
+     "door_post": 4
+    },
+    "support_radius_m": 0.3,
+    "config": {
+     "SCHEMA": "ugrp.owncam_landmark_tags.v1",
+     "INTERIM_LABEL": "interim, tag provider",
+     "SUPPORT_RADIUS_M": 0.3,
+     "FACE_NORMAL_DOT": 0.9,
+     "PLAN_MIN_SIDE_PX": 10.0,
+     "PLAN_MAX_RANGE_M": 3.5,
+     "PLAN_MAX_OBLIQUE_DEG": 70.0,
+     "PLAN_MARGIN_PX": -2.0,
+     "PLAN_LOADED_ROW_LIMIT_PX": 172.0,
+     "DETECT_P_BY_SIDE": [
+      [
+       12.0,
+       0.03
+      ],
+      [
+       14.0,
+       0.4
+      ],
+      [
+       17.0,
+       0.72
+      ],
+      [
+       22.0,
+       0.97
+      ],
+      [
+       1000000000.0,
+       0.95
+      ]
+     ],
+     "DETECT_P_BY_OBLIQUE": [
+      [
+       30.0,
+       1.0
+      ],
+      [
+       50.0,
+       0.85
+      ],
+      [
+       60.0,
+       0.5
+      ],
+      [
+       1000000000.0,
+       0.15
+      ]
+     ],
+     "EXPECT_MIN_SIDE_PX": 20.0,
+     "EXPECT_MAX_RANGE_M": 1.8,
+     "EXPECT_MAX_OBLIQUE_DEG": 55.0,
+     "EXPECT_MARGIN_PX": 18.0,
+     "EXPECT_LOADED_ROW_LIMIT_PX": 132.0
+    },
+    "result_label": "interim, tag provider"
+   }
+  }
+ ],
+ "test_comparison": {
+  "per_seed": [
+   {
+    "seed": 161,
+    "off": {
+     "outcome": "SEARCH_NOT_FOUND",
+     "m1_success": false,
+     "sim_s": 200.7,
+     "look_sweeps": 6,
+     "look_dwells": 36,
+     "look_time_s": 47.8,
+     "commands": 2536
+    },
+    "memory_v2": {
+     "outcome": "SKILL_GRASP_TARGET_NOT_VISIBLE",
+     "m1_success": false,
+     "sim_s": 33.8,
+     "look_sweeps": 1,
+     "look_dwells": 6,
+     "look_time_s": 7.9,
+     "commands": 297
+    }
+   },
+   {
+    "seed": 162,
+    "off": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 426.51,
+     "look_sweeps": 24,
+     "look_dwells": 144,
+     "look_time_s": 195.5,
+     "commands": 7118
+    },
+    "memory_v2": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 252.29,
+     "look_sweeps": 19,
+     "look_dwells": 39,
+     "look_time_s": 49.3,
+     "commands": 4596
+    },
+    "delta_sim_s": -174.22
+   },
+   {
+    "seed": 163,
+    "off": {
+     "outcome": "SEARCH_NOT_FOUND",
+     "m1_success": false,
+     "sim_s": 161.3,
+     "look_sweeps": 6,
+     "look_dwells": 36,
+     "look_time_s": 47.7,
+     "commands": 2142
+    },
+    "memory_v2": {
+     "outcome": "SEARCH_NOT_FOUND",
+     "m1_success": false,
+     "sim_s": 106.6,
+     "look_sweeps": 5,
+     "look_dwells": 12,
+     "look_time_s": 16.1,
+     "commands": 1375
+    }
+   },
+   {
+    "seed": 164,
+    "off": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 395.12,
+     "look_sweeps": 22,
+     "look_dwells": 132,
+     "look_time_s": 178.9,
+     "commands": 6680
+    },
+    "memory_v2": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 225.14,
+     "look_sweeps": 16,
+     "look_dwells": 31,
+     "look_time_s": 41.3,
+     "commands": 4090
+    },
+    "delta_sim_s": -169.98
+   },
+   {
+    "seed": 165,
+    "off": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 366.78,
+     "look_sweeps": 21,
+     "look_dwells": 126,
+     "look_time_s": 170.8,
+     "commands": 6354
+    },
+    "memory_v2": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 205.75,
+     "look_sweeps": 15,
+     "look_dwells": 30,
+     "look_time_s": 37.8,
+     "commands": 4000
+    },
+    "delta_sim_s": -161.03
+   },
+   {
+    "seed": 166,
+    "off": {
+     "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+     "m1_success": true,
+     "sim_s": 449.97,
+     "look_sweeps": 26,
+     "look_dwells": 156,
+     "look_time_s": 211.9,
+     "commands": 7497
+    },
+    "memory_v2": {
+     "outcome": "SIM_LIMIT",
+     "m1_success": false,
+     "sim_s": 720.5,
+     "look_sweeps": 111,
+     "look_dwells": 329,
+     "look_time_s": 382.7,
+     "commands": 11538
+    }
+   }
+  ],
+  "m1_success": {
+   "off": 4,
+   "memory_v2": 3
+  },
+  "false_success_memory_v2": 0,
+  "result_label": "interim, tag provider",
+  "both_success_seeds": [
+   162,
+   164,
+   165
+  ],
+  "delta_sim_s_both": [
+   -174.22,
+   -169.98,
+   -161.03
+  ],
+  "missing": [],
+  "claim_memory_faster": false,
+  "claim_rule": "memory_v2 m1_success >= off, memory_v2 false_success == 0, >= 3 seeds succeed in both, memory_v2 faster on every one of them (prereg.json with amendment A1: memory_v1 -> memory_v2)"
+ }
+}

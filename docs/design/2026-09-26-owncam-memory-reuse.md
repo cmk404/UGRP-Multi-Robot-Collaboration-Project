@@ -4,6 +4,7 @@
 - 사용자 요청(2026-09-26): "뭔가 주변을 봤으면 그걸 기억해두면 되지, 꼭 계속계속 둘러봐야 하나?", "확인하고 기억 같은 것들 바로 직접 만들지 말고, 이미 만들어진 것들을 활용해주라. 그리고 PR할 때 뭐 참고했는지 기록하고!"
 - 이 문서는 **코드 작성 전에** 쓴 재사용 조사다. 구현·실험 결과는 `experiments/2026-09-26-zone-owncam-memory/`에 둔다.
 - 같은 날 `kiro/markerless-research`(마커 없는 위치 추정 조사)는 아직 문헌 문서가 없고 탐침 코드만 있다. 이 문서는 기억·능동 관측만 다루고 마커 없는 위치 추정은 다루지 않는다.
+- **결과(test 161–166, 1회, interim, tag provider):** m1_success OFF 4/6, memory_v2 3/6 → 사전 등록 주장 규칙 불충족. 둘 다 성공한 3 seed에서는 SIM 41–44% 짧았다(둘러보기 시간 181.7 → 42.8 s). 자세한 표·실패 분석은 [실험 README](../../experiments/2026-09-26-zone-owncam-memory/README.md).
 - **2026-09-26 개정(A1–A3, 계정 2에서 이어서 작업).** 사용자: "표식은 없애기로 했잖아. 그걸 기억하면 안 되지 않을까?" 기억을 표식(AprilTag)과 무관하게 바꿨다. 0절이 현재 설계다. 1–3절은 첫 판(memory_v1, `ad78ef2`)의 기록으로 남기고, 태그에 기대던 부분은 **[대체됨 A1]**로 표시했다.
 
 ## 0. 개정 설계(memory_v2): 표식 비의존 기억
@@ -44,9 +45,22 @@
 
 ### 0.5 다른 작업과의 정렬
 
-- `kiro/memory-literature`(자세·물체 기억 문헌 조사): 이 문서를 고친 시점에 문서(`docs/design/2026-09-26-memory-literature.md`)가 아직 원격에 없다. 나오면 대조해 PR에 반영한다.
+- `kiro/memory-literature`(PR #230, `docs/design/2026-09-26-memory-literature.md`, `3174c2f`): test 코호트 도중에 원격에 올라와 **동결 뒤에** 대조했다. 대조 결과는 0.6절이다. 동결 소스는 바꾸지 않았다.
 - PR #210(`kiro/markerless-research`) 4(b): 관측 항목 필드·개체 우선·신선도·도착 시 재검증 규칙을 따른다. 들은 주장(`source: heard`)은 이 PR 범위 밖이다(단독 M1).
 - PR #227(`kiro/zone-vision-loc`): 태그 없는 지도와 벽·문 분할 모델 → PF 측정. 같은 모델의 검출 결과를 기하 제공자의 `detector`로 넣으면 기억은 바뀌지 않는다.
+
+### 0.6 문헌 조사(PR #230)와의 대조
+
+| PR #230 권고 | memory_v2 | 상태 |
+|---|---|---|
+| 자기 자세는 SLAM이 아니라 주어진 지도에서의 MCL(0절 1항, [P1][P3]) | 동결 M1 PF를 그대로 읽는다. 루프 폐쇄·키프레임 없음 | 일치 |
+| 물체 기억 = 물체별 KF 트랙 + 게이트 대응 + 정적 지도 개체 이름표(0절 2항) | `BoxTrack`(filterpy·PythonRobotics 적응), 표식 목록 ID로 관측을 붙임 | 일치. 트랙에 지도 개체(`location_ref`, 예: 픽업 칸)를 붙이는 것은 아직 없음 → 후속 |
+| 트랙 σ ≥ 최선 관측 당시 자세 σ(4.1절, `floor_var`) | A2 그대로 | 일치 |
+| 마지막 정지 둘러보기 고정을 L1 기억에 둔다(4.1절) | A3 `last_look_fix` | 일치 |
+| 보였어야 할 곳에서만 미검출을 부재 증거로 센다(0절 3항, [P18][P29][P37]) | `point_in_view`(시야·거리 1.0 m·벽 가림) 안에서만 `misses`를 센다 | 일치 |
+| `ABSENT_MISSES` 카운터 대신 존재 확률(persistence filter[P14], 수식만) | 카운터(3회) 그대로 | **후속 버전**. test 소스가 동결돼 이번 비교에는 넣지 않는다 |
+| 들은 주장(L4)은 따로 저장, 자기 트랙과 합치지 않음 | 범위 밖(단독 M1, 통신 없음) | 후속(대화 연구 통합 때) |
+| 기억 → 한국어는 결정적 템플릿 요약, 확신은 규칙 계산(4.4절) | `snapshot()`이 트랙 상태·σ·나이·지도 표식 ID를 낸다. 템플릿은 아직 없음 | 후속 |
 
 ## 1. 문제: 기준선은 왜 계속 둘러보나
 
@@ -173,6 +187,12 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 - C. Huang, O. Mees, A. Zeng, W. Burgard, "Visual Language Maps for Robot Navigation," ICRA 2023. https://arxiv.org/abs/2210.05714
 - L. Schmid, M. Abate, Y. Chang, L. Carlone, "Khronos: A Unified Approach for Spatio-Temporal Metric-Semantic SLAM in Dynamic Environments," RSS 2024. https://arxiv.org/abs/2402.13817
 - A. Anwar, J. Welsh, J. Biswas, S. Pouya, Y. Chang, "ReMEmbR: Building and Reasoning Over Long-Horizon Spatio-Temporal Memory for Robot Navigation," 2024. https://arxiv.org/abs/2409.13682
+- A1–A3 대조에 쓴 논문(PR #230 참고 목록에서 확인 수준과 함께 옮김):
+  - F. Dellaert, D. Fox, W. Burgard, S. Thrun, "Monte Carlo Localization for Mobile Robots," ICRA 1999. https://doi.org/10.1109/ROBOT.1999.772544
+  - S. Lenser, M. Veloso, "Sensor Resetting Localization for Poorly Modelled Mobile Robots," ICRA 2000. https://doi.org/10.1109/ROBOT.2000.844766
+  - D. M. Rosen, J. Mason, J. J. Leonard, "Towards Lifelong Feature-Based Mapping in Semi-Static Environments," ICRA 2016. https://doi.org/10.1109/ICRA.2016.7487237 (persistence filter, 후속 존재 확률)
+  - L. L. S. Wong, T. Lozano-Pérez, L. P. Kaelbling, "Not seeing is also believing: Combining object and metric spatial information," ICRA 2014. http://hdl.handle.net/1721.1/100724
+  - P. Liu, Z. Guo, M. Warke et al., "DynaMem: Online Dynamic Spatio-Semantic Memory for Open World Mobile Manipulation," 2024. https://arxiv.org/abs/2411.04999
 
 공개 코드·라이브러리:
 - filterpy 1.4.5 — https://github.com/rlabbe/filterpy (MIT). `filterpy/kalman/kalman_filter.py`의 `predict`·`update`를 적응(`harness/owncam_memory_kf.py`).
@@ -186,6 +206,7 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 저장소 안 재사용(경로):
 - `harness/owncam_localizer.py`, `harness/owncam_pose_source.py`, `harness/wall_tags.py`, `harness/zone_color_boxes.py`, `harness/markerless_box.py`, `harness/map_goto.py`, `harness/owncam_drive.py`, `harness/owncam_drive_v2.py`, `harness/m1_owncam_delivery.py`, `scripts/run_m1_owncam.py` (PR #177, #178, #197, #201).
 - 설계 참고: `harness/coela_modules.py`, PR #193 `harness/zone_own_outcome.py`·`judge_route_blockage`, PR #206 `status().blocked_ahead`, `harness/multi_object_tracking.py`.
+- 문헌 조사 PR #230 `docs/design/2026-09-26-memory-literature.md`(`kiro/memory-literature` `3174c2f`): 0.6절 대조.
 - A1–A3 개정: PR #210 `docs/design/2026-09-26-markerless-localization-and-memory.md` 4(b)(관측 항목 형식), PR #227 `kiro/zone-vision-loc` `experiments/2026-09-26-vision-loc/maps/zone_wide_door_walls_v3_notags.json`(태그 없는 지도, 검출기 자리), PR #208 `maps/zones/zone_wide_door_tags_v3.json`, `experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json`(`elevation_bias_rad`, A2), `harness/visual_arm.py` `camera_extrinsics`(명령 PWM FK), `harness/owncam_drive_v2.py` `LOADED_LOOK_EVERY_M_V2`(A3 0.5 m 근거).
 
 문서·웹 페이지:
