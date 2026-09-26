@@ -1,0 +1,136 @@
+{
+  "schema": "ugrp.zone_scenario.v1",
+  "scenario_id": "i1_cyan_three_slots",
+  "map_id": "zone_wide_door_tags_v2",
+  "landmark_detail": "full",
+  "seeds": [
+    700,
+    701,
+    702
+  ],
+  "orders": [
+    {
+      "order_id": "order-1",
+      "kind": "cyan",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {
+        "pickup_bay": "P2",
+        "slot": "P2-2"
+      }
+    },
+    {
+      "order_id": "order-2",
+      "kind": "cyan",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {
+        "pickup_bay": "P2",
+        "slot": "P2-1"
+      }
+    },
+    {
+      "order_id": "order-3",
+      "kind": "cyan",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "A",
+      "initial_location": {
+        "pickup_bay": "P1",
+        "slot": "P1-3"
+      }
+    }
+  ],
+  "eval": {
+    "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "통합 배선 스모크 전용. 자기 카메라 실행기(#206)의 M1 손목 스킬이 다루는 cyan 상자 3개만 주문한다. 배치는 sim.zone_arena.episode('zone_wide_door', 700, goal A/B/C cyan 1, extra red 2·green 1)의 설정 배치와 같고, 주문 줄 순서는 #194 fixture의 순위 규칙(r1→첫 줄)이 #206 smoke-s700 배정(r1→P2-2→C, r2→P2-1→B, r3→P1-3→A)을 재현하도록 정했다. 연구 시나리오가 아니다.",
+    "tests_ko": "결정→실행기→물리 결과→기록 배선. 통신 효과를 재지 않는다.",
+    "setup": {
+      "arena_variant": "zone_wide_door",
+      "map_file_sha256": "f9b0ef0d9f35457b34711c0ec5d11688af3130238560195c982660137ad3e73b",
+      "contact_profile": "cargo_noslip_v1",
+      "weld": "off",
+      "robot_spawns": "arena_default",
+      "placements": [
+        {
+          "item_id": "box_00",
+          "kind": "cyan",
+          "order_id": "order-1",
+          "slot": "P2-2",
+          "pose_m": [
+            1.6,
+            -0.85,
+            0.0
+          ]
+        },
+        {
+          "item_id": "box_01",
+          "kind": "red",
+          "order_id": null,
+          "slot": "P1-2",
+          "pose_m": [
+            0.4,
+            -0.85,
+            0.0
+          ]
+        },
+        {
+          "item_id": "box_02",
+          "kind": "cyan",
+          "order_id": "order-3",
+          "slot": "P1-3",
+          "pose_m": [
+            -0.2,
+            0.75,
+            0.0
+          ]
+        },
+        {
+          "item_id": "box_03",
+          "kind": "green",
+          "order_id": null,
+          "slot": "P2-1",
+          "pose_m": [
+            1.6,
+            -2.45,
+            0.0
+          ]
+        },
+        {
+          "item_id": "box_04",
+          "kind": "red",
+          "order_id": null,
+          "slot": "P2-3",
+          "pose_m": [
+            1.6,
+            0.75,
+            0.0
+          ]
+        },
+        {
+          "item_id": "box_05",
+          "kind": "cyan",
+          "order_id": "order-2",
+          "slot": "P2-1",
+          "pose_m": [
+            1.0,
+            -1.65,
+            0.0
+          ]
+        }
+      ]
+    },
+    "hidden_events": [],
+    "budget": {
+      "sim_seconds": 480,
+      "http_attempts_per_trial": 90,
+      "http_attempts_per_actor": 30,
+      "output_tokens_per_call": 768
+    }
+  }
+}

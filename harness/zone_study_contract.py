@@ -47,7 +47,7 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
-CONTRACT_VERSION = 'ugrp.zone_study_contract.v1'
+CONTRACT_VERSION = 'ugrp.zone_study_contract.v2'  # v2: tagged-map v2 landmark placement keys
 PAYLOAD_SCHEMA = 'ugrp.zone_study_call_input.v1'
 MESSAGE_ENVELOPE_SCHEMA = 'ugrp.zone_study_message.v1'
 CALL_LOG_SCHEMA = 'ugrp.zone_study_call.v1'
@@ -614,9 +614,31 @@ MAP_LEAF_TYPES = {
     'width_px': _int, 'height_px': _int, 'px_per_m': _num,
 }
 #: ``landmarks.placement``: the fixed tag mounting geometry, numbers only.
+#: Contract v2 (2026-09-26, integration PR, issue #223): the tagged maps v2
+#: (``*_tags_v2``, PR #178/#201) add denser tags near doors and two door-post
+#: tags per door edge. Their mounting geometry is static map data, so the
+#: three keys are declared here, closed and typed like the rest.
+DOOR_POST_KEYS = ('offset_from_edge_m', 'width_m', 'height_m', 'tag_center_heights_m')
+
+
+def _door_posts(value, label):
+    out = _closed(value, DOOR_POST_KEYS, label)
+    if out:
+        return out
+    for key in ('offset_from_edge_m', 'width_m', 'height_m'):
+        if key in value:
+            out.extend(_num(value[key], f'{label}.{key}'))
+    heights = value.get('tag_center_heights_m', [])
+    if not (isinstance(heights, Sequence) and not isinstance(heights, (str, bytes))
+            and all(_is_num(h) for h in heights)):
+        out.append(f'{label}.tag_center_heights_m must be a list of numbers, got {heights!r}')
+    return out
+
+
 PLACEMENT_KEYS = ('cell_thickness_m', 'center_height_m', 'end_margin_m', 'faces', 'plate_m',
-                  'plate_thickness_m', 'size_m', 'spacing_m')
-PLACEMENT_TYPES = {**{k: _num for k in PLACEMENT_KEYS}, 'faces': _str}
+                  'plate_thickness_m', 'size_m', 'spacing_m', 'near_door_spacing_m', 'near_door_radius_m',
+                  'door_posts')
+PLACEMENT_TYPES = {**{k: _num for k in PLACEMENT_KEYS}, 'faces': _str, 'door_posts': _door_posts}
 
 
 def _either(*checks):

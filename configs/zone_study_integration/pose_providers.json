@@ -1,0 +1,23 @@
+{
+  "schema": "ugrp.zone_study_pose_providers.v1",
+  "note_ko": "실행기(#206)가 자세를 받는 PoseReport 제공자 목록. 러너는 설정의 provider_id로만 고르고, 선택한 항목·소스·보정 해시를 실행 번들에 넣는다. 표식 0개 비전 제공자(#216, kiro/zone-vision-loc)는 여기에 항목을 추가해 러너 수정 없이 끼운다.",
+  "interface": {
+    "constructor": "factory(static_map, params, seed=int)",
+    "methods": ["on_command(row)", "on_frame(now, rgb) -> PoseReport", "report(now) -> PoseReport", "set_motion_profile(now, name)"],
+    "attributes": ["source: str (M1 own-camera label, starts with source_label_prefix)", "loc: estimate() and predict_to(now) (executor goto/delivery legs)"]
+  },
+  "providers": {
+    "tags_temporary": {
+      "factory": "harness.owncam_pose_source:OwnCamPoseSource",
+      "version": "owncam_pf_v2",
+      "source_label_prefix": "owncam_pf_v2:",
+      "maps": ["zone_wide_door_tags_v2", "zone_wide_two_doors_tags_v2", "zone_wide_door_tags_v3"],
+      "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+      "source_files": ["harness/owncam_pose_source.py", "harness/owncam_localizer.py", "harness/wall_tags.py"],
+      "temporary": true,
+      "research_result": false,
+      "uses_landmark_tags": true,
+      "note_ko": "임시, 표식 사용, 연구 결과 아님"
+    }
+  }
+}
