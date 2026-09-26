@@ -1,0 +1,82 @@
+{
+  "schema": "ugrp.zone_study_integration_prereg.v1",
+  "registered": "2026-09-26 18:40 KST, after smoke v1 (smoke-i700, 45999d9c) and before any smoke-i700b run",
+  "question": "Does one runner carry the whole path fixture decision -> SIM-costed release -> own-camera executor (x3) -> physics -> own executor events -> own wake -> next call -> records in all four main conditions, with the dialogue channel and the pair status channel as the ONLY inter-robot channels? Plumbing, not a study result: no model call, the #194 fixture actor decides.",
+  "pose_provider": "tags_temporary",
+  "pose_provider_note_ko": "임시, 표식 사용, 연구 결과 아님",
+  "actor": "fixture_v1",
+  "student": {
+    "executor": "harness/zone_own_executor.py (ZoneOwnExecutor, OwnCamTeamHost; PR #206 c8a2355a)",
+    "mode": "m1",
+    "skill_module": "harness.wrist_zone_skill_v9",
+    "skill_class": "WristZoneDeliveryV9",
+    "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json"
+  },
+  "t0_s": 0.5,
+  "horizon_s": 480,
+  "episodes": [
+    {
+      "episode_id": "smoke-i700b",
+      "split": "smoke",
+      "scenario": "configs/zone_study_integration/i1_cyan_three_slots.json",
+      "map": "zone_wide_door_tags_v2",
+      "base_map": "zone_wide_door",
+      "layout_seed": 700,
+      "trial_seed": 700,
+      "goal": {
+        "A": {
+          "cyan": 1
+        },
+        "B": {
+          "cyan": 1
+        },
+        "C": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "job_sim_limit_s": 720
+    }
+  ],
+  "conditions": [
+    "no_comm",
+    "peer_ko",
+    "leader_ko",
+    "structured"
+  ],
+  "leader_rotation_note": "leader_ko leader = r1/r2/r3[trial_seed % 3] (package A leader_for_seed); trial_seed 700 -> r2. The scenario declares seeds 700/701/702 so the rotation covers r1, r2 and r3; this smoke runs 700 only.",
+  "gates": {
+    "P1": "every condition writes result.json and study/trial_record.json without an exception (stop in horizon | quiescent_budget_spent)",
+    "P2": "decision -> executor: every released claim/wait/release reached THAT robot's executor at the release SIM time (dispatch sim_s == call finished_sim_s), with the executor ack recorded; package A validates every call/message/action record; package I parses the trial record (reopen ok)",
+    "P3": "channels: no_comm sends/receives 0 messages; leader_ko follower->follower 0; structured free text 0; package C inboxes == package D scheduler inboxes",
+    "P4": "SIM cost: zone_study_offline.cost_checks ok (released - requested == sim_cost_s, charged == scheduler thinking, billed == produced utterances); clock drift between scheduler and physics <= 0.001 s",
+    "P5": "inputs: every archived request re-hashes; its only image is the robot's own robot_cam frame (sha in own frame log); payload_validated; no TOP / GT / peer key",
+    "P6": "executor boundary: foreign_frames_fed 0, cameras_seen [robot_cam], pose sources start with owncam_pf_v2: (tags_temporary), weld max eq_active 0, cargo_noslip_v1 noslip_iterations > 0",
+    "P7": "pair status channel: present with the same config sha256 in all four conditions",
+    "P8": "labels: pose_provider tags_temporary + note in manifest, result, trial record and the TensorBoard run names",
+    "P9": "re-ask: in every condition and for every robot, own re-ask timer firings are spaced >= idle_reask_s (10 s), i.e. at most one pending chain per robot"
+  },
+  "reported_not_gated": [
+    "eval-only deliveries per order (referee from simulator truth)",
+    "own-camera confirmations and false confirmations",
+    "executor rejections (BUSY, UNKNOWN_*)",
+    "calls, messages, think/talk SIM cost per condition",
+    "contacts per robot",
+    "wall time and load average"
+  ],
+  "pass_rule": "the plumbing smoke passes when P1-P8 hold for all four conditions. Deliveries are reported as observed; no condition comparison is made (fixture decisions, 1 seed).",
+  "stop_rule": "run each condition once from one committed source SHA (bundle_sha256 below, checked by the runner), at most 2 concurrent sim processes. An infrastructure failure (no result.json) may be re-run once from the same SHA. A failed gate is reported and a fix gets a new episode id.",
+  "conditions_note": "sync SIM, OMP/OPENBLAS/VECLIB/MKL threads 1, load average logged in each manifest; weld OFF; contact profile cargo_noslip_v1 (approved by the user 2026-09-26)",
+  "bundle_sha256": "6e949fc84f9d5f5eeaa3d3ff4dbc766910d08220a308219171179d9956e76376",
+  "source_sha": "9f7b16f2",
+  "supersedes_note_ko": "v1(prereg.json, 45999d9c)은 그대로 보존한다. v2는 v1에서 찾은 재질문 타이머 연쇄(행동마다 타이머를 걸고 취소하지 않음 → no_comm·peer_ko 모두 478/445 SIM s에 HTTP 90/90 소진)를 고친 코드로 같은 장면·조건을 다시 돈다.",
+  "changes_from_v1": [
+    "reask_policy single_pending_own_timer.v1 (harness/zone_study_integration.py _arm_reask/_on_timer)",
+    "on_executor_event refuses malformed events with ContractViolation (normal events unchanged)",
+    "runner prints progress every 60 SIM s to stderr; unused import removed"
+  ]
+}
