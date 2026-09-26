@@ -79,3 +79,19 @@ def test_translates_in_body_frame_toward_goal_with_any_heading():
     assert cmds[0]['kind'] == 'mecanum'
     assert cmds[0]['left'] < 0          # east is the robot's right
     assert abs(cmds[0]['forward']) < abs(cmds[0]['left'])
+
+
+def test_door_schedule_moves_own_base_onto_the_axis_and_keeps_axial_identical():
+    from scripts import run_m2_pair as rm
+    scheds = {}
+    for rid, est in (('r1', (0.3, 0.13, 0.05)), ('r2', (1.75, 0.10, math.pi - 0.05))):
+        st = rm.M2DoorStudent.__new__(rm.M2DoorStudent)
+        st.rid, st.claims = rid, {}
+        st.door_plan, st.axial_m, st.grasp_estimate = rm.DOOR_PLAN, 2.2, list(est)
+        scheds[rid] = st.door_schedule(10.)
+        align = scheds[rid][0][2]
+        # r1 (facing +x) is north of the axis -> moves right (negative left); r2 (facing -x) north -> moves left
+        assert (align['left'] < 0) if rid == 'r1' else (align['left'] > 0)
+        assert (align['turn'] < 0) if rid == 'r1' else (align['turn'] > 0)
+    (a0, a1, ca), (b0, b1, cb) = scheds['r1'][1], scheds['r2'][1]
+    assert (a0, a1) == (b0, b1) and ca['forward'] == -cb['forward'] > 0

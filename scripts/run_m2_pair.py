@@ -83,9 +83,31 @@ SCENARIOS = {
     716: {'beam': (0.66, -0.95, 0.38), 'start': {'r1': (0.0, 0.09, -0.06), 'r2': (-0.09, -0.01, -0.18)}},
     717: {'beam': (0.37, -1.64, -0.25), 'start': {'r1': (0.01, 0.08, 0.37), 'r2': (0.09, -0.07, 0.13)}},
     718: {'beam': (0.57, -1.82, -0.17), 'start': {'r1': (0.03, 0.05, 0.18), 'r2': (-0.1, 0.02, -0.01)}},
+    # stage 3 failure propagation (pre-registered; gen_stage3_seeds.py, rng 20260927; drop = experimenter action)
+    721: {'beam': (0.4, -1.3, -0.54), 'start': {'r1': (0.08, -0.1, 0.32), 'r2': (0.05, -0.01, 0.31)}, 'drop': 'r1:3.0'},
+    722: {'beam': (0.78, -1.58, 0.52), 'start': {'r1': (-0.05, 0.02, -0.19), 'r2': (0.08, -0.03, -0.33)}, 'drop': 'r2:3.0'},
+    723: {'beam': (0.35, -1.3, -0.17), 'start': {'r1': (-0.05, 0.02, -0.04), 'r2': (-0.04, -0.01, -0.18)}, 'drop': 'r1:6.0'},
+    724: {'beam': (0.37, -0.46, -0.43), 'start': {'r1': (0.01, -0.09, -0.18), 'r2': (-0.02, 0.08, 0.34)}, 'drop': 'r2:6.0'},
 }
 DEV_SEEDS = (701, 702, 703)
 STAGE1_TEST_SEEDS = tuple(range(711, 719))   # pre-registered in experiments/2026-09-26-zone-m2-pair/README.md
+STAGE3_TEST_SEEDS = tuple(range(721, 725))   # failure propagation (experimenter drop), pre-registered
+# ---- stage 2: carry through door_1 (0.50 m) of zone_wide_door_tags_v2 -------------------------------
+# Order sheet for the door task (static): door axis y, the pair's target headings, and a FIXED axial
+# carry distance (the same number for both robots, so both timed schedules have the same length).
+DOOR_PLAN = {'door_id': 'door_1', 'axis_y_m': .05, 'target_beam_x_m': 3.20,
+             'headings_rad': {'r1': 0., 'r2': math.pi}}
+DOOR_ALIGN_S = 6.               # own lateral/heading correction onto the door axis (both robots, from GO)
+DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
+DOOR_ALIGN_MAX_RAD = .20
+TURN_GAIN = 1.4885              # static drive calibration (loop-v2 motion gain, turn), unloaded
+DOOR_SCENARIOS = {
+    # stage 2 development (door carry; tuning allowed, labelled dev)
+    801: {'beam': (1.00, .08, .04), 'start': {'r1': (.00, .00, .00), 'r2': (.00, .00, .00)}},
+    802: {'beam': (0.93, -.02, -.07), 'start': {'r1': (.06, -.04, .25), 'r2': (-.05, .06, -.20)}},
+    803: {'beam': (1.07, .12, .06), 'start': {'r1': (-.04, .07, -.30), 'r2': (.07, .03, .15)}},
+}
+SCENARIOS.update(DOOR_SCENARIOS)
 
 
 def git(*args):
@@ -173,6 +195,56 @@ class M2Student(study.PairStudent):
             self.report('approach', obs, now, ready=True, reason='at_prestation')
 
 
+class M2DoorStudent(M2Student):
+    """Stage 2: the localizer keeps running (own commands) until the grasp; after the lift each robot
+    puts its OWN base onto the order-sheet door axis with its own heading target (the pair formation
+    rotates onto the axis because both ends go there), then the fixed axial carry from the sheet."""
+
+    def __init__(self, *args, door_plan, axial_m, **kw):
+        super().__init__(*args, **kw)
+        self.door_plan, self.axial_m = door_plan, float(axial_m)
+        self.grasp_estimate = None
+
+    def set(self, state, now, **detail):
+        if state == 'grasp' and self.grasp_estimate is None:
+            loc = self.driver.loc
+            loc.predict_to(now)
+            est = loc.estimate()
+            self.grasp_estimate = [float(est['x']), float(est['y']), float(est['yaw'])] if est.get('initialized') else None
+            self.claims['grasp_pose_estimate'] = {'xyyaw': None if self.grasp_estimate is None else
+                                                  [round(v, 4) for v in self.grasp_estimate],
+                                                  'std_xy_m': round(float(est.get('std_xy_m', float('nan'))), 4),
+                                                  'sim_time': now}
+        super().set(state, now, **detail)
+
+    def _wait_carry(self, now, arm_idle):
+        def go(t):
+            self.schedule = self.door_schedule(t)
+        self._wait('carry', 'carry', now, go)
+
+    def door_schedule(self, t0):
+        sign = 1. if ROLES[self.rid] == 'end_neg' else -1.
+        out, t = [], t0
+        if self.grasp_estimate is not None:
+            x, y, yaw = self.grasp_estimate
+            dy = float(np.clip(self.door_plan['axis_y_m'] - y, -DOOR_ALIGN_MAX_M, DOOR_ALIGN_MAX_M))
+            e_yaw = float(np.clip(study.wrap(self.door_plan['headings_rad'][self.rid] - yaw),
+                                  -DOOR_ALIGN_MAX_RAD, DOOR_ALIGN_MAX_RAD))
+            fwd_m, left_m = math.sin(yaw) * dy, math.cos(yaw) * dy      # world (0, dy) in the own body frame
+            cmd = {'forward': fwd_m / DOOR_ALIGN_S / (study.FORWARD_GAIN * study.CARRY_ODOM_SCALE['axial']),
+                   'left': left_m / DOOR_ALIGN_S / (study.LEFT_GAIN * study.CARRY_ODOM_SCALE['lateral']),
+                   'turn': e_yaw / DOOR_ALIGN_S / TURN_GAIN}
+            self.claims['door_align'] = {'dy_m': round(dy, 4), 'e_yaw_rad': round(e_yaw, 4),
+                                         'cmd': {k: round(v, 4) for k, v in cmd.items()}}
+            out.append((t, t + DOOR_ALIGN_S, cmd))
+            t += DOOR_ALIGN_S + .5
+        else:
+            self.claims['door_align'] = {'skipped': 'no initialised estimate at grasp'}
+        dur = self.axial_m / (study.SPEED_M_S * study.CARRY_ODOM_SCALE['axial'])
+        out.append((t, t + dur, {'forward': sign * study.SPEED_M_S / study.FORWARD_GAIN, 'left': 0., 'turn': 0.}))
+        return out
+
+
 def main():
     import mujoco
     from scripts.record_owncam_localization import LoggingPort
@@ -183,7 +255,7 @@ def main():
     from sim.zone_tagged_cargo_scene import TaggedCargoZoneScene
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument('--seed', type=int, choices=sorted(SCENARIOS), required=True)
-    p.add_argument('--stage', choices=('open_floor',), default='open_floor')
+    p.add_argument('--stage', choices=('open_floor', 'door'), default='open_floor')
     p.add_argument('--contact-profile', choices=CONTACT_PROFILES, default='cargo_noslip_v1')
     p.add_argument('--status-channel', choices=('on', 'off'), required=True,
                    help='CANDIDATE executor status channel (pending user decision); off = barrier only')
@@ -210,6 +282,8 @@ def main():
     (out / 'inputs').mkdir()
     wall0, load0 = time.time(), [round(v, 2) for v in os.getloadavg()]
     sc = SCENARIOS[a.seed]
+    if (a.seed in DOOR_SCENARIOS) != (a.stage == 'door'):
+        raise SystemExit('seed and --stage do not match')
     item = {'item_id': 'beam', 'kind': 'long_beam', 'pose': list(sc['beam'])}
     scene = TaggedCargoZoneScene.from_tagged_cargo(MAP, 11, cargo=[item], goal={'A': {'cyan': 1}},
                                                    contact_profile=a.contact_profile)
@@ -241,6 +315,7 @@ def main():
     raw = {r: CameraRobotPort(world, r, allow_reverse=True, allow_mecanum=True) for r in ('r1', 'r2', 'r3')}
     calibration = json.loads(CALIBRATION.read_text())
     commands = {r: [] for r in ROLES}
+    feed_stop = {r: False for r in ROLES}
     drivers, ports = {}, dict(raw)
     for rid in ROLES:
         partner = next(r for r in ROLES if r != rid)
@@ -255,8 +330,8 @@ def main():
 
         def sink(row, rid=rid):
             commands[rid].append(row)
-            if drivers[rid].outcome is None:        # the localizer is used only until the pre-station
-                drivers[rid].on_command(row)
+            if drivers[rid].outcome is None or (a.stage == 'door' and not feed_stop[rid]):
+                drivers[rid].on_command(row)       # open floor: until the pre-station; door: until the grasp
         sink({'t': 0.0, 'kind': 'initial_servo_command', 'pulses': dict(initial)})
         ports[rid] = LoggingPort(raw[rid], sink)
     events = []
@@ -294,9 +369,16 @@ def main():
         loc_eval.append(row)
 
     channel = tcs.StatusChannel('beam-carry', tuple(ROLES)) if a.status_channel == 'on' else None
-    students = {r: M2Student(r, ports[r], arms[r], sync_for, log, save,
-                             (channel, tcs.StatusPublisher(channel, r)) if channel else None,
-                             a.hold_check, drivers[r], eval_hook) for r in ROLES}
+    if a.stage == 'door':
+        axial_m = DOOR_PLAN['target_beam_x_m'] - sheet['beam_xyyaw'][0]
+        students = {r: M2DoorStudent(r, ports[r], arms[r], sync_for, log, save,
+                                     (channel, tcs.StatusPublisher(channel, r)) if channel else None,
+                                     a.hold_check, drivers[r], eval_hook, door_plan=DOOR_PLAN, axial_m=axial_m)
+                    for r in ROLES}
+    else:
+        students = {r: M2Student(r, ports[r], arms[r], sync_for, log, save,
+                                 (channel, tcs.StatusPublisher(channel, r)) if channel else None,
+                                 a.hold_check, drivers[r], eval_hook) for r in ROLES}
     # ---- evaluation-only truth ------------------------------------------------------------
     truth = (out / 'evaluation-only.jsonl').open('w')
     beam_body = d.body(inst.body)
@@ -309,7 +391,7 @@ def main():
     wall_geoms = {g for g in range(m.ngeom) if (mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_GEOM, g) or '').startswith('zone_wall_')}
     stats = {'eq_active_max': 0, 'max_beam_z_m': 0., 'max_tilt_deg_lifted': 0., 'max_pair_distance_dev_m': 0.,
              'robot_robot_contacts': 0, 'robot_wall_contacts': 0, 'robot_beam_contacts_before_align': 0,
-             'beam_disp_before_grasp_m': 0.}
+             'beam_disp_before_grasp_m': 0., 'beam_wall_contacts': 0}
     beam_start = np.array(beam_body.xpos[:2], float)
     nominal_pair_dist = math.hypot(stations_true['r1'][0] - stations_true['r2'][0],
                                    stations_true['r1'][1] - stations_true['r2'][1])
@@ -342,6 +424,8 @@ def main():
                     rb = True
         stats['robot_robot_contacts'] += int(rr)
         stats['robot_wall_contacts'] += int(rw)
+        stats['beam_wall_contacts'] += int(any((g1 in cargo_geoms and g2 in wall_geoms) or (g2 in cargo_geoms and g1 in wall_geoms)
+                                               for g1, g2 in pairs))
         stats['robot_beam_contacts_before_align'] += int(rb)
 
     def sample(now):
@@ -378,6 +462,8 @@ def main():
                 for rid, st in students.items():
                     was = st.state
                     st.tick(now)
+                    if a.stage == 'door' and st.state not in ('approach', 'wait_approach', 'align_start', 'align'):
+                        feed_stop[rid] = True
                     if st.state == 'failed' and was != 'failed':
                         ports[rid].hold(now)                   # the failed robot's own stop
                         if first_failure is None:
@@ -410,6 +496,8 @@ def main():
                 sample(now)
                 contacts_check()
     finally:
+        if not truth.closed:
+            sample(float(d.time))        # final evaluation-only sample (post-failure state is always recorded)
         truth.close()
     # ---- evaluation (truth) ----------------------------------------------------------------
     now = float(d.time)
@@ -418,6 +506,8 @@ def main():
     u = np.array([math.cos(sc['beam'][2]), math.sin(sc['beam'][2])])
     v = np.array([-u[1], u[0]])
     planned = beam_start + study.LEGS[0][1] * u + study.LEGS[1][1] * v
+    if a.stage == 'door':
+        planned = np.array([DOOR_PLAN['target_beam_x_m'], DOOR_PLAN['axis_y_m']])
     final = np.array(beam_body.xpos[:2], float)
     forces = finger_forces()
     reached = {r: s.state for r, s in students.items()}
@@ -480,6 +570,7 @@ def main():
         'beam_disp_before_grasp_m': round(stats['beam_disp_before_grasp_m'], 4),
         'robot_robot_contact_samples': stats['robot_robot_contacts'],
         'robot_wall_contact_samples': stats['robot_wall_contacts'],
+        'beam_wall_contact_samples': stats['beam_wall_contacts'],
         'robot_beam_contact_samples_in_approach': stats['robot_beam_contacts_before_align'],
         'weld_eq_active_max': stats['eq_active_max'], 'final_finger_n': forces,
         'approach': approach_eval, 'failure_propagation': propagation,
@@ -491,6 +582,21 @@ def main():
     evaluation['drop_injection'] = injection
     evaluation['success_gt'] = bool(evaluation['completed_sequence'] and evaluation['lifted_clear_gt']
                                     and evaluation['on_floor_released'] and evaluation['final_error_m'] <= .10)
+    if a.stage == 'door':
+        rows = [json.loads(line) for line in (out / 'evaluation-only.jsonl').read_text().splitlines()]
+        cross = next((r for r in rows if r['beam_xyz'][0] >= 2.2), None)
+        passed = float(beam_body.xpos[0]) >= 2.7
+        evaluation['door'] = {'plan': DOOR_PLAN, 'beam_passed_x_ge_2_7': passed,
+                              'beam_y_offset_at_crossing_m': None if cross is None else
+                              round(cross['beam_xyz'][1] - DOOR_PLAN['axis_y_m'], 4),
+                              'beam_z_at_crossing_m': None if cross is None else cross['beam_xyz'][2],
+                              'crossing_t': None if cross is None else cross['t'],
+                              'door_align_claims': {r: s.claims.get('door_align') for r, s in students.items()},
+                              'grasp_estimates': {r: s.claims.get('grasp_pose_estimate') for r, s in students.items()},
+                              'success_rule': 'completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m'}
+        evaluation['success_gt'] = bool(evaluation['completed_sequence'] and evaluation['lifted_clear_gt']
+                                        and evaluation['on_floor_released'] and passed
+                                        and evaluation['final_error_m'] <= .25)
     grips = [e for e in events if e['event'] == 'grip_view']
     result = {
         'schema': SCHEMA, 'profile': PROFILE, 'seed': a.seed, 'stage': a.stage, 'map': MAP,
@@ -501,6 +607,7 @@ def main():
         'weld': 'off', 'pose_source': 'owncam_pf_v2 localizer (own RGB + static tag map + own commands); no GT',
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
+        'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': pa.PairApproachDriver.version,
