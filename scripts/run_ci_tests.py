@@ -158,6 +158,7 @@ TEST_PATTERNS = (
     "tests/test_navigation_temporal.py",
     "tests/test_ugrp_session.py",
     "tests/test_agent_worktree.py", "tests/test_disk_report.py", "tests/test_check_media_size.py",
+    "tests/test_tree_manifest.py",
     "tests/test_seed_validation_model.py",
     "tests/test_semantic_pick_policy.py",
     "tests/test_pick_match*.py",
