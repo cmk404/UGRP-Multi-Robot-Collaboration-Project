@@ -1,0 +1,79 @@
+[
+  {
+    "mutation": "M-r3-01a archive back to 4 fields",
+    "file": "harness/zone_study_offline.py",
+    "selector": "r3_f01_a_saved",
+    "killed": true,
+    "pytest": "1 failed, 88 deselected in 4.04s"
+  },
+  {
+    "mutation": "M-r3-01b no token recount",
+    "file": "harness/zone_study_prompts_ko.py",
+    "selector": "r3_f01_an_edited and (tokens or billed)",
+    "killed": true,
+    "pytest": "1 failed, 89 deselected in 4.78s"
+  },
+  {
+    "mutation": "M-r3-11 history named items only",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f11",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.78s"
+  },
+  {
+    "mutation": "M-r3-12a no covering drop",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f12_an_item_named",
+    "killed": true,
+    "pytest": "1 failed, 2 passed, 87 deselected in 0.64s"
+  },
+  {
+    "mutation": "M-r3-12b no normalisation",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f12_a_kind_hold or r3_f12_an_order_level",
+    "killed": true,
+    "pytest": "1 failed, 88 deselected in 0.94s"
+  },
+  {
+    "mutation": "M-r3-12c kinds not searched in free text",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f12_a_kind_hold",
+    "killed": true,
+    "pytest": "1 failed, 89 deselected in 1.03s"
+  },
+  {
+    "mutation": "M-r3-16a censor resets usage_known",
+    "file": "harness/zone_event_scheduler.py",
+    "selector": "r3_f16_a_fetched",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.72s"
+  },
+  {
+    "mutation": "M-r3-16b call record drops the flag",
+    "file": "harness/zone_sim_cost.py",
+    "selector": "r3_f16_a_completed",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.83s"
+  },
+  {
+    "mutation": "M-r3-16c eval ignores the flag",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f16_a_completed",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.84s"
+  },
+  {
+    "mutation": "M-r3-16d cohort drops the unknown count",
+    "file": "harness/zone_study_eval.py",
+    "selector": "r3_f16_a_completed",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.72s"
+  },
+  {
+    "mutation": "M-r3-P provider usage dropped",
+    "file": "harness/zone_event_scheduler.py",
+    "selector": "r3_provider",
+    "killed": true,
+    "pytest": "1 failed, 90 deselected in 0.84s"
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "load_average_log": [
+    "before: { 108.14 75.86 59.80 }",
+    "after: { 224.34 169.90 123.50 }",
+    "base before: { 191.64 173.05 128.92 }",
+    "base after: { 203.26 174.13 141.95 }"
+  ],
+  "note_ko": "3차 수정은 배선·SIM 비용·trace를 바꾸지 않는다. 02114ad 대조 raw는 /tmp에만 두어 보존하지 않는다(재현은 위 명령). dc8ac28 실행 raw는 outputs/에 남긴다.",
+  "vs_02114ad_second_round": {
+    "code_sha": "02114ade60f45efcaad0b44d252f8e27c4dcce45",
+    "command": "git archive 02114ad | tar -x -C /tmp/kiro-r3/base; scripts/run_zone_study_offline_smoke.py --no-probe --output /tmp/kiro-r3/base-out",
+    "identical_channel_checks": 30,
+    "identical_cost_checks": 30,
+    "identical_request_input_sha256": 30,
+    "identical_trace_sha256": 30,
+    "new_call_cost_terms": [
+      "provider_usage",
+      "usage_known"
+    ],
+    "ok": true,
+    "raw_kept": false,
+    "trial_record_fields_that_differ": [
+      "provenance.code_sha",
+      "request_archive"
+    ],
+    "trials": 30
+  },
+  "vs_dc8ac28_first_r3_commit": {
+    "code_sha": "dc8ac28ced6a375e9bf89b41e1c37417dffae0e5",
+    "identical_channel_checks": 30,
+    "identical_cost_checks": 30,
+    "identical_request_input_sha256": 30,
+    "identical_trace_sha256": 30,
+    "new_call_cost_terms": [],
+    "ok": true,
+    "raw": "outputs/zone-study-offline-smoke-v3-run-dc8ac28",
+    "raw_kept": true,
+    "trial_record_fields_that_differ": [
+      "provenance.code_sha"
+    ],
+    "trials": 30
+  }
+}

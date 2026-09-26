@@ -3,6 +3,7 @@
 > **버전 안내.** 이 폴더의 파일은 **v1**(코드 `d87e0f2`) 결과 그대로이며 덮어쓰지 않는다.
 > Codex 적대적 검토 18건을 수정한 뒤의 재실행은 [`v2/`](v2/README.md)(코드 `dd497c8`)에 있다.
 > 두 버전의 차이·불변 항목은 v2 README의 "v1과 무엇이 다른가"를 본다.
+> Codex 3차 재검토 부분 해결 4건(#1·#11·#12·#16)을 고친 뒤의 재실행은 [`v3/`](v3/README.md)(코드 `eb5572b`)에 있다. v1·v2는 그대로 둔다.
 
 - **상태:** 완료. 30회 전부 통과(`results.json` `ok: true`).
 - **실행 소스:** `d87e0f2bc179d00ad4c8de48e0559408d46d6a0c` (브랜치 `kiro/zone-study-core`, worktree `ugrp-wt/kiro-study-core`)
