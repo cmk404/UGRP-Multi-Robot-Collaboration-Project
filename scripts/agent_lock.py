@@ -77,7 +77,7 @@ def main(argv=None) -> int:
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('status')
     get = sub.add_parser('acquire')
-    get.add_argument('--owner', required=True, help='agent name, e.g. claude or codex')
+    get.add_argument('--owner', required=True, help='agent name, e.g. claude, codex or kiro')
     get.add_argument('--branch', required=True)
     get.add_argument('--purpose', required=True)
     get.add_argument('--pid', type=int, required=True, help='long-running driver PID that owns the runs')

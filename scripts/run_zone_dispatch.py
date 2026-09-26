@@ -235,7 +235,7 @@ def run(args):
                     own_jobs[rid][-1]['status'] = report['executor_receipt']
                     (finished if robot.outcome == 'placed_by_teacher' else failed).append(report)
                     if robot.outcome in ('grasp_failed_by_teacher', 'teacher_path_blocked', 'dropped_in_transit',
-                                         'box_taken_by_peer'):
+                                         'box_taken_by_peer', 'station_blocked'):
                         slots.give_back(job['slot'])
                     solo['last_end'] = zone.time()
                     if args.coordination == 'independent' and robot.outcome != 'placed_by_teacher':
@@ -506,15 +506,43 @@ def parser():
     p.add_argument('--mode', choices=('llm', 'fixture'), default='llm')
     p.add_argument('--model', default='gemini-3.8-flash')
     p.add_argument('--planning-rounds', type=int, default=8)
-    p.add_argument('--max-sim-s', type=float, default=900.)
+    p.add_argument('--max-sim-s', type=float, default=None,
+                   help='SIM budget of the motion phase (default: 900 on protocol v1, 1800 on v2)')
     p.add_argument('--max-wall-s', type=float, default=3600.)
-    p.add_argument('--contact-profile', default='local_contact_fine')
+    p.add_argument('--contact-profile', default=None,
+                   help='contact profile (v1 default: local_contact_fine; protocol v2 requires it explicitly, '
+                        'A2 smokes use cargo_noslip_v1)')
     p.add_argument('--record-replay', action='store_true')
     p.add_argument('--inject-grasp-failure', type=int, default=0,
                    help='diagnostic: the N-th issued job keeps its gripper open, so its grasp really fails (0 = off)')
     p.add_argument('--fixture-plan', help='diagnostic, fixture plan_first only: propose this recorded '
                    'committed-plan.json instead of the scripted split')
+    p.add_argument('--protocol', choices=('auto', 'v1', 'v2'), default='auto',
+                   help='v2 = mixed cargo goals, role claims, team jobs (zone team A2); auto: v2 when the goal '
+                        'names catalogue cargo, else v1 (colour-only goals unchanged)')
+    p.add_argument('--extra-cargo', default='{}', help='v2: spare cargo items per kind, JSON')
+    p.add_argument('--perception-profile', default=None, choices=('top_cargo_v1', 'top_cargo_v2'),
+                   help='v2: TOP cargo perception profile (default top_cargo_v2; recorded per run)')
+    p.add_argument('--condition-switches', default=None,
+                   help='v2: per-mechanism switch overrides, JSON {name: bool} (harness.zone_protocol_v2.SWITCHES)')
+    p.add_argument('--inject-team-grasp-failure', default=None,
+                   help='v2 diagnostic: in the first committed team job (>= 2 carriers; optionally only of this '
+                        "kind, or 'any'), the robot with the first role keeps its gripper open")
     return p
+
+
+V1_DEFAULTS = {'max_sim_s': 900., 'contact_profile': 'local_contact_fine'}
+
+
+def protocol_of(args):
+    """'v1' or 'v2' for the parsed arguments (goal v2 needs v2)."""
+    from harness.zone_goal_v2 import goal_counts_v2, is_legacy_goal
+    goal = goal_counts_v2(json.loads(args.goal), args.variant)
+    if args.protocol == 'v2' or (args.protocol == 'auto' and not is_legacy_goal(goal)):
+        return 'v2', goal
+    if not is_legacy_goal(goal):
+        raise SystemExit('catalogue cargo goals need protocol v2')
+    return 'v1', goal
 
 
 def main(argv=None):
@@ -524,6 +552,19 @@ def main(argv=None):
     if args.variant in RETIRED_VARIANTS and not args.allow_retired_variant:
         raise SystemExit(f'{args.variant} is retired (2026-09-25); use {DEFAULT_VARIANT} or another active map. '
                          'Reproducing a Z1-Z3 record needs --allow-retired-variant.')
+    protocol, goal = protocol_of(args)
+    if protocol == 'v2':
+        if args.fixture_plan or args.inject_grasp_failure:
+            raise SystemExit('--fixture-plan and --inject-grasp-failure are protocol v1 options')
+        from scripts.zone_dispatch_v2 import run_v2
+        result = run_v2(args, goal)
+        return 0 if result.get('error') is None else 1
+    if args.inject_team_grasp_failure or args.extra_cargo != '{}' or args.condition_switches or args.perception_profile:
+        raise SystemExit('--inject-team-grasp-failure, --extra-cargo, --condition-switches and --perception-profile '
+                         'are protocol v2 options')
+    for key, value in V1_DEFAULTS.items():
+        if getattr(args, key) is None:
+            setattr(args, key, value)
     result = run(args)
     return 0 if result.get('error') is None else 1
 
