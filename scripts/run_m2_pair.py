@@ -61,11 +61,13 @@ CALIBRATION = ROOT / 'experiments' / '2026-09-26-zone-owncam-loop-v2' / 'calibra
 ROLES = study.ROLES
 FRAME_S = .2                    # approach localization frames (M1 loop runner value)
 LIMIT_S = 480.
+DOOR_LIMIT_S = 720.
 APPROACH_LIMIT_S = 200.
 APPROACH_WAIT_S = 150.          # same limit in both status-channel arms
 KEEPOUT_PAD_M = .06             # order-sheet grid error (<= 0.05 m) + 1 cm
 PARTNER_KEEPOUT_HALF_M = .17    # partner's order-sheet station/pre-station (robot radius)
-STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning', 'pregrasp_look': 'aligning'}
+STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning', 'pregrasp_look': 'aligning',
+             'cp_open': 'put_down'}
 CONTACT_PROFILES = study.CONTACT_PROFILES
 # seed -> setup beam pose (x, y, yaw) and per-robot start offsets from the map spawn (dx, dy, dyaw).
 # The robots receive only coarse_order_sheet(beam); the start offsets are never given to them.
@@ -95,7 +97,7 @@ STAGE3_TEST_SEEDS = tuple(range(721, 725))   # failure propagation (experimenter
 # ---- stage 2: carry through door_1 (0.50 m) of zone_wide_door_tags_v2 -------------------------------
 # Order sheet for the door task (static): door axis y, the pair's target headings, and a FIXED axial
 # carry distance (the same number for both robots, so both timed schedules have the same length).
-DOOR_PLAN = {'door_id': 'door_1', 'axis_y_m': .05, 'target_beam_x_m': 3.20,
+DOOR_PLAN = {'door_id': 'door_1', 'axis_y_m': .05, 'target_beam_x_m': 3.20, 'checkpoints_beam_x_m': (1.55, 2.40),
              'headings_rad': {'r1': 0., 'r2': math.pi}}
 DOOR_ALIGN_S = 6.               # own lateral/heading correction onto the door axis (both robots, from GO)
 DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
@@ -202,9 +204,17 @@ class M2DoorStudent(M2Student):
     puts its OWN base onto the order-sheet door axis with its own heading target (the pair formation
     rotates onto the axis because both ends go there), then the fixed axial carry from the sheet."""
 
-    def __init__(self, *args, door_plan, axial_m, **kw):
+    def __init__(self, *args, door_plan, axial_m, sheet_beam_x, **kw):
         super().__init__(*args, **kw)
         self.door_plan, self.axial_m = door_plan, float(axial_m)
+        # Segmented carry (dev 801/802 at 076cf53: open-loop formation yaw drift 0.06-0.1 rad/m over the
+        # 2.2 m carry; the held view shows only the beam): checkpoints from the order sheet, identical
+        # sheet distances for both robots; at each checkpoint lower, open, relocalize, re-grasp.
+        stops = [float(sheet_beam_x), *door_plan['checkpoints_beam_x_m'], door_plan['target_beam_x_m']]
+        self.segments = [round(b - a, 4) for a, b in zip(stops, stops[1:])]
+        self.seg = 0
+        base_sync = self.sync_for
+        self.sync_for = lambda key: base_sync(f'{key}@{self.seg}')
         self.grasp_estimate = None
         self.pregrasp_done = False
         self.pregrasp_sweeps = 0
@@ -267,6 +277,26 @@ class M2DoorStudent(M2Student):
             self.schedule = self.door_schedule(t)
         self._wait('carry', 'carry', now, go)
 
+    def _wait_open(self, now, arm_idle):
+        if self.seg + 1 >= len(self.segments):
+            return super()._wait_open(now, arm_idle)
+
+        def go(t):
+            self.arm.queue({1: study.OPEN}, t, duration=.4, settle=.5)
+            self.arm.queue({**self.hover, 1: study.OPEN}, t, duration=.6)
+        self._wait('open', 'cp_open', now, go)
+
+    def _cp_open(self, now, arm_idle):
+        if not arm_idle:
+            return
+        self.log(self.rid, 'checkpoint', now, seg=self.seg)
+        self.seg += 1                      # new barrier keys from here on
+        self.pregrasp_done = False
+        self.pregrasp_sweeps = 0
+        self.grasp_estimate = None
+        self.claims.pop('door_align', None)
+        self._queue_grasp(now)             # relocalize (own sweep), then re-grasp at the unchanged arm pose
+
     def door_schedule(self, t0):
         sign = 1. if ROLES[self.rid] == 'end_neg' else -1.
         out, t = [], t0
@@ -285,7 +315,10 @@ class M2DoorStudent(M2Student):
             t += DOOR_ALIGN_S + .5
         else:
             self.claims['door_align'] = {'skipped': 'no initialised estimate at grasp'}
-        dur = self.axial_m / (study.SPEED_M_S * study.CARRY_ODOM_SCALE['axial'])
+        dist = self.segments[self.seg]
+        self.claims.setdefault('segments', []).append({'seg': self.seg, 'axial_m': dist,
+                                                       'door_align': self.claims.get('door_align')})
+        dur = dist / (study.SPEED_M_S * study.CARRY_ODOM_SCALE['axial'])
         out.append((t, t + dur, {'forward': sign * study.SPEED_M_S / study.FORWARD_GAIN, 'left': 0., 'turn': 0.}))
         return out
 
@@ -421,7 +454,8 @@ def main():
         axial_m = DOOR_PLAN['target_beam_x_m'] - sheet['beam_xyyaw'][0]
         students = {r: M2DoorStudent(r, ports[r], arms[r], sync_for, log, save,
                                      (channel, tcs.StatusPublisher(channel, r)) if channel else None,
-                                     a.hold_check, drivers[r], eval_hook, door_plan=DOOR_PLAN, axial_m=axial_m)
+                                     a.hold_check, drivers[r], eval_hook, door_plan=DOOR_PLAN, axial_m=axial_m,
+                                     sheet_beam_x=sheet['beam_xyyaw'][0])
                     for r in ROLES}
     else:
         students = {r: M2Student(r, ports[r], arms[r], sync_for, log, save,
@@ -503,15 +537,13 @@ def main():
     next_ctrl, next_sample, next_arm = 0., 0., 0.
     terminal = ('done', 'failed')
     try:
-        while float(d.time) < LIMIT_S:
+        while float(d.time) < (DOOR_LIMIT_S if a.stage == 'door' else LIMIT_S):
             now = float(d.time)
             if now >= next_ctrl:
                 next_ctrl = now + study.CONTROL_S
                 for rid, st in students.items():
                     was = st.state
                     st.tick(now)
-                    if a.stage == 'door' and st.state not in ('approach', 'wait_approach', 'align_start', 'align', 'pregrasp_look'):
-                        feed_stop[rid] = True
                     if st.state == 'failed' and was != 'failed':
                         ports[rid].hold(now)                   # the failed robot's own stop
                         if first_failure is None:

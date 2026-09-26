@@ -88,6 +88,7 @@ def test_door_schedule_moves_own_base_onto_the_axis_and_keeps_axial_identical():
         st = rm.M2DoorStudent.__new__(rm.M2DoorStudent)
         st.rid, st.claims = rid, {}
         st.door_plan, st.axial_m, st.grasp_estimate = rm.DOOR_PLAN, 2.2, list(est)
+        st.segments, st.seg = [.55, .85, .80], 0
         scheds[rid] = st.door_schedule(10.)
         align = scheds[rid][0][2]
         # r1 (facing +x) is north of the axis -> moves right (negative left); r2 (facing -x) north -> moves left
@@ -95,6 +96,7 @@ def test_door_schedule_moves_own_base_onto_the_axis_and_keeps_axial_identical():
         assert (align['turn'] < 0) if rid == 'r1' else (align['turn'] > 0)
     (a0, a1, ca), (b0, b1, cb) = scheds['r1'][1], scheds['r2'][1]
     assert (a0, a1) == (b0, b1) and ca['forward'] == -cb['forward'] > 0
+    assert math.isclose(a1 - a0, .55 / (rm.study.SPEED_M_S * rm.study.CARRY_ODOM_SCALE['axial']))
 
 
 def _driver_v2(goal, pose):
