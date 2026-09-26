@@ -51,6 +51,7 @@ ON_FLOOR_MAX_Z_M = .05
 SLOT_HALF_M = .06
 SETTLE_S = 2.0
 TAP_FRAMES = 64
+PROGRESS_EVERY_S = 60.
 RUNTIME_FILES = (
     'scripts/run_zone_study_integration.py', 'harness/zone_study_integration.py', 'harness/zone_study_offline.py',
     'harness/zone_study_contract.py', 'harness/zone_study_inputs.py', 'harness/zone_study_prompts_ko.py',
@@ -332,9 +333,14 @@ def run_trial(prereg, episode, condition, out, *, horizon_s, dev=False):
                                    pose_label=label)
         t = host.settle(float(prereg['t0_s']))
         trial.begin(t)
-        stop = 'horizon'
+        stop, next_report = 'horizon', t + PROGRESS_EVERY_S
         while t < horizon_s - 1e-9:
             t = round(t + zi.QUANTUM_S, 6)
+            if t >= next_report:
+                next_report += PROGRESS_EVERY_S
+                print(json.dumps({'run_id': run_id, 'sim_s': t, 'wall_s': round(time.time() - started, 1),
+                                  'calls': len(trial.scheduler.calls), 'load': [round(v, 1) for v in os.getloadavg()]}),
+                      file=sys.stderr, flush=True)
             for event in host.advance_to(t):
                 trial.on_executor_event(event, at_s=t)
             trial.step_to(t)
