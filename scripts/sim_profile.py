@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import resource
 import sys
@@ -212,6 +213,7 @@ def install_phase_stop(rec: Recorder, runner, controller_cls, target: str) -> No
     """
     ctl_phase, _, skill_phase = target.partition(':')
     orig = controller_cls.decide
+    rec._set(runner, 'SIM_LIMIT_S', runner.SIM_LIMIT_S)     # registers the current limit, so restore() puts it back
 
     def decide(ctl, *a, **kw):
         out = orig(ctl, *a, **kw)
@@ -236,7 +238,7 @@ def m1_prepare(rec: Recorder, args):
         raise SystemExit(f'{args.episode!r} is not a dev episode of {args.prereg} (profiling runs dev only)')
     spec = {**spec, 'contact_profile': student.get('contact_profile', spec.get('contact_profile'))}
     if args.sim_limit:
-        runner.SIM_LIMIT_S = float(args.sim_limit)    # truncation: behaviour before the limit is unchanged
+        rec._set(runner, 'SIM_LIMIT_S', float(args.sim_limit))   # truncation (undone by restore()): behaviour before the limit is unchanged
     if args.sections:
         rec.timed(m1_owncam_delivery.M1OwnCamDelivery, 'on_frame', 'ctl_on_frame')
         rec.timed(m1_owncam_delivery.M1OwnCamDelivery, 'decide', 'ctl_decide')
@@ -255,7 +257,7 @@ def m1_prepare(rec: Recorder, args):
     return lambda out: runner.run(spec, out, student, **kwargs), {'spec': spec, 'student': student}
 
 
-def main(argv=None):
+def parse_args(argv=None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     p.add_argument('runner', choices=('m1',))
     p.add_argument('--prereg', default=M1_PREREG)
@@ -273,19 +275,94 @@ def main(argv=None):
     p.add_argument('--speedups', default=None, help="passed to the runner (e.g. 'none', 'exact-v1')")
     p.add_argument('--cv-threads', type=int, default=None, help='cv2.setNumThreads before the run (default: unchanged)')
     args = p.parse_args(argv)
+    for name in ('sim_limit', 'cpu_mark_sim_s'):
+        value = getattr(args, name)
+        if not math.isfinite(value) or value < 0:
+            p.error(f'--{name.replace("_", "-")} must be a finite number >= 0, got {value!r}')
+    if args.qpos_every < 0:
+        p.error(f'--qpos-every must be >= 0, got {args.qpos_every}')
+    return args
+
+
+def snapshot() -> dict:
+    return {'load': os.getloadavg(), 'wall': time.time(), 'cpu': rusage_cpu(), 'main': time.thread_time(),
+            'counters': proc_counters()}
+
+
+def build_summary(args, rec: Recorder, error: str | None, s0: dict, s1: dict, cv2_threads: int) -> dict:
+    cpu0, cpu1 = s0['cpu'], s1['cpu']
+    main_s = s1['main'] - s0['main']
+    proc_s = (cpu1['user_s'] - cpu0['user_s']) + (cpu1['sys_s'] - cpu0['sys_s'])
+    render_s = rec.render_thread_cpu_s
+    return {
+        'schema': SCHEMA, 'runner': args.runner, 'episode': args.episode, 'sim_limit_s': args.sim_limit or None,
+        'speedups': args.speedups, 'cv2_threads': cv2_threads, 'error': error,
+        'cpu_s': {'process': round(proc_s, 3), 'user': round(cpu1['user_s'] - cpu0['user_s'], 3),
+                  'sys': round(cpu1['sys_s'] - cpu0['sys_s'], 3), 'main_thread': round(main_s, 3),
+                  'render_thread': None if render_s is None else round(render_s, 3),
+                  'other_threads': None if render_s is None else round(proc_s - main_s - render_s, 3)},
+        'wall_s_informational': round(s1['wall'] - s0['wall'], 1),
+        'load_average': {'start': [round(v, 2) for v in s0['load']], 'end': [round(v, 2) for v in s1['load']]},
+        'counters': counter_delta(s0['counters'], s1['counters']),
+        'cpu_at_sim_mark': rec.cpu_at_mark,
+        'dev_slice': ({'kind': 'prefix_until_phase', 'target': args.stop_at_phase, 'stop': rec.slice_stop,
+                       'note': 'DEV ONLY: unchanged mission up to the stop; outcome SIM_LIMIT is not an M1 result'}
+                      if args.stop_at_phase else None),
+        'mj_steps': rec.steps, 'qpos_every': rec.qpos_every, 'checkpoints': len(rec.checkpoints),
+        'sections_thread_cpu_s': {k: round(v, 4) for k, v in sorted(rec.cpu.items())},
+        'sections_calls': dict(sorted(rec.calls.items())),
+        'env': {k: os.environ.get(k) for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS',
+                                               'MKL_NUM_THREADS')},
+        'argv': sys.argv[1:], 'git_head': os.popen(f'git -C {ROOT} rev-parse HEAD').read().strip(),
+    }
+
+
+def write_outputs(out: Path, args, rec: Recorder, summary: dict, prof) -> None:
+    try:
+        res = json.loads((out/'run'/'result.json').read_text())
+        summary.update(sim_s=res.get('sim_s'), frames=res.get('frames'), commands=res.get('commands'),
+                       outcome=res.get('outcome'))
+    except (OSError, ValueError):
+        pass
+    (out/'profile.json').write_text(json.dumps(summary, indent=2) + '\n')
+    if args.stop_at_phase:
+        (out/'DEV_SLICE_NOT_A_RESULT.txt').write_text(
+            f'DEV-ONLY prefix slice until {args.stop_at_phase!r} (stop: {rec.slice_stop}).\n'
+            'Freeze/test decisions use full missions; never report this directory as an M1 outcome.\n')
+    with (out/'qpos_checkpoints.jsonl').open('w') as fh:
+        for row in rec.checkpoints:
+            fh.write(json.dumps(row) + '\n')
+    if prof is not None:
+        import io
+        import pstats
+        prof.dump_stats(str(out/'profile.pstats'))
+        for sort in ('tottime', 'cumulative'):
+            buf = io.StringIO()
+            pstats.Stats(prof, stream=buf).sort_stats(sort).print_stats(70)
+            (out/f'profile_{sort}.txt').write_text(buf.getvalue())
+    print(json.dumps({k: summary[k] for k in ('episode', 'cpu_s', 'counters', 'wall_s_informational', 'mj_steps')} |
+                     {'sim_s': summary.get('sim_s'), 'outcome': summary.get('outcome')}), flush=True)
+
+
+def main(argv=None):
+    args = parse_args(argv)
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=False)
     import cv2
     if args.cv_threads is not None:
         cv2.setNumThreads(int(args.cv_threads))
     rec = Recorder(args.qpos_every, args.cpu_mark_sim_s)
-    rec.install_step_hook()
-    rec.install_render_thread_probe()
-    if args.sections:
-        rec.install_sections()
-    run, meta = m1_prepare(rec, args)
-    load0, wall0, cpu0, main0, ctr0 = os.getloadavg(), time.time(), rusage_cpu(), time.thread_time(), proc_counters()
-    rec.cpu_origin = (cpu0, main0, ctr0)
+    try:
+        rec.install_step_hook()
+        rec.install_render_thread_probe()
+        if args.sections:
+            rec.install_sections()
+        run, _meta = m1_prepare(rec, args)
+    except BaseException:
+        rec.restore()          # nothing ran: undo every patch (incl. SIM_LIMIT_S) before propagating
+        raise
+    s0 = snapshot()
+    rec.cpu_origin = (s0['cpu'], s0['main'], s0['counters'])
     prof = None
     if args.cprofile:
         import cProfile
@@ -293,63 +370,16 @@ def main(argv=None):
         prof.enable()
     error = None
     try:
-        result, manifest = run(out/'run')
+        run(out/'run')
     except BaseException as exc:          # noqa: BLE001 - record then re-raise
         error = f'{type(exc).__name__}: {exc}'
         raise
     finally:
         if prof is not None:
             prof.disable()
-        main_s = time.thread_time() - main0
-        cpu1, wall1, load1, ctr1 = rusage_cpu(), time.time(), os.getloadavg(), proc_counters()
-        rec.restore()
-        proc_s = (cpu1['user_s'] - cpu0['user_s']) + (cpu1['sys_s'] - cpu0['sys_s'])
-        render_s = rec.render_thread_cpu_s
-        summary = {
-            'schema': SCHEMA, 'runner': args.runner, 'episode': args.episode, 'sim_limit_s': args.sim_limit or None,
-            'speedups': args.speedups, 'cv2_threads': cv2.getNumThreads(), 'error': error,
-            'cpu_s': {'process': round(proc_s, 3), 'user': round(cpu1['user_s'] - cpu0['user_s'], 3),
-                      'sys': round(cpu1['sys_s'] - cpu0['sys_s'], 3), 'main_thread': round(main_s, 3),
-                      'render_thread': None if render_s is None else round(render_s, 3),
-                      'other_threads': None if render_s is None else round(proc_s - main_s - render_s, 3)},
-            'wall_s_informational': round(wall1 - wall0, 1),
-            'load_average': {'start': [round(v, 2) for v in load0], 'end': [round(v, 2) for v in load1]},
-            'counters': counter_delta(ctr0, ctr1),
-            'cpu_at_sim_mark': rec.cpu_at_mark,
-            'dev_slice': ({'kind': 'prefix_until_phase', 'target': args.stop_at_phase, 'stop': rec.slice_stop,
-                           'note': 'DEV ONLY: unchanged mission up to the stop; outcome SIM_LIMIT is not an M1 result'}
-                          if args.stop_at_phase else None),
-            'mj_steps': rec.steps, 'qpos_every': rec.qpos_every, 'checkpoints': len(rec.checkpoints),
-            'sections_thread_cpu_s': {k: round(v, 4) for k, v in sorted(rec.cpu.items())},
-            'sections_calls': dict(sorted(rec.calls.items())),
-            'env': {k: os.environ.get(k) for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS',
-                                                   'MKL_NUM_THREADS')},
-            'argv': sys.argv[1:], 'git_head': os.popen(f'git -C {ROOT} rev-parse HEAD').read().strip(),
-        }
-        try:
-            res = json.loads((out/'run'/'result.json').read_text())
-            summary.update(sim_s=res.get('sim_s'), frames=res.get('frames'), commands=res.get('commands'),
-                           outcome=res.get('outcome'))
-        except (OSError, ValueError):
-            pass
-        (out/'profile.json').write_text(json.dumps(summary, indent=2) + '\n')
-        if args.stop_at_phase:
-            (out/'DEV_SLICE_NOT_A_RESULT.txt').write_text(
-                f'DEV-ONLY prefix slice until {args.stop_at_phase!r} (stop: {rec.slice_stop}).\n'
-                'Freeze/test decisions use full missions; never report this directory as an M1 outcome.\n')
-        with (out/'qpos_checkpoints.jsonl').open('w') as fh:
-            for row in rec.checkpoints:
-                fh.write(json.dumps(row) + '\n')
-        if prof is not None:
-            import io
-            import pstats
-            prof.dump_stats(str(out/'profile.pstats'))
-            for sort in ('tottime', 'cumulative'):
-                buf = io.StringIO()
-                pstats.Stats(prof, stream=buf).sort_stats(sort).print_stats(70)
-                (out/f'profile_{sort}.txt').write_text(buf.getvalue())
-        print(json.dumps({k: summary[k] for k in ('episode', 'cpu_s', 'counters', 'wall_s_informational', 'mj_steps')} |
-                         {'sim_s': summary.get('sim_s'), 'outcome': summary.get('outcome')}), flush=True)
+        s1 = snapshot()
+        rec.restore()          # every patch, including the runner's SIM_LIMIT_S (truncation and phase stop)
+        write_outputs(out, args, rec, build_summary(args, rec, error, s0, s1, cv2.getNumThreads()), prof)
 
 
 if __name__ == '__main__':
