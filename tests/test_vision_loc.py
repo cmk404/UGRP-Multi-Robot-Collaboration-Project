@@ -120,6 +120,26 @@ def test_wall_behind_camera_is_not_the_first_footprint():
     assert np.isnan(old[0][edge]).mean() > .5          # the old cast hit the wall behind the robot
 
 
+CARRY = {1: 1500, 3: 777, 4: 2053, 5: 1646, 6: 1500}
+
+
+@pytest.mark.parametrize('pose,servo', [((1.83, -.26, -.01), CARRY), ((1.75, -.35, .25), SEARCH),
+                                        ((1.83, -.26, -.01), LOOK_P20)])
+def test_door_jamb_columns_use_the_line_of_sight(pose, servo):
+    """Next to a door jamb the pitched column's upper rays hit the jamb while its floor trace passes the door:
+    the line-of-sight model matches the rendered labels; the floor-trace-only cast (PR #210) is off by >100 px."""
+    lab = render_labels(pose, servo)
+    obs = vl.column_observations(vl.one_hot(lab), COLS)
+    cm = vl.column_model(servo, 0., 0., COLS)
+    geo = vl.mp.MapGeometry(MAP, include_posts=False)
+    vb, _ = vl.expected_rows(geo, np.array([pose]), cm)
+    edge = obs.b_kind == vl.EDGE
+    assert edge.sum() >= 15
+    assert np.abs(obs.b_lo[edge] - vb[0][edge]).max() < 1.
+    old, _, _, _, _ = geo.expected_rows(np.array([pose]), cm, wall_height_m=.40)
+    assert np.nanmax(np.abs(obs.b_lo[edge] - np.nan_to_num(old[0][edge], nan=1e4))) > 100.
+
+
 def test_column_intervals_for_occlusion_free_floor_and_near_wall():
     h = vl.HEIGHT
     col = np.full(h, vl.WALL, np.uint8)

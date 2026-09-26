@@ -78,6 +78,7 @@ DEFAULT_OBS = {
     'strip_half_px': 2,        # class probabilities averaged over 2*2+1 image columns
     'min_run_px': 3,           # a wall / floor / background run must be this long
     'use_top_edge': True,
+    'consistency_px': None,    # drop sharp edges inconsistent with neighbour columns (None: keep all)
 }
 DEFAULT_MEASUREMENT = {
     'sigma_px': 2.5,           # row noise of the expected edge (extrinsic + label)
@@ -293,7 +294,43 @@ def column_observations(probs: np.ndarray, columns: np.ndarray, params: Mapping 
             above = [r for r in merged if r[2] < f[1]]
             if not above or above[-1][0] == BACKGROUND:
                 b_kind[j], b_lo[j], b_hi[j] = INTERVAL, NEG_INF, f[1] - .5       # free floor to the top
+    if p_.get('consistency_px') is not None:
+        tol = float(p_['consistency_px'])
+        for kind, lo, hi in ((b_kind, b_lo, b_hi), (t_kind, t_lo, t_hi)):
+            drop = _inconsistent_edges(kind, lo, hi, tol)
+            kind[drop] = NONE
+            lo[drop] = hi[drop] = np.nan
     return ColumnObs(np.asarray(columns), b_kind, b_lo, b_hi, t_kind, t_lo, t_hi)
+
+
+def _inconsistent_edges(kind: np.ndarray, lo: np.ndarray, hi: np.ndarray, tol: float) -> np.ndarray:
+    """Sharp edges that are not bottom (top) edges of one wall face within the column.
+
+    The camera is pitched, so an image column is not a vertical plane: next to a
+    vertical wall edge (a door jamb, a wall end) its upper rays can hit the wall
+    while its lower rays pass the edge and hit the floor behind it. That wall/floor
+    transition is the vertical edge, not the wall's bottom edge the floor-trace
+    model predicts. Such columns sit at a discontinuity: a sharp edge is dropped
+    when it is not explained by its neighbours -- both neighbours sharp edges and
+    the edge deviates by more than ``tol`` from their mean (straight or slanted
+    bottom edges pass), or a neighbour interval does not contain it (+- tol).
+    Neighbour columns keep the jump itself.
+    """
+    n = len(kind)
+    drop = np.zeros(n, bool)
+    for j in np.flatnonzero(kind == EDGE):
+        nb = [i for i in (j - 1, j + 1) if 0 <= i < n and kind[i] != NONE]
+        if not nb:
+            continue
+        edges = [i for i in nb if kind[i] == EDGE]
+        if len(edges) == 2:
+            drop[j] = abs(lo[j] - .5*(lo[edges[0]] + lo[edges[1]])) > tol
+        elif len(edges) == 1 and len(nb) == 1:
+            drop[j] = False                          # one sharp neighbour only: a straight edge may be steep
+        for i in nb:
+            if kind[i] == INTERVAL and not (lo[i] - tol <= lo[j] <= hi[i] + tol):
+                drop[j] = True
+    return drop
 
 
 # ----------------------------------------------------------------------------- likelihood
@@ -349,41 +386,152 @@ def column_loglik(vb_exp: np.ndarray, vt_exp: np.ndarray, obs: ColumnObs, params
 
 
 # ----------------------------------------------------------------------------- expected rows
-def expected_rows(geometry, poses: np.ndarray, cm: 'ColumnModelDZ', wall_height_m: float = WALL_HEIGHT_M):
-    """Expected (bottom, top) edge rows (P, C) of the first map footprint in front of the camera.
+def _rects(geometry) -> np.ndarray:
+    return np.asarray(geometry.rects, float)[:, :4]
 
-    Adapted from PR #210 ``MapGeometry.expected_rows`` (same slab ray cast
-    ``MapGeometry.raycast`` and column traces). Change: every trace is cast from
-    the point level with the camera (its projection on the trace) instead of a
-    fixed 0.6 m behind the lowest visible floor point, so a wall behind the robot
-    is never taken as the first footprint, and for walls taller than the camera
-    the top trace starts at the camera (PR #210 cast it from ~0.7 m ahead, which
-    misses near walls). No hit / behind the image plane: bottom -> POS_INF (the
-    footprint hides the image bottom), top -> NEG_INF (above the view).
+
+def _segment_hits(ox, oy, ex, ey, rect) -> np.ndarray:
+    """Segment (o -> e) meets the interior of an axis-aligned rectangle (cx, cy, hx, hy) (slab test)."""
+    cx, cy, hx, hy = rect
+    dx, dy = ex - ox, ey - oy
+    dx = np.where(np.abs(dx) < 1e-9, 1e-9, dx)
+    dy = np.where(np.abs(dy) < 1e-9, 1e-9, dy)
+    tx1, tx2 = (cx - hx - ox)/dx, (cx + hx - ox)/dx
+    ty1, ty2 = (cy - hy - oy)/dy, (cy + hy - oy)/dy
+    tmin = np.maximum(np.minimum(tx1, tx2), np.minimum(ty1, ty2))
+    tmax = np.minimum(np.maximum(tx1, tx2), np.maximum(ty1, ty2))
+    return (tmax > np.maximum(tmin, 0.) + 1e-9) & (tmin < 1.)
+
+
+def first_blocked(rects: np.ndarray, ox, oy, qx, qy, dx, dy, t_min: float | np.ndarray = 0.,
+                  corners: set | None = None) -> np.ndarray:
+    """Smallest t >= t_min at which the segment from o to q + t*d meets a footprint (inf if never).
+
+    Walls at least as tall as the camera block a ray to a floor point F (or to a
+    point at the walls' top height) exactly when the horizontal segment from the
+    camera to F crosses a wall footprint. Moving F outward along a column's trace,
+    the first contact is either F entering a footprint or the segment sweeping
+    over a footprint corner (convex polygons), so both event sets are tested.
+    Shapes broadcast over (particles, columns). ``corners``: the (rect index, corner
+    index) pairs to test (None: all); ``expected_rows`` passes only corners inside
+    the particle cloud's view fan (an exact pruning, see ``_fan_corners``).
+    """
+    # float32: ~2x faster on (particles x columns) arrays; 5 m coordinates keep ~1 um resolution
+    ox, oy, qx, qy, dx, dy = np.broadcast_arrays(*(np.asarray(a, np.float32) for a in (ox, oy, qx, qy, dx, dy)))
+    t_min = np.broadcast_to(np.asarray(t_min, np.float32), ox.shape)
+    best = np.full(ox.shape, np.inf, np.float32)
+    sx, sy = qx + t_min*dx, qy + t_min*dy
+    # already blocked at t_min: only footprints within reach of the first segment can do that
+    reach = float(np.sqrt(np.max((sx - ox)**2 + (sy - oy)**2))) if ox.size else 0.
+    blocked0 = np.zeros(ox.shape, bool)
+    if reach > 1e-6:
+        for r in rects:
+            cx, cy, hx, hy = r
+            gap = np.hypot(np.maximum(np.abs(ox - cx) - hx, 0.), np.maximum(np.abs(oy - cy) - hy, 0.))
+            if float(gap.min()) <= reach:
+                blocked0 |= _segment_hits(ox, oy, sx, sy, r)
+    ddx = np.where(np.abs(dx) < 1e-9, 1e-9, dx)
+    ddy = np.where(np.abs(dy) < 1e-9, 1e-9, dy)
+    rx, ry = qx - ox, qy - oy
+    for ri, r in enumerate(rects):
+        cx, cy, hx, hy = r
+        # (1) the trace point enters the footprint (slab test on the line q + t d, t >= t_min)
+        tx1, tx2 = (cx - hx - qx)/ddx, (cx + hx - qx)/ddx
+        ty1, ty2 = (cy - hy - qy)/ddy, (cy + hy - qy)/ddy
+        tmin = np.maximum(np.minimum(tx1, tx2), np.minimum(ty1, ty2))
+        tmax = np.minimum(np.maximum(tx1, tx2), np.maximum(ty1, ty2))
+        enter = np.maximum(tmin, t_min)
+        best = np.where((tmax > enter) & (enter < best), enter, best)
+        # (2) the segment sweeps over a corner c: o + mu (c - o) = q + t d with mu >= 1
+        for ki, (kx, ky) in enumerate(((-1, -1), (-1, 1), (1, -1), (1, 1))):
+            if corners is not None and (ri, ki) not in corners:
+                continue
+            ax, ay = cx + kx*hx - ox, cy + ky*hy - oy
+            det = -ax*dy + ay*dx
+            ok = np.abs(det) > 1e-9
+            det = np.where(ok, det, 1.)
+            mu = (-rx*dy + ry*dx)/det
+            t = (ax*ry - ay*rx)/det
+            idx = np.flatnonzero(ok & (mu >= 1.) & (t >= t_min) & (t < best))
+            if idx.size == 0:
+                continue
+            te = t.flat[idx] + 1e-4
+            hit = _segment_hits(ox.flat[idx], oy.flat[idx], qx.flat[idx] + te*dx.flat[idx],
+                                qy.flat[idx] + te*dy.flat[idx], r)
+            best.flat[idx[hit]] = t.flat[idx[hit]]
+    return np.where(blocked0, -np.inf, best)
+
+
+def _fan_corners(rects: np.ndarray, ox, oy, dirs_x, dirs_y, margin_rad: float = math.radians(3.)) -> set:
+    """Footprint corners that can lie inside some particle's view fan.
+
+    A corner event needs the corner on a line of sight to a trace point, i.e.
+    inside the horizontal fan spanned by the sight directions of all columns
+    (``dirs``, shape (P, C, M)). A corner is kept when, for some particle, its
+    bearing lies within [min, max] of that particle's sight bearings (+ margin).
+    """
+    keep = set()
+    ang = np.arctan2(dirs_y, dirs_x)                      # (P, C*M)
+    ref = ang[:, :1]
+    rel = (ang - ref + np.pi) % (2*np.pi) - np.pi
+    lo, hi = rel.min(1) - margin_rad, rel.max(1) + margin_rad
+    for ri, (cx, cy, hx, hy) in enumerate(rects):
+        for ki, (kx, ky) in enumerate(((-1, -1), (-1, 1), (1, -1), (1, 1))):
+            b = np.arctan2(cy + ky*hy - oy[:, 0], cx + kx*hx - ox[:, 0])
+            r = (b - ref[:, 0] + np.pi) % (2*np.pi) - np.pi
+            if np.any((r >= lo) & (r <= hi)):
+                keep.add((ri, ki))
+    return keep
+
+
+def expected_rows(geometry, poses: np.ndarray, cm: 'ColumnModelDZ', wall_height_m: float = WALL_HEIGHT_M):
+    """Expected (bottom, top) edge rows (P, C) of the walls in each column, for walls >= camera height.
+
+    Reuses PR #210's column traces (``ColumnModel.q0/d/trace_at/rows/rows_at``) and
+    footprints (``MapGeometry.rects``). PR #210 took the first footprint ALONG the
+    floor trace (cast from 0.6 m behind the lowest visible floor point). That is
+    exact for a vertical column plane only: the camera is pitched, so next to a
+    vertical wall edge (door jamb, wall end) the upper rays of a column hit the
+    wall while its trace passes the edge. Here the bottom edge is the first floor
+    trace point whose line of sight from the camera is blocked by a footprint
+    (``first_blocked``), the top edge likewise on the trace at the wall-top height.
+    A wall behind the camera never counts. Bottom already blocked at the lowest
+    visible row -> POS_INF (the wall hides the image bottom); bottom never
+    blocked -> NEG_INF (open floor up to the horizon); top never blocked or behind
+    the image plane -> NEG_INF (the top edge is above the view).
     """
     poses = np.asarray(poses, float).reshape(-1, 3)
+    if np.any(geometry.rects[:, 4] < cm.origin[2] - 1e-6):
+        raise ValueError('expected_rows assumes walls at least as tall as the camera')
+    rects = _rects(geometry).astype(np.float32)
     c, s = np.cos(poses[:, 2])[:, None], np.sin(poses[:, 2])[:, None]
     dx = c*cm.d[None, :, 0] - s*cm.d[None, :, 1]
     dy = s*cm.d[None, :, 0] + c*cm.d[None, :, 1]
     o = cm.origin[:2]
+    ox = poses[:, :1] + c*o[0] - s*o[1]
+    oy = poses[:, 1:2] + s*o[0] + c*o[1]
 
-    def cast(q0):
-        back = np.sum((q0 - o[None, :])*cm.d, 1)            # distance from the camera level point to q0
-        start = q0 - back[:, None]*cm.d
-        ox = poses[:, :1] + c*start[None, :, 0] - s*start[None, :, 1]
-        oy = poses[:, 1:2] + s*start[None, :, 0] + c*start[None, :, 1]
-        t, h = geometry.raycast(ox, oy, dx, dy)
-        return t - back[None, :], h
-    t, _ = cast(cm.q0)
-    fin = np.isfinite(t)
-    with np.errstate(invalid='ignore'):
-        vb = np.where(fin, cm.rows(np.where(fin, t, 0.)), np.nan)
+    def world(q):
+        return poses[:, :1] + c*q[None, :, 0] - s*q[None, :, 1], poses[:, 1:2] + s*q[None, :, 0] + c*q[None, :, 1]
+    qx, qy = world(cm.q0)
     q0h, _ = cm.trace_at(wall_height_m)
-    st, sh = cast(q0h)
-    ok = np.isfinite(st) & (np.abs(sh - wall_height_m) < 1e-6)
+    hx, hy = world(q0h)
+    s_cam = np.sum((o[None, :] - q0h)*cm.d, 1)[None, :]   # top-trace point level with the camera
+    # sight directions: to the nearest bottom-trace point, to the top-trace point level with the
+    # camera and along the traces (far points); the fan of each particle spans all of them
+    sight = [(qx - ox, qy - oy), (hx + s_cam*dx - ox, hy + s_cam*dy - oy), (dx, dy)]
+    fan = _fan_corners(rects, ox, oy, np.concatenate([a for a, _ in sight], 1),
+                       np.concatenate([b for _, b in sight], 1))
+    t = first_blocked(rects, ox, oy, qx, qy, dx, dy, 0., fan).astype(float)
+    with np.errstate(invalid='ignore'):
+        vb = np.where(np.isfinite(t), cm.rows(np.where(np.isfinite(t), t, 0.)), np.nan)
+    vb = np.where(t == -np.inf, POS_INF, vb)          # blocked at the lowest visible floor row
+    vb = np.where(np.isnan(vb), NEG_INF, vb)          # never blocked (open view): no wall bottom in the column
+    st = first_blocked(rects, ox, oy, hx, hy, dx, dy, s_cam, fan).astype(float)
+    ok = np.isfinite(st)
     with np.errstate(invalid='ignore'):
         vt = np.where(ok, cm.rows_at(np.where(ok, st, 0.), wall_height_m), np.nan)
-    return np.nan_to_num(vb, nan=POS_INF), np.nan_to_num(vt, nan=NEG_INF)
+    return vb, np.nan_to_num(vt, nan=NEG_INF)
 
 
 # ----------------------------------------------------------------------------- particle filter
