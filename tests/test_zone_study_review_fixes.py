@@ -21,10 +21,12 @@ Design choices taken where the review left one open (user decision 2026-09-26):
 from __future__ import annotations
 
 import copy
+import json
 
 import pytest
 
 from harness import zone_event_scheduler as ds
+from harness import zone_map_schematic as zms
 from harness import zone_sim_cost as zc
 from harness import zone_study_contract as c
 from harness import zone_study_eval as ev
@@ -86,25 +88,56 @@ def test_f01_a_foreign_camera_frame_cannot_be_relabelled_as_the_own_wrist_rgb():
     assert manifest[0]['ref'].startswith('own-r1-')
 
 
-def test_f01_a_map_figure_must_be_an_artefact_of_the_frozen_map():
-    trial, bundled = _inputs()
+def _schematic_trial(condition='peer_ko'):
+    """A trial whose map bundle was rendered WITH its schematic, plus the real PNG."""
+    scenario = E.load('s1_normal_mixed')
+    bundle = E.bundle_for(scenario, schematic=True)
+    data, _ = zms.load_map(scenario['map_id'])
+    png, meta = zms.render_schematic(data, width_px=760,
+                                     landmark_detail=scenario.get('landmark_detail', 'full'))
+    assert meta['png_sha256'] == bundle['schematic']['png_sha256']     # same frozen artefact
+    trial = off.OfflineTrial(scenario, condition=condition, seed=SEED, map_bundle=bundle,
+                             library=_library(), horizon_s=40.)
+    return trial, png
+
+
+def test_f01_a_map_figure_must_be_the_pinned_schematic_of_the_frozen_map():
+    """Second review: the old positive case used a self-made PNG and its OWN
+    declared hash, so any bytes with a matching self-declared ref passed."""
+    trial, png = _schematic_trial()
+    bundled = trial.build_inputs('r1', sim_time_s=0.0, request_id='req_probe')
     payload = bundled.payload_dict()
-    assert 'schematic_ref' not in payload['static_map']
-    with pytest.raises(zp.ProtocolError, match='schematic_ref'):
-        pk.StudyInputs(payload=payload, wrist_jpeg=bundled.wrist_jpeg, seed=bundled.seed,
-                       map_figure_jpeg=bundled.wrist_jpeg)
-    png = b'\x89PNG' + b'kiro-map' * 4
-    with_ref = copy.deepcopy(payload)
-    with_ref['static_map']['schematic_ref'] = {
-        'ref': f'map-{payload["static_map"]["map_id"]}-schematic', 'kind': 'map_schematic',
-        'png_sha256': pk.image_sha256(png)}
-    ok = pk.StudyInputs(payload=with_ref, wrist_jpeg=bundled.wrist_jpeg, seed=bundled.seed,
-                        map_figure_jpeg=png)
-    labels = [row['label'] for row in pk.image_manifest(ok)]
-    assert pk.IMAGE_MAP in labels
-    with pytest.raises(zp.ProtocolError, match='validated reference'):   # wrong bytes for that ref
-        pk.StudyInputs(payload=with_ref, wrist_jpeg=bundled.wrist_jpeg, seed=bundled.seed,
-                       map_figure_jpeg=png + b'x')
+    assert payload['static_map']['schematic_ref']['png_sha256'] == trial.source.pinned['schematic_png_sha256']
+    ok = pk.StudyInputs(payload=payload, wrist_jpeg=bundled.wrist_jpeg, seed=SEED,
+                        pinned=trial.source.pinned, map_figure_jpeg=png)
+    assert pk.IMAGE_MAP in [row['label'] for row in pk.image_manifest(ok)]
+    # the real figure without the pin is refused: a ref alone proves nothing
+    with pytest.raises(zp.ProtocolError, match='pinned'):
+        pk.StudyInputs(payload=payload, wrist_jpeg=bundled.wrist_jpeg, seed=SEED, map_figure_jpeg=png)
+    # wrong bytes for the pinned ref
+    with pytest.raises(zp.ProtocolError, match='validated reference'):
+        pk.StudyInputs(payload=payload, wrist_jpeg=bundled.wrist_jpeg, seed=SEED,
+                       pinned=trial.source.pinned, map_figure_jpeg=bundled.wrist_jpeg)
+
+
+def test_f01_a_wrist_photo_with_a_self_declared_schematic_ref_is_refused():
+    """The reported counterexample: wrist bytes + an arbitrary schematic_ref."""
+    trial, bundled = _inputs()                          # a run WITHOUT a schematic
+    assert trial.source.pinned['schematic_png_sha256'] is None
+    forged = bundled.payload_dict()
+    forged['static_map']['schematic_ref'] = {
+        'ref': f'map-{forged["static_map"]["map_id"]}-schematic', 'kind': 'map_schematic',
+        'png_sha256': pk.image_sha256(bundled.wrist_jpeg)}
+    assert any('pinned map schematic' in p
+               for p in c.payload_violations(forged, seed=SEED, pinned=trial.source.pinned))
+    for pinned in (trial.source.pinned, None):
+        with pytest.raises(zp.ProtocolError):
+            pk.StudyInputs(payload=forged, wrist_jpeg=bundled.wrist_jpeg, seed=SEED, pinned=pinned,
+                           map_figure_jpeg=bundled.wrist_jpeg)
+    # and a real schematic of ANOTHER map cannot be relabelled as this one
+    wrong = copy.deepcopy(forged)
+    wrong['static_map']['schematic_ref']['ref'] = 'map-some_other_map-schematic'
+    assert any('is not the schematic of map' in p for p in c.payload_violations(wrong, seed=SEED))
 
 
 def test_f01_the_whole_final_request_is_hashed_not_only_the_payload():
@@ -159,8 +192,54 @@ def test_f02_one_canonical_message_id_runs_from_validation_to_the_sim_log():
     for actor in ('r1', 'r2', 'r3'):
         for row in trial.channel.inbox(actor, now_sim_s=10_000.):
             assert set(row) == set(c.ENVELOPE_KEYS)
-            assert c.payload_violations({'schema': c.PAYLOAD_SCHEMA}) or True
     assert trial.scheduler.bus is trial.channel
+
+
+def test_f02_the_scheduler_inbox_is_the_same_canonical_envelope_as_the_bus_inbox():
+    """Second review: D's inbox lacked recipients/created_at_sim_s and carried
+    the id as the body, and the old check here was ``assert ... or True``."""
+    trial, result = _trial('peer_ko')
+    delivered = 0
+    for actor in ('r1', 'r2', 'r3'):
+        mine = list(trial.scheduler.inbox(actor))
+        assert mine == list(trial.channel.inbox(actor, now_sim_s=10_000.))
+        for row in mine:
+            delivered += 1
+            assert set(row) == set(c.ENVELOPE_KEYS)
+            assert actor in row['recipients'] and isinstance(row['created_at_sim_s'], float)
+            assert set(row['body']) == {'text'} and row['body']['text'] != row['message_id']
+        if not mine:
+            continue
+        # the D inbox is directly a valid package A input of the recipient
+        bundled = trial.build_inputs(actor, sim_time_s=10_000., request_id='req_d_inbox')
+        payload = bundled.payload_dict()
+        payload['inbox'] = mine
+        assert c.payload_violations(payload, seed=SEED, pinned=trial.source.pinned) == []
+    assert delivered, 'the peer trial must have delivered at least one envelope'
+
+
+def test_f02_the_delivery_callback_receives_the_canonical_envelope():
+    bus = zp.Transport('peer_ko', seed=SEED, delivery_owner=off.BUS_OWNER)
+    bus.open_window('w1', at_sim_s=0.)
+    seen = []
+
+    def reply(call):
+        receipt = bus.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=call.started_sim_s)
+        envelope = receipt.envelope
+        return ds.CallReply(attempts=(zc.Attempt(utterances=1),), messages=(ds.Message(
+            sender='r1', recipients=tuple(envelope.recipients), body=envelope.body(),
+            message_id=envelope.message_id),))
+
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': reply}), bus=bus, bus_owner=off.BUS_OWNER,
+                              on_message=lambda a, m, t: seen.append((a, m)),
+                              policy=ds.CallPolicy(trigger_on_message=False))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=50)
+    assert [a for a, _ in seen] == ['r2']
+    assert seen[0][1] == bus.inbox('r2', now_sim_s=50.)[0] == sched.inbox('r2')[0]
+    assert seen[0][1]['body'] == {'text': KO_TEXT} and seen[0][1]['recipients'] == ['r2']
+    assert 'delivered_sim_s' not in seen[0][1]                 # delivery time is evaluation data
+    assert sched.delivery_log('r2')[0]['message_id'] == seen[0][1]['message_id']
 
 
 def test_f02_a_scheduler_with_a_bus_refuses_a_second_id_space():
@@ -653,20 +732,55 @@ def test_f15_an_actor_has_its_own_http_attempt_cap():
     assert sched.metrics['r1']['budget_refused'] >= 1
 
 
-def test_f15_a_transport_that_retries_internally_reserves_through_the_same_owner():
-    """The budget object is the single owner, so an in-transport retry that did
-    not reserve is visible as an over-budget attempt instead of silently
-    exceeding the cap."""
+def test_f15_a_compliant_transport_reserves_every_retry_before_sending_it():
+    """Second review: the old test EXPECTED 3 attempts under a cap of 1 and
+    froze a wrong ``over=1``. A compliant transport reserves each internal retry
+    through ``PendingCall.reserve``; a refused reservation is never sent."""
     greedy = ds.CallReply(attempts=(zc.Attempt(outcome='error'), zc.Attempt(outcome='error'),
-                                    zc.Attempt(outcome='ok')))
-    policy = ds.CallPolicy(max_attempts_total=1, max_http_attempts_per_actor=1, max_retries=0)
-    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [greedy]}), policy=policy)
+                                    zc.Attempt(outcome='ok')), action='go')
+    actions = []
+    policy = ds.CallPolicy(max_attempts_total=1, max_http_attempts_per_actor=1, max_retries=1)
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [greedy]}), policy=policy,
+                              on_action=lambda a, action, t: actions.append(action))
     sched.trigger('r1', 'start')
     sched.run(until_s=200)
-    assert sched.over_budget_attempts, 'the extra HTTP attempts must be recorded'
-    assert sched.over_budget_attempts[0] == {'call_id': sched.calls[0].call_id, 'actor': 'r1',
-                                            'reserved': 1, 'actual': 3, 'over': 1}
-    assert ds.AttemptBudget(per_actor=1, total=1).reserve('r1', 1) is True
+    assert sched.budget.used_total() == 1 and sched.over_budget_attempts == []
+    assert [len(call.cost.attempts) for call in sched.calls] == [1]     # the retries never left
+    assert sched.calls[0].cost.outcome == 'error' and actions == []
+    assert sched.metrics['r1']['budget_refused'] == 1                   # the scheduler retry too
+    assert len(sched.budget.refusals) == 2
+
+
+class _IgnoresTheBudget:
+    """A NON-compliant transport: retries internally without reserving."""
+
+    def __init__(self, reply):
+        self.reply_value = reply
+
+    def submit(self, call):
+        return call
+
+    def reply(self, token):
+        return self.reply_value
+
+
+def test_f15_an_unreserved_retry_is_counted_exactly_and_executes_nothing():
+    greedy = ds.CallReply(attempts=(zc.Attempt(outcome='error'), zc.Attempt(outcome='error'),
+                                    zc.Attempt(outcome='ok')), action='go')
+    actions = []
+    policy = ds.CallPolicy(max_attempts_total=1, max_http_attempts_per_actor=1, max_retries=1)
+    sched = ds.EventScheduler(_IgnoresTheBudget(greedy), policy=policy,
+                              on_action=lambda a, action, t: actions.append(action))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=200)
+    assert sched.over_budget_attempts == [{'call_id': sched.calls[0].call_id, 'actor': 'r1',
+                                          'reserved': 1, 'actual': 3, 'unreserved': 2, 'over': 2}]
+    assert actions == []                                      # the breach is not rewarded
+    assert sched.discarded[0]['reason'] == 'budget_breach'
+    assert len(sched.calls) == 1                              # and it is not retried
+    budget = ds.AttemptBudget(per_actor=1, total=1)
+    assert budget.reserve('r1', 1) is True
+    assert budget.commit('r1', reserved=1, actual=3) == 2
 
 
 def test_f15_the_offline_loop_keeps_the_attempt_budget_inside_its_cap():
@@ -683,7 +797,7 @@ def test_f15_the_offline_loop_keeps_the_attempt_budget_inside_its_cap():
 # Medium 16 — unfinished calls are censored, never dropped
 
 def test_f16_a_call_that_does_not_finish_before_the_horizon_stays_in_the_ledger():
-    slow = ds.CallReply(attempts=(zc.Attempt(output_tokens=1000),))
+    slow = ds.CallReply(attempts=(zc.Attempt(input_tokens=123, output_tokens=1000),))
     sched = ds.EventScheduler(ds.ReplayTransport({'r1': [slow]}))
     sched.trigger('r1', 'start')
     report = sched.run(until_s=2.0)          # the call needs far more than 2 SIM seconds
@@ -696,10 +810,31 @@ def test_f16_a_call_that_does_not_finish_before_the_horizon_stays_in_the_ledger(
                              provenance=_provenance())
     assert [record['status'] for record in log['calls']] == ['censored']
     record = log['calls'][0]
-    assert record['sim_cost_s'] == 2.0                      # SIM time elapsed
-    assert record['output_tokens'] == 0 and record['input_tokens']['text'] == 0
-    assert record['cost_terms']['censored'] is True
+    assert record['sim_cost_s'] == 2.0                      # SIM time elapsed, action not released
+    # second review: the API call happened, so its KNOWN usage is kept (was 0)
+    assert record['input_tokens']['text'] == 123 and record['output_tokens'] == 1000
+    assert record['cost_terms']['censored'] is True and record['cost_terms']['usage_known'] is True
+    assert record['cost_terms']['would_release_sim_s'] > 2.0
+    assert record['http_attempts'] == 1 and sched.budget.used_total() == 1
     c.validate_log_record(record)
+    # a censored call can never complete later, even when the loop resumes
+    sched.run(until_s=100)
+    assert sched.calls == [] and len(sched.censored) == 1
+
+
+def test_f16_a_reply_not_yet_fetched_at_the_horizon_is_fetched_for_its_usage():
+    slow = ds.CallReply(attempts=(zc.Attempt(input_tokens=77, output_tokens=500),), action='go')
+    actions = []
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [slow]}),
+                              on_action=lambda a, action, t: actions.append(action))
+    sched.trigger('r1', 'start')
+    assert sched.params.min_call_s() == .5
+    sched.arm_observations(('r1',), period_s=.2)            # keeps the loop short of min_call_s
+    sched.run(until_s=.3)                                    # next tick .4 < .5: not fetched yet
+    row = sched.censored[0]
+    assert row['reason'] == 'pending' and row['usage_known'] is True
+    assert (row['input_tokens'], row['output_tokens']) == (77, 500)
+    assert actions == []                                     # fetched for accounting, never executed
 
 
 def _provenance():
@@ -711,17 +846,25 @@ def _provenance():
 
 
 def test_f16_the_offline_record_separates_elapsed_sim_time_from_api_resources():
-    trial, result = _trial('peer_ko')
+    trial, result = _trial('peer_ko', horizon_s=42.)
     censored = [row for row in result.calls if row['status'] == 'censored']
-    assert censored, 'a 40 s horizon must leave calls in flight'
+    assert censored, 'a 42 s horizon must leave calls in flight'
     assert result.cost['censored_calls'] == len(censored)
     assert result.cost['censored_elapsed_sim_s'] > 0
-    assert all(row['output_tokens'] == 0 for row in censored)
+    assert all(row['cost_terms']['usage_known'] and row['output_tokens'] > 0
+               and row['input_tokens']['text'] > 0 for row in censored)
+    # no action row and no command of a censored call
+    censored_ids = {row['request_id'] for row in censored}
+    assert not censored_ids & {a['request_id'] for a in result.actions}
     record = trial.trial_record(result)
     assert record['model']['censored_calls'] == len(censored)
     derived = ev.model_aggregate(ev.parse_trial(copy.deepcopy(record)))
     assert derived['censored_calls'] == len(censored) and derived['mismatch'] == []
     assert derived['completed_calls'] == len(record['calls']) - len(censored)
+    # the API totals include the censored calls and match the attempt budget
+    assert derived['http_attempts'] == result.cost['attempt_budget']['used_total']
+    assert derived['tokens']['output'] == sum(row['output_tokens'] for row in result.calls)
+    assert off.cost_checks(trial, result)['ok']
 
 
 # --------------------------------------------------------------------------- #
@@ -804,8 +947,24 @@ def test_f18_the_behaviour_guidance_is_no_longer_follower_only():
     for name in c.MAIN_CONDITIONS:
         for rid in zp.ROBOTS:
             text = pk.system_prompt(name, rid, seed=12)
-            assert '안전하지 않다고 판단하면 멈추고' in text, (name, rid)
+            assert '안전하지 않다고 판단하면' in text, (name, rid)
             assert pk.KO_BEHAVIOUR in text
+
+
+def test_f18_the_common_guidance_asks_only_for_what_every_output_can_express():
+    """Second review: the guidance asked every condition to leave a reason and
+    report it, but no_comm/structured have no field to do so. It now names only
+    the action and decision_sources, which every condition's schema has."""
+    for word in ('이유', '보고', 'reason'):
+        assert word not in pk.KO_BEHAVIOUR, word
+    assert 'decision_sources' in pk.KO_BEHAVIOUR and '"wait"' in pk.KO_BEHAVIOUR
+    for name in c.MAIN_CONDITIONS:
+        text = pk.system_prompt(name, 'r1', seed=12)
+        assert '최상위 키는 ' + ', '.join(zp.REPLY_FIELDS) + '입니다' in text
+    with pytest.raises(zp.ProtocolError):
+        zp.validate_reply({'request_id': 'q', 'action': {'kind': 'wait'},
+                           'decision_sources': ['own_rgb'], 'messages': [], 'reason': '위험'},
+                          request_id='q', condition='structured', actor='r1')
 
 
 def test_f18_the_fixed_prompt_cost_is_measured_per_condition():
@@ -822,8 +981,33 @@ def test_f18_the_fixed_prompt_cost_is_measured_per_condition():
                       - min(row['channel_tokens'] for row in main))
     assert report['channel_token_spread'] == channel_spread
     assert report['common_token_spread'] == 0
-    assert spread == channel_spread == 221, (spread, channel_spread)
+    assert spread == channel_spread and spread > 0, (spread, channel_spread)
     assert pk.count_tokens('r1은 order-1을 A로 옮깁니다') > 0
+
+
+def test_f18_the_fixed_prompt_is_billed_at_one_size_in_every_main_condition():
+    """Second review: measuring the residual difference was not controlling it.
+    Under ``FIXED_PROMPT_POLICY`` the system prompt is billed at the same size
+    for every main-condition actor; only the variable part is billed as counted."""
+    billed, actual = set(), set()
+    for name in c.MAIN_CONDITIONS:
+        for rid in zp.ROBOTS:
+            trial = _fresh(name)
+            bundled = trial.build_inputs(rid, sim_time_s=0.0, request_id='req_bill')
+            window = trial.channel.window_context(rid, now_sim_s=0.0) if trial.spec.channel_open else None
+            request = pk.build_request(bundled, window=window)
+            row = request['billed_tokens']
+            assert row['policy'] == pk.FIXED_PROMPT_POLICY
+            assert row['system_actual'] == request['tokens']['system']
+            assert row['total_text_billed'] == row['system_billed'] + request['tokens']['user']
+            billed.add(row['system_billed'])
+            actual.add(row['system_actual'])
+    assert len(billed) == 1 and len(actual) > 1            # equalised, although the texts differ
+    assert billed == {max(actual)}
+    # the offline loop charges the billed count, not a fixed stand-in
+    trial, result = _trial('structured')
+    request = result.requests[0]
+    assert result.calls[0]['input_tokens']['text'] == request['billed_tokens']['total_text_billed']
 
 
 def test_f18_every_request_reports_its_token_counts():
@@ -835,3 +1019,267 @@ def test_f18_every_request_reports_its_token_counts():
     assert tokens['system'] > 0 and tokens['user'] > 0
     assert tokens['total_text'] == tokens['system'] + tokens['user']
     assert tokens['images'] == len(request['images'])
+
+
+# =========================================================================== #
+# 2026-09-26 SECOND review (Codex re-review of the first-round fixes): every
+# "partially resolved" finding gets a counterexample that fails when the defect
+# is reintroduced. The mutation checks are recorded in the PR table.
+
+# --- finding 1: the final request is archived and re-hashes -----------------
+
+def test_r2_f01_every_offline_request_is_archived_and_rehashes_to_its_digest():
+    trial, result = _trial('peer_ko')
+    assert result.requests and len(result.requests) == len(result.calls)
+    checks = off.request_checks(result)
+    assert checks['ok'], checks['problems']
+    row = result.requests[0]
+    assert {'request_sha256', 'system', 'user', 'image_refs'} <= set(row)
+    assert row['request_sha256'] == pk.request_digest_from_refs(row['system'], row['user'], row['image_refs'])
+    # an archive that edited or dropped part of the request is detected
+    for mutate in (lambda r: r.update(user=r['user'].replace('order_sheet', 'order_shee7')),
+                   lambda r: r.update(system=r['system'] + ' '),
+                   lambda r: r['image_refs'][0].update(bytes_sha256='0' * 64),
+                   lambda r: r.pop('request_sha256')):
+        broken = copy.deepcopy(row)
+        mutate(broken)
+        assert pk.verify_archived_request(broken), broken.keys()
+    # and the trial record carries the digest next to the payload keys
+    record = trial.trial_record(result)
+    archive = {r['request_id']: r for r in record['request_archive']}
+    assert archive[row['request_id']]['request_sha256'] == row['request_sha256']
+
+
+def test_r2_f01_robot_views_of_the_commander_are_immutable_and_rebound():
+    trial = _fresh('reference_R')
+    bundled = trial.build_inputs('commander', sim_time_s=0.0, request_id='req_views')
+    with pytest.raises(TypeError):
+        bundled.robot_views['r1'] = bundled.robot_views['r2']
+    # even a forced swap of the whole mapping cannot reach the model
+    views = dict(bundled.robot_views)
+    swapped = {'r1': views['r2'], 'r2': views['r1'], 'r3': views['r3']}
+    assert swapped['r1'] != views['r1']
+    object.__setattr__(bundled, 'robot_views', swapped)
+    with pytest.raises(zp.ProtocolError, match='not the frame'):
+        pk.build_request(bundled)
+
+
+# --- finding 3: nested value types and the normal-path pin -------------------
+
+def test_r2_f03_a_nested_object_under_an_allowed_map_key_is_refused():
+    trial, bundled = _inputs()
+    for mutate, where in (
+            (lambda pm: pm['walls'][0].update(center_m={'survey_xy_m': [1.0, 2.0]}), 'walls[].center_m'),
+            (lambda pm: pm['passages'][0].update(width_m=[0.5, 0.1]), 'passages[].width_m'),
+            (lambda pm: pm['pickup_bays'][0]['slots'][0].update(half_extents_m={'x': 1}),
+             'slots[].half_extents_m'),
+            (lambda pm: pm['landmarks']['placement'].update(live_offset_m=0.1), 'landmarks.placement'),
+            (lambda pm: pm['landmarks']['tags'][0].update(center_m=[1.0, 'x', 2.0]), 'tags[].center_m'),
+            (lambda pm: pm.update(bounds_m={'survey': [0, 0, 1, 1]}), 'public_map.bounds_m')):
+        payload = bundled.payload_dict()
+        mutate(payload['static_map']['public_map'])
+        payload['static_map']['public_map_sha256'] = c.digest(payload['static_map']['public_map'])
+        problems = c.payload_violations(payload, seed=SEED)          # hash self-consistent
+        assert any(where in p for p in problems), (where, problems)
+
+
+def test_r2_f03_nested_values_of_the_order_sheet_and_belief_are_typed():
+    trial, bundled = _inputs()
+    payload = bundled.payload_dict()
+    kind = next(iter(payload['order_sheet']['kinds']))
+    payload['order_sheet']['kinds'][kind]['roles'] = [{'pose_hint': [0.1, 0.2]}]
+    assert any('order_sheet.kinds' in p for p in c.payload_violations(payload, seed=SEED))
+    payload = bundled.payload_dict()
+    payload['self_belief']['region'] = {'x_m': 0.4, 'y_m': -2.45}
+    assert any('self_belief.region' in p for p in c.payload_violations(payload, seed=SEED))
+
+
+def test_r2_f03_the_normal_construction_path_compares_with_the_frozen_map():
+    """``build_call_input`` used to validate without ``source.pinned``, so a
+    caller-supplied static_map with a rewritten projection AND hash passed."""
+    trial = _fresh('peer_ko')
+    forged = copy.deepcopy(trial.static_map)
+    forged['public_map']['walls'][0]['height_m'] = 9.9
+    forged['public_map_sha256'] = c.digest(forged['public_map'])
+    kw = dict(robot_id='r1', condition_name='peer_ko', request_id='req_pin', sim_time_s=0.0,
+              source=trial.source, seed=SEED, own_rgb_refs=[], own_command_history=[])
+    assert c.payload_violations(dict(si.build_call_input(static_map=trial.static_map, **kw)),
+                                seed=SEED, pinned=trial.source.pinned) == []
+    with pytest.raises(c.ContractViolation, match='pinned map'):
+        si.build_call_input(static_map=forged, **kw)
+
+
+# --- finding 6: a malformed output keeps its utterances and tokens -----------
+
+def test_r2_f06_a_malformed_reply_bills_its_tokens_and_every_utterance(monkeypatch):
+    original = off.FixtureActor.respond
+    state = {'broken': 0}
+
+    def respond(self, request):
+        raw = json.loads(original(self, request))
+        if self.actor == 'r1' and state['broken'] == 0:
+            state['broken'] += 1
+            raw['messages'] = [{'recipients': ['r2'], 'reply_to': None, 'text': '첫 발화입니다.'},
+                               {'recipients': ['r3'], 'reply_to': None, 'text': '둘째 발화입니다.'}]
+            raw['extra_key'] = True                           # malformed: fails C's reply schema
+        return json.dumps(raw, ensure_ascii=False)
+
+    monkeypatch.setattr(off.FixtureActor, 'respond', respond)
+    trial, result = _trial('peer_ko')
+    bad = next(row for row in result.calls if row['status'] == 'invalid_json')
+    assert bad['cost_terms']['utterances'] == 2 and bad['cost_terms']['gamma_s_per_utterance'] > 0
+    assert bad['output_tokens'] > 0 and bad['input_tokens']['text'] > 0
+    assert bad['action_id'] is None and bad['message_ids'] == []
+    assert trial.scheduler.discarded[0]['unparsed_utterances'] == 2
+    assert bad['request_id'] not in {a['request_id'] for a in result.actions}
+    archived = next(r for r in result.requests if r['request_id'] == bad['request_id'])
+    assert archived['status'] == 'invalid_json' and archived['unparsed_utterances'] == 2
+    checks = off.cost_checks(trial, result)
+    assert checks['ok'], checks['problems']
+    assert checks['billed_utterances'] == checks['produced_utterances']
+
+
+def test_r2_f06_a_transport_failure_keeps_the_usage_it_knows():
+    class Failing:
+        def submit(self, call):
+            return call
+
+        def reply(self, token):
+            raise ds.TransportFailure('malformed JSON after the provider billed it',
+                                      attempts=(zc.Attempt(outcome='invalid', input_tokens=300,
+                                                           output_tokens=90, utterances=2),))
+
+    sched = ds.EventScheduler(Failing(), policy=ds.CallPolicy(max_retries=0))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=50)
+    cost = sched.calls[0].cost
+    assert (cost.breakdown['output_tokens'], cost.breakdown['utterances']) == (90, 2)
+    assert cost.outcome == 'invalid' and sched.transport_errors[0]['usage_known'] is True
+    assert sched.discarded[0]['unparsed_utterances'] == 2
+    # an exception without usage stays labelled as unknown, never silently 0
+    class Broken(Failing):
+        def reply(self, token):
+            raise RuntimeError('socket closed')
+
+    other = ds.EventScheduler(Broken(), policy=ds.CallPolicy(max_retries=0))
+    other.trigger('r1', 'start')
+    other.run(until_s=50)
+    assert other.transport_errors[0]['usage_known'] is False
+    with pytest.raises(ValueError, match='only a failed reply'):
+        ds.CallReply(attempts=(zc.Attempt(utterances=1),), unparsed_utterances=1)
+
+
+# --- finding 10: None stays None, the summary is fully compared, no overlap --
+
+def test_r2_f10_a_missing_cost_source_stays_none_in_the_final_metrics():
+    trial = _delivery_trial()                           # no calls, no model summary
+    metrics = ev.efficiency_metrics(trial)
+    for key in ('think_sim_cost_s', 'talk_sim_cost_s', 'utterance_sim_cost_s', 'call_sim_cost_s',
+                'model_calls', 'tokens_total', 'talk_share_of_makespan'):
+        assert metrics[key] is None, key
+
+
+def test_r2_f10_image_cache_and_delivery_in_the_summary_must_match_the_log():
+    trial, result = _trial('peer_ko')
+    record = trial.trial_record(result)
+    for path, value in ((('tokens', 'image'), 7), (('tokens', 'cached'), 5),
+                        (('sim_cost_s', 'delivery'), 99.0), (('sim_cost_s', 'call'), 1.0)):
+        wrong = copy.deepcopy(record)
+        wrong['model'][path[0]][path[1]] = value
+        with pytest.raises(ev.TrialError, match='.'.join(path)):
+            ev.efficiency_metrics(ev.parse_trial(wrong))
+
+
+def test_r2_f10_think_and_talk_do_not_overlap():
+    trial, result = _trial('peer_ko')
+    record = trial.trial_record(result)
+    metrics = ev.efficiency_metrics(ev.parse_trial(copy.deepcopy(record)))
+    done = [c for c in record['calls'] if c['status'] != 'censored']
+    total = round(sum(c['sim_cost_s'] for c in done), 4)
+    utterance = round(sum(c['cost_terms']['gamma_s_per_utterance'] for c in done), 4)
+    assert utterance > 0
+    assert metrics['call_sim_cost_s'] == pytest.approx(total)
+    assert metrics['think_sim_cost_s'] == pytest.approx(total - utterance)
+    assert metrics['think_sim_cost_s'] + metrics['utterance_sim_cost_s'] == \
+        pytest.approx(metrics['call_sim_cost_s'])
+    assert metrics['talk_sim_cost_s'] == pytest.approx(utterance + metrics['delivery_sim_cost_s'])
+
+
+# --- finding 11: a wrong-zone fungible item never consumes the order ---------
+
+def test_r2_f11_a_misdelivered_fungible_item_does_not_consume_the_quantity():
+    trial = _delivery_trial(deliveries=[
+        {'item_id': 'red_0', 'zone': 'C', 'sim_s': 100.0},     # wrong zone
+        {'item_id': 'red_1', 'zone': 'B', 'sim_s': 110.0},
+        {'item_id': 'red_2', 'zone': 'B', 'sim_s': 120.0}])
+    state = ev.delivery_state(trial)
+    assert set(state['delivered']) == {'red_1', 'red_2'}
+    assert set(state['misdelivered']) == {'red_0'} and state['surplus'] == []
+    assert state['by_order']['order-2'] == {'ordered': 2, 'delivered': 2, 'complete': True}
+    # a third right-zone item beyond the quantity is surplus, not a delivery
+    extra = _delivery_trial(deliveries=[{'item_id': f'red_{i}', 'zone': 'B', 'sim_s': 100.0 + i}
+                                        for i in range(3)])
+    assert len(ev.delivery_state(extra)['delivered']) == 2
+    assert ev.delivery_state(extra)['surplus'] == ['red_2']
+
+
+# --- finding 12: only item/order ids become claim items ----------------------
+
+def test_r2_f12_a_robot_id_or_role_in_the_sentence_is_not_an_item_claim():
+    trial = _delivery_trial(referee=_REFEREE)
+    for text in ('r1인 제가 cyan_1을 A에 내려놓았습니다.', 'west 역할로 cyan_1을 A에 내려놓았습니다.',
+                 'commander 지시대로 cyan_1을 A에 내려놓았습니다.'):
+        claims = ev.extract_claims({'message_id': 'm-9', 'sender': 'r1', 'encoding': 'free_ko',
+                                    'text': text}, _LABELS + ('west', 'commander'))
+        assert claims == [{'type': 'delivered', 'item_id': 'cyan_1', 'zone': 'A'}], (text, claims)
+        assert [ev.check_claim(claim, trial, 150.0) for claim in claims] == ['true']
+
+
+# --- finding 17: public_part() is safe to reuse ------------------------------
+
+def test_r2_f17_public_part_names_the_scenario_only_by_its_opaque_ref():
+    for scenario_id in E.scenario_ids():
+        scenario = E.load(scenario_id)
+        public = E.public_part(scenario)
+        assert public['scenario_id'] == c.scenario_ref(scenario_id)
+        suffix = scenario_id.split('_', 1)[1]
+        assert scenario_id not in repr(public) and suffix not in repr(public), scenario_id
+        # the sheet built from the public part is still the run's sheet
+        bundle = E.bundle_for(scenario)
+        assert si.OrderSheetSource(public, bundle).sha256 == si.OrderSheetSource(scenario, bundle).sha256
+
+
+# --- extra: a robot-written message naming nav_cam is not a host leak --------
+
+def test_r2_extra_a_delivered_message_that_mentions_nav_cam_does_not_block_the_recipient():
+    text = 'nav_cam은 사용하지 말고 자기 카메라만 보세요.'
+    bus = zp.Transport('peer_ko', seed=SEED, delivery_owner=off.BUS_OWNER)
+    bus.open_window('w1', at_sim_s=0.)
+    receipt = bus.send('r1', recipients=['r2'], text=text, at_sim_s=1.)
+    assert receipt.accepted                                   # C accepts it
+    bus.commit_delivery(receipt.envelope.message_id, at_sim_s=2., owner=off.BUS_OWNER)
+    trial = _fresh('peer_ko')
+    bundled = trial.build_inputs('r2', sim_time_s=5.0, request_id='req_nav')
+    payload = bundled.payload_dict()
+    payload['inbox'] = list(bus.inbox('r2', now_sim_s=5.))
+    assert c.payload_violations(payload, seed=SEED, pinned=trial.source.pinned) == []   # A too
+    # a HOST-built value that names nav_cam is still refused
+    payload['self_belief']['notes_ko'] = 'nav_cam 영상에서 본 위치'
+    assert any('nav_cam' in p for p in c.payload_violations(payload, seed=SEED))
+
+
+# --- extra: no audit evidence is ``unverified``, never ``clean`` -------------
+
+def test_r2_extra_a_trial_without_audit_evidence_is_unverified():
+    trial, result = _trial('peer_ko')
+    record = trial.trial_record(result)
+    boundary = ev.audit_input_boundary(ev.parse_trial(copy.deepcopy(record)))
+    assert ev.boundary_status(boundary) == 'clean'            # every call row is evidence
+    assert all(req.get('input_keys') for req in ev.parse_trial(copy.deepcopy(record))['requests'])
+    bare = _audited_trial([])
+    assert ev.boundary_status(ev.audit_input_boundary(bare)) == 'unverified'
+    silent = _audited_trial([{'request_id': 'req_1', 'robot': 'r1', 'sim_s': 1.0, 'status': 'ok'}])
+    audit = ev.audit_input_boundary(silent)
+    assert ev.boundary_status(audit) == 'unverified' and audit['unconfirmed_payloads']
+    row = ev.summarise([bare])['conditions']['peer_ko']
+    assert row['boundary_unverified_trials'] == 1 and row['boundary_clean_trials'] == 0

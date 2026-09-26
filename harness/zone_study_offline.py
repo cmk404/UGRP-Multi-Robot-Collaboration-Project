@@ -62,9 +62,11 @@ FIXTURE_MODEL = 'none-fixture-v1'
 FRAME_DIR = Path(__file__).resolve().parents[1] / 'tests' / 'fixtures' / 'markerless_box' / 'blue_floor_release'
 #: SIM seconds the loop runs at most, and the referee horizon of the trial record.
 DEFAULT_HORIZON_S = 300.0
-#: Token counts of a fixture call. Fixed so the SIM cost is reproducible and is
-#: NOT a measurement of any model's real token use.
-FIXTURE_INPUT_TOKENS = 4000
+#: Output token counts of a fixture call. Fixed so the SIM cost is reproducible
+#: and is NOT a measurement of any model's real token use. Input tokens are the
+#: frozen-tokenizer count of the actual request under package C's
+#: ``FIXED_PROMPT_POLICY`` (second review, finding 18): the fixed system prompt is
+#: billed at one size for every main condition, the payload/inbox as counted.
 FIXTURE_OUTPUT_TOKENS_BASE = 40
 FIXTURE_OUTPUT_TOKENS_PER_MESSAGE = 30
 
@@ -225,6 +227,11 @@ class TrialResult:
                  'calls': [copy.deepcopy(c) for c in self.calls],
                  'messages': [copy.deepcopy(m) for m in self.messages],
                  'actions': [copy.deepcopy(a) for a in self.actions],
+                 # the payload keys and the final-request digest of every call, for
+                 # package I's input-boundary audit (second review, finding 1)
+                 'request_archive': [{k: r[k] for k in ('request_id', 'input_keys', 'input_sha256',
+                                                        'request_sha256')}
+                                     for r in self.requests],
                  'literals': list(literals),
                  'idle': {rid: {'thinking': self.cost['thinking_sim_s'].get(rid, 0.)} for rid in ROBOTS},
                  'referee': {},
@@ -233,7 +240,8 @@ class TrialResult:
                            'censored_calls': self.cost['censored_calls'],
                            'tokens': {'input': self.cost['input_tokens'],
                                       'output': self.cost['output_tokens'], 'image': 0, 'cached': 0},
-                           'sim_cost_s': {'think': self.cost['think_sim_s'],
+                           'sim_cost_s': {'call': self.cost['call_sim_s'],
+                                          'think': self.cost['think_sim_s'],
                                           'talk': self.cost['talk_sim_s'],
                                           'delivery': self.cost['delivery_sim_s'],
                                           'censored_elapsed': self.cost['censored_elapsed_sim_s']},
@@ -308,7 +316,7 @@ class OfflineTrial:
         self.policy = policy or CallPolicy()
         self.scheduler = EventScheduler(self.transport, cost_params=self.params,
                                         policy=self.policy, actors=self.actors,
-                                        on_action=self._arm_idle_reask,
+                                        on_action=self._on_action,
                                         bus=self.channel, bus_owner=BUS_OWNER)
         self.calls, self.messages, self.actions, self.requests = [], [], [], []
         self.envelopes = {}
@@ -361,16 +369,29 @@ class OfflineTrial:
             if self.spec.channel_open else None
         request = pk.build_request(bundled, window=window)
         raw = self.fixtures[actor].respond(request)
-        value = zp.validate_reply(raw, request_id=request_id, condition=self.condition, actor=actor,
-                                  order_ids=bundled.order_ids(), item_ids=bundled.item_ids(),
-                                  roles_by_order=bundled.roles_by_order(),
-                                  vocabulary=bundled.vocabulary(),
-                                  passages=bundled.passages(), location_refs=bundled.location_refs(),
-                                  robots=ROBOTS)
+        input_tokens = request['billed_tokens']['total_text_billed']
+        try:
+            value = zp.validate_reply(raw, request_id=request_id, condition=self.condition, actor=actor,
+                                      order_ids=bundled.order_ids(), item_ids=bundled.item_ids(),
+                                      roles_by_order=bundled.roles_by_order(),
+                                      vocabulary=bundled.vocabulary(),
+                                      passages=bundled.passages(), location_refs=bundled.location_refs(),
+                                      robots=ROBOTS)
+        except zp.ProtocolError as exc:
+            # Second review, finding 6: a malformed reply is still a reply the
+            # model GENERATED. Its tokens and every utterance it contained are
+            # billed; nothing of it runs or is delivered.
+            produced = generated_utterances(raw)
+            attempts = (Attempt(outcome='invalid', input_tokens=input_tokens,
+                                output_tokens=pk.count_tokens(raw if isinstance(raw, str) else json.dumps(raw)),
+                                utterances=produced),)
+            self._archive(call, bundled, request, status='invalid_json', messages_out=0,
+                          unparsed_utterances=produced, error=str(exc))
+            return CallReply(attempts=attempts, action=None, messages=(), unparsed_utterances=produced)
         # Every utterance the model produced is billed, accepted or not
         # (review finding 6).
         utterances = len(value['messages'])
-        attempts = (Attempt(outcome='ok', input_tokens=FIXTURE_INPUT_TOKENS,
+        attempts = (Attempt(outcome='ok', input_tokens=input_tokens,
                             output_tokens=FIXTURE_OUTPUT_TOKENS_BASE
                             + FIXTURE_OUTPUT_TOKENS_PER_MESSAGE * utterances,
                             utterances=utterances),)
@@ -388,40 +409,65 @@ class OfflineTrial:
                                         rejection=receipt.rejection or 'rejected'))
                 continue
             envelope = receipt.envelope
-            # ONE canonical id from package C all the way into the SIM log
+            # ONE canonical id and ONE body from package C all the way into the
+            # SIM inbox and the log (second review, finding 2)
             self.envelopes[envelope.message_id] = envelope.record()
             messages.append(Message(sender=actor, recipients=tuple(envelope.recipients),
-                                    body=envelope.message_id, encoding=self.spec.encoding,
-                                    message_id=envelope.message_id))
-        self._record(call, bundled, value, release, cost, request)
+                                    body=envelope.body(), encoding=self.spec.encoding,
+                                    message_id=envelope.message_id, reply_to=envelope.reply_to))
+        self._record(call, bundled, value, release, request)
         return CallReply(attempts=attempts, action=value['action'], messages=tuple(messages))
 
-    def _record(self, call, bundled, value, release, cost, request):
-        actor = call.actor
+    def _archive(self, call, bundled, request, *, status, messages_out, unparsed_utterances=0, error=None):
+        """Keep the FINAL request of this call (second review, finding 1)."""
+        row = pk.archive_request(request)
+        row.update({'call_id': call.call_id, 'robot': call.actor, 'sim_s': call.started_sim_s,
+                    'payload_validated': True, 'status': status,
+                    'input_keys': sorted(bundled.payload),
+                    'images': [image['label'] for image in request['images']],
+                    'messages_out': messages_out, 'unparsed_utterances': unparsed_utterances})
+        if error is not None:
+            row['error'] = error
+        self.requests.append(row)
+        return row
+
+    def _record(self, call, bundled, value, release, request):
+        """Remember what this call WOULD do; it is logged only when it runs."""
         action_id = f'act-{call.call_id}'
-        kind, arguments, order_id, role = _action_row(value['action'])
-        self.actions.append(action_log_record(
-            run_id=self.run_id, condition_name=self.condition, seed=self.seed, actor=actor,
-            action_id=action_id, request_id=bundled.request_id, submitted_at_sim_s=release,
-            kind=kind, arguments=arguments, accepted=True, order_id=order_id, role=role))
-        if actor == COMMANDER:
-            for rid, job in (value['action'].get('assignments') or {}).items():
-                if job:
-                    self._issued.append({'order_ref': job['order_id'], 'to': rid,
-                                         'at_sim_s': release, 'instruction': job['role']})
-        elif kind == 'claim_order':
-            self._history[actor].append(command_entry(
-                f'cmd_{call.call_id.replace("-", "_")}', release, 'goto',
-                {'order_id': order_id, 'role': role, 'target_zone': arguments.get('target_zone')}))
-        self.requests.append({'call_id': call.call_id, 'request_id': bundled.request_id,
-                              'input_sha256': bundled.payload_sha256,
-                              'input_keys': sorted(bundled.payload),
-                              'images': [image['label'] for image in request['images']],
-                              'messages_out': len(value['messages'])})
+        self._archive(call, bundled, request, status='ok', messages_out=len(value['messages']))
         self._pending = getattr(self, '_pending', {})
         self._pending[call.call_id] = {
             'request_id': bundled.request_id, 'input_sha256': bundled.payload_sha256,
-            'action_id': action_id, 'decision_sources': list(value['decision_sources'])}
+            'action_id': action_id, 'decision_sources': list(value['decision_sources']),
+            'action': value['action'], 'release': release}
+
+    def _on_action(self, actor, action, sim_s):
+        """The scheduler released an action at its charged SIM time: log it now.
+
+        Second review: the action row and the own command history used to be
+        written when the reply was FETCHED, so a call that was censored at the
+        horizon (or discarded) still left an accepted action and a command the
+        robot never issued.
+        """
+        call_id = self.scheduler.calls[-1].call_id
+        extra = getattr(self, '_pending', {}).get(call_id)
+        if extra is None or self.scheduler.calls[-1].actor != actor:
+            raise AssertionError(f'released action of {actor} has no recorded call')
+        kind, arguments, order_id, role = _action_row(action)
+        self.actions.append(action_log_record(
+            run_id=self.run_id, condition_name=self.condition, seed=self.seed, actor=actor,
+            action_id=extra['action_id'], request_id=extra['request_id'], submitted_at_sim_s=sim_s,
+            kind=kind, arguments=arguments, accepted=True, order_id=order_id, role=role))
+        if actor == COMMANDER:
+            for rid, job in (action.get('assignments') or {}).items():
+                if job:
+                    self._issued.append({'order_ref': job['order_id'], 'to': rid,
+                                         'at_sim_s': sim_s, 'instruction': job['role']})
+        elif kind == 'claim_order':
+            self._history[actor].append(command_entry(
+                f'cmd_{call_id.replace("-", "_")}', sim_s, 'goto',
+                {'order_id': order_id, 'role': role, 'target_zone': arguments.get('target_zone')}))
+        self._arm_idle_reask(actor, action, sim_s)
 
     # -- the loop ----------------------------------------------------------
     def _arm_idle_reask(self, actor, action, sim_s):
@@ -456,13 +502,17 @@ class OfflineTrial:
         return result
 
     def _collect(self):
-        pending = getattr(self, '_pending', {})
+        pending = {row['call_id']: {'request_id': row['request_id'], 'input_sha256': row['input_sha256']}
+                   for row in self.requests}
+        for call_id, row in getattr(self, '_pending', {}).items():
+            pending.setdefault(call_id, {}).update(row)
         rows = [(record.started_sim_s, record.actor, record.call_id, record, None)
                 for record in self.scheduler.calls]
         rows += [(row['started_sim_s'], row['actor'], row['call_id'], None, row)
                  for row in self.scheduler.censored]
         rank = {actor: i for i, actor in enumerate(self.actors)}
         index = {actor: 0 for actor in self.actors}
+        executed = {row['action_id'] for row in self.actions}
         for _, actor, call_id, record, censored in sorted(rows, key=lambda r: (r[0], rank[r[1]], r[2])):
             extra = pending.get(call_id, {})
             if record is not None:
@@ -471,7 +521,7 @@ class OfflineTrial:
                     request_id=extra.get('request_id', call_id),
                     call_index=index[actor],
                     input_sha256=extra.get('input_sha256', '0' * 64), provenance=self.provenance,
-                    action_id=extra.get('action_id'),
+                    action_id=extra.get('action_id') if extra.get('action_id') in executed else None,
                     message_ids=[m.message_id for m in self.scheduler.messages
                                  if m.call_id == call_id],
                     decision_sources=extra.get('decision_sources', ()))
@@ -524,26 +574,38 @@ class OfflineTrial:
     def cost_summary(self) -> dict:
         # Censored calls carry the SIM time that elapsed until the horizon, which
         # is NOT the charged thinking cost of a completed call, so the two are
-        # reported apart (review finding 16).
+        # reported apart (review finding 16). Their API usage is real and is part
+        # of the resource totals (second review).
         done = [c for c in self.calls if c['status'] != 'censored']
         censored = [c for c in self.calls if c['status'] == 'censored']
-        think = sum(c['sim_cost_s'] for c in done)
+        # Second review, finding 10: the charged call cost already CONTAINS the
+        # utterance term, so ``think`` is the call cost without it and ``talk``
+        # is the utterance term; think + talk == call total, never more.
+        call_total = sum(c['sim_cost_s'] for c in done)
         talk = sum(c['cost_terms']['gamma_s_per_utterance'] for c in done)
         delivery = sum(m['delivery_delay_s'] for m in self.messages)
         return {'orders': [copy.deepcopy(o) for o in self.sheet['orders']],
-                'http_attempts': sum(c['http_attempts'] for c in done),
-                'input_tokens': sum(c['input_tokens']['text'] for c in done),
-                'output_tokens': sum(c['output_tokens'] for c in done),
-                'think_sim_s': round(think, 6), 'talk_sim_s': round(talk, 6),
+                'http_attempts': sum(c['http_attempts'] for c in self.calls),
+                'input_tokens': sum(c['input_tokens']['text'] for c in self.calls),
+                'output_tokens': sum(c['output_tokens'] for c in self.calls),
+                'call_sim_s': round(call_total, 6),
+                'think_sim_s': round(call_total - talk, 6), 'talk_sim_s': round(talk, 6),
                 'delivery_sim_s': round(delivery, 6),
                 'censored_calls': len(censored),
                 'censored_elapsed_sim_s': round(sum(c['sim_cost_s'] for c in censored), 6),
                 'censored_http_attempts': sum(c['http_attempts'] for c in censored),
+                'censored_output_tokens': sum(c['output_tokens'] for c in censored),
                 'thinking_sim_s': {actor: self.scheduler.metrics[actor]['thinking_sim_s']
                                    for actor in self.actors},
                 'attempt_budget': self.scheduler.budget.to_dict(),
+                'over_budget_attempts': [dict(r) for r in self.scheduler.over_budget_attempts],
                 'rejected_messages': len(self.scheduler.rejected_messages),
                 'discarded_calls': len(self.scheduler.discarded),
+                'discarded_utterances': sum(r['messages'] + r['unparsed_utterances']
+                                            for r in self.scheduler.discarded),
+                'censored_utterances': sum(r['messages'] + r['unparsed_utterances']
+                                           for r in self.scheduler.censored),
+                'undelivered_messages': len(self.scheduler.undelivered()),
                 'params_version': self.params.version, 'params_digest': self.params.digest()}
 
     def literals(self) -> tuple:
@@ -562,6 +624,26 @@ class OfflineTrial:
     def trial_record(self, result: TrialResult) -> dict:
         return result.trial_record(horizon_s=self.horizon_s, provenance_row=self.provenance,
                                   literals=self.literals())
+
+
+def generated_utterances(raw) -> int:
+    """How many utterances a (possibly malformed) reply GENERATED.
+
+    A reply that parses as JSON counts the entries of its ``messages`` list,
+    valid or not. Text that is not JSON counts its ``"recipients"`` keys, one per
+    attempted utterance; that is a frozen, deterministic rule, not a guess about
+    intent. Used so a malformed reply keeps its utterance cost (second review,
+    finding 6).
+    """
+    value = raw
+    if isinstance(raw, str):
+        try:
+            value = json.loads(raw)
+        except ValueError:
+            return raw.count('"recipients"')
+    if isinstance(value, dict) and isinstance(value.get('messages'), list):
+        return len(value['messages'])
+    return 0
 
 
 def _vocabulary(sheet, map_bundle):
@@ -591,6 +673,23 @@ def _action_row(action):
 
 # ---------------------------------------------------------------------------
 # Falsifiable checks of the gate
+
+def request_checks(result: TrialResult) -> dict:
+    """Every call's FINAL request is archived and re-hashes to its digest.
+
+    Second review, finding 1: the log kept only the payload digest, so the
+    dialogue window, the system text and the image bytes that actually went out
+    could not be audited afterwards.
+    """
+    problems = []
+    for row in result.requests:
+        problems.extend(pk.verify_archived_request(row))
+    calls = {c['request_id'] for c in result.calls}
+    archived = {r['request_id'] for r in result.requests}
+    if calls - archived:
+        problems.append(f'calls without an archived request: {sorted(calls - archived)[:5]}')
+    return {'ok': not problems, 'problems': problems, 'archived': len(result.requests)}
+
 
 def channel_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
     """Channel isolation facts of one trial (``ok`` False = the gate failed)."""
@@ -627,20 +726,21 @@ def cost_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
         if abs(span - call['sim_cost_s']) > 1e-9:
             problems.append(f'{call["request_id"]}: released-requested != sim_cost_s')
         if call['status'] == 'censored':
-            # a call still in flight at the horizon: SIM time elapsed, API
-            # resources unknown (review finding 16)
+            # a call still in flight at the horizon: SIM time elapsed, action
+            # never released, API usage as recorded (review finding 16, second
+            # review: usage is kept, not zeroed)
             censored_elapsed += call['sim_cost_s']
-            if call['output_tokens'] or call['input_tokens']['text']:
-                problems.append(f'{call["request_id"]}: a censored call cannot report token usage')
             if not call['cost_terms'].get('censored'):
                 problems.append(f'{call["request_id"]}: a censored call must be labelled in cost_terms')
+            if call['cost_terms'].get('usage_known') and not call['input_tokens']['text']:
+                problems.append(f'{call["request_id"]}: a censored call with known usage lost its tokens')
             continue
         charged += call['sim_cost_s']
     by_actor = sum(result.cost['thinking_sim_s'].values())
     if abs(round(charged, 6) - round(by_actor, 6)) > 1e-6:
         problems.append(f'charged {charged} != scheduler thinking {by_actor}')
     budget = result.cost['attempt_budget']
-    used = sum(c['http_attempts'] for c in result.calls if c['status'] != 'censored')
+    used = sum(c['http_attempts'] for c in result.calls)
     if budget['used_total'] != used:
         problems.append(f'attempt budget used {budget["used_total"]} != call log {used}')
     if budget['total'] is not None and budget['used_total'] > budget['total']:
@@ -658,9 +758,14 @@ def cost_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:
         problems.append(f'{trial.condition} paid a talk cost without a channel')
     if trial.spec.channel_open and result.messages and not result.cost['talk_sim_s']:
         problems.append(f'{trial.condition} sent messages but paid no talk cost')
-    # review finding 6: every utterance the model produced is billed
+    if result.cost.get('over_budget_attempts'):
+        problems.append(f'HTTP attempts sent without a reservation: {result.cost["over_budget_attempts"]}')
+    # review finding 6: every utterance the model produced is billed — the
+    # delivered log, the rejected ones, the ones of discarded (malformed) and
+    # censored replies, and accepted ones still in transit at the horizon.
     billed = sum(int(c['cost_terms'].get('utterances') or 0) for c in result.calls)
-    produced = len(result.messages) + result.cost['rejected_messages']
+    produced = (len(result.messages) + result.cost['rejected_messages'] + result.cost['discarded_utterances']
+                + result.cost['censored_utterances'] + result.cost['undelivered_messages'])
     if billed != produced:
         problems.append(f'billed {billed} utterance(s) but the replies produced {produced}')
     return {'ok': not problems, 'problems': problems, 'charged_sim_s': round(charged, 6),
@@ -780,6 +885,7 @@ def run_smoke(scenario_ids, conditions, *, seeds=None, code_sha='unknown', horiz
                            'end_sim_s': result.report['sim_s'], 'end_reason': result.end_reason,
                            'channel': channel_checks(trial, result),
                            'cost': cost_checks(trial, result),
+                           'requests': request_checks(result),
                            'scheduler': result.report,
                            'trace_sha256': digest(list(result.trace)),
                            'request_input_sha256': [r['input_sha256'] for r in result.requests]})
@@ -789,7 +895,7 @@ def run_smoke(scenario_ids, conditions, *, seeds=None, code_sha='unknown', horiz
                                              cost_params=cost_params, library=library,
                                              horizon_s=horizon_s, code_sha=code_sha))
     isolation = actor_isolation()
-    ok = (all(row['channel']['ok'] and row['cost']['ok'] for row in trials)
+    ok = (all(row['channel']['ok'] and row['cost']['ok'] and row['requests']['ok'] for row in trials)
           and all(row['ok'] for row in probes) and isolation['ok'])
     return {'schema': OFFLINE_VERSION, 'ok': ok, 'scenarios': list(scenario_ids),
             'conditions': list(conditions), 'trials': trials, 'trial_records': records,

@@ -93,7 +93,9 @@ def test_action_and_messages_are_invisible_before_the_cost_is_paid():
     sched.run(until_s=100)
     assert applied == [('r1', 'go A', pytest.approx(5.3))]
     assert delivered == [('r2', '왼쪽 통로 막힘', pytest.approx(5.4))]   # + delivery_s
-    assert sched.inbox('r2')[0]['delivered_sim_s'] == pytest.approx(5.4)
+    assert sched.delivery_log('r2')[0]['delivered_sim_s'] == pytest.approx(5.4)
+    # the robot-facing inbox row is package A's envelope, without a delivery time
+    assert 'delivered_sim_s' not in sched.inbox('r2')[0]
     assert sched.inbox('r3') == ()                        # not a recipient
 
 
@@ -118,7 +120,7 @@ def test_different_reply_lengths_finish_at_different_sim_times():
     sched = _scheduler({'r1': [_reply(out=40)], 'r2': [_reply(out=120)], 'r3': [_reply(out=600)]})
     for actor in ACTORS:
         sched.trigger(actor, 'start')
-        sched.run(until_s=.0)                             # start all three at t=0
+        sched.run(until_s=.0, close_at_horizon=False)                             # start all three at t=0
     sched.run(until_s=100)
     done = {c.actor: c.finished_sim_s for c in sched.calls}
     assert done['r1'] < done['r2'] < done['r3']
@@ -342,7 +344,7 @@ def test_retries_are_bounded_and_exhaustion_is_logged():
 def test_the_same_actor_respects_its_minimum_call_interval():
     sched = _scheduler({'r1': [_reply(out=0, tokens_in=0), _reply(out=0, tokens_in=0)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)                                   # first call done at 1.0
+    sched.run(until_s=1., close_at_horizon=False)                                   # first call done at 1.0
     sched.trigger('r1', 'idle')
     sched.run(until_s=100)
     assert [c.started_sim_s for c in sched.calls] == [0., pytest.approx(2.)]
@@ -352,10 +354,10 @@ def test_the_same_actor_respects_its_minimum_call_interval():
 def test_triggers_that_arrive_while_thinking_merge_into_one_call_with_the_strongest_label():
     sched = _scheduler({'r1': [_reply(out=120), _reply(out=0, tokens_in=0)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)                                   # r1 is thinking until 5.0
+    sched.run(until_s=1., close_at_horizon=False)                                   # r1 is thinking until 5.0
     for label in ('idle', 'report', 'failure'):
         sched.trigger('r1', label)
-        sched.run(until_s=1.)
+        sched.run(until_s=1., close_at_horizon=False)
     assert sched.metrics['r1']['deferred'] == 3
     sched.run(until_s=100)
     assert len(sched.calls) == 2
@@ -368,9 +370,9 @@ def test_triggers_that_arrive_while_thinking_merge_into_one_call_with_the_strong
 def test_only_one_call_per_actor_is_outstanding():
     sched = _scheduler({'r1': [_reply(out=120), _reply(out=120)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)
+    sched.run(until_s=1., close_at_horizon=False)
     sched.trigger('r1', 'blockage')
-    sched.run(until_s=2.)
+    sched.run(until_s=2., close_at_horizon=False)
     assert sched.holding() == ('r1',) and len(sched.calls) == 0
     sched.run(until_s=100)
     assert [c.started_sim_s for c in sched.calls] == [0., pytest.approx(5.0)]
@@ -445,7 +447,7 @@ def test_run_stops_on_a_quiet_queue_on_until_and_on_max_events():
     assert sched.run().stop_reason == 'quiet'
     sched.trigger('r1', 'start')
     assert sched.run(max_events=1).stop_reason == 'max_events'
-    assert sched.run(until_s=.5).stop_reason == 'until'
+    assert sched.run(until_s=.5, close_at_horizon=False).stop_reason == 'until'
     assert sched.run(until_s=100).stop_reason == 'quiet'
 
 

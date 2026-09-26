@@ -62,8 +62,10 @@ def trial(condition='peer_ko', scenario='mixed', seed=101, *, end_reason='orders
             'sim_cost_s': {'think': 24.0, 'talk': 3.0, 'delivery': 0.5},
             'wall_latency_ms': [810.0, 930.0]},
         'requests': requests if requests is not None else [
-            {'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0, 'input_keys': list(ALLOWED_KEYS)},
-            {'request_id': 'req-2', 'robot': 'r2', 'sim_s': 1.0, 'input_keys': list(ALLOWED_KEYS)}],
+            {'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0, 'input_keys': list(ALLOWED_KEYS),
+             'payload_validated': True},
+            {'request_id': 'req-2', 'robot': 'r2', 'sim_s': 1.0, 'input_keys': list(ALLOWED_KEYS),
+             'payload_validated': True}],
         'utterances': list(utterances),
     }
     if leader_id:
@@ -245,6 +247,17 @@ class BoundaryTest(unittest.TestCase):
         audit = ev.audit_input_boundary(ev.parse_trial(trial()))
         self.assertTrue(audit['clean'])
         self.assertEqual(audit['input_leaks'], [])
+
+    def test_a_trial_without_audit_evidence_is_unverified_not_clean(self):
+        """Second review: no request rows, or rows without payload_validated,
+        are not evidence of a clean boundary."""
+        for requests in ([], [{'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0,
+                               'input_keys': list(ALLOWED_KEYS)}]):
+            audit = ev.audit_input_boundary(ev.parse_trial(trial(requests=requests)))
+            self.assertFalse(audit['clean'], requests)
+            self.assertTrue(audit['missing_evidence'], requests)
+            self.assertEqual(ev.boundary_status(audit), 'unverified')
+            self.assertEqual(ev.boundary_failures(audit), {})
 
     def test_referee_and_top_inputs_are_flagged(self):
         for leaked in ('top_rgb', 'referee', 'gt_pose', 'teacher_receipt',

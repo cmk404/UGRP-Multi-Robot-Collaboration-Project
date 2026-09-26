@@ -56,7 +56,7 @@ def test_every_condition_runs_and_logs_package_a_records(condition, library):
         assert record['schema'] == CALL_LOG_SCHEMA
         validate_log_record(record)
         assert record['condition'] == condition and record['seed'] == SEED
-        assert record['payload_validated'] is True and record['status'] == 'ok'
+        assert record['payload_validated'] is True and record['status'] in ('ok', 'censored')
         assert record['provenance']['model'] == off.FIXTURE_MODEL
     for record in result.messages:
         assert record['schema'] == MESSAGE_LOG_SCHEMA

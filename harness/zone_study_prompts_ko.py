@@ -38,7 +38,7 @@ from harness.zone_study_contract import (MAIN_CONDITIONS, ORDER_SHEET_SCHEMA, PA
                                          ROLE_NAMES, validate_robot_payload)
 from harness.zone_study_inputs import INPUT_PROFILE, payload_sha256, vocabulary
 
-PROMPT_VERSION = 'ugrp.zone_study_prompts_ko.v1'
+PROMPT_VERSION = 'ugrp.zone_study_prompts_ko.v2'
 #: Which A schema this prompt builder consumes. A bump here is a prompt change.
 CONTRACT_PAYLOAD_SCHEMA = PAYLOAD_SCHEMA
 
@@ -154,8 +154,10 @@ class StudyInputs:
             views = dict(self.robot_views or {})
             if sorted(views) != sorted(refs):
                 raise zp.ProtocolError('robot_views must match the team_rgb_refs of the payload')
-            set_(self, 'robot_views', {rid: _bound_bytes(jpeg, refs[rid], f'robot_views[{rid}]')
-                                       for rid, jpeg in sorted(views.items())})
+            # second review: an immutable view, so the r1 frame cannot be swapped
+            # for the r2 frame after the bytes were bound to their refs.
+            set_(self, 'robot_views', freeze({rid: _bound_bytes(jpeg, refs[rid], f'robot_views[{rid}]')
+                                              for rid, jpeg in sorted(views.items())}))
         else:
             if self.robot_views is not None:
                 raise zp.ProtocolError('only the reference_R commander receives every robot wrist RGB')
@@ -168,6 +170,14 @@ class StudyInputs:
             if not isinstance(ref, Mapping):
                 raise zp.ProtocolError('a map figure is only allowed with static_map.schematic_ref, so the '
                                        'figure is an artefact of the frozen map')
+            # Second review, finding 1: a self-declared ``schematic_ref`` proves
+            # nothing (a wrist photo with its own hash passed). The figure is only
+            # accepted against the run's PINNED map bundle.
+            if not self.pinned or self.pinned.get('schematic_png_sha256') is None:
+                raise zp.ProtocolError('a map figure needs pinned=OrderSheetSource.pinned of a map bundle '
+                                       'rendered with its schematic (schematic_png_sha256)')
+            if ref.get('png_sha256') != self.pinned['schematic_png_sha256']:
+                raise zp.ProtocolError('static_map.schematic_ref is not the pinned map schematic')
             set_(self, 'map_figure_jpeg',
                  _bound_bytes(self.map_figure_jpeg, {'ref': ref['ref'], 'sha256': ref['png_sha256']},
                               'map_figure_jpeg'))
@@ -322,9 +332,14 @@ order_sheet의 물건을 지정된 destination_zone(A, B, C)으로 배송하십�
 #: role (2026-09-26 review finding 18). It used to live only in the ``follower``
 #: channel block, so the leader condition got extra stop/refuse instructions and
 #: a longer prompt, which confounded the channel effect with a guidance effect.
+#: Second review: it asked every condition to "leave a reason and report it",
+#: but no_comm and structured have no field for a reason. The guidance now asks
+#: only for what every condition's output can express (the action and
+#: ``decision_sources``); a reply schema identical across conditions is kept, so
+#: the structured condition still carries no free text anywhere.
 KO_BEHAVIOUR = '''행동 판단:
-자기 wrist RGB의 근거와 어긋나는 계획이나 지시는 따르지 말고 이유를 남기십시오.
-안전하지 않다고 판단하면 멈추고 그 이유를 보고하십시오.
+자기 wrist RGB의 근거와 어긋나는 계획이나 지시는 따르지 마십시오. 근거는 decision_sources에 적습니다.
+안전하지 않다고 판단하면 action을 {"kind": "wait"}로 하여 멈추십시오.
 같은 자리에서 같은 명령을 반복하지 말고 관측을 먼저 갱신하십시오.
 각 로봇은 자기 행동을 스스로 결정합니다.'''
 
@@ -548,6 +563,45 @@ def request_tokens(system, user, images=()) -> dict:
             'total_text': count_tokens(system) + count_tokens(user)}
 
 
+#: How the FIXED system prompt is billed in SIM time (second review, finding 18).
+#: The structured condition must list its fields, so its fixed text is longer
+#: than the free-text conditions'. Billing the actual length would charge that
+#: description as if it were dialogue. Under this policy every main-condition
+#: call is billed the SAME fixed-prompt size — the largest main-condition system
+#: prompt at that seed — while the variable part (payload, inbox, window) is
+#: billed as counted. The actual count stays in the record next to the billed one.
+FIXED_PROMPT_POLICY = 'fixed_prompt_equalized.v1'
+
+
+def fixed_prompt_reference_tokens(*, seed=None, robots=zp.ROBOTS) -> int:
+    """Billed fixed-prompt size: the largest main-condition system prompt."""
+    return _fixed_reference(seed, tuple(robots))
+
+
+def _fixed_reference(seed, robots):
+    # The leader's identity only changes an ID token, not the size, so a call
+    # without a seed (no rotating leader) is billed against seed 0's prompts.
+    seed = 0 if seed is None else seed
+    key = (seed, robots)
+    if key not in _FIXED_CACHE:
+        _FIXED_CACHE[key] = max(count_tokens(system_prompt(name, rid, seed=seed, robots=robots))
+                                for name in MAIN_CONDITIONS for rid in zp.actors(name, robots))
+    return _FIXED_CACHE[key]
+
+
+_FIXED_CACHE: dict = {}
+
+
+def billed_prompt_tokens(request, *, seed=None, robots=zp.ROBOTS) -> dict:
+    """Actual vs billed text tokens of one request under ``FIXED_PROMPT_POLICY``."""
+    tokens = request['tokens']
+    reference = fixed_prompt_reference_tokens(seed=seed, robots=robots)
+    return {'policy': FIXED_PROMPT_POLICY, 'tokenizer': tokens['tokenizer'],
+            'system_actual': tokens['system'], 'system_billed': reference,
+            'user': tokens['user'], 'images': tokens['images'],
+            'total_text_billed': reference + tokens['user']}
+
+
 def prompt_token_report(*, seed=11, robots=zp.ROBOTS) -> dict:
     """Fixed-prompt cost per condition and actor, split common vs channel.
 
@@ -680,6 +734,12 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
                            allow_leader_override=allow_leader_override)
     user = json.dumps(body, sort_keys=True, ensure_ascii=False)
     images = _images(inputs)
+    manifest = image_manifest(inputs)
+    # second review, finding 1: every attached image is re-bound to its validated
+    # reference right before sending, whichever path produced it.
+    for row in manifest:
+        if row['bytes_sha256'] != row['sha256']:
+            raise zp.ProtocolError(f'{row["label"]}: the attached bytes are not the frame {row["ref"]} names')
     request = {'request_id': request_id, 'condition': condition, 'actor': rid, 'prompt_role': role,
                'prompt_version': PROMPT_VERSION, 'protocol_version': zp.PROTOCOL_VERSION,
                'payload_schema': PAYLOAD_SCHEMA, 'input_sha256': inputs.payload_sha256,
@@ -687,9 +747,10 @@ def build_request(inputs, *, seed=None, leader=None, window=None, sent=(), robot
                'messages': [{'role': 'system', 'content': system},
                             {'role': 'user', 'content': user}],
                'images': images}
-    request['image_refs'] = image_manifest(inputs)
+    request['image_refs'] = manifest
     request['request_sha256'] = request_digest(system, user, images)
     request['tokens'] = request_tokens(system, user, images)
+    request['billed_tokens'] = billed_prompt_tokens(request, seed=seed, robots=robots)
     return request
 
 
@@ -730,6 +791,57 @@ def request_digest(system, user, images) -> str:
              'images': [{'label': item['label'], 'bytes_sha256': image_sha256(_from_uri(item['image']))}
                         for item in images]}
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def request_digest_from_refs(system, user, image_refs) -> str:
+    """The same digest recomputed from an ARCHIVED request (second review, finding 1).
+
+    An archive keeps the final system and user text plus the image manifest
+    (label + ``bytes_sha256``), not the base64 frames, so the digest a model
+    request carried can be re-derived from the stored log alone.
+    """
+    value = {'schema': REQUEST_DIGEST_SCHEMA, 'system': system, 'user': user,
+             'images': [{'label': row['label'], 'bytes_sha256': row['bytes_sha256']} for row in image_refs]}
+    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def archive_request(request) -> dict:
+    """What an offline/online log keeps of one final request (second review, finding 1).
+
+    The exact system and user text, the image manifest with the byte digests
+    and the request digest. ``verify_archived_request`` re-derives the digest,
+    so an archive that dropped or edited any part of the request is detected.
+    """
+    return {'request_id': request['request_id'], 'request_sha256': request['request_sha256'],
+            'input_sha256': request['input_sha256'], 'prompt_version': request['prompt_version'],
+            'system': request['messages'][0]['content'], 'user': request['messages'][1]['content'],
+            'image_refs': copy.deepcopy(request['image_refs']),
+            'tokens': dict(request['tokens']), 'billed_tokens': dict(request['billed_tokens'])}
+
+
+def verify_archived_request(row) -> list:
+    """Problems of one archived request (empty list = the archive is the request)."""
+    problems = []
+    for key in ('request_sha256', 'system', 'user', 'image_refs'):
+        if key not in row:
+            problems.append(f'archived request {row.get("request_id")!r} misses {key}')
+    if problems:
+        return problems
+    if request_digest_from_refs(row['system'], row['user'], row['image_refs']) != row['request_sha256']:
+        problems.append(f'archived request {row.get("request_id")!r}: content does not hash to request_sha256')
+    for image in row['image_refs']:
+        if image.get('bytes_sha256') != image.get('sha256'):
+            problems.append(f'archived request {row.get("request_id")!r}: {image.get("label")} bytes differ '
+                            'from their reference')
+    try:
+        body = json.loads(row['user'])
+    except ValueError:
+        return problems + [f'archived request {row.get("request_id")!r}: user text is not JSON']
+    if 'input_sha256' in row:
+        body.pop(WINDOW_KEY, None)
+        if payload_sha256(body) != row['input_sha256']:
+            problems.append(f'archived request {row.get("request_id")!r}: user JSON does not match input_sha256')
+    return problems
 
 
 def _from_uri(uri) -> bytes:

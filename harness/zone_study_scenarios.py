@@ -76,7 +76,7 @@ from pathlib import Path
 
 from harness.zone_map_schematic import MAP_DIR, digest, load_map, map_bundle, pickup_bays
 from harness.zone_study_contract import (ROBOTS, ZONE_IDS, ContractViolation, forbidden_key_hits,
-                                         leader_for_seed, non_ascii_keys)
+                                         leader_for_seed, non_ascii_keys, scenario_ref)
 from harness.zone_study_inputs import (REQUIRED_ROBOTS, SCENARIO_SCHEMA, OrderSheetSource, order_sheet,
                                        validate_scenario)
 from sim.zone_cargo import CATALOGUE, EXISTING_SOLO, MEASURED_SINGLE_ROBOT_CAPACITY_KG, bounding_box
@@ -186,8 +186,18 @@ def load_all(*, directory: Path | str = SCENARIO_DIR) -> dict:
 
 
 def public_part(scenario: Mapping) -> dict:
-    """The part that becomes the robot-facing order sheet. Never the hidden events."""
-    return copy.deepcopy({k: scenario[k] for k in PUBLIC_KEYS if k in scenario})
+    """The part that becomes the robot-facing order sheet. Never the hidden events.
+
+    Second review, finding 17: ``scenario_id`` is replaced by package A's opaque
+    ``scenario_ref`` (``sc_<12 hex>``). The descriptive config id
+    (``s5_moved_dropped_item``) named the hidden event kind, so a caller that
+    reused this function as a safe public input leaked it. The descriptive id
+    stays in the config, the run manifest and the trial record (evaluation).
+    """
+    public = copy.deepcopy({k: scenario[k] for k in PUBLIC_KEYS if k in scenario})
+    if 'scenario_id' in public:
+        public['scenario_id'] = scenario_ref(public['scenario_id'])
+    return public
 
 
 def private_part(scenario: Mapping) -> dict:

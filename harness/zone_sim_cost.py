@@ -413,16 +413,31 @@ def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_
 
     2026-09-26 review finding 16: such a call used to vanish from
     ``self.calls``, so a condition that failed through long reasoning looked
-    cheap. The SIM time that elapsed until the horizon is recorded as the charged
-    cost, while the API resources it really used stay unknown: tokens are 0 and
-    ``cost_terms['censored']`` says the number is a lower bound, not a
-    measurement.
+    cheap. ``sim_cost_s`` is the SIM time that elapsed until the horizon (the
+    action was never released). Second review: the API side of the call is
+    finished, so the provider usage the scheduler recorded (tokens, attempts,
+    utterances) is kept instead of 0; ``cost_terms['usage_known']`` is False only
+    when a transport failure left it unknown, and then the counts are 0 as a
+    labelled lower bound.
     """
     elapsed = _round(row['elapsed_sim_s'])
-    terms = {'alpha_s': 0., 'beta_s_per_token': 0., 'gamma_s_per_utterance': 0.,
-             'output_tokens': 0, 'utterances': 0, 'censored': True,
-             'elapsed_sim_s': elapsed, 'reason': row.get('reason', 'unfinished_at_horizon'),
-             'note': 'SIM time elapsed until the horizon; the API resources actually used are unknown'}
+    known = bool(row.get('usage_known', False))
+    cost = row.get('cost') if known else None
+    breakdown = (cost or {}).get('breakdown') or {}
+    terms = {'alpha_s': breakdown.get('overhead_s', 0.), 'beta_s_per_token': breakdown.get('output_s', 0.),
+             'gamma_s_per_utterance': breakdown.get('utterance_s', 0.),
+             'output_tokens': int(row.get('output_tokens') or 0) if known else 0,
+             'utterances': int(row.get('utterances') or 0) if known else 0,
+             'censored': True, 'usage_known': known, 'elapsed_sim_s': elapsed,
+             'charged_sim_s': row.get('charged_sim_s') if known else None,
+             'would_release_sim_s': row.get('would_release_sim_s') if known else None,
+             'outcome': row.get('outcome') if known else None,
+             'reason': row.get('reason', 'unfinished_at_horizon'),
+             'params_version': (row.get('cost') or {}).get('params_version'),
+             'params_digest': (row.get('cost') or {}).get('params_digest'),
+             'note': ('SIM time elapsed until the horizon; the action was never released. Provider usage '
+                      'is the recorded API usage' if known else
+                      'SIM time elapsed until the horizon; the API usage is unknown (lower bound 0)')}
     return call_log_record(
         run_id=run_id, condition_name=condition_name, seed=seed, actor=row['actor'],
         request_id=request_id, call_index=call_index,
@@ -430,9 +445,10 @@ def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_
         requested_at_sim_s=_round(row['started_sim_s']),
         released_at_sim_s=_round(row['started_sim_s'] + elapsed),
         cost_terms=terms, input_sha256=input_sha256,
-        input_tokens={'text': 0, 'image': 0, 'cached': 0}, output_tokens=0,
+        input_tokens={'text': int(row.get('input_tokens') or 0) if known else 0, 'image': 0, 'cached': 0},
+        output_tokens=terms['output_tokens'],
         status='censored', provenance=provenance,
-        http_attempts=int(row.get('reserved_attempts', 1)), wall_latency_s=None,
+        http_attempts=int(row.get('http_attempts') or row.get('reserved_attempts', 1)), wall_latency_s=None,
         action_id=None, message_ids=[], decision_sources=list(decision_sources),
         payload_validated=True)
 

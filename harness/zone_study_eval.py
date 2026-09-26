@@ -47,6 +47,8 @@ from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, CON
                                          MAIN_CONDITIONS as A_MAIN_CONDITIONS, MESSAGE_LOG_SCHEMA,
                                          allowed_edges as A_allowed_edges, forbidden_key_hits,
                                          leader_for_seed as A_leader_for_seed, validate_log_record)
+from harness.zone_study_contract import (COMMANDER, CONFIDENCE as CONFIDENCE_LEVELS, ROBOTS, ROLE_NAMES,
+                                         STRUCTURED_ACTS, STRUCTURED_STATES)
 
 #: A-aligned trial envelope: ``calls``/``messages``/``actions`` are A log records.
 TRIAL_SCHEMA = 'ugrp.zone_study_trial.v1'
@@ -210,6 +212,10 @@ def parse_trial(obj):
     return trial
 
 
+#: What an A-aligned record may archive per request next to its call rows.
+REQUEST_ARCHIVE_KEYS = ('request_id', 'input_keys', 'input_sha256', 'request_sha256')
+
+
 def _adapt_contract_rows(trial):
     """Validate package A log rows in place and build the metric views.
 
@@ -227,7 +233,21 @@ def _adapt_contract_rows(trial):
             if row.get('schema') != log_schema:
                 raise TrialError(f'{key}[] must carry schema {log_schema}, got {row.get("schema")!r}')
             validate_log_record(row)
-    trial['requests'] = [_request_view(row) for row in _rows(trial, 'calls')]
+    archive = {}
+    for row in _rows(trial, 'request_archive'):
+        if set(row) - set(REQUEST_ARCHIVE_KEYS) or not isinstance(row.get('request_id'), str):
+            raise TrialError(f'request_archive[] carries only {REQUEST_ARCHIVE_KEYS}')
+        archive[row['request_id']] = row
+    trial['requests'] = []
+    for call in _rows(trial, 'calls'):
+        view = _request_view(call)
+        stored = archive.get(call['request_id'])
+        if stored is not None:
+            if stored.get('input_sha256') not in (None, call['input_sha256']):
+                raise TrialError(f'request_archive {call["request_id"]}: input_sha256 differs from the call log')
+            view['input_keys'] = list(stored.get('input_keys') or ())
+            view['request_sha256'] = stored.get('request_sha256')
+        trial['requests'].append(view)
     trial['utterances'] = [_utterance_view(row) for row in _rows(trial, 'messages')]
 
 
@@ -320,6 +340,10 @@ def _rows(container, key):
 CENSORED_STATUS = 'censored'
 
 
+def _opt_float(value):
+    return None if value is None else float(value)
+
+
 def model_aggregate(trial):
     """Model calls, HTTP attempts, tokens and SIM cost, derived from the LOG rows.
 
@@ -329,8 +353,16 @@ def model_aggregate(trial):
     compared with the log. The package A ``calls``/``messages`` rows are now the
     single source; a summary that is ALSO present must agree with them.
 
-    Returns ``None`` when neither source exists, so a missing number stays
-    missing instead of silently becoming 0.
+    Second review:
+
+    * the SIM cost terms do not overlap. A call's charged ``sim_cost_s``
+      already contains the utterance term, so ``think`` = call total minus the
+      utterance term and ``talk`` = the utterance term (``think + talk ==
+      call``); ``delivery`` is the separate transport delay.
+    * the API resource totals (tokens, HTTP attempts) include censored calls:
+      the request was made even though its action was never released.
+    * a missing number stays ``None`` (no cost source at all returns ``None``,
+      and a summary without a term does not turn it into 0).
     """
     calls = _rows(trial, 'calls')
     summary = trial.get('model') if isinstance(trial.get('model'), dict) else None
@@ -339,35 +371,40 @@ def model_aggregate(trial):
             return None
         tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
         cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
-        return {'source': 'summary', 'logical_calls': int(summary.get('logical_calls') or 0),
-                'http_attempts': int(summary.get('http_attempts') or 0),
-                'censored_calls': int(summary.get('censored_calls') or 0),
-                'tokens': {k: int(tokens.get(k) or 0) for k in ('input', 'output', 'image', 'cached')},
-                'think_sim_s': float(cost.get('think') or 0.0),
-                'talk_sim_s': float(cost.get('talk') or 0.0),
-                'delivery_sim_s': float(cost.get('delivery') or 0.0),
+        return {'source': 'summary', 'logical_calls': summary.get('logical_calls'),
+                'http_attempts': summary.get('http_attempts'),
+                'censored_calls': summary.get('censored_calls'),
+                'tokens': {k: (None if tokens.get(k) is None else int(tokens[k]))
+                           for k in ('input', 'output', 'image', 'cached')},
+                'call_sim_s': _opt_float(cost.get('call')),
+                'think_sim_s': _opt_float(cost.get('think')),
+                'talk_sim_s': _opt_float(cost.get('talk')),
+                'delivery_sim_s': _opt_float(cost.get('delivery')),
                 'wall_latency_ms': [float(v) for v in (summary.get('wall_latency_ms') or [])
                                     if v is not None],
                 'mismatch': []}
     censored = [c for c in calls if c.get('status') == CENSORED_STATUS]
     done = [c for c in calls if c.get('status') != CENSORED_STATUS]
-    think = sum(float(c.get('sim_cost_s') or 0.0) for c in done)
+    call_total = sum(float(c.get('sim_cost_s') or 0.0) for c in done)
     talk = sum(float((c.get('cost_terms') or {}).get('gamma_s_per_utterance') or 0.0) for c in done)
     delivery = sum(float(m.get('delivery_delay_s') or 0.0) for m in _rows(trial, 'messages'))
     tokens = {
-        'input': sum(int((c.get('input_tokens') or {}).get('text') or 0) for c in done),
-        'output': sum(int(c.get('output_tokens') or 0) for c in done),
-        'image': sum(int((c.get('input_tokens') or {}).get('image') or 0) for c in done),
-        'cached': sum(int((c.get('input_tokens') or {}).get('cached') or 0) for c in done),
+        'input': sum(int((c.get('input_tokens') or {}).get('text') or 0) for c in calls),
+        'output': sum(int(c.get('output_tokens') or 0) for c in calls),
+        'image': sum(int((c.get('input_tokens') or {}).get('image') or 0) for c in calls),
+        'cached': sum(int((c.get('input_tokens') or {}).get('cached') or 0) for c in calls),
     }
     latencies = [float(c['wall_latency_s']) * 1000.0 for c in done if c.get('wall_latency_s') is not None]
     out = {'source': 'calls', 'logical_calls': len(calls),
            'completed_calls': len(done),
-           'http_attempts': sum(int(c.get('http_attempts') or 0) for c in done),
+           'http_attempts': sum(int(c.get('http_attempts') or 0) for c in calls),
            'censored_calls': len(censored),
+           'censored_usage_unknown': sum(1 for c in censored
+                                         if not (c.get('cost_terms') or {}).get('usage_known')),
            'censored_elapsed_sim_s': round(sum(float(c.get('sim_cost_s') or 0.0) for c in censored), 6),
            'tokens': tokens,
-           'think_sim_s': round(think, 6), 'talk_sim_s': round(talk, 6),
+           'call_sim_s': round(call_total, 6),
+           'think_sim_s': round(call_total - talk, 6), 'talk_sim_s': round(talk, 6),
            'delivery_sim_s': round(delivery, 6), 'wall_latency_ms': latencies, 'mismatch': []}
     if summary is not None:
         out['mismatch'] = _summary_mismatch(summary, out)
@@ -376,7 +413,11 @@ def model_aggregate(trial):
 
 
 def _summary_mismatch(summary, derived):
-    """Where a separate ``model`` summary disagrees with the call log."""
+    """Where a separate ``model`` summary disagrees with the call log.
+
+    Second review: image/cache tokens and the delivery and call-total SIM cost
+    are compared too, so a summary cannot disagree with the log on them.
+    """
     tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
     cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
     out = []
@@ -387,8 +428,12 @@ def _summary_mismatch(summary, derived):
                derived['censored_elapsed_sim_s']),
               ('tokens.input', tokens.get('input'), derived['tokens']['input']),
               ('tokens.output', tokens.get('output'), derived['tokens']['output']),
+              ('tokens.image', tokens.get('image'), derived['tokens']['image']),
+              ('tokens.cached', tokens.get('cached'), derived['tokens']['cached']),
+              ('sim_cost_s.call', cost.get('call'), derived['call_sim_s']),
               ('sim_cost_s.think', cost.get('think'), derived['think_sim_s']),
-              ('sim_cost_s.talk', cost.get('talk'), derived['talk_sim_s'])]
+              ('sim_cost_s.talk', cost.get('talk'), derived['talk_sim_s']),
+              ('sim_cost_s.delivery', cost.get('delivery'), derived['delivery_sim_s'])]
     for name, given, got in checks:
         if given is None:
             continue
@@ -413,7 +458,7 @@ def audit_input_boundary(trial):
     archived the payload keys may add ``input_keys`` and both are checked.
     """
     condition = trial['condition']
-    leaks, unknown, unvalidated = [], [], []
+    leaks, unknown, unvalidated, unconfirmed = [], [], [], []
     for req in _rows(trial, 'requests'):
         keys = req.get('input_keys')
         keys = list(keys) if isinstance(keys, (list, tuple)) else []
@@ -429,6 +474,9 @@ def audit_input_boundary(trial):
         if req.get('payload_validated') is False:
             unvalidated.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
                                 'status': req.get('status')})
+        elif req.get('payload_validated') is not True:
+            # no auditable fact either way: not a violation, not clean either
+            unconfirmed.append({'request_id': req.get('request_id'), 'robot': req.get('robot')})
     if condition == REFERENCE_CONDITION:
         # R is the all-seeing commander: peer RGB is expected there, so the
         # request audit is reported but does not gate the main conditions.
@@ -440,11 +488,21 @@ def audit_input_boundary(trial):
         if bad:
             grounds.append({'message_id': utt.get('message_id'), 'forbidden_grounds': bad})
     channel = channel_compliance(trial)
+    # Second review: the absence of evidence is not evidence of a clean
+    # boundary. A trial without request rows, or with requests whose validation
+    # was never recorded, is ``unverified`` (``boundary_status``).
+    missing_evidence = []
+    if not _rows(trial, 'requests'):
+        missing_evidence.append('no request rows')
+    if unconfirmed:
+        missing_evidence.append(f'{len(unconfirmed)} request(s) without payload_validated')
     clean = (not leaks and not unknown and not grounds and not unvalidated
-             and not channel['violations'] and condition != REFERENCE_CONDITION)
+             and not channel['violations'] and condition != REFERENCE_CONDITION
+             and not missing_evidence)
     return {'condition': condition, 'requests_checked': len(_rows(trial, 'requests')),
             'input_leaks': leaks, 'unknown_input_keys': unknown,
-            'unvalidated_payloads': unvalidated,
+            'unvalidated_payloads': unvalidated, 'unconfirmed_payloads': unconfirmed,
+            'missing_evidence': missing_evidence,
             'forbidden_grounds': grounds, 'channel_violations': channel['violations'],
             'clean': clean,
             'note': 'R은 전지적 참조 상한이므로 주 조건 경계 판정에서 제외한다.'
@@ -642,6 +700,11 @@ def delivery_state(trial):
             final[row['item_id']] = row
     delivered, misdelivered, surplus = {}, {}, []
     fungible_used = collections.Counter()
+    # Second review, finding 11: a WRONG-zone fungible item used to consume the
+    # order's quantity, so ``red_0 -> C`` (wrong) plus ``red_1, red_2 -> B``
+    # (right) for a 2-red order counted only one delivery. Correct placements
+    # fill the quota first; a wrong placement never consumes it.
+    wrong_fungible = []
     for item, row in sorted(final.items()):
         zone = row.get('zone')
         order = by_item.get(item)
@@ -651,15 +714,20 @@ def delivery_state(trial):
             order = next((o for o in candidates
                           if fungible_used[o['order_id']] < o['count'] and o['zone'] == zone), None)
             if order is None:
-                # a fungible order of this kind exists but the zone is wrong
-                order = next((o for o in candidates if fungible_used[o['order_id']] < o['count']), None)
-            if order is None:
-                surplus.append(item)
+                if candidates and not any(o['zone'] == zone for o in candidates):
+                    wrong_fungible.append((item, row, candidates))
+                else:
+                    surplus.append(item)        # right zone, quota already filled, or no order
                 continue
             fungible_used[order['order_id']] += 1
         correct = order['zone'] == zone
         (delivered if correct else misdelivered)[item] = {
             'zone': zone, 'sim_s': row.get('sim_s'), 'order_id': order['order_id']}
+    for item, row, candidates in wrong_fungible:
+        # a wrong-zone item of an ordered kind: a misdelivery against the first
+        # order of that kind, WITHOUT consuming its quantity
+        misdelivered[item] = {'zone': row.get('zone'), 'sim_s': row.get('sim_s'),
+                              'order_id': candidates[0]['order_id']}
     history = [{'item_id': r.get('item_id'), 'zone': r.get('zone'), 'sim_s': r['sim_s']}
                for r in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0))
                if isinstance(r.get('item_id'), str)
@@ -723,9 +791,15 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
                          f'({"; ".join(model["mismatch"])}); calls/messages are the only aggregation '
                          'source (review finding 10)')
     tokens = (model or {}).get('tokens') or {}
-    talk_cost = float((model or {}).get('talk_sim_s') or 0.0) + float((model or {}).get('delivery_sim_s')
-                                                                     or 0.0)
-    think_cost = float((model or {}).get('think_sim_s') or 0.0)
+    # Second review, finding 10: a missing cost source stays None in the FINAL
+    # metrics too (it used to become 0 here), and the terms do not overlap:
+    # think + utterance == call total; delivery is the transport delay.
+    utterance_cost = (model or {}).get('talk_sim_s')
+    delivery_cost = (model or {}).get('delivery_sim_s')
+    think_cost = (model or {}).get('think_sim_s')
+    call_cost = (model or {}).get('call_sim_s')
+    talk_cost = (None if utterance_cost is None and delivery_cost is None
+                 else float(utterance_cost or 0.0) + float(delivery_cost or 0.0))
     latencies = list((model or {}).get('wall_latency_ms') or [])
 
     return {
@@ -739,9 +813,12 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'makespan_success_only_s': round(elapsed, 4) if success else None,
         'par_makespan_sim_s': round(charged, 4),
         'penalty_factor': penalty_factor,
-        'talk_sim_cost_s': round(talk_cost, 4),
-        'think_sim_cost_s': round(think_cost, 4),
-        'talk_share_of_makespan': _ratio(talk_cost, elapsed),
+        'talk_sim_cost_s': _round4(talk_cost),
+        'think_sim_cost_s': _round4(think_cost),
+        'utterance_sim_cost_s': _round4(utterance_cost),
+        'delivery_sim_cost_s': _round4(delivery_cost),
+        'call_sim_cost_s': _round4(call_cost),
+        'talk_share_of_makespan': None if talk_cost is None else _ratio(talk_cost, elapsed),
         'ordered_items': ordered_count,
         'delivered_items': len(delivered),
         'misdelivered_items': len(misdelivered),
@@ -772,14 +849,20 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'tokens_output': tokens.get('output'),
         'tokens_image': tokens.get('image'),
         'tokens_cached': tokens.get('cached'),
-        'tokens_total': (sum(int(tokens.get(k) or 0) for k in ('input', 'output', 'image'))
-                         if model is not None else None),
-        'model_calls_per_delivered': round((model or {}).get('logical_calls', 0) / len(delivered), 4)
-                                     if delivered and model is not None else None,
+        'tokens_total': (None if model is None or any(tokens.get(k) is None
+                                                      for k in ('input', 'output', 'image'))
+                         else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
+        'model_calls_per_delivered': round((model or {}).get('logical_calls') / len(delivered), 4)
+                                     if delivered and (model or {}).get('logical_calls') is not None
+                                     else None,
         'wall_latency_ms_mean': round(statistics.mean(latencies), 2) if latencies else None,
         'budget_http_attempts': budget.get('http_attempts'),
         'budget_exhausted': trial['end_reason'] == 'budget_exhausted',
     }
+
+
+def _round4(value):
+    return None if value is None else round(float(value), 4)
 
 
 def _ratio(num, den):
@@ -909,6 +992,12 @@ def extract_claims(utterance, labels=()):
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?。])\s+|\n+')
 
 
+#: Literals that can appear in a Korean sentence but never name an item.
+NON_ITEM_LITERALS = frozenset(ROBOTS) | {COMMANDER} | frozenset(ROLE_NAMES) | frozenset(STUDY_KEY_WORDS) \
+    | frozenset(STRUCTURED_ACTS) | frozenset(STRUCTURED_STATES) | frozenset(CONFIDENCE_LEVELS) \
+    | {'null', 'true', 'false'}
+
+
 def _declared_items(fragment, labels):
     """Item/order ids of the run that literally appear in ``fragment``.
 
@@ -918,7 +1007,11 @@ def _declared_items(fragment, labels):
     """
     found = []
     for label in sorted({l for l in labels if isinstance(l, str) and l}, key=len, reverse=True):
-        if label in ZONES or PASSAGE_RE.fullmatch(label):
+        # Second review, finding 12: only ITEM/ORDER ids are items. A robot id,
+        # the commander, a grasp role or an enum literal named in the same
+        # sentence ("r1인 제가 cyan_1을 A에 내려놓았습니다.") used to become a
+        # second, false delivery claim, which biased free text against schema.
+        if label in ZONES or PASSAGE_RE.fullmatch(label) or label in NON_ITEM_LITERALS:
             continue
         if re.search(r'(?<![A-Za-z0-9_-])' + re.escape(label) + r'(?![A-Za-z0-9_-])', fragment):
             found.append(label)
@@ -1196,7 +1289,8 @@ def trial_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAU
 #: mean but the trial still counts in ``trials``.
 SUMMARY_METRICS = (
     'par_makespan_sim_s', 'makespan_sim_s', 'makespan_success_only_s',
-    'talk_sim_cost_s', 'think_sim_cost_s', 'delivery_rate', 'delivered_items',
+    'talk_sim_cost_s', 'think_sim_cost_s', 'utterance_sim_cost_s', 'delivery_sim_cost_s',
+    'call_sim_cost_s', 'delivery_rate', 'delivered_items',
     'misdelivered_items', 'undelivered_items', 'idle_robot_s', 'idle_share',
     'conflicts', 'deadlocks', 'deadlock_sim_s', 'replans', 'model_calls',
     'http_attempts', 'tokens_total', 'tokens_input', 'tokens_output',

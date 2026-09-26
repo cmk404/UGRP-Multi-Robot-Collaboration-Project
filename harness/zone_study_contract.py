@@ -84,6 +84,11 @@ def scenario_ref(scenario_id: str) -> str:
     """
     if not isinstance(scenario_id, str) or not scenario_id:
         raise ContractViolation('scenario_id must be a non-empty string')
+    if SCENARIO_REF.match(scenario_id):
+        # Idempotent: E's ``public_part()`` already carries the opaque ref
+        # (second review, finding 17), and the sheet built from it must equal the
+        # sheet built from the full config.
+        return scenario_id
     return 'sc_' + hashlib.sha256(scenario_id.encode()).hexdigest()[:SCENARIO_REF_HEX]
 
 
@@ -455,6 +460,8 @@ ORDER_KEYS = ('order_id', 'kind', 'count', 'item_ids', 'required_robots', 'desti
 ORDER_IDENTITIES = ('specific_item', 'kind_fungible')
 ORDER_SHEET_KEYS = ('schema', 'scenario_id', 'map_id', 'map_file_sha256', 'public_map_sha256', 'orders',
                     'kinds', 'team_size', 'note_ko')
+#: ``order_sheet.kinds.<kind>``: the static team requirement of one kind.
+KIND_KEYS = ('required_robots', 'roles')
 RGB_REF_KEYS = ('ref', 'kind', 'captured_at_sim_s', 'sha256')
 COMMAND_KEYS = ('command_id', 'issued_at_sim_s', 'kind', 'arguments', 'local_state')
 # Arguments of the robot's OWN commands: own-frame targets and map/order ids only.
@@ -502,6 +509,18 @@ def non_ascii_keys(value: object) -> list[str]:
 
 
 def _value_hits(value: object) -> list[str]:
+    """Evaluation-only source names in HOST-built values.
+
+    2026-09-26 second review: the text of a delivered message is what another
+    ROBOT wrote (``"nav_cam은 사용하지 말고 자기 카메라만 보세요."``), not a
+    data source the host attached, so C accepted it and A then refused the
+    recipient's payload. Message bodies are checked by the channel rules
+    (``message_violations``) instead; every other value is still scanned.
+    """
+    if isinstance(value, Mapping) and isinstance(value.get('inbox'), Sequence) \
+            and not isinstance(value.get('inbox'), (str, bytes)):
+        value = {**value, 'inbox': [{k: v for k, v in env.items() if k != 'body'}
+                                    if isinstance(env, Mapping) else env for env in value['inbox']]}
     hits = []
     for path, key, item in _walk(value):
         if not isinstance(item, str):
@@ -524,6 +543,127 @@ def _closed(value: object, keys: Sequence[str], label: str, *, required: Sequenc
     missing = [k for k in required if k not in value]
     if missing:
         out.append(f'{label} misses {missing}')
+    return out
+
+
+def _is_num(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _vec(*lengths: int):
+    def check(value, label):
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) \
+                and len(value) in lengths and all(_is_num(v) for v in value):
+            return []
+        return [f'{label} must be a list of {"/".join(map(str, lengths))} numbers, got {value!r}']
+    return check
+
+
+def _num(value, label):
+    return [] if _is_num(value) else [f'{label} must be a number, got {value!r}']
+
+
+def _int(value, label):
+    return [] if isinstance(value, int) and not isinstance(value, bool) else \
+        [f'{label} must be a whole number, got {value!r}']
+
+
+def _bool(value, label):
+    return [] if isinstance(value, bool) else [f'{label} must be true/false, got {value!r}']
+
+
+def _str(value, label):
+    return [] if isinstance(value, str) else [f'{label} must be a string, got {value!r}']
+
+
+def _opt(check):
+    return lambda value, label: [] if value is None else check(value, label)
+
+
+def _tokens(value, label):
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return [p for i, item in enumerate(value) for p in _token(item, f'{label}[{i}]')]
+    return [f'{label} must be a list of ID tokens, got {value!r}']
+
+
+def _strs(value, label):
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) \
+            and all(isinstance(v, str) for v in value):
+        return []
+    return [f'{label} must be a list of strings, got {value!r}']
+
+
+def _rgba(value, label):
+    return _str(value, label) if isinstance(value, str) else _vec(4)(value, label)
+
+
+#: Value type of every leaf key a map sub-object may carry (2026-09-26 second
+#: review, finding 3). Closing the KEYS was not enough: ``center_m`` could carry
+#: ``{"survey_xy_m": [...]}`` and a recomputed hash made it pass. A key listed in
+#: a closed sub-schema but missing here is a contract bug (``_typed`` refuses it).
+MAP_LEAF_TYPES = {
+    'center_m': _vec(2, 3), 'half_extents_m': _vec(2, 3), 'height_m': _num, 'slope_deg': _num,
+    'passable': _bool, 'perimeter': _bool, 'axis': _str, 'lanes': _int, 'width_m': _num,
+    'connects': _strs, 'opens_to': _str, 'map_key': _str,
+    'paint_rgba': _rgba, 'normal_xy': _vec(2, 3), 'size_m': _num, 'yaw_rad': _num,
+    'wall': lambda v, l: _token(v, l), 'kind': lambda v, l: _token(v, l),
+    'schema': _str, 'family': _str, 'tag_count': _int, 'tag_frame': _str,
+    'version': _int, 'frame': _str, 'bounds_m': _vec(4), 'item_kinds_painted': _tokens,
+    'approach_convention': _str, 'landmark_detail': _str, 'base_map_id': _opt(lambda v, l: _token(v, l)),
+    'map_id': lambda v, l: _token(v, l),
+    'width_px': _int, 'height_px': _int, 'px_per_m': _num,
+}
+#: ``landmarks.placement``: the fixed tag mounting geometry, numbers only.
+PLACEMENT_KEYS = ('cell_thickness_m', 'center_height_m', 'end_margin_m', 'faces', 'plate_m',
+                  'plate_thickness_m', 'size_m', 'spacing_m')
+PLACEMENT_TYPES = {**{k: _num for k in PLACEMENT_KEYS}, 'faces': _str}
+
+
+def _either(*checks):
+    def check(value, label):
+        results = [c(value, label) for c in checks]
+        return [] if any(not r for r in results) else results[0]
+    return check
+
+
+_TOKEN = lambda v, l: _token(v, l)   # noqa: E731 - late binding: _token is defined below
+
+
+def _points(value, label):
+    """Own-frame waypoints: a list of ID tokens or of 2/3-number vectors, never objects."""
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return [p for i, item in enumerate(value)
+                for p in _either(_TOKEN, _vec(2, 3))(item, f'{label}[{i}]')]
+    return [f'{label} must be a list, got {value!r}']
+
+
+#: Value types of the robot's own belief, own command arguments and the
+#: commander's issued orders (second review, finding 3): no nested object can
+#: ride along under an allowed key.
+BELIEF_TYPES = {'region': _str, 'last_visual_anchor': _opt(_str), 'last_requested_destination': _opt(_str),
+                'last_visually_confirmed_region': _opt(_str), 'confidence': _either(_str, _num), 'sources': _strs,
+                'held_item_guess': _opt(_str), 'blocked_passages': _tokens, 'notes_ko': _str}
+COMMAND_ARGUMENT_TYPES = {
+    'target_ref': _opt(_TOKEN), 'target_zone': _opt(_TOKEN), 'order_id': _opt(_TOKEN), 'item': _opt(_TOKEN),
+    'role': _opt(_TOKEN), 'passage': _opt(_TOKEN), 'distance_m': _num, 'turn_deg': _num, 'speed': _num,
+    'duration_s': _num, 'gripper': _either(_str, _num), 'observe': _either(_bool, _str),
+    'waypoints': _points, 'reason_code': _opt(_TOKEN)}
+ISSUED_ORDER_TYPES = {'order_ref': _TOKEN, 'to': _TOKEN, 'at_sim_s': _num, 'instruction': _str}
+
+
+def _typed(value: object, label: str, *, skip: Sequence[str] = (), types: Mapping = MAP_LEAF_TYPES) -> list[str]:
+    """Type check every present leaf of one closed sub-object."""
+    if not isinstance(value, Mapping):
+        return []
+    out = []
+    for key, item in value.items():
+        if key in skip:
+            continue
+        check = types.get(key)
+        if check is None:
+            out.append(f'{label}.{key} has no declared value type in the contract')
+            continue
+        out.extend(check(item, f'{label}.{key}'))
     return out
 
 
@@ -634,6 +774,9 @@ def _public_map_hits(public: object) -> list[str]:
                    required=('map_id', 'bounds_m', 'walls', 'regions'))
     if not isinstance(public, Mapping):
         return hits
+    hits.extend(_typed(public, 'static_map.public_map',
+                       skip=('walls', 'terrain', 'passages', 'regions', 'zone_slots', 'pickup_bays',
+                             'landmarks')))
     for name, keys, required in (('walls', WALL_KEYS, ('id',)), ('terrain', TERRAIN_KEYS, ('id',)),
                                  ('passages', PASSAGE_KEYS, ('id',))):
         if name not in public:
@@ -645,6 +788,7 @@ def _public_map_hits(public: object) -> list[str]:
             hits.extend(_closed(row, keys, label, required=required))
             if isinstance(row, Mapping):
                 hits.extend(_token(row.get('id'), f'{label}.id'))
+                hits.extend(_typed(row, label, skip=('id',)))
     for name in ('regions', 'zone_slots'):
         section = public.get(name)
         if name in public and not isinstance(section, Mapping):
@@ -655,6 +799,7 @@ def _public_map_hits(public: object) -> list[str]:
             hits.extend(_token(key, f'static_map.public_map.{name} key'))
             if name == 'regions':
                 hits.extend(_closed(value, REGION_KEYS, label))
+                hits.extend(_typed(value, label))
                 continue
             problems, rows = _seq(value, label)
             hits.extend(problems)
@@ -662,6 +807,7 @@ def _public_map_hits(public: object) -> list[str]:
                 hits.extend(_closed(slot, SLOT_KEYS, f'{label}[]', required=('slot_id',)))
                 if isinstance(slot, Mapping):
                     hits.extend(_token(slot.get('slot_id'), f'{label}[].slot_id'))
+                    hits.extend(_typed(slot, f'{label}[]', skip=('slot_id',)))
     if 'pickup_bays' in public:
         problems, bays = _seq(public.get('pickup_bays'), 'static_map.public_map.pickup_bays')
         hits.extend(problems)
@@ -671,21 +817,32 @@ def _public_map_hits(public: object) -> list[str]:
             if not isinstance(bay, Mapping):
                 continue
             hits.extend(_token(bay.get('bay_id'), f'{label}.bay_id'))
+            hits.extend(_typed(bay, label, skip=('bay_id', 'slots')))
             problems, slots = _seq(bay.get('slots', ()), f'{label}.slots')
             hits.extend(problems)
             for slot in slots:
                 hits.extend(_closed(slot, SLOT_KEYS, f'{label}.slots[]', required=('slot_id',)))
                 if isinstance(slot, Mapping):
                     hits.extend(_token(slot.get('slot_id'), f'{label}.slots[].slot_id'))
+                    hits.extend(_typed(slot, f'{label}.slots[]', skip=('slot_id',)))
     if 'landmarks' in public:
-        hits.extend(_closed(public['landmarks'], LANDMARKS_KEYS, 'static_map.public_map.landmarks'))
-        if isinstance(public['landmarks'], Mapping):
-            problems, tags = _seq(public['landmarks'].get('tags', ()),
-                                  'static_map.public_map.landmarks.tags')
+        marks = public['landmarks']
+        hits.extend(_closed(marks, LANDMARKS_KEYS, 'static_map.public_map.landmarks'))
+        if isinstance(marks, Mapping):
+            hits.extend(_typed(marks, 'static_map.public_map.landmarks', skip=('placement', 'tags')))
+            if 'placement' in marks:
+                hits.extend(_closed(marks['placement'], PLACEMENT_KEYS,
+                                    'static_map.public_map.landmarks.placement'))
+                hits.extend(_typed(marks['placement'], 'static_map.public_map.landmarks.placement',
+                                   types=PLACEMENT_TYPES))
+            problems, tags = _seq(marks.get('tags', ()), 'static_map.public_map.landmarks.tags')
             hits.extend(problems)
             for tag in tags:
                 hits.extend(_closed(tag, TAG_KEYS, 'static_map.public_map.landmarks.tags[]',
                                     required=('id',)))
+                if isinstance(tag, Mapping):
+                    hits.extend(_int(tag.get('id'), 'static_map.public_map.landmarks.tags[].id'))
+                    hits.extend(_typed(tag, 'static_map.public_map.landmarks.tags[]', skip=('id',)))
     return hits
 
 
@@ -705,10 +862,17 @@ def _static_map_hits(payload: Mapping) -> list[str]:
         hits.extend(_closed(static['schematic_ref'], SCHEMATIC_REF_KEYS, 'static_map.schematic_ref',
                             required=('ref', 'png_sha256')))
         if isinstance(static['schematic_ref'], Mapping):
-            ref = static['schematic_ref'].get('ref')
+            schematic = static['schematic_ref']
+            ref = schematic.get('ref')
             if not isinstance(ref, str) or not MAP_SCHEMATIC_REF.match(ref):
                 hits.append(f'static_map.schematic_ref: {ref!r} is not a map schematic ref')
-            hits.extend(_sha(static['schematic_ref'].get('png_sha256'), 'static_map.schematic_ref.png_sha256'))
+            elif ref != f'map-{static.get("map_id")}-schematic':
+                hits.append(f'static_map.schematic_ref: {ref!r} is not the schematic of map '
+                            f'{static.get("map_id")!r}')
+            if schematic.get('kind', 'map_schematic') != 'map_schematic':
+                hits.append('static_map.schematic_ref.kind must be map_schematic')
+            hits.extend(_sha(schematic.get('png_sha256'), 'static_map.schematic_ref.png_sha256'))
+            hits.extend(_typed(schematic, 'static_map.schematic_ref', skip=('ref', 'kind', 'png_sha256')))
     return hits
 
 
@@ -727,6 +891,32 @@ def _order_sheet_hits(payload: Mapping) -> list[str]:
     static = payload.get('static_map') if isinstance(payload.get('static_map'), Mapping) else {}
     public = static.get('public_map') if isinstance(static.get('public_map'), Mapping) else {}
     bays, slots = map_bay_ids(public), map_slot_ids(public)
+    # second review, finding 3: the non-order fields are typed too.
+    for key in ('map_file_sha256', 'public_map_sha256'):
+        if key in sheet:
+            hits.extend(_sha(sheet.get(key), f'order_sheet.{key}'))
+    if 'map_id' in sheet:
+        hits.extend(_token(sheet.get('map_id'), 'order_sheet.map_id'))
+    if 'team_size' in sheet:
+        hits.extend(_whole(sheet.get('team_size'), 'order_sheet.team_size', minimum=1))
+    if 'note_ko' in sheet:
+        hits.extend(_str(sheet.get('note_ko'), 'order_sheet.note_ko'))
+    if 'kinds' in sheet:
+        table = sheet.get('kinds')
+        if not isinstance(table, Mapping):
+            hits.append('order_sheet.kinds must be an object')
+        else:
+            for kind, row in table.items():
+                label = f'order_sheet.kinds.{kind}'
+                hits.extend(_token(kind, 'order_sheet.kinds key'))
+                hits.extend(_closed(row, KIND_KEYS, label, required=KIND_KEYS))
+                if isinstance(row, Mapping):
+                    hits.extend(_whole(row.get('required_robots'), f'{label}.required_robots', minimum=1))
+                    roles = row.get('roles')
+                    hits.extend(_tokens(roles, f'{label}.roles'))
+                    if isinstance(roles, Sequence) and not isinstance(roles, (str, bytes)):
+                        hits.extend(f'{label}.roles: {r!r} is not a role name' for r in roles
+                                    if r not in ROLE_NAMES)
     orders = sheet.get('orders')
     if not isinstance(orders, Sequence) or isinstance(orders, str):
         return hits + ['order_sheet.orders must be a list']
@@ -784,6 +974,10 @@ def _history_hits(payload: Mapping, now: float | None) -> list[str]:
             hits.append(f'own_command_history: local_state {entry.get("local_state")!r} is not a self state')
         hits.extend(_closed(entry.get('arguments', {}), COMMAND_ARGUMENT_KEYS,
                             'own_command_history[].arguments'))
+        hits.extend(_typed(entry.get('arguments', {}), 'own_command_history[].arguments',
+                           types=COMMAND_ARGUMENT_TYPES))
+        hits.extend(_typed({k: v for k, v in entry.items() if k in ('kind',)}, 'own_command_history[]',
+                           types={'kind': lambda v, l: _token(v, l)}))
         issued = entry.get('issued_at_sim_s')
         if isinstance(issued, bool) or not isinstance(issued, (int, float)) or issued < 0:
             hits.append('own_command_history[].issued_at_sim_s must be a non-negative number')
@@ -849,8 +1043,10 @@ def _shape_hits(payload: Mapping, spec: Condition, seed: int | None) -> list[str
     if 'issued_orders' in payload:
         for entry in payload['issued_orders'] if isinstance(payload['issued_orders'], Sequence) else []:
             hits.extend(_closed(entry, ISSUED_ORDER_KEYS, 'issued_orders[]', required=('order_ref', 'to')))
+            hits.extend(_typed(entry, 'issued_orders[]', types=ISSUED_ORDER_TYPES))
     if 'self_belief' in payload:
         hits.extend(_closed(payload['self_belief'], BELIEF_KEYS, 'self_belief'))
+        hits.extend(_typed(payload['self_belief'], 'self_belief', types=BELIEF_TYPES))
     hits.extend(_inbox_hits(payload, spec, seed, now))
     if spec.leader_rotation:
         if seed is None:
@@ -923,7 +1119,8 @@ def boundary_manifest() -> dict:
 
 #: What a caller may pin so a payload is compared with the FROZEN originals
 #: instead of only with the provider's own recomputed hashes (review finding 3).
-PINNED_KEYS = ('order_sheet_sha256', 'public_map_sha256', 'map_file_sha256', 'map_id', 'scenario_id')
+PINNED_KEYS = ('order_sheet_sha256', 'public_map_sha256', 'map_file_sha256', 'map_id', 'scenario_id',
+               'schematic_png_sha256')
 
 
 def _pinned_hits(payload: Mapping, pinned: Mapping) -> list[str]:
@@ -949,6 +1146,13 @@ def _pinned_hits(payload: Mapping, pinned: Mapping) -> list[str]:
             out.append(f'static_map.{key} does not match the pinned map bundle')
     if 'scenario_id' in pinned and (sheet or {}).get('scenario_id') != pinned['scenario_id']:
         out.append('order_sheet.scenario_id does not match the pinned scenario reference')
+    # Second review, finding 1: the map FIGURE is part of the frozen map bundle.
+    # ``None`` pins "this run has no schematic", so any schematic_ref is foreign.
+    if 'schematic_png_sha256' in pinned:
+        schematic = (static or {}).get('schematic_ref')
+        got = schematic.get('png_sha256') if isinstance(schematic, Mapping) else None
+        if got != pinned['schematic_png_sha256']:
+            out.append('static_map.schematic_ref does not match the pinned map schematic')
     return out
 
 

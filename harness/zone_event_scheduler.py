@@ -43,7 +43,8 @@ from harness.zone_sim_cost import (Attempt, CallCostRecord, FAILED_OUTCOMES, Mes
                                    TRIGGER_TO_CONTRACT, call_cost, censored_call_record,
                                    contract_call_record, contract_message_records, delivery_delay_s,
                                    params, quantize)
-from harness.zone_study_contract import CONDITIONS as CONTRACT_CONDITIONS, ROBOTS
+from harness.zone_study_contract import (CONDITIONS as CONTRACT_CONDITIONS, ENVELOPE_KEYS,
+                                         MESSAGE_ENVELOPE_SCHEMA, ROBOTS)
 
 SCHEDULER_SCHEMA = 'ugrp.zone_event_scheduler.v1'
 DEFAULT_ACTORS = ROBOTS
@@ -85,6 +86,7 @@ class Message:
     encoding: str = 'free_ko'
     message_id: str = ''
     rejection: str | None = None
+    reply_to: str | None = None
 
     def __post_init__(self):
         if self.encoding not in ENCODINGS:
@@ -117,15 +119,49 @@ class CallReply:
     attempts: tuple = (Attempt(),)
     action: object = None
     messages: tuple = ()
+    #: Utterances the model GENERATED that never became an envelope because the
+    #: reply failed to parse (second review, finding 6). They are billed like
+    #: any other utterance and are never delivered. Only a failed last attempt
+    #: can carry them.
+    unparsed_utterances: int = 0
 
     def __post_init__(self):
         if not self.attempts:
             raise ValueError('a reply needs at least one attempt')
+        if isinstance(self.unparsed_utterances, bool) or not isinstance(self.unparsed_utterances, int) \
+                or self.unparsed_utterances < 0:
+            raise ValueError('unparsed_utterances must be a non-negative int')
+        if self.unparsed_utterances and self.attempts[-1].outcome not in FAILED_OUTCOMES:
+            raise ValueError('only a failed reply can carry unparsed utterances; a parsed reply carries '
+                             'its utterances as messages')
         billed = self.attempts[-1].utterances
-        if billed != len(self.messages):
-            raise ValueError(f'the reply carries {len(self.messages)} utterance(s) but its last attempt '
-                             f'bills {billed}: the charged utterance count must be the count the model '
-                             'produced (review finding 6)')
+        produced = len(self.messages) + self.unparsed_utterances
+        if billed != produced:
+            raise ValueError(f'the reply produced {produced} utterance(s) ({len(self.messages)} message(s), '
+                             f'{self.unparsed_utterances} unparsed) but its last attempt bills {billed}: '
+                             'the charged utterance count must be the count the model produced '
+                             '(review finding 6)')
+
+    @property
+    def produced_utterances(self):
+        return len(self.messages) + self.unparsed_utterances
+
+
+class TransportFailure(Exception):
+    """A transport failure that still KNOWS what the provider billed.
+
+    Second review, finding 6: the scheduler turned every transport exception
+    into an ``error`` attempt with no tokens and no utterances, so a malformed
+    or failed reply whose usage the transport had already read became free. A
+    transport raises this with the costed ``attempts`` (and the number of
+    utterances the model generated) instead; a plain exception is still an
+    ``error`` attempt, recorded with ``usage_known=False``.
+    """
+
+    def __init__(self, message, *, attempts, unparsed_utterances=0):
+        super().__init__(message)
+        self.attempts = tuple(attempts)
+        self.unparsed_utterances = int(unparsed_utterances)
 
 
 @dataclass
@@ -139,6 +175,10 @@ class PendingCall:
     token: object = None
     merged: tuple = ()
     retry_of: str = ''
+    #: ``reserve(count=1) -> bool``: a transport that retries internally MUST
+    #: reserve every further HTTP attempt through this before sending it
+    #: (second review, finding 15). False = the budget is out, do not send.
+    reserve: object = None
 
 
 @dataclass(frozen=True)
@@ -224,12 +264,11 @@ class AttemptBudget:
         of silently exceeding the cap.
         """
         self.release(actor, reserved)
-        extra = max(0, actual - reserved)
-        over = 0
-        if extra:
-            left = self.remaining(actor)
-            if left is not None and left < extra:
-                over = extra - max(left, 0)
+        # ``remaining`` after the release INCLUDES the slots this call had
+        # reserved, so the over-budget count is ``actual - remaining`` (the
+        # first round subtracted the reservation twice: cap 1, 3 attempts -> 1).
+        left = self.remaining(actor)
+        over = max(0, actual - max(left, 0)) if left is not None else 0
         self.used[actor] += actual
         return over
 
@@ -332,7 +371,14 @@ class EventScheduler:
         self.discarded = []
         self.transport_errors = []
         self.over_budget_attempts = []
+        #: Robot-facing inbox: package A's closed envelope (``ENVELOPE_KEYS``),
+        #: the SAME shape as package C's ``Transport.inbox`` (second review,
+        #: finding 2). Delivery times live in ``deliveries`` (evaluation).
         self.inboxes = {actor: [] for actor in self.actors}
+        self.deliveries = {actor: [] for actor in self.actors}
+        #: Every accepted utterance scheduled for delivery, delivered or not by
+        #: the horizon, so billing can be reconciled with production.
+        self.scheduled = {}
         self.holds = []
         self.events = []
         self.metrics = {actor: _metrics_row() for actor in self.actors}
@@ -384,9 +430,19 @@ class EventScheduler:
             self._push('observe', at, (0., self._rank[actor], 0, 0), {'actor': actor, 'period_s': period})
 
     def inbox(self, actor):
-        """Delivered messages of ``actor``, in delivery order."""
+        """Delivered envelopes of ``actor``, in delivery order (package A shape)."""
         self._check_actor(actor)
-        return tuple(self.inboxes[actor])
+        return tuple(dict(row) for row in self.inboxes[actor])
+
+    def delivery_log(self, actor):
+        """Evaluation-side delivery rows of ``actor``: envelope id, time, broadcast."""
+        self._check_actor(actor)
+        return tuple(dict(row) for row in self.deliveries[actor])
+
+    def undelivered(self):
+        """Accepted utterances whose delivery had not happened by the stop."""
+        return [dict(row, message_id=mid) for mid, row in sorted(self.scheduled.items())
+                if set(row['delivered']) != set(row['recipients'])]
 
     def trace(self):
         """Compact, comparable SIM trace: what happened, when, to whom.
@@ -440,13 +496,15 @@ class EventScheduler:
                 'censored_calls': [dict(row) for row in self.censored],
                 'attempt_budget': self.budget.to_dict()}
 
-    def run(self, until_s=None, max_events=None):
+    def run(self, until_s=None, max_events=None, *, close_at_horizon=True):
         """Process events until the queue is quiet, ``until_s`` or ``max_events``.
 
-        Calls that started before the horizon but would only be charged after it
-        are NOT dropped: they are closed as ``censored`` with the SIM time that
-        elapsed, and the API resources they really used stay unknown instead of 0
-        (review finding 16).
+        With ``close_at_horizon`` (the default) ``until_s`` is the trial HORIZON:
+        calls that started before it but would only be charged after it are NOT
+        dropped, they are closed as ``censored`` with the SIM time that elapsed
+        and the provider usage they really had (review finding 16, second
+        review). ``close_at_horizon=False`` makes ``until_s`` a resumable pause:
+        in-flight calls stay in flight and finish on the next ``run``.
         """
         processed, reason = 0, 'quiet'
         while True:
@@ -466,40 +524,79 @@ class EventScheduler:
             self._advance(event.at)
             self._dispatch(event)
             processed += 1
-        if reason == 'until':
-            # Only the HORIZON closes a call as censored. A ``max_events`` stop is
-            # an interrupted run the caller may resume, so its in-flight calls
-            # stay pending.
+        if reason == 'until' and close_at_horizon:
+            # Only the HORIZON closes a call as censored. A pause or a
+            # ``max_events`` stop is an interrupted run the caller may resume, so
+            # its in-flight calls stay pending.
             self._censor_outstanding(until_s)
         return RunReport(sim_s=self.clock, stop_reason=reason, events=processed,
                          calls=len(self.calls), deliveries=len(self.messages),
                          censored_calls=len(self.censored))
 
     def _censor_outstanding(self, until_s):
-        """Close every call that is still in flight at the horizon (finding 16)."""
+        """Close every call that is still in flight at the horizon (finding 16).
+
+        Second review: the SIM action of such a call is never released, but the
+        API call itself was made. A reply that was already fetched keeps its
+        real usage, and a reply that was not fetched yet is fetched now (the
+        request left at the call's start), so tokens, attempts and utterances are
+        the provider's numbers instead of 0. Only a transport failure without
+        usage stays ``usage_known=False``. Nothing of the reply is executed.
+        """
         at = self.clock if until_s is None else max(self.clock, float(until_s))
         rows = []
         for call in self._pending.values():
-            rows.append((call, 'pending'))
+            rows.append((call, 'pending', None, None))
         for event in self._queue:
             if event.kind == 'call_done':
-                rows.append((event.payload['call'], 'charged_after_horizon'))
-        for call, why in sorted(rows, key=lambda r: (r[0].started_sim_s, self._rank[r[0].actor],
-                                                     r[0].call_id)):
+                rows.append((event.payload['call'], 'charged_after_horizon', event.payload['cost'],
+                             event.payload['reply']))
+        censored_ids = set()
+        for call, why, cost, reply in sorted(rows, key=lambda r: (r[0].started_sim_s, self._rank[r[0].actor],
+                                                                   r[0].call_id)):
             entry = self.ledger.get(call.call_id)
             if entry is None or entry['status'] != 'outstanding':
                 continue
+            usage_known = True
+            if reply is None:
+                errors = len(self.transport_errors)
+                reply = self._reply_of(call)
+                cost = call_cost(reply.attempts, self.params)
+                usage_known = not any(row.get('usage_known') is False for row in self.transport_errors[errors:])
+            reserved = entry.get('reserved_attempts', 1)
+            actual = len(cost.attempts)
+            over = self.budget.commit(call.actor, reserved=reserved, actual=actual)
+            if actual > reserved or over:
+                self.over_budget_attempts.append({'call_id': call.call_id, 'actor': call.actor,
+                                                  'reserved': reserved, 'actual': actual,
+                                                  'unreserved': max(0, actual - reserved), 'over': over})
+            self._thinking.pop(call.call_id, None)
+            censored_ids.add(call.call_id)
             elapsed = _round(max(at - call.started_sim_s, 0.))
             entry.update({'status': 'censored', 'finished_sim_s': _round(at), 'reason': why,
-                          'elapsed_sim_s': elapsed})
+                          'elapsed_sim_s': elapsed, 'attempts': actual})
             self.censored.append({'call_id': call.call_id, 'actor': call.actor, 'trigger': call.trigger,
                                   'started_sim_s': call.started_sim_s, 'horizon_sim_s': _round(at),
                                   'elapsed_sim_s': elapsed, 'reason': why,
-                                  'reserved_attempts': entry.get('reserved_attempts', 1),
-                                  'retry_of': call.retry_of})
+                                  'reserved_attempts': reserved, 'retry_of': call.retry_of,
+                                  # the API side is complete; the SIM release is not
+                                  'usage_known': usage_known, 'http_attempts': actual,
+                                  'input_tokens': cost.breakdown['input_tokens'],
+                                  'output_tokens': cost.breakdown['output_tokens'],
+                                  'utterances': cost.breakdown['utterances'],
+                                  'outcome': cost.outcome, 'charged_sim_s': cost.sim_s,
+                                  'would_release_sim_s': _round(call.started_sim_s + cost.sim_s),
+                                  'messages': len(reply.messages),
+                                  'unparsed_utterances': reply.unparsed_utterances,
+                                  'cost': cost.to_dict()})
             self._log(f'call_censored {call.actor} {call.call_id} elapsed={elapsed:.3f}',
                       kind='call_censored', actor=call.actor, call_id=call.call_id)
         self._pending.clear()
+        if censored_ids:
+            # a censored call can never complete later, even if the run resumes
+            self._queue = [e for e in self._queue
+                           if not (e.kind == 'call_done' and e.payload['call'].call_id in censored_ids)]
+            heapq.heapify(self._queue)
 
     # -- queue -------------------------------------------------------------
 
@@ -553,9 +650,21 @@ class EventScheduler:
         """Fetch the reply; a transport exception is itself a costed error attempt."""
         try:
             reply = self.transport.reply(call.token)
+        except TransportFailure as exc:
+            # the transport knows what the provider billed: keep it (finding 6)
+            self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
+                                         'error': f'{type(exc).__name__}: {exc}', 'usage_known': True,
+                                         'unparsed_utterances': exc.unparsed_utterances})
+            attempts = exc.attempts or (Attempt(outcome='error'),)
+            if attempts[-1].outcome not in FAILED_OUTCOMES:
+                attempts = attempts[:-1] + (Attempt(outcome='error',
+                                                    input_tokens=attempts[-1].input_tokens,
+                                                    output_tokens=attempts[-1].output_tokens,
+                                                    utterances=attempts[-1].utterances),)
+            return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances)
         except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
             self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
-                                         'error': f'{type(exc).__name__}: {exc}'})
+                                         'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
             return CallReply(attempts=(Attempt(outcome='error'),))
         if not isinstance(reply, CallReply):
             raise TypeError(f'transport returned {type(reply).__name__}, expected CallReply')
@@ -603,6 +712,7 @@ class EventScheduler:
                                      'started_sim_s': self.clock, 'reserved_attempts': 1,
                                      'status': 'outstanding', 'finished_sim_s': None,
                                      'retry_of': call.retry_of, 'merged_triggers': tuple(merged)}
+        call.reserve = lambda count=1, _call=call: self._reserve_more(_call, count)
         try:
             call.token = self.transport.submit(call)
         except Exception:
@@ -618,6 +728,23 @@ class EventScheduler:
             self.on_hold(actor, True, self.now())
         self._log(f'call_start {actor} {trigger} {call.call_id}', kind='call_start', actor=actor,
                   call_id=call.call_id)
+
+    def _reserve_more(self, call, count=1):
+        """Reserve further HTTP attempts of an in-flight call (finding 15).
+
+        A transport calls this through ``PendingCall.reserve`` BEFORE each
+        internal retry. The reservation goes through the single budget owner, so
+        a refused retry is never sent instead of being found over budget later.
+        """
+        entry = self.ledger.get(call.call_id)
+        if entry is None or entry['status'] != 'outstanding':
+            raise ValueError(f'{call.call_id} is not outstanding; it cannot reserve attempts')
+        if not self.budget.reserve(call.actor, count):
+            self._log(f'retry_refused {call.actor} {call.call_id} http_budget', kind='retry_refused',
+                      actor=call.actor, call_id=call.call_id)
+            return False
+        entry['reserved_attempts'] += count
+        return True
 
     def _defer(self, actor, trigger, merged, reason):
         held = self._deferred.get(actor)
@@ -644,14 +771,17 @@ class EventScheduler:
         row['attempts'] += len(cost.attempts)
         entry = self.ledger.get(call.call_id, {})
         reserved = entry.get('reserved_attempts', 1)
-        over = self.budget.commit(actor, reserved=reserved, actual=len(cost.attempts))
-        if over:
-            # finding 15: an attempt beyond the reservation is recorded, never
-            # hidden, so the cohort can see the transport exceeded its budget.
+        actual = len(cost.attempts)
+        unreserved = max(0, actual - reserved)
+        over = self.budget.commit(actor, reserved=reserved, actual=actual)
+        if unreserved or over:
+            # finding 15: an attempt the transport sent WITHOUT reserving it is a
+            # budget breach. It is recorded, and the reply that depended on it
+            # executes nothing (second review: the retry used to run anyway).
             self.over_budget_attempts.append({'call_id': call.call_id, 'actor': actor,
-                                              'reserved': reserved, 'actual': len(cost.attempts),
-                                              'over': over})
-            self._log(f'attempts_over_budget {actor} {call.call_id} +{over}',
+                                              'reserved': reserved, 'actual': actual,
+                                              'unreserved': unreserved, 'over': over})
+            self._log(f'attempts_over_budget {actor} {call.call_id} unreserved={unreserved} over={over}',
                       kind='attempts_over_budget', actor=actor, call_id=call.call_id)
         for attempt in cost.attempts:
             if attempt.outcome == 'invalid':
@@ -662,30 +792,34 @@ class EventScheduler:
                 row['timeouts'] += 1
         row['utterances'] += cost.breakdown['utterances']
         failed = cost.outcome in FAILED_OUTCOMES
-        notes = {'messages': len(reply.messages), 'failed': failed,
-                 'attempts_over_budget': over}
-        if failed:
+        breach = bool(unreserved)
+        notes = {'messages': len(reply.messages), 'unparsed_utterances': reply.unparsed_utterances,
+                 'failed': failed, 'attempts_over_budget': over, 'unreserved_attempts': unreserved}
+        if failed or breach:
             # finding 5: a failed call PAYS but executes nothing. Its action and
             # its utterances are recorded as discarded, and only then is it
             # retried, so a wrong decision cannot run and get a second chance.
             notes['discarded_action'] = reply.action is not None
             notes['discarded_messages'] = len(reply.messages)
             self.discarded.append({'call_id': call.call_id, 'actor': actor, 'outcome': cost.outcome,
+                                   'reason': 'budget_breach' if breach else 'failed',
                                    'action': reply.action, 'messages': len(reply.messages),
+                                   'unparsed_utterances': reply.unparsed_utterances,
                                    'sim_s': self.now()})
         self.calls.append(CallCostRecord(call_id=call.call_id, actor=actor, trigger=call.trigger,
                                          started_sim_s=call.started_sim_s, finished_sim_s=self.clock,
                                          cost=cost, merged_triggers=call.merged, retry_of=call.retry_of,
                                          notes=notes))
-        entry.update({'status': 'failed' if failed else 'done', 'finished_sim_s': self.now(),
+        entry.update({'status': 'failed' if (failed or breach) else 'done', 'finished_sim_s': self.now(),
                       'attempts': len(cost.attempts)})
         self._log(f'call_done {actor} {call.call_id} {cost.outcome} cost={cost.sim_s:.3f}',
                   kind='call_done', actor=actor, call_id=call.call_id)
-        if failed:
+        if failed or breach:
             self._log(f'call_discarded {actor} {call.call_id} {cost.outcome} '
                       f'action={reply.action is not None} messages={len(reply.messages)}',
                       kind='call_discarded', actor=actor, call_id=call.call_id)
-            self._retry(call, cost)
+            if not breach:          # a budget breach is never rewarded with a retry
+                self._retry(call, cost)
         else:
             if reply.action is not None:
                 self._log(f'action {actor} {reply.action}', kind='action', actor=actor)
@@ -722,6 +856,8 @@ class EventScheduler:
                           kind='message_rejected', actor=sender, message_id=message_id)
                 continue
             delay = delivery_delay_s(len(message.recipients), self.params)
+            self.scheduled[message_id] = {'call_id': call.call_id, 'sender': sender,
+                                          'recipients': list(message.recipients), 'delivered': []}
             if message.broadcast:
                 self.metrics[sender]['broadcasts'] += 1
             for slot, recipient in enumerate(message.recipients):
@@ -732,6 +868,7 @@ class EventScheduler:
                            {'message_id': message_id, 'call_id': call.call_id,
                             'sender': sender, 'recipient': recipient, 'encoding': message.encoding,
                             'body': message.body, 'broadcast': message.broadcast,
+                            'recipients': tuple(message.recipients), 'reply_to': message.reply_to,
                             'sent_sim_s': self.clock, 'slot': slot})
 
     def _retry(self, call, cost):
@@ -754,19 +891,31 @@ class EventScheduler:
             # message into an inbox, and it does so at the SIM time it charged.
             self.bus.commit_delivery(payload['message_id'], at_sim_s=self.now(),
                                      owner=self.bus_owner, recipients=[recipient])
+            # second review: the robot-facing row IS the bus's canonical
+            # envelope (recipients, created_at_sim_s, the real body), not a
+            # second shape keyed by the id.
+            envelope = self.bus.delivered[payload['message_id']].record()
+        else:
+            envelope = {'schema': MESSAGE_ENVELOPE_SCHEMA, 'message_id': payload['message_id'],
+                        'sender': payload['sender'], 'recipients': list(payload['recipients']),
+                        'encoding': payload['encoding'], 'created_at_sim_s': _round(payload['sent_sim_s']),
+                        'reply_to': payload['reply_to'], 'body': payload['body']}
+        if set(envelope) != set(ENVELOPE_KEYS):
+            raise AssertionError(f'inbox envelope keys {sorted(envelope)} differ from package A')
+        self.scheduled.get(payload['message_id'], {'delivered': []})['delivered'].append(recipient)
         record = MessageCostRecord(message_id=payload['message_id'], sender=payload['sender'],
                                    recipient=recipient, encoding=payload['encoding'],
                                    sent_sim_s=payload['sent_sim_s'], delivered_sim_s=self.clock,
                                    broadcast=payload['broadcast'], call_id=payload['call_id'])
         self.messages.append(record)
-        self.inboxes[recipient].append({'message_id': record.message_id, 'sender': record.sender,
-                                        'encoding': record.encoding, 'body': payload['body'],
-                                        'delivered_sim_s': self.now(), 'broadcast': record.broadcast})
+        self.inboxes[recipient].append(envelope)
+        self.deliveries[recipient].append({'message_id': record.message_id, 'sender': record.sender,
+                                           'delivered_sim_s': self.now(), 'broadcast': record.broadcast})
         self.metrics[recipient]['messages_received'] += 1
         self._log(f'deliver {payload["sender"]}->{recipient} {record.message_id}',
                   kind='message', actor=recipient, message_id=record.message_id)
         if self.on_message:
-            self.on_message(recipient, self.inboxes[recipient][-1], self.now())
+            self.on_message(recipient, dict(envelope), self.now())
         if self.policy.trigger_on_message:
             self._push('call_start', self.clock, (0., self._rank[recipient], 0, 0),
                        {'actor': recipient, 'trigger': 'report', 'merged': (), 'retry_of': ''})
@@ -811,6 +960,26 @@ class ReplayTransport:
         self.resolved.append(token.call_id)
         source = self.replies.get(token.actor) if isinstance(self.replies, dict) else self.replies
         if callable(source):
-            return source(token)
+            return self._reserved(token, source(token))
         queue = self._queues.setdefault(token.actor, list(source or ()))
-        return queue.pop(0) if queue else self.default
+        return self._reserved(token, queue.pop(0) if queue else self.default)
+
+    @staticmethod
+    def _reserved(token, reply):
+        """Replay a multi-attempt reply as a COMPLIANT transport would send it.
+
+        Every attempt after the first is reserved through ``token.reserve``
+        before it is "sent" (second review, finding 15). A refused reservation
+        means the retry never left, so the reply ends at the last attempt the
+        budget covered, and a failed last attempt executes nothing.
+        """
+        reserve = getattr(token, 'reserve', None)
+        if reserve is None or len(reply.attempts) < 2:
+            return reply
+        for index in range(1, len(reply.attempts)):
+            if not reserve(1):
+                kept = reply.attempts[:index]
+                if kept[-1].outcome not in FAILED_OUTCOMES:
+                    raise ValueError('a scripted reply cannot retry after a successful attempt')
+                return CallReply(attempts=kept, unparsed_utterances=kept[-1].utterances)
+        return reply

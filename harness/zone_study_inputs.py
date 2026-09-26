@@ -225,8 +225,11 @@ def _build_sheet(normalized: Mapping, map_ref: Mapping) -> dict:
 
 
 def _map_ref(map_bundle: Mapping) -> dict:
+    schematic = map_bundle.get('schematic') if isinstance(map_bundle.get('schematic'), Mapping) else None
     return {'map_id': map_bundle['map_id'], 'map_file_sha256': map_bundle['map_file_sha256'],
-            'public_map_sha256': map_bundle['public_map_sha256']}
+            'public_map_sha256': map_bundle['public_map_sha256'],
+            # second review, finding 1: the figure is pinned like the projection
+            'schematic_png_sha256': schematic['png_sha256'] if schematic else None}
 
 
 def order_sheet(scenario: Mapping, map_bundle: Mapping) -> dict:
@@ -259,6 +262,7 @@ class OrderSheetSource:
         return {'order_sheet_sha256': self.sha256, 'map_id': self._bundle_ref['map_id'],
                 'map_file_sha256': self._bundle_ref['map_file_sha256'],
                 'public_map_sha256': self._bundle_ref['public_map_sha256'],
+                'schematic_png_sha256': self._bundle_ref['schematic_png_sha256'],
                 'scenario_id': self.scenario_ref}
 
     @property
@@ -389,7 +393,10 @@ def build_call_input(*, robot_id: str, condition_name: str, request_id: str, sim
         payload['team_rgb_refs'] = _trim(team_rgb_refs, len(ROBOTS) * int(profile['own_rgb_frames']))
     if 'issued_orders' in allow:
         payload['issued_orders'] = _trim(issued_orders, int(profile['command_history_entries']))
-    validate_robot_payload(payload, seed=seed)
+    # Second review, finding 3: the NORMAL construction path compares the payload
+    # with the frozen originals too, so a caller-supplied ``static_map`` whose
+    # projection and hash were both rewritten cannot pass as the run's map.
+    validate_robot_payload(payload, seed=seed, pinned=source.pinned)
     return payload
 
 
