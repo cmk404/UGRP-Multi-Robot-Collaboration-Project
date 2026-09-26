@@ -98,6 +98,8 @@ TIMEOUT_REASONS = ('LOCAL_TIMEOUT',)
 PICKUP_BAY_COLUMNS, PICKUP_BAY_ROWS = 2, 3
 SLOT_SEARCH_MARGIN_M = .15      # own-RGB cyan detections kept within the ordered pickup slot + this margin
 PICKUP_VIEW_X_M = -.47          # = m1_owncam_delivery.SEARCH_VIEW_X_M (west of the pickup grid)
+FAR_BAY_M = 1.0                 # a bay starting this far east of the west viewpoint gets lane viewpoints
+LANE_OFFSET_M = .40             # mid-lane between static pickup rows (rows are 0.80 m apart)
 ZONE_APPROACH_M = .25           # goto('A'): stop this far west of the zone paint
 SLOT_STANDOFF_M = .40           # goto('A2'): stop this far west of the slot centre
 DOOR_SIDE_M = .45               # goto('door_1'): the far side of the door, this far from its centre
@@ -182,6 +184,16 @@ def validate_order_sheet(order_sheet: Mapping, static_map: Mapping) -> dict[str,
     return out
 
 
+def lane_viewpoints(slot_rect, rows_y: Sequence[float], y_est: float) -> list[tuple[float, float]]:
+    """Extra search viewpoints for a far pickup slot: its west edge, on the mid-lanes between static rows."""
+    (x0, _), (y0, y1) = slot_rect
+    if x0 - PICKUP_VIEW_X_M <= FAR_BAY_M:
+        return []
+    lanes = sorted({round(r + d, 3) for r in rows_y for d in (-LANE_OFFSET_M, LANE_OFFSET_M)
+                    if y0 - .1 <= r + d <= y1 + .1}, key=lambda y: (abs(y - y_est), y))
+    return [(float(x0), y) for y in lanes]
+
+
 def uncertainty_level(report: PoseReport) -> str:
     if not report.initialized or not math.isfinite(report.std_xy_m):
         return 'unknown'
@@ -213,11 +225,31 @@ class _DeliverController(M1OwnCamDelivery):
     """M1 delivery on the executor's shared localizer; own-RGB search limited to the ordered pickup slot."""
 
     def __init__(self, *args, shared_pose: OwnCamPoseSource, servo: Mapping[int, int],
-                 slot_rect: tuple[tuple[float, float], tuple[float, float]], **kwargs):
+                 slot_rect: tuple[tuple[float, float], tuple[float, float]], all_rows_y: Sequence[float] = (),
+                 **kwargs):
         super().__init__(*args, **kwargs)
+        self.all_rows_y = tuple(float(y) for y in all_rows_y)
         self.pose = shared_pose                 # one localizer per robot for the whole episode
         self.servo = dict(servo)                # own issued servo state at job start
         self.slot_rect = slot_rect
+
+    def _init(self, now):
+        """M1 init (localise, west viewpoints), plus lane viewpoints for a far bay (P2).
+
+        dev-s703 plumb3: from the west viewpoints (x = -0.47) a P2 box (x 1.0 / 1.6) is 1.5-2.1 m away,
+        a few pixels on the horizon; neither ``near`` nor ``far_coarse`` fitted it (SEARCH_NOT_FOUND x2).
+        For a slot whose bay starts more than ``FAR_BAY_M`` east of the west viewpoint the robot also
+        looks from the bay's west edge, on the mid-lanes between pickup rows (static layout rows, the
+        same rows M1 uses for its viewpoints), after the west viewpoints (whose near boxes become keep-outs).
+        """
+        decision = super()._init(now)
+        if self.phase == 'search_leg' and not getattr(self, '_lanes_added', False):
+            self._lanes_added = True
+            extra = lane_viewpoints(self.slot_rect, self.all_rows_y, self.pose.report(now).y_m)
+            if extra:
+                self.viewpoints += extra
+                self._event(now, 'lane_viewpoints', viewpoints=self.viewpoints)
+        return decision
 
     def _in_slot(self, xy) -> bool:
         (x0, x1), (y0, y1) = self.slot_rect
@@ -719,7 +751,8 @@ class ZoneOwnExecutor:
                                          slot_xy=job.args['slot_xy'], skill_factory=self._skill_for(job),
                                          pose_estimate_cls=self.pose_estimate_cls, search_rows_y=rows,
                                          robot_id=self.robot_id, seed=self.seed, order_kind='own_rgb_bay',
-                                         shared_pose=self.pose, servo=self.servo, slot_rect=rect)
+                                         shared_pose=self.pose, servo=self.servo, slot_rect=rect,
+                                         all_rows_y=self.search_rows_y)
             job.ctl.last_obs, job.ctl.last_frame_id = self.last_obs, self.last_frame_id
             job.phase = 'm1_delivery'
         decision = job.ctl.decide(now)

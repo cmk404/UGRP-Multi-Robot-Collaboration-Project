@@ -162,6 +162,14 @@ def test_pickup_slots_follow_package_a_rule():
     assert zox.pickup_slot_of(MAP, (1.6, -0.85)) == 'P2-2' and zox.pickup_slot_of(MAP, (-0.2, 0.75)) == 'P1-3'
 
 
+def test_far_pickup_slot_gets_lane_viewpoints():
+    slots = zox.pickup_slots(MAP)
+    rect = lambda sid: (tuple(slots[sid]['x_range_m']), tuple(slots[sid]['y_range_m']))  # noqa: E731
+    assert zox.lane_viewpoints(rect('P1-2'), ROWS_Y, -0.85) == []           # near bay: M1 west viewpoints only
+    assert zox.lane_viewpoints(rect('P2-2'), ROWS_Y, -0.3) == [(0.7, -0.45), (0.7, -1.25)]
+    assert zox.lane_viewpoints(rect('P2-3'), ROWS_Y, 0.55) == [(0.7, 0.35), (0.7, 1.15)]
+
+
 def test_order_sheet_refuses_coordinates_and_unknown_keys():
     bad = {'orders': [{**SHEET['orders'][0], 'initial_location': {'pickup_bay': 'P2', 'slot': [1.0, 0.75]}}]}
     with pytest.raises(zox.ExecutorContractError):
