@@ -272,8 +272,10 @@ def test_retire_refuses_unmerged_dirty_busy_and_existing_destination(repo):
 @needs_lsof
 def test_retire_refuses_worktree_named_by_a_running_command(repo):
     path = make_worktree_with_outputs(repo, "kiro-named", "kiro/named")
-    # cwd elsewhere; only the command line names the worktree (e.g. an agent job's prompt).
-    sleeper = subprocess.Popen([sys.executable, "-c", "import time, sys; time.sleep(60)", f"{path}/x"], cwd=repo.parent)
+    # cwd elsewhere; only the command line names the worktree (e.g. an agent job's prompt), and only
+    # after 300 characters, so a ps that truncates the command column would miss it.
+    sleeper = subprocess.Popen([sys.executable, "-c", "import time, sys; time.sleep(60)", "p" * 300, f"{path}/x"],
+                               cwd=repo.parent)
     try:
         deadline = time.monotonic() + 5
         while not guard.processes_naming(path) and time.monotonic() < deadline:

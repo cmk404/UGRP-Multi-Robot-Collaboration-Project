@@ -42,7 +42,7 @@ def ancestry(pid: int) -> set[int]:
 
 
 def process_table(exclude: set[int]) -> tuple[list[dict], dict[int, str]]:
-    out = subprocess.run(["ps", "-Ao", "pid=,ppid=,command="], capture_output=True, text=True).stdout
+    out = subprocess.run(["ps", "-ww", "-Ao", "pid=,ppid=,command="], capture_output=True, text=True).stdout
     rows = []
     for line in out.splitlines():
         parts = line.strip().split(None, 2)

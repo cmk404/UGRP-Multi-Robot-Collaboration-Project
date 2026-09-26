@@ -81,7 +81,9 @@ def names_path(command: str, target: str) -> bool:
 
 def processes_naming(path: Path) -> list[dict]:
     """Other processes whose command line names path (e.g. a job started with that worktree)."""
-    result = subprocess.run(["ps", "-Ao", "pid=,command="], capture_output=True, text=True)
+    # -ww: unlimited width. procps (Linux) otherwise cuts `command` to 80 columns when
+    # stdout is not a terminal, which would hide a worktree path late in the command line.
+    result = subprocess.run(["ps", "-ww", "-Ao", "pid=,command="], capture_output=True, text=True)
     if result.returncode != 0:
         raise Refused("cannot list processes with ps; refusing")
     targets = {os.path.realpath(path), os.path.abspath(path)}
