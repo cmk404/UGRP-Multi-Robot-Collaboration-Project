@@ -1,0 +1,6794 @@
+{
+ "experiment_id": "2026-09-26-zone-m2-pair",
+ "stage": "stage2c",
+ "cohort": "stage2c-ca44f66",
+ "raw_root_local_only": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926",
+ "raw_note": "raw outputs are local (gitignored); not a remote backup",
+ "cohort_log": {
+  "path": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/cohort.log",
+  "sha256": "48a2a963870612e975988daa6082006ebff94ccce10e57bc39eaec5a8d2f249e"
+ },
+ "runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s831-on",
+   "result_sha256": "ff7164090cc704f1f8fd0f153bbda8f09bf79aa541dc6174828f729f52f34d0f",
+   "events_sha256": "981a204cbb05bacbf00e962d7254b63094b5d271ff4c5990be68926405ebe8e7",
+   "commands_sha256": "f1c307dd6efd13b37f686080254ff5e8a4a3706c52382c91606cf09095f9187a",
+   "seed": 831,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0608,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.24,
+   "order_sheet_error": {
+    "xy_m": 0.0316,
+    "yaw_rad": 0.0
+   },
+   "approach": {
+    "r1": {
+     "frames": 229,
+     "commands": 393,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 47.025,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.0715,
+     "localizer_pos_err_max_m": 0.52,
+     "at_arrival": {
+      "gt": [
+       0.3686,
+       0.1703,
+       -0.0213
+      ],
+      "pos_err_to_goal_m": 0.0706,
+      "pos_err_to_true_prestation_m": 0.0648,
+      "yaw_err_to_true_rad": 0.0213,
+      "localizer_pos_err_m": 0.0407
+     }
+    },
+    "r2": {
+     "frames": 521,
+     "commands": 889,
+     "looks": 5,
+     "outcome": "arrived",
+     "arrived_s": 105.529,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.013,
+     "localizer_pos_err_max_m": 0.8808,
+     "at_arrival": {
+      "gt": [
+       1.8375,
+       0.057,
+       3.1395
+      ],
+      "pos_err_to_goal_m": 0.0448,
+      "pos_err_to_true_prestation_m": 0.0679,
+      "yaw_err_to_true_rad": 0.0021,
+      "localizer_pos_err_m": 0.0155
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0679,
+   "max_arrival_err_to_own_goal_m": 0.0706,
+   "max_arrival_yaw_err_rad": 0.0213,
+   "max_arrival_localizer_err_m": 0.0407,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.0084,
+    "beam_z_at_crossing_m": 0.0609,
+    "crossing_t": 191.27,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0715,
+      "e_yaw_rad": -0.013,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0145,
+       "turn": -0.0015
+      }
+     },
+     "r2": {
+      "dy_m": 0.024,
+      "e_yaw_rad": 0.0283,
+      "cmd": {
+       "forward": 0.0001,
+       "left": -0.0049,
+       "turn": 0.0032
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9839,
+       -0.0215,
+       0.013
+      ],
+      "std_xy_m": 0.0285,
+      "sim_time": 207.48299999682166
+     },
+     "r2": {
+      "xyyaw": [
+       2.8561,
+       0.026,
+       3.1133
+      ],
+      "std_xy_m": 0.0188,
+      "sim_time": 207.48299999682166
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3748,
+       0.1293,
+       -0.0018
+      ],
+      "std_xy_m": 0.0277,
+      "looks": 2,
+      "sim_time": 47.025000000133524
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1727354434134757,
+       -0.006413060750786466
+      ],
+      "errors": [
+       0.010735443413475682,
+       -0.006413060750786466,
+       0.018437581083828307
+      ],
+      "sim_time": 128.98724999867784
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9839,
+       -0.0215,
+       0.013
+      ],
+      "std_xy_m": 0.0285,
+      "sim_time": 207.48299999682166
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6172,
+       "bottom_beam_fraction": 0.1513,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6172,
+       "top_beam_fraction": 0.902,
+       "bottom_beam_fraction": 0.1513
+      },
+      "sim_time": 211.49299999672684
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.843,
+       "sim_time": 136.0047499985119
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.88,
+       "sim_time": 170.18999999770352
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.851,
+       "sim_time": 213.19724999668654
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.851,
+      "sim_time": 213.19724999668654
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0369,
+        "e_yaw_rad": 0.0253,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0075,
+         "turn": 0.0028
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0421,
+        "e_yaw_rad": -0.0079,
+        "cmd": {
+         "forward": -0.0,
+         "left": -0.0086,
+         "turn": -0.0009
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0715,
+        "e_yaw_rad": -0.013,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0145,
+         "turn": -0.0015
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 237.2572499961176
+     },
+     "door_align": {
+      "dy_m": 0.0715,
+      "e_yaw_rad": -0.013,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0145,
+       "turn": -0.0015
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 245.27724999592795,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.829,
+       0.0713,
+       -3.1407
+      ],
+      "std_xy_m": 0.0319,
+      "looks": 5,
+      "sim_time": 105.52874999923255
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1724794314118701,
+       -0.004991304898837512
+      ],
+      "errors": [
+       0.010479431411870105,
+       -0.004991304898837512,
+       -0.004115777881994091
+      ],
+      "sim_time": 131.39324999862095
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8561,
+       0.026,
+       3.1133
+      ],
+      "std_xy_m": 0.0188,
+      "sim_time": 207.48299999682166
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.6213,
+       "bottom_beam_fraction": 0.037,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6213,
+       "top_beam_fraction": 0.8705,
+       "bottom_beam_fraction": 0.037
+      },
+      "sim_time": 211.49299999672684
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.828,
+       "sim_time": 136.0047499985119
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.876,
+       "sim_time": 170.18999999770352
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.846,
+       "sim_time": 213.19724999668654
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.846,
+      "sim_time": 213.19724999668654
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0668,
+        "e_yaw_rad": 0.0166,
+        "cmd": {
+         "forward": -0.0002,
+         "left": 0.0136,
+         "turn": 0.0019
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0537,
+        "e_yaw_rad": 0.0016,
+        "cmd": {
+         "forward": -0.0,
+         "left": 0.0109,
+         "turn": 0.0002
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.024,
+        "e_yaw_rad": 0.0283,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0049,
+         "turn": 0.0032
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 237.2572499961176
+     },
+     "door_align": {
+      "dy_m": 0.024,
+      "e_yaw_rad": 0.0283,
+      "cmd": {
+       "forward": 0.0001,
+       "left": -0.0049,
+       "turn": 0.0032
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 245.27724999592795,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 245.277,
+   "wall_seconds": 741.1,
+   "commands": 2650,
+   "frames": 1412,
+   "looks": 7,
+   "status_messages": 1228,
+   "load_average_start": [
+    14.08,
+    25.01,
+    33.72
+   ],
+   "load_average_end": [
+    16.59,
+    25.94,
+    33.74
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 245.277,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 136.005,
+     "seg": 0,
+     "held_iou": 0.843,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 136.005,
+     "seg": 0,
+     "held_iou": 0.828,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 170.19,
+     "seg": 1,
+     "held_iou": 0.88,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 170.19,
+     "seg": 1,
+     "held_iou": 0.876,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 213.197,
+     "seg": 2,
+     "held_iou": 0.851,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 213.197,
+     "seg": 2,
+     "held_iou": 0.846,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s831-off",
+   "result_sha256": "d1551e4867f8d477d5e8906703a73d0527c6ed44bfc1a64881cfb547195791fd",
+   "events_sha256": "981a204cbb05bacbf00e962d7254b63094b5d271ff4c5990be68926405ebe8e7",
+   "commands_sha256": "f1c307dd6efd13b37f686080254ff5e8a4a3706c52382c91606cf09095f9187a",
+   "seed": 831,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0608,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.24,
+   "order_sheet_error": {
+    "xy_m": 0.0316,
+    "yaw_rad": 0.0
+   },
+   "approach": {
+    "r1": {
+     "frames": 229,
+     "commands": 393,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 47.025,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.0715,
+     "localizer_pos_err_max_m": 0.52,
+     "at_arrival": {
+      "gt": [
+       0.3686,
+       0.1703,
+       -0.0213
+      ],
+      "pos_err_to_goal_m": 0.0706,
+      "pos_err_to_true_prestation_m": 0.0648,
+      "yaw_err_to_true_rad": 0.0213,
+      "localizer_pos_err_m": 0.0407
+     }
+    },
+    "r2": {
+     "frames": 521,
+     "commands": 889,
+     "looks": 5,
+     "outcome": "arrived",
+     "arrived_s": 105.529,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.013,
+     "localizer_pos_err_max_m": 0.8808,
+     "at_arrival": {
+      "gt": [
+       1.8375,
+       0.057,
+       3.1395
+      ],
+      "pos_err_to_goal_m": 0.0448,
+      "pos_err_to_true_prestation_m": 0.0679,
+      "yaw_err_to_true_rad": 0.0021,
+      "localizer_pos_err_m": 0.0155
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0679,
+   "max_arrival_err_to_own_goal_m": 0.0706,
+   "max_arrival_yaw_err_rad": 0.0213,
+   "max_arrival_localizer_err_m": 0.0407,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.0084,
+    "beam_z_at_crossing_m": 0.0609,
+    "crossing_t": 191.27,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0715,
+      "e_yaw_rad": -0.013,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0145,
+       "turn": -0.0015
+      }
+     },
+     "r2": {
+      "dy_m": 0.024,
+      "e_yaw_rad": 0.0283,
+      "cmd": {
+       "forward": 0.0001,
+       "left": -0.0049,
+       "turn": 0.0032
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9839,
+       -0.0215,
+       0.013
+      ],
+      "std_xy_m": 0.0285,
+      "sim_time": 207.48299999682166
+     },
+     "r2": {
+      "xyyaw": [
+       2.8561,
+       0.026,
+       3.1133
+      ],
+      "std_xy_m": 0.0188,
+      "sim_time": 207.48299999682166
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3748,
+       0.1293,
+       -0.0018
+      ],
+      "std_xy_m": 0.0277,
+      "looks": 2,
+      "sim_time": 47.025000000133524
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1727354434134757,
+       -0.006413060750786466
+      ],
+      "errors": [
+       0.010735443413475682,
+       -0.006413060750786466,
+       0.018437581083828307
+      ],
+      "sim_time": 128.98724999867784
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9839,
+       -0.0215,
+       0.013
+      ],
+      "std_xy_m": 0.0285,
+      "sim_time": 207.48299999682166
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6172,
+       "bottom_beam_fraction": 0.1513,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6172,
+       "top_beam_fraction": 0.902,
+       "bottom_beam_fraction": 0.1513
+      },
+      "sim_time": 211.49299999672684
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.843,
+       "sim_time": 136.0047499985119
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.88,
+       "sim_time": 170.18999999770352
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.851,
+       "sim_time": 213.19724999668654
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.851,
+      "sim_time": 213.19724999668654
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0369,
+        "e_yaw_rad": 0.0253,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0075,
+         "turn": 0.0028
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0421,
+        "e_yaw_rad": -0.0079,
+        "cmd": {
+         "forward": -0.0,
+         "left": -0.0086,
+         "turn": -0.0009
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0715,
+        "e_yaw_rad": -0.013,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0145,
+         "turn": -0.0015
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 237.2572499961176
+     },
+     "door_align": {
+      "dy_m": 0.0715,
+      "e_yaw_rad": -0.013,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0145,
+       "turn": -0.0015
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 245.27724999592795,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.829,
+       0.0713,
+       -3.1407
+      ],
+      "std_xy_m": 0.0319,
+      "looks": 5,
+      "sim_time": 105.52874999923255
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1724794314118701,
+       -0.004991304898837512
+      ],
+      "errors": [
+       0.010479431411870105,
+       -0.004991304898837512,
+       -0.004115777881994091
+      ],
+      "sim_time": 131.39324999862095
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8561,
+       0.026,
+       3.1133
+      ],
+      "std_xy_m": 0.0188,
+      "sim_time": 207.48299999682166
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.6213,
+       "bottom_beam_fraction": 0.037,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6213,
+       "top_beam_fraction": 0.8705,
+       "bottom_beam_fraction": 0.037
+      },
+      "sim_time": 211.49299999672684
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.828,
+       "sim_time": 136.0047499985119
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.876,
+       "sim_time": 170.18999999770352
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.846,
+       "sim_time": 213.19724999668654
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.846,
+      "sim_time": 213.19724999668654
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0668,
+        "e_yaw_rad": 0.0166,
+        "cmd": {
+         "forward": -0.0002,
+         "left": 0.0136,
+         "turn": 0.0019
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0537,
+        "e_yaw_rad": 0.0016,
+        "cmd": {
+         "forward": -0.0,
+         "left": 0.0109,
+         "turn": 0.0002
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.024,
+        "e_yaw_rad": 0.0283,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0049,
+         "turn": 0.0032
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 237.2572499961176
+     },
+     "door_align": {
+      "dy_m": 0.024,
+      "e_yaw_rad": 0.0283,
+      "cmd": {
+       "forward": 0.0001,
+       "left": -0.0049,
+       "turn": 0.0032
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 245.27724999592795,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 245.277,
+   "wall_seconds": 740.4,
+   "commands": 2650,
+   "frames": 1412,
+   "looks": 7,
+   "status_messages": 0,
+   "load_average_start": [
+    14.08,
+    25.01,
+    33.72
+   ],
+   "load_average_end": [
+    16.59,
+    25.94,
+    33.74
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 245.277,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 136.005,
+     "seg": 0,
+     "held_iou": 0.843,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 136.005,
+     "seg": 0,
+     "held_iou": 0.828,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 170.19,
+     "seg": 1,
+     "held_iou": 0.88,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 170.19,
+     "seg": 1,
+     "held_iou": 0.876,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 213.197,
+     "seg": 2,
+     "held_iou": 0.851,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 213.197,
+     "seg": 2,
+     "held_iou": 0.846,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s832-on",
+   "result_sha256": "89601d372ddf840f875b9fd889e7cd3fa1552f06445b1611207c74e2548015a3",
+   "events_sha256": "0b6ff35dae5feb28e4024d3f92c84bdd8e9fa9fbc7cfc562600a3fb146e79ce9",
+   "commands_sha256": "7eb585f360ee377e83218323790c320e4d9e3b0bff63d096bfc4bfc41d763b83",
+   "seed": 832,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.098,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.82,
+   "order_sheet_error": {
+    "xy_m": 0.0224,
+    "yaw_rad": 0.03
+   },
+   "approach": {
+    "r1": {
+     "frames": 339,
+     "commands": 526,
+     "looks": 5,
+     "outcome": "arrived",
+     "arrived_s": 69.038,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0301,
+     "localizer_pos_err_max_m": 0.2225,
+     "at_arrival": {
+      "gt": [
+       0.3747,
+       0.1245,
+       -0.0281
+      ],
+      "pos_err_to_goal_m": 0.0245,
+      "pos_err_to_true_prestation_m": 0.0595,
+      "yaw_err_to_true_rad": 0.0581,
+      "localizer_pos_err_m": 0.0091
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 952,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.651,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0127,
+     "localizer_pos_err_max_m": 0.2615,
+     "at_arrival": {
+      "gt": [
+       1.8391,
+       0.0673,
+       -3.141
+      ],
+      "pos_err_to_goal_m": 0.0356,
+      "pos_err_to_true_prestation_m": 0.0562,
+      "yaw_err_to_true_rad": 0.0294,
+      "localizer_pos_err_m": 0.0061
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0595,
+   "max_arrival_err_to_own_goal_m": 0.0356,
+   "max_arrival_yaw_err_rad": 0.0581,
+   "max_arrival_localizer_err_m": 0.0091,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.068,
+    "beam_z_at_crossing_m": 0.06,
+    "crossing_t": 199.68,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": -0.1359,
+      "e_yaw_rad": -0.0294,
+      "cmd": {
+       "forward": -0.0005,
+       "left": -0.0276,
+       "turn": -0.0033
+      }
+     },
+     "r2": {
+      "dy_m": -0.0805,
+      "e_yaw_rad": -0.0399,
+      "cmd": {
+       "forward": 0.0004,
+       "left": 0.0163,
+       "turn": -0.0045
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9767,
+       0.1859,
+       0.0294
+      ],
+      "std_xy_m": 0.0269,
+      "sim_time": 216.20474999661542
+     },
+     "r2": {
+      "xyyaw": [
+       2.866,
+       0.1305,
+       -3.1017
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 216.20474999661542
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3779,
+       0.1159,
+       -0.0239
+      ],
+      "std_xy_m": 0.0244,
+      "looks": 5,
+      "sim_time": 69.03775000009544
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17351590130423447,
+       -0.007062271283504609
+      ],
+      "errors": [
+       0.011515901304234466,
+       -0.007062271283504609,
+       0.028095041409604324
+      ],
+      "sim_time": 139.31299999843367
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9767,
+       0.1859,
+       0.0294
+      ],
+      "std_xy_m": 0.0269,
+      "sim_time": 216.20474999661542
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6482,
+       "bottom_beam_fraction": 0.1062,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6482,
+       "top_beam_fraction": 0.8751,
+       "bottom_beam_fraction": 0.1062
+      },
+      "sim_time": 220.2147499965206
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.822,
+       "sim_time": 144.72649999830566
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.793,
+       "sim_time": 178.91174999749728
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.833,
+       "sim_time": 221.9189999964803
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.833,
+      "sim_time": 221.9189999964803
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0339,
+        "e_yaw_rad": 0.015,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0069,
+         "turn": 0.0017
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0392,
+        "e_yaw_rad": -0.047,
+        "cmd": {
+         "forward": -0.0003,
+         "left": -0.0079,
+         "turn": -0.0053
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.1359,
+        "e_yaw_rad": -0.0294,
+        "cmd": {
+         "forward": -0.0005,
+         "left": -0.0276,
+         "turn": -0.0033
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 245.97899999591135
+     },
+     "door_align": {
+      "dy_m": -0.1359,
+      "e_yaw_rad": -0.0294,
+      "cmd": {
+       "forward": -0.0005,
+       "left": -0.0276,
+       "turn": -0.0033
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 253.9989999957217,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.8381,
+       0.0734,
+       -3.1387
+      ],
+      "std_xy_m": 0.0321,
+      "looks": 6,
+      "sim_time": 114.65149999901682
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17343376609195915,
+       -0.006786672604949338
+      ],
+      "errors": [
+       0.011433766091959147,
+       -0.006786672604949338,
+       0.022120192773571013
+      ],
+      "sim_time": 140.1149999984147
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.866,
+       0.1305,
+       -3.1017
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 216.20474999661542
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.6428,
+       "bottom_beam_fraction": 0.0394,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6428,
+       "top_beam_fraction": 0.8681,
+       "bottom_beam_fraction": 0.0394
+      },
+      "sim_time": 220.2147499965206
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.792,
+       "sim_time": 144.72649999830566
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.809,
+       "sim_time": 178.91174999749728
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.809,
+       "sim_time": 221.9189999964803
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.809,
+      "sim_time": 221.9189999964803
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0447,
+        "e_yaw_rad": 0.0076,
+        "cmd": {
+         "forward": -0.0,
+         "left": 0.0091,
+         "turn": 0.0009
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0431,
+        "e_yaw_rad": -0.0584,
+        "cmd": {
+         "forward": 0.0003,
+         "left": 0.0087,
+         "turn": -0.0065
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.0805,
+        "e_yaw_rad": -0.0399,
+        "cmd": {
+         "forward": 0.0004,
+         "left": 0.0163,
+         "turn": -0.0045
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 245.97899999591135
+     },
+     "door_align": {
+      "dy_m": -0.0805,
+      "e_yaw_rad": -0.0399,
+      "cmd": {
+       "forward": 0.0004,
+       "left": 0.0163,
+       "turn": -0.0045
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 253.9989999957217,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 253.999,
+   "wall_seconds": 1039.6,
+   "commands": 2848,
+   "frames": 1533,
+   "looks": 11,
+   "status_messages": 1272,
+   "load_average_start": [
+    16.54,
+    25.77,
+    33.63
+   ],
+   "load_average_end": [
+    34.18,
+    54.97,
+    50.53
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 253.999,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 144.726,
+     "seg": 0,
+     "held_iou": 0.822,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 144.726,
+     "seg": 0,
+     "held_iou": 0.792,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 178.912,
+     "seg": 1,
+     "held_iou": 0.793,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 178.912,
+     "seg": 1,
+     "held_iou": 0.809,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 221.919,
+     "seg": 2,
+     "held_iou": 0.833,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 221.919,
+     "seg": 2,
+     "held_iou": 0.809,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s832-off",
+   "result_sha256": "697c8d7842232c12b057646c8ed70efd0fede281ae8d9582f7c11ae13b011115",
+   "events_sha256": "0b6ff35dae5feb28e4024d3f92c84bdd8e9fa9fbc7cfc562600a3fb146e79ce9",
+   "commands_sha256": "7eb585f360ee377e83218323790c320e4d9e3b0bff63d096bfc4bfc41d763b83",
+   "seed": 832,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.098,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.82,
+   "order_sheet_error": {
+    "xy_m": 0.0224,
+    "yaw_rad": 0.03
+   },
+   "approach": {
+    "r1": {
+     "frames": 339,
+     "commands": 526,
+     "looks": 5,
+     "outcome": "arrived",
+     "arrived_s": 69.038,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0301,
+     "localizer_pos_err_max_m": 0.2225,
+     "at_arrival": {
+      "gt": [
+       0.3747,
+       0.1245,
+       -0.0281
+      ],
+      "pos_err_to_goal_m": 0.0245,
+      "pos_err_to_true_prestation_m": 0.0595,
+      "yaw_err_to_true_rad": 0.0581,
+      "localizer_pos_err_m": 0.0091
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 952,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.651,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0127,
+     "localizer_pos_err_max_m": 0.2615,
+     "at_arrival": {
+      "gt": [
+       1.8391,
+       0.0673,
+       -3.141
+      ],
+      "pos_err_to_goal_m": 0.0356,
+      "pos_err_to_true_prestation_m": 0.0562,
+      "yaw_err_to_true_rad": 0.0294,
+      "localizer_pos_err_m": 0.0061
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0595,
+   "max_arrival_err_to_own_goal_m": 0.0356,
+   "max_arrival_yaw_err_rad": 0.0581,
+   "max_arrival_localizer_err_m": 0.0091,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.068,
+    "beam_z_at_crossing_m": 0.06,
+    "crossing_t": 199.68,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": -0.1359,
+      "e_yaw_rad": -0.0294,
+      "cmd": {
+       "forward": -0.0005,
+       "left": -0.0276,
+       "turn": -0.0033
+      }
+     },
+     "r2": {
+      "dy_m": -0.0805,
+      "e_yaw_rad": -0.0399,
+      "cmd": {
+       "forward": 0.0004,
+       "left": 0.0163,
+       "turn": -0.0045
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9767,
+       0.1859,
+       0.0294
+      ],
+      "std_xy_m": 0.0269,
+      "sim_time": 216.20474999661542
+     },
+     "r2": {
+      "xyyaw": [
+       2.866,
+       0.1305,
+       -3.1017
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 216.20474999661542
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3779,
+       0.1159,
+       -0.0239
+      ],
+      "std_xy_m": 0.0244,
+      "looks": 5,
+      "sim_time": 69.03775000009544
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17351590130423447,
+       -0.007062271283504609
+      ],
+      "errors": [
+       0.011515901304234466,
+       -0.007062271283504609,
+       0.028095041409604324
+      ],
+      "sim_time": 139.31299999843367
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9767,
+       0.1859,
+       0.0294
+      ],
+      "std_xy_m": 0.0269,
+      "sim_time": 216.20474999661542
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6482,
+       "bottom_beam_fraction": 0.1062,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6482,
+       "top_beam_fraction": 0.8751,
+       "bottom_beam_fraction": 0.1062
+      },
+      "sim_time": 220.2147499965206
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.822,
+       "sim_time": 144.72649999830566
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.793,
+       "sim_time": 178.91174999749728
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.833,
+       "sim_time": 221.9189999964803
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.833,
+      "sim_time": 221.9189999964803
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0339,
+        "e_yaw_rad": 0.015,
+        "cmd": {
+         "forward": 0.0001,
+         "left": -0.0069,
+         "turn": 0.0017
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0392,
+        "e_yaw_rad": -0.047,
+        "cmd": {
+         "forward": -0.0003,
+         "left": -0.0079,
+         "turn": -0.0053
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.1359,
+        "e_yaw_rad": -0.0294,
+        "cmd": {
+         "forward": -0.0005,
+         "left": -0.0276,
+         "turn": -0.0033
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 245.97899999591135
+     },
+     "door_align": {
+      "dy_m": -0.1359,
+      "e_yaw_rad": -0.0294,
+      "cmd": {
+       "forward": -0.0005,
+       "left": -0.0276,
+       "turn": -0.0033
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 253.9989999957217,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.8381,
+       0.0734,
+       -3.1387
+      ],
+      "std_xy_m": 0.0321,
+      "looks": 6,
+      "sim_time": 114.65149999901682
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17343376609195915,
+       -0.006786672604949338
+      ],
+      "errors": [
+       0.011433766091959147,
+       -0.006786672604949338,
+       0.022120192773571013
+      ],
+      "sim_time": 140.1149999984147
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.866,
+       0.1305,
+       -3.1017
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 216.20474999661542
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.6428,
+       "bottom_beam_fraction": 0.0394,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6428,
+       "top_beam_fraction": 0.8681,
+       "bottom_beam_fraction": 0.0394
+      },
+      "sim_time": 220.2147499965206
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.792,
+       "sim_time": 144.72649999830566
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.809,
+       "sim_time": 178.91174999749728
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.809,
+       "sim_time": 221.9189999964803
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.809,
+      "sim_time": 221.9189999964803
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0447,
+        "e_yaw_rad": 0.0076,
+        "cmd": {
+         "forward": -0.0,
+         "left": 0.0091,
+         "turn": 0.0009
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0431,
+        "e_yaw_rad": -0.0584,
+        "cmd": {
+         "forward": 0.0003,
+         "left": 0.0087,
+         "turn": -0.0065
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.0805,
+        "e_yaw_rad": -0.0399,
+        "cmd": {
+         "forward": 0.0004,
+         "left": 0.0163,
+         "turn": -0.0045
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 245.97899999591135
+     },
+     "door_align": {
+      "dy_m": -0.0805,
+      "e_yaw_rad": -0.0399,
+      "cmd": {
+       "forward": 0.0004,
+       "left": 0.0163,
+       "turn": -0.0045
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 253.9989999957217,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 253.999,
+   "wall_seconds": 1037.8,
+   "commands": 2848,
+   "frames": 1533,
+   "looks": 11,
+   "status_messages": 0,
+   "load_average_start": [
+    16.54,
+    25.77,
+    33.63
+   ],
+   "load_average_end": [
+    34.18,
+    54.97,
+    50.53
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 253.999,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 144.726,
+     "seg": 0,
+     "held_iou": 0.822,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 144.726,
+     "seg": 0,
+     "held_iou": 0.792,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 178.912,
+     "seg": 1,
+     "held_iou": 0.793,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 178.912,
+     "seg": 1,
+     "held_iou": 0.809,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 221.919,
+     "seg": 2,
+     "held_iou": 0.833,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 221.919,
+     "seg": 2,
+     "held_iou": 0.809,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s833-on",
+   "result_sha256": "dacdf87fe5e63a233bc0226a7af4a6f313fae7153bbb307028d707ec8336fc44",
+   "events_sha256": "c0001529598cf6e9c65dc9e91a27627347442d58f4bf1e57797e1d534487f83e",
+   "commands_sha256": "89e63938703b2327288eac010a2e4724a6b7daf1b2443c32e512916ca7e07c17",
+   "seed": 833,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "DOOR_POSE_NOT_LOCALIZED",
+    "r2": "PARTNER_ABORT"
+   },
+   "success_gt": false,
+   "final_error_m": 0.7928,
+   "lifted_clear_gt": true,
+   "on_floor_released": false,
+   "max_tilt_deg_lifted": 0.39,
+   "order_sheet_error": {
+    "xy_m": 0.04,
+    "yaw_rad": 0.0845
+   },
+   "approach": {
+    "r1": {
+     "frames": 226,
+     "commands": 358,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 46.425,
+     "approach_go_s": 109.238,
+     "localizer_pos_err_p50_m": 0.0124,
+     "localizer_pos_err_max_m": 0.9821,
+     "at_arrival": {
+      "gt": [
+       0.3748,
+       0.2023,
+       -0.175
+      ],
+      "pos_err_to_goal_m": 0.0261,
+      "pos_err_to_true_prestation_m": 0.0523,
+      "yaw_err_to_true_rad": 0.085,
+      "localizer_pos_err_m": 0.0085
+     }
+    },
+    "r2": {
+     "frames": 539,
+     "commands": 896,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 109.037,
+     "approach_go_s": 109.238,
+     "localizer_pos_err_p50_m": 0.0156,
+     "localizer_pos_err_max_m": 0.1914,
+     "at_arrival": {
+      "gt": [
+       1.8182,
+       -0.0397,
+       2.9731
+      ],
+      "pos_err_to_goal_m": 0.0144,
+      "pos_err_to_true_prestation_m": 0.0828,
+      "yaw_err_to_true_rad": 0.0785,
+      "localizer_pos_err_m": 0.0027
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0828,
+   "max_arrival_err_to_own_goal_m": 0.0261,
+   "max_arrival_yaw_err_rad": 0.085,
+   "max_arrival_localizer_err_m": 0.0085,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0005,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": {
+    "first_failure": {
+     "robot": "r1",
+     "reason": "DOOR_POSE_NOT_LOCALIZED",
+     "sim_time_s": 219.413,
+     "state_before": "pregrasp_look",
+     "beam_z_m": -0.0001
+    },
+    "partner": "r2",
+    "partner_terminal_state": "failed",
+    "partner_failure": "PARTNER_ABORT",
+    "partner_terminal_latency_s": 0.0,
+    "partner_motion_commands_after": 0,
+    "partner_arm_commands_after": 0,
+    "partner_last_motion_after_s": null,
+    "beam_max_tilt_deg_after": null,
+    "beam_final_z_m": -0.0001,
+    "on_failure_mode": "continue"
+   },
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": false,
+    "beam_y_offset_at_crossing_m": 0.0408,
+    "beam_z_at_crossing_m": 0.0607,
+    "crossing_t": 194.88,
+    "door_align_claims": {
+     "r1": null,
+     "r2": null
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.0768,
+       0.0792,
+       0.0198
+      ],
+      "std_xy_m": 0.0208,
+      "sim_time": 167.98449999775568
+     },
+     "r2": {
+      "xyyaw": [
+       2.8506,
+       0.0775,
+       -3.1298
+      ],
+      "std_xy_m": 0.0232,
+      "sim_time": 210.9917499967387
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3806,
+       0.1968,
+       -0.1722
+      ],
+      "std_xy_m": 0.0248,
+      "looks": 3,
+      "sim_time": 46.42500000013066
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1727913768940473,
+       -0.006862760605337911
+      ],
+      "errors": [
+       0.0107913768940473,
+       -0.006862760605337911,
+       0.02974450422723013
+      ],
+      "sim_time": 132.49599999859487
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.0768,
+       0.0792,
+       0.0198
+      ],
+      "std_xy_m": 0.0208,
+      "sim_time": 167.98449999775568
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6393,
+       "bottom_beam_fraction": 0.2741,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6393,
+       "top_beam_fraction": 0.8015,
+       "bottom_beam_fraction": 0.2741
+      },
+      "sim_time": 171.99449999766085
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.7,
+       "sim_time": 139.51349999842893
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.869,
+       "sim_time": 173.69874999762055
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.869,
+      "sim_time": 173.69874999762055
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0956,
+        "e_yaw_rad": 0.1292,
+        "cmd": {
+         "forward": 0.0017,
+         "left": -0.0192,
+         "turn": 0.0145
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0292,
+        "e_yaw_rad": -0.0198,
+        "cmd": {
+         "forward": -0.0001,
+         "left": -0.0059,
+         "turn": -0.0022
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 198.7612499970279
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.8173,
+       -0.0371,
+       2.9739
+      ],
+      "std_xy_m": 0.0315,
+      "looks": 6,
+      "sim_time": 109.03749999914957
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17381249764408452,
+       -0.005576811973545249
+      ],
+      "errors": [
+       0.011812497644084513,
+       -0.005576811973545249,
+       0.029043425218089534
+      ],
+      "sim_time": 134.90199999853797
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8506,
+       0.0775,
+       -3.1298
+      ],
+      "std_xy_m": 0.0232,
+      "sim_time": 210.9917499967387
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6359,
+       "bottom_beam_fraction": 0.0695,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6359,
+       "top_beam_fraction": 0.8148,
+       "bottom_beam_fraction": 0.0695
+      },
+      "sim_time": 215.00174999664387
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.748,
+       "sim_time": 139.51349999842893
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.849,
+       "sim_time": 173.69874999762055
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.849,
+      "sim_time": 173.69874999762055
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0026,
+        "e_yaw_rad": 0.1433,
+        "cmd": {
+         "forward": -0.0001,
+         "left": 0.0005,
+         "turn": 0.016
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": 0.0025,
+        "e_yaw_rad": -0.0119,
+        "cmd": {
+         "forward": -0.0,
+         "left": -0.0005,
+         "turn": -0.0013
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 198.7612499970279
+     }
+    }
+   },
+   "sim_seconds": 219.413,
+   "wall_seconds": 1024.2,
+   "commands": 2158,
+   "frames": 1325,
+   "looks": 9,
+   "status_messages": 1098,
+   "load_average_start": [
+    36.25,
+    55.06,
+    50.59
+   ],
+   "load_average_end": [
+    111.34,
+    105.1,
+    79.99
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 219.413,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 139.513,
+     "seg": 0,
+     "held_iou": 0.7,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 139.513,
+     "seg": 0,
+     "held_iou": 0.748,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 173.699,
+     "seg": 1,
+     "held_iou": 0.869,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 173.699,
+     "seg": 1,
+     "held_iou": 0.849,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s833-off",
+   "result_sha256": "31bdea3ba43c5ff2d8e2d09c4dca9d4d036837d5c03709c3ca5470b070839434",
+   "events_sha256": "9557f355467d7770e335b4be03c7b0b48011b67a1c0b16b26c1d55af55a48c22",
+   "commands_sha256": "0473d2c0251632dc8ecb68a03c006f4274cc8bbe2a740201bc6193eab25357a1",
+   "seed": 833,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "DOOR_POSE_NOT_LOCALIZED",
+    "r2": "BARRIER_LIFT_TIMEOUT"
+   },
+   "success_gt": false,
+   "final_error_m": 0.7928,
+   "lifted_clear_gt": true,
+   "on_floor_released": false,
+   "max_tilt_deg_lifted": 0.39,
+   "order_sheet_error": {
+    "xy_m": 0.04,
+    "yaw_rad": 0.0845
+   },
+   "approach": {
+    "r1": {
+     "frames": 226,
+     "commands": 358,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 46.425,
+     "approach_go_s": 109.238,
+     "localizer_pos_err_p50_m": 0.0124,
+     "localizer_pos_err_max_m": 0.9821,
+     "at_arrival": {
+      "gt": [
+       0.3748,
+       0.2023,
+       -0.175
+      ],
+      "pos_err_to_goal_m": 0.0261,
+      "pos_err_to_true_prestation_m": 0.0523,
+      "yaw_err_to_true_rad": 0.085,
+      "localizer_pos_err_m": 0.0085
+     }
+    },
+    "r2": {
+     "frames": 539,
+     "commands": 896,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 109.037,
+     "approach_go_s": 109.238,
+     "localizer_pos_err_p50_m": 0.0156,
+     "localizer_pos_err_max_m": 0.1914,
+     "at_arrival": {
+      "gt": [
+       1.8182,
+       -0.0397,
+       2.9731
+      ],
+      "pos_err_to_goal_m": 0.0144,
+      "pos_err_to_true_prestation_m": 0.0828,
+      "yaw_err_to_true_rad": 0.0785,
+      "localizer_pos_err_m": 0.0027
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0828,
+   "max_arrival_err_to_own_goal_m": 0.0261,
+   "max_arrival_yaw_err_rad": 0.085,
+   "max_arrival_localizer_err_m": 0.0085,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0005,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": {
+    "first_failure": {
+     "robot": "r1",
+     "reason": "DOOR_POSE_NOT_LOCALIZED",
+     "sim_time_s": 219.413,
+     "state_before": "pregrasp_look",
+     "beam_z_m": -0.0001
+    },
+    "partner": "r2",
+    "partner_terminal_state": "failed",
+    "partner_failure": "BARRIER_LIFT_TIMEOUT",
+    "partner_terminal_latency_s": 55.638,
+    "partner_motion_commands_after": 0,
+    "partner_arm_commands_after": 0,
+    "partner_last_motion_after_s": null,
+    "beam_max_tilt_deg_after": 0.01,
+    "beam_final_z_m": -0.0001,
+    "on_failure_mode": "continue"
+   },
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": false,
+    "beam_y_offset_at_crossing_m": 0.0408,
+    "beam_z_at_crossing_m": 0.0607,
+    "crossing_t": 194.88,
+    "door_align_claims": {
+     "r1": null,
+     "r2": null
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.0768,
+       0.0792,
+       0.0198
+      ],
+      "std_xy_m": 0.0208,
+      "sim_time": 167.98449999775568
+     },
+     "r2": {
+      "xyyaw": [
+       2.8506,
+       0.0775,
+       -3.1298
+      ],
+      "std_xy_m": 0.0232,
+      "sim_time": 210.9917499967387
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.3806,
+       0.1968,
+       -0.1722
+      ],
+      "std_xy_m": 0.0248,
+      "looks": 3,
+      "sim_time": 46.42500000013066
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1727913768940473,
+       -0.006862760605337911
+      ],
+      "errors": [
+       0.0107913768940473,
+       -0.006862760605337911,
+       0.02974450422723013
+      ],
+      "sim_time": 132.49599999859487
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.0768,
+       0.0792,
+       0.0198
+      ],
+      "std_xy_m": 0.0208,
+      "sim_time": 167.98449999775568
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6393,
+       "bottom_beam_fraction": 0.2741,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6393,
+       "top_beam_fraction": 0.8015,
+       "bottom_beam_fraction": 0.2741
+      },
+      "sim_time": 171.99449999766085
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.7,
+       "sim_time": 139.51349999842893
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.869,
+       "sim_time": 173.69874999762055
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.869,
+      "sim_time": 173.69874999762055
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0956,
+        "e_yaw_rad": 0.1292,
+        "cmd": {
+         "forward": 0.0017,
+         "left": -0.0192,
+         "turn": 0.0145
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0292,
+        "e_yaw_rad": -0.0198,
+        "cmd": {
+         "forward": -0.0001,
+         "left": -0.0059,
+         "turn": -0.0022
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 198.7612499970279
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.8173,
+       -0.0371,
+       2.9739
+      ],
+      "std_xy_m": 0.0315,
+      "looks": 6,
+      "sim_time": 109.03749999914957
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17381249764408452,
+       -0.005576811973545249
+      ],
+      "errors": [
+       0.011812497644084513,
+       -0.005576811973545249,
+       0.029043425218089534
+      ],
+      "sim_time": 134.90199999853797
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8506,
+       0.0775,
+       -3.1298
+      ],
+      "std_xy_m": 0.0232,
+      "sim_time": 210.9917499967387
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6359,
+       "bottom_beam_fraction": 0.0695,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6359,
+       "top_beam_fraction": 0.8148,
+       "bottom_beam_fraction": 0.0695
+      },
+      "sim_time": 215.00174999664387
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.748,
+       "sim_time": 139.51349999842893
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.849,
+       "sim_time": 173.69874999762055
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.849,
+      "sim_time": 173.69874999762055
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.45,
+       "door_align": {
+        "dy_m": -0.0026,
+        "e_yaw_rad": 0.1433,
+        "cmd": {
+         "forward": -0.0001,
+         "left": 0.0005,
+         "turn": 0.016
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": 0.0025,
+        "e_yaw_rad": -0.0119,
+        "cmd": {
+         "forward": -0.0,
+         "left": -0.0005,
+         "turn": -0.0013
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 198.7612499970279
+     }
+    }
+   },
+   "sim_seconds": 275.051,
+   "wall_seconds": 1334.9,
+   "commands": 2158,
+   "frames": 1464,
+   "looks": 9,
+   "status_messages": 0,
+   "load_average_start": [
+    36.25,
+    55.06,
+    50.59
+   ],
+   "load_average_end": [
+    116.85,
+    132.94,
+    102.61
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 275.051,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 139.513,
+     "seg": 0,
+     "held_iou": 0.7,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 139.513,
+     "seg": 0,
+     "held_iou": 0.748,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 173.699,
+     "seg": 1,
+     "held_iou": 0.869,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 173.699,
+     "seg": 1,
+     "held_iou": 0.849,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s834-on",
+   "result_sha256": "2434768e6f333346397c57381fab57d693f849bf250fb7c31bfaaaf389a278da",
+   "events_sha256": "a98b84f1c2895ace1cbbd9b29d535390ea7585db8586ccfb9b595c10a98d0a73",
+   "commands_sha256": "26bf2cbf884020ef1023e8fea47c4025308bd6ab34f18ef9a80232e989654dca",
+   "seed": 834,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0973,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.64,
+   "order_sheet_error": {
+    "xy_m": 0.01,
+    "yaw_rad": 0.0745
+   },
+   "approach": {
+    "r1": {
+     "frames": 190,
+     "commands": 314,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 39.125,
+     "approach_go_s": 109.839,
+     "localizer_pos_err_p50_m": 0.0428,
+     "localizer_pos_err_max_m": 0.4977,
+     "at_arrival": {
+      "gt": [
+       0.2955,
+       0.2756,
+       -0.1867
+      ],
+      "pos_err_to_goal_m": 0.0506,
+      "pos_err_to_true_prestation_m": 0.1067,
+      "yaw_err_to_true_rad": 0.0867,
+      "localizer_pos_err_m": 0.0232
+     }
+    },
+    "r2": {
+     "frames": 542,
+     "commands": 902,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 109.639,
+     "approach_go_s": 109.839,
+     "localizer_pos_err_p50_m": 0.0146,
+     "localizer_pos_err_max_m": 1.4105,
+     "at_arrival": {
+      "gt": [
+       1.717,
+       -0.0627,
+       2.9651
+      ],
+      "pos_err_to_goal_m": 0.0369,
+      "pos_err_to_true_prestation_m": 0.0905,
+      "yaw_err_to_true_rad": 0.0765,
+      "localizer_pos_err_m": 0.0088
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.1067,
+   "max_arrival_err_to_own_goal_m": 0.0506,
+   "max_arrival_yaw_err_rad": 0.0867,
+   "max_arrival_localizer_err_m": 0.0232,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.02,
+    "beam_z_at_crossing_m": 0.061,
+    "crossing_t": 195.88,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0321,
+      "e_yaw_rad": -0.0242,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0065,
+       "turn": -0.0027
+      }
+     },
+     "r2": {
+      "dy_m": 0.0056,
+      "e_yaw_rad": 0.0085,
+      "cmd": {
+       "forward": 0.0,
+       "left": -0.0011,
+       "turn": 0.001
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9729,
+       0.0179,
+       0.0242
+      ],
+      "std_xy_m": 0.0369,
+      "sim_time": 212.79624999669602
+     },
+     "r2": {
+      "xyyaw": [
+       2.9004,
+       0.0444,
+       3.1331
+      ],
+      "std_xy_m": 0.0214,
+      "sim_time": 212.79624999669602
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.2972,
+       0.2524,
+       -0.1771
+      ],
+      "std_xy_m": 0.0288,
+      "looks": 2,
+      "sim_time": 39.1250000000958
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1726629426794185,
+       -0.0049993323311384365
+      ],
+      "errors": [
+       0.010662942679418502,
+       -0.0049993323311384365,
+       0.014910768756887247
+      ],
+      "sim_time": 132.69649999859013
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9729,
+       0.0179,
+       0.0242
+      ],
+      "std_xy_m": 0.0369,
+      "sim_time": 212.79624999669602
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6463,
+       "bottom_beam_fraction": 0.1211,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6463,
+       "top_beam_fraction": 0.8606,
+       "bottom_beam_fraction": 0.1211
+      },
+      "sim_time": 216.8062499966012
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.747,
+       "sim_time": 138.91199999844315
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.871,
+       "sim_time": 175.50324999757788
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.828,
+       "sim_time": 218.5104999965609
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.828,
+      "sim_time": 218.5104999965609
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0835,
+        "e_yaw_rad": 0.1405,
+        "cmd": {
+         "forward": 0.0016,
+         "left": -0.0168,
+         "turn": 0.0157
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0236,
+        "e_yaw_rad": 0.0051,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0048,
+         "turn": 0.0006
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0321,
+        "e_yaw_rad": -0.0242,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0065,
+         "turn": -0.0027
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 242.57049999599195
+     },
+     "door_align": {
+      "dy_m": 0.0321,
+      "e_yaw_rad": -0.0242,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0065,
+       "turn": -0.0027
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 250.5904999958023,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7121,
+       -0.0554,
+       2.9673
+      ],
+      "std_xy_m": 0.0326,
+      "looks": 6,
+      "sim_time": 109.63899999913535
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17331365504833,
+       -0.004806600220495452
+      ],
+      "errors": [
+       0.011313655048329985,
+       -0.004806600220495452,
+       0.025999283079979854
+      ],
+      "sim_time": 134.3004999985522
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.9004,
+       0.0444,
+       3.1331
+      ],
+      "std_xy_m": 0.0214,
+      "sim_time": 212.79624999669602
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6257,
+       "bottom_beam_fraction": 0.0682,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6257,
+       "top_beam_fraction": 0.7851,
+       "bottom_beam_fraction": 0.0682
+      },
+      "sim_time": 216.8062499966012
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.762,
+       "sim_time": 138.91199999844315
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.844,
+       "sim_time": 175.50324999757788
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.846,
+       "sim_time": 218.5104999965609
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.846,
+      "sim_time": 218.5104999965609
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0033,
+        "e_yaw_rad": 0.1598,
+        "cmd": {
+         "forward": -0.0001,
+         "left": 0.0007,
+         "turn": 0.0179
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0023,
+        "e_yaw_rad": -0.0042,
+        "cmd": {
+         "forward": 0.0,
+         "left": 0.0005,
+         "turn": -0.0005
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0056,
+        "e_yaw_rad": 0.0085,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0011,
+         "turn": 0.001
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 242.57049999599195
+     },
+     "door_align": {
+      "dy_m": 0.0056,
+      "e_yaw_rad": 0.0085,
+      "cmd": {
+       "forward": 0.0,
+       "left": -0.0011,
+       "turn": 0.001
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 250.5904999958023,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 250.59,
+   "wall_seconds": 1686.6,
+   "commands": 2624,
+   "frames": 1430,
+   "looks": 8,
+   "status_messages": 1256,
+   "load_average_start": [
+    121.66,
+    133.67,
+    103.05
+   ],
+   "load_average_end": [
+    105.36,
+    118.54,
+    138.22
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 250.59,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 138.912,
+     "seg": 0,
+     "held_iou": 0.747,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 138.912,
+     "seg": 0,
+     "held_iou": 0.762,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 175.503,
+     "seg": 1,
+     "held_iou": 0.871,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 175.503,
+     "seg": 1,
+     "held_iou": 0.844,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 218.51,
+     "seg": 2,
+     "held_iou": 0.828,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 218.51,
+     "seg": 2,
+     "held_iou": 0.846,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s834-off",
+   "result_sha256": "f6d3c6e889eaa3c0fb6fad51e0f4dd2ab47ad47651e6147293ab2cd81cde6483",
+   "events_sha256": "a98b84f1c2895ace1cbbd9b29d535390ea7585db8586ccfb9b595c10a98d0a73",
+   "commands_sha256": "26bf2cbf884020ef1023e8fea47c4025308bd6ab34f18ef9a80232e989654dca",
+   "seed": 834,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0973,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.64,
+   "order_sheet_error": {
+    "xy_m": 0.01,
+    "yaw_rad": 0.0745
+   },
+   "approach": {
+    "r1": {
+     "frames": 190,
+     "commands": 314,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 39.125,
+     "approach_go_s": 109.839,
+     "localizer_pos_err_p50_m": 0.0428,
+     "localizer_pos_err_max_m": 0.4977,
+     "at_arrival": {
+      "gt": [
+       0.2955,
+       0.2756,
+       -0.1867
+      ],
+      "pos_err_to_goal_m": 0.0506,
+      "pos_err_to_true_prestation_m": 0.1067,
+      "yaw_err_to_true_rad": 0.0867,
+      "localizer_pos_err_m": 0.0232
+     }
+    },
+    "r2": {
+     "frames": 542,
+     "commands": 902,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 109.639,
+     "approach_go_s": 109.839,
+     "localizer_pos_err_p50_m": 0.0146,
+     "localizer_pos_err_max_m": 1.4105,
+     "at_arrival": {
+      "gt": [
+       1.717,
+       -0.0627,
+       2.9651
+      ],
+      "pos_err_to_goal_m": 0.0369,
+      "pos_err_to_true_prestation_m": 0.0905,
+      "yaw_err_to_true_rad": 0.0765,
+      "localizer_pos_err_m": 0.0088
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.1067,
+   "max_arrival_err_to_own_goal_m": 0.0506,
+   "max_arrival_yaw_err_rad": 0.0867,
+   "max_arrival_localizer_err_m": 0.0232,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.02,
+    "beam_z_at_crossing_m": 0.061,
+    "crossing_t": 195.88,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0321,
+      "e_yaw_rad": -0.0242,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0065,
+       "turn": -0.0027
+      }
+     },
+     "r2": {
+      "dy_m": 0.0056,
+      "e_yaw_rad": 0.0085,
+      "cmd": {
+       "forward": 0.0,
+       "left": -0.0011,
+       "turn": 0.001
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9729,
+       0.0179,
+       0.0242
+      ],
+      "std_xy_m": 0.0369,
+      "sim_time": 212.79624999669602
+     },
+     "r2": {
+      "xyyaw": [
+       2.9004,
+       0.0444,
+       3.1331
+      ],
+      "std_xy_m": 0.0214,
+      "sim_time": 212.79624999669602
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.2972,
+       0.2524,
+       -0.1771
+      ],
+      "std_xy_m": 0.0288,
+      "looks": 2,
+      "sim_time": 39.1250000000958
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1726629426794185,
+       -0.0049993323311384365
+      ],
+      "errors": [
+       0.010662942679418502,
+       -0.0049993323311384365,
+       0.014910768756887247
+      ],
+      "sim_time": 132.69649999859013
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9729,
+       0.0179,
+       0.0242
+      ],
+      "std_xy_m": 0.0369,
+      "sim_time": 212.79624999669602
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6463,
+       "bottom_beam_fraction": 0.1211,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6463,
+       "top_beam_fraction": 0.8606,
+       "bottom_beam_fraction": 0.1211
+      },
+      "sim_time": 216.8062499966012
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.747,
+       "sim_time": 138.91199999844315
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.871,
+       "sim_time": 175.50324999757788
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.828,
+       "sim_time": 218.5104999965609
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.828,
+      "sim_time": 218.5104999965609
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0835,
+        "e_yaw_rad": 0.1405,
+        "cmd": {
+         "forward": 0.0016,
+         "left": -0.0168,
+         "turn": 0.0157
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0236,
+        "e_yaw_rad": 0.0051,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0048,
+         "turn": 0.0006
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0321,
+        "e_yaw_rad": -0.0242,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0065,
+         "turn": -0.0027
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 242.57049999599195
+     },
+     "door_align": {
+      "dy_m": 0.0321,
+      "e_yaw_rad": -0.0242,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0065,
+       "turn": -0.0027
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 250.5904999958023,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7121,
+       -0.0554,
+       2.9673
+      ],
+      "std_xy_m": 0.0326,
+      "looks": 6,
+      "sim_time": 109.63899999913535
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17331365504833,
+       -0.004806600220495452
+      ],
+      "errors": [
+       0.011313655048329985,
+       -0.004806600220495452,
+       0.025999283079979854
+      ],
+      "sim_time": 134.3004999985522
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.9004,
+       0.0444,
+       3.1331
+      ],
+      "std_xy_m": 0.0214,
+      "sim_time": 212.79624999669602
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6257,
+       "bottom_beam_fraction": 0.0682,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6257,
+       "top_beam_fraction": 0.7851,
+       "bottom_beam_fraction": 0.0682
+      },
+      "sim_time": 216.8062499966012
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.762,
+       "sim_time": 138.91199999844315
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.844,
+       "sim_time": 175.50324999757788
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.846,
+       "sim_time": 218.5104999965609
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.846,
+      "sim_time": 218.5104999965609
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0033,
+        "e_yaw_rad": 0.1598,
+        "cmd": {
+         "forward": -0.0001,
+         "left": 0.0007,
+         "turn": 0.0179
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0023,
+        "e_yaw_rad": -0.0042,
+        "cmd": {
+         "forward": 0.0,
+         "left": 0.0005,
+         "turn": -0.0005
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0056,
+        "e_yaw_rad": 0.0085,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0011,
+         "turn": 0.001
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 242.57049999599195
+     },
+     "door_align": {
+      "dy_m": 0.0056,
+      "e_yaw_rad": 0.0085,
+      "cmd": {
+       "forward": 0.0,
+       "left": -0.0011,
+       "turn": 0.001
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 250.5904999958023,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 250.59,
+   "wall_seconds": 1692.1,
+   "commands": 2624,
+   "frames": 1430,
+   "looks": 8,
+   "status_messages": 0,
+   "load_average_start": [
+    121.66,
+    133.67,
+    103.05
+   ],
+   "load_average_end": [
+    106.05,
+    118.46,
+    138.07
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 250.59,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 138.912,
+     "seg": 0,
+     "held_iou": 0.747,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 138.912,
+     "seg": 0,
+     "held_iou": 0.762,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 175.503,
+     "seg": 1,
+     "held_iou": 0.871,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 175.503,
+     "seg": 1,
+     "held_iou": 0.844,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 218.51,
+     "seg": 2,
+     "held_iou": 0.828,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 218.51,
+     "seg": 2,
+     "held_iou": 0.846,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s835-on",
+   "result_sha256": "74269d8b08fa206b4fd25e759a26b32d98bd1452d42a8532c94bf6c2d11efa41",
+   "events_sha256": "d1e81a667c2c7a732d7c46c4abc188be19cb30bcaed56ac9d672c3cdcc0247d6",
+   "commands_sha256": "c57612de43e901e1892c1ecd88cf2e7f40a70288113e3c0176f2a5115f7a20e1",
+   "seed": 835,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0828,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 1.24,
+   "order_sheet_error": {
+    "xy_m": 0.05,
+    "yaw_rad": 0.03
+   },
+   "approach": {
+    "r1": {
+     "frames": 248,
+     "commands": 401,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 50.725,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0261,
+     "localizer_pos_err_max_m": 0.8088,
+     "at_arrival": {
+      "gt": [
+       0.2711,
+       0.1433,
+       -0.0057
+      ],
+      "pos_err_to_goal_m": 0.0435,
+      "pos_err_to_true_prestation_m": 0.1016,
+      "yaw_err_to_true_rad": 0.0357,
+      "localizer_pos_err_m": 0.0158
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 952,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.651,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0214,
+     "localizer_pos_err_max_m": 0.2003,
+     "at_arrival": {
+      "gt": [
+       1.7389,
+       0.1371,
+       -3.1194
+      ],
+      "pos_err_to_goal_m": 0.0396,
+      "pos_err_to_true_prestation_m": 0.0707,
+      "yaw_err_to_true_rad": 0.0078,
+      "localizer_pos_err_m": 0.014
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.1016,
+   "max_arrival_err_to_own_goal_m": 0.0435,
+   "max_arrival_yaw_err_rad": 0.0357,
+   "max_arrival_localizer_err_m": 0.0158,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": -0.0448,
+    "beam_z_at_crossing_m": 0.0606,
+    "crossing_t": 203.49,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.037,
+      "e_yaw_rad": 0.0709,
+      "cmd": {
+       "forward": -0.0004,
+       "left": 0.0075,
+       "turn": 0.0079
+      }
+     },
+     "r2": {
+      "dy_m": 0.0992,
+      "e_yaw_rad": 0.1214,
+      "cmd": {
+       "forward": 0.0017,
+       "left": -0.02,
+       "turn": 0.0136
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9739,
+       0.013,
+       -0.0709
+      ],
+      "std_xy_m": 0.0248,
+      "sim_time": 219.81374999653008
+     },
+     "r2": {
+      "xyyaw": [
+       2.8524,
+       -0.0492,
+       3.0202
+      ],
+      "std_xy_m": 0.0266,
+      "sim_time": 219.81374999653008
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.279,
+       0.1296,
+       -0.0007
+      ],
+      "std_xy_m": 0.0267,
+      "looks": 3,
+      "sim_time": 50.72500000015119
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17268963937201814,
+       -0.0067269010342276316
+      ],
+      "errors": [
+       0.01068963937201814,
+       -0.0067269010342276316,
+       0.02835886665752039
+      ],
+      "sim_time": 137.30799999848108
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9739,
+       0.013,
+       -0.0709
+      ],
+      "std_xy_m": 0.0248,
+      "sim_time": 219.81374999653008
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6468,
+       "bottom_beam_fraction": 0.1118,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6468,
+       "top_beam_fraction": 0.8627,
+       "bottom_beam_fraction": 0.1118
+      },
+      "sim_time": 223.82374999643525
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.754,
+       "sim_time": 145.9294999982772
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.867,
+       "sim_time": 182.52074999741194
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.799,
+       "sim_time": 225.52799999639495
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.799,
+      "sim_time": 225.52799999639495
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0087,
+        "e_yaw_rad": 0.0154,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0018,
+         "turn": 0.0017
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0283,
+        "e_yaw_rad": -0.0554,
+        "cmd": {
+         "forward": -0.0002,
+         "left": -0.0057,
+         "turn": -0.0062
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.037,
+        "e_yaw_rad": 0.0709,
+        "cmd": {
+         "forward": -0.0004,
+         "left": 0.0075,
+         "turn": 0.0079
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.587999995826
+     },
+     "door_align": {
+      "dy_m": 0.037,
+      "e_yaw_rad": 0.0709,
+      "cmd": {
+       "forward": -0.0004,
+       "left": 0.0075,
+       "turn": 0.0079
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.60799999563636,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7429,
+       0.1237,
+       -3.1234
+      ],
+      "std_xy_m": 0.0324,
+      "looks": 6,
+      "sim_time": 114.65149999901682
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17280795853921255,
+       0.004627074238001771
+      ],
+      "errors": [
+       0.010807958539212542,
+       0.004627074238001771,
+       -0.00043679482355071694
+      ],
+      "sim_time": 141.31799999838626
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8524,
+       -0.0492,
+       3.0202
+      ],
+      "std_xy_m": 0.0266,
+      "sim_time": 219.81374999653008
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.628,
+       "bottom_beam_fraction": 0.0325,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.628,
+       "top_beam_fraction": 0.9264,
+       "bottom_beam_fraction": 0.0325
+      },
+      "sim_time": 223.82374999643525
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.832,
+       "sim_time": 145.9294999982772
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.815,
+       "sim_time": 182.52074999741194
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.8,
+       "sim_time": 225.52799999639495
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.8,
+      "sim_time": 225.52799999639495
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0211,
+        "e_yaw_rad": -0.018,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0043,
+         "turn": -0.002
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0843,
+        "e_yaw_rad": 0.0366,
+        "cmd": {
+         "forward": -0.0004,
+         "left": 0.0171,
+         "turn": 0.0041
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0992,
+        "e_yaw_rad": 0.1214,
+        "cmd": {
+         "forward": 0.0017,
+         "left": -0.02,
+         "turn": 0.0136
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.587999995826
+     },
+     "door_align": {
+      "dy_m": 0.0992,
+      "e_yaw_rad": 0.1214,
+      "cmd": {
+       "forward": 0.0017,
+       "left": -0.02,
+       "turn": 0.0136
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.60799999563636,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 257.608,
+   "wall_seconds": 1000.7,
+   "commands": 2765,
+   "frames": 1506,
+   "looks": 9,
+   "status_messages": 1290,
+   "load_average_start": [
+    106.05,
+    118.46,
+    138.07
+   ],
+   "load_average_end": [
+    28.66,
+    40.37,
+    77.52
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 257.608,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 145.929,
+     "seg": 0,
+     "held_iou": 0.754,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 145.929,
+     "seg": 0,
+     "held_iou": 0.832,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 182.521,
+     "seg": 1,
+     "held_iou": 0.867,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 182.521,
+     "seg": 1,
+     "held_iou": 0.815,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 225.528,
+     "seg": 2,
+     "held_iou": 0.799,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 225.528,
+     "seg": 2,
+     "held_iou": 0.8,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s835-off",
+   "result_sha256": "e181e569e7600cde10be1129a788160aabcbd58fc5b1f41952932f8efed1aef0",
+   "events_sha256": "d1e81a667c2c7a732d7c46c4abc188be19cb30bcaed56ac9d672c3cdcc0247d6",
+   "commands_sha256": "c57612de43e901e1892c1ecd88cf2e7f40a70288113e3c0176f2a5115f7a20e1",
+   "seed": 835,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0828,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 1.24,
+   "order_sheet_error": {
+    "xy_m": 0.05,
+    "yaw_rad": 0.03
+   },
+   "approach": {
+    "r1": {
+     "frames": 248,
+     "commands": 401,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 50.725,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0261,
+     "localizer_pos_err_max_m": 0.8088,
+     "at_arrival": {
+      "gt": [
+       0.2711,
+       0.1433,
+       -0.0057
+      ],
+      "pos_err_to_goal_m": 0.0435,
+      "pos_err_to_true_prestation_m": 0.1016,
+      "yaw_err_to_true_rad": 0.0357,
+      "localizer_pos_err_m": 0.0158
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 952,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.651,
+     "approach_go_s": 114.852,
+     "localizer_pos_err_p50_m": 0.0214,
+     "localizer_pos_err_max_m": 0.2003,
+     "at_arrival": {
+      "gt": [
+       1.7389,
+       0.1371,
+       -3.1194
+      ],
+      "pos_err_to_goal_m": 0.0396,
+      "pos_err_to_true_prestation_m": 0.0707,
+      "yaw_err_to_true_rad": 0.0078,
+      "localizer_pos_err_m": 0.014
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.1016,
+   "max_arrival_err_to_own_goal_m": 0.0435,
+   "max_arrival_yaw_err_rad": 0.0357,
+   "max_arrival_localizer_err_m": 0.0158,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": -0.0448,
+    "beam_z_at_crossing_m": 0.0606,
+    "crossing_t": 203.49,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.037,
+      "e_yaw_rad": 0.0709,
+      "cmd": {
+       "forward": -0.0004,
+       "left": 0.0075,
+       "turn": 0.0079
+      }
+     },
+     "r2": {
+      "dy_m": 0.0992,
+      "e_yaw_rad": 0.1214,
+      "cmd": {
+       "forward": 0.0017,
+       "left": -0.02,
+       "turn": 0.0136
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9739,
+       0.013,
+       -0.0709
+      ],
+      "std_xy_m": 0.0248,
+      "sim_time": 219.81374999653008
+     },
+     "r2": {
+      "xyyaw": [
+       2.8524,
+       -0.0492,
+       3.0202
+      ],
+      "std_xy_m": 0.0266,
+      "sim_time": 219.81374999653008
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.279,
+       0.1296,
+       -0.0007
+      ],
+      "std_xy_m": 0.0267,
+      "looks": 3,
+      "sim_time": 50.72500000015119
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17268963937201814,
+       -0.0067269010342276316
+      ],
+      "errors": [
+       0.01068963937201814,
+       -0.0067269010342276316,
+       0.02835886665752039
+      ],
+      "sim_time": 137.30799999848108
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9739,
+       0.013,
+       -0.0709
+      ],
+      "std_xy_m": 0.0248,
+      "sim_time": 219.81374999653008
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6468,
+       "bottom_beam_fraction": 0.1118,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6468,
+       "top_beam_fraction": 0.8627,
+       "bottom_beam_fraction": 0.1118
+      },
+      "sim_time": 223.82374999643525
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.754,
+       "sim_time": 145.9294999982772
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.867,
+       "sim_time": 182.52074999741194
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.799,
+       "sim_time": 225.52799999639495
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.799,
+      "sim_time": 225.52799999639495
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0087,
+        "e_yaw_rad": 0.0154,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0018,
+         "turn": 0.0017
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0283,
+        "e_yaw_rad": -0.0554,
+        "cmd": {
+         "forward": -0.0002,
+         "left": -0.0057,
+         "turn": -0.0062
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.037,
+        "e_yaw_rad": 0.0709,
+        "cmd": {
+         "forward": -0.0004,
+         "left": 0.0075,
+         "turn": 0.0079
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.587999995826
+     },
+     "door_align": {
+      "dy_m": 0.037,
+      "e_yaw_rad": 0.0709,
+      "cmd": {
+       "forward": -0.0004,
+       "left": 0.0075,
+       "turn": 0.0079
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.60799999563636,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7429,
+       0.1237,
+       -3.1234
+      ],
+      "std_xy_m": 0.0324,
+      "looks": 6,
+      "sim_time": 114.65149999901682
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17280795853921255,
+       0.004627074238001771
+      ],
+      "errors": [
+       0.010807958539212542,
+       0.004627074238001771,
+       -0.00043679482355071694
+      ],
+      "sim_time": 141.31799999838626
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8524,
+       -0.0492,
+       3.0202
+      ],
+      "std_xy_m": 0.0266,
+      "sim_time": 219.81374999653008
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.628,
+       "bottom_beam_fraction": 0.0325,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.628,
+       "top_beam_fraction": 0.9264,
+       "bottom_beam_fraction": 0.0325
+      },
+      "sim_time": 223.82374999643525
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.832,
+       "sim_time": 145.9294999982772
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.815,
+       "sim_time": 182.52074999741194
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.8,
+       "sim_time": 225.52799999639495
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.8,
+      "sim_time": 225.52799999639495
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0211,
+        "e_yaw_rad": -0.018,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0043,
+         "turn": -0.002
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0843,
+        "e_yaw_rad": 0.0366,
+        "cmd": {
+         "forward": -0.0004,
+         "left": 0.0171,
+         "turn": 0.0041
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0992,
+        "e_yaw_rad": 0.1214,
+        "cmd": {
+         "forward": 0.0017,
+         "left": -0.02,
+         "turn": 0.0136
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.587999995826
+     },
+     "door_align": {
+      "dy_m": 0.0992,
+      "e_yaw_rad": 0.1214,
+      "cmd": {
+       "forward": 0.0017,
+       "left": -0.02,
+       "turn": 0.0136
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.60799999563636,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 257.608,
+   "wall_seconds": 997.8,
+   "commands": 2765,
+   "frames": 1506,
+   "looks": 9,
+   "status_messages": 0,
+   "load_average_start": [
+    106.05,
+    118.46,
+    138.07
+   ],
+   "load_average_end": [
+    28.66,
+    40.37,
+    77.52
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 257.608,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 145.929,
+     "seg": 0,
+     "held_iou": 0.754,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 145.929,
+     "seg": 0,
+     "held_iou": 0.832,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 182.521,
+     "seg": 1,
+     "held_iou": 0.867,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 182.521,
+     "seg": 1,
+     "held_iou": 0.815,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 225.528,
+     "seg": 2,
+     "held_iou": 0.799,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 225.528,
+     "seg": 2,
+     "held_iou": 0.8,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s836-on",
+   "result_sha256": "676828bec7183c868d5a87bc0c48d25d3ee80bafd2d5f728e68c4587f1427087",
+   "events_sha256": "374a98b3d9ca3767beaf11439d650b634db0019fba7d55bfca6d4208e001668c",
+   "commands_sha256": "38f2f892c8305cdb0332edad904c0a67b3f540b476b340faaa91f5d498fa0eea",
+   "seed": 836,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0629,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.69,
+   "order_sheet_error": {
+    "xy_m": 0.0412,
+    "yaw_rad": 0.04
+   },
+   "approach": {
+    "r1": {
+     "frames": 210,
+     "commands": 326,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 43.225,
+     "approach_go_s": 114.952,
+     "localizer_pos_err_p50_m": 0.0118,
+     "localizer_pos_err_max_m": 0.3002,
+     "at_arrival": {
+      "gt": [
+       0.2716,
+       -0.0364,
+       0.0042
+      ],
+      "pos_err_to_goal_m": 0.0366,
+      "pos_err_to_true_prestation_m": 0.0361,
+      "yaw_err_to_true_rad": 0.0358,
+      "localizer_pos_err_m": 0.0081
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 953,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.752,
+     "approach_go_s": 114.952,
+     "localizer_pos_err_p50_m": 0.0126,
+     "localizer_pos_err_max_m": 0.1811,
+     "at_arrival": {
+      "gt": [
+       1.7345,
+       -0.031,
+       -3.1406
+      ],
+      "pos_err_to_goal_m": 0.0324,
+      "pos_err_to_true_prestation_m": 0.0708,
+      "yaw_err_to_true_rad": 0.039,
+      "localizer_pos_err_m": 0.006
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0708,
+   "max_arrival_err_to_own_goal_m": 0.0366,
+   "max_arrival_yaw_err_rad": 0.039,
+   "max_arrival_localizer_err_m": 0.0081,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.006,
+    "beam_z_at_crossing_m": 0.0607,
+    "crossing_t": 203.49,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0925,
+      "e_yaw_rad": -0.0622,
+      "cmd": {
+       "forward": 0.0008,
+       "left": 0.0187,
+       "turn": -0.007
+      }
+     },
+     "r2": {
+      "dy_m": -0.0227,
+      "e_yaw_rad": -0.0225,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0046,
+       "turn": -0.0025
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9422,
+       -0.0425,
+       0.0622
+      ],
+      "std_xy_m": 0.035,
+      "sim_time": 219.9139999965277
+     },
+     "r2": {
+      "xyyaw": [
+       2.8639,
+       0.0727,
+       -3.119
+      ],
+      "std_xy_m": 0.0191,
+      "sim_time": 219.9139999965277
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.2768,
+       -0.0293,
+       0.0019
+      ],
+      "std_xy_m": 0.025,
+      "looks": 3,
+      "sim_time": 43.22500000011538
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17280890158946857,
+       -0.00644395310727543
+      ],
+      "errors": [
+       0.010808901589468567,
+       -0.00644395310727543,
+       0.005119240109310732
+      ],
+      "sim_time": 138.21024999845974
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9422,
+       -0.0425,
+       0.0622
+      ],
+      "std_xy_m": 0.035,
+      "sim_time": 219.9139999965277
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6301,
+       "bottom_beam_fraction": 0.1239,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6301,
+       "top_beam_fraction": 0.9065,
+       "bottom_beam_fraction": 0.1239
+      },
+      "sim_time": 223.92399999643288
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.845,
+       "sim_time": 146.02974999827484
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.842,
+       "sim_time": 182.62099999740957
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.827,
+       "sim_time": 225.62824999639258
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.827,
+      "sim_time": 225.62824999639258
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": 0.0615,
+        "e_yaw_rad": -0.0237,
+        "cmd": {
+         "forward": 0.0002,
+         "left": 0.0125,
+         "turn": -0.0027
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": 0.0139,
+        "e_yaw_rad": -0.0286,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0028,
+         "turn": -0.0032
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0925,
+        "e_yaw_rad": -0.0622,
+        "cmd": {
+         "forward": 0.0008,
+         "left": 0.0187,
+         "turn": -0.007
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.68824999582364
+     },
+     "door_align": {
+      "dy_m": 0.0925,
+      "e_yaw_rad": -0.0622,
+      "cmd": {
+       "forward": 0.0008,
+       "left": 0.0187,
+       "turn": -0.007
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.708249995634,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7282,
+       -0.0289,
+       3.141
+      ],
+      "std_xy_m": 0.0296,
+      "looks": 6,
+      "sim_time": 114.75174999901445
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17299295632781997,
+       -0.0048732859218756875
+      ],
+      "errors": [
+       0.010992956327819964,
+       -0.0048732859218756875,
+       -0.02518535955578454
+      ],
+      "sim_time": 141.41824999838389
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8639,
+       0.0727,
+       -3.119
+      ],
+      "std_xy_m": 0.0191,
+      "sim_time": 219.9139999965277
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6323,
+       "bottom_beam_fraction": 0.0401,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6323,
+       "top_beam_fraction": 0.88,
+       "bottom_beam_fraction": 0.0401
+      },
+      "sim_time": 223.92399999643288
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.797,
+       "sim_time": 146.02974999827484
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.843,
+       "sim_time": 182.62099999740957
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.807,
+       "sim_time": 225.62824999639258
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.807,
+      "sim_time": 225.62824999639258
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": 0.042,
+        "e_yaw_rad": -0.0571,
+        "cmd": {
+         "forward": -0.0003,
+         "left": -0.0085,
+         "turn": -0.0064
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0029,
+        "e_yaw_rad": -0.0444,
+        "cmd": {
+         "forward": 0.0,
+         "left": 0.0006,
+         "turn": -0.005
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.0227,
+        "e_yaw_rad": -0.0225,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0046,
+         "turn": -0.0025
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.68824999582364
+     },
+     "door_align": {
+      "dy_m": -0.0227,
+      "e_yaw_rad": -0.0225,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0046,
+       "turn": -0.0025
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.708249995634,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 257.708,
+   "wall_seconds": 908.3,
+   "commands": 2693,
+   "frames": 1487,
+   "looks": 9,
+   "status_messages": 1290,
+   "load_average_start": [
+    28.77,
+    40.2,
+    77.24
+   ],
+   "load_average_end": [
+    14.65,
+    27.15,
+    45.97
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 257.708,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 146.03,
+     "seg": 0,
+     "held_iou": 0.845,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 146.03,
+     "seg": 0,
+     "held_iou": 0.797,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 182.621,
+     "seg": 1,
+     "held_iou": 0.842,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 182.621,
+     "seg": 1,
+     "held_iou": 0.843,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 225.628,
+     "seg": 2,
+     "held_iou": 0.827,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 225.628,
+     "seg": 2,
+     "held_iou": 0.807,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s836-off",
+   "result_sha256": "1ab52161a4717f4aa19a905378a96ded9323ebabbe196a83c22d16183234fcc9",
+   "events_sha256": "374a98b3d9ca3767beaf11439d650b634db0019fba7d55bfca6d4208e001668c",
+   "commands_sha256": "38f2f892c8305cdb0332edad904c0a67b3f540b476b340faaa91f5d498fa0eea",
+   "seed": 836,
+   "stage": "door",
+   "arm": "off",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "done",
+    "r2": "done"
+   },
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "success_gt": true,
+   "final_error_m": 0.0629,
+   "lifted_clear_gt": true,
+   "on_floor_released": true,
+   "max_tilt_deg_lifted": 0.69,
+   "order_sheet_error": {
+    "xy_m": 0.0412,
+    "yaw_rad": 0.04
+   },
+   "approach": {
+    "r1": {
+     "frames": 210,
+     "commands": 326,
+     "looks": 3,
+     "outcome": "arrived",
+     "arrived_s": 43.225,
+     "approach_go_s": 114.952,
+     "localizer_pos_err_p50_m": 0.0118,
+     "localizer_pos_err_max_m": 0.3002,
+     "at_arrival": {
+      "gt": [
+       0.2716,
+       -0.0364,
+       0.0042
+      ],
+      "pos_err_to_goal_m": 0.0366,
+      "pos_err_to_true_prestation_m": 0.0361,
+      "yaw_err_to_true_rad": 0.0358,
+      "localizer_pos_err_m": 0.0081
+     }
+    },
+    "r2": {
+     "frames": 567,
+     "commands": 953,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.752,
+     "approach_go_s": 114.952,
+     "localizer_pos_err_p50_m": 0.0126,
+     "localizer_pos_err_max_m": 0.1811,
+     "at_arrival": {
+      "gt": [
+       1.7345,
+       -0.031,
+       -3.1406
+      ],
+      "pos_err_to_goal_m": 0.0324,
+      "pos_err_to_true_prestation_m": 0.0708,
+      "yaw_err_to_true_rad": 0.039,
+      "localizer_pos_err_m": 0.006
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0708,
+   "max_arrival_err_to_own_goal_m": 0.0366,
+   "max_arrival_yaw_err_rad": 0.039,
+   "max_arrival_localizer_err_m": 0.0081,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": null,
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": true,
+    "beam_y_offset_at_crossing_m": 0.006,
+    "beam_z_at_crossing_m": 0.0607,
+    "crossing_t": 203.49,
+    "door_align_claims": {
+     "r1": {
+      "dy_m": 0.0925,
+      "e_yaw_rad": -0.0622,
+      "cmd": {
+       "forward": 0.0008,
+       "left": 0.0187,
+       "turn": -0.007
+      }
+     },
+     "r2": {
+      "dy_m": -0.0227,
+      "e_yaw_rad": -0.0225,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0046,
+       "turn": -0.0025
+      }
+     }
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9422,
+       -0.0425,
+       0.0622
+      ],
+      "std_xy_m": 0.035,
+      "sim_time": 219.9139999965277
+     },
+     "r2": {
+      "xyyaw": [
+       2.8639,
+       0.0727,
+       -3.119
+      ],
+      "std_xy_m": 0.0191,
+      "sim_time": 219.9139999965277
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.2768,
+       -0.0293,
+       0.0019
+      ],
+      "std_xy_m": 0.025,
+      "looks": 3,
+      "sim_time": 43.22500000011538
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17280890158946857,
+       -0.00644395310727543
+      ],
+      "errors": [
+       0.010808901589468567,
+       -0.00644395310727543,
+       0.005119240109310732
+      ],
+      "sim_time": 138.21024999845974
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9422,
+       -0.0425,
+       0.0622
+      ],
+      "std_xy_m": 0.035,
+      "sim_time": 219.9139999965277
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6301,
+       "bottom_beam_fraction": 0.1239,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6301,
+       "top_beam_fraction": 0.9065,
+       "bottom_beam_fraction": 0.1239
+      },
+      "sim_time": 223.92399999643288
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.845,
+       "sim_time": 146.02974999827484
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.842,
+       "sim_time": 182.62099999740957
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.827,
+       "sim_time": 225.62824999639258
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.827,
+      "sim_time": 225.62824999639258
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": 0.0615,
+        "e_yaw_rad": -0.0237,
+        "cmd": {
+         "forward": 0.0002,
+         "left": 0.0125,
+         "turn": -0.0027
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": 0.0139,
+        "e_yaw_rad": -0.0286,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0028,
+         "turn": -0.0032
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": 0.0925,
+        "e_yaw_rad": -0.0622,
+        "cmd": {
+         "forward": 0.0008,
+         "left": 0.0187,
+         "turn": -0.007
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.68824999582364
+     },
+     "door_align": {
+      "dy_m": 0.0925,
+      "e_yaw_rad": -0.0622,
+      "cmd": {
+       "forward": 0.0008,
+       "left": 0.0187,
+       "turn": -0.007
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.708249995634,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7282,
+       -0.0289,
+       3.141
+      ],
+      "std_xy_m": 0.0296,
+      "looks": 6,
+      "sim_time": 114.75174999901445
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17299295632781997,
+       -0.0048732859218756875
+      ],
+      "errors": [
+       0.010992956327819964,
+       -0.0048732859218756875,
+       -0.02518535955578454
+      ],
+      "sim_time": 141.41824999838389
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8639,
+       0.0727,
+       -3.119
+      ],
+      "std_xy_m": 0.0191,
+      "sim_time": 219.9139999965277
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6323,
+       "bottom_beam_fraction": 0.0401,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6323,
+       "top_beam_fraction": 0.88,
+       "bottom_beam_fraction": 0.0401
+      },
+      "sim_time": 223.92399999643288
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.797,
+       "sim_time": 146.02974999827484
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.843,
+       "sim_time": 182.62099999740957
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.807,
+       "sim_time": 225.62824999639258
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.807,
+      "sim_time": 225.62824999639258
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": 0.042,
+        "e_yaw_rad": -0.0571,
+        "cmd": {
+         "forward": -0.0003,
+         "left": -0.0085,
+         "turn": -0.0064
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.0029,
+        "e_yaw_rad": -0.0444,
+        "cmd": {
+         "forward": 0.0,
+         "left": 0.0006,
+         "turn": -0.005
+        }
+       }
+      },
+      {
+       "seg": 2,
+       "axial_m": 0.8,
+       "door_align": {
+        "dy_m": -0.0227,
+        "e_yaw_rad": -0.0225,
+        "cmd": {
+         "forward": 0.0001,
+         "left": 0.0046,
+         "turn": -0.0025
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 249.68824999582364
+     },
+     "door_align": {
+      "dy_m": -0.0227,
+      "e_yaw_rad": -0.0225,
+      "cmd": {
+       "forward": 0.0001,
+       "left": 0.0046,
+       "turn": -0.0025
+      }
+     },
+     "placed": {
+      "beam_visible_on_floor_plane": true,
+      "sim_time": 257.708249995634,
+      "scope": "own view after release; no map target in the open-floor study"
+     }
+    }
+   },
+   "sim_seconds": 257.708,
+   "wall_seconds": 908.4,
+   "commands": 2693,
+   "frames": 1487,
+   "looks": 9,
+   "status_messages": 0,
+   "load_average_start": [
+    28.77,
+    40.2,
+    77.24
+   ],
+   "load_average_end": [
+    14.65,
+    27.15,
+    45.97
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": null,
+   "unplanned_drops": [],
+   "makespan_sim_s": 257.708,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 146.03,
+     "seg": 0,
+     "held_iou": 0.845,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 146.03,
+     "seg": 0,
+     "held_iou": 0.797,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 182.621,
+     "seg": 1,
+     "held_iou": 0.842,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 182.621,
+     "seg": 1,
+     "held_iou": 0.843,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 225.628,
+     "seg": 2,
+     "held_iou": 0.827,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 225.628,
+     "seg": 2,
+     "held_iou": 0.807,
+     "held_gt": true
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s837-on-openlift",
+   "result_sha256": "427e244151276ce024d6e2092fa66a65a9b484ff724aa86c89bb550bfc90a50a",
+   "events_sha256": "4b9928974d822936bc18a20491e86b29e500da43d124aa214cbf200d830837be",
+   "commands_sha256": "029d6ff8c00c59d92027d76feb6774d6bfef3f85d52c79d7b4020fd60f5ec832",
+   "seed": 837,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "PARTNER_ABORT",
+    "r2": "LOAD_NOT_HELD_AFTER_LIFT"
+   },
+   "success_gt": false,
+   "final_error_m": 0.7666,
+   "lifted_clear_gt": true,
+   "on_floor_released": false,
+   "max_tilt_deg_lifted": 1.1,
+   "order_sheet_error": {
+    "xy_m": 0.0361,
+    "yaw_rad": 0.05
+   },
+   "approach": {
+    "r1": {
+     "frames": 198,
+     "commands": 331,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 40.825,
+     "approach_go_s": 114.752,
+     "localizer_pos_err_p50_m": 0.052,
+     "localizer_pos_err_max_m": 0.3733,
+     "at_arrival": {
+      "gt": [
+       0.2712,
+       0.1458,
+       -0.0075
+      ],
+      "pos_err_to_goal_m": 0.046,
+      "pos_err_to_true_prestation_m": 0.0424,
+      "yaw_err_to_true_rad": 0.0425,
+      "localizer_pos_err_m": 0.0169
+     }
+    },
+    "r2": {
+     "frames": 566,
+     "commands": 951,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 114.551,
+     "approach_go_s": 114.752,
+     "localizer_pos_err_p50_m": 0.013,
+     "localizer_pos_err_max_m": 0.4174,
+     "at_arrival": {
+      "gt": [
+       1.7379,
+       0.0769,
+       -3.1381
+      ],
+      "pos_err_to_goal_m": 0.0265,
+      "pos_err_to_true_prestation_m": 0.0548,
+      "yaw_err_to_true_rad": 0.0535,
+      "localizer_pos_err_m": 0.003
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0548,
+   "max_arrival_err_to_own_goal_m": 0.046,
+   "max_arrival_yaw_err_rad": 0.0535,
+   "max_arrival_localizer_err_m": 0.0169,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": {
+    "first_failure": {
+     "robot": "r2",
+     "reason": "LOAD_NOT_HELD_AFTER_LIFT",
+     "sim_time_s": 224.225,
+     "state_before": "lift",
+     "beam_z_m": 0.029
+    },
+    "partner": "r1",
+    "partner_terminal_state": "failed",
+    "partner_failure": "PARTNER_ABORT",
+    "partner_terminal_latency_s": 0.1,
+    "partner_motion_commands_after": 0,
+    "partner_arm_commands_after": 0,
+    "partner_last_motion_after_s": null,
+    "beam_max_tilt_deg_after": 5.56,
+    "beam_final_z_m": 0.0291,
+    "on_failure_mode": "continue"
+   },
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": false,
+    "beam_y_offset_at_crossing_m": -0.0481,
+    "beam_z_at_crossing_m": 0.0606,
+    "crossing_t": 201.88,
+    "door_align_claims": {
+     "r1": null,
+     "r2": null
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       1.9984,
+       -0.0016,
+       -0.0683
+      ],
+      "std_xy_m": 0.0243,
+      "sim_time": 218.5104999965609
+     },
+     "r2": {
+      "xyyaw": [
+       2.8748,
+       -0.0634,
+       3.0203
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 218.5104999965609
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.2776,
+       0.1293,
+       -0.0015
+      ],
+      "std_xy_m": 0.0302,
+      "looks": 2,
+      "sim_time": 40.82500000010392
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17302324225481533,
+       -0.0054501648212308355
+      ],
+      "errors": [
+       0.011023242254815324,
+       -0.0054501648212308355,
+       0.015864557543437734
+      ],
+      "sim_time": 138.410749998455
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.9984,
+       -0.0016,
+       -0.0683
+      ],
+      "std_xy_m": 0.0243,
+      "sim_time": 218.5104999965609
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6156,
+       "bottom_beam_fraction": 0.1176,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6156,
+       "top_beam_fraction": 0.9489,
+       "bottom_beam_fraction": 0.1176
+      },
+      "sim_time": 222.52049999646607
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.827,
+       "sim_time": 144.62624999830803
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.861,
+       "sim_time": 181.21749999744276
+      },
+      {
+       "seg": 2,
+       "held_iou": 0.887,
+       "sim_time": 224.22474999642577
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.887,
+      "sim_time": 224.22474999642577
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0342,
+        "e_yaw_rad": 0.0624,
+        "cmd": {
+         "forward": 0.0003,
+         "left": -0.0069,
+         "turn": 0.007
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": -0.009,
+        "e_yaw_rad": 0.0174,
+        "cmd": {
+         "forward": 0.0,
+         "left": -0.0018,
+         "turn": 0.0019
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 206.2799999968501
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7369,
+       0.074,
+       -3.1387
+      ],
+      "std_xy_m": 0.0311,
+      "looks": 6,
+      "sim_time": 114.55124999901919
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.1729421085507438,
+       0.0045171128725847234
+      ],
+      "errors": [
+       0.01094210855074379,
+       0.0045171128725847234,
+       -0.022945234397388065
+      ],
+      "sim_time": 140.01474999841707
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       2.8748,
+       -0.0634,
+       3.0203
+      ],
+      "std_xy_m": 0.0201,
+      "sim_time": 218.5104999965609
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": false,
+       "dark_fraction": 0.5891,
+       "bottom_beam_fraction": 0.0226,
+       "reason": "GRIP_VIEW_NOT_BAND"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.5891,
+       "top_beam_fraction": 0.9821,
+       "bottom_beam_fraction": 0.0226
+      },
+      "sim_time": 222.52049999646607
+     },
+     "lifts": [
+      {
+       "seg": 0,
+       "held_iou": 0.868,
+       "sim_time": 144.62624999830803
+      },
+      {
+       "seg": 1,
+       "held_iou": 0.82,
+       "sim_time": 181.21749999744276
+      }
+     ],
+     "lifted": {
+      "held_iou": 0.82,
+      "sim_time": 181.21749999744276
+     },
+     "segments": [
+      {
+       "seg": 0,
+       "axial_m": 0.55,
+       "door_align": {
+        "dy_m": -0.0054,
+        "e_yaw_rad": 0.0169,
+        "cmd": {
+         "forward": -0.0,
+         "left": 0.0011,
+         "turn": 0.0019
+        }
+       }
+      },
+      {
+       "seg": 1,
+       "axial_m": 0.85,
+       "door_align": {
+        "dy_m": 0.0418,
+        "e_yaw_rad": 0.1115,
+        "cmd": {
+         "forward": 0.0006,
+         "left": -0.0084,
+         "turn": 0.0125
+        }
+       }
+      }
+     ],
+     "route_done": {
+      "sim_time": 206.2799999968501
+     }
+    }
+   },
+   "sim_seconds": 224.325,
+   "wall_seconds": 622.7,
+   "commands": 2230,
+   "frames": 1348,
+   "looks": 8,
+   "status_messages": 1124,
+   "load_average_start": [
+    14.65,
+    27.15,
+    45.97
+   ],
+   "load_average_end": [
+    14.88,
+    25.71,
+    40.28
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": {
+    "robot": "r2",
+    "segment": 2,
+    "applied_at_s": 222.721,
+    "replaced_servo1_commands": 24,
+    "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+    "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+    "victim_failed_at_intervened_lift": true
+   },
+   "unplanned_drops": [],
+   "makespan_sim_s": 224.325,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 144.626,
+     "seg": 0,
+     "held_iou": 0.827,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 144.626,
+     "seg": 0,
+     "held_iou": 0.868,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 181.217,
+     "seg": 1,
+     "held_iou": 0.861,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 181.217,
+     "seg": 1,
+     "held_iou": 0.82,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 224.225,
+     "seg": 2,
+     "held_iou": 0.887,
+     "held_gt": false
+    },
+    {
+     "robot": "r2",
+     "t": 224.225,
+     "seg": 2,
+     "held_iou": 0.121,
+     "held_gt": false
+    }
+   ]
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/stage2c-ca44f66/s838-on-openlift",
+   "result_sha256": "a96fab1157cf3844b9b8d37bcae3b3cee59ff912e263b6f8068d9f2236fca902",
+   "events_sha256": "6e5f3914128617f868763f6b12969594e891665b1b4b7f462cff216306759bb4",
+   "commands_sha256": "d97fe646f4c7bb45f53f36fc51c169c56860705dfccbba1d0546c2d9f497e2ca",
+   "seed": 838,
+   "stage": "door",
+   "arm": "on",
+   "on_failure": "continue",
+   "source_sha": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+   "dirty_source": false,
+   "gt_at_runtime": false,
+   "development_seed": false,
+   "final_states": {
+    "r1": "failed",
+    "r2": "failed"
+   },
+   "failures": {
+    "r1": "LOAD_NOT_HELD_AFTER_LIFT",
+    "r2": "PARTNER_ABORT"
+   },
+   "success_gt": false,
+   "final_error_m": 2.22,
+   "lifted_clear_gt": false,
+   "on_floor_released": false,
+   "max_tilt_deg_lifted": 0.0,
+   "order_sheet_error": {
+    "xy_m": 0.0283,
+    "yaw_rad": 0.02
+   },
+   "approach": {
+    "r1": {
+     "frames": 182,
+     "commands": 299,
+     "looks": 2,
+     "outcome": "arrived",
+     "arrived_s": 37.625,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.0485,
+     "localizer_pos_err_max_m": 0.234,
+     "at_arrival": {
+      "gt": [
+       0.282,
+       0.043,
+       -0.0086
+      ],
+      "pos_err_to_goal_m": 0.0436,
+      "pos_err_to_true_prestation_m": 0.0461,
+      "yaw_err_to_true_rad": 0.0286,
+      "localizer_pos_err_m": 0.0138
+     }
+    },
+    "r2": {
+     "frames": 521,
+     "commands": 861,
+     "looks": 6,
+     "outcome": "arrived",
+     "arrived_s": 105.529,
+     "approach_go_s": 105.729,
+     "localizer_pos_err_p50_m": 0.0171,
+     "localizer_pos_err_max_m": 0.2646,
+     "at_arrival": {
+      "gt": [
+       1.7407,
+       -0.0251,
+       -3.1402
+      ],
+      "pos_err_to_goal_m": 0.0296,
+      "pos_err_to_true_prestation_m": 0.0695,
+      "yaw_err_to_true_rad": 0.0186,
+      "localizer_pos_err_m": 0.0118
+     }
+    }
+   },
+   "arrived_both": true,
+   "max_arrival_err_to_true_prestation_m": 0.0695,
+   "max_arrival_err_to_own_goal_m": 0.0436,
+   "max_arrival_yaw_err_rad": 0.0286,
+   "max_arrival_localizer_err_m": 0.0138,
+   "robot_robot_contact_samples": 0,
+   "robot_beam_contact_samples_in_approach": 0,
+   "robot_wall_contact_samples": 0,
+   "beam_wall_contact_samples": 0,
+   "beam_disp_before_grasp_m": 0.0001,
+   "weld_eq_active_max": 0,
+   "drop_injection": null,
+   "failure_propagation": {
+    "first_failure": {
+     "robot": "r1",
+     "reason": "LOAD_NOT_HELD_AFTER_LIFT",
+     "sim_time_s": 135.604,
+     "state_before": "lift",
+     "beam_z_m": 0.0286
+    },
+    "partner": "r2",
+    "partner_terminal_state": "failed",
+    "partner_failure": "PARTNER_ABORT",
+    "partner_terminal_latency_s": 0.0,
+    "partner_motion_commands_after": 0,
+    "partner_arm_commands_after": 0,
+    "partner_last_motion_after_s": null,
+    "beam_max_tilt_deg_after": null,
+    "beam_final_z_m": 0.0286,
+    "on_failure_mode": "continue"
+   },
+   "door": {
+    "plan": {
+     "door_id": "door_1",
+     "axis_y_m": 0.05,
+     "target_beam_x_m": 3.2,
+     "checkpoints_beam_x_m": [
+      1.55,
+      2.4
+     ],
+     "headings_rad": {
+      "r1": 0.0,
+      "r2": 3.141592653589793
+     }
+    },
+    "beam_passed_x_ge_2_7": false,
+    "beam_y_offset_at_crossing_m": null,
+    "beam_z_at_crossing_m": null,
+    "crossing_t": null,
+    "door_align_claims": {
+     "r1": null,
+     "r2": null
+    },
+    "grasp_estimates": {
+     "r1": {
+      "xyyaw": [
+       0.5589,
+       0.0077,
+       0.0117
+      ],
+      "source": "arrival estimate + own-RGB beam displacement (door v2)",
+      "sim_time": 129.78924999865887
+     },
+     "r2": {
+      "xyyaw": [
+       1.3876,
+       0.0156,
+       3.1255
+      ],
+      "source": "arrival estimate + own-RGB beam displacement (door v2)",
+      "sim_time": 130.99224999863043
+     }
+    },
+    "success_rule": "completed + lifted + released on floor + beam x >= 2.7 + final error <= 0.25 m"
+   },
+   "claims": {
+    "r1": {
+     "at_prestation": {
+      "estimate": [
+       0.284,
+       0.0285,
+       -0.0031
+      ],
+      "std_xy_m": 0.0278,
+      "looks": 2,
+      "sim_time": 37.62500000008864
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17321349693475505,
+       -0.006897183071131499
+      ],
+      "errors": [
+       0.01121349693475504,
+       -0.006897183071131499,
+       0.002986689570283788
+      ],
+      "sim_time": 129.78924999865887
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       0.5589,
+       0.0077,
+       0.0117
+      ],
+      "source": "arrival estimate + own-RGB beam displacement (door v2)",
+      "sim_time": 129.78924999865887
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.6019,
+       "bottom_beam_fraction": 0.3033,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.6019,
+       "top_beam_fraction": 0.8829,
+       "bottom_beam_fraction": 0.3033
+      },
+      "sim_time": 132.69649999859013
+     }
+    },
+    "r2": {
+     "at_prestation": {
+      "estimate": [
+       1.7291,
+       -0.0288,
+       3.1405
+      ],
+      "std_xy_m": 0.0291,
+      "looks": 6,
+      "sim_time": 105.52874999923255
+     },
+     "aligned": {
+      "grip_base_m": [
+       0.17344676610928328,
+       -0.0047089406188603345
+      ],
+      "errors": [
+       0.011446766109283274,
+       -0.0047089406188603345,
+       0.00322580403045797
+      ],
+      "sim_time": 130.99224999863043
+     },
+     "grasp_pose_estimate": {
+      "xyyaw": [
+       1.3876,
+       0.0156,
+       3.1255
+      ],
+      "source": "arrival estimate + own-RGB beam displacement (door v2)",
+      "sim_time": 130.99224999863043
+     },
+     "gripped": {
+      "grip_view": {
+       "seen": true,
+       "dark_fraction": 0.5937,
+       "bottom_beam_fraction": 0.3325,
+       "reason": "BAND_BETWEEN_JAWS"
+      },
+      "grip_view_m2": {
+       "seen": true,
+       "dark_fraction": 0.5937,
+       "top_beam_fraction": 0.8576,
+       "bottom_beam_fraction": 0.3325
+      },
+      "sim_time": 133.89949999856168
+     }
+    }
+   },
+   "sim_seconds": 135.604,
+   "wall_seconds": 388.2,
+   "commands": 1269,
+   "frames": 999,
+   "looks": 8,
+   "status_messages": 674,
+   "load_average_start": [
+    14.65,
+    27.15,
+    45.97
+   ],
+   "load_average_end": [
+    18.15,
+    39.59,
+    48.74
+   ],
+   "contact_profile": "cargo_noslip_v1",
+   "weld": "off",
+   "profile": "m2_pair_v1",
+   "door_version": "v3",
+   "lift_check": "owncam_pair_lift_v3",
+   "open_at_lift_injection": {
+    "robot": "r1",
+    "segment": 0,
+    "applied_at_s": 134.1,
+    "replaced_servo1_commands": 24,
+    "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+    "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+    "victim_failed_at_intervened_lift": true
+   },
+   "unplanned_drops": [],
+   "makespan_sim_s": 135.604,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 135.604,
+     "seg": 0,
+     "held_iou": 0.177,
+     "held_gt": false
+    }
+   ]
+  }
+ ],
+ "missing": [],
+ "report_blocked": false,
+ "gates": {
+  "on": {
+   "M2-D1_success": {
+    "value": "5/6",
+    "pass": true
+   },
+   "M2-D2_no_wall_contact": {
+    "seeds_with_contact": [],
+    "pass": true
+   },
+   "M2-D3_approach": {
+    "arrived_both": "6/6",
+    "pass": true
+   },
+   "M2-D4_inputs_safety": {
+    "pass": true
+   },
+   "crossing_offset_m": {
+    "831": 0.0084,
+    "832": 0.068,
+    "833": 0.0408,
+    "834": 0.02,
+    "835": -0.0448,
+    "836": 0.006
+   },
+   "final_error_m": {
+    "831": 0.0608,
+    "832": 0.098,
+    "833": 0.7928,
+    "834": 0.0973,
+    "835": 0.0828,
+    "836": 0.0629
+   },
+   "failures": {
+    "831": {
+     "r1": null,
+     "r2": null
+    },
+    "832": {
+     "r1": null,
+     "r2": null
+    },
+    "833": {
+     "r1": "DOOR_POSE_NOT_LOCALIZED",
+     "r2": "PARTNER_ABORT"
+    },
+    "834": {
+     "r1": null,
+     "r2": null
+    },
+    "835": {
+     "r1": null,
+     "r2": null
+    },
+    "836": {
+     "r1": null,
+     "r2": null
+    }
+   },
+   "cost": {
+    "sim_s_mean": 247.4,
+    "commands_mean": 2623.0,
+    "wall_s_mean": 1066.8
+   },
+   "M2-L1_no_lift_false_negative": {
+    "lifts_held_gt": 34,
+    "false_negatives": [],
+    "pass": true
+   },
+   "unplanned_drops": {
+    "831": 0,
+    "832": 0,
+    "833": 0,
+    "834": 0,
+    "835": 0,
+    "836": 0
+   },
+   "arrived_both": {
+    "831": true,
+    "832": true,
+    "833": true,
+    "834": true,
+    "835": true,
+    "836": true
+   },
+   "makespan_sim_s": {
+    "831": 245.277,
+    "832": 253.999,
+    "833": 219.413,
+    "834": 250.59,
+    "835": 257.608,
+    "836": 257.708
+   },
+   "makespan_sim_s_mean_successful": 253.0
+  },
+  "off": {
+   "M2-D1_success": {
+    "value": "5/6",
+    "pass": true
+   },
+   "M2-D2_no_wall_contact": {
+    "seeds_with_contact": [],
+    "pass": true
+   },
+   "M2-D3_approach": {
+    "arrived_both": "6/6",
+    "pass": true
+   },
+   "M2-D4_inputs_safety": {
+    "pass": true
+   },
+   "crossing_offset_m": {
+    "831": 0.0084,
+    "832": 0.068,
+    "833": 0.0408,
+    "834": 0.02,
+    "835": -0.0448,
+    "836": 0.006
+   },
+   "final_error_m": {
+    "831": 0.0608,
+    "832": 0.098,
+    "833": 0.7928,
+    "834": 0.0973,
+    "835": 0.0828,
+    "836": 0.0629
+   },
+   "failures": {
+    "831": {
+     "r1": null,
+     "r2": null
+    },
+    "832": {
+     "r1": null,
+     "r2": null
+    },
+    "833": {
+     "r1": "DOOR_POSE_NOT_LOCALIZED",
+     "r2": "BARRIER_LIFT_TIMEOUT"
+    },
+    "834": {
+     "r1": null,
+     "r2": null
+    },
+    "835": {
+     "r1": null,
+     "r2": null
+    },
+    "836": {
+     "r1": null,
+     "r2": null
+    }
+   },
+   "cost": {
+    "sim_s_mean": 256.7,
+    "commands_mean": 2623.0,
+    "wall_s_mean": 1118.6
+   },
+   "M2-L1_no_lift_false_negative": {
+    "lifts_held_gt": 34,
+    "false_negatives": [],
+    "pass": true
+   },
+   "unplanned_drops": {
+    "831": 0,
+    "832": 0,
+    "833": 0,
+    "834": 0,
+    "835": 0,
+    "836": 0
+   },
+   "arrived_both": {
+    "831": true,
+    "832": true,
+    "833": true,
+    "834": true,
+    "835": true,
+    "836": true
+   },
+   "makespan_sim_s": {
+    "831": 245.277,
+    "832": 253.999,
+    "833": 275.051,
+    "834": 250.59,
+    "835": 257.608,
+    "836": 257.708
+   },
+   "makespan_sim_s_mean_successful": 253.0
+  },
+  "intervention": {
+   "runs": [
+    {
+     "seed": 837,
+     "injection": {
+      "robot": "r2",
+      "segment": 2,
+      "applied_at_s": 222.721,
+      "replaced_servo1_commands": 24,
+      "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+      "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+      "victim_failed_at_intervened_lift": true
+     },
+     "applied": true,
+     "victim_detected_at_lift": true,
+     "partner_failure": "PARTNER_ABORT",
+     "partner_latency_s": 0.1,
+     "partner_motion_commands_after": 0
+    },
+    {
+     "seed": 838,
+     "injection": {
+      "robot": "r1",
+      "segment": 0,
+      "applied_at_s": 134.1,
+      "replaced_servo1_commands": 24,
+      "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+      "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+      "victim_failed_at_intervened_lift": true
+     },
+     "applied": true,
+     "victim_detected_at_lift": true,
+     "partner_failure": "PARTNER_ABORT",
+     "partner_latency_s": 0.0,
+     "partner_motion_commands_after": 0
+    }
+   ],
+   "measurable": "2/2",
+   "M2-L2_specificity": {
+    "pass": true
+   },
+   "M2-L3_partner_abort_on": {
+    "pass": true
+   }
+  }
+ },
+ "development_runs": [
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev12-811-v3-on-openlift",
+   "result_sha256": "a02db7bd70990832c1cf45b6e74b2f4c487a49d070fe0fd276e037524f63029c",
+   "seed": 811,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 0.7321,
+   "failures": {
+    "r1": "PARTNER_ABORT",
+    "r2": "LOAD_NOT_HELD_AFTER_LIFT"
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": {
+    "robot": "r2",
+    "segment": 2,
+    "applied_at_s": 218.31,
+    "replaced_servo1_commands": 24,
+    "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+    "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+    "victim_failed_at_intervened_lift": true
+   },
+   "lift_views": [
+    {
+     "robot": "r2",
+     "t": 131.794,
+     "seg": 0,
+     "held_iou": 0.866,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 131.894,
+     "seg": 0,
+     "held_iou": 0.886,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 168.385,
+     "seg": 1,
+     "held_iou": 0.876,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 168.486,
+     "seg": 1,
+     "held_iou": 0.837,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 219.814,
+     "seg": 2,
+     "held_iou": 0.859,
+     "held_gt": false
+    },
+    {
+     "robot": "r2",
+     "t": 219.814,
+     "seg": 2,
+     "held_iou": 0.137,
+     "held_gt": false
+    }
+   ],
+   "makespan_sim_s": 219.914
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev12-824-v3-on",
+   "result_sha256": "02cae6ea78e574e10b0c5d1b34d9bbe1412db4d730241ee8ce8eeca65d8eba35",
+   "seed": 824,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.0711,
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": null,
+   "lift_views": [
+    {
+     "robot": "r2",
+     "t": 137.909,
+     "seg": 0,
+     "held_iou": 0.922,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 138.01,
+     "seg": 0,
+     "held_iou": 0.84,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 172.095,
+     "seg": 1,
+     "held_iou": 0.873,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 172.195,
+     "seg": 1,
+     "held_iou": 0.874,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 223.523,
+     "seg": 2,
+     "held_iou": 0.861,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 223.523,
+     "seg": 2,
+     "held_iou": 0.837,
+     "held_gt": true
+    }
+   ],
+   "makespan_sim_s": 255.603
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev13-813-v3-on-openlift",
+   "result_sha256": "f0dec1097d0b9e2e39310a1216883f649b1b9a1bc7417fec80c4d7205217fa10",
+   "seed": 813,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 2.2172,
+   "failures": {
+    "r1": "PARTNER_ABORT",
+    "r2": "BARRIER_LIFT_BARRIER_LIMIT"
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": {
+    "robot": "r1",
+    "segment": 0,
+    "applied_at_s": null,
+    "replaced_servo1_commands": 0,
+    "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+    "victim_failure": "PARTNER_ABORT",
+    "victim_failed_at_intervened_lift": false
+   },
+   "lift_views": [],
+   "makespan_sim_s": 261.417
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev13-822-v3-off",
+   "result_sha256": "fb6bf4fb620cbfb65b0a528148bfb5c50805e4d8f6edf899d34f5c2984f02e05",
+   "seed": 822,
+   "stage": "door",
+   "arm": "off",
+   "source_sha": "9b0ca56d6271cddd582ef2c951816d3813ee0c04",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.1296,
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": null,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 131.694,
+     "seg": 0,
+     "held_iou": 0.847,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 131.694,
+     "seg": 0,
+     "held_iou": 0.727,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 176.706,
+     "seg": 1,
+     "held_iou": 0.693,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 176.706,
+     "seg": 1,
+     "held_iou": 0.819,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 219.713,
+     "seg": 2,
+     "held_iou": 0.834,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 219.713,
+     "seg": 2,
+     "held_iou": 0.783,
+     "held_gt": true
+    }
+   ],
+   "makespan_sim_s": 251.793
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev14-813-v3-on-openlift",
+   "result_sha256": "d151cff6b6f945b85f1b1df1f1beea3c15e8fa6450b4abb7be8974a40eb61ad4",
+   "seed": 813,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "2b14185268b154ccd9610f1a87898f4b9ee48907",
+   "dirty_source": false,
+   "success_gt": false,
+   "final_error_m": 2.2193,
+   "failures": {
+    "r1": "LOAD_NOT_HELD_AFTER_LIFT",
+    "r2": "PARTNER_ABORT"
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": {
+    "robot": "r1",
+    "segment": 0,
+    "applied_at_s": 134.2,
+    "replaced_servo1_commands": 24,
+    "action": "simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still issues CLOSED, its own command history is unchanged)",
+    "victim_failure": "LOAD_NOT_HELD_AFTER_LIFT",
+    "victim_failed_at_intervened_lift": true
+   },
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 135.704,
+     "seg": 0,
+     "held_iou": 0.175,
+     "held_gt": false
+    }
+   ],
+   "makespan_sim_s": 135.704
+  },
+  {
+   "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-m2-pair-kiro-20260926/dev14-824-v3-on",
+   "result_sha256": "07dd92bbff7d4c88560dc97451ade03bd86580232fa0e1a08a10ff4995c39c63",
+   "seed": 824,
+   "stage": "door",
+   "arm": "on",
+   "source_sha": "2b14185268b154ccd9610f1a87898f4b9ee48907",
+   "dirty_source": false,
+   "success_gt": true,
+   "final_error_m": 0.0824,
+   "failures": {
+    "r1": null,
+    "r2": null
+   },
+   "door_version": "v3",
+   "open_at_lift_injection": null,
+   "lift_views": [
+    {
+     "robot": "r1",
+     "t": 143.323,
+     "seg": 0,
+     "held_iou": 0.756,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 143.323,
+     "seg": 0,
+     "held_iou": 0.861,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 185.929,
+     "seg": 1,
+     "held_iou": 0.857,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 185.929,
+     "seg": 1,
+     "held_iou": 0.816,
+     "held_gt": true
+    },
+    {
+     "robot": "r1",
+     "t": 228.936,
+     "seg": 2,
+     "held_iou": 0.867,
+     "held_gt": true
+    },
+    {
+     "robot": "r2",
+     "t": 228.936,
+     "seg": 2,
+     "held_iou": 0.846,
+     "held_gt": true
+    }
+   ],
+   "makespan_sim_s": 261.016
+  }
+ ]
+}

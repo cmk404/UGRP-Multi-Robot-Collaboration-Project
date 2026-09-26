@@ -30,4 +30,8 @@ python3 scripts/ugrp_session.py run m2 -- .venv-sim/bin/python scripts/run_m2_pa
   --seed 701 --status-channel on --output outputs/zone-m2-pair/<run>
 ```
 
-weld OFF. `cargo_noslip_v1`은 2026-09-26 사용자 결정으로 연구 전체 접촉 프로필로 승인됐다. 상태 채널도 같은 결정으로 모든 조건에 들어가므로 앞으로 기본은 `--status-channel on`이고, `off`는 진단·비교용이다(현 러너는 `--status-channel`을 필수 인자로 받으며 help 문구의 "pending user decision"은 아직 고치지 않았다).
+weld OFF. `cargo_noslip_v1`은 2026-09-26 사용자 결정으로 연구 전체 접촉 프로필로 승인됐다. 상태 채널도 같은 결정으로 모든 조건에 들어가므로 앞으로 기본은 `--status-channel on`이고, `off`는 진단·비교용이다문 v3(`kiro/zone-m2-pair-v3`, PR #205)부터 러너 기본값이 `on`이고 help 문구도 이 결정을 적는다. 동결 버전(ed15489 이전)은 `--status-channel`이 필수 인자로 남아 있다.
+
+## 문 v3 (2c)
+
+`--stage door --approach v2 --door-version v3`: 문 v2 + 저조도 들기 확인(`harness/owncam_pair_lift_v3.py`, 빔 색 V ≥ 60). 2c 코호트(ca44f66) ON 5/6, OFF 5/6. 실험자 개입 `--inject-open-at-lift <robot>:<segment>`는 특이도 확인용이며 평가 전용으로 기록한다. 결과는 [실험 기록](../experiments/2026-09-26-zone-m2-pair/README.md)의 2c 절.
