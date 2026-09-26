@@ -595,6 +595,23 @@
         "--episodes"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-m2-pair",
+      "purpose": "M2: 실행 중 GT 없는 2인 long_beam 운반(자기 손목 RGB·정적 태그 지도·개략 주문서·자기 명령; 자기 카메라 위치 추정 접근 → 자기 RGB 정렬·파지·운반)",
+      "entry": "scripts/run_m2_pair.py",
+      "docs": "docs/zone_m2_pair.md",
+      "requires": "local Mac/Linux offscreen rendering; no ground truth at runtime (truth only in evaluation-only outputs); weld OFF; status channel is a CANDIDATE behind --status-channel (pending user decision); synchronous SIM only",
+      "version": "1.0.0",
+      "runner": "scripts.run_m2_pair",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--seed",
+        "--status-channel"
+      ],
+      "output_kind": "directory"
     }
   ]
 }
