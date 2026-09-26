@@ -8,9 +8,10 @@
     "dev-a5": "6352fde, amendment A4: loaded carry leg through the door to the pre-place goal",
     "dev-a6": "amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge",
     "dev-a7": "amendment A6: skill v9 (A5 conditions); pre-freeze dev check s93 + s95 - crashed at setup (runner StaticKeepout import, e10f88d), no physics",
-    "dev-a8": "amendment A6b: runner keep-out import fix only; A6 dev check s93 + s95 relaunched"
+    "dev-a8": "amendment A6b: runner keep-out import fix only; A6 dev check s93 + s95 relaunched",
+    "test": "test split, once, frozen source (see frozen_source.json)"
   },
-  "test_status": "not run",
+  "test_status": "complete",
   "test_expected": [
     "m1test-s101",
     "m1test-s102",
@@ -19,17 +20,22 @@
     "m1test-s105",
     "m1test-s106"
   ],
-  "test_missing": [
-    "m1test-s101",
-    "m1test-s102",
-    "m1test-s103",
-    "m1test-s104",
-    "m1test-s105",
-    "m1test-s106"
-  ],
+  "test_missing": [],
   "test_problems": [],
-  "test_adopted": [],
-  "claim": null,
+  "test_adopted": [
+    "m1test-s101@test",
+    "m1test-s102@test",
+    "m1test-s103@test",
+    "m1test-s104@test",
+    "m1test-s105@test",
+    "m1test-s106@test"
+  ],
+  "claim": {
+    "m1_success_k_of_6": 4,
+    "false_success": 0,
+    "demonstrated": false,
+    "rule": "test m1_success >= 5/6 AND false_success == 0 (prereg claim_rule)"
+  },
   "runs": [
     {
       "attempt": "dev-a1",
@@ -1277,6 +1283,610 @@
       "pose_source": "owncam_pf_v2:757f7f09",
       "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
       "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s101",
+      "split": "test",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 1012790,
+        "both_finger_steps": 1012790,
+        "min_box_z_m": 0.08334825430326163,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.0017627795739170316,
+        "max_box_normal_force_n": 2.6894235283361274,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0285,
+      "gt_box_final_xyz": [
+        4.5963,
+        0.3693,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 530.39,
+      "looks": 5,
+      "commands": 8442,
+      "localizer_stats": {
+        "updates": 1774,
+        "resets": 0,
+        "resamples": 819
+      },
+      "load_average": {
+        "start": [
+          5.54,
+          6.56,
+          6.81
+        ],
+        "end": [
+          32.45,
+          19.97,
+          17.24
+        ]
+      },
+      "wall_s": 1787.1,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "9f4272bdb841c4d1a397f116aa66aebd44d818a6d3163db486059f1958387c36",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s102",
+      "split": "test",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 1214924,
+        "both_finger_steps": 1214924,
+        "min_box_z_m": 0.08448639463357713,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.002300413728422172,
+        "max_box_normal_force_n": 2.937546330393986,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0652,
+      "gt_box_final_xyz": [
+        4.5907,
+        -2.4855,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 444.52,
+      "looks": 6,
+      "commands": 7385,
+      "localizer_stats": {
+        "updates": 1236,
+        "resets": 0,
+        "resamples": 677
+      },
+      "load_average": {
+        "start": [
+          5.54,
+          6.56,
+          6.81
+        ],
+        "end": [
+          22.68,
+          18.7,
+          16.64
+        ]
+      },
+      "wall_s": 1602.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "a353e6ca1446b5a2bc1f4ad8c23fcbadd5c0149c212a2ea678a5cb6660d97ba0",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s103",
+      "split": "test",
+      "robot_id": "r1",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "EXCEPTION:OSError",
+      "exception": {
+        "type": "OSError",
+        "message": "[Errno 28] No space left on device",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 339, in run\n    physics(TICK_S)\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 278, in physics\n    capture(now)\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 209, in capture\n    (frames_dir/f'{index:05d}.jpg').write_bytes(jpeg)\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py\", line 1037, in write_bytes\n    return f.write(view)\n           ^^^^^^^^^^^^^\nOSError: [Errno 28] No space left on device\n"
+      },
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "no_exception"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 219112,
+        "both_finger_steps": 219112,
+        "min_box_z_m": 0.08527927836931608,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.0016317425479062935,
+        "max_box_normal_force_n": 2.450898810949427,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0142,
+      "gt_box_final_xyz": [
+        2.5482,
+        -0.0905,
+        0.1715
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 271.79,
+      "looks": 2,
+      "commands": 4335,
+      "localizer_stats": {
+        "updates": 1050,
+        "resets": 0,
+        "resamples": 375
+      },
+      "load_average": {
+        "start": [
+          32.45,
+          19.97,
+          17.24
+        ],
+        "end": [
+          13.98,
+          26.11,
+          34.41
+        ]
+      },
+      "wall_s": 904.1,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "583e49b9764fce114d119eb8b2260293b6bfd8a7a79261340e8f7d6580e9a9f8",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s104",
+      "split": "test",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "EXCEPTION:OSError",
+      "exception": {
+        "type": "OSError",
+        "message": "[Errno 28] No space left on device: '/Users/changmin/projects/ugrp/outputs/m1-owncam-20260926/test/m1test-s104/frames/01663.jpg'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 339, in run\n    physics(TICK_S)\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 278, in physics\n    capture(now)\n  File \"/Users/changmin/projects/ugrp-wt/zone-m1-owncam/scripts/run_m1_owncam.py\", line 209, in capture\n    (frames_dir/f'{index:05d}.jpg').write_bytes(jpeg)\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py\", line 1036, in write_bytes\n    with self.open(mode='wb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.13/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py\", line 1013, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nOSError: [Errno 28] No space left on device: '/Users/changmin/projects/ugrp/outputs/m1-owncam-20260926/test/m1test-s104/frames/01663.jpg'\n"
+      },
+      "m1_success": false,
+      "counts_as_m1": true,
+      "diagnostic_success": false,
+      "false_success": false,
+      "m1_failed_checks": [
+        "skill_claims_in_slot",
+        "gt_box_in_slot",
+        "look_back_pose_gate_ok",
+        "no_exception"
+      ],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": false,
+        "released": false,
+        "look_back": false
+      },
+      "retention": {
+        "carry_steps": 510453,
+        "both_finger_steps": 510453,
+        "min_box_z_m": 0.0850077518576019,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.0020368029595154895,
+        "max_box_normal_force_n": 2.7786076632406753,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0201,
+      "gt_box_final_xyz": [
+        3.988,
+        0.2746,
+        0.1713
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 320.56,
+      "looks": 2,
+      "commands": 5027,
+      "localizer_stats": {
+        "updates": 1132,
+        "resets": 0,
+        "resamples": 483
+      },
+      "load_average": {
+        "start": [
+          22.68,
+          18.7,
+          16.64
+        ],
+        "end": [
+          13.98,
+          26.11,
+          34.41
+        ]
+      },
+      "wall_s": 1088.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "5290d0579788c6d93887a2b395d96fe0dce91e1867dd310428a1101b7f8302db",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s105",
+      "split": "test",
+      "robot_id": "r3",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 968306,
+        "both_finger_steps": 968306,
+        "min_box_z_m": 0.08469844470007723,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.0012117369997057337,
+        "max_box_normal_force_n": 1.8608873052743105,
+        "kind_steps": {}
+      },
+      "search_target_error_m": 0.0687,
+      "gt_box_final_xyz": [
+        4.5922,
+        -2.1346,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "contact_steps": {},
+      "max_eq_active": 0,
+      "sim_s": 352.6,
+      "looks": 5,
+      "commands": 6183,
+      "localizer_stats": {
+        "updates": 1031,
+        "resets": 0,
+        "resamples": 566
+      },
+      "load_average": {
+        "start": [
+          13.98,
+          26.11,
+          34.41
+        ],
+        "end": [
+          131.22,
+          85.83,
+          55.76
+        ]
+      },
+      "wall_s": 1489.4,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "99f9e9ac4eb1c9d33ffb0fa4f7e8e99fa1bc200b8cc221e81177d7bdeaf6bef4",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "m1test-s106",
+      "split": "test",
+      "robot_id": "r2",
+      "infrastructure_failure": false,
+      "code_sha": "cceb7ee7cebec4dba797c45fc8939c875468692c",
+      "code_dirty": false,
+      "skill": "v9",
+      "amendments": [
+        "A1-dev-a1-s91",
+        "A2-dev-a2-s91-s92",
+        "A3-dev-a3-s93-runner-robot-id",
+        "A4-dev-a4-s94-carry-to-preplace",
+        "A5-codex-prereview-and-skill-v6",
+        "A6-skill-v9",
+        "A6b-runner-keepout-import"
+      ],
+      "freeze": {
+        "frozen_source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+        "frozen_file": "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+        "frozen_file_sha256": "9eb316ab7c34d19cc410e66d9ec06b066bd5f32b667cf0751c59af95eb3102de",
+        "head": "cceb7ee7cebec4dba797c45fc8939c875468692c"
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "noslip_iterations": 10,
+      "outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+      "exception": null,
+      "m1_success": true,
+      "counts_as_m1": true,
+      "diagnostic_success": true,
+      "false_success": false,
+      "m1_failed_checks": [],
+      "setup_diagnostic": {},
+      "stages": {
+        "initialized": true,
+        "search_found": true,
+        "grasp_attached": true,
+        "carry_leg_arrived": true,
+        "released": true,
+        "look_back": true
+      },
+      "retention": {
+        "carry_steps": 695936,
+        "both_finger_steps": 695936,
+        "min_box_z_m": 0.08497026759947783,
+        "low_box_steps": 0,
+        "max_box_penetration_m": 0.001654019156317533,
+        "max_box_normal_force_n": 2.4590885521802046,
+        "kind_steps": {
+          "other_box": 3509
+        }
+      },
+      "search_target_error_m": 0.0383,
+      "gt_box_final_xyz": [
+        2.9837,
+        -0.4443,
+        0.0159
+      ],
+      "contacts": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 10
+      },
+      "contact_steps": {
+        "other_box": 3509
+      },
+      "max_eq_active": 0,
+      "sim_s": 420.84,
+      "looks": 6,
+      "commands": 6868,
+      "localizer_stats": {
+        "updates": 1470,
+        "resets": 0,
+        "resamples": 624
+      },
+      "load_average": {
+        "start": [
+          13.98,
+          26.11,
+          34.41
+        ],
+        "end": [
+          45.16,
+          61.7,
+          52.45
+        ]
+      },
+      "wall_s": 1755.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+      "pose_source": "owncam_pf_v2:757f7f09",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "2d3d505abe4410f5ef33a8cfad4b0ec26b6bf0eb2724d5e82aed038842f797e8",
       "weld": "off"
     }
   ]

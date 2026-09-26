@@ -10,9 +10,11 @@
 **입력.** 자기 `robot_cam` JPEG, 자기 발행 명령, 정적 tagged map v2, 고정 교정, 주문서(색·픽업 구역 행·목적 슬롯)만 쓴다. 상자 위치는 주문서에 없다. GT는 `eval_only/`에만 기록한다.
 
 ## 상태 (2026-09-26 기준)
-- **test(101–106)는 실행하지 않았고 동결도 하지 않았다.** A5(v6, `cargo_noslip_v1`)로 dev를 확인한 결과(dev-a6)는 s93·s95 모두 `GRASP_TARGET_NOT_VISIBLE`이었다.
-  - 원인: 스킬 N7 approach 단계의 cyan 검출 임계값(min_saturation 65)이 서쪽 픽업 구역의 밝은 청색 바닥에서 상자를 놓치거나 바닥을 상자로 오검출한다. 기록 프레임을 150으로 재생하면 정상 검출된다.
-  - #181에 보고했다. 1회용 test를 쓸지는 코디네이터가 결정한다.
+- **test(101–106) 1회 실행 완료: m1_success 4/6, false_success 0. 주장 규칙(≥ 5/6)을 충족하지 못해 M1 시연으로 주장하지 않는다.** 동결 소스는 `ca2fdb8`(`frozen_source.json`, `cceb7ee`)이다. 조건은 스킬 v9, `cargo_noslip_v1`, A1–A6b다.
+  - 성공: s101, s102, s105, s106.
+  - 실패: s103, s104. 둘 다 `EXCEPTION:OSError [Errno 28] No space left on device`다. 호스트 디스크가 가득 차서 러너가 카메라 프레임 JPEG를 쓰다 멈췄다. 두 에피소드 모두 파지 뒤 운반(`nav_preplace`, SIM 272 / 321 s) 중이었다. 멈추기 전까지 양손가락 접촉·유지·벽 접촉 검사에는 위반이 없었다.
+  - 사전 등록의 제외 규칙은 "result.json이 없는 호스트 오류"만 1회 재실행을 허용한다. 이 두 건은 예외 처리기가 result.json을 남겼으므로 규칙 문구대로 실패로 집계했다. 호스트 오류로 보고 재실행할지는 사용자·코디네이터가 결정한다(아직 재실행하지 않음). 재실행하려면 디스크 공간도 먼저 확보해야 한다(종료 시점 여유 1.9 GiB, 100%).
+- **이전 상태.** dev-a6(A5, v6)의 s93·s95는 `GRASP_TARGET_NOT_VISIBLE`이었다(N7 approach 임계값 65가 밝은 청색 바닥에서 실패). #181 v9에서 이를 고친 뒤 A6로 채택했다.
 - **dev 진단 성공 2건(같은 s94).** A5 조건(v6·`cargo_noslip_v1`·새 판정식)에서도 dev-a6 s94가 완주했다(아래 표). 첫 완주는 dev-a5 s94(+15°, `6352fde`)였다. 조건은 A5 이전(`local_contact_fine`, v5, 이전 판정식)이다. **M1 코호트 증거가 아니다.**
   - 경로: 탐색(오차 2.3 cm) → 자기 RGB 면 추정 파지 → 운반·문 통과(둘러보기 16회) → 배치(GT 슬롯 오차 2.3 / 1.3 cm) → 다시 보기 IN_SLOT.
   - 기록: 벽·peer·다른 상자 접촉 0, weld OFF, 자세 출처 `owncam_pf_v2:757f7f09`만, SIM 544 s.
@@ -44,6 +46,8 @@
 | A3 | dev-a3 s93·s94: 러너가 스킬에 robot_id를 넘기지 않음(r2·r3 거부) | 스킬에 에피소드 robot_id 전달 |
 | A4 | dev-a4 s94: 문 통과 뒤 스킬 자체 mecanum 주행의 yaw 표류(최대 11°), yaw 게이트에 19회 걸림, SIM_LIMIT | 운반 구간 드라이버(loop v2 plant)가 사전 배치 목표까지 주행. 스킬은 잔차만 보정 |
 | A5 | Codex 사전 검토 1–7, #181 v6(`ac34651`) | 스킬 v6(정적 keep-out, 공개 re-anchor hook), `cargo_noslip_v1` 주 조건(approved by user 2026-09-26), 0.5 m bay, 확인 프레임별 look-back 게이트, 유지·파지·예외 판정, test 가드와 채택 규칙. 조건과 판정도 바꾼 amendment이므로 `scope_note`에 적었다 |
+| A6 | dev-a6 s93·s95: 밝은 청색 바닥에서 approach 검출 실패 | 스킬 v9(#181 `04a5e3c`, 읽기 전용). 나머지 A5 조건은 그대로. 사전 등록한 dev 점검 규칙: s93·s95 모두 m1_success여야 동결 |
+| A6b | dev-a7(`e10f88d`) s93·s95: 설정 단계에서 `AttributeError`(v9가 `StaticKeepout`을 내보내지 않음). 물리 시작 전 | 러너만 수정했다. keep-out을 v6 `StaticKeepout`으로 만들고 값은 같다. 동작 변화 없음. A6 점검 규칙은 dev-a8에 그대로 적용 |
 
 ## dev 결과 (전부 보고, `results.json`)
 | 시도 | 에피소드 | 결과 | 도달 단계 |
@@ -55,6 +59,21 @@
 | dev-a5 `6352fde` | s94(+15°, 진단) | **OWN_RGB_PLACEMENT_IN_SLOT, 당시 m1 검사 전부 통과**(A5 이전 판정식) | 전 단계 |
 | dev-a6 `aa2dced` | s93 / s95(−20°) | GRASP_TARGET_NOT_VISIBLE ×2(N7 approach 임계값 65가 밝은 청색 바닥에서 실패) | 탐색(오차 8.0 / 7.1 cm) |
 | dev-a6 `1ff646e` | s94(+15°, 진단, A5 조건) | **OWN_RGB_PLACEMENT_IN_SLOT, A5 판정식 전부 통과**: noslip 10, 운반 step 913,572에서 양손가락 접촉 100%, 최저 z 0.085 m, 접촉 0, 배치 frame에 게이트, GT 슬롯 오차 2.4 / 1.1 cm, SIM 503 s | 전 단계 |
+| dev-a7 `e10f88d` | s93, s95 | 설정 단계 충돌(러너 `StaticKeepout` import), 물리 없음 | - |
+| dev-a8 `16b41e2` | s93 / s95(−20°) | **OWN_RGB_PLACEMENT_IN_SLOT ×2, A5 판정 12항목 전부 통과**: SIM 397 / 425 s, 슬롯 오차 (−0.8, 1.2) / (−0.9, 3.8) cm. A6 dev 점검 통과 | 전 단계 |
+
+## test 결과 (1회, 동결 소스 `ca2fdb8`, `results.json`)
+| 에피소드 | 로봇 | 결과 | m1_success | SIM s | 둘러보기 | GT 슬롯 오차 (cm) |
+|---|---|---|---|---|---|---|
+| s101 | r2 | OWN_RGB_PLACEMENT_IN_SLOT | ✔ | 530 | 5 | (−0.3, −3.1) |
+| s102 | r2 | OWN_RGB_PLACEMENT_IN_SLOT | ✔ | 445 | 6 | (−0.5, 1.8) |
+| s103 | r1 | EXCEPTION:OSError(디스크 가득 참), 운반 중 | ✘ | 272 | 2 | - |
+| s104 | r2 | EXCEPTION:OSError(디스크 가득 참), 운반 중 | ✘ | 321 | 2 | - |
+| s105 | r3 | OWN_RGB_PLACEMENT_IN_SLOT | ✔ | 353 | 5 | (−0.9, −3.4) |
+| s106 | r2 | OWN_RGB_PLACEMENT_IN_SLOT | ✔ | 421 | 6 | (−0.7, 0.8) |
+
+- 성공 4건은 12개 판정 항목을 모두 통과했다. 자세 출처는 `owncam_pf_v2:757f7f09`뿐이고 벽 접촉 0, weld OFF다.
+- 실행 부하: 두 프로세스 동시 실행. 부하 평균이 5.5에서 최대 131까지 올랐다(다른 작업 포함). wall 시간은 900–1790 s다. SIM 결과에는 영향이 없다(동기 SIM).
 
 ## 관찰 요약 (GT는 오프라인 평가에만 사용)
 - **파지 단계 plant.** 팔을 내린 상태에서 전진 반응이 크게 늦다. 0.08×0.3 s 명령이 0.66 cm만 움직였고(명령 2.4 cm), 적합값은 τ ≈ 1.3 s다. 주행 중 입자별 미끄럼 척도(1.27)가 이를 더 부풀린다. A1의 'fine' 프로필을 쓰면 s91 재생에서 파지 구간 오차가 3 cm다(in-sample).
@@ -64,7 +83,7 @@
 - **re-anchor.** 짐을 든 채 둘러본 뒤 dev-a4에서는 엄격 비교가 매번 실패했고, 자기 pan probe가 매번 통과했다. dev-a5에서는 엄격 비교가 20회 모두 통과했다.
 
 ## 검증 범위
-- 단위 테스트: `tests/test_m1_owncam.py`(계약, 경계, 자세 한계, 제어기, 교정 추가의 v2 동일성)와 `test_owncam_localizer.py`, `test_wrist_zone_skill_v5.py`가 통과했다.
+- 단위 테스트: `tests/test_m1_owncam.py`(계약, 경계, 자세 한계, 제어기, 교정 추가의 v2 동일성, 러너 keep-out 경로)와 `test_owncam_localizer.py`, `test_wrist_zone_skill_v9.py`, `test_simulation_workflow_manager.py`가 통과했다(72개).
 - M1 성공은 test 코호트에서만 주장한다. dev·진단 결과는 합산하지 않는다. #181 v5 코호트(541–548)와 loop v1/v2 결과도 M1이 아니다.
 - 실행 환경: 동기 SIM(timestep 0.00025 s), 스레드 1(`OMP/OPENBLAS/VECLIB/MKL=1`), 동시 실행 최대 2개. 부하 평균은 `outputs/.../launch_load.txt`와 각 manifest에 있다.
 
