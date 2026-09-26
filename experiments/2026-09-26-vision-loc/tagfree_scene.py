@@ -88,6 +88,19 @@ def load_map(base: str = 'zone_wide_door') -> dict:
     return value
 
 
+def offset_spawns(spawns: dict, offsets: dict | None) -> dict:
+    """Spawns ``{rid: [x, y, z, yaw]}`` with ``offsets`` ``{rid: [dx, dy, dyaw]}`` added (new dict)."""
+    out = copy.deepcopy(spawns)
+    for rid, off in (offsets or {}).items():
+        if rid not in out:
+            raise ValueError(f'spawn offset for unknown robot {rid!r}')
+        if len(off) != 3 or not all(isinstance(v, (int, float)) and not isinstance(v, bool) and abs(v) < 1. for v in off):
+            raise ValueError(f'spawn offset must be three finite numbers below 1 in magnitude, got {off!r}')
+        x, y, z, yaw = out[rid]
+        out[rid] = [x + float(off[0]), y + float(off[1]), z, yaw + float(off[2])]
+    return out
+
+
 def make_scene_class():
     """``TagFreeZoneScene`` (import-time dependency on the v3 source tree)."""
     from sim.research_dispatch_arena import digest
@@ -98,11 +111,17 @@ def make_scene_class():
         """ZoneScene on the tag-free walls_v3 map. Selection id: ``zones/<base>_walls_v3_notags``."""
 
         @classmethod
-        def from_tagfree(cls, base, seed, goal, extra_boxes=None, contact_profile=None):
+        def from_tagfree(cls, base, seed, goal, extra_boxes=None, contact_profile=None, spawn_offset=None):
+            """``spawn_offset``: {robot_id: [dx_m, dy_m, dyaw_rad]} added to the setup-only spawn pose.
+
+            Setup-only (``sim.session_scenes``: research runners may adjust setup-only
+            spawn poses before construction); the robot is never told the offset.
+            """
             from sim.session_scenes import ROOT
             selected = {'layout': 'zones/' + map_id(base), 'seed': seed, 'map_file': None, 'cargo_ids': None,
                         'robots': {}, 'objects': [], 'builder': None, 'contact_profile': contact_profile,
-                        'params': {'goal': goal, 'extra_boxes': extra_boxes or {}, 'base': base}}
+                        'params': {'goal': goal, 'extra_boxes': extra_boxes or {}, 'base': base,
+                                   'spawn_offset': spawn_offset or {}}}
             return cls(selected, ROOT)
 
         def _resolve(self):
@@ -113,6 +132,8 @@ def make_scene_class():
                 raise ValueError(f'unknown tag-free zone scene: {self.selection}')
             self._read(MAP_DIR/(base + '.json'))
             config = episode(base, self.scene['seed'], goal=params['goal'], extra_boxes=params.get('extra_boxes'))
+            config['setup_only']['spawns'] = offset_spawns(config['setup_only']['spawns'], params.get('spawn_offset'))
+            config['spawn_offset'] = copy.deepcopy(params.get('spawn_offset') or {})
             static = load_map(base)
             config.update(static_map=static, static_map_sha256=digest(static), tagfree_map_id=name)
             config['extra_boxes'] = params.get('extra_boxes') or {}

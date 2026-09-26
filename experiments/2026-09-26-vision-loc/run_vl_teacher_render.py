@@ -12,7 +12,13 @@ ground truth; nothing here is a student result):
    instead of ``TaggedZoneScene``;
 2. pose: the controller's pose source is the simulator truth
    (``teacher_gt_eval_only``) instead of the tag particle filter, so the robot is
-   driven by the teacher. The controller logic (search viewpoints, pregrasp
+   driven by the teacher. Round 3 episodes (``episodes_v3.json``) add a constant
+   per-episode ``teacher_pose_bias`` [dx, dy, dyaw] to that truth: the controller
+   believes it is at truth + bias, so the physical path is the planned path minus
+   the bias. This is demonstration-noise injection (DART, Laskey et al. 2017) to
+   make trajectories distinct from the train renders (the deterministic GT teacher
+   re-drove identical door passages and whole trajectories in round 2); the
+   student never sees it and ``eval_only/`` keeps the true pose; The controller logic (search viewpoints, pregrasp
    approach, carry leg with its distance/door-checkpoint looks, pre-place and
    look-back looks, re-anchoring) is the M1 controller's own; covariance-triggered
    looks never fire because the teacher is certain;
@@ -37,6 +43,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -58,7 +65,7 @@ TEACHER_STD_XY_M, TEACHER_STD_YAW_RAD = .01, .005
 # Segmentation label classes (ideal pinhole robot_cam view).
 CLASSES = {'floor': 0, 'wall': 1, 'self': 2, 'object': 3, 'background': 4}
 IGNORE = 255
-OWN_FILES = ('run_vl_teacher_render.py', 'tagfree_scene.py', 'episodes.json',
+OWN_FILES = ('run_vl_teacher_render.py', 'tagfree_scene.py', 'episodes.json', 'episodes_v3.json',
              'maps/zone_wide_door_walls_v3_notags.json')
 
 
@@ -113,7 +120,9 @@ def make_teacher_classes():
         def truth(self):
             r = REGISTRY['world'].robot(self.robot_id)
             xyz, rpy = r.base_xyz(), r.base_rpy()
-            return float(xyz[0]), float(xyz[1]), float(rpy[2])
+            bx, by, byaw = REGISTRY.get('pose_bias', (0., 0., 0.))
+            return (float(xyz[0]) + bx, float(xyz[1]) + by,
+                    float((rpy[2] + byaw + np.pi) % (2*np.pi) - np.pi))
 
         def predict_to(self, t):
             self.t = max(self.t, float(t))
@@ -304,7 +313,8 @@ def main(argv=None):
             base = table['base_map']
             if name != tagfree_scene.map_id(base):
                 raise ValueError(f'teacher render expects map {tagfree_scene.map_id(base)}, got {name}')
-            return scene_cls.from_tagfree(base, seed, goal, extra_boxes, contact_profile=contact_profile)
+            return scene_cls.from_tagfree(base, seed, goal, extra_boxes, contact_profile=contact_profile,
+                                          spawn_offset=state.get('spawn_offset'))
 
     patches = {'sim.zone_landmarks.TaggedZoneScene': 'TagFreeZoneScene (tagfree_scene.py)',
                'sim.multi_masterpi_production.MultiMasterPiProductionV2': 'subclass registering the world (truth access)',
@@ -335,6 +345,10 @@ def main(argv=None):
         cfg = zone_episode(base, spec['seed'], goal=spec['goal'], extra_boxes=spec.get('extra_boxes'))
         spawns = cfg['setup_only']['spawns']
         state['rid'] = min(spawns, key=lambda r: abs(spawns[r][1] - spec['spawn_y']))
+        off = spec.get('spawn_offset')          # [dx m, dy m, dyaw deg], own robot only (setup-only)
+        state['spawn_offset'] = {state['rid']: [float(off[0]), float(off[1]), math.radians(float(off[2]))]} if off else {}
+        bias = spec.get('teacher_pose_bias')    # [dx m, dy m, dyaw deg] (teacher only, see module docstring)
+        REGISTRY['pose_bias'] = (float(bias[0]), float(bias[1]), math.radians(float(bias[2]))) if bias else (0., 0., 0.)
         started, load0 = time.time(), os.getloadavg()
         result, manifest = m1run.run(spec, out, student)
         moved = {}
@@ -342,6 +356,12 @@ def main(argv=None):
         teacher_manifest = {
             'schema': SCHEMA, 'episode': ep, 'split': spec['split'], 'role': spec['role'], 'robot_id': state['rid'],
             'sources': sources, 'patches': patches, 'teacher_pose_source': TEACHER_SOURCE,
+            'episodes_file': {'path': str(Path(args.episodes).resolve().relative_to(HERE)),
+                              'sha256': sha_bytes(Path(args.episodes).read_bytes())},
+            'spawn_offset': {'value': spec.get('spawn_offset'), 'units': '[m, m, deg], own robot, setup-only',
+                             'applied_rad': state['spawn_offset']},
+            'teacher_pose_bias': {'value': spec.get('teacher_pose_bias'),
+                                  'units': '[m, m, deg] added to the truth the controller receives'},
             'teacher_pose_std': {'xy_m': TEACHER_STD_XY_M, 'yaw_rad': TEACHER_STD_YAW_RAD},
             'static_map': {'map_id': spec['map'], 'file': 'maps/zone_wide_door_walls_v3_notags.json',
                            'file_sha256': sources['render_source']['files_sha256'][

@@ -481,3 +481,39 @@ def test_overlap_check_flags_replayed_trajectories_and_identical_jpegs(tmp_path)
     with pytest.raises(SystemExit, match='overwrite'):
         oc.main(['--render-root', str(tmp_path), '--candidates', 'shifted', '--references', 'train',
                  '--output', str(out)])
+
+
+# ----------------------------------------------------------------------------- round 3: independent episodes
+def test_offset_spawns_applies_setup_only_offsets_and_rejects_bad_values():
+    import tagfree_scene as ts
+    spawns = {'r1': [-.85, .55, .03, 0.], 'r2': [-.85, -.85, .03, 0.]}
+    out = ts.offset_spawns(spawns, {'r2': [.02, -.05, .1]})
+    assert out['r2'] == pytest.approx([-.83, -.9, .03, .1]) and out['r1'] == spawns['r1']
+    assert spawns['r2'] == [-.85, -.85, .03, 0.]                      # input not mutated
+    assert ts.offset_spawns(spawns, None) == spawns and ts.offset_spawns(spawns, {}) == spawns
+    for bad in ({'r9': [0., 0., 0.]}, {'r1': [0., 0.]}, {'r1': [float('nan'), 0., 0.]},
+                {'r1': [float('inf'), 0., 0.]}, {'r1': [True, 0., 0.]}, {'r1': ['0.1', 0., 0.]}, {'r1': [1.5, 0., 0.]}):
+        with pytest.raises(ValueError):
+            ts.offset_spawns(spawns, bad)
+
+
+def test_round3_episodes_follow_the_registered_design_rule():
+    import design_episodes_v3 as de
+    v3 = json.loads((VL_DIR/'episodes_v3.json').read_text())
+    r2 = json.loads((VL_DIR/'episodes.json').read_text())
+    eps = v3['episodes']
+    assert [e['split'] for e in eps].count('dev') == len(de.DEV2) and [e['split'] for e in eps].count('test') == len(de.TEST2)
+    assert not {e['seed'] for e in eps} & {e['seed'] for e in r2['episodes']}
+    assert len({e['seed'] for e in eps}) == len(eps)
+    spawn_cell = {(e['spawn_y'], tuple(de.cyan_cell(e['seed'], e['goal']))) for e in r2['episodes']}
+    cell_slot = {(tuple(de.cyan_cell(e['seed'], e['goal'])), e['slot_id']) for e in r2['episodes']}
+    for e in eps:
+        cell = tuple(de.cyan_cell(e['seed'], e['goal']))
+        assert list(cell) == e['cyan_cell'] and e['goal'] == {e['slot_id'][0]: {'cyan': 1}}
+        assert (e['spawn_y'], cell) not in spawn_cell and (cell, e['slot_id']) not in cell_slot
+        spawn_cell.add((e['spawn_y'], cell))
+        cell_slot.add((cell, e['slot_id']))
+        assert e['spawn_offset'] == de.spawn_offset(e['seed']) and e['teacher_pose_bias'] == de.pose_bias(e['seed'])
+        assert .012 - 1e-4 <= math.hypot(*e['teacher_pose_bias'][:2]) <= .03 + 1e-4
+        assert e['episode_id'] == f"vl3-{e['split']}-s{e['seed']}"
+    assert v3['controller'] == r2['controller'] and v3['base_map'] == r2['base_map']

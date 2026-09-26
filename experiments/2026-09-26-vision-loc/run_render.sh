@@ -1,6 +1,7 @@
 #!/bin/bash
 # Launch teacher renders of the tag-free environment v3 as owned sessions.
 # Usage: run_render.sh <session-name> <output root> <episode ids (comma-separated)> [run_vl_teacher_render.py args]
+# Round 3: pass --episodes <HERE>/episodes_v3.json.
 # Thread caps, disk >= 30 GiB, machine-wide sim cap (< 6 running sims, re-checked every 60 s), load log.
 set -euo pipefail
 name=$1; out=$2; eps=$3; shift 3
@@ -30,7 +31,11 @@ export UGRP_V3_SOURCE=$V3
 echo "$(date -u +%FT%TZ) start $name eps=$eps sims=$(count_sims) free=${free}GiB own=$(git -C "$HERE" rev-parse --short HEAD) v3=$(git -C "$V3" rev-parse --short HEAD) $(uptime)" >> "$out/launch_load.txt"
 status=0
 cd "$V3"
-python3 "$PRIMARY/scripts/ugrp_session.py" run "$name" -- "$PY" "$HERE/run_vl_teacher_render.py" --only "$eps" --output "$out" "$@" \
-  > "$out/$name.log" 2>&1 || status=$?
+# Machine-wide slot queue (kiro/sim-speed scripts/sim_slots.py, PR #209) when available; the manual cap above stays.
+SLOTS=/Users/changmin/projects/ugrp-wt/kiro-sim-speed/scripts/sim_slots.py
+wrap=()
+if [ -f "$SLOTS" ]; then wrap=(python3 "$SLOTS" run --owner kiro --label "$name" --); fi
+python3 "$PRIMARY/scripts/ugrp_session.py" run "$name" -- ${wrap[@]+"${wrap[@]}"} "$PY" "$HERE/run_vl_teacher_render.py" \
+  --only "$eps" --output "$out" "$@" > "$out/$name.log" 2>&1 || status=$?
 echo "$(date -u +%FT%TZ) end $name status=$status free=$(df -g /System/Volumes/Data | tail -1 | awk '{print $4}')GiB $(uptime)" >> "$out/launch_load.txt"
 exit $status
