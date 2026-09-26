@@ -45,6 +45,16 @@
 - **번호 예약:** 새 실행 번들 ID나 workflow 버전을 정하기 전에 main과 열린 PR 브랜치 전체에서 사용 중인 최댓값을 확인하고(`git grep RUNNABLE_ID origin/<브랜치> -- harness/rgb_execution_bundle.py`) 그 다음 번호를 쓴다. 사용한 ID를 PR 본문에 적는다. 병합 충돌 시 실행 기록이 쓴 번들은 바이트 그대로 은퇴 목록에 보존하고, 나중에 병합되는 쪽이 새 ID로 다시 등록한다.
 - **공용 설정 파일:** `outputs/tensorboard-view.json` 등 공용 파일은 쓰기 직전에 다시 읽고 자기 키만 추가·수정한다. 다른 키의 값·순서·형식을 바꾸지 않는다.
 
+## 디스크 사용 (2026-09-26)
+
+2026-09-26 사용자 요청에 따라 프로젝트 자체의 디스크 사용량을 작게 유지한다. 예산·측정·보존 등급은 [디스크 관리](docs/disk_management.md)를 따른다.
+
+- **worktree:** `python3 scripts/agent_worktree.py new <이름> --branch <에이전트>/<주제>`로 만든다. `experiments/`의 무거운 미디어를 뺀 sparse checkout이며, 에이전트당 등록 worktree는 8개까지다.
+- **병합 뒤 정리:** `python3 scripts/agent_worktree.py retire <경로> --execute`만 쓴다. 이 명령은 무시된 `outputs/` 등을 기본 체크아웃 `outputs/retired-worktrees/<이름>/`으로 옮기고 개수·바이트를 확인한 뒤 제거한다. `git worktree remove`를 직접 쓰거나 `git status --porcelain`만 보고 지우지 않는다. 무시 파일이 보이지 않아 raw가 함께 지워진다(2026-09-26 사고). Codex-app worktree도 같다.
+- **raw 위치:** 실행 raw는 기본 체크아웃 `outputs/`에 절대 경로로 쓴다. `experiments/`에는 파일당 1 MiB, 실험당 5 MiB를 넘는 미디어를 커밋하지 않는다. raw 프레임·영상은 `outputs/`에 두고 sha256을 기록한다.
+- **보존:** raw의 삭제·솎기·압축·외부 이동은 등급별 사용자 결정이다. 모델 요청 이미지·텍스트는 dev 실행에서도 그대로 보존한다.
+- **실행 전:** `ugrp_session.py run`은 여유 공간이 10 GiB 미만이면 시작하지 않는다. 사용량은 `python3 scripts/disk_report.py`로 확인한다. 사전 등록에는 디스크 부족(ENOSPC)을 HOST_ERROR로 분류하는 규칙을 넣는다.
+
 ## Git·검증·병합
 
 - 시뮬레이션의 표준 관리 진입점은 `scripts/open_simulation.command` / `scripts/sim_cli.py`다. 새 실행 경로는 `configs/simulation_workflows.json`에 등록하고 공통 실행 기록에 소스·설정·입력·환경·결과를 연결한다. 연구별 실행기는 이 관리 계층의 어댑터로 유지하며 별도의 기본 실행·버전 관리 체계를 만들지 않는다. 장면·초기화·접촉 설정은 표준 `sim.session_scenes.Scene`을 재사용하고, 호환 경로의 차이는 명시적 버전/프로필로 남긴다. 표준 관리 통합과 제어기 이관, 실제 운반 성공 검증은 각각 구분해 보고한다.

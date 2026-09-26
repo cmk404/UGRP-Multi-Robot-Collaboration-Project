@@ -1,0 +1,582 @@
+{
+ "repo": "/Users/changmin/projects/ugrp",
+ "head_origin_main": "b7fedceea55a858db24c18a5e4c4c87f0138c7b7",
+ "refs_scanned": 217,
+ "unique_text_blobs": 4625,
+ "references": [
+  {
+   "reference": ".codex/worktrees/act-route-coverage/ugrp",
+   "removed_root": ".codex/worktrees/act-route-coverage/ugrp",
+   "class": "worktree_root",
+   "files": [
+    "experiments/2026-09-24-action-act/route-coverage-protocol.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 112
+  },
+  {
+   "reference": ".codex/worktrees/act-route-coverage/ugrp/scripts/run_act_route_teachers.py",
+   "removed_root": ".codex/worktrees/act-route-coverage/ugrp",
+   "class": "tracked_or_other",
+   "files": [
+    "experiments/2026-09-24-rolling-cargo-recovery/physical-protocol.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 110
+  },
+  {
+   "reference": ".codex/worktrees/act-teacher-load-policy/ugrp/scripts/run_act_route_teachers.py",
+   "removed_root": ".codex/worktrees/act-teacher-load-policy/ugrp",
+   "class": "tracked_or_other",
+   "files": [
+    "experiments/2026-09-24-rolling-view-recovery/physical-protocol.json",
+    "experiments/2026-09-25-settled-view-recovery/physical-protocol.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 106
+  },
+  {
+   "reference": "ugrp-worktrees/fine-gain-schedule",
+   "removed_root": "ugrp-worktrees/fine-gain-schedule",
+   "class": "worktree_root",
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 111
+  },
+  {
+   "reference": "ugrp-worktrees/plan-objective-preview",
+   "removed_root": "ugrp-worktrees/plan-objective-preview",
+   "class": "worktree_root",
+   "files": [
+    "experiments/2026-09-25-host-scheduling/v50-infrastructure-abort.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 97
+  },
+  {
+   "reference": "ugrp-worktrees/plan-objective-preview/experiments/2026-09-25-plan-guidance/results.json",
+   "removed_root": "ugrp-worktrees/plan-objective-preview",
+   "class": "tracked_or_other",
+   "files": [
+    "experiments/2026-09-25-host-scheduling/plan-guidance-independent-review.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 97
+  },
+  {
+   "reference": "ugrp-worktrees/post-run-replay",
+   "removed_root": "ugrp-worktrees/post-run-replay",
+   "class": "worktree_root",
+   "files": [
+    "configs/dispatch_stage_priors.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 99
+  },
+  {
+   "reference": "ugrp-worktrees/post-run-replay/outputs/simulation-runs/20260925-000852-dispatch-ee5eac42/artifacts",
+   "removed_root": "ugrp-worktrees/post-run-replay",
+   "class": "ignored_deleted",
+   "files": [
+    "experiments/2026-09-25-dynamic-coordination/results.json",
+    "experiments/2026-09-25-plan-guidance/README.md"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-binding",
+    "refs/heads/claude/beam-regrasp-coarse",
+    "refs/heads/claude/beam-regrasp-r3-pose-record"
+   ],
+   "ref_count": 104
+  },
+  {
+   "reference": "ugrp-worktrees/team-recovery-fix/outputs/",
+   "removed_root": "ugrp-worktrees/team-recovery-fix",
+   "class": "ignored_deleted",
+   "files": [
+    "experiments/2026-09-25-r3-regrasp-pose/analyze_r3_pose.py"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-r3-pose-record",
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix"
+   ],
+   "ref_count": 82
+  },
+  {
+   "reference": "ugrp-worktrees/team-recovery-fix/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "removed_root": "ugrp-worktrees/team-recovery-fix",
+   "class": "ignored_deleted",
+   "files": [
+    "experiments/2026-09-25-r3-regrasp-pose/analysis-output.json",
+    "experiments/2026-09-25-r3-regrasp-pose/results.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/beam-regrasp-r3-pose-record",
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix"
+   ],
+   "ref_count": 82
+  },
+  {
+   "reference": "ugrp-worktrees/zone-cargo/outputs/zone-cargo/final-d81514a",
+   "removed_root": "ugrp-worktrees/zone-cargo",
+   "class": "ignored_deleted",
+   "files": [
+    "experiments/2026-09-25-zone-cargo-catalogue/results.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925"
+   ],
+   "ref_count": 81
+  },
+  {
+   "reference": "ugrp-worktrees/zone-cargo/outputs/zone-cargo/slip-8886cf5",
+   "removed_root": "ugrp-worktrees/zone-cargo",
+   "class": "ignored_deleted",
+   "files": [
+    "experiments/2026-09-25-zone-cargo-catalogue/results-slip.json"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925b"
+   ],
+   "ref_count": 77
+  },
+  {
+   "reference": "ugrp-worktrees/zone-team-jobs/experiments/2026-09-25-zone-team-jobs/README.md",
+   "removed_root": "ugrp-worktrees/zone-team-jobs",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-25-zone-korean-dialogue-codex.md"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925"
+   ],
+   "ref_count": 75
+  },
+  {
+   "reference": "ugrp-worktrees/zone-team-jobs/harness/zone_team_jobs.py",
+   "removed_root": "ugrp-worktrees/zone-team-jobs",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-25-zone-korean-dialogue-codex.md"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925"
+   ],
+   "ref_count": 75
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "worktree_root",
+   "files": [
+    "experiments/2026-09-25-zone-owncam-loc/breakdown.py",
+    "experiments/2026-09-25-zone-owncam-loc/dead_reckoning_by_posture.py",
+    "experiments/2026-09-25-zone-owncam-loc/tune_dev.py"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925b"
+   ],
+   "ref_count": 71
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/experiments/2026-09-25-zone-owncam-loc/README.md",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/experiments/2026-09-25-zone-owncam-loc/calibration_frozen.json",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/experiments/2026-09-25-zone-owncam-loc/thresholds.json",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "experiments/2026-09-25-zone-owncam-loc/tune_dev.py"
+   ],
+   "on_origin_main": true,
+   "refs": [
+    "refs/heads/claude/kiro-agent",
+    "refs/heads/claude/owncam-loc-timestep-fix",
+    "refs/heads/claude/records-0925b"
+   ],
+   "ref_count": 71
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/harness/owncam_localizer.py",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/harness/wall_tags.py",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/sim/zone_landmarks.py",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/tests/test_owncam_localizer.py",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-loc/tests/test_zone_landmarks_sim.py",
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "worktree_root",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/experiments/2026-09-25-zone-owncam-skill/README.md",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/experiments/2026-09-25-zone-owncam-skill/build_results.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/harness/visual_arm.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/harness/visual_box_skill.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/harness/wrist_zone_skill.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/scripts/probe_owncam_carry_view.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/scripts/run_zone_owncam_skill.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/sim/dispatch_contact_profile.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/sim/zone_arena.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  },
+  {
+   "reference": "ugrp-wt/zone-owncam-skill/tests/test_wrist_zone_skill.py",
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "files": [
+    "docs/design/2026-09-26-owncam-adversarial-review-codex.md"
+   ],
+   "on_origin_main": false,
+   "refs": [
+    "refs/heads/kiro/records-owncam-review",
+    "refs/remotes/origin/kiro/records-owncam-review"
+   ],
+   "ref_count": 2
+  }
+ ],
+ "summary": [
+  {
+   "removed_root": ".codex/worktrees/act-route-coverage/ugrp",
+   "class": "tracked_or_other",
+   "references": 1
+  },
+  {
+   "removed_root": ".codex/worktrees/act-route-coverage/ugrp",
+   "class": "worktree_root",
+   "references": 1
+  },
+  {
+   "removed_root": ".codex/worktrees/act-teacher-load-policy/ugrp",
+   "class": "tracked_or_other",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/fine-gain-schedule",
+   "class": "worktree_root",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/plan-objective-preview",
+   "class": "tracked_or_other",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/plan-objective-preview",
+   "class": "worktree_root",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/post-run-replay",
+   "class": "ignored_deleted",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/post-run-replay",
+   "class": "worktree_root",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-worktrees/team-recovery-fix",
+   "class": "ignored_deleted",
+   "references": 2
+  },
+  {
+   "removed_root": "ugrp-worktrees/zone-cargo",
+   "class": "ignored_deleted",
+   "references": 2
+  },
+  {
+   "removed_root": "ugrp-worktrees/zone-team-jobs",
+   "class": "tracked_or_other",
+   "references": 2
+  },
+  {
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "tracked_or_other",
+   "references": 8
+  },
+  {
+   "removed_root": "ugrp-wt/zone-owncam-loc",
+   "class": "worktree_root",
+   "references": 1
+  },
+  {
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "tracked_or_other",
+   "references": 10
+  },
+  {
+   "removed_root": "ugrp-wt/zone-owncam-skill",
+   "class": "worktree_root",
+   "references": 1
+  }
+ ]
+}

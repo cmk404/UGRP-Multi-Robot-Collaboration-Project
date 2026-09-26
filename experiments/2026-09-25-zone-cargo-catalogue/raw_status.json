@@ -1,0 +1,31 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "/Users/changmin/projects/ugrp-worktrees/zone-cargo/outputs/zone-cargo/final-d81514a",
+      "used_as": "results.json raw_root_local_only (83 files, 14,282,220 bytes, sha256 and bytes per file in raw_files)",
+      "status": "partially_preserved",
+      "removed_with": "git worktree remove ugrp-worktrees/zone-cargo, 2026-09-26 about 13:50 KST; no backup",
+      "preserved_in_git": "11 files byte-identical (sha256) in media/: the 9 run videos, catalogue/catalogue.png (media/catalogue.png) and catalogue/top-TOP_NE.png (media/catalogue-top-ne.png)",
+      "lost": "72 files: per-run result/event JSON, JSONL traces (9.9 MB), scene XML (1.07 MB) and 3 TOP PNGs; only their sha256 and sizes remain"
+    },
+    {
+      "reference": "/Users/changmin/projects/ugrp-worktrees/zone-cargo/outputs/zone-cargo/slip-8886cf5",
+      "used_as": "results-slip.json raw_root_local_only (168 files, sha256 per file in raw_files_sha256)",
+      "status": "partially_preserved",
+      "removed_with": "git worktree remove ugrp-worktrees/zone-cargo, 2026-09-26 about 13:50 KST; no backup",
+      "preserved_in_git": "the 9 videos, byte-identical (sha256) as media/slip-*.mp4",
+      "lost": "159 files (result JSON, JSONL, scene XML, driver logs); only their sha256 remain"
+    },
+    {
+      "reference": "outputs/zone-cargo/{dev*,diag-1,diag-2,sweep-1,sweep-2,cat-dev*} (README section 6)",
+      "used_as": "unfrozen development runs, not counted as results",
+      "status": "lost",
+      "removed_with": "same worktree"
+    }
+  ]
+}

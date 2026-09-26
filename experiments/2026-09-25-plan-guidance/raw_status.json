@@ -1,0 +1,20 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "/Users/changmin/projects/ugrp-worktrees/post-run-replay/outputs/simulation-runs/20260925-000852-dispatch-ee5eac42/artifacts",
+      "used_as": "reference run (README: 참고 실행 원본); not one of the 15 cohort runs",
+      "status": "lost",
+      "removed_with": "git worktree remove ugrp-worktrees/post-run-replay, 2026-09-26 about 13:50 KST; no backup",
+      "surviving_evidence": [
+        "outputs/tensorboard/0925-plan-guidance/R-user-boxfirst: TensorBoard events and manifest.json with sha256 of five source files",
+        "experiments/2026-09-25-dynamic-coordination/results.json runs[0]: sha256 of result.json and team/team.json"
+      ],
+      "not_affected": "the 15 cohort runs in /Users/changmin/projects/ugrp/outputs/plan-guidance-20260925/ (primary checkout) are intact"
+    }
+  ]
+}
