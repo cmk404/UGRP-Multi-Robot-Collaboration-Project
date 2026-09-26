@@ -279,10 +279,14 @@ def run_coverage(out, profile, log):
 
 # --------------------------------------------------------------------------- stills
 
-# (x, y) floor spots v1 cannot see on the corridor v3 map (env v3 ST5 unseen bands):
-# north of the corridor walls, the east side of the bay, west of the bay west wall.
-STILL_BOXES = ((3.65, .965), (2.50, .965), (3.335, .50), (2.70, .60))
+# (x, y) box spots per layout on the corridor v3 map. hidden_bands: floor v1 cannot see
+# (env v3 ST5 unseen bands north of the corridor walls, east side of the bay, west of
+# the bay west wall). open_floor: spots both the v1 and the v2 cctv_top_north_east see,
+# so detector differences there come from the camera placement, not from occlusion.
+STILL_LAYOUTS = {'hidden_bands': ((3.65, .965), (2.50, .965), (3.335, .50), (2.70, .60)),
+                 'open_floor': ((4.60, .40), (4.60, -.20), (3.00, -.40), (4.00, .20))}
 STILL_ROBOT = ((2.95, 1.18), 0.)
+MATCH_M = .05
 
 
 def still_world(sc, name):
@@ -296,58 +300,66 @@ def still_world(sc, name):
     return scene, world
 
 
-def place_still(sc, scene, world):
+def place_still(sc, scene, world, spots):
     import mujoco
     rid = sorted(world.controllers)[0]
     sc.clear_scene(world, scene, keep_robot=rid)
     (x, y), yaw = STILL_ROBOT
     world.controllers[rid].set_base_pose_for_test((x, y, .0324), yaw)
     placed = []
-    for (oid, obj), xy in zip(sorted(scene.config['setup_only']['objects'].items()), STILL_BOXES):
+    for (oid, obj), xy in zip(sorted(scene.config['setup_only']['objects'].items()), spots):
         sc.set_free(world, obj['body_name'], (xy[0], xy[1], .016), (1., 0., 0., 0.))
         placed.append({'object': oid, 'kind': obj['kind'], 'xy_m': list(xy)})
     mujoco.mj_forward(world.model, world.data)
     return rid, placed
 
 
+def detect_placed(frames, cameras, placed):
+    """Existing TOP colour detectors on every view; which placed box each camera found (<= 5 cm)."""
+    from harness.zone_color_boxes import TOP_PROFILE_BASELINE, TOP_PROFILE_ZONE, detect_top
+    kinds = sorted({p['kind'] for p in placed})
+    out = {}
+    for det_profile in (TOP_PROFILE_BASELINE, TOP_PROFILE_ZONE):
+        rows = []
+        for name, jpeg in frames.items():
+            rows += detect_top(jpeg, cameras[name], kinds, profile=det_profile)
+        found = {p['object']: sorted({r['camera'] for r in rows if r['kind'] == p['kind']
+                                      and math.dist(r['floor_xy_m'], p['xy_m']) <= MATCH_M}) for p in placed}
+        out[det_profile] = {'detections': rows, 'placed_found_by': found}
+    return out
+
+
 def run_stills(out, log):
     from PIL import Image
     import sim.zone_eval_top as zet
-    from harness.zone_color_boxes import TOP_PROFILE_BASELINE, TOP_PROFILE_ZONE, detect_top
     sc, sc_sha = static_checks()
     rows, mosaics = [], {}
-    for profile in ('zone_eval_top_v1', 'zone_eval_top_v2'):
-        scene, world = still_world(sc, MAP_V3)
-        try:
-            rid, placed = place_still(sc, scene, world)
-            static = scene.config['static_map']
-            record = zet.apply_to_world(world, static, profile)
-            cameras = {c['name']: c for c in zet.eval_top_cameras(static, profile)}
-            frames = {}
-            for name in cameras:
-                jpeg = world.render_team_jpeg(camera=name, quality=95)
-                (out/f'{profile}_{name}.jpg').write_bytes(jpeg)
-                frames[name] = jpeg
-            det = {}
-            for det_profile in (TOP_PROFILE_BASELINE, TOP_PROFILE_ZONE):
-                found = []
-                for name, jpeg in frames.items():
-                    found += detect_top(jpeg, cameras[name], [p['kind'] for p in placed], profile=det_profile)
-                det[det_profile] = [{**r, 'nearest_placed_error_m': round(min(math.dist(r['floor_xy_m'], p['xy_m'])
-                                                                            for p in placed if p['kind'] == r['kind']), 3)}
-                                    for r in found]
+    for layout, spots in STILL_LAYOUTS.items():
+        for profile in ('zone_eval_top_v1', 'zone_eval_top_v2'):
+            scene, world = still_world(sc, MAP_V3)
+            try:
+                rid, placed = place_still(sc, scene, world, spots)
+                static = scene.config['static_map']
+                record = zet.apply_to_world(world, static, profile)
+                cameras = {c['name']: c for c in zet.eval_top_cameras(static, profile)}
+                frames = {}
+                for name in cameras:
+                    frames[name] = world.render_team_jpeg(camera=name, quality=95)
+                    (out/f'{layout}_{profile}_{name}.jpg').write_bytes(frames[name])
+                det = detect_placed(frames, cameras, placed)
+            finally:
+                world.close()
             tiles = [np.concatenate([np.asarray(Image.open(io.BytesIO(frames[n]))) for n in row], axis=1) for row in MOSAIC]
-            mosaics[profile] = np.concatenate(tiles, axis=0)
-            rows.append({'profile': profile, 'record': record, 'robot': rid, 'robot_pose': STILL_ROBOT, 'boxes': placed,
-                         'frames_sha256': {n: hashlib.sha256(j).hexdigest() for n, j in frames.items()},
-                         'detections': det})
-            log(f'{profile}: ' + ', '.join(f'{k} {len(v)}' for k, v in det.items()))
-        finally:
-            world.close()
-    both = np.concatenate([mosaics['zone_eval_top_v1'], mosaics['zone_eval_top_v2']], axis=1)
-    Image.fromarray(both).save(out/'mosaic_v1_left_v2_right.jpg', quality=90)
+            mosaics[(layout, profile)] = np.concatenate(tiles, axis=0)
+            rows.append({'layout': layout, 'profile': profile, 'record': record, 'robot': rid, 'robot_pose': STILL_ROBOT,
+                         'boxes': placed, 'frames_sha256': {n: hashlib.sha256(j).hexdigest() for n, j in frames.items()},
+                         'detectors': det})
+            log(f'{layout} {profile}: ' + '; '.join(f"{k} {v['placed_found_by']}" for k, v in det.items()))
+    for layout in STILL_LAYOUTS:
+        both = np.concatenate([mosaics[(layout, 'zone_eval_top_v1')], mosaics[(layout, 'zone_eval_top_v2')]], axis=1)
+        Image.fromarray(both).save(out/f'mosaic_{layout}_v1_left_v2_right.jpg', quality=90)
     result = {**header('stills'), 'static_checks_sha256': sc_sha, 'map': MAP_V3, 'rows': rows,
-              'mosaic_sha256': sha_file(out/'mosaic_v1_left_v2_right.jpg')}
+              'mosaics_sha256': {p.name: sha_file(p) for p in sorted(out.glob('mosaic_*.jpg'))}}
     result['load_average_end'] = [round(v, 2) for v in os.getloadavg()]
     (out/'stills.json').write_text(json.dumps(result, indent=1) + '\n')
     return result
