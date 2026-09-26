@@ -1,0 +1,105 @@
+{
+  "source_run": "/Users/changmin/projects/ugrp-worktrees/zone-team-a2/outputs/zone-team-a2-20260925/a-two-dynamic-s12",
+  "captures": [
+    "038-claim-37-0",
+    "039-claim-38-0",
+    "040-final"
+  ],
+  "profiles": {
+    "top_cargo_v2": {
+      "observations": [
+        {
+          "capture": "038-claim-37-0",
+          "pickup_items_still_visible": [
+            "heavy_crate-1"
+          ],
+          "moved_labels": null
+        },
+        {
+          "capture": "039-claim-38-0",
+          "pickup_items_still_visible": [
+            "heavy_crate-1"
+          ],
+          "moved_labels": null
+        },
+        {
+          "capture": "040-final",
+          "pickup_items_still_visible": [
+            "heavy_crate-1"
+          ],
+          "moved_labels": null
+        }
+      ],
+      "long_beam-1_rgb_xy_after": [
+        0.4012,
+        -2.1499
+      ],
+      "long_beam-1_claimable_at_end": false
+    },
+    "top_cargo_v2_track": {
+      "observations": [
+        {
+          "capture": "038-claim-37-0",
+          "pickup_items_still_visible": [
+            "heavy_crate-1"
+          ],
+          "moved_labels": {}
+        },
+        {
+          "capture": "039-claim-38-0",
+          "pickup_items_still_visible": [
+            "heavy_crate-1",
+            "long_beam-1"
+          ],
+          "moved_labels": {
+            "long_beam-1": {
+              "kind": "long_beam",
+              "from_rgb_xy_m": [
+                0.401,
+                -2.15
+              ],
+              "to_rgb_xy_m": [
+                0.948,
+                -1.438
+              ]
+            }
+          }
+        },
+        {
+          "capture": "040-final",
+          "pickup_items_still_visible": [
+            "heavy_crate-1",
+            "long_beam-1"
+          ],
+          "moved_labels": {}
+        }
+      ],
+      "long_beam-1_rgb_xy_after": [
+        0.948,
+        -1.4379
+      ],
+      "long_beam-1_claimable_at_end": true
+    }
+  },
+  "files_sha256": {
+    "038-claim-37-0-top-sw.jpg": "5c7e45da5ba3ba9d155f72b7bfbe53188e70a7415b855e44bd8c16b18a254192",
+    "038-claim-37-0-top-nw.jpg": "d864513530ffb5630789ee5d27e082ebbfc6118496cd51171d1ac2b9e2b459fb",
+    "038-claim-37-0-top-se.jpg": "9ad4de71eb1a467f36aaf0cf1c2e369e72a6fe79ae643846c2c57f17dcfd29c5",
+    "038-claim-37-0-top-ne.jpg": "cb9b87ad4d6ce5d7b6201404d3c4725c4f05c1ae0c9f52198fb006154b2dbbed",
+    "039-claim-38-0-top-sw.jpg": "5ffa5f26a9f905c42116155bb32f7a7a569ef4fc05a01af93e2159b77cb9884d",
+    "039-claim-38-0-top-nw.jpg": "e129ab8a16fc380a2782b0875ef44939054fb36db1c2765fdb2e48cd3ea65a95",
+    "039-claim-38-0-top-se.jpg": "cdb0ed17cb821aa243429eed2154b38dc10a89d9ecd97e87660671de7e9a95c5",
+    "039-claim-38-0-top-ne.jpg": "08488c3d6b9543899c08c78335fddbea63e0ec743ec55ce8cafd749a3b29f280",
+    "040-final-top-sw.jpg": "699c624e1f02fee596b210cef40c0f4f848daebdad433cbdbf42ac0344c5407a",
+    "040-final-top-nw.jpg": "e129ab8a16fc380a2782b0875ef44939054fb36db1c2765fdb2e48cd3ea65a95",
+    "040-final-top-se.jpg": "cdb0ed17cb821aa243429eed2154b38dc10a89d9ecd97e87660671de7e9a95c5",
+    "040-final-top-ne.jpg": "08488c3d6b9543899c08c78335fddbea63e0ec743ec55ce8cafd749a3b29f280"
+  },
+  "scope": "offline robot-input perception only (TOP RGB); referee pose for scoring",
+  "referee_long_beam_0": {
+    "kind": "long_beam",
+    "zone": null,
+    "footprint": "outside",
+    "resting": true
+  }
+}

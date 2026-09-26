@@ -1,0 +1,4199 @@
+{
+  "experiment": "2026-09-26-zone-teacher-fix",
+  "claim_scope": "GT TEACHER feasibility only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot, RGB-skill or student success",
+  "robot_facing_outcome_source": "teacher_receipt_L4 (unresolved)",
+  "contact_profile": "cargo_noslip_v1 (pending user approval)",
+  "weld": "off",
+  "physics_clock": "synchronous SIM",
+  "llm_calls_total": 0,
+  "raw_root_local_only": "/Users/changmin/projects/ugrp-wt/kiro-teacher-fix/outputs/zone-teacher-fix-20260926",
+  "new_seed_cohort": {
+    "pre_registered": [
+      "mix-dynamic-s21",
+      "mix-independent-s21",
+      "mix-dynamic-s22",
+      "mix-independent-s22",
+      "mix-dynamic-s23",
+      "mix-independent-s23",
+      "tri-dynamic-s21",
+      "tri-dynamic-s22"
+    ],
+    "finished": [
+      "mix-dynamic-s21",
+      "mix-independent-s21",
+      "mix-dynamic-s22",
+      "mix-independent-s22",
+      "mix-dynamic-s23",
+      "mix-independent-s23",
+      "tri-dynamic-s21",
+      "tri-dynamic-s22"
+    ],
+    "teacher_feasibility_success": 5,
+    "n": 8
+  },
+  "blocker_reruns": [
+    "d-b3-mix-dynamic-s12",
+    "d-b4-mix-dynamic-s12-b3off",
+    "g-b2-door-tri-s11",
+    "g-b8-two-tri-s11"
+  ],
+  "runs": [
+    {
+      "run": "d-b3-mix-dynamic-s12",
+      "driver": {
+        "run": "d-b3-mix-dynamic-s12",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 12,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          11.78,
+          16.52,
+          15.66
+        ],
+        "load_avg_end": [
+          50.61,
+          35.35,
+          36.52
+        ],
+        "returncode": 0,
+        "wall_s": 1416.0,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/d-b3-mix-dynamic-s12",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "12",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "e6446e743b27327905aceaf9551bd81598105f3c28e9cb3600d8882269a15efc",
+        "result.json": "4064ad4ec08dd368443ac22996ac7dd6fba7ba03f3f0cfd4454989c272ba19f3",
+        "teacher-events.json": "c4047a2ca8929757a24d8d8e1fca139875fc366640f79f8077f00d5e3a2f8264"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 471.5,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 475.3,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 9,
+      "drops": 0,
+      "slip_max_mm": 0.5,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 6
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "green": 1,
+          "red": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 2,
+          "first_t": 140.3,
+          "last_t": 200.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 0,
+        "rendezvous_timeout": 2,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 1,
+          "station_staged": 1,
+          "arrival_reset": 1,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 19.6,
+          "end_sim_s": 189.8,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r2": 0.1
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4,
+            "r2": 0.5
+          },
+          "pause_total_s": 2.3,
+          "pauses": 1
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 241.5,
+          "end_sim_s": 297.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "commit_sim_s": 225.3,
+          "end_sim_s": 329.4,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r3": 24.5
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.5,
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 340.5,
+          "end_sim_s": 400.7,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 373.7,
+          "end_sim_s": 416.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 370.2,
+          "end_sim_s": 474.1,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 1,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          11.71,
+          16.43,
+          15.63
+        ],
+        "end": [
+          50.61,
+          35.35,
+          36.52
+        ]
+      },
+      "wall_s": 1408.49
+    },
+    {
+      "run": "d-b4-mix-dynamic-s12-b3off",
+      "driver": {
+        "run": "d-b4-mix-dynamic-s12-b3off",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 12,
+        "coordination": "dynamic",
+        "extra": [
+          "--teacher-fix",
+          "{\"b3_claim_yield\": false}",
+          "--max-sim-s",
+          "900"
+        ],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          11.78,
+          16.52,
+          15.66
+        ],
+        "load_avg_end": [
+          12.88,
+          22.47,
+          28.72
+        ],
+        "returncode": 0,
+        "wall_s": 9781.1,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/d-b4-mix-dynamic-s12-b3off",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "12",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay",
+          "--teacher-fix",
+          "{\"b3_claim_yield\": false}",
+          "--max-sim-s",
+          "900"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "4e2a63546670e61052fb45179d22a0e1610376d436d88d67a06b418907d3615e",
+        "result.json": "87a072b8f34ed71c94748fe6651dc24d9500d1044b24b8b4db5db50c5278ae0e",
+        "teacher-events.json": "413d8af8d08ec89aa16feb14753a1bc31b6a390628cfe560f83b355a552311e5"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 865.5,
+      "max_sim_s": 900.0,
+      "sim_end_s": 869.3,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 13,
+      "drops": 0,
+      "slip_max_mm": 0.5,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 7
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "green": 1,
+          "red": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "team_carry_pause",
+          "outcome": null,
+          "target": "long_beam_0",
+          "count": 4,
+          "first_t": 33.1,
+          "last_t": 203.2,
+          "robots": [],
+          "cause": "carry paused 42.7 s for ['r3'] near None"
+        },
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 3,
+          "first_t": 75.8,
+          "last_t": 196.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        },
+        {
+          "kind": "team_failure",
+          "outcome": "carry_blocked",
+          "target": "long_beam_0",
+          "count": 1,
+          "first_t": 408.9,
+          "last_t": 408.9,
+          "robots": [
+            "r1"
+          ],
+          "cause": "carry_blocked"
+        },
+        {
+          "kind": "claim_end",
+          "outcome": "team_aborted",
+          "target": "long_beam_0",
+          "count": 2,
+          "first_t": 417.3,
+          "last_t": 417.3,
+          "robots": [
+            "r1",
+            "r2"
+          ],
+          "cause": "team job aborted after a failure (see team_failure)"
+        },
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "long_beam_0",
+          "count": 2,
+          "first_t": 504.3,
+          "last_t": 564.8,
+          "robots": [
+            "r2"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 2,
+        "rendezvous_timeout": 5,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": false,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 1,
+          "return_finished": 1,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "ABORTED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 19.6,
+          "end_sim_s": 416.9,
+          "failures": [
+            {
+              "robot": "r1",
+              "reason": "carry_blocked",
+              "state_before": "CARRY",
+              "action": "hold_lower",
+              "t": 408.9,
+              "returned_to_start": true
+            }
+          ],
+          "returns": [
+            {
+              "robot": "r1",
+              "reason": "carry_blocked",
+              "t0": 383.3,
+              "detail": {
+                "by": [
+                  "r3"
+                ]
+              },
+              "from_pose": [
+                0.9506,
+                -1.4338,
+                1.5706
+              ],
+              "to_pose": [
+                0.4004,
+                -2.1503,
+                1.5709
+              ],
+              "legs": 2,
+              "outcome": "returned_to_start",
+              "t1": 408.9,
+              "end_pose": [
+                0.4073,
+                -2.1494,
+                1.5692
+              ],
+              "end_err_m": 0.007
+            }
+          ],
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r2": 0.1
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4,
+            "r2": 0.5
+          },
+          "pause_total_s": 331.0,
+          "pauses": 6
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "commit_sim_s": 440.1,
+          "end_sim_s": 543.4,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r3": 21.7
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.1,
+            "r3": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 589.3,
+          "end_sim_s": 642.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 686.2,
+          "end_sim_s": 738.1,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "long_beam_0@g2",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 576.5,
+          "end_sim_s": 744.2,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r2": 11.7
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.3,
+            "r2": 0.3
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 776.7,
+          "end_sim_s": 834.7,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 784.7,
+          "end_sim_s": 867.8,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          11.71,
+          16.43,
+          15.63
+        ],
+        "end": [
+          12.88,
+          22.47,
+          28.72
+        ]
+      },
+      "wall_s": 9772.95
+    },
+    {
+      "run": "g-b2-door-tri-s11",
+      "driver": {
+        "run": "g-b2-door-tri-s11",
+        "variant": "zone_wide_door",
+        "goal": {
+          "A": {
+            "tri_frame": 1,
+            "red": 1
+          },
+          "C": {
+            "green": 1
+          }
+        },
+        "seed": 11,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          11.23,
+          17.24,
+          15.86
+        ],
+        "load_avg_end": [
+          10.94,
+          16.88,
+          15.75
+        ],
+        "returncode": 3,
+        "wall_s": 16.9,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/g-b2-door-tri-s11",
+          "--variant",
+          "zone_wide_door",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"tri_frame\": 1, \"red\": 1}, \"C\": {\"green\": 1}}",
+          "--seed",
+          "11",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "infeasible",
+        "run_started": false,
+        "items": [
+          {
+            "item_id": "tri_frame_0",
+            "kind": "tri_frame",
+            "zone": "A",
+            "verdict": "infeasible",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "054b9fd169d608a7cf0b23843082f2c4fd6f9f21aa3cad30d6ee5e7753ad3c8e"
+      },
+      "status": "refused_by_gate"
+    },
+    {
+      "run": "g-b8-two-tri-s11",
+      "driver": {
+        "run": "g-b8-two-tri-s11",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "tri_frame": 1,
+            "red": 1
+          },
+          "C": {
+            "green": 1
+          }
+        },
+        "seed": 11,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          10.94,
+          16.88,
+          15.75
+        ],
+        "load_avg_end": [
+          11.78,
+          16.52,
+          15.66
+        ],
+        "returncode": 3,
+        "wall_s": 31.0,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/g-b8-two-tri-s11",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"tri_frame\": 1, \"red\": 1}, \"C\": {\"green\": 1}}",
+          "--seed",
+          "11",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "order_constrained",
+        "run_started": false,
+        "items": [
+          {
+            "item_id": "tri_frame_0",
+            "kind": "tri_frame",
+            "zone": "A",
+            "verdict": "order_constrained",
+            "blocking_solo_items": [
+              [
+                "box_01"
+              ]
+            ],
+            "blocking_solo_item_poses": {
+              "box_01": [
+                1.6,
+                -2.45
+              ]
+            }
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "baeeb2cb64edde2a51303ea9c33f4d27cb9047da1a3cd28cdee528f6f75ec6e5"
+      },
+      "status": "refused_by_gate"
+    },
+    {
+      "run": "mix-dynamic-s21",
+      "driver": {
+        "run": "mix-dynamic-s21",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 21,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          50.61,
+          35.35,
+          36.52
+        ],
+        "load_avg_end": [
+          24.53,
+          49.71,
+          48.83
+        ],
+        "returncode": 0,
+        "wall_s": 1685.4,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-dynamic-s21",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "21",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "53d3bf7bed814a3d4525d4f6c9e641d6e599576dbb5ae45582406e7dff189add",
+        "result.json": "aa4f9b51e92da86243ee476a5d5461c17f19676398477015f0f8069a047b343e",
+        "teacher-events.json": "56f1a365145067121f5526129be1126035a23be5a7d1a6f9c1b02f322e6f09a4"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 477.0,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 480.8,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 10,
+      "drops": 0,
+      "slip_max_mm": 0.8,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 6
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 3,
+          "first_t": 77.8,
+          "last_t": 198.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 0,
+        "rendezvous_timeout": 3,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 30.9,
+          "end_sim_s": 166.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 5.2,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.3,
+            "r2": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 203.4,
+          "end_sim_s": 263.2,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "commit_sim_s": 222.2,
+          "end_sim_s": 336.2,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r3": 23.4
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4,
+            "r3": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 301.5,
+          "end_sim_s": 352.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 377.5,
+          "end_sim_s": 418.8,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.8
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 374.7,
+          "end_sim_s": 479.4,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          49.84,
+          35.44,
+          36.55
+        ],
+        "end": [
+          24.53,
+          49.71,
+          48.83
+        ]
+      },
+      "wall_s": 1679.07
+    },
+    {
+      "run": "mix-dynamic-s22",
+      "driver": {
+        "run": "mix-dynamic-s22",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 22,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          115.3,
+          119.79,
+          135.38
+        ],
+        "load_avg_end": [
+          17.02,
+          28.82,
+          47.22
+        ],
+        "returncode": 0,
+        "wall_s": 1714.8,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-dynamic-s22",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "22",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "cc582e3cb7e7f3e17deaec1aab2cc0399e564dbee39429be62fb5dc5f14bc53f",
+        "result.json": "ad24173c8b0c0504eb145e667244640d1114397f00547544c8153baf73cefae7",
+        "teacher-events.json": "31abcdef216a97ef36f0c706dc991f04b0c90590a37287749adec4e0786cec95"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": false,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": false
+      },
+      "teacher_feasibility_success": false,
+      "goal_met_rgb": false,
+      "control_end_sim_s": 466.0,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 469.8,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 9,
+      "drops": 0,
+      "slip_max_mm": 0.7,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 5,
+        "finished_items_unique": 5,
+        "ledger_delivered_units": 5,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 5
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": false
+      },
+      "not_delivered_items": [
+        "box_01"
+      ],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 3,
+          "first_t": 74.3,
+          "last_t": 195.3,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        },
+        {
+          "kind": "not_delivered_at_end",
+          "outcome": null,
+          "target": "box_01",
+          "count": 1,
+          "first_t": 469.8,
+          "last_t": 469.8,
+          "robots": [],
+          "cause": "referee_v2: zone None, footprint outside"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 7,
+        "team_aborted": 0,
+        "rendezvous_timeout": 3,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 1,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 25.0,
+          "end_sim_s": 167.7,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 13.6,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4,
+            "r2": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 211.7,
+          "end_sim_s": 263.5,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "commit_sim_s": 205.7,
+          "end_sim_s": 374.5,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r3": 10.4
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.7,
+            "r3": 0.1
+          },
+          "pause_total_s": 2.4,
+          "pauses": 1
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 329.9,
+          "end_sim_s": 377.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 414.4,
+          "end_sim_s": 468.6,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 1,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          118.16,
+          120.18,
+          135.24
+        ],
+        "end": [
+          17.02,
+          28.82,
+          47.22
+        ]
+      },
+      "wall_s": 1698.24
+    },
+    {
+      "run": "mix-dynamic-s23",
+      "driver": {
+        "run": "mix-dynamic-s23",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 23,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          9.91,
+          13.53,
+          29.04
+        ],
+        "load_avg_end": [
+          7.65,
+          18.53,
+          41.27
+        ],
+        "returncode": 0,
+        "wall_s": 2825.0,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-dynamic-s23",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "23",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "6886463bc3afb631cc691930436fe09cea1a4fba55bc16c8b08963dee9265efe",
+        "result.json": "bbc27006e7d419df9e98cd4aa45636b962861f1df1de6a6a63a1e73f6e845805",
+        "teacher-events.json": "f582a2088db50ff475c9c270ae20b441605d4501c5e74c9bbce74bec0e7ea240"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 497.0,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 500.8,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 14,
+      "drops": 0,
+      "slip_max_mm": 0.7,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 6
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "green": 1,
+          "red": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 3,
+          "first_t": 81.8,
+          "last_t": 202.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        },
+        {
+          "kind": "claim_end",
+          "outcome": "path_blocked",
+          "target": "box_00",
+          "count": 4,
+          "first_t": 351.3,
+          "last_t": 382.8,
+          "robots": [
+            "r1"
+          ],
+          "cause": "no disc path to the station/landing for the drive-phase limit (240 s with walls)"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 0,
+        "rendezvous_timeout": 3,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 4,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 25.9,
+          "end_sim_s": 183.4,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r2": 11.2
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.5,
+            "r2": 0.3
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 234.6,
+          "end_sim_s": 301.7,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r3"
+          ],
+          "commit_sim_s": 216.8,
+          "end_sim_s": 340.5,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r3": 14.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.7,
+            "r3": 0.1
+          },
+          "pause_total_s": 10.6,
+          "pauses": 2
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 345.2,
+          "end_sim_s": 390.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 382.7,
+          "end_sim_s": 424.5,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 438.2,
+          "end_sim_s": 499.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 1,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          9.6,
+          13.41,
+          28.91
+        ],
+        "end": [
+          7.65,
+          18.53,
+          41.27
+        ]
+      },
+      "wall_s": 2819.95
+    },
+    {
+      "run": "mix-independent-s21",
+      "driver": {
+        "run": "mix-independent-s21",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 21,
+        "coordination": "independent",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          24.53,
+          49.71,
+          48.83
+        ],
+        "load_avg_end": [
+          115.3,
+          119.79,
+          135.38
+        ],
+        "returncode": 0,
+        "wall_s": 3155.0,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-independent-s21",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "independent",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "21",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "bb2fa30f5f0095a8af2d27b501c3f06f4590ad5dcc709f9b4355373c1ff492c3",
+        "result.json": "9df628ef0ccb9f5c6d18308f91a1ac4e52f4c258db3df4772443c16c6441bae3",
+        "teacher-events.json": "62f40124552b62fd3cac524317706ee6095f145119643957d1b73c2c713893f3"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "independent",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 470.0,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 473.8,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 33,
+      "drops": 0,
+      "slip_max_mm": 0.6,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 6
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 1,
+          "first_t": 77.8,
+          "last_t": 77.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 0,
+        "rendezvous_timeout": 1,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 30.9,
+          "end_sim_s": 166.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 5.2,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.3,
+            "r2": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 117.9,
+          "end_sim_s": 179.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 222.2,
+          "end_sim_s": 272.9,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 206.9,
+          "end_sim_s": 321.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 8.2,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.1,
+            "r2": 0.6
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 363.4,
+          "end_sim_s": 404.9,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.3
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 361.0,
+          "end_sim_s": 465.6,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          23.12,
+          49.0,
+          48.59
+        ],
+        "end": [
+          115.3,
+          119.79,
+          135.38
+        ]
+      },
+      "wall_s": 3147.32
+    },
+    {
+      "run": "mix-independent-s22",
+      "driver": {
+        "run": "mix-independent-s22",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 22,
+        "coordination": "independent",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          17.02,
+          28.82,
+          47.22
+        ],
+        "load_avg_end": [
+          9.91,
+          13.53,
+          29.04
+        ],
+        "returncode": 0,
+        "wall_s": 1022.6,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-independent-s22",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "independent",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "22",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "db7d8b4ffcd571862bbdd1e8f1d0beccc85fc47d9a3d6003b5c38451ea566d56",
+        "result.json": "1196d74fa6dd6a202660638c81b715f90166c6cff98a83d0a3dbc7752e36c1e4",
+        "teacher-events.json": "373ce7704f53cba800135a03ee7c614ac3e8df883728158fc7fd11be32ada521"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "independent",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": false,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": false
+      },
+      "teacher_feasibility_success": false,
+      "goal_met_rgb": false,
+      "control_end_sim_s": 491.5,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 495.3,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 39,
+      "drops": 0,
+      "slip_max_mm": 0.4,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 5,
+        "finished_items_unique": 5,
+        "ledger_delivered_units": 5,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 5
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": false
+      },
+      "not_delivered_items": [
+        "box_01"
+      ],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 1,
+          "first_t": 74.3,
+          "last_t": 74.3,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        },
+        {
+          "kind": "not_delivered_at_end",
+          "outcome": null,
+          "target": "box_01",
+          "count": 1,
+          "first_t": 495.3,
+          "last_t": 495.3,
+          "robots": [],
+          "cause": "referee_v2: zone None, footprint outside"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 7,
+        "team_aborted": 0,
+        "rendezvous_timeout": 1,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 101.7,
+          "end_sim_s": 157.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 25.0,
+          "end_sim_s": 167.7,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 13.6,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.4,
+            "r2": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 201.0,
+          "end_sim_s": 251.5,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 233.3,
+          "end_sim_s": 399.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 29.5,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.2,
+            "r2": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 436.9,
+          "end_sim_s": 487.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.2
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          16.62,
+          28.54,
+          47.01
+        ],
+        "end": [
+          9.91,
+          13.53,
+          29.04
+        ]
+      },
+      "wall_s": 1014.7
+    },
+    {
+      "run": "mix-independent-s23",
+      "driver": {
+        "run": "mix-independent-s23",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "heavy_crate": 1,
+            "red": 1
+          },
+          "C": {
+            "can": 1,
+            "green": 1,
+            "tile": 1
+          }
+        },
+        "seed": 23,
+        "coordination": "independent",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          12.88,
+          22.47,
+          28.72
+        ],
+        "load_avg_end": [
+          18.04,
+          18.18,
+          32.1
+        ],
+        "returncode": 0,
+        "wall_s": 2505.7,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/mix-independent-s23",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "independent",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"long_beam\": 1}, \"B\": {\"heavy_crate\": 1, \"red\": 1}, \"C\": {\"can\": 1, \"green\": 1, \"tile\": 1}}",
+          "--seed",
+          "23",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "long_beam_0",
+            "kind": "long_beam",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          },
+          {
+            "item_id": "heavy_crate_0",
+            "kind": "heavy_crate",
+            "zone": "B",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "bfed7ee953059a781715c43785d977a6fa42baf0b2a5117cf17fc777c5a4c088",
+        "result.json": "fc2df96a91bd15bb42cd9bfeb62b18606adf5ae2eaecc149c5fa7bdf001203b9",
+        "teacher-events.json": "f314bcadda59764bc4c1257e52add8053f22c33b2239679e2900fbc957af1270"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "independent",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "B": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 519.0,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 522.8,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 45,
+      "drops": 0,
+      "slip_max_mm": 0.8,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 6,
+        "finished_items_unique": 6,
+        "ledger_delivered_units": 6,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 6
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "green": 1,
+          "red": 1,
+          "long_beam": 1,
+          "heavy_crate": 1,
+          "tile": 1,
+          "can": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "can": 1,
+          "heavy_crate": 1,
+          "long_beam": 1,
+          "tile": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [
+        {
+          "kind": "claim_end",
+          "outcome": "rendezvous_timeout",
+          "target": "heavy_crate_0",
+          "count": 1,
+          "first_t": 81.8,
+          "last_t": 81.8,
+          "robots": [
+            "r3"
+          ],
+          "cause": "team not complete within 60 SIM s after this robot reached its station"
+        },
+        {
+          "kind": "claim_end",
+          "outcome": "path_blocked",
+          "target": "box_00",
+          "count": 2,
+          "first_t": 348.3,
+          "last_t": 369.3,
+          "robots": [
+            "r1"
+          ],
+          "cause": "no disc path to the station/landing for the drive-phase limit (240 s with walls)"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 8,
+        "team_aborted": 0,
+        "rendezvous_timeout": 1,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 2,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "long_beam": 1
+          },
+          "B": {
+            "red": 1,
+            "heavy_crate": 1
+          },
+          "C": {
+            "green": 1,
+            "can": 1,
+            "tile": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 107.7,
+          "end_sim_s": 156.9,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "long_beam_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 25.9,
+          "end_sim_s": 183.4,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0,
+            "r2": 11.2
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.5,
+            "r2": 0.3
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "can_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r3"
+          ],
+          "commit_sim_s": 200.6,
+          "end_sim_s": 249.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r3": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r3": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "heavy_crate_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2"
+          ],
+          "commit_sim_s": 225.4,
+          "end_sim_s": 337.3,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 5.7,
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.1,
+            "r2": 0.8
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "tile_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 380.8,
+          "end_sim_s": 422.1,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.8
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 451.3,
+          "end_sim_s": 514.6,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          12.49,
+          22.23,
+          28.59
+        ],
+        "end": [
+          18.04,
+          18.18,
+          32.1
+        ]
+      },
+      "wall_s": 2499.95
+    },
+    {
+      "run": "tri-dynamic-s21",
+      "driver": {
+        "run": "tri-dynamic-s21",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "tri_frame": 1,
+            "red": 1
+          },
+          "C": {
+            "green": 1
+          }
+        },
+        "seed": 21,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          7.65,
+          18.53,
+          41.27
+        ],
+        "load_avg_end": [
+          6.55,
+          9.44,
+          20.71
+        ],
+        "returncode": 0,
+        "wall_s": 1035.4,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/tri-dynamic-s21",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"tri_frame\": 1, \"red\": 1}, \"C\": {\"green\": 1}}",
+          "--seed",
+          "21",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "tri_frame_0",
+            "kind": "tri_frame",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "a1c998482a05dbb1e1d669ffa663e9c0cda9886078ccd13388803e4421995cda",
+        "result.json": "fa6ad612f8d01c5c5ae112f7cfaaa401d12e304061ce614f29ff0dfb147ab0f2",
+        "teacher-events.json": "91bed891bec2055d8c103a20a43ef9c901bff1ab7809388dd9c62af5ec569137"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": true,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "C": true
+      },
+      "teacher_feasibility_success": true,
+      "goal_met_rgb": true,
+      "control_end_sim_s": 377.5,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 381.3,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 4,
+      "drops": 0,
+      "slip_max_mm": 0.5,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 3,
+        "finished_items_unique": 3,
+        "ledger_delivered_units": 3,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 3
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "tri_frame": 1
+        },
+        "labels": {
+          "green": 1,
+          "red": 1,
+          "tri_frame": 1
+        },
+        "match": true
+      },
+      "not_delivered_items": [],
+      "blocker_summary": [],
+      "executor_metrics": {
+        "placed_by_teacher": 5,
+        "team_aborted": 0,
+        "rendezvous_timeout": 0,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "red": 1,
+            "tri_frame": 1
+          },
+          "B": {},
+          "C": {
+            "green": 1
+          }
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "tri_frame_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2",
+            "r3"
+          ],
+          "commit_sim_s": 34.0,
+          "end_sim_s": 232.8,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 3.9,
+            "r2": 0.0,
+            "r3": 25.3
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.2,
+            "r2": 0.5,
+            "r3": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_01@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r2"
+          ],
+          "commit_sim_s": 273.9,
+          "end_sim_s": 339.6,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r2": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r2": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 282.4,
+          "end_sim_s": 379.8,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 1,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          38.44,
+          25.24,
+          42.22
+        ],
+        "end": [
+          6.51,
+          9.49,
+          20.79
+        ]
+      },
+      "wall_s": 975.36
+    },
+    {
+      "run": "tri-dynamic-s22",
+      "driver": {
+        "run": "tri-dynamic-s22",
+        "variant": "zone_wide_two_doors",
+        "goal": {
+          "A": {
+            "tri_frame": 1,
+            "red": 1
+          },
+          "C": {
+            "green": 1
+          }
+        },
+        "seed": 22,
+        "coordination": "dynamic",
+        "extra": [],
+        "perception_profile": "top_cargo_v2_track",
+        "contact_profile": "cargo_noslip_v1 (pending user approval)",
+        "thread_env": {
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "MKL_NUM_THREADS": "1"
+        },
+        "load_avg_start": [
+          18.04,
+          18.18,
+          32.1
+        ],
+        "load_avg_end": [
+          13.9,
+          12.5,
+          20.45
+        ],
+        "returncode": 0,
+        "wall_s": 693.0,
+        "command": [
+          "-m",
+          "scripts.run_zone_teacher_fix",
+          "--output",
+          "outputs/zone-teacher-fix-20260926/tri-dynamic-s22",
+          "--variant",
+          "zone_wide_two_doors",
+          "--coordination",
+          "dynamic",
+          "--mode",
+          "fixture",
+          "--goal",
+          "{\"A\": {\"tri_frame\": 1, \"red\": 1}, \"C\": {\"green\": 1}}",
+          "--seed",
+          "22",
+          "--contact-profile",
+          "cargo_noslip_v1",
+          "--perception-profile",
+          "top_cargo_v2_track",
+          "--record-replay"
+        ]
+      },
+      "gate": {
+        "verdict": "ok",
+        "run_started": true,
+        "items": [
+          {
+            "item_id": "tri_frame_0",
+            "kind": "tri_frame",
+            "zone": "A",
+            "verdict": "ok",
+            "blocking_solo_items": null,
+            "blocking_solo_item_poses": null
+          }
+        ]
+      },
+      "files_sha256": {
+        "feasibility-gate.json": "2cf42220309c55fe495b12294ee67f42f713ec724fe243151b00106f34d0612f",
+        "result.json": "bdac43faf2fbe4a3dfc29aab8be12633bff2b9006394816fc1ec5ab7fdc95d23",
+        "teacher-events.json": "3449cc6125e0012c9b23c8fb01efe49cc35081a0b8facab911fd6eb4815cd0a2"
+      },
+      "status": "ran",
+      "source_sha": "3885fdf310ab231ae967d066b6353acb2ed3863e",
+      "coordination": "dynamic",
+      "perception_profile": "top_cargo_v2_track",
+      "contact_profile": "cargo_noslip_v1 (pending user approval)",
+      "phase": "FINISHED",
+      "error": null,
+      "referee_v2_goal_met": false,
+      "referee_v2_per_zone_exact": {
+        "A": true,
+        "C": false
+      },
+      "teacher_feasibility_success": false,
+      "goal_met_rgb": false,
+      "control_end_sim_s": 327.5,
+      "max_sim_s": 1800.0,
+      "sim_end_s": 331.3,
+      "eq_active_max": 0,
+      "llm_calls": 0,
+      "claim_rounds": 3,
+      "drops": 0,
+      "slip_max_mm": 0.7,
+      "ledger_checks": {
+        "double_membership": 0,
+        "finished_jobs": 2,
+        "finished_items_unique": 2,
+        "ledger_delivered_units": 2,
+        "decrement_once_per_item": true,
+        "over_delivered": {},
+        "barrier_histories": 2
+      },
+      "labels_vs_setup": {
+        "setup": {
+          "red": 1,
+          "green": 1,
+          "tri_frame": 1
+        },
+        "labels": {
+          "red": 1,
+          "tri_frame": 1
+        },
+        "match": false
+      },
+      "not_delivered_items": [
+        "box_01"
+      ],
+      "blocker_summary": [
+        {
+          "kind": "not_delivered_at_end",
+          "outcome": null,
+          "target": "box_01",
+          "count": 1,
+          "first_t": 331.3,
+          "last_t": 331.3,
+          "robots": [],
+          "cause": "referee_v2: zone None, footprint outside"
+        }
+      ],
+      "executor_metrics": {
+        "placed_by_teacher": 4,
+        "team_aborted": 0,
+        "rendezvous_timeout": 0,
+        "station_blocked": 0,
+        "item_taken": 0,
+        "path_blocked": 0,
+        "no_landing_area": 0,
+        "commit_rejected": 0,
+        "route_rejected": 0
+      },
+      "teacher_fix": {
+        "profile": "team_teacher_fix_v1",
+        "switches": {
+          "b3_claim_yield": true,
+          "b4_return_setdown": true
+        },
+        "events": {
+          "claim_yield": 0,
+          "station_staged": 0,
+          "arrival_reset": 0,
+          "yield_short_fallback": 0,
+          "return_started": 0,
+          "return_finished": 0,
+          "return_failed": 0
+        },
+        "source": "scripts/zone_team_teacher_fix.py",
+        "source_sha256": "b5a8b2dbb0b4a7da314489d33d731739c50e07c6721773d700b6a2eb943190bd",
+        "scope": "GT TEACHER only (demonstrations, training targets, scenario feasibility); never the study executor; teacher success is never robot success"
+      },
+      "final_rgb_view": {
+        "profile": "top_cargo_v2_track",
+        "pickup_items_still_visible": [],
+        "zone_counts_seen": {
+          "A": {
+            "red": 1,
+            "tri_frame": 1
+          },
+          "B": {},
+          "C": {}
+        },
+        "moved_labels": {}
+      },
+      "jobs": [
+        {
+          "job_id": "tri_frame_0@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1",
+            "r2",
+            "r3"
+          ],
+          "commit_sim_s": 31.0,
+          "end_sim_s": 237.1,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 4.3,
+            "r2": 0.0,
+            "r3": 4.5
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.3,
+            "r2": 0.7,
+            "r3": 0.1
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        },
+        {
+          "job_id": "box_00@g1",
+          "state": "FINISHED",
+          "participants": [
+            "r1"
+          ],
+          "commit_sim_s": 275.7,
+          "end_sim_s": 330.0,
+          "failures": [],
+          "returns": null,
+          "formation_wait_s": {
+            "r1": 0.0
+          },
+          "drops": 0,
+          "slip_mm": {
+            "r1": 0.0
+          },
+          "pause_total_s": 0,
+          "pauses": 0
+        }
+      ],
+      "door_gate_waits": 0,
+      "door_standoffs": 0,
+      "load_avg": {
+        "start": [
+          14.56,
+          17.32,
+          31.23
+        ],
+        "end": [
+          13.9,
+          12.5,
+          20.45
+        ]
+      },
+      "wall_s": 657.29
+    }
+  ],
+  "b5_offline": {
+    "source_run": "/Users/changmin/projects/ugrp-worktrees/zone-team-a2/outputs/zone-team-a2-20260925/a-two-dynamic-s12",
+    "captures": [
+      "038-claim-37-0",
+      "039-claim-38-0",
+      "040-final"
+    ],
+    "profiles": {
+      "top_cargo_v2": {
+        "observations": [
+          {
+            "capture": "038-claim-37-0",
+            "pickup_items_still_visible": [
+              "heavy_crate-1"
+            ],
+            "moved_labels": null
+          },
+          {
+            "capture": "039-claim-38-0",
+            "pickup_items_still_visible": [
+              "heavy_crate-1"
+            ],
+            "moved_labels": null
+          },
+          {
+            "capture": "040-final",
+            "pickup_items_still_visible": [
+              "heavy_crate-1"
+            ],
+            "moved_labels": null
+          }
+        ],
+        "long_beam-1_rgb_xy_after": [
+          0.4012,
+          -2.1499
+        ],
+        "long_beam-1_claimable_at_end": false
+      },
+      "top_cargo_v2_track": {
+        "observations": [
+          {
+            "capture": "038-claim-37-0",
+            "pickup_items_still_visible": [
+              "heavy_crate-1"
+            ],
+            "moved_labels": {}
+          },
+          {
+            "capture": "039-claim-38-0",
+            "pickup_items_still_visible": [
+              "heavy_crate-1",
+              "long_beam-1"
+            ],
+            "moved_labels": {
+              "long_beam-1": {
+                "kind": "long_beam",
+                "from_rgb_xy_m": [
+                  0.401,
+                  -2.15
+                ],
+                "to_rgb_xy_m": [
+                  0.948,
+                  -1.438
+                ]
+              }
+            }
+          },
+          {
+            "capture": "040-final",
+            "pickup_items_still_visible": [
+              "heavy_crate-1",
+              "long_beam-1"
+            ],
+            "moved_labels": {}
+          }
+        ],
+        "long_beam-1_rgb_xy_after": [
+          0.948,
+          -1.4379
+        ],
+        "long_beam-1_claimable_at_end": true
+      }
+    },
+    "files_sha256": {
+      "038-claim-37-0-top-sw.jpg": "5c7e45da5ba3ba9d155f72b7bfbe53188e70a7415b855e44bd8c16b18a254192",
+      "038-claim-37-0-top-nw.jpg": "d864513530ffb5630789ee5d27e082ebbfc6118496cd51171d1ac2b9e2b459fb",
+      "038-claim-37-0-top-se.jpg": "9ad4de71eb1a467f36aaf0cf1c2e369e72a6fe79ae643846c2c57f17dcfd29c5",
+      "038-claim-37-0-top-ne.jpg": "cb9b87ad4d6ce5d7b6201404d3c4725c4f05c1ae0c9f52198fb006154b2dbbed",
+      "039-claim-38-0-top-sw.jpg": "5ffa5f26a9f905c42116155bb32f7a7a569ef4fc05a01af93e2159b77cb9884d",
+      "039-claim-38-0-top-nw.jpg": "e129ab8a16fc380a2782b0875ef44939054fb36db1c2765fdb2e48cd3ea65a95",
+      "039-claim-38-0-top-se.jpg": "cdb0ed17cb821aa243429eed2154b38dc10a89d9ecd97e87660671de7e9a95c5",
+      "039-claim-38-0-top-ne.jpg": "08488c3d6b9543899c08c78335fddbea63e0ec743ec55ce8cafd749a3b29f280",
+      "040-final-top-sw.jpg": "699c624e1f02fee596b210cef40c0f4f848daebdad433cbdbf42ac0344c5407a",
+      "040-final-top-nw.jpg": "e129ab8a16fc380a2782b0875ef44939054fb36db1c2765fdb2e48cd3ea65a95",
+      "040-final-top-se.jpg": "cdb0ed17cb821aa243429eed2154b38dc10a89d9ecd97e87660671de7e9a95c5",
+      "040-final-top-ne.jpg": "08488c3d6b9543899c08c78335fddbea63e0ec743ec55ce8cafd749a3b29f280"
+    },
+    "scope": "offline robot-input perception only (TOP RGB); referee pose for scoring",
+    "referee_long_beam_0": {
+      "kind": "long_beam",
+      "zone": null,
+      "footprint": "outside",
+      "resting": true
+    },
+    "file_sha256": "5b68db96306464629423d46b8989cbb3a3246a9afd608b29831d94641368257c"
+  },
+  "n1_offline": {
+    "scope": "post-hoc offline diagnostics, not pre-registered; no physics; evaluation data only for scoring",
+    "b5_scoring": {
+      "beam_replay_pose": {
+        "t_s": 1800.015750252024,
+        "xy_m": [
+          0.9502,
+          -1.4372
+        ],
+        "yaw_rad": 1.5706,
+        "files_sha256": {
+          "states.npz": "b158ab50e05d396ed8c68aa1c0c3d32ae892c37d1f940de13b36515049c2375c",
+          "model.mjb": "a6e3ab71ab05ad6c196b69610d1184eaee4793994cb51b88101469d979533cae"
+        },
+        "scope": "observer-only post-run replay; evaluation only"
+      },
+      "track_label_xy_m": [
+        0.948,
+        -1.4379
+      ],
+      "track_error_m": 0.0023,
+      "baseline_label_xy_m": [
+        0.4012,
+        -2.1499
+      ],
+      "baseline_error_m": 0.8996
+    },
+    "n1_start_box_detection": {
+      "mix-dynamic-s21": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "green": 1,
+          "red": 1
+        },
+        "missed": {},
+        "labels_at_start": {
+          "green-1": "green",
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "green",
+              [
+                -0.197,
+                -1.651
+              ]
+            ]
+          ],
+          "top-nw": [
+            [
+              "red",
+              [
+                -0.194,
+                0.747
+              ]
+            ]
+          ],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "a7e22e5bfb6b06d82905500f58f32b1a602e364347109b1040fb3714a8e161de",
+          "001-start-top-nw.jpg": "f22d0c1bf4aee5426a7177814112b683c775e6d5f56af1af3de533f8c09aa792",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        }
+      },
+      "mix-independent-s21": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "green": 1,
+          "red": 1
+        },
+        "missed": {},
+        "labels_at_start": {
+          "green-1": "green",
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "green",
+              [
+                -0.197,
+                -1.651
+              ]
+            ]
+          ],
+          "top-nw": [
+            [
+              "red",
+              [
+                -0.194,
+                0.747
+              ]
+            ]
+          ],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "a7e22e5bfb6b06d82905500f58f32b1a602e364347109b1040fb3714a8e161de",
+          "001-start-top-nw.jpg": "f22d0c1bf4aee5426a7177814112b683c775e6d5f56af1af3de533f8c09aa792",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        }
+      },
+      "mix-dynamic-s22": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "red": 1
+        },
+        "missed": {
+          "green": 1
+        },
+        "labels_at_start": {
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "red",
+              [
+                0.4,
+                -1.652
+              ]
+            ]
+          ],
+          "top-nw": [],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "8be79445530a92a1238b8c0560b2048d069ec993edfc445ff70f28b6bda16ae3",
+          "001-start-top-nw.jpg": "19549091ae959469e6d58853e7eaf2f34a2ca81fcd54e34400de5ce6bf4c0ef9",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        },
+        "missed_setup_positions_eval_only": {
+          "box_01": {
+            "kind": "green",
+            "xy_m": [
+              0.4,
+              -0.05
+            ]
+          }
+        },
+        "relaxed_inspection": {
+          "top-nw/green": [
+            {
+              "centroid_px": [
+                437.7,
+                456.8
+              ],
+              "relaxed_area_px": 89,
+              "strict_mask_px_in_component": 39,
+              "strict_area_gate_px": 50,
+              "hue_median": 69.0,
+              "sat_median": 98.0,
+              "sat_p10_p90": [
+                93.0,
+                103.0
+              ],
+              "val_median": 254.0,
+              "strict_sat_min": 100
+            }
+          ]
+        }
+      },
+      "mix-independent-s22": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "red": 1
+        },
+        "missed": {
+          "green": 1
+        },
+        "labels_at_start": {
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "red",
+              [
+                0.4,
+                -1.652
+              ]
+            ]
+          ],
+          "top-nw": [],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "8be79445530a92a1238b8c0560b2048d069ec993edfc445ff70f28b6bda16ae3",
+          "001-start-top-nw.jpg": "19549091ae959469e6d58853e7eaf2f34a2ca81fcd54e34400de5ce6bf4c0ef9",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        },
+        "missed_setup_positions_eval_only": {
+          "box_01": {
+            "kind": "green",
+            "xy_m": [
+              0.4,
+              -0.05
+            ]
+          }
+        },
+        "relaxed_inspection": {
+          "top-nw/green": [
+            {
+              "centroid_px": [
+                437.7,
+                456.8
+              ],
+              "relaxed_area_px": 89,
+              "strict_mask_px_in_component": 39,
+              "strict_area_gate_px": 50,
+              "hue_median": 69.0,
+              "sat_median": 98.0,
+              "sat_p10_p90": [
+                93.0,
+                103.0
+              ],
+              "val_median": 254.0,
+              "strict_sat_min": 100
+            }
+          ]
+        }
+      },
+      "mix-dynamic-s23": {
+        "setup_box_counts": {
+          "green": 1,
+          "red": 1
+        },
+        "start_top_zone_v2_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "missed": {},
+        "labels_at_start": {
+          "green-1": "green",
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "red",
+              [
+                0.997,
+                -1.651
+              ]
+            ]
+          ],
+          "top-nw": [
+            [
+              "green",
+              [
+                0.998,
+                0.749
+              ]
+            ]
+          ],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "e68a7f18cf334efa9395225d30fa1b163a2ef620ef0d9addb9642447894915d8",
+          "001-start-top-nw.jpg": "66c3eae0ff24662be280efcf0b38952625ba649a7c01584b3941f9834d80291e",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        }
+      },
+      "mix-independent-s23": {
+        "setup_box_counts": {
+          "green": 1,
+          "red": 1
+        },
+        "start_top_zone_v2_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "missed": {},
+        "labels_at_start": {
+          "green-1": "green",
+          "red-1": "red",
+          "can-1": "can",
+          "heavy_crate-1": "heavy_crate",
+          "long_beam-1": "long_beam",
+          "tile-1": "tile"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "red",
+              [
+                0.997,
+                -1.651
+              ]
+            ]
+          ],
+          "top-nw": [
+            [
+              "green",
+              [
+                0.998,
+                0.749
+              ]
+            ]
+          ],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "e68a7f18cf334efa9395225d30fa1b163a2ef620ef0d9addb9642447894915d8",
+          "001-start-top-nw.jpg": "66c3eae0ff24662be280efcf0b38952625ba649a7c01584b3941f9834d80291e",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        }
+      },
+      "tri-dynamic-s21": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "green": 1,
+          "red": 1
+        },
+        "missed": {},
+        "labels_at_start": {
+          "green-1": "green",
+          "red-1": "red",
+          "tri_frame-1": "tri_frame"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "green",
+              [
+                -0.197,
+                -1.651
+              ]
+            ]
+          ],
+          "top-nw": [
+            [
+              "red",
+              [
+                -0.194,
+                0.747
+              ]
+            ]
+          ],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "631d69922bbea3d1ad2c06f30de231ac575aea50369a578cf17ac84b3657117e",
+          "001-start-top-nw.jpg": "9dadc616852a293b345b9c4f6fa3429939848d5dde76c1bd63ffea30f58d5755",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        }
+      },
+      "tri-dynamic-s22": {
+        "setup_box_counts": {
+          "red": 1,
+          "green": 1
+        },
+        "start_top_zone_v2_counts": {
+          "red": 1
+        },
+        "missed": {
+          "green": 1
+        },
+        "labels_at_start": {
+          "red-1": "red",
+          "tri_frame-1": "tri_frame"
+        },
+        "detections_per_camera": {
+          "top-sw": [
+            [
+              "red",
+              [
+                0.4,
+                -1.652
+              ]
+            ]
+          ],
+          "top-nw": [],
+          "top-se": [],
+          "top-ne": []
+        },
+        "files_sha256": {
+          "001-start-top-sw.jpg": "b9c909412e93ef59efe1929cdcdbdda64185a7047695b724d641363e019c7d8f",
+          "001-start-top-nw.jpg": "9e4620d0f66be9c39caa323ba2a5b534ca9192d43bd81a830e91e68f03cf7678",
+          "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+          "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+        },
+        "missed_setup_positions_eval_only": {
+          "box_01": {
+            "kind": "green",
+            "xy_m": [
+              0.4,
+              -0.05
+            ]
+          }
+        },
+        "relaxed_inspection": {
+          "top-nw/green": [
+            {
+              "centroid_px": [
+                437.7,
+                456.8
+              ],
+              "relaxed_area_px": 89,
+              "strict_mask_px_in_component": 39,
+              "strict_area_gate_px": 50,
+              "hue_median": 69.0,
+              "sat_median": 98.0,
+              "sat_p10_p90": [
+                93.0,
+                103.0
+              ],
+              "val_median": 254.0,
+              "strict_sat_min": 100
+            }
+          ]
+        }
+      }
+    },
+    "relaxed_sat_min_for_inspection_only": 60,
+    "file_sha256": "83a1eff84dc26ba452b90fd3986d3710b628cfbce3ebab1e939e2260a265f752"
+  }
+}
