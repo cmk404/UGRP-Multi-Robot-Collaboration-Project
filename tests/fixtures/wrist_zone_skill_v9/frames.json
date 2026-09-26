@@ -1,0 +1,122 @@
+{
+ "purpose": "wrist_zone_skill_v9 replay fixtures (v8 cohort 583 fit-model flip, 587 close-range fit loss); robot inputs only (own RGB + own commands), no GT",
+ "frames": [
+  {
+   "file": "v8cohort-s583_0296.jpg",
+   "sha256": "1de758a2d12dfee6e2d58eb36d8a10c8ce15c0c7d24ac87dbbce7143d0a1ffb4",
+   "source": "outputs/zone-owncam-skill-20260925/cohort-v8-39f214c/P/583/inputs/0296.jpg (control.jsonl step 296)",
+   "own_servo_pwm": {
+    "1": 2000,
+    "3": 561,
+    "4": 2320,
+    "5": 1320,
+    "6": 1521
+   },
+   "logged_box": {
+    "visible": true,
+    "reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+    "pixel_centroid": [
+     294.03851349228785,
+     257.5132723902868
+    ],
+    "estimated_box_center_base_m": [
+     0.29499942539233387,
+     0.004413275952840633,
+     0.016
+    ]
+   },
+   "logged_action": {
+    "kind": "pose",
+    "pulses": {
+     "3": 545
+    }
+   }
+  },
+  {
+   "file": "v8cohort-s583_0297.jpg",
+   "sha256": "7017bfd54f63f9e3f0008dbd447b9f835f7bd8bc1a6bc7e2172a8dab38d3afca",
+   "source": "outputs/zone-owncam-skill-20260925/cohort-v8-39f214c/P/583/inputs/0297.jpg (control.jsonl step 297)",
+   "own_servo_pwm": {
+    "1": 2000,
+    "3": 545,
+    "4": 2320,
+    "5": 1320,
+    "6": 1521
+   },
+   "logged_box": {
+    "visible": true,
+    "reason": "MEASURED_TOP_FACE_FLOOR_HYPOTHESIS_VALIDATED",
+    "pixel_centroid": [
+     298.36370874636725,
+     187.53417731597594
+    ],
+    "estimated_box_center_base_m": [
+     0.29525839337770565,
+     0.0051414022652753535,
+     0.018384869457275452
+    ]
+   },
+   "logged_action": {
+    "kind": "pose",
+    "pulses": {
+     "3": 561
+    }
+   }
+  },
+  {
+   "file": "v8cohort-s587_0088.jpg",
+   "sha256": "38274b4ea2083f5b7e51b25ea765f4b0b87470f0fc4e31e80060297fc4b7e407",
+   "source": "outputs/zone-owncam-skill-20260925/cohort-v8-39f214c/P/587/inputs/0088.jpg (control.jsonl step 88)",
+   "own_servo_pwm": {
+    "1": 2000,
+    "3": 611,
+    "4": 2320,
+    "5": 1320,
+    "6": 1534
+   },
+   "logged_box": {
+    "visible": true,
+    "reason": "FLOOR_CUBOID_HYPOTHESIS_VALIDATED",
+    "pixel_centroid": [
+     312.24259935117595,
+     217.65318329278182
+    ],
+    "estimated_box_center_base_m": [
+     0.37745547150583186,
+     0.0071826244159670805,
+     0.016
+    ]
+   },
+   "logged_action": {
+    "kind": "drive",
+    "fwd": 0.15,
+    "turn": 0.0,
+    "duration": 1.0
+   }
+  },
+  {
+   "file": "v8cohort-s587_0089.jpg",
+   "sha256": "cbaeeec590301c0dcc55a8e9f6357fbe5a70ed18b7088916764e448b2bc84c9c",
+   "source": "outputs/zone-owncam-skill-20260925/cohort-v8-39f214c/P/587/inputs/0089.jpg (control.jsonl step 89)",
+   "own_servo_pwm": {
+    "1": 2000,
+    "3": 611,
+    "4": 2320,
+    "5": 1320,
+    "6": 1534
+   },
+   "logged_box": {
+    "visible": false,
+    "reason": "FLOOR_HYPOTHESIS_PROJECTION_MISMATCH",
+    "pixel_centroid": null,
+    "estimated_box_center_base_m": null
+   },
+   "logged_action": {
+    "kind": "pose",
+    "pulses": {
+     "3": 623
+    }
+   }
+  }
+ ]
+}

@@ -611,6 +611,22 @@
         "--prereg"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-m1-owncam-run",
+      "purpose": "M1 자기 카메라 배달(자기 RGB 탐색·손목 스킬 파지·추정 기반 문 통과·배치·다시 보기, pose stub 없음)",
+      "entry": "scripts/run_m1_owncam.py",
+      "docs": "experiments/2026-09-26-zone-m1-owncam/prereg.json (+ prereg_amendments.json)",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; M1 contract rejects any non own-camera pose source; GT only in eval_only/; weld OFF",
+      "version": "1.1.0",
+      "runner": "scripts.run_m1_owncam",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg"
+      ],
+      "output_kind": "directory"
     }
   ]
 }

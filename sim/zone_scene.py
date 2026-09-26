@@ -80,10 +80,20 @@ class ZoneScene(Scene):
         xml, self.manifest = build_zone_xml(plain_beam_xml(xml), self.config)
         if self.scene['contact_profile']:
             from sim.dispatch_contact_profile import contact_profile
-            xml = contact_profile(xml, self.scene['contact_profile'])
+            from sim.zone_cargo_contact import CARGO_PROFILES, base_profile
+            # 2026-09-26 (environment v3): a cargo profile name (cargo_noslip_v1, approved
+            # study-wide) builds its base dispatch profile, then adds its recorded solver
+            # options. Dispatch profile names behave exactly as before (base_profile(name) == name).
+            requested = self.scene['contact_profile']
+            xml = contact_profile(xml, base_profile(requested))
             xml, mirrored = mirror_box_contact_pairs(xml, [r['body_name'] for r in self.manifest['box_replicas'].values()])
+            if requested in CARGO_PROFILES:
+                from sim.zone_cargo_contact import apply as apply_cargo_profile
+                from sim.zone_cargo_contact import profile_record
+                xml = apply_cargo_profile(xml, requested)
+                self.manifest['cargo_contact_profile'] = profile_record(requested)
             self.manifest['scene_xml_sha256'] = hashlib.sha256(xml.encode()).hexdigest()
-            self.manifest['contact_solver_profile'] = self.scene['contact_profile']
+            self.manifest['contact_solver_profile'] = requested
             self.manifest['replica_finger_contact_pairs'] = mirrored
         return xml
 

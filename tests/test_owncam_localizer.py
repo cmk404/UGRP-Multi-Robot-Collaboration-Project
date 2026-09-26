@@ -16,10 +16,10 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_MODULES = (ROOT/'harness'/'owncam_localizer.py', ROOT/'harness'/'wall_tags.py',
-                   ROOT/'harness'/'owncam_drive.py')
+                   ROOT/'harness'/'owncam_drive.py', ROOT/'harness'/'owncam_drive_v2.py')
 ALLOWED_IMPORTS = {'__future__', 'math', 'copy', 'collections.abc', 'numpy', 'cv2', 'harness.wall_tags',
                    'harness.visual_arm', 'sim.masterpi_camera_profile', 'harness.owncam_localizer',
-                   'harness.map_goto'}
+                   'harness.map_goto', 'harness.owncam_drive'}
 # Simulator state accessors that must never appear in the run-time path.
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'xmat', 'qpos', 'qvel', 'cam_xpos', 'cam_xmat', 'base_xyz', 'base_rpy',
              'site_xyz', 'eval_only', 'frames_gt', 'gt_trajectory', 'MjData', 'world.data', '.data.body')
@@ -378,6 +378,91 @@ class DriverLookTriggerTests(unittest.TestCase):
         d = self._driver(loaded=False)
         self.assertEqual(d._needs_look(self._est(0., 30.), 0.), 'no_tag')
         self.assertIsNone(d._needs_look(self._est(2., 0.), 0.))
+
+
+class LoopV2Tests(unittest.TestCase):
+    """Loop v2: stop lag in the motion model and the loaded look policy (v1 unchanged)."""
+
+    def _loc(self, motion):
+        from harness.owncam_localizer import OwnCamLocalizer
+        from sim.zone_landmarks import tagged_map
+        params = json.loads((ROOT/'experiments'/'2026-09-25-zone-owncam-loop'/'calibration_loop.json').read_text())['params']
+        params = {**params, 'motion': {**params['motion'], **motion}}
+        loc = OwnCamLocalizer(tagged_map('zone_wide_door_tags_v2'), params, seed=0)
+        return loc
+
+    def test_stop_lag_only_changes_the_coast(self):
+        base = {'tau_s': .8}
+        a, b = self._loc(base), self._loc({**base, 'tau_stop_s': .05})
+        for loc in (a, b):
+            loc.command({'t': 0., 'kind': 'mecanum', 'forward': .1, 'left': 0., 'turn': 0., 'duration_s': 1.})
+            loc.predict_to(1.)
+        np.testing.assert_allclose(a.vel, b.vel)                 # identical while driving
+        for loc in (a, b):
+            loc.predict_to(1.3)                                  # command expired: coast
+        self.assertLess(abs(b.vel[0]), .01*abs(a.vel[0]))        # fast stop only with tau_stop_s
+
+    def test_absent_stop_lag_is_v1(self):
+        a, b = self._loc({}), self._loc({'tau_stop_s': self._loc({}).params['motion']['tau_s']})
+        for loc in (a, b):
+            loc.command({'t': 0., 'kind': 'mecanum', 'forward': .1, 'left': .02, 'turn': 0., 'duration_s': .5})
+            loc.predict_to(1.)
+        np.testing.assert_array_equal(a.vel, b.vel)
+
+    def _driver(self, cls, loaded):
+        from sim.zone_landmarks import tagged_map
+        cal = json.loads((ROOT/'experiments'/'2026-09-26-zone-owncam-loop-v2'/'calibration_loop_v2.json').read_text())
+        d = cls(tagged_map('zone_wide_door_tags_v2'), cal['params'], loaded=loaded, goal_xy=(2.65, .05),
+                door_xy=(2.2, .05))
+        d.checkpoints_done = {1.5, .6}
+        return d
+
+    @staticmethod
+    def _est(x, std, since_tag=0.):
+        return {'initialized': True, 'x': x, 'y': -1., 'yaw': 0., 'std_xy_m': std, 'std_yaw_rad': .01,
+                'since_tag_s': since_tag}
+
+    def test_v2_loaded_hysteresis_and_travel(self):
+        from harness.owncam_drive_v2 import (LOADED_FIX_STD_XY_M, LOADED_LOOK_EVERY_M_V2,
+                                             LOADED_UNCERTAIN_MIN_TRAVEL_M, LOADED_UNCERTAIN_STD_XY_M,
+                                             OwnCamDriverV2)
+        self.assertLess(LOADED_FIX_STD_XY_M, LOADED_UNCERTAIN_STD_XY_M)
+        d = self._driver(OwnCamDriverV2, loaded=True)
+        d.last_look_xy = (0., -1.)
+        self.assertIsNone(d._needs_look(self._est(.05, .065), 0.))                     # between fix and trigger
+        self.assertIsNone(d._needs_look(self._est(LOADED_UNCERTAIN_MIN_TRAVEL_M - .01, .09), 0.))  # right after a look
+        self.assertEqual(d._needs_look(self._est(LOADED_UNCERTAIN_MIN_TRAVEL_M + .01, .09), 0.), 'uncertain')
+        self.assertEqual(d._needs_look(self._est(LOADED_LOOK_EVERY_M_V2 + .01, .03), 0.), 'travel')
+        self.assertEqual(d._fix_std_xy_m(), LOADED_FIX_STD_XY_M)
+
+    def test_v2_refixes_at_most_once_in_a_row(self):
+        from harness.owncam_drive_v2 import OwnCamDriverV2
+        d = self._driver(OwnCamDriverV2, loaded=True)
+        d.looks_without_fix = 1
+        self.assertTrue(d._should_refix(False))
+        d.looks_without_fix = 2
+        self.assertFalse(d._should_refix(False))
+        self.assertFalse(d._should_refix(True))
+
+    def test_v2_unloaded_is_v1(self):
+        from harness.owncam_drive import OwnCamDriver
+        from harness.owncam_drive_v2 import OwnCamDriverV2
+        a, b = self._driver(OwnCamDriver, loaded=False), self._driver(OwnCamDriverV2, loaded=False)
+        for est in (self._est(0., .055), self._est(0., .03, 5.), self._est(1., .03)):
+            self.assertEqual(a._needs_look(est, 0.), b._needs_look(est, 0.))
+        for n in range(4):
+            a.looks_without_fix = b.looks_without_fix = n
+            self.assertEqual(a._should_refix(False), b._should_refix(False))
+        self.assertEqual(a._fix_std_xy_m(), b._fix_std_xy_m())
+
+    def test_runner_student_selection(self):
+        from scripts.run_owncam_closed_loop import CALIBRATION, student_config
+        cls, cal, rec = student_config(None)
+        self.assertEqual((cls.__name__, cal, rec['driver']), ('OwnCamDriver', CALIBRATION, 'v1'))
+        cls, cal, rec = student_config({'driver': 'v2', 'calibration':
+                                        'experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json'})
+        self.assertEqual((cls.__name__, rec['driver']), ('OwnCamDriverV2', 'v2'))
+        self.assertTrue(cal.exists())
 
 
 if __name__ == '__main__':

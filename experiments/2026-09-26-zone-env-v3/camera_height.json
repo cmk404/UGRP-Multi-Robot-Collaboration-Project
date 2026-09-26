@@ -1,0 +1,240 @@
+{
+  "schema": "ugrp.zone_env_v3.camera_height.v1",
+  "method": "MuJoCo mj_forward after set_servo_pulses(pose, forward_only=True) on zones/zone_wide_door (no mj_step); camera = r1__robot_cam world position; PWM clamp 500..2500 and joint-range clip exactly as the simulator applies commands",
+  "named_postures": {
+    "SEARCH_POSE (sim.masterpi_production_v2, owncam nobox drive)": {
+      "pulses": {
+        "1": 2000,
+        "3": 740,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      },
+      "camera_z_m": 0.20907247095149883,
+      "optical_pitch_deg": -20.624942950717248,
+      "robot_top_z_m": 0.25589624532757577,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.20922328667683232,
+      "fk_optical_pitch_deg": -20.6208234695377
+    },
+    "CARRY_POSTURE = carry_p30 (wrist_zone_skill, owncam_drive loaded)": {
+      "pulses": {
+        "1": 1500,
+        "3": 777,
+        "4": 2053,
+        "5": 1646,
+        "6": 1500
+      },
+      "camera_z_m": 0.20804129840894695,
+      "optical_pitch_deg": -22.604942950717202,
+      "robot_top_z_m": 0.2573809348125822,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.20819467627724036,
+      "fk_optical_pitch_deg": -22.6008234695377
+    },
+    "LOOK_P20 (owncam_drive stop-and-look)": {
+      "pulses": {
+        "1": 1500,
+        "3": 1072,
+        "4": 2400,
+        "5": 1482,
+        "6": 1500
+      },
+      "camera_z_m": 0.20394224809116332,
+      "optical_pitch_deg": -12.524942950717428,
+      "robot_top_z_m": 0.23992492808809204,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.20409529835570667,
+      "fk_optical_pitch_deg": -12.520823469537715
+    },
+    "look_p10 (probe_owncam_carry_view, diagnostic only)": {
+      "pulses": {
+        "1": 1500,
+        "3": 897,
+        "4": 1998,
+        "5": 1598,
+        "6": 1500
+      },
+      "camera_z_m": 0.23900285815757827,
+      "optical_pitch_deg": -2.5349429507175985,
+      "robot_top_z_m": 0.26974448620646735,
+      "robot_top_geom": "r1__camera_body",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.23915563399273662,
+      "fk_optical_pitch_deg": -2.530823469537714
+    },
+    "HOVER_POSE / LIFT_POSE (production)": {
+      "pulses": {
+        "1": 2000,
+        "3": 650,
+        "4": 2230,
+        "5": 1500,
+        "6": 1500
+      },
+      "camera_z_m": 0.19005521313496143,
+      "optical_pitch_deg": -36.824942950716824,
+      "robot_top_z_m": 0.2555607284407932,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.19020712930034467,
+      "fk_optical_pitch_deg": -36.8208234695377
+    },
+    "GRASP_POSE (production)": {
+      "pulses": {
+        "1": 2000,
+        "3": 650,
+        "4": 2230,
+        "5": 1920,
+        "6": 1500
+      },
+      "camera_z_m": 0.11649103872449443,
+      "optical_pitch_deg": -74.62494295071369,
+      "robot_top_z_m": 0.20357787822168213,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.11664432955947154,
+      "fk_optical_pitch_deg": -74.62082346953771
+    },
+    "CARRY_POSE (production, level)": {
+      "pulses": {
+        "1": 1500,
+        "3": 960,
+        "4": 2410,
+        "5": 1215,
+        "6": 1500
+      },
+      "camera_z_m": 0.22986412600883435,
+      "optical_pitch_deg": 0.5250570492823328,
+      "robot_top_z_m": 0.2590623691527991,
+      "robot_top_geom": "r1__camera_body",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.23001438215406952,
+      "fk_optical_pitch_deg": 0.5291765304622749
+    },
+    "STACK_POSE (production)": {
+      "pulses": {
+        "1": 1500,
+        "3": 650,
+        "4": 2230,
+        "5": 1750,
+        "6": 1500
+      },
+      "camera_z_m": 0.14767575370681058,
+      "optical_pitch_deg": -59.324942950715794,
+      "robot_top_z_m": 0.23025243543984075,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.1478289145088855,
+      "fk_optical_pitch_deg": -59.3208234695377
+    },
+    "PRECAPTURE_POSE (training env)": {
+      "pulses": {
+        "1": 2000,
+        "3": 500,
+        "4": 2320,
+        "5": 1320,
+        "6": 1500
+      },
+      "camera_z_m": 0.1863276345330471,
+      "optical_pitch_deg": -42.22494295071666,
+      "robot_top_z_m": 0.2569667397716269,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.1864776022919717,
+      "fk_optical_pitch_deg": -42.2208234695377
+    },
+    "v9 LOOK_DOWN (elbow 2480, wrist 560)": {
+      "pulses": {
+        "1": 2000,
+        "3": 560,
+        "4": 2480,
+        "5": 1320,
+        "6": 1500
+      },
+      "camera_z_m": 0.16619401795941627,
+      "optical_pitch_deg": -51.22494295071631,
+      "robot_top_z_m": 0.2439757846555467,
+      "robot_top_geom": "r1__wrist_servo_visual",
+      "base_body_z_m": 0.03235512084614775,
+      "fk_camera_z_m": 0.16634415016179147,
+      "fk_optical_pitch_deg": -51.22082346953772
+    }
+  },
+  "max_named_camera_z_m": 0.23900285815757827,
+  "kinematic_max": {
+    "camera_z_m": 0.32072108998825666,
+    "pulses": {
+      "1": 1500,
+      "3": 1425,
+      "4": 1550,
+      "5": 1590,
+      "6": 1500
+    },
+    "optical_pitch_deg": 86.02505704926651,
+    "fk_camera_z_m": 0.32086595942432544,
+    "coarse_grid_step_pwm": 50,
+    "refine": [
+      60,
+      5
+    ],
+    "coarse_camera_z_m": 0.32068662888663385
+  },
+  "robot_top_max": {
+    "z_m": 0.367361428947412,
+    "geom": "r1__right_finger_pad_visual",
+    "pulses": {
+      "1": 1500,
+      "3": 1550,
+      "4": 1550,
+      "5": 1600,
+      "6": 1500
+    },
+    "grid_step_pwm": 50
+  },
+  "joint_ranges_rad": {
+    "shoulder": [
+      -0.15,
+      2.8
+    ],
+    "elbow": [
+      -1.8,
+      1.8
+    ],
+    "wrist": [
+      -1.8,
+      1.8
+    ],
+    "yaw": [
+      -1.75,
+      1.75
+    ]
+  },
+  "evaluations": 84546,
+  "env": {
+    "python": "3.12.13",
+    "mujoco": "3.12.0",
+    "numpy": "2.5.2",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "load_average": {
+    "start": [
+      97.34,
+      123.94,
+      142.22
+    ],
+    "end": [
+      85.4,
+      111.2,
+      129.59
+    ]
+  },
+  "wall_s": 421.6
+}

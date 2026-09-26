@@ -134,15 +134,33 @@ class OwnCamDriver:
                        {'kind': 'arm', 'servo_id': servo, 'pulse': nxt})
         return out
 
+    # Look-policy hooks (v1 values; harness/owncam_drive_v2.py overrides them).
+    def _uncertain(self, est) -> bool:
+        return est['std_xy_m'] > LOOK_IF_STD_XY_M or est['std_yaw_rad'] > LOOK_IF_STD_YAW_RAD
+
+    def _since_look_m(self, est) -> float:
+        if self.last_look_xy is None:
+            return 0.
+        return math.hypot(est['x'] - self.last_look_xy[0], est['y'] - self.last_look_xy[1])
+
+    def _travel_look_m(self) -> float:
+        return LOADED_LOOK_EVERY_M
+
+    def _fix_std_xy_m(self) -> float:
+        return LOOK_IF_STD_XY_M
+
+    def _should_refix(self, fixed) -> bool:
+        return not fixed and self.looks_without_fix < MAX_LOOKS_WITHOUT_FIX
+
     def _needs_look(self, est, now):
         if not est.get('initialized'):
             return 'not_initialized'
-        if est['std_xy_m'] > LOOK_IF_STD_XY_M or est['std_yaw_rad'] > LOOK_IF_STD_YAW_RAD:
+        if self._uncertain(est):
             return 'uncertain'
         if self.loaded:
             if self.last_look_xy is None:
                 self.last_look_xy = (est['x'], est['y'])
-            elif math.hypot(est['x'] - self.last_look_xy[0], est['y'] - self.last_look_xy[1]) > LOADED_LOOK_EVERY_M:
+            elif self._since_look_m(est) > self._travel_look_m():
                 return 'travel'
         elif est['since_tag_s'] is not None and est['since_tag_s'] > LOOK_IF_NO_TAG_S:
             return 'no_tag'
@@ -214,7 +232,7 @@ class OwnCamDriver:
                 self.state_since = now
                 return [{'kind': 'hold'}]
             est = self.loc.estimate()
-            fixed = est.get('initialized') and est['std_xy_m'] <= LOOK_IF_STD_XY_M
+            fixed = est.get('initialized') and est['std_xy_m'] <= self._fix_std_xy_m()
             self.looks_without_fix = 0 if fixed else self.looks_without_fix + 1
             if est.get('initialized'):
                 self.last_look_xy = (est['x'], est['y'])
@@ -225,7 +243,7 @@ class OwnCamDriver:
             if est.get('initialized') and est['std_xy_m'] > LOST_STD_XY_M and \
                     self.looks_without_fix >= MAX_LOOKS_WITHOUT_FIX:
                 return self._finish(now, 'lost')
-            if not fixed and self.looks_without_fix < MAX_LOOKS_WITHOUT_FIX:
+            if self._should_refix(fixed):
                 return self._start_look(now, 'refix')
             self.arm_target = dict(self.drive_pose)
             self.path = None
