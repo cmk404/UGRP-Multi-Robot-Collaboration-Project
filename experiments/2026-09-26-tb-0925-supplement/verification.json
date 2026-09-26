@@ -1,0 +1,533 @@
+{
+ "schema": "ugrp.tensorboard_snapshot_verification.v1",
+ "date": "2026-09-26",
+ "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0925-zone-supplement",
+ "snapshot_runs": 116,
+ "collection_sha256": "dacacd5e45ad78440d7fb8d71a820fcb4799ac635e1d7386e6b86ed962700aa3",
+ "converter_sha": "3bac1862f07052f6961cdd19f9d4690ae7bfc668",
+ "derived_views": "/Users/changmin/projects/ugrp/outputs/tb-supplement-20260925/derived",
+ "originals": {
+  "experiments/2026-09-25-zone-hard-routes/results.json": {
+   "rows": 60,
+   "sha256": "44eb06dd8e8eecf31be9a63051b3efc294eb375faf4e96eb1729802907f0b562"
+  },
+  "experiments/2026-09-25-zone-owncam-loc/results.json": {
+   "rows": 14,
+   "sha256": "cd4a6e4e0e8be74c9a4278cc94fc089098dd2656c4de1758c87e4981f9642f8d"
+  },
+  "experiments/2026-09-25-zone-dialogue-ko-pilot/results.json": {
+   "rows": 5,
+   "sha256": "41cf47d8a9ccfe66501b8dd2f6ac79168f87547691fbc76424f414a4690a36ab"
+  },
+  "experiments/2026-09-25-zone-cargo-catalogue/results-slip.json": {
+   "rows": 21,
+   "sha256": "b5994c5d21bb41b87aa2c3858ac137f843554583f809f05cfa02cb74d4dfc541"
+  },
+  "experiments/2026-09-25-zone-cargo-perception-v2/results.json": {
+   "rows": 8,
+   "sha256": "eb93bee023b32ed35a36a8e253959a3e19b227ff1850d5829a2a449f68329ec3"
+  },
+  "experiments/2026-09-25-zone-rgb-color/results.json": {
+   "rows": 8,
+   "sha256": "842191bf4c8aacc459bef5a1868c1df56bef6f03dda6dc8007126246e1596815"
+  }
+ },
+ "groups": {
+  "hr": 60,
+  "loc": 14,
+  "ko": 5,
+  "slip": 21,
+  "perc": 16
+ },
+ "readback": {
+  "checked_scalars": 813,
+  "mismatches": [],
+  "manifest_incomplete": [],
+  "warnings": [],
+  "origin_hash_mismatch": [],
+  "missing_tags": [],
+  "failed": []
+ },
+ "sample_values": {
+  "hr-corr-G5-dyn-s11": {
+   "evaluation/reported_success": 1.0,
+   "offline/box_taken_by_peer": 0.0,
+   "offline/claim_collisions": 0.0,
+   "offline/control_end_sim_s": 365.79998779296875,
+   "offline/door_wait_s": 7.099999904632568,
+   "offline/generic_yields": 1.0,
+   "offline/goal_met_rgb": 1.0,
+   "offline/passage_standoffs": 0.0,
+   "offline/teacher_path_blocked": 0.0,
+   "result/model_calls": 0.0,
+   "result/sim_s": 364.0,
+   "result/wall_s": 874.9000244140625,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "hard-routes routes: zone_wide_corridor G5 dynamic seed 11; fixture protocol replies (0 LLM calls); teacher_executor(ground-truth drive/IK, weld off); not an RGB/own-camera student result"
+  },
+  "hr-corr-G5-ind-s11": {
+   "evaluation/reported_success": 1.0,
+   "offline/box_taken_by_peer": 3.0,
+   "offline/claim_collisions": 0.0,
+   "offline/control_end_sim_s": 396.29998779296875,
+   "offline/door_wait_s": 0.0,
+   "offline/generic_yields": 1.0,
+   "offline/goal_met_rgb": 1.0,
+   "offline/passage_standoffs": 0.0,
+   "offline/teacher_path_blocked": 0.0,
+   "result/model_calls": 0.0,
+   "result/sim_s": 394.5,
+   "result/wall_s": 1409.9000244140625,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "hard-routes routes: zone_wide_corridor G5 independent seed 11; fixture protocol replies (0 LLM calls); teacher_executor(ground-truth drive/IK, weld off); not an RGB/own-camera student result"
+  },
+  "loc-test-G1": {
+   "evaluation/reported_success": 0.0,
+   "offline/frames": 104.0,
+   "offline/pos_err_m": 0.09120000153779984,
+   "offline/quantile": 90.0,
+   "offline/uninitialized": 0.0,
+   "offline/yaw_err_deg": 2.683000087738037,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "owncam localisation preregistered test: G1_door_stop_look_p90; own-camera AprilTag estimate, evaluation-only GT comparison"
+  },
+  "loc-ph-test-G1": {
+   "evaluation/reported_success": 1.0,
+   "offline/frames": 84.0,
+   "offline/pos_err_m": 0.044599998742341995,
+   "offline/quantile": 90.0,
+   "offline/yaw_err_deg": 0.4269999861717224,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "owncam localisation posthoc-look-only test: G1_door_stop_look_p90; own-camera AprilTag estimate, evaluation-only GT comparison"
+  },
+  "ko-V2": {
+   "offline/calls": 20.0,
+   "offline/chars_mean": 57.599998474121094,
+   "offline/code_switched": 0.05000000074505806,
+   "offline/decision_same_as_original": 0.6841999888420105,
+   "offline/decision_same_as_v0": 0.6499999761581421,
+   "offline/hangul_ratio_mean": 0.9919999837875366,
+   "offline/json_ok": 1.0,
+   "offline/korean_ge_0_9": 0.949999988079071,
+   "offline/over_240_chars": 0.0,
+   "offline/reason_hangul_ratio_mean": 0.8766000270843506,
+   "offline/schema_ok": 0.949999988079071,
+   "offline/silent_messages": 0.0,
+   "offline/transport_errors": 0.0,
+   "result/input_tokens": 136713.0,
+   "result/model_calls": 20.0,
+   "result/output_tokens": 4000.0,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "Korean dialogue pilot V2; offline, no SIM, decisions not executed"
+  },
+  "ko-V3": {
+   "offline/calls": 20.0,
+   "offline/decision_same_as_original": 0.7894999980926514,
+   "offline/decision_same_as_v0": 0.75,
+   "offline/json_chars_mean": 156.923095703125,
+   "offline/json_ok": 1.0,
+   "offline/reason_hangul_ratio_mean": 0.0,
+   "offline/schema_ok": 1.0,
+   "offline/silent_messages": 7.0,
+   "offline/struct_valid_replies": 20.0,
+   "offline/transport_errors": 0.0,
+   "result/input_tokens": 135123.0,
+   "result/model_calls": 20.0,
+   "result/output_tokens": 4016.0,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "Korean dialogue pilot V3; offline, no SIM, decisions not executed"
+  },
+  "slip-hold-pair_beam-noslip": {
+   "evaluation/reported_success": 0.0,
+   "offline/drop_event_rows": 0.0,
+   "offline/hold_measured_s": 59.880001068115234,
+   "offline/lifted_clear": 1.0,
+   "offline/max_hold_slip_mm": 0.5,
+   "offline/max_robot_tilt_deg": 0.12999999523162842,
+   "offline/placement_pos_err_m": 0.0,
+   "offline/placement_yaw_err_deg": 0.03999999910593033,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "cargo acceptance static_hold_60s: pair_beam with contact profile cargo_noslip_v1; teacher_executor(ground-truth drive/IK, weld off); not an RGB/own-camera student result"
+  },
+  "perc-cargo-test-top-cargo-v2": {
+   "offline/false_positives_total": 7.0,
+   "offline/frames": 180.0,
+   "offline/full_rate/box_cyan": 0.9243999719619751,
+   "offline/full_rate/box_green": 0.9429000020027161,
+   "offline/full_rate/box_red": 0.9980000257492065,
+   "offline/full_rate/box_yellow": 0.920799970626831,
+   "offline/full_rate/can": 0.9889000058174133,
+   "offline/full_rate/heavy_crate": 0.9886999726295471,
+   "offline/full_rate/long_beam": 1.0,
+   "offline/full_rate/tile": 1.0,
+   "offline/full_rate/tri_frame": 1.0,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "TOP cargo perception test split, profile top_cargo_v2; offline evaluation of rendered frames, evaluation-only GT segmentation"
+  },
+  "perc-colour-test-zone-own": {
+   "offline/false_positives_per_frame": 0.0,
+   "offline/false_positives_total": 0.0,
+   "offline/frames": 390.0,
+   "offline/full_rate/cyan": 0.8029000163078308,
+   "offline/full_rate/green": 0.7906000018119812,
+   "offline/full_rate/red": 0.7398999929428101,
+   "offline/full_rate/yellow": 0.7979000210762024,
+   "_texts": [
+    "_hparams_/experiment",
+    "_hparams_/session_end_info",
+    "_hparams_/session_start_info",
+    "evaluation/referee_only",
+    "provenance/offline_scalars",
+    "provenance/source",
+    "result/summary"
+   ],
+   "_condition": "zone colour-box detection test split, zone profile, own view on primary_zone_wide; offline evaluation of rendered frames"
+  }
+ },
+ "views": {
+  "all": {
+   "run_filter": "^0925-zone-supplement/",
+   "runs": 116,
+   "pinned_tags": [
+    "evaluation/reported_success",
+    "result/sim_s",
+    "result/wall_s",
+    "result/model_calls"
+   ],
+   "runs_with_each_tag": {
+    "evaluation/reported_success": 95,
+    "result/sim_s": 60,
+    "result/wall_s": 60,
+    "result/model_calls": 64
+   },
+   "first_served_value": {
+    "evaluation/reported_success": [
+     "hr-corr-G5-dyn-s11",
+     1.0
+    ],
+    "result/sim_s": [
+     "hr-corr-G5-dyn-s11",
+     364.0
+    ],
+    "result/wall_s": [
+     "hr-corr-G5-dyn-s11",
+     874.9000244140625
+    ],
+    "result/model_calls": [
+     "hr-corr-G5-dyn-s11",
+     0.0
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fsim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2F#timeseries"
+  },
+  "hard_routes": {
+   "run_filter": "^0925-zone-supplement/hr-",
+   "runs": 60,
+   "pinned_tags": [
+    "evaluation/reported_success",
+    "result/sim_s",
+    "result/wall_s",
+    "offline/control_end_sim_s",
+    "offline/door_wait_s",
+    "offline/box_taken_by_peer",
+    "offline/claim_collisions"
+   ],
+   "runs_with_each_tag": {
+    "evaluation/reported_success": 60,
+    "result/sim_s": 60,
+    "result/wall_s": 60,
+    "offline/control_end_sim_s": 60,
+    "offline/door_wait_s": 60,
+    "offline/box_taken_by_peer": 60,
+    "offline/claim_collisions": 60
+   },
+   "first_served_value": {
+    "evaluation/reported_success": [
+     "hr-corr-G5-dyn-s11",
+     1.0
+    ],
+    "result/sim_s": [
+     "hr-corr-G5-dyn-s11",
+     364.0
+    ],
+    "result/wall_s": [
+     "hr-corr-G5-dyn-s11",
+     874.9000244140625
+    ],
+    "offline/control_end_sim_s": [
+     "hr-corr-G5-dyn-s11",
+     365.79998779296875
+    ],
+    "offline/door_wait_s": [
+     "hr-corr-G5-dyn-s11",
+     7.099999904632568
+    ],
+    "offline/box_taken_by_peer": [
+     "hr-corr-G5-dyn-s11",
+     0.0
+    ],
+    "offline/claim_collisions": [
+     "hr-corr-G5-dyn-s11",
+     0.0
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fsim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fcontrol_end_sim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fdoor_wait_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fbox_taken_by_peer%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fclaim_collisions%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2Fhr-#timeseries"
+  },
+  "owncam_localisation": {
+   "run_filter": "^0925-zone-supplement/loc-",
+   "runs": 14,
+   "pinned_tags": [
+    "evaluation/reported_success",
+    "offline/pos_err_m",
+    "offline/yaw_err_deg",
+    "offline/frames"
+   ],
+   "runs_with_each_tag": {
+    "evaluation/reported_success": 14,
+    "offline/pos_err_m": 14,
+    "offline/yaw_err_deg": 14,
+    "offline/frames": 14
+   },
+   "first_served_value": {
+    "evaluation/reported_success": [
+     "loc-dev-G1",
+     0.0
+    ],
+    "offline/pos_err_m": [
+     "loc-dev-G1",
+     0.1597999930381775
+    ],
+    "offline/yaw_err_deg": [
+     "loc-dev-G1",
+     3.065999984741211
+    ],
+    "offline/frames": [
+     "loc-dev-G1",
+     92.0
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fpos_err_m%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fyaw_err_deg%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fframes%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2Floc-#timeseries"
+  },
+  "korean_dialogue": {
+   "run_filter": "^0925-zone-supplement/ko-",
+   "runs": 5,
+   "pinned_tags": [
+    "offline/hangul_ratio_mean",
+    "offline/korean_ge_0_9",
+    "offline/schema_ok",
+    "offline/decision_same_as_original",
+    "result/model_calls",
+    "result/input_tokens"
+   ],
+   "runs_with_each_tag": {
+    "offline/hangul_ratio_mean": 3,
+    "offline/korean_ge_0_9": 3,
+    "offline/schema_ok": 4,
+    "offline/decision_same_as_original": 4,
+    "result/model_calls": 4,
+    "result/input_tokens": 4
+   },
+   "first_served_value": {
+    "offline/hangul_ratio_mean": [
+     "ko-V0",
+     0.0
+    ],
+    "offline/korean_ge_0_9": [
+     "ko-V0",
+     0.0
+    ],
+    "offline/schema_ok": [
+     "ko-V0",
+     1.0
+    ],
+    "offline/decision_same_as_original": [
+     "ko-V0",
+     0.8946999907493591
+    ],
+    "result/model_calls": [
+     "ko-V0",
+     20.0
+    ],
+    "result/input_tokens": [
+     "ko-V0",
+     131983.0
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fhangul_ratio_mean%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fkorean_ge_0_9%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fschema_ok%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fdecision_same_as_original%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Finput_tokens%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2Fko-#timeseries"
+  },
+  "cargo_noslip": {
+   "run_filter": "^0925-zone-supplement/slip-",
+   "runs": 21,
+   "pinned_tags": [
+    "evaluation/reported_success",
+    "offline/max_hold_slip_mm",
+    "offline/hold_measured_s",
+    "offline/placement_pos_err_m"
+   ],
+   "runs_with_each_tag": {
+    "evaluation/reported_success": 21,
+    "offline/max_hold_slip_mm": 21,
+    "offline/hold_measured_s": 21,
+    "offline/placement_pos_err_m": 21
+   },
+   "first_served_value": {
+    "evaluation/reported_success": [
+     "slip-fewer-duo_frame-noslip",
+     0.0
+    ],
+    "offline/max_hold_slip_mm": [
+     "slip-fewer-duo_frame-noslip",
+     0.10000000149011612
+    ],
+    "offline/hold_measured_s": [
+     "slip-fewer-duo_frame-noslip",
+     1.4800000190734863
+    ],
+    "offline/placement_pos_err_m": [
+     "slip-fewer-duo_frame-noslip",
+     0.9394000172615051
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fmax_hold_slip_mm%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fhold_measured_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fplacement_pos_err_m%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2Fslip-#timeseries"
+  },
+  "perception": {
+   "run_filter": "^0925-zone-supplement/perc-",
+   "runs": 16,
+   "pinned_tags": [
+    "offline/frames",
+    "offline/false_positives_total",
+    "offline/full_rate/box_cyan",
+    "offline/full_rate/red"
+   ],
+   "runs_with_each_tag": {
+    "offline/frames": 16,
+    "offline/false_positives_total": 16,
+    "offline/full_rate/box_cyan": 8,
+    "offline/full_rate/red": 8
+   },
+   "first_served_value": {
+    "offline/frames": [
+     "perc-cargo-dev-top-cargo-v1",
+     60.0
+    ],
+    "offline/false_positives_total": [
+     "perc-cargo-dev-top-cargo-v1",
+     2.0
+    ],
+    "offline/full_rate/box_cyan": [
+     "perc-cargo-dev-top-cargo-v1",
+     0.8605999946594238
+    ],
+    "offline/full_rate/red": [
+     "perc-colour-dev-baseline-own",
+     0.4341999888420105
+    ]
+   },
+   "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Fframes%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Ffalse_positives_total%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Ffull_rate%2Fbox_cyan%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22offline%2Ffull_rate%2Fred%22%7D%5D&smoothing=0&runFilter=%5E0925-zone-supplement%2Fperc-#timeseries"
+  }
+ },
+ "server": {
+  "pid": [
+   9291,
+   9293
+  ],
+  "started": "2026-09-22T13:58:01+09:00",
+  "owner": "changmin",
+  "logdir": "/Users/changmin/projects/ugrp/outputs/tensorboard",
+  "port": 6006,
+  "media_port": 6009,
+  "restarted_by_this_task": false,
+  "runs_total_after": 468,
+  "new_runs_visible": 116
+ },
+ "hparams": {
+  "new_sessions": 116,
+  "session_condition_present": true,
+  "experiment_hparam_columns": [
+   "case",
+   "clock",
+   "condition_fingerprint",
+   "family",
+   "outcome",
+   "policy",
+   "seed",
+   "setup_sha256",
+   "source_sha"
+  ],
+  "experiment_metric_columns_include_offline": false
+ },
+ "load_average_1m": {
+  "before_build": 15.13,
+  "after_export": 19.7
+ },
+ "limits": [
+  "native UI(브라우저) 시각 확인은 하지 않았다: 실행 중인 서버 HTTP API와 EventAccumulator 재확인만 했다",
+  "교사 실행기·GT 심판·오프라인 평가·사후 분석 코호트를 합산하지 않는다",
+  "offline/* 는 원본에 기록된 오프라인 측정값이며 로봇 임무 성공이나 실행 시간이 아니다"
+ ],
+ "verified_utc": "2026-09-25T16:57:26Z"
+}

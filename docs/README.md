@@ -14,10 +14,11 @@
 | 제어기 검증·결과 판정 | [연구 제어기 검증](research_controller_validation.md) | 회귀 실패 재현, 새 조건 비교, 원본 재검증과 제어기 채택 |
 | 실행 버전·이식 검증 | [실행 버전 관리](execution_versioning.md) | 성공 설정 재사용, 실행기 변경, 실제 적용값과 기준의 차이 확인 |
 | 실험 증거 | [실험 인덱스](../experiments/README.md) | 관련 ID의 설정·성공/실패·원본 확인 |
-| 구역 파이프라인 현황·설계 제안 | [E2E 현황(2026-09-25)](e2e_status_20260925.md), [설계 제안(Codex, docs/design/)](design/2026-09-25-zone-team-carry-codex.md), [PR 검토(Codex, 2026-09-25)](design/2026-09-25-zone-pr-review-codex.md), [자기 카메라 역량 목록](design/2026-09-25-own-camera-inventory-claude.md), [자기 카메라 오픈소스 조사](design/2026-09-25-own-camera-oss-survey-claude.md) | 구역 팀 운반·미등록 장애물·한국어 대화 단계별 완료/진행/미착수 확인 |
+| 구역 파이프라인 현황·설계 제안 | [E2E 현황(2026-09-25)](e2e_status_20260925.md), [설계 제안(Codex, docs/design/)](design/2026-09-25-zone-team-carry-codex.md), [PR 검토(Codex, 2026-09-25)](design/2026-09-25-zone-pr-review-codex.md), [자기 카메라 역량 목록](design/2026-09-25-own-camera-inventory-claude.md), [자기 카메라 오픈소스 조사](design/2026-09-25-own-camera-oss-survey-claude.md), [대화 연구 통합 설계(Codex)](design/2026-09-25-zone-dialogue-study-design-codex.md) | 구역 팀 운반·미등록 장애물·한국어 대화 단계별 완료/진행/미착수 확인 |
 | 실물 운영 | [네트워크](masterpi_network_runbook.md), [trace](real_trace_system.md), [물리 보정](masterpi_physics_calibration.md) | 실물 연결 시 현재 장치 상태와 함께 확인 |
 | 과거 기록 | [결정 이력](decision_log.md), [옛 아키텍처](current_architecture_todo.md), [이전 검증 요약](archive/validation_summary_20260917.md), [초기 연구 브리프](research_brief_20260813.md) | 변경 이유·과거 실험을 조사할 때 |
 | 퇴역 기록 | [구형 브라우저 UI](browser_ui_retirement_20260923.md), [클라우드](cloud_simulation.md), [환경 정리](simulation_cleanup_20260909.md) | 이력 확인; 현재 실행 지침으로 사용하지 않음 |
+| 자기 카메라 PR 반대 검토 | [자기 카메라 반대 검토(Codex, 2026-09-26)](design/2026-09-26-owncam-adversarial-review-codex.md) | PR #177 `a9f5d6e`·#176 `edd075d`의 결과를 인용·승계하기 전. M1 성공 판정, 입력 경계, 사전 등록 범위의 반대 지적 확인 |
 
 코드 탐색은 해당 모듈·테스트부터 시작하고, 긴 결정 이력은 필요한 날짜·키워드로 좁혀 검색한다. `docs/archive/`와 `outputs/`는 이름만으로 읽기가 차단되지 않는다. `.gitignore`도 접근 제어가 아니므로 탐색 도구에 필요한 경로를 명시한다. 실험 증거를 옮기거나 삭제하기 전에는 코드·fixture·manifest 참조와 로컬 원본의 보존 상태를 확인한다.
 
