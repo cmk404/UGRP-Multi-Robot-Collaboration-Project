@@ -216,6 +216,58 @@ def calibrate(args):
     print(json.dumps({'sag': sag, 'settle': settle, 'pan_base_yaw_fit': pan_fit}, indent=1))
 
 
+# ----------------------------------------------------------------------------- motion refit (TRAIN, GT offline)
+def fit_motion_cmd(args):
+    """Refit the M1 command->motion model (unloaded and loaded) on TRAIN teacher logs.
+
+    Reuses ``scripts/eval_owncam_localization.py`` (``fit_motion``: lagged-command
+    least squares, noise and slip-scale fit; ``_gt_body_velocity``) exactly as the
+    own-camera localizer calibration did; only the episodes differ (the teacher
+    here strafes with mecanum commands far more than the M1 student did). The
+    M1 'fine' manipulation profile and everything else stay as calibrated.
+    """
+    if any(split_of(e) != 'train' for e in args.episodes):
+        raise SystemExit('fit-motion reads TRAIN episodes only')
+    import copy
+    from scripts import eval_owncam_localization as eol
+    m1 = mp.load_m1_localizer()
+    m1_cal, m1_prov = mp.load_m1_calibration()
+    base = copy.deepcopy(m1_cal['params'])
+    raw = []
+    for ep in args.episodes:
+        gt = vl.read_jsonl(RENDER_ROOT/ep/'eval_only'/'gt_trajectory.jsonl')
+        t, dt, v = eol._gt_body_velocity(gt)
+        cmds = sorted(vl.read_jsonl(RENDER_ROOT/ep/'inputs'/'commands.jsonl'), key=lambda c: c['t'])
+        u, loaded, ci, cur, exp, load = [], [], 0, np.zeros(3), -1., m1.LoadState()
+        for tt in t:
+            while ci < len(cmds) and cmds[ci]['t'] <= tt + 1e-9:
+                c = cmds[ci]
+                load.command(c)
+                if c['kind'] == 'mecanum':
+                    cur, exp = np.array([c['forward'], c['left'], c['turn']], float), c['t'] + c['duration_s']
+                elif c['kind'] == 'drive':
+                    cur, exp = np.array([c['forward'], 0., c['turn']], float), c['t'] + c['duration_s']
+                elif c['kind'] not in ('arm', 'look', 'initial_servo_command'):
+                    cur, exp = np.zeros(3), -1.
+                ci += 1
+            u.append(cur if tt < exp - 1e-9 else np.zeros(3))
+            loaded.append(load.loaded)
+        raw.append((np.array(u), dt, v, np.array(loaded)))
+    params = copy.deepcopy(base)
+    mot, rep_u = eol.fit_motion([(u, dt, v, ~m) for u, dt, v, m in raw], {k: v for k, v in base['motion'].items()
+                                                                          if k != 'tau_stop_s'})
+    mot_l, rep_l = eol.fit_motion([(u, dt, v, m) for u, dt, v, m in raw], {k: v for k, v in base['motion_loaded'].items()
+                                                                           if k != 'tau_stop_s'})
+    params['motion'], params['motion_loaded'] = mot, mot_l
+    out = {'schema': 'ugrp.vision_loc.motion_refit.v1', 'split_used': args.episodes, 'base': m1_prov,
+           'method': 'scripts/eval_owncam_localization.py fit_motion on TRAIN teacher logs (own commands + GT '
+                     'trajectory); motion and motion_loaded replaced, tau_stop_s dropped (single-lag fit), fine '
+                     'profile and all other parameters from the M1 calibration',
+           'report': {'unloaded': rep_u, 'loaded': rep_l}, 'params': params}
+    Path(args.output).write_text(json.dumps(out, indent=1))
+    print(json.dumps(out['report'], indent=1))
+
+
 # ----------------------------------------------------------------------------- train
 def train_cmd(args):
     import seg_model
@@ -375,6 +427,10 @@ def localize(args):
     m1 = mp.load_m1_localizer()
     m1_cal, m1_prov = mp.load_m1_calibration()
     params = m1_cal['params']
+    if args.motion:
+        refit = load_json(args.motion)
+        params = refit['params']
+        m1_prov = {**m1_prov, 'motion_refit': {'path': str(args.motion), 'sha256': sha_file(args.motion)}}
     static = load_map()
     cal = load_json(args.calibration)
     cfg = load_json(args.config)
@@ -593,6 +649,9 @@ def main(argv=None):
     c.add_argument('--settled-s', type=float, default=.8)
     c.add_argument('--min-frames', type=int, default=20)
     c.add_argument('--output', required=True)
+    fm = sub.add_parser('fit-motion')
+    fm.add_argument('--episodes', nargs='+', required=True)
+    fm.add_argument('--output', required=True)
     t = sub.add_parser('train')
     t.add_argument('--output', required=True)
     t.add_argument('--epochs', type=int, default=4)
@@ -615,6 +674,7 @@ def main(argv=None):
     lz.add_argument('--calibration', required=True)
     lz.add_argument('--config')
     lz.add_argument('--filters', default='vision,boundary,deadreck')
+    lz.add_argument('--motion', help='motion refit JSON (fit-motion); default: the M1 calibration')
     lz.add_argument('--obs')
     lz.add_argument('--oracle-obs')
     lz.add_argument('--output', required=True)
@@ -633,7 +693,7 @@ def main(argv=None):
     b.add_argument('--n', type=int, default=200)
     b.add_argument('--output', required=True)
     args = ap.parse_args(argv)
-    {'calibrate': calibrate, 'train': train_cmd, 'segment': segment, 'oracle': oracle, 'localize': localize,
+    {'calibrate': calibrate, 'fit-motion': fit_motion_cmd, 'train': train_cmd, 'segment': segment, 'oracle': oracle, 'localize': localize,
      'score': score, 'bench': bench}[args.cmd](args)
 
 
