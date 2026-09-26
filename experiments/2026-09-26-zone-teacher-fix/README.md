@@ -5,7 +5,7 @@
 - 브랜치 `kiro/zone-teacher-fix`(Kiro 작업), `claude/zone-team-a2`(PR #169, OPEN) 위에 쌓은 PR.
 - 막힘 정의: [PR #169 기록 §7](../2026-09-25-zone-team-a2/README.md).
 - 접촉 프로필: **`cargo_noslip_v1`(사용자 승인 대기)**. PR #169가 지원하고 A2 스모크가 쓴 프로필이다.
-- 실행 번들 ID: 쓰지 않음(`harness/rgb_execution_bundle.py` 변경 없음). 새 실행 경로 `scripts/run_zone_teacher_fix.py`를 `configs/simulation_workflows.json`에 `zone-teacher-fix` 1.0.0으로 등록했다(PR #169 `zone-dispatch` 1.2.0의 교사 진단 어댑터, 목록 개수 테스트 30 → 31).
+- 실행 번들 ID: 쓰지 않음(`harness/rgb_execution_bundle.py` 변경 없음). 새 실행 경로 `scripts/run_zone_teacher_fix.py`를 `configs/simulation_workflows.json`에 `zone-teacher-fix` 1.0.0으로 등록했다(PR #169 `zone-dispatch` 1.2.0의 교사 진단 어댑터, 목록 개수 테스트 30 → 31, 결과 기록 뒤 origin/main 병합에서 31 → 32).
 
 ## 1. 무엇을 바꿨나 (PR #169 소유 파일은 수정하지 않음)
 
