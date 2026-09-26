@@ -68,7 +68,7 @@ APPROACH_WAIT_S = 150.          # same limit in both status-channel arms
 KEEPOUT_PAD_M = .06             # order-sheet grid error (<= 0.05 m) + 1 cm
 PARTNER_KEEPOUT_HALF_M = .17    # partner's order-sheet station/pre-station (robot radius)
 STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning', 'pregrasp_look': 'aligning',
-             'cp_open': 'put_down', 'reapproach': 'aligning'}
+             'cp_open': 'put_down', 'reapproach': 'aligning', 'cp_backoff': 'aligning'}
 CONTACT_PROFILES = study.CONTACT_PROFILES
 # seed -> setup beam pose (x, y, yaw) and per-robot start offsets from the map spawn (dx, dy, dyaw).
 # The robots receive only coarse_order_sheet(beam); the start offsets are never given to them.
@@ -99,6 +99,7 @@ STAGE3_TEST_SEEDS = tuple(range(721, 725))   # failure propagation (experimenter
 # Order sheet for the door task (static): door axis y, the pair's target headings, and a FIXED axial
 # carry distance (the same number for both robots, so both timed schedules have the same length).
 DOOR_PLAN = {'door_id': 'door_1', 'axis_y_m': .05, 'target_beam_x_m': 3.20, 'checkpoints_beam_x_m': (1.55, 2.40),
+             'checkpoints_beam_x_m_v2': (1.45, 2.40),
              'headings_rad': {'r1': 0., 'r2': math.pi}}
 DOOR_ALIGN_S = 6.               # own lateral/heading correction onto the door axis (both robots, from GO)
 DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
@@ -113,6 +114,11 @@ PREGRASP_PANS_V2 = (1500, 1230, 970, 700, 1770, 2030, 2300, 1500)
 EXPECT_GRIP_X_M = .30 + .162    # PRESTATION_BACK_M + align grip radius
 CONSIST_X_M, CONSIST_Y_M = .25, .20
 MAX_REAPPROACH = 1
+# door v2 checkpoints (dev9 814: re-align from the station itself saw the band clipped in the nearest
+# posture for 60 s; 813: partners' re-align times differed by 27 s > the 20 s lift barrier):
+CP_BACKOFF_M = .15              # open-loop back-off after opening (same command for both robots)
+CP_BACKOFF_FWD = -.05           # issued forward command (drive model gain FORWARD_GAIN)
+CP_LIFT_WAIT_S = 60.            # lift barrier after a checkpoint re-align (both robots re-align)
 PREGRASP_FIX_STD_M = .06
 DOOR_SCENARIOS = {
     # stage 2 development (door carry; tuning allowed, labelled dev)
@@ -283,7 +289,8 @@ class M2DoorStudent(M2Student):
         # Segmented carry (dev 801/802 at 076cf53: open-loop formation yaw drift 0.06-0.1 rad/m over the
         # 2.2 m carry; the held view shows only the beam): checkpoints from the order sheet, identical
         # sheet distances for both robots; at each checkpoint lower, open, relocalize, re-grasp.
-        stops = [float(sheet_beam_x), *door_plan['checkpoints_beam_x_m'], door_plan['target_beam_x_m']]
+        cps = door_plan['checkpoints_beam_x_m_v2' if version == 'v2' else 'checkpoints_beam_x_m']
+        stops = [float(sheet_beam_x), *cps, door_plan['target_beam_x_m']]
         self.segments = [round(b - a, 4) for a, b in zip(stops, stops[1:])]
         self.seg = 0
         base_sync = self.sync_for
@@ -324,6 +331,39 @@ class M2DoorStudent(M2Student):
         self.port.hold(now)
         drv._relocalize(now)
         self.set('reapproach', now)
+
+    def _cp_backoff(self, now, arm_idle):
+        dur = CP_BACKOFF_M / (abs(CP_BACKOFF_FWD) * study.FORWARD_GAIN)
+        if now - self.state_t < dur:
+            self.commands += 1
+            self.port.apply({'kind': 'mecanum', 'forward': CP_BACKOFF_FWD, 'left': 0., 'turn': 0., 'duration_s': .15}, now)
+            return
+        self.port.hold(now)
+        if not arm_idle:
+            return
+        self.look_name = 'p45'
+        self.set('align', now, restart='checkpoint', posture=self.look_name)
+
+    def _wait(self, key, nxt, now, on_go):
+        if not (self.version == 'v2' and self.seg > 0 and key == 'lift'):
+            return super()._wait(key, nxt, now, on_go)
+        limit = CP_LIFT_WAIT_S                     # copy of PairStudent._wait with the checkpoint limit
+        waited = now - self.state_t
+        if self.status is not None:
+            verdict = tcs.wait_verdict(self.status[0].partner_view(self.rid, now), waited, limit)
+            if verdict['verdict'] == 'ABORT':
+                return self.fail(f'BARRIER_{key.upper()}_{verdict["why"].upper()}', now)
+        elif waited > limit:
+            return self.fail(f'BARRIER_{key.upper()}_TIMEOUT', now)
+        if self.sync_for(key).authorize(now)['phase'] == 'GO':
+            self.log(self.rid, 'barrier_go', now, barrier=key)
+            on_go(now)
+            return self.set(nxt, now)
+        if now >= self.next_look:
+            self.next_look = now + study.LOOK_EVERY_S
+            obs = self.look(now)
+            hold = self.hold_state(obs)
+            self.report(key, obs, now, ready=hold['ok'], reason=f"hold_ratio={hold['v1_ratio']:.2f}")
 
     def _reapproach(self, now, arm_idle):
         # Same own-camera approach, then straight back to align (the approach barrier already passed).
@@ -459,9 +499,8 @@ class M2DoorStudent(M2Student):
             # third grasp missed). Re-run the own-RGB align (same order as the first grasp:
             # align -> stationary relocalization sweep -> grasp).
             self.aligned_streak = 0
-            self.look_name, pose = ob2.look_posture(self.grip_base[0])     # own last grip distance
-            self.arm.queue(pose, now, duration=.8)
-            return self.set('align', now, restart='checkpoint', posture=self.look_name)
+            self.arm.queue(ob2.pose_of('p45'), now, duration=.8)
+            return self.set('cp_backoff', now)
         self._queue_grasp(now)             # door v1: relocalize, then re-grasp at the unchanged arm pose
 
     def door_schedule(self, t0):
