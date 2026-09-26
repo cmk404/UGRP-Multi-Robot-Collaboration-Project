@@ -1,0 +1,42 @@
+{
+ "schema": "ugrp.vision_loc.model_manifest.v1",
+ "model_id": "vision-loc-seg-lraspp-mbv3-20260926-v2",
+ "status": "local only; GitHub Release asset pending (docs/model_artifacts.md). Not registered in configs/model_artifacts.json in this PR.",
+ "files": {
+  "seg_lraspp_mbv3.pt": {
+   "local_path": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v2/seg_lraspp_mbv3.pt",
+   "bytes": 13071401,
+   "sha256": "348539030fda962cc5ba64e21c956619bc4db9321a99cd3ae6746611a9939fd9"
+  },
+  "train_info.json": {
+   "local_path": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v2/train_info.json",
+   "sha256": "a9453aab30d5af6e0f1b6214049cf0bc538128fc1faca77be32400f54ee47caa",
+   "copy_in_repo": "model_train_info.json"
+  },
+  "train_log.jsonl": {
+   "local_path": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v2/train_log.jsonl",
+   "sha256": "d3c630bbc3410d20881a4626ad8595d7d3bceedcf418038ac5feb88b741fea08"
+  }
+ },
+ "rejected_checkpoint": {
+  "local_path": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v1-bn-running-stats/seg_lraspp_mbv3.pt",
+  "sha256": "c7c45a35da13fcca5383bc54bd1479c6e7322c3ead0663b6c982425e3658fb68",
+  "why": "same training, running BN statistics of augmented batches: eval-mode walls read as floor (dev wall IoU 0.74); kept, unused"
+ },
+ "backbone_weights": {
+  "name": "torchvision MobileNet_V3_Large_Weights.IMAGENET1K_V1",
+  "url": "https://download.pytorch.org/models/mobilenet_v3_large-8738ca79.pth",
+  "sha256": "8738ca797c879b547d18bbd15da5736ff2557b2036a9af72225393ca61759a04",
+  "bytes": 22139423
+ },
+ "training_source": "kiro/zone-vision-loc 0c889f0c (seg_model.py with precise BN), command: vision_loc_cli.py train --epochs 4 --every 3 --val-every 10 --batch 16 --lr 0.001 --workers 3 --seed 0",
+ "training_data": "teacher renders vl-train-s901..s908 (outputs/vision-loc-20260926/render, local only)",
+ "runtime": {
+  "env": "/Users/changmin/Project-Runtimes/ugrp/.venv-reference-act (torch 2.11.0, torchvision 0.26.0, MPS)",
+  "inference_size": [
+   480,
+   360
+  ]
+ },
+ "verification": "loaded by seg_model.Segmenter in the dev/test segmentation runs (hash recorded in every obs npz meta)"
+}

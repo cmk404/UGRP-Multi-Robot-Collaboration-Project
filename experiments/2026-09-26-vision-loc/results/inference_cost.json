@@ -1,0 +1,47 @@
+{
+ "segmentation": {
+  "episode": "vl-test-s912",
+  "infer_size": [
+   480,
+   360
+  ],
+  "n": 150,
+  "torch": "2.11.0",
+  "threads": 1,
+  "load_average_start": [
+   3.62939453125,
+   4.8056640625,
+   8.3515625
+  ],
+  "mps": {
+   "net_incl_undistort_ms_p50": 19.72,
+   "net_ms_p90": 21.69,
+   "column_obs_ms_p50": 13.89
+  },
+  "cpu": {
+   "net_incl_undistort_ms_p50": 86.68,
+   "net_ms_p90": 87.04,
+   "column_obs_ms_p50": 13.71
+  },
+  "load_average_end": [
+   3.3681640625,
+   4.67138671875,
+   8.22021484375
+  ]
+ },
+ "pf_measurement": {
+  "pf_update_ms_p50": 47.8,
+  "pf_update_ms_p90": 52.7,
+  "particles": 2000,
+  "columns": 96,
+  "measured": 200,
+  "load_average": [
+   3.4150390625,
+   4.62060546875,
+   8.1396484375
+  ],
+  "note": "measurement update incl. line-of-sight expected rows for all particles, numpy, 1 thread"
+ },
+ "lock": "scripts/agent_lock.py acquire/release (owner kiro) around both measurements; M3 Mac, other agents idle-ish (load ~3.5)",
+ "per_frame_total_ms_mps": 81.4
+}
