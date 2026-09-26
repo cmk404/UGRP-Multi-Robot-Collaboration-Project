@@ -1,0 +1,250 @@
+{
+  "after_restore": "7 passed, 91 deselected in 0.99s",
+  "after_restore_ok": true,
+  "baseline_before": "7 passed, 91 deselected in 1.39s",
+  "code_sha": "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+  "killed": 18,
+  "method_ko": "수정 커밋의 git archive 사본에서 수정 한 조각씩 되돌리고 r4 회귀 묶음(-k r4)을 실행한 뒤 파일을 바이트 그대로 원복했다. worktree는 수정하지 않았다.",
+  "mutations": [
+    {
+      "anchor": "usage_known=reply.usage_known, provider_usage=None)",
+      "description": "counterexample 1: replay truncation resets usage_known to True",
+      "failed_tests": [
+        "test_r4_f16_a_budget_truncated_replay_keeps_the_unknown_usage_flag"
+      ],
+      "file": "harness/zone_event_scheduler.py",
+      "killed": true,
+      "mutation": "M-r4-16a",
+      "pytest": "1 failed, 6 passed, 91 deselected in 0.89s",
+      "replacement": "provider_usage=None)"
+    },
+    {
+      "anchor": "usage_known=reply.usage_known, provider_usage=None)",
+      "description": "counterexample 1: truncated reply keeps the scripted provider_usage",
+      "failed_tests": [
+        "test_r4_f16_a_budget_truncated_replay_keeps_the_unknown_usage_flag"
+      ],
+      "file": "harness/zone_event_scheduler.py",
+      "killed": true,
+      "mutation": "M-r4-16b",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.15s",
+      "replacement": "usage_known=reply.usage_known, provider_usage=reply.provider_usage)"
+    },
+    {
+      "anchor": "usage_known = bool(exc.usage_known) and bool(exc.attempts)",
+      "description": "TransportFailure(usage_known=False) is ignored (always known)",
+      "failed_tests": [
+        "test_r4_f16_a_transport_failure_can_declare_its_usage_incomplete"
+      ],
+      "file": "harness/zone_event_scheduler.py",
+      "killed": true,
+      "mutation": "M-r4-16c",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.24s",
+      "replacement": "usage_known = True"
+    },
+    {
+      "anchor": "usage_known = bool(exc.usage_known) and bool(exc.attempts)",
+      "description": "a TransportFailure with no attempts counts as known usage",
+      "failed_tests": [
+        "test_r4_f16_a_transport_failure_can_declare_its_usage_incomplete"
+      ],
+      "file": "harness/zone_event_scheduler.py",
+      "killed": true,
+      "mutation": "M-r4-16d",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.06s",
+      "replacement": "usage_known = bool(exc.usage_known)"
+    },
+    {
+      "anchor": "input_tokens={'text': int(row.get('input_tokens') or 0), 'image': 0, 'cached': 0},",
+      "description": "counterexample 2: censored record zeroes input tokens when usage is unknown",
+      "failed_tests": [
+        "test_r4_f16_a_partly_known_retry_keeps_its_known_lower_bound_when_censored"
+      ],
+      "file": "harness/zone_sim_cost.py",
+      "killed": true,
+      "mutation": "M-r4-16e",
+      "pytest": "1 failed, 6 passed, 91 deselected in 0.99s",
+      "replacement": "input_tokens={'text': int(row.get('input_tokens') or 0) if known else 0, 'image': 0, 'cached': 0},"
+    },
+    {
+      "anchor": "'output_tokens': int(row.get('output_tokens') or 0),",
+      "description": "counterexample 2: censored record zeroes output tokens when usage is unknown",
+      "failed_tests": [
+        "test_r4_f16_a_partly_known_retry_keeps_its_known_lower_bound_when_censored"
+      ],
+      "file": "harness/zone_sim_cost.py",
+      "killed": true,
+      "mutation": "M-r4-16f",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.03s",
+      "replacement": "'output_tokens': int(row.get('output_tokens') or 0) if known else 0,"
+    },
+    {
+      "anchor": "'charged_sim_s': row.get('charged_sim_s'),",
+      "description": "counterexample 2: censored record drops the charged SIM cost when unknown",
+      "failed_tests": [
+        "test_r4_f16_a_partly_known_retry_keeps_its_known_lower_bound_when_censored"
+      ],
+      "file": "harness/zone_sim_cost.py",
+      "killed": true,
+      "mutation": "M-r4-16g",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.01s",
+      "replacement": "'charged_sim_s': row.get('charged_sim_s') if known else None,"
+    },
+    {
+      "anchor": "'tokens_total_lower_bound': (None if model is None",
+      "description": "trial tokens_total_lower_bound missing (None)",
+      "failed_tests": [
+        "test_r4_f16_a_cohort_token_mean_is_never_the_mean_of_the_known_trials_only",
+        "test_r4_f16_a_partly_known_retry_keeps_its_known_lower_bound_when_censored",
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16h",
+      "pytest": "3 failed, 4 passed, 91 deselected in 1.02s",
+      "replacement": "'tokens_total_lower_bound': (None if True"
+    },
+    {
+      "anchor": "out[name] = None if any(v is None for v in values) else _mean(values)",
+      "description": "counterexample 3: cohort token mean drops None again (mean of known trials)",
+      "failed_tests": [
+        "test_r4_f16_a_cohort_token_mean_is_never_the_mean_of_the_known_trials_only",
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total",
+        "test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16i",
+      "pytest": "3 failed, 4 passed, 91 deselected in 1.00s",
+      "replacement": "out[name] = _mean(values)"
+    },
+    {
+      "anchor": "else round(sum(float(v or 0) for v in values) / len(values), 4))",
+      "description": "counterexample 3: cohort lower-bound mean over the known trials only",
+      "failed_tests": [
+        "test_r4_f16_a_cohort_token_mean_is_never_the_mean_of_the_known_trials_only"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16j",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.11s",
+      "replacement": "else _mean(values))"
+    },
+    {
+      "anchor": "tok=token_cell(row)))",
+      "description": "counterexample 3: report token cell back to the plain mean",
+      "failed_tests": [
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total"
+      ],
+      "file": "scripts/zone_study_report.py",
+      "killed": true,
+      "mutation": "M-r4-16k",
+      "pytest": "1 failed, 6 passed, 91 deselected in 0.95s",
+      "replacement": "tok=fmt(m['tokens_total'], 0)))"
+    },
+    {
+      "anchor": "return rows + token_note(summary)",
+      "description": "counterexample 3: report drops the unknown-usage note",
+      "failed_tests": [
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total"
+      ],
+      "file": "scripts/zone_study_report.py",
+      "killed": true,
+      "mutation": "M-r4-16l",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.09s",
+      "replacement": "return rows"
+    },
+    {
+      "anchor": "'result/usage_unknown_calls': 'usage_unknown_calls',",
+      "description": "counterexample 3: TensorBoard per-trial result/usage_unknown_calls removed",
+      "failed_tests": [
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total",
+        "test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16m",
+      "pytest": "2 failed, 5 passed, 91 deselected in 1.15s",
+      "replacement": ""
+    },
+    {
+      "anchor": "'penalty_factor', 'sim_horizon_s', 'tokens_complete')",
+      "description": "counterexample 3: HParams column tokens_complete removed",
+      "failed_tests": [
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total",
+        "test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16n",
+      "pytest": "2 failed, 5 passed, 91 deselected in 1.05s",
+      "replacement": "'penalty_factor', 'sim_horizon_s')"
+    },
+    {
+      "anchor": "'cohort/usage_unknown_calls': _num(row.get('usage_unknown_calls')),",
+      "description": "counterexample 3: cohort TensorBoard usage_unknown_calls removed",
+      "failed_tests": [
+        "test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total",
+        "test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16o",
+      "pytest": "2 failed, 5 passed, 91 deselected in 0.96s",
+      "replacement": ""
+    },
+    {
+      "anchor": "if metric in COMPLETE_ONLY_METRICS:\n        for key in unknown:",
+      "description": "paired: a partly unknown repetition is averaged again",
+      "failed_tests": [
+        "test_r4_f16_a_paired_comparison_counts_a_seed_dropped_for_unknown_usage"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16p",
+      "pytest": "1 failed, 6 passed, 91 deselected in 0.92s",
+      "replacement": "if False:\n        for key in unknown:"
+    },
+    {
+      "anchor": "if row['n_pairs'] or row['excluded_pairs']:",
+      "description": "paired: an all-excluded comparison disappears again",
+      "failed_tests": [
+        "test_r4_f16_a_paired_comparison_counts_a_seed_dropped_for_unknown_usage"
+      ],
+      "file": "harness/zone_study_eval.py",
+      "killed": true,
+      "mutation": "M-r4-16q",
+      "pytest": "1 failed, 6 passed, 91 deselected in 0.98s",
+      "replacement": "if row['n_pairs']:"
+    },
+    {
+      "anchor": "x=c.get('excluded_pairs', 0)",
+      "description": "paired: report excluded-pairs column always 0",
+      "failed_tests": [
+        "test_r4_f16_a_paired_comparison_counts_a_seed_dropped_for_unknown_usage"
+      ],
+      "file": "scripts/zone_study_report.py",
+      "killed": true,
+      "mutation": "M-r4-16r",
+      "pytest": "1 failed, 6 passed, 91 deselected in 1.08s",
+      "replacement": "x=0"
+    }
+  ],
+  "pre_fix": {
+    "code_sha": "83f560d7401acfa6fc3132a84350e2248ee5cf0f",
+    "failures": [
+      "tests/test_zone_study_review_fixes.py:1544: assert True is False",
+      "tests/test_zone_study_review_fixes.py:1582: assert (0, 0) == (833, 40)",
+      "tests/test_zone_study_review_fixes.py:1610: KeyError: 'usage_bound'",
+      "tests/test_zone_study_review_fixes.py:1685: KeyError: 'cohort_tokens_total_lower_bound'",
+      "tests/test_zone_study_review_fixes.py:1716: AssertionError: assert 'cohort/tokens_total' not in {'cohort/success_rate': 0.0, 'cohort/trials': 2.0, 'cohort/par_makespan_sim_s': 120.0, 'cohort/makespan_sim_s': 60.0, ...}",
+      "tests/test_zone_study_review_fixes.py:1730: KeyError: 'tokens_total_lower_bound'",
+      "tests/test_zone_study_review_fixes.py:1749: assert (2 == 1)"
+    ],
+    "method_ko": "git archive 83f560d 사본에 최종 tests/test_zone_study_review_fixes.py만 올려 -k r4 실행",
+    "summary": "7 failed, 91 deselected in 1.65s"
+  },
+  "restored_files_match_commit": true,
+  "schema": "ugrp.zone_study_mutations.v1",
+  "total": 18
+}

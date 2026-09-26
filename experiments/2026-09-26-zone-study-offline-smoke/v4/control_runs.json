@@ -1,0 +1,74 @@
+{
+  "vs_v3_eb5572b": {
+    "calls": 2168,
+    "calls_identical_apart_from_new_cost_terms_and_provenance": 2168,
+    "code_sha": "eb5572bd9f34744373d02b63e1033979f0a0a920",
+    "cohort_summary_fields_that_differ": {
+      "leader_ko": [
+        "cohort_tokens_total_lower_bound",
+        "metrics.tokens_input_lower_bound",
+        "metrics.tokens_output_lower_bound",
+        "metrics.tokens_total_lower_bound"
+      ],
+      "no_comm": [
+        "cohort_tokens_total_lower_bound",
+        "metrics.tokens_input_lower_bound",
+        "metrics.tokens_output_lower_bound",
+        "metrics.tokens_total_lower_bound"
+      ],
+      "peer_ko": [
+        "cohort_tokens_total_lower_bound",
+        "metrics.tokens_input_lower_bound",
+        "metrics.tokens_output_lower_bound",
+        "metrics.tokens_total_lower_bound"
+      ],
+      "reference_R": [
+        "cohort_tokens_total_lower_bound",
+        "metrics.tokens_input_lower_bound",
+        "metrics.tokens_output_lower_bound",
+        "metrics.tokens_total_lower_bound"
+      ],
+      "structured": [
+        "cohort_tokens_total_lower_bound",
+        "metrics.tokens_input_lower_bound",
+        "metrics.tokens_output_lower_bound",
+        "metrics.tokens_total_lower_bound"
+      ]
+    },
+    "lower_bounds_equal_exact_totals_in_every_condition": true,
+    "new_call_cost_terms": [
+      "usage_bound"
+    ],
+    "note_ko": "4차 수정은 SIM 시계·비용·채널·입력을 바꾸지 않는다. 이 코호트에는 사용량 미상 호출이 0건이라 새 하한 값은 모두 확정 합계와 같다. 반례 경로는 단위 회귀 테스트가 덮는다(mutations.json).",
+    "ok": true,
+    "provenance_fields_that_differ": [
+      "code_sha"
+    ],
+    "raw": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3",
+    "smoke_json_byte_identical": true,
+    "smoke_json_sha256": "6914fde48e8332e85ff52fc551b3faa6c1178389e4c7ea141da9c87326d0f1d1",
+    "trial_record_fields_that_differ": [
+      "calls",
+      "provenance"
+    ],
+    "trial_row_keys_identical_in_all_trials": [
+      "actions",
+      "calls",
+      "channel",
+      "condition",
+      "cost",
+      "end_reason",
+      "end_sim_s",
+      "leader_id",
+      "messages",
+      "request_input_sha256",
+      "requests",
+      "run_id",
+      "scenario",
+      "scheduler",
+      "seed",
+      "trace_sha256"
+    ],
+    "trials": 30
+  }
+}

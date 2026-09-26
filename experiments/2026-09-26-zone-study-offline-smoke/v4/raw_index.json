@@ -1,0 +1,80 @@
+{
+  "committed": {
+    "cohort_summary.json": "31b356cc0aace75ae8e239f7939c2cce5b3810eab29cfdd7196bc5ffd89ab180",
+    "config.json": "21e9e451fd2bbba4b5c5678c4bb527bdaf6422763b344e3099b8cb7b2cc597ff",
+    "control_runs.json": "5c6c8cac4b7bc72063b01ec85b88efb41681003c0031554ae81e46aeb403eada",
+    "environment.json": "04d030dace7d2c9c100fc038bf2180e75718c30792d17fddbfe11eb40b92f470",
+    "example_trial_record.json.gz": "0406d1338503f57f3116068100ca8f1490965edf8882aa89ffe19cb912adf6d0",
+    "mutations.json": "98a9894dad49da6a4f41bc1224a63b876528ba8704991ea127b7ec42e05eb861",
+    "report_summary.md": "db913a2feafbfefdcc4d40dc5d930aebfbd4afb1f1af99f19d789d82e5249ce2",
+    "results.json": "6914fde48e8332e85ff52fc551b3faa6c1178389e4c7ea141da9c87326d0f1d1",
+    "sha256.json": "c8b05bbe5015f615e49ca13773fb1e524029a38f0c1efc73b63bb5a5929181c0",
+    "source.json": "fe97a5d1cb8239382dfe6e552f70e7c37fd67be007b3c143aa23438ba9497376",
+    "tensorboard.json": "c7a06472c76a31f7b7f6a332096fef32e5ce56f582003ee513ccdd15e45eced0"
+  },
+  "committed_note_ko": "이 폴더의 커밋 파일 해시(README.md와 이 파일 제외). report_summary.md는 보고서 summary.md의 바이트 복사다: True.",
+  "example": {
+    "calls": 90,
+    "decompressed": "peer_ko-s1_normal_mixed-s601.json",
+    "decompressed_sha256": "aad9cfb9c6cd7db78cf0b90282c57494d3e4eca17ee14d119402adde1b15eb82",
+    "file": "example_trial_record.json.gz",
+    "rehashed": 90,
+    "reopen_ok": true
+  },
+  "location": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4",
+  "note_ko": "raw 30건 trial record(요청 원문 포함)는 기본 체크아웃의 outputs/에만 있고 Git에 넣지 않는다. 처음부터 기본 체크아웃에 썼다. 로컬 보관이며 원격 백업이 아니다.",
+  "raw_bytes": 57497020,
+  "raw_files": {
+    "leader_ko-s1_normal_mixed-s601.json": "52a1bdd6fa0b070390bf961eb0e799cab02a56acc8460cff25ec8a2535348400",
+    "leader_ko-s2_unmapped_blockage-s611.json": "986eae3fad6fcfe1bafe721c13d35899f364c16c2b13bfd15d241d6796a40326",
+    "leader_ko-s3_late_rendezvous-s621.json": "e8a14f8bff51c03929f1a84725ea2fdfc373cc0c886252e822ca1f87d7709afd",
+    "leader_ko-s4_narrow_door_standoff-s631.json": "0474186c84a66f7feeb79c33f8af49140d56bb00d79b1d796527b756c32e89fe",
+    "leader_ko-s5_moved_dropped_item-s641.json": "a885b38aae01b875a0e2fd114b57997122397fe43a7c728da0bfa3894d123973",
+    "leader_ko-s6_novel_relation-s651.json": "caf243e820da7306425a6b3b963a3abdc797f7b6302a966745237c61be38cb94",
+    "no_comm-s1_normal_mixed-s601.json": "8d37c9baef3b59e7575f96f99c6f859e1b7b9d307213e37fecdea37e3281bd5d",
+    "no_comm-s2_unmapped_blockage-s611.json": "ad4e1c76e4b692d67413a1c8993eac7bcab6b9eed1a6d92190beadedaa24a6c3",
+    "no_comm-s3_late_rendezvous-s621.json": "84fe3342ce09cc7688c68c11be78d6ac434e454bb2da07b91b716a0488d48fa1",
+    "no_comm-s4_narrow_door_standoff-s631.json": "a5881940863d623aa53d31924dcabb199cbd3cefa9e29b0970d050d336949dcb",
+    "no_comm-s5_moved_dropped_item-s641.json": "49f8f916348beb174d202f7d10e501f8b4ee33bc40ce14684ae9e892056dd57b",
+    "no_comm-s6_novel_relation-s651.json": "87324434421b3b845a3eb2d30281d000a13724469a822addbe9612a0d8f4bde7",
+    "peer_ko-s1_normal_mixed-s601.json": "aad9cfb9c6cd7db78cf0b90282c57494d3e4eca17ee14d119402adde1b15eb82",
+    "peer_ko-s2_unmapped_blockage-s611.json": "97a1812ccdb2d5ed6115fe85d4d0d957019db17c28db6f1ada0ff4da06fd9d79",
+    "peer_ko-s3_late_rendezvous-s621.json": "050d11b33511621bac189a0da36a0f0cc34bf0b2be6f4d30378d05051f6c1f71",
+    "peer_ko-s4_narrow_door_standoff-s631.json": "5d9144c89c0c9e0745abcffd0d1262ed2ba5ac67eebc474bda48281ff0bdb1e6",
+    "peer_ko-s5_moved_dropped_item-s641.json": "688292efc759cbf13bb01eb571cb6717132b3691cbfba963aa85ae618131a830",
+    "peer_ko-s6_novel_relation-s651.json": "af24a28c0474c6684da60ac00105dd6f697cc347724040336ad73ec9749d17f5",
+    "reference_R-s1_normal_mixed-s601.json": "7092f7b658defc87ca7b805542e23881269f7a5653788d69ca70fb0e7090938a",
+    "reference_R-s2_unmapped_blockage-s611.json": "ea2c46c1641193f94faa4e30abb4d2dd5f2e58ce04eb9ae6b85a68805dcaf5dd",
+    "reference_R-s3_late_rendezvous-s621.json": "b0a5e45c8fdb3d60182c91a170149ed75e815a6ec4cb12b9344619160400c50d",
+    "reference_R-s4_narrow_door_standoff-s631.json": "f6af7165f7b0d8a041b76d1527df7c3a3cd1a2675f0c38a7ecffd56ac4912ea4",
+    "reference_R-s5_moved_dropped_item-s641.json": "034b2ea170b652eaeec63d21667ab6260e90637f805f412ad4685ffa03db758c",
+    "reference_R-s6_novel_relation-s651.json": "42828b27730d81b6133e2a98cb1f9f187c8a37b16617a76b0f5ec759f21ab135",
+    "structured-s1_normal_mixed-s601.json": "653eaef57b0ccc61a36d401136dcdbbc2c0cceea3b2cc84b661e5c85f4b86d25",
+    "structured-s2_unmapped_blockage-s611.json": "11398b778a3d7915f0c6d828981409c41021564cffc1669c1fc74a8b84a476ba",
+    "structured-s3_late_rendezvous-s621.json": "c96c37ebb71d618837062496d03259a0069c95652add83414b5e8c38fb49ea3f",
+    "structured-s4_narrow_door_standoff-s631.json": "5b6121660128b8573e02c4c1eea8c3ffff29e9653c91f69826316755728a69dd",
+    "structured-s5_moved_dropped_item-s641.json": "10663dee08c5de71cd77d4759f259e0c762c8b37c03d300855612600e3ff85d0",
+    "structured-s6_novel_relation-s651.json": "497eda736bd088818dece056c11e5e50e2463e3f121d1667469d974388eb3523"
+  },
+  "raw_summary_files": {
+    "cohort_summary.json": "31b356cc0aace75ae8e239f7939c2cce5b3810eab29cfdd7196bc5ffd89ab180",
+    "environment.json": "04d030dace7d2c9c100fc038bf2180e75718c30792d17fddbfe11eb40b92f470",
+    "sha256.json": "c8b05bbe5015f615e49ca13773fb1e524029a38f0c1efc73b63bb5a5929181c0",
+    "smoke.json": "6914fde48e8332e85ff52fc551b3faa6c1178389e4c7ea141da9c87326d0f1d1"
+  },
+  "report": {
+    "files": {
+      "metrics.json": "abb317fa6455340b342dfc2eec87720e606f646a090dccfb2ee6baaf4e4f5981",
+      "scalars.json": "dbb7979dcc28482097b2e0904235d3ea1073d067e63908fc959a0c1a712d41a0",
+      "summary.md": "db913a2feafbfefdcc4d40dc5d930aebfbd4afb1f1af99f19d789d82e5249ce2",
+      "tensorboard-pinned-v4.png": "41a2ae1e4046ba76ae7242c75615c82999bb1c71197dd63855a5fc6c93190cfe",
+      "tensorboard.json": "80f012168fbd97d4bcdc9c8ac480c95daaf82e9a5b480b5022bf63069ead5d54"
+    },
+    "location": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4-report"
+  },
+  "schema": "ugrp.zone_study_offline_raw_index.v2",
+  "tensorboard_snapshot": {
+    "collection_sha256": "15eaacf9200b94829c8df48e42f844e6db4539f4f91a0be68311f39b3b6694a5",
+    "location": "/Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-study-offline-smoke-v4"
+  }
+}
