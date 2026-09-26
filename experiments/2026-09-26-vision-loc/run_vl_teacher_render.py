@@ -58,7 +58,7 @@ TEACHER_STD_XY_M, TEACHER_STD_YAW_RAD = .01, .005
 # Segmentation label classes (ideal pinhole robot_cam view).
 CLASSES = {'floor': 0, 'wall': 1, 'self': 2, 'object': 3, 'background': 4}
 IGNORE = 255
-OWN_FILES = ('render_teacher.py', 'tagfree_scene.py', 'episodes.json',
+OWN_FILES = ('run_vl_teacher_render.py', 'tagfree_scene.py', 'episodes.json',
              'maps/zone_wide_door_walls_v3_notags.json')
 
 

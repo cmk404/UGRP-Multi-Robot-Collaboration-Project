@@ -9,7 +9,7 @@
   "skill": "v9",
   "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only), run with mode='diagnostic' (teacher pose)",
   "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
-  "pose_source": "teacher_gt_eval_only (simulator truth; render_teacher.TeacherPoseSource) -- the M1 student used owncam_pf_v2",
+  "pose_source": "teacher_gt_eval_only (simulator truth; run_vl_teacher_render.TeacherPoseSource) -- the M1 student used owncam_pf_v2",
   "order_kind": "own_rgb_bay",
   "controller_schema": "ugrp.m1_owncam_delivery.v3",
   "bay_half_m": [
@@ -19,7 +19,7 @@
   "contact_profile": "cargo_noslip_v1",
   "runner_schema": "ugrp.m1_owncam_run.v3",
   "contact_profile_status": "approved by the user 2026-09-26 (study-wide)",
-  "source_note": "M1 effective student (A1-A6b) as copied in kiro/zone-map-v3 experiments/2026-09-26-zone-env-v3/m1/prereg.json; used here as the TEACHER controller: pose source replaced by the simulator truth (render_teacher.py), skill v9 mode diagnostic"
+  "source_note": "M1 effective student (A1-A6b) as copied in kiro/zone-map-v3 experiments/2026-09-26-zone-env-v3/m1/prereg.json; used here as the TEACHER controller: pose source replaced by the simulator truth (run_vl_teacher_render.py), skill v9 mode diagnostic"
  },
  "episodes": [
   {
