@@ -42,7 +42,7 @@
 ### 2.2 선·가장자리 기반 MCL (RoboCup)
 
 - Röfer·Jüngel의 가장자리 기반 위치 추정은 영상 전체가 아닌 격자 선을 따라 필드–선·경계·골대 가장자리를 뽑는다. [RoboCup 2003](https://link.springer.com/chapter/10.1007/978-3-540-25940-4_23), [ICRA 2003 MCL](https://faculty.kfupm.edu.sa/COE/mayez/ps-coe484/core/Vision-Localization/icra03.pdf). 탐침의 열(column) 단위 검출은 이 방식을 따랐다.
-- Lauer 등의 "perfect match"는 선 점과 지도 사이 오차를 수치 최소화한다. [RoboCup 2005](https://link.springer.com/chapter/10.1007/11780519_13). 코드 예: [B-Human 공개 코드](https://github.com/bhuman/BHumanCodeRelease).
+- "perfect match" 방법은 선 점과 지도 사이 오차를 수치 최소화한다. [RoboCup 2005](https://link.springer.com/chapter/10.1007/11780519_13). 코드 예: [B-Human 공개 코드](https://github.com/bhuman/BHumanCodeRelease).
 - 시사점: RoboCup 필드는 선이 많고 대칭을 골대 색으로 깬다. 우리 경기장은 선이 벽 몇 개뿐이다. 긴 벽을 따라 움직이면 벽 방향 위치가 관측되지 않는다(조리개 문제). 모서리·문·도색·표지가 대칭과 조리개를 깨야 한다.
 
 ### 2.3 단안 VO/SLAM
@@ -64,7 +64,7 @@
 
 - 의미 지도: [VLMaps](https://github.com/vlmaps/vlmaps)는 3D 재구성에 시각–언어 특징을 합친다. [ConceptGraphs](https://github.com/concept-graphs/concept-graphs)는 물체 단위 3D 장면 그래프에 언어 태그를 단다. [Hydra](https://github.com/MIT-SPARK/Hydra)는 실시간 3D 장면 그래프다. 모두 깊이 센서(RGB-D·스테레오)와 3D 재구성용 자세 추정을 전제한다. 우리는 단안이고 자세가 불확실하다.
 - 기억: [ReMEmbR](https://arxiv.org/abs/2409.13682)는 관측을 시각·위치·영상과 함께 저장하고 LLM이 질의한다. 우리 기억 설계(4(b))의 기본형이다. 관측 시각과 위치를 항목에 붙이는 것이 핵심이다.
-- 능동 인식: Fox·Burgard·Thrun의 active Markov localization은 엔트로피가 줄어드는 방향을 보거나 움직인다. [CMU](https://publications.ri.cmu.edu/active-markov-localization-for-mobile-robots). Seekircher 등은 휴머노이드 머리를 엔트로피 기준으로 돌렸다. [RoboCup 2010](https://link.springer.com/chapter/10.1007/978-3-642-20217-9_1). M1 제어기의 "공분산이 크면 둘러보기"(PoseLimits)가 이 단순형이다. 탐침에서도 둘러보기 직후 오차가 줄었고, 되보기 정지 자세의 오차가 가장 작았다(3.2·3.3절).
+- 능동 인식: Fox 등의 active Markov localization은 엔트로피가 줄어드는 방향을 보거나 움직인다. [CMU](https://publications.ri.cmu.edu/active-markov-localization-for-mobile-robots). Seekircher 등은 휴머노이드 머리를 엔트로피 기준으로 돌렸다. [RoboCup 2010](https://link.springer.com/chapter/10.1007/978-3-642-20217-9_1). M1 제어기의 "공분산이 크면 둘러보기"(PoseLimits)가 이 단순형이다. 탐침에서도 둘러보기 직후 오차가 줄었고, 되보기 정지 자세의 오차가 가장 작았다(3.2·3.3절).
 
 ### 2.6 자연어로 관측을 공유하는 다중 로봇 LLM
 
@@ -77,9 +77,9 @@
   - 실행 전 계획을 파싱·과업 제약·IK·충돌 검사로 검증하고 실패 이유를 되돌려 준다.
   - 한계로 "인식이 정확하다고 가정"한다고 적는다.
   - 실패 사례: 한 로봇이 틀리게 "완료"라 말하자 다른 로봇들이 따라 믿고 기다렸다. 검증 없는 주장이 전파된 예다.
-- **조직 구조:** Chen 등은 중앙·분산·혼합 LLM 다중 로봇을 비교해 혼합이 가장 좋았다. [arXiv 2309.15943](https://arxiv.org/abs/2309.15943). Guo 등은 지정 리더가 팀 효율을 바꾼다고 보고한다. [arXiv 2403.12482](https://arxiv.org/abs/2403.12482). 우리 조건 ③(순환 지휘자)과 ②의 비교 근거다.
+- **조직 구조:** 중앙·분산·혼합 LLM 다중 로봇을 비교한 연구에서 혼합이 가장 좋았다. [arXiv 2309.15943](https://arxiv.org/abs/2309.15943). Guo 등은 지정 리더가 팀 효율을 바꾼다고 보고한다. [arXiv 2403.12482](https://arxiv.org/abs/2403.12482). 우리 조건 ③(순환 지휘자)과 ②의 비교 근거다.
 - **부분 관측 계획:** LLaMAR는 plan–act–correct–verify 순서로, 오라클 없이 부분 관측에서 동작한다. [arXiv 2407.10031](https://arxiv.org/abs/2407.10031).
-- **믿음 상태:** Li 등은 명시적 믿음 상태 표현이 과업 성능과 마음이론 추론을 개선한다고 보고한다. 긴 문맥에서 과업 상태를 환각하는 실패도 보고한다. [arXiv 2310.10701](https://arxiv.org/abs/2310.10701).
+- **믿음 상태:** 다중 에이전트 마음이론(ToM) 연구는 명시적 믿음 상태 표현이 과업 성능과 마음이론 추론을 개선한다고 보고한다. 긴 문맥에서 과업 상태를 환각하는 실패도 보고한다. [arXiv 2310.10701](https://arxiv.org/abs/2310.10701).
 - **실패 분류:** MAST는 다중 에이전트 LLM 실패를 명세, 에이전트 간 불일치, 과업 검증의 세 범주로 나눈다. [arXiv 2503.13657](https://arxiv.org/abs/2503.13657). 우리 대화 지표의 "오정보 비용"과 "검증"에 대응한다.
 - **비언어 대응물:** 다중 로봇 SLAM은 로봇 간 측정을 쌍별 일관성으로 검증한다. [PCM, ICRA 2018](http://robots.engin.umich.edu/publications/jmangelson-2018a.pdf). 정보의 신선도는 Age of Information으로 잰다. [Kaul 등, INFOCOM 2012](https://www.iiitd.edu.in/~skkaul/Papers/Infocom2012.pdf).
 - 정리: 조사한 LLM 시스템들은 관측을 **텍스트 상태 설명**으로 바꿔 공유한다. 근거(관측 ID·시각)를 메시지에 붙이는 규약은 없다. 신선도는 기억에서 오래된 항목을 버리는 수준이다. 검증은 환경 검사(RoCo)나 재관측이다. 우리 설계는 관측 ID·시각·불확실성을 명시하고, 도착하면 재관측 판정을 기록하는 점을 더한다.
@@ -255,7 +255,7 @@ test 궤적에서 벽 윤곽은 그대로 두고 높이만 바꿔, 48열 중 보
 - **보정 드리프트:** 팔 처짐 편향이 자세·짐에 따라 크게 다르다(−0.018 ~ −0.048 rad). 스킬·짐 종류가 바뀌면 다시 맞춰야 한다. 실물에서는 서보 부하에 따라 더 변한다.
 - **렌더링 의존:** 검출 문턱은 현재 조명·벽색·체커 바닥에 맞춘 값이다. 지도 v3(높은 벽)과 새 표지는 재조정이 필요하다.
 - **대칭·별칭:** 두 방이 거의 같다. 전역 재위치 추정에는 표지·도색이 있어야 한다.
-- **기억 환각:** LLM이 없는 관측을 만들어 말하거나 오래된 주장을 새것처럼 말할 수 있다(Li 등, RoCo 사례). 관측 ID가 없는 주장은 채점에서 "근거 없음"으로 따로 센다.
+- **기억 환각:** LLM이 없는 관측을 만들어 말하거나 오래된 주장을 새것처럼 말할 수 있다(2.6절의 ToM 연구·RoCo 사례). 관측 ID가 없는 주장은 채점에서 "근거 없음"으로 따로 센다.
 - **교란:** 기억 요약 형식·K·신선도 규칙이 조건마다 다르면 채널 효과와 섞인다. 공통 모듈과 입력 불변성 테스트로 막는다.
 - **비용:** 도착 시 재관측·둘러보기는 SIM 시간을 쓴다. 조건 공통 규칙으로 두고 비용을 기록한다.
 - **범위:** 이 탐침은 태그 PF가 몬 궤적의 개루프 재생이다. 태그 없는 추정으로 몰았을 때의 궤적·둘러보기 빈도는 다르다(G3에서 확인).
