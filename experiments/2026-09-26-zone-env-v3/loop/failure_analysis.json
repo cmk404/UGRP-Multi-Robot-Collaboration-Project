@@ -1,0 +1,1588 @@
+{
+ "schema": "ugrp.zone_env_v3.failure_analysis.v1",
+ "posthoc": true,
+ "note": "evaluation-only ground truth; diagnostics, not gates, never robot input",
+ "strip": {
+  "x": [
+   1.8,
+   2.05
+  ],
+  "y": [
+   -1.3,
+   -0.3
+  ]
+ },
+ "v3_test": [
+  {
+   "episode": "envtest-box-s724",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": false,
+   "outcome": "time_limit",
+   "looks": 18,
+   "look_reasons": {
+    "uncertain": 12,
+    "travel": 4,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1
+   },
+   "student_sim_s": 240.1,
+   "sim_s_by_state": {
+    "look_pan": 142.8,
+    "drive": 69.3,
+    "look_arm": 12.6,
+    "posture_back": 12.6
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 59,
+    "frames_without_tag": 49,
+    "mean_err_m": 0.0356,
+    "max_err_m": 0.0732,
+    "tag_sightings_by_wall": {
+     "wall_divider_1": 5,
+     "wall_divider_2": 4,
+     "wall_east": 1
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 245,
+     "frames_without_tag": 184,
+     "mean_dy_m": 0.0085,
+     "mean_dyaw_deg": -1.027
+    },
+    "x2.00-2.20": {
+     "frames": 62,
+     "frames_without_tag": 28,
+     "mean_dy_m": 0.0395,
+     "mean_dyaw_deg": -0.453
+    },
+    "x2.20-2.45": {
+     "frames": 13,
+     "frames_without_tag": 13,
+     "mean_dy_m": 0.0477,
+     "mean_dyaw_deg": -0.601
+    },
+    "x2.45-2.80": {
+     "frames": 129,
+     "frames_without_tag": 55,
+     "mean_dy_m": -0.0021,
+     "mean_dyaw_deg": 0.24
+    }
+   }
+  },
+  {
+   "episode": "envtest-box-s725",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 9,
+   "look_reasons": {
+    "uncertain": 5,
+    "door_checkpoint_1.5": 1,
+    "travel": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 115.6,
+   "sim_s_by_state": {
+    "look_pan": 70.0,
+    "drive": 30.7,
+    "look_arm": 6.3,
+    "posture_back": 6.3
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 0,
+    "frames_without_tag": 0,
+    "mean_err_m": null,
+    "max_err_m": null,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 129,
+     "frames_without_tag": 74,
+     "mean_dy_m": 0.0055,
+     "mean_dyaw_deg": 0.296
+    },
+    "x2.00-2.20": {
+     "frames": 12,
+     "frames_without_tag": 12,
+     "mean_dy_m": 0.0061,
+     "mean_dyaw_deg": -0.124
+    },
+    "x2.20-2.45": {
+     "frames": 65,
+     "frames_without_tag": 33,
+     "mean_dy_m": 0.0051,
+     "mean_dyaw_deg": -0.052
+    },
+    "x2.45-2.80": {
+     "frames": 122,
+     "frames_without_tag": 48,
+     "mean_dy_m": -0.0065,
+     "mean_dyaw_deg": 0.225
+    }
+   }
+  },
+  {
+   "episode": "envtest-box-s726",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 19,
+   "look_reasons": {
+    "uncertain": 15,
+    "travel": 1,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 235.8,
+   "sim_s_by_state": {
+    "look_pan": 149.8,
+    "drive": 57.3,
+    "look_arm": 13.3,
+    "posture_back": 13.3
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 576,
+    "frames_without_tag": 557,
+    "mean_err_m": 0.0214,
+    "max_err_m": 0.0544,
+    "tag_sightings_by_wall": {
+     "wall_divider_1": 15,
+     "wall_divider_2": 4
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 196,
+     "frames_without_tag": 142,
+     "mean_dy_m": 0.0058,
+     "mean_dyaw_deg": -1.025
+    },
+    "x2.00-2.20": {
+     "frames": 12,
+     "frames_without_tag": 12,
+     "mean_dy_m": 0.0139,
+     "mean_dyaw_deg": 0.167
+    },
+    "x2.20-2.45": {
+     "frames": 64,
+     "frames_without_tag": 27,
+     "mean_dy_m": -0.0137,
+     "mean_dyaw_deg": 0.383
+    },
+    "x2.45-2.80": {
+     "frames": 131,
+     "frames_without_tag": 57,
+     "mean_dy_m": -0.0221,
+     "mean_dyaw_deg": 0.585
+    }
+   }
+  },
+  {
+   "episode": "envtest-box-s727",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": false,
+   "outcome": "arrived",
+   "looks": 11,
+   "look_reasons": {
+    "door_checkpoint_1.5": 1,
+    "travel": 1,
+    "door_checkpoint_0.6": 1,
+    "uncertain": 7,
+    "arrival_check": 1
+   },
+   "student_sim_s": 150.1,
+   "sim_s_by_state": {
+    "look_pan": 86.2,
+    "drive": 43.5,
+    "look_arm": 7.7,
+    "posture_back": 7.7
+   },
+   "wall_contact_events": [
+    {
+     "t_start": 87.18,
+     "t_end": 88.32,
+     "samples": 5,
+     "geoms": [
+      "cargo_box_01_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.009,
+      -0.202,
+      2.5
+     ],
+     "est_err_m": 0.10564,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 96.62,
+     "t_end": 96.72,
+     "samples": 2,
+     "geoms": [
+      "cargo_box_01_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "posture_back",
+     "gt_xy_yaw": [
+      2.005,
+      -0.191,
+      1.8
+     ],
+     "est_err_m": 0.10469,
+     "tags_in_frame": [
+      25,
+      26
+     ]
+    },
+    {
+     "t_start": 97.74,
+     "t_end": 102.35,
+     "samples": 43,
+     "geoms": [
+      "cargo_box_01_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.008,
+      -0.188,
+      1.3
+     ],
+     "est_err_m": 0.10448,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 110.62,
+     "t_end": 110.82,
+     "samples": 3,
+     "geoms": [
+      "cargo_box_01_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "posture_back",
+     "gt_xy_yaw": [
+      2.008,
+      -0.165,
+      -5.3
+     ],
+     "est_err_m": 0.16069,
+     "tags_in_frame": [
+      30,
+      25
+     ]
+    },
+    {
+     "t_start": 111.93,
+     "t_end": 112.03,
+     "samples": 2,
+     "geoms": [
+      "r1__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.024,
+      -0.163,
+      -3.9
+     ],
+     "est_err_m": 0.16602,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 113.47,
+     "t_end": 116.37,
+     "samples": 30,
+     "geoms": [
+      "r1__wheel_fr",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.084,
+      -0.154,
+      -1.4
+     ],
+     "est_err_m": 0.19024,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 116.47,
+     "t_end": 117.8,
+     "samples": 8,
+     "geoms": [
+      "r1__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_arm",
+     "gt_xy_yaw": [
+      2.09,
+      -0.153,
+      -8.0
+     ],
+     "est_err_m": 0.3792,
+     "tags_in_frame": [
+      24
+     ]
+    },
+    {
+     "t_start": 117.9,
+     "t_end": 119.0,
+     "samples": 12,
+     "geoms": [
+      "r1__wheel_fr",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.087,
+      -0.137,
+      -4.3
+     ],
+     "est_err_m": 0.29816,
+     "tags_in_frame": [
+      32,
+      30,
+      31
+     ]
+    },
+    {
+     "t_start": 119.1,
+     "t_end": 119.5,
+     "samples": 5,
+     "geoms": [
+      "r1__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.118,
+      -0.108,
+      6.1
+     ],
+     "est_err_m": 0.25527,
+     "tags_in_frame": [
+      31,
+      30
+     ]
+    }
+   ],
+   "loaded_strip": {
+    "frames": 115,
+    "frames_without_tag": 115,
+    "mean_err_m": 0.0729,
+    "max_err_m": 0.0943,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 178,
+     "frames_without_tag": 175,
+     "mean_dy_m": 0.0591,
+     "mean_dyaw_deg": -1.532
+    },
+    "x2.00-2.20": {
+     "frames": 201,
+     "frames_without_tag": 117,
+     "mean_dy_m": 0.1383,
+     "mean_dyaw_deg": -3.548
+    },
+    "x2.20-2.45": {
+     "frames": 14,
+     "frames_without_tag": 14,
+     "mean_dy_m": 0.1147,
+     "mean_dyaw_deg": -1.767
+    },
+    "x2.45-2.80": {
+     "frames": 213,
+     "frames_without_tag": 102,
+     "mean_dy_m": 0.0188,
+     "mean_dyaw_deg": -0.142
+    }
+   }
+  },
+  {
+   "episode": "envtest-box-s728",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": false,
+   "outcome": "time_limit",
+   "looks": 20,
+   "look_reasons": {
+    "uncertain": 16,
+    "travel": 1,
+    "door_checkpoint_1.5": 1,
+    "refix": 1,
+    "door_checkpoint_0.6": 1
+   },
+   "student_sim_s": 240.1,
+   "sim_s_by_state": {
+    "look_pan": 149.8,
+    "drive": 60.6,
+    "look_arm": 13.4,
+    "posture_back": 12.6
+   },
+   "wall_contact_events": [
+    {
+     "t_start": 193.24,
+     "t_end": 193.44,
+     "samples": 3,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "posture_back",
+     "gt_xy_yaw": [
+      2.005,
+      -0.268,
+      -1.1
+     ],
+     "est_err_m": 0.03331,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 196.1,
+     "t_end": 197.15,
+     "samples": 9,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.008,
+      -0.204,
+      2.5
+     ],
+     "est_err_m": 0.04488,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 205.42,
+     "t_end": 205.52,
+     "samples": 2,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "posture_back",
+     "gt_xy_yaw": [
+      2.005,
+      -0.194,
+      -0.0
+     ],
+     "est_err_m": 0.06632,
+     "tags_in_frame": [
+      24
+     ]
+    },
+    {
+     "t_start": 206.57,
+     "t_end": 211.55,
+     "samples": 48,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.01,
+      -0.189,
+      -0.3
+     ],
+     "est_err_m": 0.06609,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 219.82,
+     "t_end": 219.92,
+     "samples": 2,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "posture_back",
+     "gt_xy_yaw": [
+      2.009,
+      -0.165,
+      -7.3
+     ],
+     "est_err_m": 0.09885,
+     "tags_in_frame": [
+      25
+     ]
+    },
+    {
+     "t_start": 220.93,
+     "t_end": 221.13,
+     "samples": 3,
+     "geoms": [
+      "cargo_box_00_geom",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.012,
+      -0.163,
+      -6.3
+     ],
+     "est_err_m": 0.10216,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 222.66,
+     "t_end": 225.06,
+     "samples": 25,
+     "geoms": [
+      "r1__wheel_fr",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "drive",
+     "gt_xy_yaw": [
+      2.086,
+      -0.146,
+      -3.2
+     ],
+     "est_err_m": 0.12041,
+     "tags_in_frame": []
+    },
+    {
+     "t_start": 226.63,
+     "t_end": 227.03,
+     "samples": 5,
+     "geoms": [
+      "r1__wheel_fr",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.092,
+      -0.125,
+      -7.6
+     ],
+     "est_err_m": 0.12997,
+     "tags_in_frame": [
+      30
+     ]
+    },
+    {
+     "t_start": 227.13,
+     "t_end": 228.31,
+     "samples": 9,
+     "geoms": [
+      "r1__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.102,
+      -0.107,
+      -2.6
+     ],
+     "est_err_m": 0.1154,
+     "tags_in_frame": [
+      32
+     ]
+    }
+   ],
+   "loaded_strip": {
+    "frames": 570,
+    "frames_without_tag": 570,
+    "mean_err_m": 0.1113,
+    "max_err_m": 0.1279,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 71,
+     "frames_without_tag": 71,
+     "mean_dy_m": 0.0218,
+     "mean_dyaw_deg": 0.118
+    },
+    "x2.00-2.20": {
+     "frames": 259,
+     "frames_without_tag": 172,
+     "mean_dy_m": 0.0591,
+     "mean_dyaw_deg": -0.879
+    },
+    "x2.20-2.45": {
+     "frames": 14,
+     "frames_without_tag": 14,
+     "mean_dy_m": 0.0004,
+     "mean_dyaw_deg": 0.467
+    },
+    "x2.45-2.80": {
+     "frames": 91,
+     "frames_without_tag": 36,
+     "mean_dy_m": -0.0126,
+     "mean_dyaw_deg": 0.346
+    }
+   }
+  },
+  {
+   "episode": "envtest-box-s729",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 8,
+   "look_reasons": {
+    "door_checkpoint_1.5": 1,
+    "travel": 1,
+    "door_checkpoint_0.6": 1,
+    "uncertain": 3,
+    "refix": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 101.9,
+   "sim_s_by_state": {
+    "look_pan": 62.3,
+    "drive": 26.9,
+    "look_arm": 5.0,
+    "posture_back": 4.9
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 0,
+    "frames_without_tag": 0,
+    "mean_err_m": null,
+    "max_err_m": null,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 129,
+     "frames_without_tag": 79,
+     "mean_dy_m": -0.0007,
+     "mean_dyaw_deg": 0.388
+    },
+    "x2.00-2.20": {
+     "frames": 12,
+     "frames_without_tag": 12,
+     "mean_dy_m": -0.0172,
+     "mean_dyaw_deg": 0.142
+    },
+    "x2.20-2.45": {
+     "frames": 105,
+     "frames_without_tag": 45,
+     "mean_dy_m": -0.024,
+     "mean_dyaw_deg": 0.438
+    },
+    "x2.45-2.80": {
+     "frames": 127,
+     "frames_without_tag": 59,
+     "mean_dy_m": -0.0307,
+     "mean_dyaw_deg": 0.645
+    }
+   }
+  },
+  {
+   "episode": "envtest-nobox-s721",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "nobox",
+   "pass": false,
+   "outcome": "arrived",
+   "looks": 5,
+   "look_reasons": {
+    "uncertain": 1,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "no_tag": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 76.4,
+   "sim_s_by_state": {
+    "look_pan": 37.9,
+    "drive": 30.1,
+    "posture_back": 3.5,
+    "look_arm": 3.5
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 0,
+    "frames_without_tag": 0,
+    "mean_err_m": null,
+    "max_err_m": null,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 72,
+     "frames_without_tag": 22,
+     "mean_dy_m": -0.0002,
+     "mean_dyaw_deg": -0.091
+    },
+    "x2.00-2.20": {
+     "frames": 59,
+     "frames_without_tag": 29,
+     "mean_dy_m": -0.0031,
+     "mean_dyaw_deg": 0.03
+    },
+    "x2.20-2.45": {
+     "frames": 12,
+     "frames_without_tag": 3,
+     "mean_dy_m": -0.0125,
+     "mean_dyaw_deg": 0.385
+    },
+    "x2.45-2.80": {
+     "frames": 68,
+     "frames_without_tag": 12,
+     "mean_dy_m": -0.0254,
+     "mean_dyaw_deg": 0.579
+    }
+   }
+  },
+  {
+   "episode": "envtest-nobox-s722",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "nobox",
+   "pass": false,
+   "outcome": "arrived",
+   "looks": 9,
+   "look_reasons": {
+    "uncertain": 3,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "no_tag": 3,
+    "arrival_check": 1
+   },
+   "student_sim_s": 124.9,
+   "sim_s_by_state": {
+    "look_pan": 69.6,
+    "drive": 37.7,
+    "posture_back": 6.3,
+    "look_arm": 6.3
+   },
+   "wall_contact_events": [
+    {
+     "t_start": 98.53,
+     "t_end": 98.83,
+     "samples": 4,
+     "geoms": [
+      "r3__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.111,
+      -0.068,
+      1.3
+     ],
+     "est_err_m": 0.01312,
+     "tags_in_frame": []
+    }
+   ],
+   "loaded_strip": {
+    "frames": 164,
+    "frames_without_tag": 109,
+    "mean_err_m": 0.021,
+    "max_err_m": 0.0763,
+    "tag_sightings_by_wall": {
+     "wall_divider_1": 59,
+     "wall_divider_2": 23
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 190,
+     "frames_without_tag": 122,
+     "mean_dy_m": 0.0125,
+     "mean_dyaw_deg": -0.057
+    },
+    "x2.00-2.20": {
+     "frames": 62,
+     "frames_without_tag": 28,
+     "mean_dy_m": 0.0317,
+     "mean_dyaw_deg": -0.769
+    },
+    "x2.20-2.45": {
+     "frames": 13,
+     "frames_without_tag": 2,
+     "mean_dy_m": 0.0529,
+     "mean_dyaw_deg": -0.844
+    },
+    "x2.45-2.80": {
+     "frames": 85,
+     "frames_without_tag": 10,
+     "mean_dy_m": 0.0262,
+     "mean_dyaw_deg": -0.505
+    }
+   }
+  },
+  {
+   "episode": "envtest-nobox-s723",
+   "map_id": "zone_wide_door_tags_v3",
+   "condition": "nobox",
+   "pass": false,
+   "outcome": "arrived",
+   "looks": 6,
+   "look_reasons": {
+    "uncertain": 1,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "no_tag": 2,
+    "arrival_check": 1
+   },
+   "student_sim_s": 108.5,
+   "sim_s_by_state": {
+    "drive": 52.9,
+    "look_pan": 46.5,
+    "look_arm": 4.2,
+    "posture_back": 4.2
+   },
+   "wall_contact_events": [
+    {
+     "t_start": 85.74,
+     "t_end": 85.94,
+     "samples": 3,
+     "geoms": [
+      "r1__right_finger",
+      "zone_wall_divider_1"
+     ],
+     "student_state": "look_pan",
+     "gt_xy_yaw": [
+      2.091,
+      -0.065,
+      0.0
+     ],
+     "est_err_m": 0.00233,
+     "tags_in_frame": []
+    }
+   ],
+   "loaded_strip": {
+    "frames": 107,
+    "frames_without_tag": 57,
+    "mean_err_m": 0.008,
+    "max_err_m": 0.0266,
+    "tag_sightings_by_wall": {
+     "wall_divider_1": 63,
+     "wall_divider_2": 17
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 136,
+     "frames_without_tag": 68,
+     "mean_dy_m": 0.0044,
+     "mean_dyaw_deg": -0.154
+    },
+    "x2.00-2.20": {
+     "frames": 62,
+     "frames_without_tag": 32,
+     "mean_dy_m": 0.0052,
+     "mean_dyaw_deg": -0.134
+    },
+    "x2.20-2.45": {
+     "frames": 13,
+     "frames_without_tag": 4,
+     "mean_dy_m": 0.014,
+     "mean_dyaw_deg": -0.136
+    },
+    "x2.45-2.80": {
+     "frames": 66,
+     "frames_without_tag": 11,
+     "mean_dy_m": 0.0061,
+     "mean_dyaw_deg": -0.099
+    }
+   }
+  }
+ ],
+ "v2_baseline_test": [
+  {
+   "episode": "v2test-box-s61",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 10,
+   "look_reasons": {
+    "uncertain": 6,
+    "door_checkpoint_1.5": 1,
+    "travel": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 133.8,
+   "sim_s_by_state": {
+    "look_pan": 78.2,
+    "drive": 39.2,
+    "look_arm": 7.0,
+    "posture_back": 7.0
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 62,
+    "frames_without_tag": 25,
+    "mean_err_m": 0.0233,
+    "max_err_m": 0.0396,
+    "tag_sightings_by_wall": {
+     "wall_east": 52,
+     "wall_north": 17,
+     "wall_south": 9
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 142,
+     "frames_without_tag": 67,
+     "mean_dy_m": -0.0013,
+     "mean_dyaw_deg": 0.031
+    },
+    "x2.00-2.20": {
+     "frames": 62,
+     "frames_without_tag": 20,
+     "mean_dy_m": 0.0102,
+     "mean_dyaw_deg": -0.121
+    },
+    "x2.20-2.45": {
+     "frames": 15,
+     "frames_without_tag": 15,
+     "mean_dy_m": 0.0045,
+     "mean_dyaw_deg": -0.01
+    },
+    "x2.45-2.80": {
+     "frames": 177,
+     "frames_without_tag": 45,
+     "mean_dy_m": -0.0008,
+     "mean_dyaw_deg": 0.056
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 62,
+     "frames_with_tag_v2": 37,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {
+      "hidden_by_0.40m_walls": 61,
+      "removed_by_rule": 17
+     }
+    },
+    "door_x1.60-2.00": {
+     "frames": 142,
+     "frames_with_tag_v2": 75,
+     "frames_still_tagged_in_v3": 20,
+     "sightings": {
+      "removed_by_rule": 57,
+      "kept_in_v3": 20,
+      "hidden_by_0.40m_walls": 72
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 62,
+     "frames_with_tag_v2": 42,
+     "frames_still_tagged_in_v3": 12,
+     "sightings": {
+      "removed_by_rule": 113,
+      "kept_in_v3": 12
+     }
+    },
+    "door_x2.20-2.45": {
+     "frames": 15,
+     "frames_with_tag_v2": 0,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {}
+    },
+    "door_x2.45-2.80": {
+     "frames": 177,
+     "frames_with_tag_v2": 132,
+     "frames_still_tagged_in_v3": 78,
+     "sightings": {
+      "removed_by_rule": 423,
+      "kept_in_v3": 80
+     }
+    }
+   }
+  },
+  {
+   "episode": "v2test-box-s62",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 12,
+   "look_reasons": {
+    "uncertain": 9,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 166.7,
+   "sim_s_by_state": {
+    "look_pan": 94.4,
+    "drive": 52.7,
+    "posture_back": 8.4,
+    "look_arm": 8.4
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 274,
+    "frames_without_tag": 112,
+    "mean_err_m": 0.0294,
+    "max_err_m": 0.0599,
+    "tag_sightings_by_wall": {
+     "wall_east": 247,
+     "wall_south": 60,
+     "wall_north": 38,
+     "wall_divider_1": 6
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 143,
+     "frames_without_tag": 69,
+     "mean_dy_m": -0.0081,
+     "mean_dyaw_deg": 0.071
+    },
+    "x2.00-2.20": {
+     "frames": 63,
+     "frames_without_tag": 22,
+     "mean_dy_m": -0.0128,
+     "mean_dyaw_deg": 0.148
+    },
+    "x2.20-2.45": {
+     "frames": 14,
+     "frames_without_tag": 14,
+     "mean_dy_m": -0.0061,
+     "mean_dyaw_deg": 0.1
+    },
+    "x2.45-2.80": {
+     "frames": 129,
+     "frames_without_tag": 41,
+     "mean_dy_m": -0.0011,
+     "mean_dyaw_deg": -0.01
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 274,
+     "frames_with_tag_v2": 162,
+     "frames_still_tagged_in_v3": 4,
+     "sightings": {
+      "hidden_by_0.40m_walls": 335,
+      "kept_in_v3": 4,
+      "removed_by_rule": 12
+     }
+    },
+    "door_x1.60-2.00": {
+     "frames": 143,
+     "frames_with_tag_v2": 74,
+     "frames_still_tagged_in_v3": 3,
+     "sightings": {
+      "hidden_by_0.40m_walls": 103,
+      "removed_by_rule": 29,
+      "kept_in_v3": 3
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 63,
+     "frames_with_tag_v2": 41,
+     "frames_still_tagged_in_v3": 18,
+     "sightings": {
+      "removed_by_rule": 102,
+      "kept_in_v3": 18
+     }
+    },
+    "door_x2.20-2.45": {
+     "frames": 14,
+     "frames_with_tag_v2": 0,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {}
+    },
+    "door_x2.45-2.80": {
+     "frames": 129,
+     "frames_with_tag_v2": 88,
+     "frames_still_tagged_in_v3": 51,
+     "sightings": {
+      "kept_in_v3": 51,
+      "removed_by_rule": 261
+     }
+    }
+   }
+  },
+  {
+   "episode": "v2test-box-s63",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 11,
+   "look_reasons": {
+    "uncertain": 8,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 144.5,
+   "sim_s_by_state": {
+    "look_pan": 86.0,
+    "drive": 41.2,
+    "look_arm": 7.7,
+    "posture_back": 7.7
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 269,
+    "frames_without_tag": 112,
+    "mean_err_m": 0.0254,
+    "max_err_m": 0.0796,
+    "tag_sightings_by_wall": {
+     "wall_east": 253,
+     "wall_south": 52,
+     "wall_north": 33,
+     "wall_divider_1": 4
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 92,
+     "frames_without_tag": 49,
+     "mean_dy_m": 0.0008,
+     "mean_dyaw_deg": 0.012
+    },
+    "x2.00-2.20": {
+     "frames": 63,
+     "frames_without_tag": 21,
+     "mean_dy_m": -0.0051,
+     "mean_dyaw_deg": 0.033
+    },
+    "x2.20-2.45": {
+     "frames": 64,
+     "frames_without_tag": 20,
+     "mean_dy_m": 0.0044,
+     "mean_dyaw_deg": -0.075
+    },
+    "x2.45-2.80": {
+     "frames": 127,
+     "frames_without_tag": 39,
+     "mean_dy_m": 0.0014,
+     "mean_dyaw_deg": -0.035
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 269,
+     "frames_with_tag_v2": 157,
+     "frames_still_tagged_in_v3": 4,
+     "sightings": {
+      "hidden_by_0.40m_walls": 330,
+      "kept_in_v3": 4,
+      "removed_by_rule": 8
+     }
+    },
+    "door_x1.60-2.00": {
+     "frames": 92,
+     "frames_with_tag_v2": 43,
+     "frames_still_tagged_in_v3": 14,
+     "sightings": {
+      "kept_in_v3": 14,
+      "removed_by_rule": 27,
+      "hidden_by_0.40m_walls": 28
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 63,
+     "frames_with_tag_v2": 42,
+     "frames_still_tagged_in_v3": 18,
+     "sightings": {
+      "removed_by_rule": 80,
+      "kept_in_v3": 19,
+      "hidden_by_0.40m_walls": 4
+     }
+    },
+    "door_x2.20-2.45": {
+     "frames": 64,
+     "frames_with_tag_v2": 44,
+     "frames_still_tagged_in_v3": 23,
+     "sightings": {
+      "kept_in_v3": 23,
+      "removed_by_rule": 114
+     }
+    },
+    "door_x2.45-2.80": {
+     "frames": 127,
+     "frames_with_tag_v2": 88,
+     "frames_still_tagged_in_v3": 54,
+     "sightings": {
+      "removed_by_rule": 291,
+      "kept_in_v3": 54
+     }
+    }
+   }
+  },
+  {
+   "episode": "v2test-box-s64",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 7,
+   "look_reasons": {
+    "door_checkpoint_1.5": 1,
+    "travel": 1,
+    "door_checkpoint_0.6": 1,
+    "uncertain": 3,
+    "arrival_check": 1
+   },
+   "student_sim_s": 93.6,
+   "sim_s_by_state": {
+    "look_pan": 53.9,
+    "drive": 27.8,
+    "look_arm": 4.9,
+    "posture_back": 4.9
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 0,
+    "frames_without_tag": 0,
+    "mean_err_m": null,
+    "max_err_m": null,
+    "tag_sightings_by_wall": {}
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 126,
+     "frames_without_tag": 51,
+     "mean_dy_m": -0.0014,
+     "mean_dyaw_deg": -0.088
+    },
+    "x2.00-2.20": {
+     "frames": 12,
+     "frames_without_tag": 12,
+     "mean_dy_m": -0.0142,
+     "mean_dyaw_deg": 0.004
+    },
+    "x2.20-2.45": {
+     "frames": 64,
+     "frames_without_tag": 21,
+     "mean_dy_m": -0.0135,
+     "mean_dyaw_deg": 0.178
+    },
+    "x2.45-2.80": {
+     "frames": 130,
+     "frames_without_tag": 42,
+     "mean_dy_m": -0.0109,
+     "mean_dyaw_deg": 0.155
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 0,
+     "frames_with_tag_v2": 0,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {}
+    },
+    "door_x1.60-2.00": {
+     "frames": 126,
+     "frames_with_tag_v2": 75,
+     "frames_still_tagged_in_v3": 37,
+     "sightings": {
+      "removed_by_rule": 77,
+      "hidden_by_0.40m_walls": 60,
+      "kept_in_v3": 40
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 12,
+     "frames_with_tag_v2": 0,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {}
+    },
+    "door_x2.20-2.45": {
+     "frames": 64,
+     "frames_with_tag_v2": 43,
+     "frames_still_tagged_in_v3": 17,
+     "sightings": {
+      "removed_by_rule": 119,
+      "kept_in_v3": 17
+     }
+    },
+    "door_x2.45-2.80": {
+     "frames": 130,
+     "frames_with_tag_v2": 88,
+     "frames_still_tagged_in_v3": 58,
+     "sightings": {
+      "removed_by_rule": 277,
+      "kept_in_v3": 58
+     }
+    }
+   }
+  },
+  {
+   "episode": "v2test-box-s65",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 10,
+   "look_reasons": {
+    "uncertain": 5,
+    "travel": 2,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 134.8,
+   "sim_s_by_state": {
+    "look_pan": 77.7,
+    "drive": 41.4,
+    "look_arm": 7.0,
+    "posture_back": 7.0
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 61,
+    "frames_without_tag": 21,
+    "mean_err_m": 0.026,
+    "max_err_m": 0.0522,
+    "tag_sightings_by_wall": {
+     "wall_east": 51,
+     "wall_north": 18,
+     "wall_south": 14,
+     "wall_divider_1": 4
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 145,
+     "frames_without_tag": 65,
+     "mean_dy_m": -0.0236,
+     "mean_dyaw_deg": 0.348
+    },
+    "x2.00-2.20": {
+     "frames": 63,
+     "frames_without_tag": 20,
+     "mean_dy_m": -0.0195,
+     "mean_dyaw_deg": 0.268
+    },
+    "x2.20-2.45": {
+     "frames": 13,
+     "frames_without_tag": 13,
+     "mean_dy_m": -0.0002,
+     "mean_dyaw_deg": -0.135
+    },
+    "x2.45-2.80": {
+     "frames": 125,
+     "frames_without_tag": 37,
+     "mean_dy_m": -0.007,
+     "mean_dyaw_deg": 0.116
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 61,
+     "frames_with_tag_v2": 40,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {
+      "hidden_by_0.40m_walls": 65,
+      "removed_by_rule": 22
+     }
+    },
+    "door_x1.60-2.00": {
+     "frames": 145,
+     "frames_with_tag_v2": 80,
+     "frames_still_tagged_in_v3": 20,
+     "sightings": {
+      "kept_in_v3": 21,
+      "removed_by_rule": 63,
+      "hidden_by_0.40m_walls": 80
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 63,
+     "frames_with_tag_v2": 43,
+     "frames_still_tagged_in_v3": 20,
+     "sightings": {
+      "removed_by_rule": 105,
+      "kept_in_v3": 20
+     }
+    },
+    "door_x2.20-2.45": {
+     "frames": 13,
+     "frames_with_tag_v2": 0,
+     "frames_still_tagged_in_v3": 0,
+     "sightings": {}
+    },
+    "door_x2.45-2.80": {
+     "frames": 125,
+     "frames_with_tag_v2": 88,
+     "frames_still_tagged_in_v3": 50,
+     "sightings": {
+      "removed_by_rule": 292,
+      "kept_in_v3": 50
+     }
+    }
+   }
+  },
+  {
+   "episode": "v2test-box-s66",
+   "map_id": "zone_wide_door_tags_v2",
+   "condition": "box",
+   "pass": true,
+   "outcome": "arrived",
+   "looks": 16,
+   "look_reasons": {
+    "uncertain": 11,
+    "travel": 2,
+    "door_checkpoint_1.5": 1,
+    "door_checkpoint_0.6": 1,
+    "arrival_check": 1
+   },
+   "student_sim_s": 216.1,
+   "sim_s_by_state": {
+    "look_pan": 125.6,
+    "drive": 63.9,
+    "look_arm": 11.2,
+    "posture_back": 11.2
+   },
+   "wall_contact_events": [],
+   "loaded_strip": {
+    "frames": 278,
+    "frames_without_tag": 115,
+    "mean_err_m": 0.0239,
+    "max_err_m": 0.0628,
+    "tag_sightings_by_wall": {
+     "wall_east": 266,
+     "wall_south": 52,
+     "wall_north": 48,
+     "wall_divider_1": 33
+    }
+   },
+   "door_bands": {
+    "x1.60-2.00": {
+     "frames": 92,
+     "frames_without_tag": 50,
+     "mean_dy_m": 0.0042,
+     "mean_dyaw_deg": -0.572
+    },
+    "x2.00-2.20": {
+     "frames": 63,
+     "frames_without_tag": 20,
+     "mean_dy_m": 0.014,
+     "mean_dyaw_deg": -0.285
+    },
+    "x2.20-2.45": {
+     "frames": 62,
+     "frames_without_tag": 18,
+     "mean_dy_m": 0.0089,
+     "mean_dyaw_deg": -0.106
+    },
+    "x2.45-2.80": {
+     "frames": 144,
+     "frames_without_tag": 57,
+     "mean_dy_m": 0.0024,
+     "mean_dyaw_deg": -0.039
+    }
+   },
+   "v2_sightings_under_v3": {
+    "loaded_strip": {
+     "frames": 278,
+     "frames_with_tag_v2": 163,
+     "frames_still_tagged_in_v3": 23,
+     "sightings": {
+      "hidden_by_0.40m_walls": 358,
+      "removed_by_rule": 18,
+      "kept_in_v3": 23
+     }
+    },
+    "door_x1.60-2.00": {
+     "frames": 92,
+     "frames_with_tag_v2": 42,
+     "frames_still_tagged_in_v3": 31,
+     "sightings": {
+      "kept_in_v3": 31,
+      "removed_by_rule": 32,
+      "hidden_by_0.40m_walls": 13
+     }
+    },
+    "door_x2.00-2.20": {
+     "frames": 63,
+     "frames_with_tag_v2": 43,
+     "frames_still_tagged_in_v3": 15,
+     "sightings": {
+      "removed_by_rule": 111,
+      "kept_in_v3": 15
+     }
+    },
+    "door_x2.20-2.45": {
+     "frames": 62,
+     "frames_with_tag_v2": 44,
+     "frames_still_tagged_in_v3": 26,
+     "sightings": {
+      "kept_in_v3": 27,
+      "removed_by_rule": 134
+     }
+    },
+    "door_x2.45-2.80": {
+     "frames": 144,
+     "frames_with_tag_v2": 87,
+     "frames_still_tagged_in_v3": 54,
+     "sightings": {
+      "removed_by_rule": 296,
+      "kept_in_v3": 54
+     }
+    }
+   }
+  }
+ ],
+ "v2_sightings_under_v3_total": {
+  "loaded_strip": {
+   "frames": 944,
+   "frames_with_tag_v2": 559,
+   "frames_still_tagged_in_v3": 31,
+   "sightings": {
+    "hidden_by_0.40m_walls": 1149,
+    "removed_by_rule": 77,
+    "kept_in_v3": 31
+   }
+  },
+  "door_x1.60-2.00": {
+   "frames": 740,
+   "frames_with_tag_v2": 389,
+   "frames_still_tagged_in_v3": 125,
+   "sightings": {
+    "removed_by_rule": 285,
+    "kept_in_v3": 129,
+    "hidden_by_0.40m_walls": 356
+   }
+  },
+  "door_x2.00-2.20": {
+   "frames": 326,
+   "frames_with_tag_v2": 211,
+   "frames_still_tagged_in_v3": 83,
+   "sightings": {
+    "removed_by_rule": 511,
+    "kept_in_v3": 84,
+    "hidden_by_0.40m_walls": 4
+   }
+  },
+  "door_x2.20-2.45": {
+   "frames": 232,
+   "frames_with_tag_v2": 131,
+   "frames_still_tagged_in_v3": 66,
+   "sightings": {
+    "kept_in_v3": 67,
+    "removed_by_rule": 367
+   }
+  },
+  "door_x2.45-2.80": {
+   "frames": 832,
+   "frames_with_tag_v2": 571,
+   "frames_still_tagged_in_v3": 345,
+   "sightings": {
+    "removed_by_rule": 1840,
+    "kept_in_v3": 347
+   }
+  }
+ }
+}
