@@ -119,3 +119,57 @@ v2의 확신 오류 2건(dev 243): `held_can_carry`에서 `no`+cyan(W7 재현, p
 - 모양 단서는 정당한 렌더에서 발동한 적이 없다. 발동 조건(띠에 팀 색이 전혀 없음)이 생기면 신뢰도 0.70의 모양 답이 나온다.
 - 파지 단계 자세는 렌더에서 도달만 확인했다. 자기 충돌·실제 서보 하중은 재지 않았다.
 - 분할당 시드 4개 규모다. 사례 단위로 읽고 다른 실험 수치와 합산하지 않는다.
+
+## test 결과 (1회 채점, 사전 등록 `c7e7725` 뒤)
+
+렌더·채점 소스 `c7e7725`(깨끗한 작업 트리, manifest `source_dirty: false`), 렌더 `outputs/2026-09-26-zone-own-perception-v3/test-frames`(100뷰·300프레임, 11 MB, wall 633.4 s, 1분 부하 13.2 → 20.1 — 다른 작업이 함께 돌던 호스트), 채점 `test-score`(이 폴더 `test-summary.json`). **dev 재현:** 사전 등록 커밋 `c7e7725`로 dev 프레임을 다시 채점한 `dev-score-clean`은 조정용 `dev-score-2`와 모든 지표가 같다.
+
+| 버전:판단:계열:자세 | 뷰 | unknown | 전체 정확도 | 결정 정확도 | 확신 오류 | 관측 가능(뷰 / 정확도 / unknown / 확신 오류) |
+|---|---:|---:|---:|---:|---:|---|
+| `v3:held_item_at_grip:held:carry` | 20 | .200 | .800 | 1.000 | **0** | 19 / .842 / .158 / 0 |
+| `v2:held_item_at_grip:held:carry` | 20 | .350 | .650 | 1.000 | 0 | 19 / .684 / .316 / 0 |
+| `v3:held_item_at_grip:held:held_check` | 16 | .438 | .562 | 1.000 | **0** | 12 / .750 / .250 / 0 |
+| `v2:held_item_at_grip:held:held_check` | 16 | .375 | .562 | .900 | **1** | 12 / .750 / .167 / 1 |
+| `v3:team_cargo_at_grip:carry:carry` | 24 | .042 | .958 | 1.000 | **0** | 24 / .958 / .042 / 0 |
+| `v2:team_cargo_at_grip:carry:carry` | 24 | .208 | .792 | 1.000 | 0 | 24 / .792 / .208 / 0 |
+| `v3:team_cargo_identity:grasp:grasp_look_v3` | 20 | .050 | .950 | 1.000 | **0** | 20 / .950 / .050 / 0 |
+| `v2:team_cargo_identity:grasp:approach_look_v2` | 20 | .800 | .200 | 1.000 | 0 | 17 / .176 / .824 / 0 |
+| `v3:team_cargo_handle:grasp:grasp_look_v3` | 20 | .400 | .600 | 1.000 | **0** | 12 / 1.000 / .000 / 0 |
+| `v2:team_cargo_handle:grasp:approach_look_v2` | 20 | .650 | .350 | 1.000 | 0 | 11 / .636 / .364 / 0 |
+
+사례별 v3(뷰 / unknown / 정답 / 오답): `held_can` 4/3/1/0 · `held_can_absent` 4/0/4/0 · `held_can_wrong_kind` 4/0/4/0 · `held_box_carry` 4/0/4/0 · `held_tile_carry` 4/0/4/0 · `held_nothing_carry` 4/0/4/0 · `held_tile_expect_box_carry` 4/0/4/0 · `held_can_carry` 4/4/0/0 · `held_box_held_check` 4/4/0/0 / `carry_long_beam`·`carry_heavy_crate`·`carry_tri_frame`·`carry_crate_expect_beam`·`carry_beam_expect_crate` 각 4/0/4/0 · `carry_nothing_expect_crate` 4/1/3/0 / 파지 단계 종류 `grasp_long_beam` 4/1/3/0 · `grasp_heavy_crate`·`grasp_tri_frame`·`grasp_wrong_kind`·`wrong_end_long_beam` 각 4/0/4/0, 손잡이 `grasp_long_beam`·`grasp_heavy_crate`·`grasp_tri_frame` 각 4/0/4/0 · `grasp_wrong_kind`·`wrong_end_long_beam` 각 4/4/0/0(관측 불가).
+
+### 게이트 판정 — 10개 모두 통과
+
+| ID | 기준 | 결과 | 판정 |
+|---|---|---|---|
+| V1 | `held_item_at_grip` 확신 오류 ≤ 1, 관측 가능 뷰 0 | 0 / 0 | 통과 |
+| V2 | `held_can_carry`·`held_box_held_check` 확신 답 0 | 8뷰 모두 `unknown` | 통과 |
+| V3 | 관측 가능 정확도 ≥ .80, unknown ≤ .25 | **.806** / .194 (31뷰) | 통과(여유 작음) |
+| V4 | `held_nothing_carry` ≥ 3/4 `no` | 4/4 (v2 1/4) | 통과 |
+| V5 | `team_cargo_at_grip` 확신 오류 0, 정확도 ≥ .85 | 0 / .958 | 통과 |
+| V6 | `carry_heavy_crate` ≥ 3/4 `yes` | 4/4 | 통과 |
+| V7 | `grasp_tri_frame` 종류 ≥ 3/4 `yes` (v3 자세) | 4/4 (같은 뷰 v2 자세 0/4) | 통과 |
+| V8 | 파지 단계 확신 오류 합 ≤ 1 | 0 | 통과 |
+| V9 | 손잡이 관측 가능 ≥ .75, 종류 관측 가능 ≥ .70 | 1.000 (12) / .950 (20) | 통과 |
+| V10 | 테스트 전체 통과 | 27/27 | 통과 |
+
+**읽는 법:**
+- v3의 모든 판단은 test에서 **확신 오류 0**이다. 같은 프레임의 v2는 `held_can`에서 "can 없음" 확신 오류 1건(`zone_wide_two_doors-s273`)을 냈다. W7 조건(`held_can_carry`)은 이번 test에서 v2도 확신 답을 내지 않았다 — pickup 칠이 cyan 대역에 걸리는 조명은 로봇 위치·방향에 달려 있어 매번 생기지 않는다(dev 243에서는 재현).
+- **held-check 자세의 can은 여전히 약하다:** `held_can` `yes` 1/4, 나머지 `unknown`. 원인은 발견 4(렌더 절단면에서 흔들리는 can)다. 확신 오류는 없지만 **“can을 들고 있다”는 영수증은 자주 나오지 않는다.**
+- 운반 중 팀 화물 3종은 파지 규약대로 들면 **색으로** 4/4씩 식별된다. 모양 단서는 test에서도 발동하지 않았다.
+- 파지 단계 새 자세는 v2 자세에 비해 종류 관측 가능 정확도 .176 → .950, 손잡이 .636 → 1.000이다. 한 프레임으로 둘 다 답한다.
+
+### 장면 해시 (변형·시드 / CargoZoneScene / 추가물 포함 / 주문서)
+
+dev: door 241 `9f0a5ea0` / `f20ee9e4` / `f0ae1517`; corridor 242 `add31594` / `0a305eb6` / `576a2c15`; two_doors 243 `ad407c47` / `8ea8dc36` / `a3adf9b3`; door 244 `38531207` / `48f524e4` / `7793d591`. test: door 271 `f7f042d3` / `6559a8b4` / `b28e73bd`; corridor 272 `1eb2cb7f` / `eab67794` / `71368bf0`; two_doors 273 `c63e4376` / `576f745b` / `4bc59861`; corridor 274 `7a3555e6` / `2eaab37b` / `5258b937`.
+
+### 원본 위치
+
+| 항목 | 위치 (로컬, Git 제외) |
+|---|---|
+| 자세 스캔 | `outputs/2026-09-26-zone-own-perception-v3/dev-scan` (164뷰), 채점 `dev-scan-score4` |
+| dev | `dev-frames` (11 MB), 채점 `dev-score-2`(조정)·`dev-score-clean`(`c7e7725` 재현) = `dev-summary.json` |
+| test | `test-frames` (11 MB), 채점 `test-score` = `test-summary.json` |
+
+로컬 보관은 원격 백업이 아니다.
