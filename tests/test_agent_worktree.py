@@ -254,7 +254,7 @@ def test_retire_refuses_unmerged_dirty_busy_and_existing_destination(repo):
     sleeper = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"], cwd=busy)
     try:
         deadline = time.monotonic() + 5
-        while not aw.processes_using(busy) and time.monotonic() < deadline:
+        while not guard.processes_using(busy) and time.monotonic() < deadline:
             time.sleep(0.1)
         assert retire(repo, busy, "--execute") == 2
         assert (busy / "outputs/run-1/result.json").exists()

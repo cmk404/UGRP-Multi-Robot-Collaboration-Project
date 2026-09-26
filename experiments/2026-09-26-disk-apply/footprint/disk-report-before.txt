@@ -1,0 +1,91 @@
+UGRP disk report 2026-09-26T16:49:22.180997+09:00 (allocated bytes; APFS clones counted in full)
+
+[filesystem] free   48.53 GiB of  460.40 GiB
+
+[primary checkout, without outputs/]    3.47 GiB
+     1.13 GiB  work
+     1.01 GiB  experiments
+     0.96 GiB  .git
+     0.26 GiB  .venv-dev
+     0.04 GiB  작업 증거
+     0.03 GiB  tests
+     0.02 GiB  ugrp_budget_repaired_source.zip
+     0.01 GiB  boot
+
+[primary outputs/]   68.27 GiB in 510 entries; by kind: image 46.87, json 11.77, archive 4.08, model 2.67, other 1.50, video 1.37
+    13.07 GiB  retired-worktrees
+     3.69 GiB  simulation-realtime-20260923
+     3.52 GiB  jev-semantic-motion-20260921-v1
+     3.42 GiB  zone-rgb-outcome-v2-20260925
+     2.93 GiB  plan-guidance-20260925
+     2.71 GiB  experiment-archives-20260907
+     2.60 GiB  act-action-training-20260924
+     2.33 GiB  dynamic-team-recovery-20260925
+     1.87 GiB  jev-skills-holdout-v1
+     1.56 GiB  jev-skills-dev-v6
+     1.47 GiB  zone-m2-pair-20260926
+     1.37 GiB  dispatch-action-act-refinement-20260924
+     1.29 GiB  simulation-realtime-20260924-faster
+     1.20 GiB  map-goto-20260925
+     1.17 GiB  beam-regrasp-20260925
+
+[worktrees] (merged = ancestor of origin/main)
+  all                                      n= 60 merged= 27 sparse=  4 total   64.31 GiB tracked   58.67 GiB outputs    5.48 GiB caches    0.16 GiB
+  owner:claude                             n= 21 merged= 14 sparse=  0 total   24.24 GiB tracked   21.93 GiB outputs    2.24 GiB caches    0.07 GiB
+  owner:codex                              n=  9 merged=  0 sparse=  0 total   11.87 GiB tracked    9.18 GiB outputs    2.67 GiB caches    0.02 GiB
+  owner:kiro                               n= 30 merged= 13 sparse=  4 total   28.20 GiB tracked   27.56 GiB outputs    0.57 GiB caches    0.08 GiB
+  parent:/Users/changmin/projects          n=  1 merged=  1 sparse=  0 total    1.04 GiB tracked    1.04 GiB outputs    0.00 GiB caches    0.00 GiB
+  parent:/Users/changmin/projects/ugrp-worktrees n=  3 merged=  3 sparse=  0 total    5.40 GiB tracked    3.14 GiB outputs    2.24 GiB caches    0.02 GiB
+  parent:/Users/changmin/projects/ugrp-wt  n= 47 merged= 23 sparse=  4 total   46.00 GiB tracked   45.31 GiB outputs    0.57 GiB caches    0.12 GiB
+  parent:~/.codex/worktrees                n=  9 merged=  0 sparse=  0 total   11.87 GiB tracked    9.18 GiB outputs    2.67 GiB caches    0.02 GiB
+  HEAD in base and no open PR -> owner may retire with scripts/agent_worktree.py retire <path>:
+       2.37 GiB outputs    1.31 GiB  /Users/changmin/projects/ugrp-worktrees/zone-hard-routes #173:MERGED
+       1.76 GiB outputs    0.71 GiB  /Users/changmin/projects/ugrp-worktrees/zone-team-a2 #169:MERGED
+       1.27 GiB outputs    0.22 GiB  /Users/changmin/projects/ugrp-worktrees/zone-team-a2-dev
+       1.07 GiB outputs    0.02 GiB  /Users/changmin/projects/ugrp-wt/kiro-noslip-audit #189:MERGED
+       1.06 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-study-protocol #184:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-skill-v2 #181:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-skill-v9-frozen
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-skill-v8-frozen
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-skill-v7-frozen
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-scenario-feasibility #202:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-loop-v2 #197:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-sim-cost #186:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-loop #178:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-study-contract #187:MERGED
+       1.05 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/zone-owncam-pair #200:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-markerless-research #210:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-study-eval #185:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-tb-0925 #183:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-vision-loc
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-decisions-0926 #204:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-records-review #196:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/ro-pr181
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/owncam-loc-ts #198:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/records-0926 #180:MERGED
+       1.04 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-kiro-agent #182:MERGED
+       0.13 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-memory-literature
+       0.13 GiB outputs    0.00 GiB  /Users/changmin/projects/ugrp-wt/kiro-references-0926
+
+[tracked experiments/ at origin/main]    1.01 GiB; heavy media    0.93 GiB
+     0.69 GiB    51  .zip
+     0.11 GiB   680  .gz
+     0.06 GiB   129  .mp4
+     0.06 GiB  1685  .json
+     0.05 GiB   627  .jpg
+     0.01 GiB    34  .jsonl
+     0.01 GiB    53  .png
+     0.01 GiB    60  .xml
+
+[virtual environments]    1.12 GiB
+[agent state .kiro]    0.02 GiB
+
+[outputs/ retention tiers] unclassified 31.10, retired-worktrees 13.07, dev-diagnostic 12.09, test-cohort 8.53, archive 3.01, infrastructure 0.47
+  by age: <=3d 40.94, <=7d 16.19, >7d 11.14
+  entries over 2 GiB: simulation-realtime-20260923 3.69, jev-semantic-motion-20260921-v1 3.52, zone-rgb-outcome-v2-20260925 3.42, plan-guidance-20260925 2.93, experiment-archives-20260907 2.71, act-action-training-20260924 2.60, dynamic-team-recovery-20260925 2.33
+
+[budget] project  137.17 GiB /   58.00 GiB; agent state (outside budget)    0.02 GiB
+  primary_outputs    68.27 GiB /   40.00 GiB  OVER
+  worktrees          64.31 GiB /   10.00 GiB  OVER
+  primary_other       3.47 GiB /    6.00 GiB
+  runtimes            1.12 GiB /    2.00 GiB

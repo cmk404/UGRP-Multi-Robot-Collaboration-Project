@@ -13,7 +13,8 @@
 | **프로젝트 합계** | **149.4** | **135.6** | **≤ 60** (58 + 여유 2) |
 | 에이전트 상태(`~/.codex` worktree 제외, `~/.kiro`, `~/.claude`) | 6.55 | 6.77 | 예산 밖, 보고만 |
 
-- 이번 적용은 두 가지다.
+- 2026-09-26 18:24–18:54 사용자 승인 4항목을 적용했다. 결과·제외 목록·검증은 [적용 기록](../experiments/2026-09-26-disk-apply/README.md)에 있다. 아래 1–2절 수치는 그 전 측정이다.
+- 처음 적용은 두 가지다.
   - 병합된 Codex-app worktree 14개를 은퇴시켜 checkout 14.38 GiB(추정)를 확보했다. 파일시스템 여유는 32.47 → 46.88 GiB로 늘었는데, 이 값에는 다른 작업의 쓰기가 섞여 있다.
   - 이 PR의 worktree를 sparse로 바꿔 1.05 GiB → 0.13 GiB가 됐다.
 - 두 측정 사이에도 다른 에이전트의 새 실행·worktree가 늘었으므로, 차이 13.8 GiB는 순수 절감량이 아니다.
@@ -90,15 +91,15 @@
 |---|---|---|---|
 | 1 | 병합된 Codex-app worktree 14개 은퇴(무시 자료 0.82 GiB 이동) | 14.38 | **적용함** |
 | 2 | 새 worktree는 sparse checkout (`agent_worktree.py new`) | 개당 0.92 (실측 134 MiB 대 1,077 MiB) | **도구·규칙 적용**, 이후 생성분부터 |
-| 3 | 병합됐고 열린 PR이 없는 다른 에이전트 worktree 19개 은퇴 (Claude 14, Kiro 5) | 약 19.9 (무시 자료 2.26은 이동) | 주인·사용자 결정 |
-| 4 | 열린 PR·동결 소스 worktree 28개를 sparse로 전환 (`sparsify`) | 약 25 | 주인·사용자 결정 |
-| 5 | Codex 미병합 9개: PR 없는 브랜치 6(6.1), detached 감사 2(2.0), 닫힌 PR #120 1(3.70, 무시 자료 2.67) | 최대 11.9 | 사용자 결정 |
+| 3 | 병합됐고 열린 PR이 없는 다른 에이전트 worktree 은퇴 | 22개 23.01(추정), 무시 자료 0.24 이동 | **적용함**(09-26 사용자 승인, 사용 중 5개 제외) |
+| 4 | 열린 PR·동결 소스 worktree를 sparse로 전환 (`sparsify`) | 17개 15.59(18.09 → 2.50) | **적용함**(09-26 사용자 승인, 사용 중 7개 제외) |
+| 5 | Codex 미병합 9개: HEAD를 `codex/archive-<이름>-0926`에 올리고 SHA 확인 뒤 은퇴 | checkout 9.20(추정), 무시 자료 2.60 이동 | **적용함**(09-26 사용자 승인) |
 | 6 | 에이전트당 동시 worktree 8개 상한 | 안정 상태 24개 × 0.14 ≈ 3.4 | **도구 적용**(초과 시 거부) |
 | 7 | `experiments/`에 무거운 미디어 커밋 중단(파일당 1 MiB, 실험당 5 MiB) | 이후 checkout·`.git` 증가 방지 | **경고 적용**(pre-commit·CI) |
 | 8 | raw 보존 등급(4절)에 따른 외부 보관 | 21.7–46 | 사용자 결정 |
-| 9 | 기록된 dev·진단 raw 프레임 솎기(1 Hz + 결정 프레임) | 약 4 (현재 연구 dev 5.4 GiB의 70–80%) | 사용자 결정 |
+| 9 | 기록된 dev·진단 raw 프레임 솎기(1 Hz + 결정 프레임) | 논리 추정 4.74 (중복 제거 뒤 실제는 더 작음) | **보류**: 삭제 조건(재생성·파생본) 미확인, 목록만 제시 |
 | 10 | 앞으로의 캡처 설정(5절) | dev 실행당 60–80% | 러너 주인·사용자 결정 |
-| 11 | 같은 내용 파일의 APFS clone 중복 제거 | 약 2.5 | 사용자 결정(파일을 다시 쓰는 작업) |
+| 11 | 같은 내용 파일의 APFS clone 중복 제거 (4 KiB 이상, fclones) | 26.50 계획, `df` +26.77 | **적용함**(09-26 사용자 승인, 해시 재검증) |
 | 12 | `.venv-dev` 0.26, `work/` 1.13 | 최대 1.4 | 사용자 결정 |
 
 - 1–7을 모두 적용하면 worktree는 약 10 GiB 이하가 된다.
@@ -155,7 +156,10 @@ AGENTS.md는 **실제 모델 요청의 이미지·텍스트 보존**을 요구�
    - 기존 worktree는 주인이 `python3 scripts/agent_worktree.py sparsify <경로>`로 바꿀 수 있다.
 2. **raw 위치:** 실행 raw는 기본 체크아웃의 `outputs/`(절대 경로 `/Users/changmin/projects/ugrp/outputs/...`)에 쓴다. worktree 안의 `outputs/`는 worktree와 함께 사라질 수 있다.
 3. **병합 뒤 정리:** `python3 scripts/agent_worktree.py retire <경로>`로 계획을 본 뒤 `--execute`를 붙인다.
-   - 무시 자료를 `outputs/retired-worktrees/<주인>-<이름>/`으로 옮기고 개수·바이트를 확인한 뒤에만 `git worktree remove`를 실행한다.
+   - 무시된 `outputs/<이름>`은 기본 체크아웃의 같은 상대 경로로 옮긴다. 그 경로가 이미 있거나 `outputs/` 밖의 무시 파일(`MUJOCO_LOG.TXT` 등)은 `outputs/retired-worktrees/<주인>-<이름>/`으로 옮긴다(`--archive-layout`이면 전부 이쪽).
+   - 옮기기 전후 모든 파일의 개수·바이트·sha256을 비교하고 같을 때만 `git worktree remove`를 실행한다. 목록은 `outputs/retired-worktrees/<주인>-<이름>/MANIFEST.tsv`, 영수증은 같은 폴더의 `RETIRED.json`이다. 불일치면 worktree를 남기고 실패 영수증을 쓴다.
+   - 프로세스 cwd·열린 파일·명령줄이 그 경로를 가리키거나 60분 안에 바뀐 파일·git index가 있으면 거부한다(`--idle-minutes`). `sparsify`도 같다.
+   - 미병합 작업은 HEAD를 원격 `codex/archive-<이름>-0926` 같은 보관 브랜치에 올리고 `--archive-ref <브랜치>`를 준다. `ls-remote`로 원격 SHA가 HEAD와 같을 때만 진행한다.
    - `git worktree remove`를 직접 쓰지 않는다. `--force`는 쓰지 않는다. `git status --porcelain`만 보고 지우지 않는다(무시 파일이 안 보인다).
    - 다른 에이전트의 worktree는 주인이나 사용자가 정한다.
    - Codex-app worktree(`~/.codex/worktrees/<이름>/ugrp`)도 같은 절차이며, 은퇴 폴더 이름은 `codex-<이름>`이다.
@@ -203,6 +207,8 @@ python3 scripts/agent_worktree.py sparsify /Users/changmin/projects/ugrp-wt/<이
 # 병합 뒤 정리: 먼저 계획, 그다음 실행
 python3 scripts/agent_worktree.py retire /Users/changmin/projects/ugrp-wt/<이름>
 python3 scripts/agent_worktree.py retire /Users/changmin/projects/ugrp-wt/<이름> --execute
+# 미병합 작업: HEAD를 보관 브랜치에 올린 뒤
+python3 scripts/agent_worktree.py retire <경로> --archive-ref codex/archive-<이름>-0926 --execute
 # 읽기 전용 보고서
 python3 scripts/disk_report.py --json /tmp/disk.json
 # 미디어 경고 (pre-commit hook이 자동 실행; 기존 worktree는 한 번 설정)

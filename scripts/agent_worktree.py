@@ -39,7 +39,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts import tree_manifest  # noqa: E402
-from scripts.worktree_guard import Refused, processes_using, refuse_if_in_use  # noqa: E402,F401
+from scripts.worktree_guard import Refused, refuse_if_in_use  # noqa: E402
 AGENTS = ("kiro", "claude", "codex")
 DEFAULT_CAP = 8
 SPARSE_PROFILE = "agent-media-v1"
