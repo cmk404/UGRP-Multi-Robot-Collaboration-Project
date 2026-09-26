@@ -1,0 +1,15 @@
+{
+  "schema": "ugrp.zone_eval_topcam.prereg_amendments.v1",
+  "amendments": [
+    {
+      "id": "A1",
+      "written": "2026-09-26, AFTER the pre-registered search (outputs/zone-eval-topcam-20260926/search/search.json, source 733197b6) was seen; no new search was run",
+      "what_the_prereg_rule_selected": {"position_m": [3.4, 0.7, 2.9], "zone_wide_corridor_tags_v3": {"corridor_corridor_1": 0.97418, "passing_bay_bay_1": 1.0},
+                                         "note": "passes G1-G4 but the corridor walls still hide a 3.6 cm strip along their north face (2.6 % of the lane grid points)"},
+      "reason": "prereg G1 encoded only the numeric half of the task (lane coverage >= 0.97). The task (#218 coordinator decision) also says the 0.40 m walls must not occlude the lanes. A1 adds that half literally: no ST5 grid point of the lane or the passing bay may be hidden.",
+      "added_gate": {"G1b": "zone_wide_corridor_tags_v3: corridor_corridor_1 == 1.0 and passing_bay_bay_1 == 1.0 at both floor levels (0.02 m ST5 grid)"},
+      "unchanged": "change space, grid, G1-G4, the selection order (lowest z, smallest horizontal move from (3.85, 0.30), highest floor_all, smallest x, smallest y), the measurement code and the confirmation run",
+      "residual_disclosed": "a straight wall of height h hides floor behind it up to h*(d)/(H - h) from a camera at height H and horizontal distance d from the wall face; the grid step (0.02 m) bounds what ST5 can resolve, so the record also reports this analytic strip for the selected camera"
+    }
+  ]
+}

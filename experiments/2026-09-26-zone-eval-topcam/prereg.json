@@ -1,0 +1,34 @@
+{
+  "schema": "ugrp.zone_eval_topcam.prereg.v1",
+  "written": "2026-09-26, before the candidate search was run",
+  "issue": "#218 (coordinator decision, user delegated): move the evaluation-only TOP so the corridor map lane is fully visible; new version, old records unchanged",
+  "scope": "evaluation-only TOP cameras (referee, videos, report stills). Never a robot input. Robot wrist cameras, FOV, robot appearance, walls, map files and scene XML are not changed.",
+  "affected_maps": {
+    "reason": "environment v3 ST5 (experiments/2026-09-26-zone-env-v3/static_results.json, source f843d392): door maps are 1.0 in every region; only zone_wide_corridor lost coverage (corridor_corridor_1 0.97274 -> 0.86896, passing_bay_bay_1 0.96296 -> 0.81778 at walls 0.40 m)",
+    "base_map": "zone_wide_corridor",
+    "base_static_map_sha256": "262b8d7c3e73bcc6b8ff21d5ab64204ae869670c82141312593e99e590e96a20",
+    "measured_on": ["zone_wide_corridor_tags_v3 (walls_v3, 0.40 m; gate)", "zone_wide_corridor_tags_v1 (walls 0.10 m; non-regression)"]
+  },
+  "measurement": {
+    "code": "experiments/2026-09-26-zone-env-v3/static_checks.py st5() and its helpers, imported byte-identical (sha256 recorded in every output); make_world is wrapped only to apply the evaluation TOP profile after scene.setup",
+    "grid_m": 0.02, "floor_levels_z_m": [0.003, 0.032], "image_px": [640, 480],
+    "visible": "a floor point is visible to a camera when it projects inside the image and mj_multiRay (geom groups 0-4) from the camera reaches it (first hit >= distance - 1 mm); region fraction = share of floor points (wall footprints +5 mm excluded) seen by at least one TOP"
+  },
+  "change_space": {
+    "camera": "cctv_top_north_east only (the TOP above the corridor and zone side north); the other three TOPs unchanged",
+    "fixed": {"quaternion_wxyz": [1, 0, 0, 0], "fov_y_deg": 55.0, "reason": "harness/zone_perception.pixel_to_floor supports only straight-down TOPs; same lens as the approved TOP"},
+    "grid": {"x_m": [2.85, 3.85, 0.05], "y_m": [0.30, 1.20, 0.05], "z_m": [2.5, 4.0, 0.1]},
+    "search_levels_z_m": [0.003, 0.032]
+  },
+  "gate": {
+    "G1": "zone_wide_corridor_tags_v3: corridor_corridor_1 >= 0.97 and passing_bay_bay_1 >= 0.97 at both floor levels",
+    "G2": "every other ST5 region of zone_wide_corridor_tags_v3 >= its zone_eval_top_v1 value at both floor levels (no regression, incl. floor_all and within_0.30m_of_interior_walls)",
+    "G3": "zone_wide_corridor_tags_v1 (0.10 m walls): every ST5 region >= its zone_eval_top_v1 value at both floor levels",
+    "G4": "box stays detectable in the moved view: predicted top-face area of the 0.034 x 0.040 m box at 960 x 720 >= 60 px (harness/zone_color_boxes TOP_ZONE_AREA_PX lower bound 50 x 1.2)"
+  },
+  "selection": "among grid candidates passing G1-G4: lowest z (closest to the approved 2.5 m); then smallest horizontal move from (3.85, 0.30); then highest zone_wide_corridor_tags_v3 floor_all at z 0.003; then smallest x, then smallest y",
+  "if_none_pass": "record the search, do not register zone_eval_top_v2, report the blocker on #218; thresholds are not relaxed without a new written amendment",
+  "confirmation": "the selected camera is written into sim/zone_eval_top.py as zone_eval_top_v2 and committed; then unmodified st5() is run for zone_eval_top_v1 (must reproduce the env v3 numbers) and zone_eval_top_v2 on all three base maps x both wall families; the reported numbers are those st5() outputs",
+  "stills": "at most 2 concurrent renders: corridor v3 TOP mosaic v1 vs v2 with boxes placed in the formerly hidden lane/bay bands, plus existing TOP colour detectors (zone_perception_v1, top_zone_v2) on the moved view",
+  "robot_input_check": "no module under harness/ or scripts/ and no robot-side sim module imports sim.zone_eval_top or names a zone_eval_top profile; applying the profile leaves physics (qpos trace) and the robot wrist RGB byte-identical (tests/test_zone_eval_top.py)"
+}
