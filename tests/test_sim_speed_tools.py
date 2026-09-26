@@ -247,6 +247,23 @@ class EquivalenceTests(unittest.TestCase):
         self.assertEqual(report['verdict'], 'different')
         self.assertEqual(report['checks']['frame_jpeg_bytes']['mismatched'], [1])
 
+    def test_late_row_with_an_early_time_stays_outside_the_window(self) -> None:
+        """Real case (s93, base120i vs a 20 s run): approach_point is logged with t=0.0 after t=99.1."""
+        events = [{'t': 1.8, 'event': 'sweep_start'}, {'t': 30.9, 'event': 'sweep_start'},
+                  {'t': 0.0, 'event': 'approach_point'}]
+        cmds = [{'t': 5.*i, 'kind': 'hold'} for i in range(10)]
+        a = write_run(self.root/'a', [b'x', b'y', b'z'], cmds, {'outcome': 'OK'}, frame_dt=20.)
+        b = write_run(self.root/'b', [b'x', b'y'], cmds[:5], {'outcome': 'SIM_LIMIT'}, frame_dt=20.)
+        (a/'controller_events.jsonl').write_text(''.join(json.dumps(r) + '\n' for r in events))
+        (b/'controller_events.jsonl').write_text(json.dumps(events[0]) + '\n')
+        report = sim_equivalence.compare(a, b, until=20.)
+        self.assertEqual(report['verdict'], 'equivalent', report)
+        self.assertEqual(report['checks']['controller_events.jsonl']['len_a'], 1)
+        self.assertEqual(report['checks']['inputs/commands.jsonl']['len_a'], 4)
+        self.assertEqual(sim_equivalence.cut(events, 20.), events[:1])
+        self.assertEqual(sim_equivalence.cut(events, None), events)
+        self.assertEqual(sim_equivalence.cut([], 20.), [])
+
     def test_untimed_required_rows_cannot_be_cut(self) -> None:
         cmds = [{'kind': 'hold'}] * 3
         a = write_run(self.root/'a', [b'x', b'y'], cmds, {'outcome': 'OK'})

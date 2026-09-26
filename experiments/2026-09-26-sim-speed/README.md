@@ -102,7 +102,8 @@ Codex가 `origin/kiro/sim-speed@eecd2d6`을 읽기 전용으로 검토했다(P0 
 
 - 문구 정정: "전체 임무 동일"은 명령·프레임·로그·`result.json`에 한정하고, qpos 동일성은 seed별 첫 120 SIM s로 고쳤다(이 README·실험 인덱스·PR 본문).
 - CI: `tests/test_sim_speed_tools.py`·`tests/test_sim_slots.py`는 `scripts/run_ci_tests.py` `TEST_PATTERNS`에, MuJoCo가 필요한 `tests/test_exact_speedups.py`·`tests/test_sim_speed_runtime.py`는 `.github/workflows/tests.yml`의 `ubuntu-simulation-runtime` 작업에 넣었다. OpenBLAS에서 `np.dot` 순서가 다르면 비트 비교 테스트는 건너뛰고 원 경로로 돌아가는지만 확인한다.
-- 새 무거운 코호트는 실행하지 않았다. 실제 확인은 아래 슬롯 경유 짧은 실행 1회와 기존 원본의 동등성 재판정뿐이다.
+- 추가 결함(검토 후 실제 확인에서 발견): `--until-sim-s`의 행 자르기가 시간 필터여서, 늦게 기록되지만 `t=0.0`인 행(`M1OwnCamDelivery`의 `approach_point`, s93 기준 99.1 s 뒤)이 어떤 창에도 들어갔다. 20 s 비교가 이 때문에 `different`로 나왔다(`recheck/s93_until20_base_none_vs_slotcheck_exact1.filter-cut-before-fix.json`). 기록 순서의 앞부분(처음으로 T 이상인 행 전까지)으로 바꿨고 회귀 테스트를 붙였다. 기존 120 s·slice 비교는 두 쪽 모두 그 행을 창 안에 가져 판정이 바뀌지 않았다.
+- 실제 확인(새 무거운 코호트 없음): (a) `exact-v1` s93 20 SIM s 실행 1회를 `ugrp_session` → `sim_slots run` → `sim_profile`로 돌렸다(`review-fixes-codex/slot-check-s93-20-exact1`, HEAD `32d4242`, `code.dirty=false`, 부하 3.75→4.35, 실행 전 `libmujoco` 프로세스 0, 사용자 규칙의 `grep -c`는 kiro-cli·TensorBoard 7개를 셈). 슬롯 0/6을 대기 0.1 s에 잡았고, 실행 중 `status`는 보유 1·대기열 밖 sim 0으로 이중 집계가 없었으며, 끝난 뒤 보유 0이었다. 기존 `none` 기준 `base120i-s93`과 20 s까지 qpos 체크포인트 40·명령 243·프레임/JPEG 94·로그 동일. (b) 기존 원본 비교 9건을 새 검사기로 다시 판정: 기존 `equivalent` 7건 유지(dev-a8 전체 비교 2건은 qpos 미비교로 명시), 240 s 창(기준이 120 s에서 끝남)과 없는 경로는 `insufficient_evidence`(`review-fixes-codex/recheck/summary.txt`).
 
 ## TensorBoard
 

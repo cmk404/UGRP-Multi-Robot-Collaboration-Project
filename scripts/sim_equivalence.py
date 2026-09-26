@@ -98,9 +98,20 @@ def row_time(row: dict):
 
 
 def cut(items: list[dict], until: float | None) -> list[dict]:
+    """The log prefix written before SIM time ``until``: rows up to the first one stamped at or after it.
+
+    A prefix, not a filter: rows are in emission order and a truncated run's log is a prefix of the full
+    run's. Some rows carry a time that is not their emission time (``M1OwnCamDelivery`` logs
+    ``approach_point`` with ``t=0.0`` long after start); a filter would pull such a row into any window.
+    Rows without a time do not end the prefix (callers reject untimed required logs when cutting).
+    """
     if until is None:
         return items
-    return [r for r in items if row_time(r) is None or row_time(r) < until]
+    for index, row in enumerate(items):
+        t = row_time(row)
+        if t is not None and t >= until:
+            return items[:index]
+    return items
 
 
 def check_until(until) -> float | None:
