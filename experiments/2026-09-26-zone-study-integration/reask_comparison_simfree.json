@@ -1,0 +1,54 @@
+{
+ "single_pending_own_timer.v1": {
+  "no_comm": {
+   "calls": 21,
+   "http_attempts": 21,
+   "end_reason": "sim_horizon",
+   "messages": 0
+  },
+  "peer_ko": {
+   "calls": 27,
+   "http_attempts": 27,
+   "end_reason": "sim_horizon",
+   "messages": 3
+  },
+  "leader_ko": {
+   "calls": 24,
+   "http_attempts": 24,
+   "end_reason": "sim_horizon",
+   "messages": 4
+  },
+  "structured": {
+   "calls": 27,
+   "http_attempts": 27,
+   "end_reason": "sim_horizon",
+   "messages": 3
+  }
+ },
+ "one_timer_per_action (#194 offline)": {
+  "no_comm": {
+   "calls": 21,
+   "http_attempts": 21,
+   "end_reason": "sim_horizon",
+   "messages": 0
+  },
+  "peer_ko": {
+   "calls": 63,
+   "http_attempts": 63,
+   "end_reason": "sim_horizon",
+   "messages": 3
+  },
+  "leader_ko": {
+   "calls": 42,
+   "http_attempts": 42,
+   "end_reason": "sim_horizon",
+   "messages": 4
+  },
+  "structured": {
+   "calls": 63,
+   "http_attempts": 63,
+   "end_reason": "sim_horizon",
+   "messages": 3
+  }
+ }
+}
