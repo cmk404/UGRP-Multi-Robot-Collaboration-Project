@@ -4,7 +4,8 @@
 
 ## 결론
 
-- **`exact-v1`(구동 산술 + 접촉 사전 필터)은 M1에서 retired instruction을 16.6–18.3% 줄였다.** 같은 부하에서 CPU 초도 18.3% 줄었다(s93, 첫 120 SIM s). pair 러너에는 구동 산술만 해당해 −4.5%였다. 2개 seed의 **전체 임무**에서 명령 6,541/6,910개, 제어 입력 프레임 2,080/2,309장의 JPEG 바이트, 모든 로그, `result.json` 전 필드가 기존 dev-a8 실행과 같았다. 첫 120 SIM s의 qpos/qvel/act 해시 체크포인트 240개도 같았다.
+- **판정(2026-09-26 Codex 검토): `exact-v1`을 연구 코호트 공통 기본값으로 채택하는 것은 보류한다.** 기본값은 `none`이다. 검증 도구·대기열의 결함 6건은 아래 [검토 반영](#codex-검토-반영-2026-09-26)에서 고쳤다. 채택 전에 최종 소스를 고정하고 전체 M1 임무 A/B에서 파지·상승 이후까지 qpos 해시를 비교해야 한다.
+- **`exact-v1`(구동 산술 + 접촉 사전 필터)은 M1에서 retired instruction을 16.6–18.3% 줄였다.** 같은 부하에서 CPU 초도 18.3% 줄었다(s93, 첫 120 SIM s). pair 러너에는 구동 산술만 해당해 −4.5%였다. 2개 seed의 **전체 임무**에서 명령 6,541/6,910개, 제어 입력 프레임 2,080/2,309장의 JPEG 바이트, 모든 로그, `result.json` 전 필드가 기존 dev-a8 실행과 같았다. **qpos/qvel/act 상태 동일성은 seed별 첫 120 SIM s(체크포인트 240개)에서만 확인했다.** dev-a8 기준 실행에는 체크포인트가 없어 전체 임무의 상태 해시는 비교하지 못했다. 따라서 "전체 임무 qpos 동일"로 해석하지 않는다.
 - 이 Mac의 렌더링은 드물게 실행마다 달라진다: pair 기준 두 번 사이에 785장 중 1장이 최대 1 단계 달랐다(궤적·결정 동일). M1은 비교한 약 1만 장 전부 같았다.
 - 남은 CPU는 `mj_step`(약 37%)과 robot_cam 렌더(약 28%, 그중 그림자 약 75%)다. 둘 다 물리·영상을 바꾸지 않고는 줄일 방법을 찾지 못했다.
 - **가장 큰 wall 요인은 머신 과부하였다.** 같은 코드·같은 120 SIM s 구간이 부하 3–5에서 CPU 156초, 부하 12→90에서 361초였다(2.3배). instruction 수는 같고 성능 코어 비율이 떨어진다(0.95 → 0.61–0.75). 동시 sim을 제한하는 `scripts/sim_slots.py`를 추가했다.
@@ -32,9 +33,9 @@
 
 | seed | 비교 | 결과 |
 |---|---|---|
-| s93 | dev-a8 전체 vs `exact1-full-s93` | 명령 6,541·프레임 2,080(JPEG 바이트)·controller/skill/macro 로그·frames_eval·gt 7,919·retention 3,999·`result.json` **모두 동일** (`equivalence/s93_full_deva8_vs_exact1.json`) |
+| s93 | dev-a8 전체 vs `exact1-full-s93` | 명령 6,541·프레임 2,080(JPEG 바이트)·controller/skill/macro 로그·frames_eval·gt 7,919·retention 3,999·`result.json` **모두 동일** (`equivalence/s93_full_deva8_vs_exact1.json`). qpos 체크포인트는 기준 쪽에 없어 비교 안 함 |
 | s93 | `base120i-s93` vs `exact1-full-s93` (<120 s) | qpos 체크포인트 240, 명령 1,485, 프레임 594 **동일** |
-| s95 | dev-a8 전체 vs `exact1-full-s95b` | 명령 6,910·프레임 2,309·로그·gt 8,468·retention 3,645·`result.json` **모두 동일** |
+| s95 | dev-a8 전체 vs `exact1-full-s95b` | 명령 6,910·프레임 2,309·로그·gt 8,468·retention 3,645·`result.json` **모두 동일**. qpos 체크포인트는 기준 쪽에 없어 비교 안 함 |
 | s95 | `base120i-s95` vs `exact1-full-s95b` (<120 s) | qpos 체크포인트 240, 명령 1,614, 프레임 631 **동일** |
 | 둘 다 | 원 러너 `base120-*` vs `--speedups none` `base120i-*` | 120 s 절단 전체 동일(기본 경로 불변) |
 
@@ -72,10 +73,11 @@ PR #205 `6990a6e`(`kiro/zone-m2-pair-v3`)의 `scripts/run_m2_pair.py`를 이 PR�
 - 구동 산술만 `install_drive_kernel(world)`로 적용(`pair701-kernel`) vs 기준(`pair701-base`), 동시 실행(부하 52→85, P 비율 0.57 둘 다): instruction 2,011 → 1,921 G(**−4.5%**), 주 스레드 CPU 132.2 → 125.4초(−5.1%).
 - 동등성: qpos 체크포인트 241개, 명령, `result.json`(wall·부하·SHA 제외 전 키), 프레임 784/785장이 같다. 다른 1장(`r2-00144.jpg`, 디코딩 후 최대 1 단계)은 **기준 두 번(`pair701-base` vs `pair701-base-cprof-b`) 사이에서도 똑같이 다르다.** 커널과 cProfile 기준은 792개 파일 전부 같다. 즉 커널 영향이 아니라 이 Mac의 렌더링이 드물게 실행마다 달라지는 현상이다(M1에서는 비교한 프레임 약 1만 장 전부 동일). 궤적·결정에는 영향이 없었지만, "프레임 바이트 동일"을 동등성 기준으로 쓸 때 이 기준선 변동을 먼저 확인해야 한다.
 - 적용 방법: pair 러너가 월드 생성 뒤 `install_drive_kernel(world)` 한 줄을 부르면 된다. 러너 소유 PR에서 적용·재검증한다.
+- **기록 한계(검토 6):** 위 pair 실행(`pair701-base`, `pair701-base-cprof-b`, `pair701-kernel`, 2026-09-26 17:15–17:25)의 `profile.json`에는 pair worktree SHA(`6990a6e`)만 있고, 주입한 `sim/exact_speedups.py`·`scripts/sim_profile.py`의 해시는 없다. 실행 시각 직전 커밋 `493bc0f`·`92c5ea1`의 파일이 이후 커밋까지 바뀌지 않았으므로(`exact_speedups.py` SHA-256 `f1d8a430…`) 그 구현이었을 가능성이 높지만, 실행 시점 바이트로 입증된 것은 아니다. 원본 기록은 고치지 않았다. 새 `pair_prof.py`(schema `ugrp.sim_speed.pair_prof.v2`)는 실행한 바이트의 SHA-256(`injected_sources`), 속도 체크아웃 HEAD·dirty 경로(`speed_source`), 커널이 import한 pair 쪽 모듈 해시(`pair_modules_used_by_kernel`)를 기록한다.
 
 ## sim 대기열과 원격 병렬
 
-- `scripts/sim_slots.py`: `fcntl.flock` 기반 N 슬롯 세마포어(기본 코어 − 1 = 7). 보유자가 죽으면 커널이 해제한다. `--ps-cap 6`로 사용자 규칙(머신 전체 6개)도 지킨다. 기존 `grep -c` 규칙은 kiro-cli 프롬프트 문구를 세어 실제 sim 3개일 때 12로 보고했다. 테스트 7개.
+- `scripts/sim_slots.py`: `fcntl.flock` 기반 슬롯, 슬롯 수 = 머신 상한 6(사용자 규칙). 보유자가 죽으면 커널이 해제한다. 입장은 전역 `admission.lock` 안에서 "집계 → 상한 비교 → 예약"을 한 번에 하고, 실행 중 sim은 `libmujoco`를 실제로 불러온 프로세스로 센다(검토 2·3). 기존 `grep -c` 규칙은 kiro-cli 프롬프트 문구를 세어 실제 sim 3개일 때 12로 보고했다.
 - 성능 코어 4개 머신에서 5번째 이후 sim은 효율 코어에서 더 느리다(같은 instruction에 CPU 초 +60%, P 비율 0.61). 효율 코어까지 쓰면 전체 처리량은 늘 수 있지만(미측정) 개별 wall은 길어진다. 빠른 개발 반복은 동시 4개 이하가 유리할 것으로 본다.
 - Ubuntu·Kaggle·Colab 병렬 코호트의 비용·절차는 [docs/sim_speed.md §6](../../docs/sim_speed.md)에 정리했다. OSMesa 렌더러와 Linux 부동소수점은 Mac과 달라 같은 코호트로 섞을 수 없고, 에피소드 시간(특히 OSMesa 렌더)은 측정하지 않았다. 원격 자원은 만들지 않았다.
 
@@ -85,14 +87,31 @@ PR #205 `6990a6e`(`kiro/zone-m2-pair-v3`)의 `scripts/run_m2_pair.py`를 이 PR�
 - `slice-s93-to-carry`(exact-v1): SIM 173.8 s에 파지 직후 단계에서 정지(정착 포함 175.4 s, 전체 397.2 s의 44%, instruction 2,750 G = 전체의 41%). 정지 시각 전까지 전체 실행과 qpos 체크포인트 347·명령 2,642·프레임 927장 JPEG 바이트·로그가 **동일**(`equivalence/s93_slice_to_carry_vs_exact1_full.json`). 탐색·접근·파지 단계 개발 반복에 쓴다.
 - 제안(미구현): 문 앞에서 상자를 든 채 시작, 슬롯 앞에서 배치부터 시작. 둘 다 (1) weld 없이 파지 상태를 물리적으로 만드는 초기화, (2) 제어기·스킬 v9의 중간 단계 진입점(현재 위치 추정·보유 상태)이 필요하다. 해당 파일은 PR #201·자기 카메라 위치 추정 작업 소유여서 이 PR에서 고치지 않았다. 대안으로 전체 실행의 MuJoCo 상태(`mj_getState`)와 제어기 상태를 같은 SIM 시각에 저장·복원하는 checkpoint slice가 있으나, 러너 closure 구조 변경이 필요하다. 어떤 slice도 동결·시험 판단을 대신하지 않는다.
 
+## Codex 검토 반영 (2026-09-26)
+
+Codex가 `origin/kiro/sim-speed@eecd2d6`을 읽기 전용으로 검토했다(P0 없음). 각 항목에 수정 전 실패·수정 후 통과 테스트를 붙였다. 수정 전후 재현: `outputs/sim-speed-20260926/review-fixes-codex/scenarios_before_after.txt`(같은 스크립트 `scenarios.py`를 `eecd2d6` 소스와 수정 소스에 실행), 새 테스트를 옛 소스에 돌린 결과 `new_tests_on_old_source.txt`(도구 테스트 31 실패, 슬롯 테스트 수집 오류, 커널 2 실패, 실행 테스트 6 실패).
+
+| # | 결함 | 수정 전 → 후 (재현) | 수정·테스트 |
+|---|---|---|---|
+| 1 P1 | 없는 두 경로 비교가 `equivalent=True`, JPEG 0장 | `true`, 0장 → `insufficient_evidence` | `scripts/sim_equivalence.py`: 필수 파일·JSON 객체 행·구간 도달(양쪽 마지막 프레임 ≥ T)·비교 수 > 0 요구, 종료 코드 2. `tests/test_sim_speed_tools.py` (빈 폴더·빈 로그·깨진 행·빈 JPEG·T=0/NaN/Inf/bool) |
+| 2 P1 | `--ps-cap 6`이 원자적이지 않아 5개 실행 중 두 래퍼가 모두 시작(7개), 기본 슬롯 7 | 2개 입장·7개 → 1개 입장·6개, 기본 7 → 6 | `scripts/sim_slots.py`: 전역 `admission.lock` 안에서 집계+예약, 슬롯 수 = 상한 6, `--ps-cap` 제거. `tests/test_sim_slots.py::test_concurrent_admission_cannot_exceed_the_cap` |
+| 3 P2 | argv 문자열로 sim 집계(`pair_prof.py` 0, `run_ci_tests.py` 1, `kiro-cli` 경로 제외) | 실제 MuJoCo 2개 중 0개·비 sim 1개 → 2개·0개 | `libmujoco` 매핑(macOS `lsof`, Linux `/proc`)으로 집계, 슬롯 보유자·자손·대기자는 중복 제외, 집계 불가 시 실패. `tests/test_sim_speed_runtime.py`(실제 MuJoCo 프로세스), `tests/test_sim_slots.py` |
+| 4 P2 | phase stop 뒤 `restore()`해도 `SIM_LIMIT_S == -1` | −1 → 720 | `scripts/sim_profile.py`: `SIM_LIMIT_S`를 `Recorder._set`으로 등록해 복원, 준비 실패 시에도 복원. 같은 프로세스 후속 전체 실행 테스트 |
+| 5 P2 | 기존 `PhysicsDriveKernel`이 있으면 `already_installed`로 유지 | 유지 → `RuntimeError` | `sim/exact_speedups.py`: 타입·`version`·월드 확인, 다른 커널은 거부. M1 러너는 거부 시 `world.close()`. `tests/test_exact_speedups.py` |
+| 6 P2 | pair 결과에 주입 소스 해시 없음 | pair SHA만 → 실행 바이트 SHA-256 | `pair_prof.py` v2(위 pair 절 참고), 과거 기록은 그대로 두고 한계만 적음. `tests/test_sim_speed_runtime.py::PairProfSourceTests` |
+
+- 문구 정정: "전체 임무 동일"은 명령·프레임·로그·`result.json`에 한정하고, qpos 동일성은 seed별 첫 120 SIM s로 고쳤다(이 README·실험 인덱스·PR 본문).
+- CI: `tests/test_sim_speed_tools.py`·`tests/test_sim_slots.py`는 `scripts/run_ci_tests.py` `TEST_PATTERNS`에, MuJoCo가 필요한 `tests/test_exact_speedups.py`·`tests/test_sim_speed_runtime.py`는 `.github/workflows/tests.yml`의 `ubuntu-simulation-runtime` 작업에 넣었다. OpenBLAS에서 `np.dot` 순서가 다르면 비트 비교 테스트는 건너뛰고 원 경로로 돌아가는지만 확인한다.
+- 새 무거운 코호트는 실행하지 않았다. 실제 확인은 아래 슬롯 경유 짧은 실행 1회와 기존 원본의 동등성 재판정뿐이다.
+
 ## TensorBoard
 
 `outputs/tensorboard/0926-sim-speed`(14 run, `make_tb_snapshot.py`, `d28a36a`): `speed/*`(120 s 시점·전체 CPU, instruction, P 코어 비율, 동등성), `result/sim_s·commands·wall_s`(wall은 참고값), 전체 임무 M1만 `evaluation/reported_success`. 중단 2건은 텍스트만. EventAccumulator 값 37개가 원본 `profile.json`/`result.json`과 일치했고, 공용 서버(PID 9291, 재시작 없음)의 `/data/runs`·scalars API에서 14 run을 확인했다. `outputs/tensorboard-view.json`에는 `sim_speed_20260926` 키만 추가했다(다른 키 값·순서 불변, 파일은 indent 2로 다시 저장). [대시보드](http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Finstructions_g_at_120s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Fcpu_process_s_at_120s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Fequivalent%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fsim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%5D&smoothing=0&runFilter=%5E0926-sim-speed%2F#timeseries). 브라우저 화면은 열어 보지 않고 API로 값을 확인했다.
 
 ## 권장 설정
 
-1. M1 개발 실행은 `--speedups exact-v1`. 새 동결·시험 코호트도 이 설정을 고정해 쓸 수 있다(동일성 검증됨, manifest에 기록).
-2. 모든 sim을 `sim_slots.py run --ps-cap 6`으로 감싸 머신 과부하를 막는다.
+1. M1 **개발** 실행은 `--speedups exact-v1`을 쓸 수 있다(manifest에 기록). 연구 동결·시험 코호트의 기본값은 전체 임무 qpos A/B 전까지 `none`이다.
+2. 모든 sim을 `sim_slots.py run --owner <agent> -- <cmd>`로 감싸 머신 과부하를 막는다(기본 상한 6).
 3. CPU 비교는 `scripts/sim_profile.py`의 instruction 수와 `cpu_at_sim_mark`로 하고, 새 가속 항목은 `scripts/sim_equivalence.py`로 2개 seed 전체 임무 동일성을 확인한 뒤 채택한다.
 
 ## 참고 자료
