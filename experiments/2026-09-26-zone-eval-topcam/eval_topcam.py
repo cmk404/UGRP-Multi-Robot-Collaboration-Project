@@ -4,6 +4,7 @@ Subcommands (raw outputs go to the PRIMARY checkout's outputs/, never a worktree
 
   search    grid search of the moved ``cctv_top_north_east`` (prereg.json change_space,
             gate G1-G4, selection rule) with the env v3 ST5 helpers
+  select    prereg rule and amendment A1 (G1b) applied to the saved search (no new measurement)
   coverage  unmodified env v3 ``st5()`` under a profile (make_world wrapped only to
             apply ``sim.zone_eval_top`` after scene.setup), all maps x both wall families
   stills    corridor v3 TOP mosaics under v1 and v2 with boxes and a robot placed in
@@ -170,6 +171,47 @@ def gate(v3, v1, base3, base1, z):
     return {'G1': g1, 'G2': g2, 'G3': g3, 'G4': g4}
 
 
+def selection_key(row, authored):
+    """prereg selection order: lowest z, smallest horizontal move, highest floor_all, smallest x, y."""
+    x, y, z = row['position_m']
+    return (z, round(math.hypot(x - authored[0], y - authored[1]), 6), -row['v3']['z0.003']['floor_all'], x, y)
+
+
+def g1b(row):
+    """Amendment A1: no ST5 grid point of the lane or the passing bay hidden (both floor levels)."""
+    return all(row['v3'][lv][LANE] == 1. and row['v3'][lv][BAY] == 1. for lv in row['v3'])
+
+
+def wall_strip_m(camera_y, camera_z, wall_face_y=.925, wall_h=.40, floor_z=.003):
+    """Analytic floor strip hidden behind the corridor walls' north face (long wall, camera south of it)."""
+    h, H = wall_h - floor_z, camera_z - floor_z
+    return max(0., h*(wall_face_y - camera_y)/(H - h))
+
+
+def run_select(out, log):
+    """Apply prereg + amendment A1 to the saved search (no new measurement)."""
+    path = RAW/'search'/'search.json'
+    search = json.loads(path.read_text())
+    auth = search['authored_position_m']
+    passing = sorted((r for r in search['rows'] if r['pass']), key=lambda r: selection_key(r, auth))
+    amended = [r for r in passing if g1b(r)]
+    pick = lambda r: None if r is None else {**{k: r[k] for k in ('position_m', 'gate', 'v3', 'box_area_px_960x720')},
+                                             'hidden_strip_north_of_corridor_walls_m': round(wall_strip_m(
+                                                 r['position_m'][1], r['position_m'][2]), 4)}
+    result = {**header('selection'), 'search': str(path), 'search_sha256': sha_file(path),
+              'amendments_sha256': sha_file(X/'prereg_amendments.json'), 'search_code': search['code'],
+              'passing_G1_G4': len(passing), 'passing_G1_G4_and_G1b': len(amended),
+              'prereg_rule_selection': pick(passing[0] if passing else None),
+              'amended_selection': pick(amended[0] if amended else None),
+              'authored_position_m': auth,
+              'authored_hidden_strip_m': round(wall_strip_m(auth[1], auth[2]), 4),
+              'next_amended_candidates': [pick(r) for r in amended[1:6]]}
+    (out/'selection.json').write_text(json.dumps(result, indent=1) + '\n')
+    log(f"prereg rule {result['prereg_rule_selection']['position_m'] if passing else None}; "
+        f"amended {result['amended_selection']['position_m'] if amended else None}")
+    return result
+
+
 def run_search(out, log):
     sc, sc_sha = static_checks()
     spec = PREREG['change_space']['grid']
@@ -195,11 +237,7 @@ def run_search(out, log):
                                  'box_area_px_960x720': round(box_area_px(float(z)), 1)})
             log(f'z {z}: {sum(r["pass"] for r in rows)} passing so far of {len(rows)}')
         auth = v3.authored
-
-        def key(r):
-            (x, y, z) = r['position_m']
-            return (z, round(math.hypot(x - auth[0], y - auth[1]), 6), -r['v3']['z0.003']['floor_all'], x, y)
-        passing = sorted((r for r in rows if r['pass']), key=key)
+        passing = sorted((r for r in rows if r['pass']), key=lambda r: selection_key(r, auth))
         selected = passing[0] if passing else None
         detail = None
         if selected:
@@ -317,7 +355,7 @@ def run_stills(out, log):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    p.add_argument('command', choices=('search', 'coverage', 'stills'))
+    p.add_argument('command', choices=('search', 'select', 'coverage', 'stills'))
     p.add_argument('--profile', default=None, help='coverage: evaluation TOP profile id (required)')
     p.add_argument('--output', default=None)
     args = p.parse_args(argv)
@@ -333,6 +371,8 @@ def main(argv=None):
     try:
         if args.command == 'search':
             run_search(out, log)
+        elif args.command == 'select':
+            run_select(out, log)
         elif args.command == 'coverage':
             run_coverage(out, args.profile, log)
         else:
