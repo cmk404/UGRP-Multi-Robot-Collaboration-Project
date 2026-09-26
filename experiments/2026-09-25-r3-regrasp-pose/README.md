@@ -141,3 +141,7 @@ Codex의 관절·베이스·바퀴 수치를 모두 재현했다. 팔·집게는
   - 위: 원본. 아래: 전경(파랑)·노란 마스크(빨강).
   - 열: G, F, F+G 빔.
 - [results.json](results.json): 요약·해시·판정
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 `stage_model_dir`(`…/team-recovery-fix/outputs/dispatch-models/e78a5a5777f5bc48/models/varied`)가 지워졌다. 이 폴더는 추적 중인 `experiments/dispatch-skill-integration-20260917/models.zip`의 압축 해제본이다. 기록된 모델 해시 7개가 ZIP 구성원과 모두 같아 복원할 수 있다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.

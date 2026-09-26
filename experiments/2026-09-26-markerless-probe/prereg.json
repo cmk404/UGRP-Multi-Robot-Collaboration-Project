@@ -1,0 +1,73 @@
+{
+ "schema": "ugrp.markerless_probe.prereg.v1",
+ "written_before_test": true,
+ "question": "offline, on the recorded M1 test frames: how accurately does a tag-free floor/wall-boundary scan PF localize, compared with the tag PF on the same frames and with issued-command dead reckoning?",
+ "claim_scope": "feasibility probe only: open-loop replay of trajectories driven by the tag PF; no closed-loop or success claim; tags are physically present in the frames (not used)",
+ "test_episodes": [
+  "test/m1test-s101",
+  "test/m1test-s102",
+  "test/m1test-s103",
+  "test/m1test-s104",
+  "test/m1test-s105",
+  "test/m1test-s106"
+ ],
+ "dev_episodes_used_for_tuning": [
+  "dev-a8/m1dev-s93",
+  "dev-a8/m1devdiag-s95",
+  "dev-a6/m1devdiag-s94 (calibration only)"
+ ],
+ "filters": {
+  "boundary": "v3 (calibration_dev.json), dock prior (static spawn row) +-0.15 m / +-10 deg",
+  "deadreck": "same PF, no measurement",
+  "tag_replay": "M1 tag PF replayed offline (same detector/calibration)",
+  "tag_online": "tag PF of the recorded run (eval_only/frames_eval.jsonl)"
+ },
+ "calibration_file_sha256": "e554c6178c7f8846795fbf9d1288236035890f405f1ed5bafec00374563bd9af",
+ "measurement": {
+  "bias_rad": {
+   "unloaded": {
+    "s3": [
+     740,
+     1072
+    ],
+    "bias": [
+     -0.01821,
+     -0.02439
+    ],
+    "share_lt3px_near": [
+     0.5688,
+     0.4135
+    ],
+    "fit": [
+     "median_signed_zero",
+     "median_signed_zero"
+    ]
+   },
+   "loaded": {
+    "s3": [
+     777,
+     1072
+    ],
+    "bias": [
+     -0.04675,
+     -0.04748
+    ],
+    "share_lt3px_near": [
+     0.2792,
+     0.5801
+    ],
+    "fit": [
+     "median_signed_zero",
+     "median_signed_zero"
+    ]
+   }
+  }
+ },
+ "metrics": "per-frame position error vs eval-only GT (p50/p90/p99/max, share < 5 / 10 cm), yaw error p50/p90; pooled and per phase group (search_approach, door_zone = |x-2.2|<0.6 and -0.45<y<0.55, carry, manipulate, look_back)",
+ "reference_needs": "door 0.5 m wide; M1 placement GT slot errors were 1-4 cm with tags",
+ "not_run_on_test": [
+  "v4 paint explanations (worse on dev)",
+  "global (uniform) initialization (not tuned)"
+ ],
+ "run_once": true
+}

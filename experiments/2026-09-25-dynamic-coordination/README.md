@@ -34,3 +34,7 @@ PR #142의 `--coordination dynamic`이 실제 LLM으로 (1) 자기 선언으로 
 - 파지·운반·상자 로봇의 실패는 아직 대화 대상이 아니다.
 
 TensorBoard: `outputs/tensorboard/0925-dynamic-coordination` (view key `dynamic_coordination_20260925`).
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 `baseline-plan-first` 원본(`…/post-run-replay/…/20260925-000852-dispatch-ee5eac42`)이 지워졌고 복구할 수 없다. 남은 것은 `results.json`의 요약값·해시와 TensorBoard 스냅샷이다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.

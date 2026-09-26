@@ -139,3 +139,7 @@ $PY experiments/2026-09-25-zone-cargo-perception-v2/collect.py $OUT
   - 로컬에만 있으며(gitignore) 원격 백업이 아니다.
   - manifest·summary·records 해시는 `results.json`의 `artifacts`에 있다.
 - **TensorBoard:** 조정자 지시로 제외했다.
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 worktree의 원본 `outputs/zone-cargo-perception-v2-20260925/`가 지워졌고 복구할 수 없다. 파일 해시는 `results.json`의 `artifacts`에 있다. 위 재현 명령으로 다시 렌더할 수 있지만, 지워진 프레임과 바이트가 같은지는 확인하지 않았다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.
