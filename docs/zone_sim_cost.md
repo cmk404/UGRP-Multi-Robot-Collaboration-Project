@@ -74,6 +74,20 @@ d_q   = quantum * ceil(raw_q / quantum)
 - **알려진 하한을 지우지 않는다.** 일부 시도의 사용량만 알면 그 수(예: 입력 833·출력 40)를 기록하고 `usage_bound='lower_bound'`로 표시한다. horizon에서 censor된 호출도 같다. 스케줄러가 계산한 청구 SIM 비용(`charged_sim_s`, `would_release_sim_s`)도 비용 모형의 사실이므로 남긴다.
 - 실제 전송 계층은 `TransportFailure(..., attempts=..., usage_known=False)`로 "아는 것이 전부가 아니다"를 알린다. 시도를 하나도 밝히지 않은 `TransportFailure`는 미상으로 기록한다.
 - **보낸 시도와 그 예산을 돌려주지 않는다(Codex 5차 검토 P1).** 준수하는 전송 계층은 시도마다 보내기 직전에 `PendingCall.reserve`로 예약한다. 사용량 미상 응답(예외, `TransportFailure`, `usage_known=False`인 `CallReply`)이 예약보다 적은 시도를 밝히면, 스케줄러는 **예약한 시도를 모두 보낸 것으로 센다.** 빠진 시도는 비용을 내는 `error` 시도로 채워 앞에 두고(응답의 마지막 시도가 호출 결과로 남는다), `unreported_attempts`(`contract_log()`에도 포함)와 `attempts_unreported` 사건에 기록한다. 그래서 `commit`이 예약을 돌려주지 않고, 스케줄러 재시도가 이미 쓴 예산을 다시 쓰지 못한다. 사용량을 **아는** 응답은 자기 시도 수를 밝히는 것으로 보고, 쓰지 않은 예약은 전처럼 반환한다. 예약보다 많은 시도는 전처럼 예산 위반(`over_budget_attempts`)이다.
+- **`submit()` 실패도 호출이다(Codex 6차 검토 P1).** 전에는 `submit()`이 예외를 내면 예약을 돌려주고 예외를 다시 던졌다. 그래서 요청을 보낸 뒤 실패한 호출이 호출·censor 기록에서 빠지고 SIM 비용이 0이었다. HTTP 상한 1에서 호출자가 예외를 처리하고 다시 실행하면 실제 전송 2회·장부 0회였다. 이제 규칙은 다음과 같다.
+  - **`NotSent`만 반환한다.** 전송 계층이 "요청을 하나도 보내지 않았다"를 증명할 때(예: 보내기 전 입력 검증 실패) `NotSent`를 던진다. 스케줄러는 그 호출이 예약한 시도를 모두 돌려주고, `unsent_calls`와 `call_not_sent` 사건에 남기고, 예외를 다시 던진다.
+  - **그 밖의 예외는 실패한 호출로 정산한다.** 보낸 뒤 실패했을 수 있기 때문이다. 호출은 `reply()` 실패와 같이 시도 1회(또는 `submit` 안에서 예약한 수)로 세고, SIM 비용을 내고, hold하고, 기록에 남는다. 사용량은 미상이다(`TransportFailure`가 밝힌 시도·토큰은 하한으로 남는다). `transport_errors`의 `stage`가 `submit`이다. 예외는 다시 던지지 않고 루프가 계속된다.
+  - `reply()`가 던진 `NotSent`는 증명이 되지 않는다. `submit()`이 토큰을 돌려준 순간 첫 요청은 넘겨진 것이기 때문이다. 이 경우는 일반 실패다.
+  - `KeyboardInterrupt` 같은 중단은 예약을 **돌려주지 않고**(`attempt_budget.outstanding`에 남는다) ledger 상태를 `interrupted`로 적은 뒤 다시 던진다.
+- **보낸 수를 아는 전송 계층은 밝힌다(`sent_attempts`, Codex 6차 검토 권고).** 위 5차 규칙은 예약한 재시도를 보내지 않은 경우 실제 1회를 2회로 센다(보수적 과대 청구). `CallReply`와 `TransportFailure`는 `sent_attempts`(첫 요청 포함, 실제로 나간 요청 수)를 받는다. 값이 있으면 예약 수 대신 그 수를 세고 청구하며, 쓰지 않은 예약은 반환한다. `None`(기본값)은 "모른다"이며 5차 규칙대로 예약을 모두 보낸 것으로 센다. 값은 1 이상의 정수여야 한다(0회는 `NotSent`로만 표현한다). 보고한 시도 수보다 작을 수 없고, 사용량이 확정이면 보고한 시도 수와 같아야 한다. bool·소수·문자열·NaN·Inf는 거절한다. 예약보다 큰 값은 전처럼 예산 위반이다.
+
+### 재질문 타이머 (`REASK_POLICY = 'single_pending_own_timer.v1'`)
+
+로봇 자기 재질문 타이머는 `EventScheduler.arm_reask(actor, label, at=...)`로만 건다. **로봇마다 대기 중인 재질문 타이머는 최대 1개다.** 타이머가 대기 중이면 새로 걸지 않고 `False`를 돌려준다(`reask_counts[actor]['skipped']`). 대기 중인 타이머는 처음 건 시각에 울리고, 뒤의 행동이 시각을 옮기지 않는다. 울리면 다음 행동이 다시 걸 수 있다. 일반 `timer()`는 이 표지를 건드리지 않는다. 시각은 유한한 수여야 하고 과거일 수 없다.
+
+- **이유(통합 PR #229, 이슈 #222):** 전에는 행동마다 타이머를 하나씩 더 걸었다. 그래서 호출마다 끝나지 않는 사슬이 하나씩 생겼고, 채널 조건에서 메시지로 시작된 호출이 사슬을 늘려 모든 조건이 445–478 SIM s에 호출 예산 90회를 다 썼다. 오프라인 스모크 v4의 채널 조건 18회도 모두 `budget_exhausted`였다.
+- 통합 러너의 임시 우회(`harness/zone_study_integration.py` `_arm_reask`)와 같은 규칙·같은 식별자다. 통합 쪽은 이 API를 쓰면 지역 우회를 지울 수 있다.
+- 오프라인 루프(`harness/zone_study_offline.py`)는 이 규칙을 쓰며, 실행 번들 ID를 `zone_study_offline_v2`로 올렸다. v1~v4 기록은 옛 규칙(`zone_study_offline_v1`)으로 실행됐다.
 
 ## 3. 실행 의미 (스케줄러 계약)
 
@@ -108,7 +122,7 @@ d_q   = quantum * ceil(raw_q / quantum)
 |---|---:|---|
 | `min_interval_s` | 2.0 | actor당 최소 호출 간격. 이른 계기는 버리지 않고 뒤로 미룬다 |
 | `max_outstanding_per_actor` | 1 | 동시 미완료 호출 |
-| `idle_reask_s` / `busy_reask_s` | 10 / 60 | 재검토 타이머 시작값 |
+| `idle_reask_s` / `busy_reask_s` | 10 / 60 | 재검토 타이머 시작값. 로봇마다 대기 중인 타이머는 1개(`REASK_POLICY`) |
 | `observe_period_s` | 1.0 | 자기 카메라 관측 주기. `arm_observations()`로 시작한다 |
 | `max_retries` | 1 | 실패 호출의 추가 호출 수 |
 | `max_calls_per_actor` | 30 | 예산. 초과분은 조용히 사라지지 않고 `call_refused`로 기록된다 |

@@ -281,7 +281,12 @@ PYTHONPATH=. .venv-sim-worker-mac/bin/python scripts/zone_study_report.py \
 - `--tb-events`는 TensorBoard 자체 protobuf로 이벤트 파일만 새로 쓴다. 뷰어·서버 설정,
   `outputs/tensorboard-view.json`, 기존 스냅샷은 건드리지 않는다. logdir에 이미 있는 run은
   거절하며(`FileExistsError`, 보고서 파일을 쓰기 전에 검사), logdir 밖을 가리키는 run 이름도
-  거절한다. 공용 뷰어 등록과 화면 확인은 [TensorBoard 안내](tensorboard.md)의 절차를 따로 따른다.
+  거절한다. 6차 검토 P2부터는 이 검사를 **실제 경로**로 한다. logdir와 run 사이의 경로 요소가
+  심볼릭 링크이면(끊어진 링크, logdir 안을 가리키는 링크 포함) 거절한다. `Path.resolve()`한 경로가
+  실제 logdir 안에 있어야 한다. 중복은 실제 경로를 대소문자·유니코드 정규화해서 비교한다(macOS 기본
+  파일 시스템은 `A`와 `a`를 구분하지 않는다). 한 run이 다른 run의 상위 폴더가 되는 것도 거절한다.
+  logdir 자체가 링크인 것은 허용하며, 쓰기는 링크가 가리키는 실제 경로에 한다. 각 run은 만들기
+  직전에 한 번 더 확인한다. 공용 뷰어 등록과 화면 확인은 [TensorBoard 안내](tensorboard.md)의 절차를 따로 따른다.
 - run 이름은 시행마다 `<condition>/<trial_id>`, 조건별로 `cohort/<condition>`이다(Codex 5차 검토 P2).
   같은 조건·시나리오·seed의 반복 시행도 run이 따로 생긴다. `trial_id`는 경로 한 칸이어야 하므로
   ASCII 영숫자와 `_`·`-`·`.`(첫 글자 제외)만 받고, run 이름이 겹치면 거절한다. 시나리오·seed는

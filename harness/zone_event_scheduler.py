@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import collections
 import heapq
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field, replace
 from types import MappingProxyType
@@ -50,6 +51,10 @@ from harness.zone_study_contract import (CONDITIONS as CONTRACT_CONDITIONS, ENVE
 
 SCHEDULER_SCHEMA = 'ugrp.zone_event_scheduler.v1'
 DEFAULT_ACTORS = ROBOTS
+#: Own re-ask timers (``EventScheduler.arm_reask``): at most ONE pending per
+#: actor; arming while one is pending arms nothing. Same identifier and rule as
+#: the integration runner's local workaround (PR #229), which can now import it.
+REASK_POLICY = 'single_pending_own_timer.v1'
 #: Package A's message encodings (``harness.zone_study_contract``).
 ENCODINGS = tuple(sorted({c.encoding for c in CONTRACT_CONDITIONS.values()} - {'none'}))
 
@@ -142,12 +147,17 @@ class CallReply:
     #: Kept APART from the standardised billed size in ``attempts`` that the
     #: SIM cost uses (third review, finding 18 follow-up).
     provider_usage: object = None
+    #: Sixth review: how many HTTP requests of this call LEFT, when the
+    #: transport can tell; None = it cannot (every reserved attempt then counts
+    #: as sent when the usage is unknown). See ``_sent_count``.
+    sent_attempts: object = None
 
     def __post_init__(self):
         if not self.attempts:
             raise ValueError('a reply needs at least one attempt')
         if not isinstance(self.usage_known, bool):
             raise ValueError('usage_known must be a bool')
+        _sent_count(self.sent_attempts, self.attempts, usage_known=self.usage_known)
         if self.provider_usage is not None:
             if not isinstance(self.provider_usage, Mapping) or any(
                     isinstance(v, bool) or not isinstance(v, int) or v < 0
@@ -190,7 +200,7 @@ class TransportFailure(Exception):
     """
 
     def __init__(self, message, *, attempts, unparsed_utterances=0, provider_usage=None,
-                 usage_known=True):
+                 usage_known=True, sent_attempts=None):
         super().__init__(message)
         if not isinstance(usage_known, bool):
             raise ValueError('usage_known must be a bool')
@@ -198,6 +208,57 @@ class TransportFailure(Exception):
         self.unparsed_utterances = int(unparsed_utterances)
         self.provider_usage = provider_usage
         self.usage_known = usage_known
+        #: Sixth review: how many HTTP requests of this call really LEFT, when
+        #: the transport can tell (None = it cannot). See ``_sent_count``.
+        self.sent_attempts = _sent_count(sent_attempts, self.attempts,
+                                         usage_known=usage_known and bool(self.attempts))
+
+
+class NotSent(Exception):
+    """``submit()``'s proof that NO request of the call left (sixth review, P1).
+
+    The only ``submit()`` failure whose reserved attempts are refunded: raise it
+    when the call failed BEFORE its first request could leave (for example the
+    payload failed validation or a local limiter refused). Any other exception
+    raised by ``submit()`` may come after the request was sent, so the scheduler
+    settles it as a failed call with an unknown usage: the attempt is counted,
+    the call is charged SIM time and it stays in the call records. ``NotSent``
+    is re-raised; the call is recorded in ``EventScheduler.unsent_calls``.
+
+    Raised by ``reply()`` it proves nothing: ``submit()`` returning a token means
+    the first request was handed off, so there it is an ordinary failure.
+    """
+
+
+def _sent_count(value, attempts, *, usage_known):
+    """Validate a transport's declared number of SENT requests of one call.
+
+    ``None`` = the transport cannot tell, and every reserved attempt is counted
+    as sent when the usage is unknown (fifth review rule). An int is the count of
+    requests that left, the first one included, so it is at least 1 (a call with
+    no request is :class:`NotSent`) and at least the number of reported attempts
+    (each reported attempt was sent). With a KNOWN usage the reported attempts
+    are the whole list, so the count must equal it.
+    """
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f'sent_attempts must be None or an int >= 1 (0 sent = NotSent), got {value!r}')
+    if value < len(attempts):
+        raise ValueError(f'sent_attempts={value} is fewer than the {len(attempts)} reported attempt(s)')
+    if usage_known and value != len(attempts):
+        raise ValueError(f'a reply with a known usage reports all its attempts: sent_attempts={value} '
+                         f'but {len(attempts)} attempt(s) reported')
+    return value
+
+
+class _SubmitFailed:
+    """Token of a call whose ``submit()`` raised after (possibly) sending it."""
+
+    __slots__ = ('error',)
+
+    def __init__(self, error):
+        self.error = error
 
 
 @dataclass
@@ -358,6 +419,13 @@ class EventScheduler:
         token = transport.submit(pending_call)   # start the work, return a handle
         reply = transport.reply(token)           # may block; returns a CallReply
 
+    ``submit`` raising :class:`NotSent` proves nothing left: the reservation is
+    refunded and the exception re-raised. Any other exception of ``submit`` or
+    ``reply`` is a failed, charged call with an unknown usage (sixth review).
+    A transport that can tell how many requests left says so with
+    ``sent_attempts``; otherwise every reserved attempt of an unknown-usage call
+    counts as sent (``_reply_of``).
+
     Optional callbacks, all pure observers from the scheduler's point of view:
 
     ``advance(from_s, to_s)``   step physics over a SIM interval,
@@ -410,6 +478,14 @@ class EventScheduler:
         #: Fifth review, P1: calls whose unknown-usage reply accounted for fewer
         #: attempts than they reserved; every reserved attempt was counted as sent.
         self.unreported_attempts = []
+        #: Sixth review, P1: calls whose ``submit()`` raised :class:`NotSent`,
+        #: the only failure proven to be before any request left (refunded).
+        self.unsent_calls = []
+        #: ``REASK_POLICY``: the SIM time of the one pending own re-ask timer per
+        #: actor, and how often arming was skipped because one was pending
+        #: (integration PR #229, issue #222).
+        self._reask_pending = {}
+        self.reask_counts = {actor: {'armed': 0, 'skipped': 0} for actor in self.actors}
         #: Robot-facing inbox: package A's closed envelope (``ENVELOPE_KEYS``),
         #: the SAME shape as package C's ``Transport.inbox`` (second review,
         #: finding 2). Delivery times live in ``deliveries`` (evaluation).
@@ -457,6 +533,38 @@ class EventScheduler:
         self._check_actor(actor)
         when = self.clock + float(delay_s) if at is None else float(at)
         self._push('timer', when, (0., self._rank[actor], 0, 0), {'actor': actor, 'label': label})
+
+    def arm_reask(self, actor, label='idle', *, at):
+        """Arm ``actor``'s own re-ask timer unless one is still pending (``REASK_POLICY``).
+
+        Returns True when a timer was armed and False when one of this actor's
+        re-ask timers had not fired yet, in which case NOTHING is armed. The
+        offline rule used to arm a new timer after every action, so each call
+        started one more perpetual chain and message-triggered calls multiplied
+        them until every condition had spent its call budget (integration PR
+        #229, issue #222). The pending timer fires at the time it was armed for;
+        a later action does not move it. The caller decides the time (idle or
+        busy delay) and whether the actor still has budget and horizon left.
+        """
+        self._check_actor(actor)
+        if label not in TRIGGERS:
+            raise ValueError(f'unknown re-ask label {label!r}; known: {sorted(TRIGGERS)}')
+        if isinstance(at, bool) or not isinstance(at, (int, float)) or not math.isfinite(at):
+            raise ValueError(f're-ask time must be a finite number of SIM seconds, got {at!r}')
+        if at < self.clock - 1e-9:
+            raise ValueError('cannot arm a re-ask in the SIM past')
+        if actor in self._reask_pending:
+            self.reask_counts[actor]['skipped'] += 1
+            return False
+        self._push('timer', at, (0., self._rank[actor], 0, 0), {'actor': actor, 'label': label, 'reask': True})
+        self._reask_pending[actor] = _round(at)
+        self.reask_counts[actor]['armed'] += 1
+        return True
+
+    def reask_pending(self, actor):
+        """True while ``actor``'s re-ask timer is armed and has not fired."""
+        self._check_actor(actor)
+        return actor in self._reask_pending
 
     def arm_observations(self, actors=None, *, period_s=None, first_at=None):
         """Start the periodic own-camera observation tick (re-arms itself)."""
@@ -701,29 +809,53 @@ class EventScheduler:
         ones (the reply's last attempt stays the call outcome) and the gap is
         recorded in ``unreported_attempts``. A reply with a KNOWN usage states
         its own attempts; an unused reservation of it is still refunded.
+
+        Sixth review: a transport that CAN tell how many requests left declares
+        it (``sent_attempts`` on the reply or the ``TransportFailure``). Then that
+        count, not the reservation, is what is counted and charged, and the
+        reservations it never used are refunded: a reserved retry that was never
+        sent no longer turns one real send into two.
         """
-        reply, reported = self._fetch_reply(call)
-        reserved = self.ledger[call.call_id]['reserved_attempts']
-        if reply.usage_known or len(reply.attempts) >= reserved:
+        reply, reported, sent = self._fetch_reply(call)
+        entry = self.ledger[call.call_id]
+        reserved = entry['reserved_attempts']
+        if sent is not None:
+            entry['sent_attempts_declared'] = sent
+        counted = reserved if sent is None else sent
+        if reply.usage_known or len(reply.attempts) >= counted:
             return reply
-        missing = reserved - len(reply.attempts)
+        missing = counted - len(reply.attempts)
         self.unreported_attempts.append({'call_id': call.call_id, 'actor': call.actor,
                                          'reserved': reserved, 'reported': reported,
-                                         'counted': reserved})
+                                         'counted': counted})
         self._log(f'attempts_unreported {call.actor} {call.call_id} reserved={reserved} '
                   f'reported={reported}', kind='attempts_unreported', actor=call.actor,
                   call_id=call.call_id)
         return replace(reply, attempts=(Attempt(outcome='error'),) * missing + reply.attempts)
 
     def _fetch_reply(self, call):
-        """``(reply, reported attempts)``; a transport exception is a costed error attempt."""
+        """``(reply, reported attempts, declared sent count)``; a failure is a costed error attempt.
+
+        A ``submit()`` that raised (anything but :class:`NotSent`) left a
+        ``_SubmitFailed`` token: its reply is that failure, with no ``reply()``.
+        """
+        if isinstance(call.token, _SubmitFailed):
+            return self._failure_reply(call, call.token.error, stage='submit')
         try:
             reply = self.transport.reply(call.token)
-        except TransportFailure as exc:
+        except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
+            return self._failure_reply(call, exc, stage='reply')
+        if not isinstance(reply, CallReply):
+            raise TypeError(f'transport returned {type(reply).__name__}, expected CallReply')
+        return reply, len(reply.attempts), reply.sent_attempts
+
+    def _failure_reply(self, call, exc, *, stage):
+        """The costed reply of a transport exception raised by ``submit`` or ``reply``."""
+        if isinstance(exc, TransportFailure):
             # the transport knows what the provider billed: keep it (finding 6)
             # fourth review: the transport says whether what it knows is ALL of it
             usage_known = bool(exc.usage_known) and bool(exc.attempts)
-            self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
+            self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor, 'stage': stage,
                                          'error': f'{type(exc).__name__}: {exc}',
                                          'usage_known': usage_known,
                                          'unparsed_utterances': exc.unparsed_utterances})
@@ -733,15 +865,12 @@ class EventScheduler:
                                                     input_tokens=attempts[-1].input_tokens,
                                                     output_tokens=attempts[-1].output_tokens,
                                                     utterances=attempts[-1].utterances),)
-            return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances,
-                             provider_usage=exc.provider_usage, usage_known=usage_known), len(exc.attempts)
-        except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
-            self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
-                                         'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
-            return CallReply(attempts=(Attempt(outcome='error'),), usage_known=False), 0
-        if not isinstance(reply, CallReply):
-            raise TypeError(f'transport returned {type(reply).__name__}, expected CallReply')
-        return reply, len(reply.attempts)
+            return (CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances,
+                              provider_usage=exc.provider_usage, usage_known=usage_known),
+                    len(exc.attempts), exc.sent_attempts)
+        self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor, 'stage': stage,
+                                     'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
+        return CallReply(attempts=(Attempt(outcome='error'),), usage_known=False), 0, None
 
     # -- dispatch ----------------------------------------------------------
 
@@ -786,12 +915,7 @@ class EventScheduler:
                                      'status': 'outstanding', 'finished_sim_s': None,
                                      'retry_of': call.retry_of, 'merged_triggers': tuple(merged)}
         call.reserve = lambda count=1, _call=call: self._reserve_more(_call, count)
-        try:
-            call.token = self.transport.submit(call)
-        except Exception:
-            self.budget.release(actor, 1)
-            self.ledger[call.call_id]['status'] = 'submit_failed'
-            raise
+        self._submit(call)
         self._pending[call.call_id] = call
         self._last_start[actor] = self.clock
         self.metrics[actor]['calls'] += 1
@@ -801,6 +925,37 @@ class EventScheduler:
             self.on_hold(actor, True, self.now())
         self._log(f'call_start {actor} {trigger} {call.call_id}', kind='call_start', actor=actor,
                   call_id=call.call_id)
+
+    def _submit(self, call):
+        """Hand the call to the transport; settle a failure by what it proves.
+
+        Sixth review, P1: ``submit()`` raising used to refund the reservation and
+        drop the call from every record (SIM cost 0) even when the request had
+        already left. Now only :class:`NotSent` (proof that nothing left) is
+        refunded and re-raised. Any other exception makes the call a failed call
+        whose reply is that failure (``_SubmitFailed``): counted, charged SIM time
+        and recorded, with an unknown usage unless a ``TransportFailure`` says
+        more, and the loop goes on. An interrupt keeps the reservation.
+        """
+        actor, entry = call.actor, self.ledger[call.call_id]
+        try:
+            call.token = self.transport.submit(call)
+        except NotSent as exc:
+            self.budget.release(actor, entry['reserved_attempts'])
+            entry['status'] = 'not_sent'
+            self.unsent_calls.append({'call_id': call.call_id, 'actor': actor, 'trigger': call.trigger,
+                                      'sim_s': self.now(), 'refunded': entry['reserved_attempts'],
+                                      'error': f'{type(exc).__name__}: {exc}'})
+            self._log(f'call_not_sent {actor} {call.trigger} {call.call_id}', kind='call_not_sent',
+                      actor=actor, call_id=call.call_id)
+            raise
+        except Exception as exc:  # noqa: BLE001 - the request may have left: settle, never refund
+            call.token = _SubmitFailed(exc)
+        except BaseException as exc:
+            # e.g. KeyboardInterrupt: the request may have left, so the reservation
+            # stays in the budget's ``outstanding`` and the ledger row says why
+            entry.update({'status': 'interrupted', 'error': f'{type(exc).__name__}: {exc}'})
+            raise
 
     def _reserve_more(self, call, count=1):
         """Reserve further HTTP attempts of an in-flight call (finding 15).
@@ -996,6 +1151,9 @@ class EventScheduler:
 
     def _on_timer(self, payload):
         actor, label = payload['actor'], payload['label']
+        if payload.get('reask'):
+            # the one pending re-ask of this actor fired: the next action may arm again
+            self._reask_pending.pop(actor, None)
         self._log(f'timer {actor} {label}', kind='timer', actor=actor)
         if self.on_timer:
             self.on_timer(actor, label, self.now())

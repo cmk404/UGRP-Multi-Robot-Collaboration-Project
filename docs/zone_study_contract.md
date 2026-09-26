@@ -42,6 +42,8 @@
 
 **(1) 닫힌 하위 schema.** 각 절은 계약이 정한 키만 가질 수 있다(`boundary_manifest()['closed_sub_schemas']`). `static_map`, `static_map.public_map`, `static_map.schematic_ref`, `order_sheet`, `order_sheet.orders[]`, `own_rgb_refs[]`, `own_command_history[]`, `own_command_history[].arguments`, `inbox[]`, `channel`, `self_belief`, `issued_orders[]`가 닫혀 있다. 그래서 평가 전용 자료를 **다른 이름으로 바꿔 넣는 우회**(예: `survey_xy_m`, `overhead_still`, `teammate_views`, `servo_deg`, `jaw_contact_n`, `coach_ack`, `board`, `upcoming`, `kpi`)도 거부된다. 새 키가 필요하면 계약 변경이며 `CONTRACT_VERSION`을 올리고 경계 테스트를 다시 통과해야 한다.
 
+**계약 버전 (v2, 2026-09-26).** 현재 버전은 `ugrp.zone_study_contract.v2`다. v2는 태그 지도 v2(`*_tags_v2`)의 `landmarks.placement` 키 세 개(`near_door_spacing_m`, `near_door_radius_m`, `door_posts`; `door_posts`는 `offset_from_edge_m`·`width_m`·`height_m`·`tag_center_heights_m`만 받는 닫힌 객체)를 추가했다. 통합 PR #229가 먼저 올린 변경을 같은 키·같은 검사로 PR 194에 옮긴 것이다. 조건 registry 내용은 그대로이며 버전 문자열만 바뀌어 registry 해시는 `c9bb5556…`이다. **v1은 남겨 둔다.** 오프라인 스모크 v1~v4 기록이 v1로 만들어졌으므로 `registry_sha256(CONTRACT_VERSION_V1)`은 그 기록의 `f1ff6a49…`을 그대로 재현하고, `payload_violations(..., contract_version=CONTRACT_VERSION_V1)`는 v2 전용 키를 계속 거절한다(`PLACEMENT_KEYS_BY_VERSION`). 모르는 버전은 `ValueError`다. 테스트: `tests/test_zone_study_review_r6_paths_contract.py`.
+
 **(2) 이름·값·구조 검사.** 그 위에서 다음을 거부한다.
 
 - **TOP 카메라와 그 파생물**(`top_*`, `cctv*`, `nav_cam*`, 하이픈·공백 변형 포함). 공개 지도 투영에서 `top_cameras`를 아예 제외한다.

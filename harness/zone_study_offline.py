@@ -55,7 +55,11 @@ OFFLINE_VERSION = 'ugrp.zone_study_offline.v1'
 #: canonical envelope id, the SIM scheduler decides WHEN an inbox changes
 #: (2026-09-26 review finding 2).
 BUS_OWNER = 'sim_scheduler'
-EXECUTION_BUNDLE_ID = 'zone_study_offline_v1'
+#: v2 (2026-09-26, sixth review round of PR 194): own re-ask timers follow
+#: ``zone_event_scheduler.REASK_POLICY`` (at most one pending per robot) instead
+#: of one more timer after every action, and the contract is v2. The offline
+#: smoke v1-v4 records ran ``zone_study_offline_v1``; v5 is the first v2 run.
+EXECUTION_BUNDLE_ID = 'zone_study_offline_v2'
 FIXTURE_MODEL = 'none-fixture-v1'
 #: Stored wrist frames referenced by the payloads. Real robot frames with real
 #: byte hashes; this loop runs no perception on them.
@@ -477,14 +481,16 @@ class OfflineTrial:
 
         A LOCAL timer, the study's own call trigger: never a peer's job end, a
         teacher receipt or global progress. Stops once the actor reached its call
-        budget or the timer would fire past the horizon.
+        budget or the timer would fire past the horizon. At most ONE is pending
+        per actor (``REASK_POLICY``, sixth review round): an action while one is
+        pending arms nothing, so close calls cannot start parallel chains.
         """
         del action
         if self.scheduler.metrics[actor]['calls'] >= self.policy.max_calls_per_actor:
             return
         at = sim_s + self.policy.idle_reask_s
         if at <= self.horizon_s:
-            self.scheduler.timer(actor, 'idle', at=at)
+            self.scheduler.arm_reask(actor, 'idle', at=at)
 
     def run(self) -> TrialResult:
         for actor in self.actors:
