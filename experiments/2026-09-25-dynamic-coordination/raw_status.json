@@ -1,0 +1,21 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "/Users/changmin/projects/ugrp-worktrees/post-run-replay/outputs/simulation-runs/20260925-000852-dispatch-ee5eac42/artifacts",
+      "used_as": "runs[0] baseline-plan-first (user-run plan_first reference)",
+      "status": "lost",
+      "removed_with": "git worktree remove ugrp-worktrees/post-run-replay, 2026-09-26 about 13:50 KST; no backup",
+      "surviving_evidence": [
+        "results.json runs[0]: summary values and sha256 of result.json and team/team.json",
+        "outputs/tensorboard/0925-dynamic-coordination/A-planfirst: TensorBoard events (18 scalars, 4 texts) and manifest.json with sha256 and size of result.json, episode-setup-only.json, team/team.json, issued-commands.json, pair-decisions.json",
+        "outputs/tensorboard/0925-plan-guidance/R-user-boxfirst: a second TensorBoard snapshot of the same run"
+      ],
+      "not_recoverable": "raw frames, execution.mp4 (2,181,008 bytes, TensorBoard video link now broken), full result.json and request/decision files"
+    }
+  ]
+}

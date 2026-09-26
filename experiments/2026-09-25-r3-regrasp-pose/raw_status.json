@@ -1,0 +1,22 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "/Users/changmin/projects/ugrp-worktrees/team-recovery-fix/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+      "used_as": "inputs.stage_model_dir of results.json, analysis-output.json and analyze_r3_pose.py",
+      "status": "recoverable",
+      "removed_with": "git worktree remove ugrp-worktrees/team-recovery-fix, 2026-09-26 about 13:50 KST",
+      "evidence": [
+        "the folder is the extraction cache of the tracked archive experiments/dispatch-skill-integration-20260917/models.zip; its sha256 e78a5a5777f5bc48daf1bd5e03d2058705083a38505ed959159d5903526b83f1 gives the folder name (scripts/sim_dispatch.py bundled_models)",
+        "all 7 stage_model_sha256 values in results.json and analysis-output.json equal the sha256 of the matching models/varied/ members of that archive",
+        "4 extracted copies with all 15 files identical to the archive were found in Codex-app worktrees and moved on 2026-09-26 to /Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-{simulation-performance,pair-approach-progress-sync,simulation-realtime,faster-dispatch}/outputs/dispatch-models/e78a5a5777f5bc48/",
+        "not listed in configs/model_artifacts.json and not a GitHub Release asset (models-20260923-v1 and models-20260924-action-act-v1 hold ACT models only)"
+      ],
+      "restore": "extract models/varied/ from experiments/dispatch-skill-integration-20260917/models.zip and check the 7 sha256 values; scripts/sim_dispatch.py recreates outputs/dispatch-models/e78a5a5777f5bc48/ on demand"
+    }
+  ]
+}

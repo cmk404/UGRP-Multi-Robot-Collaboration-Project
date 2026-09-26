@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,6 +17,30 @@ import time
 
 
 TERM_GRACE_SECONDS = 5.0
+# Refuse to start a session below this much free space on the working directory's
+# filesystem (docs/disk_management.md). A run that fills the disk fails mid-episode
+# with ENOSPC and leaves partial raw data.
+DEFAULT_MIN_FREE_GIB = 10.0
+
+
+def default_min_free_gib() -> float:
+    configured = os.environ.get("UGRP_MIN_FREE_GIB")
+    if configured:
+        return float(configured)
+    # Ephemeral GitHub runners are not the shared research host this floor protects.
+    return 0.0 if os.environ.get("GITHUB_ACTIONS") == "true" else DEFAULT_MIN_FREE_GIB
+
+
+def free_space_refusal(path: Path, min_free_gib: float) -> str | None:
+    """Return a refusal message when free space at path is below the floor."""
+    if min_free_gib <= 0:
+        return None
+    free = shutil.disk_usage(path).free
+    if free >= min_free_gib * 2**30:
+        return None
+    return (f"refusing to start: {free / 2**30:.1f} GiB free on the filesystem of {path} "
+            f"(floor {min_free_gib:g} GiB). Free space first (python3 scripts/disk_report.py) "
+            "or pass --allow-low-disk before the session name.")
 
 
 def session_dir() -> Path:
@@ -116,17 +141,32 @@ def write_session(name: str, record: dict) -> None:
     os.replace(temp, path)
 
 
+def signal_group(pgid: int, signum: int) -> bool:
+    """Signal a process group; False when it is already gone.
+
+    macOS can answer EPERM for a group whose members are exiting (zombies). That
+    is treated as gone instead of raising out of session cleanup, which left a
+    stale session record under load.
+    """
+    try:
+        os.killpg(pgid, signum)
+        return True
+    except (ProcessLookupError, PermissionError):
+        return False
+
+
 def stop_group(pgid: int, grace: float = TERM_GRACE_SECONDS) -> None:
     if not process_group_alive(pgid):
         return
-    os.killpg(pgid, signal.SIGTERM)
+    if not signal_group(pgid, signal.SIGTERM):
+        return
     deadline = time.monotonic() + grace
     while time.monotonic() < deadline:
         if not process_group_alive(pgid):
             return
         time.sleep(0.05)
     if process_group_alive(pgid):
-        os.killpg(pgid, signal.SIGKILL)
+        signal_group(pgid, signal.SIGKILL)
 
 
 def run_session(name: str, command: list[str], grace: float) -> int:
@@ -249,6 +289,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="action", required=True)
     run_parser = subparsers.add_parser("run", help="run a command as a foreground owned session")
+    run_parser.add_argument("--allow-low-disk", action="store_true",
+                            help="start even when free space is below the floor")
+    run_parser.add_argument("--min-free-gib", type=float, default=None,
+                            help=f"free-space floor in GiB (default {DEFAULT_MIN_FREE_GIB:g}; env UGRP_MIN_FREE_GIB)")
     run_parser.add_argument("name", type=validate_name)
     run_parser.add_argument("command", nargs=argparse.REMAINDER)
     stop_parser = subparsers.add_parser("stop", help="stop one owned session and all descendants")
@@ -259,7 +303,26 @@ def main(argv: list[str] | None = None) -> int:
         item.add_argument("--grace", type=float, default=TERM_GRACE_SECONDS, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     if args.action == "run":
-        command = args.command[1:] if args.command[:1] == ["--"] else args.command
+        command = list(args.command)
+        allow_low_disk, min_free = args.allow_low_disk, args.min_free_gib
+        # Also accept the disk options between the session name and "--".
+        while command and command[0] != "--":
+            if command[0] == "--allow-low-disk":
+                allow_low_disk = True
+                command.pop(0)
+            elif command[0].startswith("--min-free-gib="):
+                min_free = float(command.pop(0).split("=", 1)[1])
+            elif command[0] == "--min-free-gib" and len(command) > 1:
+                command.pop(0)
+                min_free = float(command.pop(0))
+            else:
+                break
+        command = command[1:] if command[:1] == ["--"] else command
+        if command and not allow_low_disk:
+            refusal = free_space_refusal(Path.cwd(), default_min_free_gib() if min_free is None else min_free)
+            if refusal:
+                print(f"UGRP session '{args.name}' {refusal}", file=sys.stderr)
+                return 2
         return run_session(args.name, command, max(0.0, args.grace))
     if args.action == "stop":
         return stop_session(args.name, max(0.0, args.grace))

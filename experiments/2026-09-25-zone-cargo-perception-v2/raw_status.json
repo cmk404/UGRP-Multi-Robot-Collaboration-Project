@@ -1,0 +1,20 @@
+{
+  "schema": "ugrp.raw-status.v1",
+  "recorded_at": "2026-09-26",
+  "recorded_by": "Kiro (kiro/disk-rules)",
+  "incident": "experiments/2026-09-26-disk-incident/README.md",
+  "results_changed": false,
+  "entries": [
+    {
+      "reference": "outputs/zone-cargo-perception-v2-20260925/ in the worktree /Users/changmin/projects/ugrp-worktrees/zone-cargo-perception-v2",
+      "used_as": "results.json artifacts.local_root (README: 원본)",
+      "status": "lost",
+      "removed_with": "git worktree remove ugrp-worktrees/zone-cargo-perception-v2, 2026-09-26 about 13:50 KST; no backup",
+      "surviving_evidence": [
+        "results.json artifacts.sha256: manifest, summary and per-profile record files of dev and test",
+        "outputs/tensorboard/0925-zone-supplement/perc-cargo-*: TensorBoard views derived from this record's committed results.json, not from the raw frames"
+      ],
+      "reproduction": "README 재현 section re-renders and re-scores at source 330e856; byte identity with the lost frames was not checked"
+    }
+  ]
+}

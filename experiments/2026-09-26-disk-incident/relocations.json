@@ -1,0 +1,927 @@
+{
+ "roots": {
+  "/Users/changmin/.codex/worktrees/act-finalization-recovery/ugrp": "codex-act-finalization-recovery",
+  "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp": "codex-action-act-refinement",
+  "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp": "codex-dispatch-action-act",
+  "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp": "codex-faster-dispatch",
+  "/Users/changmin/.codex/worktrees/github-model-artifacts/ugrp": "codex-github-model-artifacts",
+  "/Users/changmin/.codex/worktrees/merge-approved-20260923/ugrp": "codex-merge-approved-20260923",
+  "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp": "codex-pair-approach-progress-sync",
+  "/Users/changmin/.codex/worktrees/pair-coarse-concurrency/ugrp": "codex-pair-coarse-concurrency",
+  "/Users/changmin/.codex/worktrees/rolling-cargo-recovery/ugrp": "codex-rolling-cargo-recovery",
+  "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp": "codex-rolling-view-recovery",
+  "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp": "codex-rolling-visual-servo",
+  "/Users/changmin/.codex/worktrees/settled-view-recovery/ugrp": "codex-settled-view-recovery",
+  "/Users/changmin/.codex/worktrees/simulation-performance/ugrp": "codex-simulation-performance",
+  "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp": "codex-simulation-realtime"
+ },
+ "refs_scanned": 221,
+ "summary": {
+  "references": 74,
+  "into_ignored_data": 64,
+  "old_exists": 0,
+  "new_exists": 64,
+  "resolvable": 64
+ },
+ "rows": [
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/route-coverage-protocol.json",
+    "experiments/2026-09-24-rolling-cargo-recovery/physical-protocol.json",
+    "experiments/2026-09-24-rolling-view-recovery/physical-protocol.json"
+   ],
+   "ref_count": 117
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/experiments/2026-09-24-action-act/refinement-protocol.json",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-evaluation-design.json"
+   ],
+   "ref_count": 124
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-203400-dispatch-b630b2dd/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-action-act-refinement/outputs/simulation-runs/20260924-203400-dispatch-b630b2dd/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-203746-dispatch-2186b77d/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-action-act-refinement/outputs/simulation-runs/20260924-203746-dispatch-2186b77d/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-211701-dispatch-3093fd07/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-action-act-refinement/outputs/simulation-runs/20260924-211701-dispatch-3093fd07/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-213001-dispatch-df12905d/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-action-act-refinement/outputs/simulation-runs/20260924-213001-dispatch-df12905d/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/action-act-refinement/ugrp/outputs/simulation-runs/20260924-214925-dispatch-92da7ac9/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-action-act-refinement/outputs/simulation-runs/20260924-214925-dispatch-92da7ac9/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-211027-dispatch-91923c6c/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-dispatch-action-act/outputs/simulation-runs/20260924-211027-dispatch-91923c6c/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-212057-dispatch-e68f95d4/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-dispatch-action-act/outputs/simulation-runs/20260924-212057-dispatch-e68f95d4/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/dispatch-action-act/ugrp/outputs/simulation-runs/20260924-214558-dispatch-790cc398/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-dispatch-action-act/outputs/simulation-runs/20260924-214558-dispatch-790cc398/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/refinement-qualification-summary-v3.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-fine-gain-schedule/run_ab.py"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-fine-gain-schedule/replay-audit.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-155816-dispatch-46b75d9b/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-155816-dispatch-46b75d9b/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v20-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-160939-dispatch-766f3e1f/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-160939-dispatch-766f3e1f/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v21-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-161558-dispatch-30580e0b/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-161558-dispatch-30580e0b/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v22-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-162142-dispatch-4b1583dc/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-162142-dispatch-4b1583dc/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v22-foreground.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-163345-dispatch-cd96e5cd/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-163345-dispatch-cd96e5cd/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v23-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-164348-dispatch-c4f02b07/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-164348-dispatch-c4f02b07/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v24-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-165809-dispatch-4e5ecf31/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-165809-dispatch-4e5ecf31/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v25-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-170349-dispatch-9106bd50/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-170349-dispatch-9106bd50/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v25-repeat.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-171748-dispatch-b8c634ea/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-171748-dispatch-b8c634ea/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v26-full.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/faster-dispatch/ugrp/outputs/simulation-runs/20260924-172146-dispatch-95ed553c/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-faster-dispatch/outputs/simulation-runs/20260924-172146-dispatch-95ed553c/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/audit-v26-repeat.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/experiments/2026-09-22-parallel-transport/independent-plan.json",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-pair-approach-progress-sync/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-pair-approach-progress-sync/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-b055042",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-pair-approach-progress-sync/outputs/simulation-runs/20260923-pair-approach-sync-b055042",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-pair-approach-progress-sync/records.json"
+   ],
+   "ref_count": 134
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-b055042-repeat",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-pair-approach-progress-sync/outputs/simulation-runs/20260923-pair-approach-sync-b055042-repeat",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-pair-approach-progress-sync/records.json"
+   ],
+   "ref_count": 134
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/outputs/simulation-runs/20260923-pair-approach-sync-c3178cf",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-pair-approach-progress-sync/outputs/simulation-runs/20260923-pair-approach-sync-c3178cf",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-pair-approach-progress-sync/records.json"
+   ],
+   "ref_count": 134
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/pair-approach-progress-sync/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-cargo-recovery/ugrp",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-rolling-cargo-recovery/physical-protocol.json"
+   ],
+   "ref_count": 114
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-cargo-recovery/ugrp/outputs/simulation-runs/20260924-231933-dispatch-a43e0b22/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-rolling-cargo-recovery/outputs/simulation-runs/20260924-231933-dispatch-a43e0b22/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-25-action-act-followup/cargo-recovery-original-candidate-diagnostic-1-review-v2.json"
+   ],
+   "ref_count": 109
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-rolling-view-recovery/physical-protocol.json"
+   ],
+   "ref_count": 110
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/config/rgb_execution_bundles/rgb-standard-dispatch-v43.json",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-25-action-act-followup/view-recovery-source-freeze-v1.json"
+   ],
+   "ref_count": 109
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/experiments/2026-09-24-rolling-view-recovery/physical-protocol.json",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-25-action-act-followup/view-recovery-cohort-closure-v1.json"
+   ],
+   "ref_count": 109
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-view-recovery/ugrp/outputs/simulation-runs/20260925-002144-dispatch-5538e992/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-rolling-view-recovery/outputs/simulation-runs/20260925-002144-dispatch-5538e992/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-25-action-act-followup/view-recovery-original-candidate-diagnostic-1.json"
+   ],
+   "ref_count": 109
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/experiments/2026-09-24-action-act/rolling-protocol.json",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/rolling-postdiagnostic-closure-amendment.json",
+    "experiments/2026-09-24-action-act/rolling-postdiagnostic-summary.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/outputs/simulation-runs/20260924-215623-dispatch-9af5c663/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-rolling-visual-servo/outputs/simulation-runs/20260924-215623-dispatch-9af5c663/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/rolling-postdiagnostic-closure-amendment.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/rolling-visual-servo/ugrp/outputs/simulation-runs/20260924-215942-dispatch-00c4d661/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-rolling-visual-servo/outputs/simulation-runs/20260924-215942-dispatch-00c4d661/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-action-act/rolling-postdiagnostic-closure-amendment.json"
+   ],
+   "ref_count": 115
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/settled-view-recovery/ugrp/outputs/simulation-runs/20260925-022338-dispatch-c662162e/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-settled-view-recovery/outputs/simulation-runs/20260925-022338-dispatch-c662162e/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-25-host-scheduling/v50-infrastructure-abort.json"
+   ],
+   "ref_count": 101
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-performance/outputs/dispatch-models/e78a5a5777f5bc48/models/grasp",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-performance/outputs/dispatch-models/e78a5a5777f5bc48/models/varied",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-performance/ugrp/tests/fixtures/camera_goal_transport/reference-top.jpg",
+   "ignored_data": false,
+   "old_exists": false,
+   "new_path": null,
+   "new_exists": null,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-local-dispatch-performance/results.json"
+   ],
+   "ref_count": 133
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-forward.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-lateral.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r1-yaw.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-forward.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-lateral.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/model-r3-yaw.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/dispatch-models/e78a5a5777f5bc48/models/varied/varied-start-skill.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-24-faster-dispatch/coarse-handoff-diagnosis.json"
+   ],
+   "ref_count": 126
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-214300-dispatch-27e5baa9/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-214300-dispatch-27e5baa9/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/initial-diagnostics.json"
+   ],
+   "ref_count": 131
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-220237-dispatch-3c3d2a5f/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-220237-dispatch-3c3d2a5f/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v9.json"
+   ],
+   "ref_count": 131
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-222042-dispatch-e8f1a71f/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-222042-dispatch-e8f1a71f/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v10.json"
+   ],
+   "ref_count": 131
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-222604-dispatch-e32f4590/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-222604-dispatch-e32f4590/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v11.json"
+   ],
+   "ref_count": 131
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-223141-dispatch-7c5462f6/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-223141-dispatch-7c5462f6/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v12.json"
+   ],
+   "ref_count": 131
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-224042-dispatch-07361dd3/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-224042-dispatch-07361dd3/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v13.json"
+   ],
+   "ref_count": 130
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-224309-dispatch-8ff07eac/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-224309-dispatch-8ff07eac/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v13-full.json"
+   ],
+   "ref_count": 130
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-225746-dispatch-19e3b2fa/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-225746-dispatch-19e3b2fa/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v14-full.json"
+   ],
+   "ref_count": 130
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-231251-dispatch-a1409e49/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-231251-dispatch-a1409e49/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v15-full.json"
+   ],
+   "ref_count": 129
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260923-234102-dispatch-b43ca3d1/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260923-234102-dispatch-b43ca3d1/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v16-full.json"
+   ],
+   "ref_count": 129
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-001203-dispatch-1f51ffef/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-001203-dispatch-1f51ffef/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v17-full.json"
+   ],
+   "ref_count": 128
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-002112-dispatch-6e3bb60f/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-002112-dispatch-6e3bb60f/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v17-repeat.json"
+   ],
+   "ref_count": 128
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-004832-dispatch-dcbe74b6/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-004832-dispatch-dcbe74b6/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v18-full.json"
+   ],
+   "ref_count": 127
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-005604-dispatch-e52de5f8/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-005604-dispatch-e52de5f8/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v18-repeat.json"
+   ],
+   "ref_count": 127
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-011434-dispatch-01a4daa7/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-011434-dispatch-01a4daa7/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-full.json",
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-grasp-full.json"
+   ],
+   "ref_count": 127
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-012458-dispatch-e7c9de10/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-012458-dispatch-e7c9de10/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-repeat.json"
+   ],
+   "ref_count": 127
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-013415-dispatch-3b6945da/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-013415-dispatch-3b6945da/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-grasp-full.json"
+   ],
+   "ref_count": 127
+  },
+  {
+   "reference": "/Users/changmin/.codex/worktrees/simulation-realtime/ugrp/outputs/simulation-runs/20260924-014030-dispatch-5020d320/manifest.json",
+   "ignored_data": true,
+   "old_exists": false,
+   "new_path": "/Users/changmin/projects/ugrp/outputs/retired-worktrees/codex-simulation-realtime/outputs/simulation-runs/20260924-014030-dispatch-5020d320/manifest.json",
+   "new_exists": true,
+   "on_origin_main": true,
+   "files": [
+    "experiments/2026-09-23-realtime-dispatch/independent-audit-v19-grasp-repeat.json"
+   ],
+   "ref_count": 127
+  }
+ ],
+ "summary_before_move": {
+  "references": 74,
+  "into_ignored_data": 64,
+  "old_exists": 64,
+  "new_exists": 0,
+  "resolvable": 64
+ }
+}
