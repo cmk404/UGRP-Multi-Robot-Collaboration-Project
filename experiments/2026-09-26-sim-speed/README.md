@@ -4,7 +4,8 @@
 
 ## 결론
 
-- **`exact-v1`(구동 산술 + 접촉 사전 필터)은 retired instruction을 16.6–18.3% 줄였다.** 같은 부하에서 CPU 초도 18.3% 줄었다(s93, 첫 120 SIM s). 2개 seed의 **전체 임무**에서 명령 6,541/6,910개, 제어 입력 프레임 2,080/2,309장의 JPEG 바이트, 모든 로그, `result.json` 전 필드가 기존 dev-a8 실행과 같았다. 첫 120 SIM s의 qpos/qvel/act 해시 체크포인트 240개도 같았다.
+- **`exact-v1`(구동 산술 + 접촉 사전 필터)은 M1에서 retired instruction을 16.6–18.3% 줄였다.** 같은 부하에서 CPU 초도 18.3% 줄었다(s93, 첫 120 SIM s). pair 러너에는 구동 산술만 해당해 −4.5%였다. 2개 seed의 **전체 임무**에서 명령 6,541/6,910개, 제어 입력 프레임 2,080/2,309장의 JPEG 바이트, 모든 로그, `result.json` 전 필드가 기존 dev-a8 실행과 같았다. 첫 120 SIM s의 qpos/qvel/act 해시 체크포인트 240개도 같았다.
+- 이 Mac의 렌더링은 드물게 실행마다 달라진다: pair 기준 두 번 사이에 785장 중 1장이 최대 1 단계 달랐다(궤적·결정 동일). M1은 비교한 약 1만 장 전부 같았다.
 - 남은 CPU는 `mj_step`(약 37%)과 robot_cam 렌더(약 28%, 그중 그림자 약 75%)다. 둘 다 물리·영상을 바꾸지 않고는 줄일 방법을 찾지 못했다.
 - **가장 큰 wall 요인은 머신 과부하였다.** 같은 코드·같은 120 SIM s 구간이 부하 3–5에서 CPU 156초, 부하 12→90에서 361초였다(2.3배). instruction 수는 같고 성능 코어 비율이 떨어진다(0.95 → 0.61–0.75). 동시 sim을 제한하는 `scripts/sim_slots.py`를 추가했다.
 
@@ -65,7 +66,12 @@ s95 exact-v1의 CPU 초는 실행 중 다른 작업의 부하(1분 평균 최대
 
 ## pair 러너(보조)
 
-(측정 후 갱신)
+PR #205 `6990a6e`(`kiro/zone-m2-pair-v3`)의 `scripts/run_m2_pair.py`를 이 PR에서 고치지 않고, 분리된 sparse worktree에서 `pair_prof.py`(이 폴더, 원 러너를 그대로 호출)로 dev seed 701 open_floor를 실행했다. 두 로봇 모두 `done`, SIM 120.4 s, 프레임 785장.
+
+- cProfile(`pair701-base-cprof-b`, process_time, 계측 부하 포함): `mj_step` 99.4초(35%), `mjr_render` 78.7초(28%, 785회), `_physics_step_for` 구동 산술·`base_rpy`·`_quat_to_rpy` 약 58초(계측 과대), 포트 tick 10.8초, `detectMarkers` 7.1초. pair 러너는 접촉 검사를 0.2 s마다 하므로 스텝별 접촉 루프 비용이 없다.
+- 구동 산술만 `install_drive_kernel(world)`로 적용(`pair701-kernel`) vs 기준(`pair701-base`), 동시 실행(부하 52→85, P 비율 0.57 둘 다): instruction 2,011 → 1,921 G(**−4.5%**), 주 스레드 CPU 132.2 → 125.4초(−5.1%).
+- 동등성: qpos 체크포인트 241개, 명령, `result.json`(wall·부하·SHA 제외 전 키), 프레임 784/785장이 같다. 다른 1장(`r2-00144.jpg`, 디코딩 후 최대 1 단계)은 **기준 두 번(`pair701-base` vs `pair701-base-cprof-b`) 사이에서도 똑같이 다르다.** 커널과 cProfile 기준은 792개 파일 전부 같다. 즉 커널 영향이 아니라 이 Mac의 렌더링이 드물게 실행마다 달라지는 현상이다(M1에서는 비교한 프레임 약 1만 장 전부 동일). 궤적·결정에는 영향이 없었지만, "프레임 바이트 동일"을 동등성 기준으로 쓸 때 이 기준선 변동을 먼저 확인해야 한다.
+- 적용 방법: pair 러너가 월드 생성 뒤 `install_drive_kernel(world)` 한 줄을 부르면 된다. 러너 소유 PR에서 적용·재검증한다.
 
 ## sim 대기열과 원격 병렬
 
