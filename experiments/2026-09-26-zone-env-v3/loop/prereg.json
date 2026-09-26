@@ -1,0 +1,251 @@
+{
+  "schema": "ugrp.owncam_loop_prereg.v2",
+  "fixed_at": "2026-09-26, Kiro, before any run on zone_wide_door_tags_v3 (experiments/2026-09-26-zone-env-v3/prereg.json phase 2)",
+  "question": "Environment v3 (walls 0.40 m, 33 site-based tags instead of 80): does the loop v2 student still drive through door_1 on its own-camera estimate, without a box and carrying the cyan box, on NEW seeds?",
+  "previous_cohorts": "experiments/2026-09-25-zone-owncam-loop (v2 map, test nobox 3/3, box 1/3) and experiments/2026-09-26-zone-owncam-loop-v2 (v2 map, test box 6/6); their seeds are not reused",
+  "student": {
+    "driver": "v2",
+    "calibration": "experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json"
+  },
+  "episodes": [
+    {
+      "episode_id": "envdev-nobox-s711",
+      "split": "dev",
+      "condition": "nobox",
+      "seed": 711,
+      "spawn_y": 0.55,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envdev-box-s712",
+      "split": "dev",
+      "condition": "box",
+      "seed": 712,
+      "spawn_y": -0.85,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-nobox-s721",
+      "split": "test",
+      "condition": "nobox",
+      "seed": 721,
+      "spawn_y": 0.55,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-nobox-s722",
+      "split": "test",
+      "condition": "nobox",
+      "seed": 722,
+      "spawn_y": -0.85,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-nobox-s723",
+      "split": "test",
+      "condition": "nobox",
+      "seed": 723,
+      "spawn_y": -2.25,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s724",
+      "split": "test",
+      "condition": "box",
+      "seed": 724,
+      "spawn_y": 0.55,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s725",
+      "split": "test",
+      "condition": "box",
+      "seed": 725,
+      "spawn_y": -0.85,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s726",
+      "split": "test",
+      "condition": "box",
+      "seed": 726,
+      "spawn_y": -2.25,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s727",
+      "split": "test",
+      "condition": "box",
+      "seed": 727,
+      "spawn_y": 0.55,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s728",
+      "split": "test",
+      "condition": "box",
+      "seed": 728,
+      "spawn_y": -0.85,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    },
+    {
+      "episode_id": "envtest-box-s729",
+      "split": "test",
+      "condition": "box",
+      "seed": 729,
+      "spawn_y": -2.25,
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1",
+      "box_kind": "cyan"
+    }
+  ],
+  "student_inputs": "own issued commands, own wrist RGB (JPEG q90 of robot_cam 640x480), static tagged map v3, calibration_loop_v2.json (loop v2 dev fits, unchanged), fixed pickup-grid cells as static keep-outs; never live poses",
+  "teacher_part": "box condition only: the GT teacher drives to the cyan box, grasps and lifts it (weld OFF); the student takes over at the teacher carry phase. Teacher part reported separately, never counted as student success",
+  "goal": "door-exit waypoint W = (door_x + 0.45, door_y) = (2.65, 0.05); the student ends by declaring arrival",
+  "gates": {
+    "R1_exit_waypoint": "at the declared arrival, GT base distance to W <= 0.10 m (no declaration = fail)",
+    "R2_no_wall_contact": "no contact between any geom of the robot (or the held box) and a wall geom during the student part",
+    "R3_estimate_near_door": "p90 of |estimate - GT| position over observed frames with GT in the door region (|x-2.2|<=0.6, |y-0.05|<=0.5) < 0.06 m and no uninitialized frame there",
+    "R4_box_held": "box condition: GT box z > 0.045 m at every sample of the student part and at arrival",
+    "episode_pass": "R1 and R2 and R3 (and R4 for box)"
+  },
+  "cohort_gate": {
+    "LG1": "box: >= 5 of 6 test episodes pass",
+    "LG2": "nobox: 3 of 3 test episodes pass",
+    "LG3": "0 wall contacts and 0 box drops over all 9 test episodes",
+    "pass": "LG1 and LG2 and LG3"
+  },
+  "stop_rule": {
+    "episode": [
+      "student declares arrival",
+      "SIM 240 s after the student starts",
+      "estimator not initialized after 3 consecutive stop-and-look sweeps (not_initialized)",
+      "estimate std_xy > 0.15 m after 3 consecutive sweeps without a fix (lost)",
+      "3 consecutive planner failures (no_path)",
+      "box condition: teacher grasp not reached within 400 s SIM (teacher failure, not a student episode)"
+    ],
+    "cohort": "dev (s711, s712) is an infrastructure smoke check; nothing about the map, tags, student or calibration is changed from it. Test runs once on the committed source; no reruns except an infrastructure crash (kept and labelled)",
+    "wall_contact": "does not stop the episode (recorded)"
+  },
+  "contact_profile_note": "cargo_noslip_v1 (user-approved 2026-09-26); the loop v1/v2 cohorts used local_contact_fine",
+  "label_note": "TOP frames recorded by the evaluation-only observer wrapper (experiments/2026-09-26-zone-env-v3/observe_top.py) never reach the student"
+}

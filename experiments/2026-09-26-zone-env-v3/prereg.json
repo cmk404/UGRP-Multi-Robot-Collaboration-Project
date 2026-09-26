@@ -1,0 +1,44 @@
+{
+  "schema": "ugrp.zone_env_v3_prereg.v1",
+  "registered": "2026-09-26, Kiro, branch kiro/zone-map-v3, committed before any v3 static check, localization run or M1 run",
+  "question": "Environment v3 (walls 0.40 m, sparse site-based AprilTags): is the map/scene consistent, do the walls hide other rooms, does the TOP evaluation camera still see the relevant floor, and does own-camera localization (and then an M1-style delivery) still work with far fewer tags?",
+  "environment": {
+    "maps": {
+      "validated": "zone_wide_door_tags_v3",
+      "static_checks_only": ["zone_wide_two_doors_tags_v3", "zone_wide_corridor_tags_v3"]
+    },
+    "wall_profile": "walls_v3 (0.40 m, sim/zone_arena.WALL_PROFILES)",
+    "tag_rule": "ugrp.zone_tag_rule.v3 (sim/zone_tag_rule_v3.py, tag_rule_v3.md)",
+    "contact_profile": "cargo_noslip_v1 (approved by the user 2026-09-26 as the study-wide profile)",
+    "weld": "off",
+    "physics": "sync SIM, timestep as built (0.00025 s); thread caps OMP/OPENBLAS/VECLIB/MKL=1; at most 2 concurrent sim processes; load average recorded per run",
+    "robot_inputs": "own wrist fisheye RGB (robot_cam JPEG q90), own issued commands, static tagged map v3, fixed calibrations; never live poses; TOP is evaluation-only; nav_cam unused"
+  },
+  "phase_1_static": {
+    "ST1_map_scene_consistency": "for all three v3 maps: file == authored definition; base and v1/v2 map files byte-identical (SHA-256 pinned in tests/test_zone_env_v3.py); every wall 0.40 m in the map and in the compiled MuJoCo model; tag geoms visual only; same commands give identical qpos with and without the tag geoms; rule counts 33/36/33",
+    "ST2_readability": "zone_wide_door_tags_v3 door-frame site column (z 0.05/0.15/0.25): robot facing the site at distances 0.3, 0.6, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5 m, bearings 0 and 30 deg off the face normal; postures SEARCH_POSE and LOOK_P20 unloaded, CARRY_POSTURE and LOOK_P20 with the cyan box held (box placed kinematically between the fingers, render only); record detection per tag and PnP range error. Reported as ranges; no pass/fail",
+    "ST3_station_coverage": "zone_wide_door_tags_v3: every spawn row, every pickup-grid approach point (cell - 0.40 m in x, facing east), door checkpoints 1.5 m and 0.6 m west of door_1 and the exit W (door + 0.45 m), and the pre-place point of every zone slot (slot - grasp offset of CARRY_POSTURE, facing east); unloaded stations use SEARCH_POSE and LOOK_P20 with WIDE_LOOK_PANS, loaded stations CARRY_POSTURE and LOOK_P20 with the box held. Gate ST3: at least 1 detected map tag at every station over its sweep (counts reported)",
+    "ST4_wall_occlusion": "same wrist poses on zone_wide_door_tags_v2 (0.10 m walls) and v3: robot in the west room facing the divider away from the door, postures SEARCH_POSE, CARRY_POSE (production level), look_p10 and the highest-camera posture with |optical pitch| <= 10 deg over the PWM grid; peer robot and a red box placed in the east room as probes. Gate ST4: in v3, 0 wrist pixels of east-room geoms (zone paint, slots, the peer, the probe box) when the door is out of view; v2 counts reported as the contrast. Frames saved",
+    "ST5_top_coverage": "for each map family (v1/v2 walls 0.10 m vs v3 0.40 m): fraction of each relevant floor region (pickup region, zones A/B/C, zone slots, door openings, corridor lane, passing bay, spawn cells) visible in at least one TOP camera (inside the 640x480 image and not occluded by a wall: mj_ray from the camera to the floor point). Reported; cameras are never moved"
+  },
+  "phase_2_localization": {
+    "runner": "scripts/run_owncam_closed_loop.py (unchanged) with loop/prereg.json",
+    "student": "driver v2 + experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json (the loop v2 configuration that passed 6/6 on the v2 map; nobox behaviour equals v1)",
+    "episodes": "dev (infrastructure smoke only, not gated): envdev-nobox-s711, envdev-box-s712. test (once): nobox s721/s722/s723, box s724-s729; spawn rows 0.55/-0.85/-2.25 in turn; goal A cyan 1, extra red 2 green 1",
+    "gates_per_episode": "R1-R4 exactly as loop v1/v2 (R1 declared arrival within 0.10 m of W; R2 no wall contact; R3 door-region estimate error p90 < 0.06 m and no uninitialized frame; R4 box z > 0.045 m)",
+    "cohort_gates": {"LG1": "box: >= 5 of 6 test episodes pass", "LG2": "nobox: 3 of 3 test episodes pass",
+                     "LG3": "0 wall contacts and 0 box drops over all 9 test episodes",
+                     "pass": "LG1 and LG2 and LG3; only then phase 3 runs"},
+    "dev_rule": "dev may reveal infrastructure errors only (crash, incompatibility); the map, the tag rule, the student and the calibration are not changed from dev results; test runs on the committed source once, no reruns except an infrastructure crash (kept and labelled)"
+  },
+  "phase_3_m1_dev_check": {
+    "condition": "only if phase 2 passes",
+    "runner": "scripts/run_m1_owncam.py --split dev (unchanged) with m1/prereg.json",
+    "student": "the M1 effective student after amendments A1-A6b of experiments/2026-09-26-zone-m1-owncam (skill v9 read-only, calibration_m1_dev.json, cargo_noslip_v1, bay half 0.25 m)",
+    "episodes": "m1env-s731 (spawn 0.55, slot A2), m1env-s732 (spawn -0.85, slot C2), m1env-s733 (spawn -2.25, slot B2)",
+    "gate": "all 3 m1_success (the M1 runner's 12 judge items) and false_success 0; a dev check, not an M1 claim"
+  },
+  "amendment_policy": "if a localization gate fails: at most one amendment round in this task; it may only ADD tags, states each added site (where) and the failure it addresses (why), is committed before its runs, creates a new map version (never overwrites v3) and is validated on fresh seeds (loop test nobox s741-s743, box s744-s749; M1 s751-s753). No seed-by-seed tuning",
+  "disk_rule": "before each cohort: df of the data volume; stop if free < 30 GiB",
+  "reporting": "all dev and test runs kept; per-episode gates, SIM time, looks, commands, tag visibility, contacts; failures reported with the cause; TensorBoard snapshot with baselines (loop v2 on the v2 map) and wrist + TOP videos"
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.m1_owncam_prereg.v1",
+  "registered": "2026-09-26, Kiro, before any run on zone_wide_door_tags_v3 (experiments/2026-09-26-zone-env-v3/prereg.json phase 3); runs only if the phase-2 localization gates pass",
+  "question": "M1-style own-camera delivery (skill v9 + localizer, M1 student after A6b) on environment v3: does the full chain (own-RGB search, grasp, carry through the door, place, re-look) still complete with 33 site-based tags and 0.40 m walls?",
+  "student": {
+    "controller": "harness/m1_owncam_delivery.py",
+    "skill": "v9",
+    "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only, mode='m1')",
+    "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+    "pose_source": "owncam_pf_v2:<calibration params sha8> (harness/owncam_pose_source.py)",
+    "order_kind": "own_rgb_bay",
+    "controller_schema": "ugrp.m1_owncam_delivery.v3",
+    "bay_half_m": [
+      0.25,
+      0.25
+    ],
+    "contact_profile": "cargo_noslip_v1",
+    "runner_schema": "ugrp.m1_owncam_run.v3",
+    "contact_profile_status": "approved by the user 2026-09-26 (study-wide)",
+    "source_note": "copied from the effective student of experiments/2026-09-26-zone-m1-owncam/prereg.json + prereg_amendments.json (A1-A6b, amendments sha256 585a607d...) ; only the map differs"
+  },
+  "episodes": [
+    {
+      "episode_id": "m1env-s731",
+      "split": "dev",
+      "seed": 731,
+      "spawn_y": 0.55,
+      "slot_id": "A2",
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1"
+    },
+    {
+      "episode_id": "m1env-s732",
+      "split": "dev",
+      "seed": 732,
+      "spawn_y": -0.85,
+      "slot_id": "C2",
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "C": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1"
+    },
+    {
+      "episode_id": "m1env-s733",
+      "split": "dev",
+      "seed": 733,
+      "spawn_y": -2.25,
+      "slot_id": "B2",
+      "map": "zone_wide_door_tags_v3",
+      "goal": {
+        "B": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "cargo_noslip_v1"
+    }
+  ],
+  "gate": "all 3 m1_success (runner judge, 12 items) and false_success 0; dev check only, not an M1 claim",
+  "label_note": "dev split only (no test split, no frozen check); TOP frames from the evaluation-only observer wrapper never reach the controller"
+}
