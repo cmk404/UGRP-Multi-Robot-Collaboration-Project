@@ -155,6 +155,10 @@ def run_entry(run):
              'student_sim_s': result['student_sim_s'], 'sim_s_by_state': state_time(log),
              'wall_contact_events': contact_events(run, ev, log), 'loaded_strip': strip_stats(ev, tags),
              'door_bands': door_bands(ev)}
+    student = [e for e in ev if e['phase'] == 'student' and 'pos_err_m' in e]
+    if student:
+        entry['handover'] = {'t': student[0]['t'], 'gt_xy': [round(v, 3) for v in student[0]['gt'][:2]],
+                             'est_err_m': student[0]['pos_err_m'], 'std_xy_m': student[0].get('std_xy_m')}
     if manifest['map_id'] == 'zone_wide_door_tags_v2':
         v3 = json.loads((ROOT/'maps'/'zones'/'zone_wide_door_tags_v3.json').read_text())
         entry['v2_sightings_under_v3'] = v2_sighting_fate(ev, tags, v3)
@@ -165,12 +169,17 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     p.add_argument('--v3', type=Path, required=True)
     p.add_argument('--v2', type=Path, required=True)
+    p.add_argument('--a1', type=Path, default=None, help='amendment A1 test folder (loop/a1-test)')
     p.add_argument('--output', type=Path, required=True)
     a = p.parse_args(argv)
     out = {'schema': 'ugrp.zone_env_v3.failure_analysis.v1', 'posthoc': True,
            'note': 'evaluation-only ground truth; diagnostics, not gates, never robot input',
            'strip': STRIP, 'v3_test': [], 'v2_baseline_test': []}
-    for key, root, pattern in (('v3_test', a.v3, 'envtest-*'), ('v2_baseline_test', a.v2, 'v2test-*')):
+    groups = [('v3_test', a.v3, 'envtest-*'), ('v2_baseline_test', a.v2, 'v2test-*')]
+    if a.a1 is not None:
+        out['v3a1_test'] = []
+        groups.append(('v3a1_test', a.a1, 'a1test-*'))
+    for key, root, pattern in groups:
         for run in sorted(root.glob(pattern)):
             if (run/'result.json').exists():
                 out[key].append(run_entry(run))
@@ -186,11 +195,12 @@ def main(argv=None):
     a.output.write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     for region, v in out['v2_sightings_under_v3_total'].items():
         print(region, v)
-    for key in ('v3_test', 'v2_baseline_test'):
-        for r in out[key]:
+    for key in ('v3_test', 'v3a1_test', 'v2_baseline_test'):
+        for r in out.get(key, []):
             s = r['loaded_strip']
             print(f"{r['episode']:20s} pass={r['pass']!s:5s} contacts={len(r['wall_contact_events'])} "
-                  f"strip frames={s['frames']} no_tag={s['frames_without_tag']} mean_err={s['mean_err_m']}")
+                  f"strip frames={s['frames']} no_tag={s['frames_without_tag']} mean_err={s['mean_err_m']} "
+                  f"handover_err={r.get('handover', {}).get('est_err_m')}")
 
 
 if __name__ == '__main__':

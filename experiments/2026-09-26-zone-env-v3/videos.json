@@ -1,0 +1,169 @@
+{
+ "schema": "ugrp.zone_env_v3.videos.v1",
+ "builder": "experiments/2026-09-26-zone-env-v3/make_videos.py",
+ "layout": "left: wrist camera frames exactly as the robot received them (robot input); right: TOP 4-camera mosaic from observe_top.py (evaluation only, never a robot input); caption: SIM time, runner phase and student state",
+ "sim_speed": 2.0,
+ "raw_dir": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/videos",
+ "videos": [
+  {
+   "file": "v3a1test-box-s744.mp4",
+   "sha256": "87455583ae55abfe7deee444c8f0447d986288712509c7c8a71906a77b0d67c3",
+   "bytes": 660100,
+   "frames": 423,
+   "top_frames": 172,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s744"
+  },
+  {
+   "file": "v3a1test-box-s745.mp4",
+   "sha256": "9157555b4565ab31dde7ef9ee11b244792629c852bbaec380845fd808817ee82",
+   "bytes": 1223178,
+   "frames": 777,
+   "top_frames": 314,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s745"
+  },
+  {
+   "file": "v3a1test-box-s746.mp4",
+   "sha256": "2dc7135083566360ea1a8aef5c8a168965fef331034a214245a2c7e316ffc4f7",
+   "bytes": 762954,
+   "frames": 495,
+   "top_frames": 201,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s746"
+  },
+  {
+   "file": "v3a1test-box-s747.mp4",
+   "sha256": "5881894e3706ac36b1d8bced6d277b00a35a6d3ace273bb56613d5f01aba0fa1",
+   "bytes": 1089253,
+   "frames": 703,
+   "top_frames": 284,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s747"
+  },
+  {
+   "file": "v3a1test-box-s748.mp4",
+   "sha256": "af20208d89e47c4b8106dab9f988e5aa98b460d258fc4ea22acba1aa88724c63",
+   "bytes": 1585413,
+   "frames": 1311,
+   "top_frames": 527,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s748"
+  },
+  {
+   "file": "v3a1test-box-s749.mp4",
+   "sha256": "a6c79c54503965eac9ba8be4211b1c345abaab3e76cd8c49c85e37651bb504b5",
+   "bytes": 1023820,
+   "frames": 688,
+   "top_frames": 278,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-box-s749"
+  },
+  {
+   "file": "v3a1test-nobox-s741.mp4",
+   "sha256": "81f0ee5709f0c92cf9cfe53b39a694b1081209f89138d70ae3b0a6ca1c52c694",
+   "bytes": 857522,
+   "frames": 493,
+   "top_frames": 200,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-nobox-s741"
+  },
+  {
+   "file": "v3a1test-nobox-s742.mp4",
+   "sha256": "778ed142f15f7d559c3c123796611add1f1a974ee8b31b8f8647caaf829dfb6c",
+   "bytes": 842995,
+   "frames": 466,
+   "top_frames": 189,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-nobox-s742"
+  },
+  {
+   "file": "v3a1test-nobox-s743.mp4",
+   "sha256": "b177d708d59639e6aedd1d171bcc9fd7057e0736f03cd26f8e82fbf1a0cf35e8",
+   "bytes": 1001571,
+   "frames": 578,
+   "top_frames": 234,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/a1-test/a1test-nobox-s743"
+  },
+  {
+   "file": "v3dev-box-s712.mp4",
+   "sha256": "b9065e1928b493782c32da21a9c8b6ad96c69ec8452d67d34d41757a80a54e25",
+   "bytes": 1591026,
+   "frames": 1106,
+   "top_frames": 445,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/dev/envdev-box-s712"
+  },
+  {
+   "file": "v3dev-nobox-s711.mp4",
+   "sha256": "69de915dc22bb57bc66c129fc20de31790d48db6b16203712b6a0d0a1f5d74f9",
+   "bytes": 734836,
+   "frames": 457,
+   "top_frames": 185,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/dev/envdev-nobox-s711"
+  },
+  {
+   "file": "v3test-box-s724.mp4",
+   "sha256": "839e6dfaf078b77bd596056f79fa8f3af558b867391f4d88553c1d2cf239d560",
+   "bytes": 2019757,
+   "frames": 1360,
+   "top_frames": 547,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s724"
+  },
+  {
+   "file": "v3test-box-s725.mp4",
+   "sha256": "074970d642eefdcbab9fc04e836578235e82bc2fae11d6e566df4d5d788ae8ef",
+   "bytes": 1063924,
+   "frames": 687,
+   "top_frames": 277,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s725"
+  },
+  {
+   "file": "v3test-box-s726.mp4",
+   "sha256": "28181b2d470049df658ce05fff58c286195fcbef0997c5682f908ad51ae2fbd1",
+   "bytes": 1589011,
+   "frames": 1254,
+   "top_frames": 504,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s726"
+  },
+  {
+   "file": "v3test-box-s727.mp4",
+   "sha256": "087366ab5f2a036ae352207678bfedf63d1b7a41bdbf82db838a3fcac3315d21",
+   "bytes": 1154719,
+   "frames": 857,
+   "top_frames": 346,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s727"
+  },
+  {
+   "file": "v3test-box-s728.mp4",
+   "sha256": "eec35d0e0851a9bab61c9654820f389668a4be510b171ae6783bde17816db13a",
+   "bytes": 1537954,
+   "frames": 1279,
+   "top_frames": 514,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s728"
+  },
+  {
+   "file": "v3test-box-s729.mp4",
+   "sha256": "7f26835c6bd2149e81e8708e3c8184ce4746d16ea1cbceed059f9f6e3dfbecc5",
+   "bytes": 943990,
+   "frames": 649,
+   "top_frames": 262,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-box-s729"
+  },
+  {
+   "file": "v3test-nobox-s721.mp4",
+   "sha256": "da72e64b7e744641bad6cdcd41fb5b909090723015349b95229f6bf62ee1f795",
+   "bytes": 655097,
+   "frames": 383,
+   "top_frames": 156,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-nobox-s721"
+  },
+  {
+   "file": "v3test-nobox-s722.mp4",
+   "sha256": "5c1c66a5748d23430f2c81b1476f408ea870f9ab32686a6c052ee57834da838d",
+   "bytes": 988135,
+   "frames": 625,
+   "top_frames": 253,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-nobox-s722"
+  },
+  {
+   "file": "v3test-nobox-s723.mp4",
+   "sha256": "ca22bd4ba11eefcd04a89b70ca2dc776529ffec4fb05b3a96945c5594915a097",
+   "bytes": 885800,
+   "frames": 543,
+   "top_frames": 220,
+   "source_run": "/Users/changmin/projects/ugrp/outputs/zone-env-v3-20260926/loop/test/envtest-nobox-s723"
+  }
+ ]
+}
