@@ -1,0 +1,88 @@
+{
+ "schema": "ugrp.vision_loc.prereg.v1",
+ "registered": "2026-09-26, Kiro, after dev selection and before any test segmentation, localization or scoring",
+ "source_sha_at_registration": "0620e42fe6fa21cd792ea88d55073046db6eccd8",
+ "student": {
+  "model": {
+   "checkpoint": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v2/seg_lraspp_mbv3.pt",
+   "sha256": "348539030fda962cc5ba64e21c956619bc4db9321a99cd3ae6746611a9939fd9",
+   "bytes": 13071401,
+   "train_info_sha256": "a9453aab30d5af6e0f1b6214049cf0bc538128fc1faca77be32400f54ee47caa",
+   "arch": "MobileNet_V3_Large_Weights.IMAGENET1K_V1",
+   "release": "pending (hashed locally; GitHub Release per docs/model_artifacts.md not done)"
+  },
+  "calibration": {
+   "file": "calibration_train.json",
+   "sha256": "60177d6b4e116f4d63aea0b5c0bd200cd5eaebe66a63080612c7949491f085dd"
+  },
+  "config": {
+   "file": "selected_config.json",
+   "sha256": "57665a36e72cc186cffacdb87eabd36ff8f653e04c25b97c61cf2c048e396412",
+   "value": {
+    "infer_size": [
+     480,
+     360
+    ],
+    "obs": {
+     "refine_px": 6,
+     "consistency_px": 4
+    },
+    "measurement": {
+     "settle_s": 0.2,
+     "effective_columns": 8,
+     "sigma_px": 2.5
+    }
+   }
+  },
+  "m1_motion_model": "M1 calibration (markerless_probe.load_m1_calibration, hash-checked), unchanged",
+  "filters": {
+   "vision": "student",
+   "boundary": "PR #210 detector baseline",
+   "deadreck": "baseline",
+   "oracle": "EVAL-ONLY diagnostic (teacher labels), never a student result"
+  },
+  "frozen_files_sha256": {
+   "vision_loc.py": "e508dc8d92ca8ddc808d83a265e4bee8343830234b79219c169ad96681a9c6ec",
+   "vision_loc_cli.py": "fba56dc3e68f52b10540a08876aaad816defdb1c126edd1fe600263291f06424",
+   "seg_model.py": "c837bce7d369d730a41161bd72280c710e6af3a72d6866ddfd694898240ac229",
+   "episodes.json": "75a9512e57b6416b232eb8b52b9b3f64d4641e34c9be50c5befb9402049e1015",
+   "calibration_train.json": "60177d6b4e116f4d63aea0b5c0bd200cd5eaebe66a63080612c7949491f085dd",
+   "maps/zone_wide_door_walls_v3_notags.json": "61d35247e9a3f487c888ac4c6762e89962a4a33cb4853a671f02f0b12973f63e",
+   "../2026-09-26-markerless-probe/markerless_probe.py": "015df71be345e16ebea9062b2f6b31cfdac26351b6200a763ca44265618d2b15"
+  }
+ },
+ "dev_selection": {
+  "file": "dev_variants.json",
+  "sha256": "4e5b8c6856ba33c4b15644660046868ac5c6d7284aa7d35b505ab274137a8c15"
+ },
+ "test_episodes": [
+  "vl-test-s912",
+  "vl-test-s913",
+  "vl-test-s914",
+  "vl-test-s915",
+  "vl-test-s916",
+  "vl-test-s917"
+ ],
+ "scoring": {
+  "once": true,
+  "metrics": "vision_loc_cli.py score (pooled over the 6 test episodes and per episode)",
+  "groups": {
+   "door_zone": "|x - 2.2| < 0.6 and -0.45 < y < 0.55 (GT), as PR #210",
+   "door_loaded": "door_zone and own-command load state loaded (carrying through door_1)",
+   "lateral": "|y_est - y_gt| (door_1 is crossed along x)"
+  },
+  "false_detections": "learned column edges outside the teacher-label interval by > 5 px"
+ },
+ "gate": {
+  "name": "door_1 carrying clearance",
+  "derivation": "door_1 opening 0.50 m (y -0.20..0.30); loaded body envelope y +-0.15 m (harness/owncam_drive.LOADED_ENVELOPE) -> 0.10 m clearance per side. A 3 deg heading error swings the envelope front corner (0.20 m ahead) by 0.2*sin(3 deg) = 0.010 m; keeping ~0.03 m for path tracking and contact margin leaves 0.06 m for the lateral localization error.",
+  "lateral_p99_max_m": 0.06,
+  "position_p90_max_m": 0.05,
+  "yaw_p90_max_deg": 3.0,
+  "min_episodes": 3,
+  "min_door_loaded_frames_per_episode": 20,
+  "rule": "PASS iff, over the pooled test door_loaded frames of the vision filter: lateral p99 <= 0.06 m AND position p90 <= 0.05 m AND yaw p90 <= 3.0 deg, with door_loaded frames (>= 20) in >= 3 test episodes (else INSUFFICIENT_DATA; teacher failures that never reach the door give no door frames)",
+  "reference_not_gate": "tag PF on the M1 test frames (tags_v2): door p90 3.6 cm; environment v3 loop test (tags_v3) tag PF - other environments, reported next to the result"
+ },
+ "recommendation_rule": "PASS: wall and door-frame tags are not needed for door_1 carrying at the measured accuracy (offline; closed loop still to verify). FAIL: keep a closed-loop check before removing them and report the residual error and where it comes from."
+}

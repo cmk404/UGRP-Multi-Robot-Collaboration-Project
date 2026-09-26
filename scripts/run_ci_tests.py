@@ -148,6 +148,7 @@ TEST_PATTERNS = (
     "tests/test_known_map*.py",
     "tests/test_rgb_traffic*.py",
     "tests/test_markerless*.py",
+    "tests/test_vision_loc*.py",
     "tests/test_visual_attachment*.py",
     "tests/test_placement_guidance.py",
     "tests/test_visual_placement*.py",

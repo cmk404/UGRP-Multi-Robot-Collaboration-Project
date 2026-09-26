@@ -1,0 +1,199 @@
+{
+ "schema": "ugrp.vision_loc.calibration.v1",
+ "split_used": [
+  "vl-train-s901",
+  "vl-train-s902",
+  "vl-train-s903",
+  "vl-train-s904",
+  "vl-train-s905",
+  "vl-train-s906",
+  "vl-train-s907",
+  "vl-train-s908"
+ ],
+ "method": "true camera pose (MuJoCo, teacher render, eval_only/labels.jsonl) vs commanded-PWM FK (harness.wall_tags.camera_in_base) on settled frames (own arm/pan command >= settled_s ago) of the named M1 arm poses; median elevation rotation about the FK optical x axis and median camera height offset per (own load state, servo 3 pulse); interpolated over servo 3",
+ "settled_s": 0.3,
+ "fits": {
+  "loaded:carry:777": {
+   "n": 1613,
+   "bias_median_rad": -0.04289,
+   "bias_p10_p90_rad": [
+    -0.04297,
+    -0.04274
+   ],
+   "dz_median_m": -0.00443,
+   "az_abs_p95_deg": 0.015
+  },
+  "loaded:look_p20:1072": {
+   "n": 1066,
+   "bias_median_rad": -0.04484,
+   "bias_p10_p90_rad": [
+    -0.04488,
+    -0.04472
+   ],
+   "dz_median_m": -0.00478,
+   "az_abs_p95_deg": 0.001
+  },
+  "unloaded:search:740": {
+   "n": 5488,
+   "bias_median_rad": -0.017,
+   "bias_p10_p90_rad": [
+    -0.01701,
+    -0.017
+   ],
+   "dz_median_m": -0.00166,
+   "az_abs_p95_deg": 0.001
+  },
+  "unloaded:look_p20:1072": {
+   "n": 494,
+   "bias_median_rad": -0.02306,
+   "bias_p10_p90_rad": [
+    -0.02308,
+    -0.02304
+   ],
+   "dz_median_m": -0.00258,
+   "az_abs_p95_deg": 0.001
+  }
+ },
+ "sag": {
+  "loaded": {
+   "s3": [
+    777,
+    1072
+   ],
+   "bias": [
+    -0.04289,
+    -0.04484
+   ],
+   "dz": [
+    -0.00443,
+    -0.00478
+   ]
+  },
+  "unloaded": {
+   "s3": [
+    740,
+    1072
+   ],
+   "bias": [
+    -0.017,
+    -0.02306
+   ],
+   "dz": [
+    -0.00166,
+    -0.00258
+   ]
+  }
+ },
+ "settle_analysis": [
+  {
+   "since_cmd_s": [
+    0.0,
+    0.1
+   ],
+   "n": 2909,
+   "az_abs_p95_deg": 5.919,
+   "el_dev_abs_p95_deg": 0.095
+  },
+  {
+   "since_cmd_s": [
+    0.1,
+    0.2
+   ],
+   "n": 1510,
+   "az_abs_p95_deg": 0.152,
+   "el_dev_abs_p95_deg": 0.399
+  },
+  {
+   "since_cmd_s": [
+    0.2,
+    0.3
+   ],
+   "n": 750,
+   "az_abs_p95_deg": 0.019,
+   "el_dev_abs_p95_deg": 0.092
+  },
+  {
+   "since_cmd_s": [
+    0.3,
+    0.4
+   ],
+   "n": 780,
+   "az_abs_p95_deg": 0.003,
+   "el_dev_abs_p95_deg": 0.014
+  },
+  {
+   "since_cmd_s": [
+    0.4,
+    0.5
+   ],
+   "n": 305,
+   "az_abs_p95_deg": 0.007,
+   "el_dev_abs_p95_deg": 0.008
+  },
+  {
+   "since_cmd_s": [
+    0.5,
+    0.6
+   ],
+   "n": 639,
+   "az_abs_p95_deg": 0.002,
+   "el_dev_abs_p95_deg": 0.007
+  },
+  {
+   "since_cmd_s": [
+    0.6,
+    0.8
+   ],
+   "n": 744,
+   "az_abs_p95_deg": 0.004,
+   "el_dev_abs_p95_deg": 0.007
+  },
+  {
+   "since_cmd_s": [
+    0.8,
+    1.2
+   ],
+   "n": 577,
+   "az_abs_p95_deg": 0.012,
+   "el_dev_abs_p95_deg": 0.009
+  },
+  {
+   "since_cmd_s": [
+    1.2,
+    null
+   ],
+   "n": 6698,
+   "az_abs_p95_deg": 0.012,
+   "el_dev_abs_p95_deg": 0.007
+  }
+ ],
+ "pan_base_yaw": {
+  "unloaded": 5.5e-07,
+  "loaded": -0.00014404
+ },
+ "pan_base_yaw_fit": {
+  "unloaded": {
+   "n": 496,
+   "rad_per_pwm": 5.5e-07,
+   "residual_abs_p95_deg": 0.003,
+   "offset_at_pan_2030_deg": 0.017
+  },
+  "loaded": {
+   "n": 689,
+   "rad_per_pwm": -0.00014404,
+   "residual_abs_p95_deg": 0.002,
+   "offset_at_pan_2030_deg": -4.374
+  }
+ },
+ "pan_base_yaw_method": "GT chassis yaw (eval_only/labels.jsonl base_gt) in hold segments (no own wheel command, same own arm pose and load state) minus the segment median at pan 1500, regressed through the origin on (pan pulse - 1500), settled frames",
+ "files_sha256": {
+  "vl-train-s901": "9a704cf7d8b16b6aba0009f40d9f5d1933df4de2313f51eb74b3cc8af6027df9",
+  "vl-train-s902": "b88baab61d0261a475f5a643be84a305a77c4a387ca1700c0ccc0f129a7003e5",
+  "vl-train-s903": "3c160616a3d22f9e1db5b24f3462ec71893a14d52ce64b3c89b2325603516e35",
+  "vl-train-s904": "9231b967856d3b20e78c2b77ca4e9d0f4e71e573216b72f331d9ffcb7e5c8374",
+  "vl-train-s905": "d38a154ce962b563702b7a61bbfa7e9119801a762a4240bbe6945a5cc236253e",
+  "vl-train-s906": "7075a7f6e3031912f9d8aceb1a09f0f511e19a29f90c8e751fc828ca742408d0",
+  "vl-train-s907": "d51ca555ddb40a913552148f77f26d140d8b71e42864f830f114fef17da89d2f",
+  "vl-train-s908": "e7054da7d0e72f82cb5e39547e31ff46bf681d6a6153541d253c72e3725c7da4"
+ }
+}

@@ -1,0 +1,315 @@
+{
+ "schema": "ugrp.vision_loc_episodes.v1",
+ "registered": "2026-09-26, Kiro, before any render (splits fixed here: train = vision-model training only; dev = PF tuning and model selection; test = scored once after the gate is committed)",
+ "base_map": "zone_wide_door",
+ "map": "zone_wide_door_walls_v3_notags (maps/, base + walls_v3 + zero tags)",
+ "layout_rule": "spawn rows and slots mirror the M1 cohort (A/B/C slots, spawn rows 0.55/-0.85/-2.25, cyan target + red x2 + green x1); new seeds 901-917 (M1 91-106 and environment v3 711-733 unused here)",
+ "controller": {
+  "controller": "harness/m1_owncam_delivery.py",
+  "skill": "v9",
+  "skill_module": "harness/wrist_zone_skill_v9.py (PR #181 frozen 04a5e3c, read-only), run with mode='diagnostic' (teacher pose)",
+  "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+  "pose_source": "teacher_gt_eval_only (simulator truth; run_vl_teacher_render.TeacherPoseSource) -- the M1 student used owncam_pf_v2",
+  "order_kind": "own_rgb_bay",
+  "controller_schema": "ugrp.m1_owncam_delivery.v3",
+  "bay_half_m": [
+   0.25,
+   0.25
+  ],
+  "contact_profile": "cargo_noslip_v1",
+  "runner_schema": "ugrp.m1_owncam_run.v3",
+  "contact_profile_status": "approved by the user 2026-09-26 (study-wide)",
+  "source_note": "M1 effective student (A1-A6b) as copied in kiro/zone-map-v3 experiments/2026-09-26-zone-env-v3/m1/prereg.json; used here as the TEACHER controller: pose source replaced by the simulator truth (run_vl_teacher_render.py), skill v9 mode diagnostic"
+ },
+ "episodes": [
+  {
+   "episode_id": "vl-train-s901",
+   "split": "train",
+   "role": "model_train",
+   "seed": 901,
+   "spawn_y": 0.55,
+   "slot_id": "A1",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s902",
+   "split": "train",
+   "role": "model_train",
+   "seed": 902,
+   "spawn_y": -0.85,
+   "slot_id": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s903",
+   "split": "train",
+   "role": "model_train",
+   "seed": 903,
+   "spawn_y": -2.25,
+   "slot_id": "C3",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s904",
+   "split": "train",
+   "role": "model_train",
+   "seed": 904,
+   "spawn_y": 0.55,
+   "slot_id": "C1",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s905",
+   "split": "train",
+   "role": "model_train",
+   "seed": 905,
+   "spawn_y": -0.85,
+   "slot_id": "A3",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s906",
+   "split": "train",
+   "role": "model_train",
+   "seed": 906,
+   "spawn_y": -2.25,
+   "slot_id": "B1",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s907",
+   "split": "train",
+   "role": "model_train",
+   "seed": 907,
+   "spawn_y": 0.55,
+   "slot_id": "B3",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-train-s908",
+   "split": "train",
+   "role": "model_train",
+   "seed": 908,
+   "spawn_y": -0.85,
+   "slot_id": "C2",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-dev-s909",
+   "split": "dev",
+   "role": "pf_dev_model_val",
+   "seed": 909,
+   "spawn_y": -2.25,
+   "slot_id": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-dev-s910",
+   "split": "dev",
+   "role": "pf_dev_model_val",
+   "seed": 910,
+   "spawn_y": 0.55,
+   "slot_id": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-dev-s911",
+   "split": "dev",
+   "role": "pf_dev_model_val",
+   "seed": 911,
+   "spawn_y": -0.85,
+   "slot_id": "C1",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s912",
+   "split": "test",
+   "role": "test_once",
+   "seed": 912,
+   "spawn_y": 0.55,
+   "slot_id": "A2",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s913",
+   "split": "test",
+   "role": "test_once",
+   "seed": 913,
+   "spawn_y": -0.85,
+   "slot_id": "B1",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s914",
+   "split": "test",
+   "role": "test_once",
+   "seed": 914,
+   "spawn_y": -2.25,
+   "slot_id": "C1",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s915",
+   "split": "test",
+   "role": "test_once",
+   "seed": 915,
+   "spawn_y": 0.55,
+   "slot_id": "A3",
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s916",
+   "split": "test",
+   "role": "test_once",
+   "seed": 916,
+   "spawn_y": -0.85,
+   "slot_id": "B2",
+   "goal": {
+    "B": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  },
+  {
+   "episode_id": "vl-test-s917",
+   "split": "test",
+   "role": "test_once",
+   "seed": 917,
+   "spawn_y": -2.25,
+   "slot_id": "C3",
+   "goal": {
+    "C": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   }
+  }
+ ]
+}
