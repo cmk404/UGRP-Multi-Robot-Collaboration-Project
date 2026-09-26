@@ -176,6 +176,52 @@ for _name, _walls, _passages, _text in (
                       'passages': _passages, 'route_text': _text}
 
 
+# 2026-09-26 environment v3 (user request "벽이 너무 낮은 거 같아, 벽 너머가 보여야
+# 하나"): a versioned wall-height profile applied on top of an authored base map.
+# ``walls_v1`` is the 0.10 m wall every base map above is authored with (their
+# JSON files and every map up to *_tags_v2 stay byte-identical). ``walls_v3``
+# raises every wall (perimeter and interior) to 0.40 m; footprints, doors,
+# passages, zones, TOP cameras and spawns are unchanged. The height is the
+# smallest 0.05 m step above both (a) the highest wrist-camera position any
+# commandable arm posture reaches plus 0.05 m (0.321 m: servo 3/4/5 PWM
+# 500..2500 through the simulator's own pulse map and MuJoCo joint ranges, arm
+# straight up; the named work postures reach at most 0.239 m) and (b) the highest
+# robot geom plus 0.03 m (0.367 m, finger pad with the arm straight up). So no
+# wrist camera sees over a wall into another room (only through doors and
+# corridors) and no raised arm or held box shows above one.
+# Evidence: experiments/2026-09-26-zone-env-v3/camera_height.json.
+WALL_PROFILES = {
+    'walls_v1': {'version': 1, 'height_m': .10,
+                 'scope': 'authored base maps and every tagged map up to *_tags_v2 (unchanged)'},
+    'walls_v3': {'version': 3, 'height_m': .40,
+                 'rule': ('smallest 0.05 m step >= max(kinematic max wrist-camera z + 0.05 m, '
+                          'highest robot geom z + 0.03 m)'),
+                 'kinematic_max_camera_z_m': .321, 'max_work_posture_camera_z_m': .239,
+                 'robot_top_max_z_m': .367,
+                 'evidence': 'experiments/2026-09-26-zone-env-v3/camera_height.json'},
+}
+
+
+def wall_profile_record(profile_id):
+    """The profile as recorded in a map file (id, parameters, parameter hash)."""
+    if profile_id not in WALL_PROFILES:
+        raise ValueError(f'unknown wall profile: {profile_id}')
+    value = {'id': profile_id, **copy.deepcopy(WALL_PROFILES[profile_id])}
+    value['sha256'] = digest(value)
+    return value
+
+
+def apply_wall_profile(static, profile_id):
+    """Copy of a static map with every wall at the profile height (footprints unchanged)."""
+    record = wall_profile_record(profile_id)
+    value = copy.deepcopy(static)
+    for obstacle in value['obstacles']:
+        if obstacle.get('kind') == 'wall':
+            obstacle['height_m'] = record['height_m']
+    value['wall_profile'] = record
+    return value
+
+
 def layout(variant):
     if variant not in VARIANTS:
         raise ValueError('unknown zone arena variant')
@@ -233,7 +279,11 @@ def static_map_text(static):
         (x, y), (hx, hy) = o['center_m'], o['half_extents_m']
         a, b = ((x-hx, y), (x+hx, y)) if hx >= hy else ((x, y-hy), (x, y+hy))
         return f"{o['id']} ({a[0]:.2f}, {a[1]:.2f})-({b[0]:.2f}, {b[1]:.2f})"
-    lines = ['Fixed interior walls (0.10 m high; x east, y north, metres): ' + '; '.join(seg(o) for o in interior) + '.']
+    # Wall height from the map itself (0.10 m on every authored map, so their text is unchanged;
+    # 0.40 m under wall profile walls_v3).
+    heights = sorted({float(o.get('height_m', .10)) for o in interior})
+    high = '/'.join(f'{h:.2f}' for h in heights) + ' m high'
+    lines = [f'Fixed interior walls ({high}; x east, y north, metres): ' + '; '.join(seg(o) for o in interior) + '.']
     for p in static.get('passages', []):
         (x, y), (hx, hy) = p['center_m'], p['half_extents_m']
         if p['kind'] == 'passing_bay':
