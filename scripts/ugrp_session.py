@@ -141,17 +141,32 @@ def write_session(name: str, record: dict) -> None:
     os.replace(temp, path)
 
 
+def signal_group(pgid: int, signum: int) -> bool:
+    """Signal a process group; False when it is already gone.
+
+    macOS can answer EPERM for a group whose members are exiting (zombies). That
+    is treated as gone instead of raising out of session cleanup, which left a
+    stale session record under load.
+    """
+    try:
+        os.killpg(pgid, signum)
+        return True
+    except (ProcessLookupError, PermissionError):
+        return False
+
+
 def stop_group(pgid: int, grace: float = TERM_GRACE_SECONDS) -> None:
     if not process_group_alive(pgid):
         return
-    os.killpg(pgid, signal.SIGTERM)
+    if not signal_group(pgid, signal.SIGTERM):
+        return
     deadline = time.monotonic() + grace
     while time.monotonic() < deadline:
         if not process_group_alive(pgid):
             return
         time.sleep(0.05)
     if process_group_alive(pgid):
-        os.killpg(pgid, signal.SIGKILL)
+        signal_group(pgid, signal.SIGKILL)
 
 
 def run_session(name: str, command: list[str], grace: float) -> int:

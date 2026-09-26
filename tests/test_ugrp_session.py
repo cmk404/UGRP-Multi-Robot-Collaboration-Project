@@ -279,6 +279,16 @@ class UgrpSessionTests(unittest.TestCase):
             self.assertIsNone(SESSION_MODULE.free_space_refusal(Path("/data"), 4.0))
             self.assertIsNone(SESSION_MODULE.free_space_refusal(Path("/data"), 0.0))
 
+    def test_stop_group_treats_eperm_from_exiting_group_as_gone(self):
+        # macOS answers EPERM for a group of exiting zombies; cleanup must not raise.
+        eperm = PermissionError(1, "Operation not permitted")
+        with mock.patch.object(SESSION_MODULE, "process_group_alive", return_value=True), \
+                mock.patch.object(SESSION_MODULE.os, "killpg", side_effect=eperm) as killpg:
+            SESSION_MODULE.stop_group(12345, grace=0.1)
+        killpg.assert_called_once_with(12345, signal.SIGTERM)
+        with mock.patch.object(SESSION_MODULE.os, "killpg", side_effect=ProcessLookupError):
+            self.assertFalse(SESSION_MODULE.signal_group(12345, signal.SIGKILL))
+
 
 if __name__ == "__main__":
     unittest.main()
