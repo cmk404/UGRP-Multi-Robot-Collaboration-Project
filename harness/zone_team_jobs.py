@@ -37,7 +37,8 @@ import math
 from dataclasses import dataclass
 
 from harness.three_robot_plan import digest
-from harness.zone_goal_v2 import ALL_KINDS, formation, formation_id, required_carriers
+from harness.zone_goal_v2 import (ALL_KINDS, claim_roles, fills_formation, formation, formation_id, formations,
+                                  required_carriers)
 from harness.zone_team_footprint import station_offset
 
 SCHEMA = 'ugrp.zone_team_job.v1'
@@ -73,7 +74,7 @@ class RoleClaim:
     def __post_init__(self):
         if self.kind not in ALL_KINDS:
             raise ValueError(f'unknown item kind: {self.kind}')
-        if self.role not in formation(self.kind):
+        if self.role not in claim_roles(self.kind):
             raise ValueError(f'{self.kind} has no grasp role {self.role!r}')
 
     @property
@@ -252,7 +253,7 @@ class TeamJobLedger:
         roles = [c.role for c in claims]
         if len(set(roles)) != len(roles):
             raise CommitRejected('duplicate role in one team')
-        if sorted(roles) != sorted(formation(first.kind)):
+        if not fills_formation(first.kind, roles):
             raise CommitRejected(f'roles {sorted(roles)} do not fill formation {formation_id(first.kind)}')
         if len(claims) != required_carriers(first.kind):
             raise CommitRejected('participant count differs from required_carriers')
@@ -339,7 +340,10 @@ class RendezvousRule:
       ``near_item_m`` of the station: a visible event, not an intention);
       else ``en_route``. Equal distances block both.
     - ``teams``: robots at_station on the same item whose claims share one spec
-      and exactly fill the formation form a team. Nothing else forms a team.
+      and exactly fill one formation form a team. Nothing else forms a team: two
+      robots at the two alternative sides of a one-robot item (tile west and
+      east) fill no single formation, so neither commits and both wait out
+      ``wait_s`` (no robot id breaks the tie).
     - A robot waits at most ``wait_s`` SIM seconds after its own arrival; then
       its claim ends with the plain "stopped" receipt, whether or not a peer
       with another spec stood at another station of the item.
@@ -375,7 +379,7 @@ class RendezvousRule:
         for _, members in sorted(groups.items()):
             roles = sorted(c.role for c in members.values())
             kind = next(iter(members.values())).kind
-            if roles == sorted(formation(kind)):
+            if fills_formation(kind, roles):
                 out.append(dict(sorted(members.items())))
         return out
 
@@ -417,8 +421,8 @@ def normalize_claim(rid, raw, labels):
         if required_carriers(kind) != 1:
             raise ValueError(f'{kind} needs {required_carriers(kind)} carriers: name your role')
         role = formation(kind)[0]
-    if role not in formation(kind):
-        raise ValueError(f'{kind} roles are {list(formation(kind))}')
+    if role not in claim_roles(kind):
+        raise ValueError(f'{kind} roles are {list(claim_roles(kind))}')
     if raw['zone'] not in ('A', 'B', 'C'):
         raise ValueError('zone must be A, B or C')
     return RoleClaim(rid, raw['item'], kind, raw['zone'], role)
@@ -493,6 +497,8 @@ def check_dynamic_claims(claims, *, goal, labels, view, active, finished=None):
     - same item with different zones      -> collision 'zone_mismatch' (they talk)
     - a free role on an item that already has active claims to the same zone is
       accepted (the robot chose to join; the item is not counted twice)
+    - a role that fits no formation with the item's other claims (tile west and
+      east both claimed) -> collision 'formation_conflict' (they talk)
     - a new item needs remaining need (items counted once)
     """
     out = {'accepted': {}, 'invalid': {}, 'idle': [], 'collisions': []}
@@ -533,6 +539,13 @@ def check_dynamic_claims(claims, *, goal, labels, view, active, finished=None):
             out['invalid'][rid] = f'{c.item} is not an item still visible in pickup'
             continue
         joining = any(p.item == c.item for r, p in pending.items() if r != rid)
+        if joining:
+            roles = {p.role for r, p in pending.items() if r != rid and p.item == c.item} | {c.role}
+            if not any(roles <= set(f) for f in formations(c.kind)):
+                out['collisions'].append({'kind': 'formation_conflict', 'item': c.item, 'roles': sorted(roles),
+                                          'robots': sorted({rid} | {r for r, p in pending.items()
+                                                                    if r != rid and p.item == c.item})})
+                continue
         if not joining:
             need = remaining_need_items(goal, view, {r: p for r, p in pending.items() if r != rid},
                                         finished).get(c.zone, {}).get(c.kind, 0)
@@ -583,7 +596,7 @@ def validate_team_plan(plan, goal, labels, robots=('r1', 'r2', 'r3')):
         if len({c.zone for c in cs}) != 1:
             raise ValueError(f'item {item} goes to different zones')
         roles = sorted(c.role for c in cs)
-        if roles != sorted(formation(cs[0].kind)):
+        if not fills_formation(cs[0].kind, roles):
             raise ValueError(f'item {item} roles {roles} do not fill {formation_id(cs[0].kind)}')
         delivered.setdefault(cs[0].zone, {}).setdefault(cs[0].kind, 0)
         delivered[cs[0].zone][cs[0].kind] += 1

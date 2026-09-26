@@ -69,12 +69,31 @@ def required_carriers(kind):
 
 
 def formation(kind):
-    """Grasp roles of the (single) catalogue formation; colour boxes: ('west',)."""
+    """Default formation (the catalogue's first): footprints, landing layout, fixtures.
+    Colour boxes: ('west',). Claims accept any formation (see formations/claim_roles)."""
+    return formations(kind)[0]
+
+
+def formations(kind):
+    """Every catalogue formation of a kind (alternative role sets; tile: west or east)."""
     if kind in COLORS:
-        return ('west',)
+        return (('west',),)
     if kind in CATALOGUE:
-        return tuple(CATALOGUE[kind].formations[0])
+        return tuple(tuple(f) for f in CATALOGUE[kind].formations)
     raise ValueError(f'unknown item kind: {kind}')
+
+
+def claim_roles(kind):
+    """Roles a robot may claim for a kind: the union of its formations, catalogue order."""
+    out = []
+    for f in formations(kind):
+        out += [r for r in f if r not in out]
+    return tuple(out)
+
+
+def fills_formation(kind, roles):
+    """Do these roles (one per robot) fill exactly one formation of the kind?"""
+    return sorted(roles) in [sorted(f) for f in formations(kind)]
 
 
 def formation_id(kind):
@@ -281,11 +300,13 @@ def task_static_info(goal, variant='zone_wide'):
     goal = goal_counts_v2(goal, variant)
     kinds = sorted({k for z in goal.values() for k in z})
     return {'schema': SCHEMA, 'goal': copy.deepcopy(goal),
-            'kinds': {k: {'required_carriers': required_carriers(k), 'roles': list(formation(k)),
+            'kinds': {k: {'required_carriers': required_carriers(k), 'roles': list(claim_roles(k)),
+                          'formations': [list(f) for f in formations(k)],
                           'formation_id': formation_id(k)} for k in kinds},
             'landing_areas': landing_layout(goal, variant) if not is_legacy_goal(goal) else None}
 
 
-__all__ = ['SCHEMA', 'BOX_KINDS', 'CARGO_KINDS', 'ALL_KINDS', 'required_carriers', 'formation', 'formation_id',
+__all__ = ['SCHEMA', 'BOX_KINDS', 'CARGO_KINDS', 'ALL_KINDS', 'required_carriers', 'formation', 'formations',
+           'claim_roles', 'fills_formation', 'formation_id',
            'is_legacy_goal', 'goal_counts_v2', 'goal_units', 'landing_spec', 'landing_layout',
            'landing_capacity_table', 'referee_v2', 'task_static_info']
