@@ -77,6 +77,12 @@ QUANTUM_S = cost_params_for().quantum_s
 #: (#206); the thinking cost reaches physics through the delayed action release.
 THINK_HOLD_POLICY = 'idle_robot_holds_busy_job_continues'
 ACTION_MAP_VERSION = 'zone_study_action_map.v1'
+#: Own re-ask timers: at most ONE pending per actor (idle 10 s / busy 60 s). The #194
+#: offline rule armed a new timer after EVERY action and never cancelled one, so each
+#: call started a perpetual chain; message-triggered calls in channel conditions then
+#: multiplied the chains and drained the HTTP budget (smoke 45999d9c, peer_ko: 90/90
+#: attempts by 445 SIM s, 81 of them ``continue``). Smoke v1 ran the old rule.
+REASK_POLICY = 'single_pending_own_timer.v1'
 #: ``wait`` on an idle executor = hold this long (then job_done -> idle wake).
 WAIT_HOLD_S = 10.0
 FIXTURE_ACTOR = 'fixture_v1'
@@ -315,6 +321,8 @@ class IntegratedTrial(zo.OfflineTrial):
         self.request_images: dict[str, bytes] = {}
         self.input_log, self.dispatch_log, self.executor_events = [], [], []
         self.clock_drift_s = 0.0
+        self._reask_at = {actor: None for actor in self.actors}
+        self.scheduler.on_timer = self._on_timer
 
     # -- clock --------------------------------------------------------------
     def begin(self, t0_s):
@@ -430,13 +438,24 @@ class IntegratedTrial(zo.OfflineTrial):
             self._jobs[ack['job_id']] = entry
 
     def _arm_reask(self, actor, sim_s):
-        """Own timer: idle re-ask when the own executor is idle, busy re-ask while it runs."""
+        """Own timer: idle re-ask when the own executor is idle, busy re-ask while it runs.
+
+        At most one pending re-ask per actor (``REASK_POLICY``): a call while one is
+        pending arms nothing, so N close calls cannot start N perpetual chains.
+        """
         if self.scheduler.metrics[actor]['calls'] >= self.policy.max_calls_per_actor:
+            return
+        if self._reask_at[actor] is not None:
             return
         busy = self.links[actor].job() is not None
         at = sim_s + (self.policy.busy_reask_s if busy else self.policy.idle_reask_s)
         if at <= self.horizon_s:
+            self._reask_at[actor] = round(at, 6)
             self.scheduler.timer(actor, 'timer' if busy else 'idle', at=at)
+
+    def _on_timer(self, actor, label, sim_s):
+        if self._reask_at.get(actor) is not None and abs(self._reask_at[actor] - sim_s) < 1e-6:
+            self._reask_at[actor] = None
 
     # -- records --------------------------------------------------------------
     def wakeups(self, actor) -> list:
@@ -454,6 +473,7 @@ class IntegratedTrial(zo.OfflineTrial):
                 'cost_params': {'version': self.params.version, 'digest': self.params.digest()},
                 'call_policy': policy, 'quantum_s': QUANTUM_S, 'think_hold_policy': THINK_HOLD_POLICY,
                 'action_map': {'version': ACTION_MAP_VERSION, 'wait_hold_s': WAIT_HOLD_S},
+                'reask_policy': REASK_POLICY,
                 'pair_status': self.pair_status.config(), 'pair_status_sha256': self.pair_status.config_sha256(),
                 'order_sheet_sha256': self.source.sha256, 'pose_provider': dict(self.pose_label),
                 'inter_robot_channels': (['dialogue'] if self.spec.channel_open else []) + ['pair_status']}

@@ -435,3 +435,13 @@ def test_study_config_is_condition_invariant_apart_from_the_channel():
     assert configs['leader_ko']['leader_id'] == 'r2' and all(configs[c]['leader_id'] is None
                                                              for c in CONDITIONS if c != 'leader_ko')
     assert configs['no_comm']['actor'] == zi.FIXTURE_ACTOR and configs['no_comm']['planned_model']['enabled'] is False
+
+
+@pytest.mark.parametrize('condition', CONDITIONS)
+def test_at_most_one_pending_own_reask_timer_per_robot(condition):
+    """Close calls (start + message wakes) must not start several perpetual re-ask chains."""
+    trial, result, _ = run(condition, horizon=200.)
+    for rid in zox.ROBOTS:
+        timers = [row['sim_s'] for row in trial.scheduler.events if row.get('kind') == 'timer' and row['actor'] == rid]
+        assert all(b - a >= trial.policy.idle_reask_s - 1e-9 for a, b in zip(timers, timers[1:])), (rid, timers)
+    assert trial.study_config()['reask_policy'] == zi.REASK_POLICY
