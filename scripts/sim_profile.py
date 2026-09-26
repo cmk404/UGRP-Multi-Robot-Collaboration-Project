@@ -104,6 +104,7 @@ class Recorder:
         self.steps = 0
         self.checkpoints: list[dict] = []
         self.render_thread_cpu_s = None
+        self.slice_stop: dict | None = None
         self._patched: list[tuple[object, str, object]] = []
 
     # ------------------------------------------------------------ patching
@@ -201,6 +202,29 @@ class Recorder:
         self.timed(owncam_localizer.OwnCamLocalizer, 'command', 'pf_command_incl_predict')
 
 
+def install_phase_stop(rec: Recorder, runner, controller_cls, target: str) -> None:
+    """DEV-ONLY prefix slice: end the episode (as SIM_LIMIT) once the controller enters ``target``.
+
+    ``target`` is ``'<controller phase>:<skill phase>'`` as in result.json ``phase_times``
+    (e.g. ``'skill:to_carry_posture'`` = just after the grasp); ``'skill:'`` matches any
+    skill phase. Everything before the stop is the unchanged full mission (the same
+    trajectory, commands and frames as a full run); the result is not an M1 outcome.
+    """
+    ctl_phase, _, skill_phase = target.partition(':')
+    orig = controller_cls.decide
+
+    def decide(ctl, *a, **kw):
+        out = orig(ctl, *a, **kw)
+        sp = getattr(ctl.skill, 'phase', None) or ''
+        if rec.slice_stop is None and ctl.phase == ctl_phase and (not skill_phase or sp == skill_phase):
+            rec.slice_stop = {'target': target, 'sim_t': round(float(a[0]) if a else float('nan'), 3),
+                              'phase': f'{ctl.phase}:{sp}'}
+            runner.SIM_LIMIT_S = -1.        # the runner loop ends before the next decision
+        return out
+    decide.__wrapped__ = orig
+    rec._set(controller_cls, 'decide', decide)
+
+
 def m1_prepare(rec: Recorder, args):
     from harness import m1_owncam_delivery
     from harness import zone_color_boxes
@@ -223,6 +247,8 @@ def m1_prepare(rec: Recorder, args):
         module, name, _kind, _kw = runner.SKILLS[student['skill']]
         cls = getattr(importlib.import_module(module), name)
         rec.timed(cls, 'decide', f'skill_{student["skill"]}_decide')
+    if args.stop_at_phase:
+        install_phase_stop(rec, runner, m1_owncam_delivery.M1OwnCamDelivery, args.stop_at_phase)
     kwargs = {}
     if args.speedups is not None:
         kwargs['speedups'] = args.speedups
@@ -241,6 +267,9 @@ def main(argv=None):
     p.add_argument('--qpos-every', type=int, default=2000, help='mj_step calls per trajectory checkpoint (0 = off)')
     p.add_argument('--cpu-mark-sim-s', type=float, default=120.,
                    help='also record process/main-thread CPU at the first mj_step with SIM time >= this (0 = off)')
+    p.add_argument('--stop-at-phase', default='',
+                   help="DEV-ONLY prefix slice: stop once the controller enters '<phase>:<skill phase>' "
+                        "(e.g. 'skill:to_carry_posture'); never a result")
     p.add_argument('--speedups', default=None, help="passed to the runner (e.g. 'none', 'exact-v1')")
     p.add_argument('--cv-threads', type=int, default=None, help='cv2.setNumThreads before the run (default: unchanged)')
     args = p.parse_args(argv)
@@ -287,6 +316,9 @@ def main(argv=None):
             'load_average': {'start': [round(v, 2) for v in load0], 'end': [round(v, 2) for v in load1]},
             'counters': counter_delta(ctr0, ctr1),
             'cpu_at_sim_mark': rec.cpu_at_mark,
+            'dev_slice': ({'kind': 'prefix_until_phase', 'target': args.stop_at_phase, 'stop': rec.slice_stop,
+                           'note': 'DEV ONLY: unchanged mission up to the stop; outcome SIM_LIMIT is not an M1 result'}
+                          if args.stop_at_phase else None),
             'mj_steps': rec.steps, 'qpos_every': rec.qpos_every, 'checkpoints': len(rec.checkpoints),
             'sections_thread_cpu_s': {k: round(v, 4) for k, v in sorted(rec.cpu.items())},
             'sections_calls': dict(sorted(rec.calls.items())),
@@ -301,6 +333,10 @@ def main(argv=None):
         except (OSError, ValueError):
             pass
         (out/'profile.json').write_text(json.dumps(summary, indent=2) + '\n')
+        if args.stop_at_phase:
+            (out/'DEV_SLICE_NOT_A_RESULT.txt').write_text(
+                f'DEV-ONLY prefix slice until {args.stop_at_phase!r} (stop: {rec.slice_stop}).\n'
+                'Freeze/test decisions use full missions; never report this directory as an M1 outcome.\n')
         with (out/'qpos_checkpoints.jsonl').open('w') as fh:
             for row in rec.checkpoints:
                 fh.write(json.dumps(row) + '\n')
