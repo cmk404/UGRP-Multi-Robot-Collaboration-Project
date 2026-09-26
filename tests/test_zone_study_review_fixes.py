@@ -1516,3 +1516,252 @@ def test_r3_provider_usage_is_kept_apart_from_the_billed_size():
     assert derived['provider_usage'] == usage and derived['tokens']['input'] == 833
     with pytest.raises(ValueError):
         ds.CallReply(provider_usage={'input_tokens': -1})
+
+
+# =========================================================================== #
+# Fourth review (codex-194-r4), finding 16: three remaining counterexamples.
+# Each test reproduces the reported counterexample in memory; the mutation of
+# its fix is recorded in experiments/2026-09-26-zone-study-offline-smoke/v4/.
+
+def _r4_log(sched, condition='peer_ko', seed=SEED):
+    return sched.contract_log(run_id='run', condition_name=condition, seed=seed,
+                              provenance=_provenance())['calls']
+
+
+def test_r4_f16_a_budget_truncated_replay_keeps_the_unknown_usage_flag():
+    """Counterexample 1: the replay transport cut the reply at the refused retry
+    and rebuilt it with ``usage_known`` reset to True: 0 unknown calls and "0
+    confirmed tokens"."""
+    usage = {'input_tokens': 999, 'output_tokens': 99}
+    unknown = ds.CallReply(attempts=(zc.Attempt(outcome='error'),
+                                     zc.Attempt(outcome='ok', input_tokens=833, output_tokens=40)),
+                           action='go', usage_known=False, provider_usage=usage)
+    policy = ds.CallPolicy(max_attempts_total=1, max_http_attempts_per_actor=1, max_retries=0)
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [unknown]}), policy=policy)
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    assert [len(call.cost.attempts) for call in sched.calls] == [1]     # the retry never left
+    assert sched.calls[0].notes['usage_known'] is False
+    # the provider report described attempts that were never sent
+    assert sched.calls[0].notes['provider_usage'] is None
+    record = _r4_log(sched)[0]
+    assert record['cost_terms']['usage_known'] is False
+    assert record['cost_terms']['usage_bound'] == 'lower_bound'
+    c.validate_log_record(record)
+    derived = ev.model_aggregate({'calls': [record], 'messages': []})
+    assert derived['usage_unknown_calls'] == 1 and derived['tokens_complete'] is False
+    assert ev.efficiency_metrics(_delivery_trial(calls=[record]))['tokens_total'] is None
+    # control: a KNOWN reply cut the same way stays known (the flag is inherited,
+    # not forced to False)
+    known = dataclasses.replace(unknown, usage_known=True)
+    other = ds.EventScheduler(ds.ReplayTransport({'r1': [known]}), policy=policy)
+    other.trigger('r1', 'start')
+    other.run(until_s=60.0)
+    assert other.calls[0].notes['usage_known'] is True
+
+
+def test_r4_f16_a_transport_failure_can_declare_its_usage_incomplete():
+    """The real-transport form of a partly known retry: the first attempt's usage
+    was read, the last one failed without a report."""
+    class PartlyKnown:
+        def submit(self, call):
+            return call
+
+        def reply(self, token):
+            raise ds.TransportFailure('retry failed without a usage report', usage_known=False,
+                                      attempts=(zc.Attempt(outcome='invalid', input_tokens=833,
+                                                           output_tokens=40),
+                                                zc.Attempt(outcome='error')))
+
+    sched = ds.EventScheduler(PartlyKnown(), policy=ds.CallPolicy(max_retries=0, max_calls_per_actor=1))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    assert sched.transport_errors[0]['usage_known'] is False
+    record = _r4_log(sched)[0]
+    assert record['status'] == 'http_error' and record['cost_terms']['usage_known'] is False
+    assert (record['input_tokens']['text'], record['output_tokens']) == (833, 40)   # lower bound kept
+    # a failure that states NO attempt knows nothing: it is not a confirmed 0
+    class Silent(PartlyKnown):
+        def reply(self, token):
+            raise ds.TransportFailure('no usage at all', attempts=())
+
+    silent = ds.EventScheduler(Silent(), policy=ds.CallPolicy(max_retries=0, max_calls_per_actor=1))
+    silent.trigger('r1', 'start')
+    silent.run(until_s=60.0)
+    assert silent.calls[0].notes['usage_known'] is False
+    with pytest.raises(ValueError, match='usage_known'):
+        ds.TransportFailure('x', attempts=(), usage_known='no')
+
+
+def test_r4_f16_a_partly_known_retry_keeps_its_known_lower_bound_when_censored():
+    """Counterexample 2: the censored record zeroed the known 833 / 40 tokens of
+    the first attempt because the second attempt's usage was unknown."""
+    reply = ds.CallReply(attempts=(zc.Attempt(outcome='invalid', input_tokens=833, output_tokens=40),
+                                   zc.Attempt(outcome='error')), usage_known=False)
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [reply]}))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=2.0)                     # the call is charged 2.5 s: censored at 2.0
+    row = sched.censored[0]
+    assert row['reason'] == 'charged_after_horizon' and row['usage_known'] is False
+    record = _r4_log(sched)[0]
+    c.validate_log_record(record)
+    assert record['status'] == 'censored' and record['sim_cost_s'] == 2.0
+    terms = record['cost_terms']
+    assert terms['usage_known'] is False and terms['usage_bound'] == 'lower_bound'
+    assert (record['input_tokens']['text'], record['output_tokens']) == (833, 40)
+    assert record['http_attempts'] == 2
+    # the scheduler's own charge is a fact of the cost model and stays visible
+    assert terms['charged_sim_s'] == 2.5 and terms['would_release_sim_s'] == 2.5
+    metrics = ev.efficiency_metrics(_delivery_trial(calls=[record]))
+    assert metrics['usage_unknown_calls'] == 1 and metrics['tokens_complete'] is False
+    assert metrics['tokens_total'] is None and metrics['tokens_input'] is None
+    assert (metrics['tokens_input_lower_bound'], metrics['tokens_output_lower_bound'],
+            metrics['tokens_total_lower_bound']) == (833, 40, 873)
+
+
+def _r4_token_trial(trial_id, seed, calls, condition='peer_ko'):
+    """A raw (unparsed) provisional trial record with a real call log."""
+    return {'schema': ev.PROVISIONAL_SCHEMA, 'trial_id': trial_id, 'condition': condition,
+            'scenario': 'mixed', 'seed': seed, 'robots': ['r1', 'r2', 'r3'],
+            'end_reason': 'sim_horizon', 't0_sim_s': 0.0, 'end_sim_s': 60.0,
+            'budget': {'sim_horizon_s': 60.0}, 'orders': [],
+            'referee': {'deliveries': [], 'conflicts': [], 'deadlocks': []}, 'calls': calls}
+
+
+def _r4_known_calls(condition='peer_ko', seed=SEED):
+    """One completed call of exactly 120 billed tokens (100 in + 20 out)."""
+    reply = ds.CallReply(attempts=(zc.Attempt(input_tokens=100, output_tokens=20),))
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [reply]}),
+                              policy=ds.CallPolicy(max_calls_per_actor=1))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    return _r4_log(sched, condition, seed)
+
+
+def _r4_unknown_calls(condition='peer_ko', seed=SEED):
+    """One completed call whose transport raised a plain exception."""
+    sched = ds.EventScheduler(_PlainFailure(), policy=ds.CallPolicy(max_calls_per_actor=1, max_retries=0))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    return _r4_log(sched, condition, seed)
+
+
+def _tb_run(directory, run):
+    from tensorboard.backend.event_processing import event_accumulator
+    from tensorboard.plugins.hparams import plugin_data_pb2
+
+    acc = event_accumulator.EventAccumulator(str(directory / run))
+    acc.Reload()
+    scalars = {tag: acc.Scalars(tag)[-1].value for tag in acc.Tags()['scalars']}
+    hparams = {}
+    for content in acc.PluginTagToContent('hparams').values():
+        data = plugin_data_pb2.HParamsPluginData.FromString(content)
+        if data.HasField('session_start_info'):
+            hparams = {k: v.string_value for k, v in data.session_start_info.hparams.items()}
+    return scalars, hparams
+
+
+def _r4_mixed_report(tmp_path, *, tb_events=None):
+    """Report over a 120-token trial and an unknown-usage trial of one condition."""
+    from scripts import zone_study_report as report
+
+    trials = tmp_path / 'trials'
+    trials.mkdir()
+    for name, row in (('known', _r4_token_trial('peer_ko-mixed-s1', 1, _r4_known_calls(seed=1))),
+                      ('unknown', _r4_token_trial('peer_ko-mixed-s2', 2, _r4_unknown_calls(seed=2)))):
+        (trials / f'{name}.json').write_text(json.dumps(row, ensure_ascii=False))
+    return report.build([trials], tmp_path / 'report', resamples=50, now=0.0, tb_events=tb_events)
+
+
+def test_r4_f16_the_report_and_tensorboard_mark_an_incomplete_token_total(tmp_path):
+    """Counterexample 3: a 120-token trial and an unknown-usage trial of one
+    condition. The JSON said "1 unknown, total null", but the report and the
+    TensorBoard export printed 120 with no marker."""
+    out = _r4_mixed_report(tmp_path)
+    assert out['trials'] == 2
+
+    row = json.loads((tmp_path / 'report' / 'metrics.json').read_text())['summary']['conditions']['peer_ko']
+    assert row['usage_unknown_calls'] == 1 and row['tokens_incomplete_trials'] == 1
+    assert row['cohort_tokens_total'] is None and row['cohort_tokens_total_lower_bound'] == 120
+    assert row['metrics']['tokens_total'] is None                   # was 120, the known trial alone
+    assert row['metrics']['tokens_total_lower_bound'] == 60.0       # (120 + 0) / 2 trials
+
+    text = (tmp_path / 'report' / 'summary.md').read_text()
+    line = next(l for l in text.splitlines() if l.startswith(f'| {ev.CONDITION_LABELS_KO["peer_ko"]} | 2 |'))
+    assert line.endswith('| ≥60 (미상 1) |'), line
+    assert '토큰 사용량 미상' in text
+
+    exported = json.loads((tmp_path / 'report' / 'scalars.json').read_text())
+    assert 'tokens_complete' in exported['hparam_columns']
+    scalars = {r['run']: r for r in exported['runs']}
+    cohort = scalars['cohort/peer_ko']
+    assert 'cohort/tokens_total' not in cohort['scalars']
+    assert cohort['scalars']['cohort/usage_unknown_calls'] == 1.0
+    assert cohort['scalars']['cohort/tokens_incomplete_trials'] == 1.0
+    assert cohort['scalars']['cohort/tokens_total_lower_bound'] == 60.0
+    assert cohort['hparams']['tokens_complete'] is False
+    unknown, known = scalars['peer_ko/mixed-s2'], scalars['peer_ko/mixed-s1']
+    assert 'result/tokens_total' not in unknown['scalars']
+    assert unknown['scalars']['result/usage_unknown_calls'] == 1.0
+    assert unknown['hparams']['tokens_complete'] is False
+    assert known['scalars']['result/tokens_total'] == 120.0
+    assert known['scalars']['result/usage_unknown_calls'] == 0.0 and known['hparams']['tokens_complete'] is True
+
+
+def test_r4_f16_the_tensorboard_event_files_carry_the_unknown_marker(tmp_path):
+    """Counterexample 3, read back from the TensorBoard event files themselves."""
+    pytest.importorskip('tensorboard')
+    _r4_mixed_report(tmp_path, tb_events=tmp_path / 'events')
+    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'cohort/peer_ko')
+    assert 'cohort/tokens_total' not in tb_scalars
+    assert tb_scalars['cohort/usage_unknown_calls'] == 1.0 and tb_hparams['tokens_complete'] == 'False'
+    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/mixed-s2')
+    assert 'result/tokens_total' not in tb_scalars and tb_scalars['result/usage_unknown_calls'] == 1.0
+    assert tb_hparams['tokens_complete'] == 'False'
+    tb_scalars, tb_hparams = _tb_run(tmp_path / 'events', 'peer_ko/mixed-s1')
+    assert tb_scalars['result/tokens_total'] == 120.0 and tb_hparams['tokens_complete'] == 'True'
+
+
+def test_r4_f16_a_cohort_token_mean_is_never_the_mean_of_the_known_trials_only():
+    """The cohort lower bound is averaged over EVERY trial: a trial without any
+    cost source contributes 0 (a valid lower bound), never "is left out"."""
+    known = ev.parse_trial(_r4_token_trial('peer_ko-mixed-s1', 1, _r4_known_calls(seed=1)))
+    no_source = _delivery_trial(trial_id='peer_ko-mixed-s2', seed=2)      # no calls, no summary
+    assert ev.efficiency_metrics(no_source)['tokens_total_lower_bound'] is None
+    row = ev.summarise([known, no_source])['conditions']['peer_ko']
+    assert row['metrics']['tokens_total'] is None
+    assert row['metrics']['tokens_total_lower_bound'] == 60.0          # not 120
+    assert row['cohort_tokens_total'] is None and row['cohort_tokens_total_lower_bound'] == 120
+    complete = ev.summarise([known])['conditions']['peer_ko']
+    assert complete['metrics']['tokens_total'] == 120 and complete['cohort_tokens_total'] == 120
+
+
+def test_r4_f16_a_paired_comparison_counts_a_seed_dropped_for_unknown_usage(tmp_path):
+    """A matched seed whose token total is unknown is EXCLUDED and counted, never
+    silently dropped; a repetition that is partly unknown is not averaged."""
+    rows = [_r4_token_trial('no_comm-mixed-s1', 1, _r4_known_calls('no_comm', 1), 'no_comm'),
+            _r4_token_trial('peer_ko-mixed-s1', 1, _r4_known_calls('peer_ko', 1)),
+            _r4_token_trial('no_comm-mixed-s2', 2, _r4_known_calls('no_comm', 2), 'no_comm'),
+            _r4_token_trial('peer_ko-mixed-s2', 2, _r4_unknown_calls('peer_ko', 2)),
+            _r4_token_trial('peer_ko-mixed-s2-rep', 2, _r4_known_calls('peer_ko', 2))]
+    trials = [ev.parse_trial(copy.deepcopy(r)) for r in rows]
+    comparison = ev.compare_conditions(trials, 'tokens_total', 'no_comm', 'peer_ko', resamples=50)
+    assert comparison['n_pairs'] == 1 and comparison['excluded_pairs'] == 1
+    assert comparison['excluded'] == [{'scenario': 'mixed', 'seed': 2, 'unknown_in': ['peer_ko']}]
+    # every matched seed excluded: the comparison is kept so the exclusion shows
+    only_unknown = [t for t in trials if t['seed'] == 2]
+    kept = [r for r in ev.compare_all(only_unknown, resamples=50) if r['metric'] == 'tokens_total']
+    assert len(kept) == 1 and kept[0]['n_pairs'] == 0 and kept[0]['excluded_pairs'] == 1
+
+    from scripts import zone_study_report as report
+    directory = tmp_path / 'trials'
+    directory.mkdir()
+    for r in rows:
+        (directory / f'{r["trial_id"]}.json').write_text(json.dumps(r, ensure_ascii=False))
+    report.build([directory], tmp_path / 'report', resamples=50, now=0.0)
+    text = (tmp_path / 'report' / 'summary.md').read_text()
+    assert '| 제외 짝 |' in text
+    note = next(l for l in text.splitlines() if l.startswith('값을 알 수 없는 seed를 짝에서 제외한 지표가 있다'))
+    assert 'tokens_total' in note
+    block = text.split('**tokens_total**', 1)[1].split('\n\n**', 1)[0]
+    assert '| ① 무통신 | ② 자유 한국어 동료 대화 | 1 | 1 |' in block, block

@@ -55,6 +55,37 @@ def interval(ci):
     return f'[{ci["low"]:.3f}, {ci["high"]:.3f}]'
 
 
+def token_cell(row):
+    """Token mean of one condition, or its known lower bound with the unknown marker.
+
+    Fourth review, finding 16: the table printed the mean of the KNOWN trials
+    (120) with no marker while the JSON said one call's usage was unknown and
+    the cohort total was null. An incomplete cohort now shows ``≥<lower bound>
+    (미상 <calls>)``; the lower bound is averaged over every trial.
+    """
+    unknown = int(row.get('usage_unknown_calls') or 0)
+    total = row['metrics'].get('tokens_total')
+    if total is not None and not unknown:
+        return fmt(total, 0)
+    if not unknown:
+        return '—'
+    bound = row['metrics'].get('tokens_total_lower_bound')
+    return f'≥{fmt(bound, 0)} (미상 {unknown})' if bound is not None else f'— (미상 {unknown})'
+
+
+def token_note(summary):
+    """One sentence under the table when any condition's token total is incomplete."""
+    rows = [row for row in summary['conditions'].values() if int(row.get('usage_unknown_calls') or 0)]
+    if not rows:
+        return []
+    detail = ', '.join(f'{row["label_ko"]} 호출 {row["usage_unknown_calls"]}건'
+                       f'(시행 {row.get("tokens_incomplete_trials", 0)}개)' for row in rows)
+    return ['', f'**토큰 사용량 미상:** {detail}. 토큰 열의 `≥N (미상 k)`는 확정 평균이 아니라 '
+                '알려진 사용량만 더한 시행당 하한 평균이다. 확정 합계(`cohort_tokens_total`)는 '
+                '`null`이며 TensorBoard에서는 `result/usage_unknown_calls`·`cohort/usage_unknown_calls`'
+                '와 HParams `tokens_complete=False`로 표시한다.']
+
+
 def condition_table(summary):
     rows = ['| 조건 | 시행 | 성공 | 성공률 | PAR makespan(SIM초) | 성공 makespan | 배송률 | 발화 비용(초) | idle(로봇초) | 충돌 | 교착 | 재계획 | 호출 | 토큰 |',
             '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|']
@@ -66,8 +97,8 @@ def condition_table(summary):
             ok=fmt(m['makespan_success_only_s'], 1), dr=fmt(row['cohort_delivery_rate'], 3),
             talk=fmt(m['talk_sim_cost_s'], 1), idle=fmt(m['idle_robot_s'], 1),
             cf=fmt(m['conflicts'], 1), dl=fmt(m['deadlocks'], 1), rp=fmt(m['replans'], 1),
-            mc=fmt(m['model_calls'], 1), tok=fmt(m['tokens_total'], 0)))
-    return rows
+            mc=fmt(m['model_calls'], 1), tok=token_cell(row)))
+    return rows + token_note(summary)
 
 
 def dialogue_table(summary):
@@ -120,11 +151,12 @@ def comparison_section(comparisons):
         if c['metric'] != current:
             current = c['metric']
             rows += ['', f'**{current}**', '',
-                     '| 기준 | 비교 | 짝 | 기준 평균 | 비교 평균 | 차이 | 95% 부트스트랩 구간 | dz | rank-biserial | 비교>기준 |',
-                     '|---|---|---:|---:|---:|---:|---|---:|---:|---:|']
-        rows.append('| {b} | {v} | {n} | {bm} | {vm} | {d} | {ci} | {dz} | {rb} | {pos}/{n} |'.format(
+                     '| 기준 | 비교 | 짝 | 제외 짝 | 기준 평균 | 비교 평균 | 차이 | 95% 부트스트랩 구간 | dz | rank-biserial | 비교>기준 |',
+                     '|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|']
+        rows.append('| {b} | {v} | {n} | {x} | {bm} | {vm} | {d} | {ci} | {dz} | {rb} | {pos}/{n} |'.format(
             b=ev.CONDITION_LABELS_KO[c['baseline']], v=ev.CONDITION_LABELS_KO[c['variant']],
-            n=c['n_pairs'], bm=fmt(c['baseline_mean'], 3), vm=fmt(c['variant_mean'], 3),
+            n=c['n_pairs'], x=c.get('excluded_pairs', 0), bm=fmt(c['baseline_mean'], 3),
+            vm=fmt(c['variant_mean'], 3),
             d=fmt(c['mean_diff'], 3), ci=interval(c['diff_ci']),
             dz=fmt(c['cohens_dz'], 3), rb=fmt(c['rank_biserial'], 3),
             pos=c['pairs_variant_higher']))
@@ -133,6 +165,13 @@ def comparison_section(comparisons):
         rows += ['', f'짝 수가 {ev.SMALL_SAMPLE_PAIRS}개 미만인 비교가 있다(짝 {small}). '
                      '유의성 검정을 하지 않고 구간과 짝별 표만 읽는다. '
                      '차이 부호는 `비교 − 기준`이며 짝별 값은 `metrics.json`에 있다.']
+    excluded = sorted({c['metric'] for c in comparisons if c.get('excluded_pairs')})
+    if excluded:
+        # fourth review, finding 16: a pair whose value is unknown is not
+        # silently dropped from the comparison
+        rows += ['', f'값을 알 수 없는 seed를 짝에서 제외한 지표가 있다({", ".join(excluded)}). '
+                     '토큰 지표에서는 사용량 미상 호출이 있는 시행이 제외 대상이다. '
+                     '제외한 seed는 `metrics.json`의 `excluded`에 있다.']
     return rows
 
 

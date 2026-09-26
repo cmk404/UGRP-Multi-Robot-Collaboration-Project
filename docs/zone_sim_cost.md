@@ -66,6 +66,14 @@ d_q   = quantum * ceil(raw_q / quantum)
 
 호출의 결과는 마지막 시도의 결과다. 재시도로 성공한 호출은 `ok`이지만 실패 시도의 비용도 낸다. 스케줄러는 실패한 호출을 **별도 호출**로 한 번 더 시도할 수도 있고(`CallPolicy.max_retries`), 그 호출은 자기 비용을 따로 낸다.
 
+### 사용량 미상 (`usage_known`)
+
+전송 계층이 공급자가 청구한 사용량을 읽지 못하면(일반 예외, 사용량 보고 없이 실패한 재시도) 그 호출은 `usage_known=False`다. 이 표지는 응답 → 호출 ledger → horizon censor → 패키지 A 호출 기록(`cost_terms.usage_known`, `cost_terms.usage_bound`) → 평가 → 보고서·TensorBoard까지 그대로 간다(Codex 3·4차 검토 #16).
+
+- **표지를 바꾸지 않는다.** 재시도 예산 거절로 재생 응답을 자를 때도 원래 응답의 표지를 물려받는다. 잘린 응답의 `provider_usage`는 보내지 않은 시도까지 포함한 보고이므로 버린다(`None`).
+- **알려진 하한을 지우지 않는다.** 일부 시도의 사용량만 알면 그 수(예: 입력 833·출력 40)를 기록하고 `usage_bound='lower_bound'`로 표시한다. horizon에서 censor된 호출도 같다. 스케줄러가 계산한 청구 SIM 비용(`charged_sim_s`, `would_release_sim_s`)도 비용 모형의 사실이므로 남긴다.
+- 실제 전송 계층은 `TransportFailure(..., attempts=..., usage_known=False)`로 "아는 것이 전부가 아니다"를 알린다. 시도를 하나도 밝히지 않은 `TransportFailure`는 미상으로 기록한다.
+
 ## 3. 실행 의미 (스케줄러 계약)
 
 `harness/zone_event_scheduler.py`가 단일 SIM 사건 큐를 소유한다. makespan에 비용을 사후 덧셈하지 않는다. 기다리는 동안 생기는 통로 경쟁·낙하·보고 지연이 물리에 반영되어야 하기 때문이다.

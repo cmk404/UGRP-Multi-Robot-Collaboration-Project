@@ -399,6 +399,8 @@ def contract_call_record(record, *, run_id, condition_name, seed, request_id, ca
     # the provider's own report is kept APART from the standardised billed size
     # (``input_tokens`` / ``output_tokens``) the SIM cost is computed from.
     terms['usage_known'] = bool(notes.get('usage_known', True))
+    # fourth review: the counts of an unknown-usage call are its known LOWER bound
+    terms['usage_bound'] = 'exact' if terms['usage_known'] else 'lower_bound'
     terms['provider_usage'] = copy.deepcopy(notes.get('provider_usage'))
     return call_log_record(
         run_id=run_id, condition_name=condition_name, seed=seed, actor=record.actor,
@@ -425,28 +427,37 @@ def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_
     action was never released). Second review: the API side of the call is
     finished, so the provider usage the scheduler recorded (tokens, attempts,
     utterances) is kept instead of 0; ``cost_terms['usage_known']`` is False only
-    when a transport failure left it unknown, and then the counts are 0 as a
-    labelled lower bound.
+    when a transport failure left it unknown.
+
+    Fourth review, finding 16: an unknown usage no longer ZEROES the counts. A
+    retry whose first attempt reported 833 input / 40 output tokens and whose
+    last attempt failed without a report keeps 833 / 40 here as the KNOWN LOWER
+    BOUND, labelled by ``usage_known=False`` (``usage_bound='lower_bound'``); the
+    scheduler's own charge (``charged_sim_s``, ``would_release_sim_s``) is a
+    fact of the cost model and is kept too.
     """
     elapsed = _round(row['elapsed_sim_s'])
     known = bool(row.get('usage_known', False))
-    cost = row.get('cost') if known else None
-    breakdown = (cost or {}).get('breakdown') or {}
+    cost = row.get('cost') or {}
+    breakdown = cost.get('breakdown') or {}
     terms = {'alpha_s': breakdown.get('overhead_s', 0.), 'beta_s_per_token': breakdown.get('output_s', 0.),
              'gamma_s_per_utterance': breakdown.get('utterance_s', 0.),
-             'output_tokens': int(row.get('output_tokens') or 0) if known else 0,
-             'utterances': int(row.get('utterances') or 0) if known else 0,
-             'censored': True, 'usage_known': known, 'elapsed_sim_s': elapsed,
-             'charged_sim_s': row.get('charged_sim_s') if known else None,
-             'would_release_sim_s': row.get('would_release_sim_s') if known else None,
-             'outcome': row.get('outcome') if known else None,
+             'output_tokens': int(row.get('output_tokens') or 0),
+             'utterances': int(row.get('utterances') or 0),
+             'censored': True, 'usage_known': known,
+             'usage_bound': 'exact' if known else 'lower_bound',
+             'elapsed_sim_s': elapsed,
+             'charged_sim_s': row.get('charged_sim_s'),
+             'would_release_sim_s': row.get('would_release_sim_s'),
+             'outcome': row.get('outcome'),
              'reason': row.get('reason', 'unfinished_at_horizon'),
-             'params_version': (row.get('cost') or {}).get('params_version'),
-             'params_digest': (row.get('cost') or {}).get('params_digest'),
+             'params_version': cost.get('params_version'),
+             'params_digest': cost.get('params_digest'),
              'provider_usage': copy.deepcopy(row.get('provider_usage')),
              'note': ('SIM time elapsed until the horizon; the action was never released. Provider usage '
                       'is the recorded API usage' if known else
-                      'SIM time elapsed until the horizon; the API usage is unknown (lower bound 0)')}
+                      'SIM time elapsed until the horizon; the action was never released. The API usage '
+                      'is unknown: the counts are the known lower bound, not a total')}
     return call_log_record(
         run_id=run_id, condition_name=condition_name, seed=seed, actor=row['actor'],
         request_id=request_id, call_index=call_index,
@@ -454,7 +465,7 @@ def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_
         requested_at_sim_s=_round(row['started_sim_s']),
         released_at_sim_s=_round(row['started_sim_s'] + elapsed),
         cost_terms=terms, input_sha256=input_sha256,
-        input_tokens={'text': int(row.get('input_tokens') or 0) if known else 0, 'image': 0, 'cached': 0},
+        input_tokens={'text': int(row.get('input_tokens') or 0), 'image': 0, 'cached': 0},
         output_tokens=terms['output_tokens'],
         status='censored', provenance=provenance,
         http_attempts=int(row.get('http_attempts') or row.get('reserved_attempts', 1)), wall_latency_s=None,

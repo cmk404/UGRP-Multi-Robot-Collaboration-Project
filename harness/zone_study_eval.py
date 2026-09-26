@@ -930,6 +930,12 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'tokens_total': (None if model is None or not tokens_complete
                          or any(tokens.get(k) is None for k in ('input', 'output', 'image'))
                          else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
+        # fourth review, finding 16: the displays need the marker and the known
+        # lower bound of the TOTAL too, not only of input/output
+        'tokens_complete': None if model is None else tokens_complete,
+        'tokens_total_lower_bound': (None if model is None
+                                     or any(tokens.get(k) is None for k in ('input', 'output', 'image'))
+                                     else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
         'model_calls_per_delivered': round((model or {}).get('logical_calls') / len(delivered), 4)
                                      if delivered and (model or {}).get('logical_calls') is not None
                                      else None,
@@ -1476,7 +1482,8 @@ def trial_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAU
 # cohort summary
 # --------------------------------------------------------------------------- #
 #: Cohort metrics reported per condition. ``None`` values are dropped from the
-#: mean but the trial still counts in ``trials``.
+#: mean but the trial still counts in ``trials`` -- except for the resource
+#: totals in ``COMPLETE_ONLY_METRICS``.
 SUMMARY_METRICS = (
     'par_makespan_sim_s', 'makespan_sim_s', 'makespan_success_only_s',
     'talk_sim_cost_s', 'think_sim_cost_s', 'utterance_sim_cost_s', 'delivery_sim_cost_s',
@@ -1484,7 +1491,30 @@ SUMMARY_METRICS = (
     'misdelivered_items', 'undelivered_items', 'idle_robot_s', 'idle_share',
     'conflicts', 'deadlocks', 'deadlock_sim_s', 'replans', 'model_calls',
     'http_attempts', 'tokens_total', 'tokens_input', 'tokens_output',
+    'tokens_total_lower_bound', 'tokens_input_lower_bound', 'tokens_output_lower_bound',
 )
+#: Fourth review, finding 16: a trial with an unknown-usage call has no token
+#: total, and dropping it from the mean printed the KNOWN trials' mean (120) as
+#: the cohort's. These means are None unless every trial's value is known.
+COMPLETE_ONLY_METRICS = ('tokens_total', 'tokens_input', 'tokens_output')
+#: ... and their lower bounds are averaged over EVERY trial: a trial without a
+#: known count contributes 0, which is a valid lower bound of a token count.
+LOWER_BOUND_METRICS = {'tokens_total': 'tokens_total_lower_bound',
+                       'tokens_input': 'tokens_input_lower_bound',
+                       'tokens_output': 'tokens_output_lower_bound'}
+
+
+def _cohort_metrics(eff):
+    """Per-condition means of ``SUMMARY_METRICS`` (see the two rules above)."""
+    out = {name: _mean([e.get(name) for e in eff]) for name in SUMMARY_METRICS}
+    for name in COMPLETE_ONLY_METRICS:
+        values = [e.get(name) for e in eff]
+        out[name] = None if any(v is None for v in values) else _mean(values)
+    for bound in LOWER_BOUND_METRICS.values():
+        values = [e.get(bound) for e in eff]
+        out[bound] = (None if not values or all(v is None for v in values)
+                      else round(sum(float(v or 0) for v in values) / len(values), 4))
+    return out
 
 
 def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_LOOKBACK_S):
@@ -1513,7 +1543,7 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
             'censored_trials': sum(e['censored'] for e in eff),
             'seeds': sorted({e['seed'] for e in eff}),
             'leader_ids': sorted({e['leader_id'] for e in eff if e['leader_id']}),
-            'metrics': {name: _mean([e.get(name) for e in eff]) for name in SUMMARY_METRICS},
+            'metrics': _cohort_metrics(eff),
             'cohort_delivered_items': delivered,
             'cohort_ordered_items': ordered,
             'cohort_delivery_rate': _ratio(delivered, ordered),
@@ -1531,6 +1561,10 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
             'tokens_incomplete_trials': sum(1 for e in eff if int(e.get('usage_unknown_calls') or 0) > 0),
             'cohort_tokens_total': (None if any(e.get('tokens_total') is None for e in eff)
                                     else sum(e['tokens_total'] for e in eff)),
+            # fourth review: the known part stays visible next to the null total
+            'cohort_tokens_total_lower_bound': (
+                None if all(e.get('tokens_total_lower_bound') is None for e in eff)
+                else sum(int(e.get('tokens_total_lower_bound') or 0) for e in eff)),
             'idle_by_reason': _sum_dicts(e['idle_by_reason'] for e in eff),
             'replans_by_kind': _sum_dicts(e['replans_by_kind'] for e in eff),
             'conflicts_by_kind': _sum_dicts(e['conflicts_by_kind'] for e in eff),
@@ -1601,31 +1635,60 @@ def _provenance_check(trials):
 # paired comparison
 # --------------------------------------------------------------------------- #
 
+def _metric_buckets(trials, metric, penalty_factor):
+    """``(condition, scenario, seed)`` -> known values of ``metric``, plus every key seen.
+
+    Fourth review, finding 16: for ``COMPLETE_ONLY_METRICS`` a key whose
+    repetitions are not ALL known has no value (a partial mean of the known
+    repetitions is the same bias as a partial cohort mean).
+    """
+    buckets, seen, unknown = collections.defaultdict(list), set(), set()
+    for trial in trials:
+        eff = efficiency_metrics(trial, penalty_factor=penalty_factor)
+        key = (eff['condition'], eff['scenario'], eff['seed'])
+        seen.add(key)
+        value = eff.get(metric)
+        if value is None:
+            unknown.add(key)
+            continue
+        buckets[key].append(float(value))
+    if metric in COMPLETE_ONLY_METRICS:
+        for key in unknown:
+            buckets.pop(key, None)
+    return buckets, seen
+
+
+def _paired(trials, metric, baseline, variant, penalty_factor):
+    """Matched pairs, and the matched seeds dropped because a value is unknown."""
+    buckets, seen = _metric_buckets(trials, metric, penalty_factor)
+    pairs, excluded = [], []
+    keys = sorted({(s, d) for (c, s, d) in seen if c in (baseline, variant)},
+                  key=lambda k: (str(k[0]), str(k[1])))
+    for scenario, seed in keys:
+        if (baseline, scenario, seed) not in seen or (variant, scenario, seed) not in seen:
+            continue                        # a one-sided seed is not a pair
+        base = buckets.get((baseline, scenario, seed))
+        var = buckets.get((variant, scenario, seed))
+        if not base or not var:
+            excluded.append({'scenario': scenario, 'seed': seed,
+                             'unknown_in': [c for c, values in ((baseline, base), (variant, var))
+                                            if not values]})
+            continue
+        pairs.append({'scenario': scenario, 'seed': seed,
+                      'baseline': statistics.mean(base), 'variant': statistics.mean(var),
+                      'reps': (len(base), len(var))})
+    return pairs, excluded
+
+
 def paired_values(trials, metric, baseline, variant, penalty_factor=DEFAULT_PENALTY_FACTOR):
     """Per-(scenario, seed) pairs of ``metric`` for two conditions.
 
     Repetitions of the same (condition, scenario, seed) are averaged first so
     one pair equals one matched scenario/seed, as the paired-seed design asks.
+    A matched seed whose value is unknown on either side is not a pair; see
+    ``compare_conditions(...)['excluded']``.
     """
-    buckets = collections.defaultdict(list)
-    for trial in trials:
-        eff = efficiency_metrics(trial, penalty_factor=penalty_factor)
-        value = eff.get(metric)
-        if value is None:
-            continue
-        buckets[(eff['condition'], eff['scenario'], eff['seed'])].append(float(value))
-    pairs = []
-    keys = sorted({(s, d) for (c, s, d) in buckets if c in (baseline, variant)},
-                  key=lambda k: (str(k[0]), str(k[1])))
-    for scenario, seed in keys:
-        base = buckets.get((baseline, scenario, seed))
-        var = buckets.get((variant, scenario, seed))
-        if not base or not var:
-            continue
-        pairs.append({'scenario': scenario, 'seed': seed,
-                      'baseline': statistics.mean(base), 'variant': statistics.mean(var),
-                      'reps': (len(base), len(var))})
-    return pairs
+    return _paired(trials, metric, baseline, variant, penalty_factor)[0]
 
 
 def bootstrap_ci(values, statistic=None, confidence=0.95, resamples=10000, seed=0):
@@ -1662,7 +1725,7 @@ def compare_conditions(trials, metric, baseline, variant, confidence=0.95,
     for condition in (baseline, variant):
         if condition not in CONDITIONS:
             raise TrialError(f'unknown condition {condition!r}')
-    pairs = paired_values(trials, metric, baseline, variant, penalty_factor)
+    pairs, excluded = _paired(trials, metric, baseline, variant, penalty_factor)
     diffs = [p['variant'] - p['baseline'] for p in pairs]
     ci = bootstrap_ci(diffs, confidence=confidence, resamples=resamples, seed=seed)
     stdev = statistics.stdev(diffs) if len(diffs) > 1 else None
@@ -1682,6 +1745,10 @@ def compare_conditions(trials, metric, baseline, variant, confidence=0.95,
         'pairs_variant_higher': pos, 'pairs_variant_lower': neg,
         'pairs_tied': len(diffs) - pos - neg,
         'pairs': pairs,
+        # fourth review, finding 16: matched seeds dropped because a value is
+        # unknown (e.g. tokens of a trial with an unknown-usage call)
+        'excluded_pairs': len(excluded),
+        'excluded': excluded,
         'small_sample': len(pairs) < SMALL_SAMPLE_PAIRS,
         'reporting': '유의성 검정을 하지 않는다. 구간과 짝별 표만 보고한다.',
     }
@@ -1727,7 +1794,9 @@ def compare_all(trials, metrics=COMPARISON_METRICS, include_reference=False,
             for metric in metrics:
                 row = compare_conditions(trials, metric, baseline, variant, confidence,
                                          resamples, seed, penalty_factor)
-                if row['n_pairs']:
+                # a comparison whose every matched seed was excluded is kept, so
+                # the exclusion is visible instead of the metric disappearing
+                if row['n_pairs'] or row['excluded_pairs']:
                     out.append(row)
     return out
 
@@ -1750,6 +1819,10 @@ SCALAR_TAGS = {
     'result/replans': 'replans',
     'result/model_calls': 'model_calls',
     'result/tokens_total': 'tokens_total',
+    # fourth review, finding 16: the unknown marker and the known lower bound
+    # travel into TensorBoard with the (then absent) exact total
+    'result/tokens_total_lower_bound': 'tokens_total_lower_bound',
+    'result/usage_unknown_calls': 'usage_unknown_calls',
     'result/wall_latency_ms_mean': 'wall_latency_ms_mean',
 }
 DIALOGUE_TAGS = {
@@ -1763,8 +1836,10 @@ DIALOGUE_TAGS = {
     'dialogue/channel_violations': 'channel_violations',
 }
 #: HParams columns to show; the viewer config lives in outputs/tensorboard-view.json.
+#: ``tokens_complete`` is the per-run marker of fourth review finding 16: False
+#: when an unknown-usage call makes the token total a lower bound.
 HPARAM_KEYS = ('condition', 'scenario', 'seed', 'leader_id', 'end_reason',
-               'penalty_factor', 'sim_horizon_s')
+               'penalty_factor', 'sim_horizon_s', 'tokens_complete')
 
 
 def scalar_export(summary):
@@ -1792,7 +1867,10 @@ def scalar_export(summary):
                    'cohort/delivery_rate': _num(row['cohort_delivery_rate']),
                    'cohort/par_sim_s_per_delivered': _num(row['cohort_par_sim_s_per_delivered']),
                    'cohort/korean_share': _num(row['dialogue']['korean_share']),
-                   'cohort/truthful_share': _num(row['dialogue']['truthful_share'])}
+                   'cohort/truthful_share': _num(row['dialogue']['truthful_share']),
+                   # fourth review, finding 16: counted, never averaged away
+                   'cohort/usage_unknown_calls': _num(row.get('usage_unknown_calls')),
+                   'cohort/tokens_incomplete_trials': _num(row.get('tokens_incomplete_trials'))}
         for name in SUMMARY_METRICS:
             scalars[f'cohort/{name}'] = _num(row['metrics'].get(name))
         runs.append({'run': f'cohort/{condition}', 'step': 0,
@@ -1800,7 +1878,8 @@ def scalar_export(summary):
                                  'seed': -1, 'leader_id': '',
                                  'end_reason': 'cohort',
                                  'penalty_factor': summary['penalty_factor'],
-                                 'sim_horizon_s': 0.0},
+                                 'sim_horizon_s': 0.0,
+                                 'tokens_complete': row.get('cohort_tokens_total') is not None},
                      'scalars': {k: v for k, v in scalars.items() if v is not None},
                      'boundary_clean': row['boundary_violation_trials'] == 0})
     return {'schema': 'ugrp.zone_study_scalars.v1',

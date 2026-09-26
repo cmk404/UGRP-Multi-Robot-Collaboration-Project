@@ -182,13 +182,22 @@ class TransportFailure(Exception):
     transport raises this with the costed ``attempts`` (and the number of
     utterances the model generated) instead; a plain exception is still an
     ``error`` attempt, recorded with ``usage_known=False``.
+
+    Fourth review, finding 16: a transport that read the usage of SOME attempts
+    only (an internal retry whose last attempt failed without a usage report)
+    raises this with ``usage_known=False``. The counts it does know stay in
+    ``attempts`` as a labelled lower bound instead of being claimed complete.
     """
 
-    def __init__(self, message, *, attempts, unparsed_utterances=0, provider_usage=None):
+    def __init__(self, message, *, attempts, unparsed_utterances=0, provider_usage=None,
+                 usage_known=True):
         super().__init__(message)
+        if not isinstance(usage_known, bool):
+            raise ValueError('usage_known must be a bool')
         self.attempts = tuple(attempts)
         self.unparsed_utterances = int(unparsed_utterances)
         self.provider_usage = provider_usage
+        self.usage_known = usage_known
 
 
 @dataclass
@@ -680,8 +689,11 @@ class EventScheduler:
             reply = self.transport.reply(call.token)
         except TransportFailure as exc:
             # the transport knows what the provider billed: keep it (finding 6)
+            # fourth review: the transport says whether what it knows is ALL of it
+            usage_known = bool(exc.usage_known) and bool(exc.attempts)
             self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
-                                         'error': f'{type(exc).__name__}: {exc}', 'usage_known': True,
+                                         'error': f'{type(exc).__name__}: {exc}',
+                                         'usage_known': usage_known,
                                          'unparsed_utterances': exc.unparsed_utterances})
             attempts = exc.attempts or (Attempt(outcome='error'),)
             if attempts[-1].outcome not in FAILED_OUTCOMES:
@@ -690,7 +702,7 @@ class EventScheduler:
                                                     output_tokens=attempts[-1].output_tokens,
                                                     utterances=attempts[-1].utterances),)
             return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances,
-                             provider_usage=exc.provider_usage)
+                             provider_usage=exc.provider_usage, usage_known=usage_known)
         except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
             self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
                                          'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
@@ -1002,6 +1014,12 @@ class ReplayTransport:
         before it is "sent" (second review, finding 15). A refused reservation
         means the retry never left, so the reply ends at the last attempt the
         budget covered, and a failed last attempt executes nothing.
+
+        Fourth review, finding 16: the truncated reply keeps the scripted
+        reply's ``usage_known`` (it was silently reset to True, so an unknown
+        usage became "0 confirmed tokens"). The scripted ``provider_usage``
+        described attempts that were never sent, so it cannot be attributed to
+        the kept ones and is dropped (None = no provider report).
         """
         reserve = getattr(token, 'reserve', None)
         if reserve is None or len(reply.attempts) < 2:
@@ -1011,5 +1029,6 @@ class ReplayTransport:
                 kept = reply.attempts[:index]
                 if kept[-1].outcome not in FAILED_OUTCOMES:
                     raise ValueError('a scripted reply cannot retry after a successful attempt')
-                return CallReply(attempts=kept, unparsed_utterances=kept[-1].utterances)
+                return CallReply(attempts=kept, unparsed_utterances=kept[-1].utterances,
+                                 usage_known=reply.usage_known, provider_usage=None)
         return reply

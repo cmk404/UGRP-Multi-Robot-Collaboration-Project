@@ -140,8 +140,18 @@
 | `deadlocks`, `deadlock_sim_s` | 교착 횟수와 누적 시간 |
 | `replans`, `replans_by_kind` | 작업·역할·통로 변경과 취소·재시도 |
 | `model_calls`, `http_attempts` | 논리 호출과 실제 HTTP 시도를 구분 |
-| `tokens_input/output/image/cached`, `tokens_total` | `total = input + output + image` (캐시 제외) |
+| `tokens_input/output/image/cached`, `tokens_total` | `total = input + output + image` (캐시 제외). 사용량 미상 호출이 있으면 `null` |
+| `tokens_complete`, `usage_unknown_calls` | 토큰 합계가 확정인지와 사용량 미상 호출 수 |
+| `tokens_input/output/total_lower_bound` | 알려진 사용량만 더한 하한. 미상이어도 지우지 않는다 |
 | `wall_latency_ms_mean` | 실제 API 지연. 부과한 SIM 비용과 별개로 기록한다 |
+
+### 사용량 미상 호출의 집계 (Codex 3·4차 검토 #16)
+
+- 시행: 미상 호출이 하나라도 있으면 `tokens_total`·`tokens_input`·`tokens_output`은 `null`이고 `*_lower_bound`에 알려진 부분이 남는다.
+- 코호트: 토큰 평균(`metrics.tokens_*`)은 **모든 시행이 확정일 때만** 계산한다. 미상 시행을 빼고 평균하면 알려진 시행의 평균이 코호트 값처럼 보이기 때문이다. 하한 평균(`metrics.tokens_*_lower_bound`)은 **모든 시행**으로 나눈다(비용 원본이 없는 시행은 0을 더하며, 이는 토큰 수의 유효한 하한이다). `cohort_tokens_total`은 `null`, `cohort_tokens_total_lower_bound`는 하한 합계다.
+- 짝 비교: 한쪽 값이 미상인 seed는 짝에서 빼고 `excluded_pairs`·`excluded`로 센다. 토큰 지표는 같은 seed의 반복 중 하나라도 미상이면 그 seed 전체를 뺀다(일부 반복만의 평균을 쓰지 않는다). 짝이 모두 빠진 비교도 표에 남는다.
+- 보고서: 토큰 열은 `≥<하한 평균> (미상 <호출 수>)`로 쓰고 표 아래에 미상 호출 수를 적는다. 짝 비교 표에 `제외 짝` 열이 있다.
+- TensorBoard: `result/usage_unknown_calls`, `result/tokens_total_lower_bound`, `cohort/usage_unknown_calls`, `cohort/tokens_incomplete_trials`, `cohort/tokens_*_lower_bound`와 HParams `tokens_complete`. 미상이면 `result/tokens_total`·`cohort/tokens_total` 카드는 기록하지 않는다.
 
 ### 실패를 분모에 유지하는 방법
 
@@ -270,7 +280,7 @@ PYTHONPATH=. .venv-sim-worker-mac/bin/python scripts/zone_study_report.py \
   충돌·교착·재계획·호출·토큰·wall 지연), `dialogue/*`(발화 수·한국어 준수·코드전환·ID 손상·
   사실/거짓·사실성·채널 위반), `cohort/*`.
 - HParams 열은 `condition`, `scenario`, `seed`, `leader_id`, `end_reason`, `penalty_factor`,
-  `sim_horizon_s`다. HParams의 session status는 변환 완료를 뜻하며 로봇 성공이 아니다.
+  `sim_horizon_s`, `tokens_complete`다. HParams의 session status는 변환 완료를 뜻하며 로봇 성공이 아니다.
 - 서로 다른 조건의 성공률을 자동 합산하지 않는다. 빠르게 실패한 실행의 시간을 성능 개선으로
   읽지 않는다.
 

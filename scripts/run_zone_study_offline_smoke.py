@@ -65,7 +65,8 @@ def summarise(bundle) -> dict:
                                                       'boundary_violation_trials',
                                                       'usage_unknown_calls',
                                                       'tokens_incomplete_trials',
-                                                      'cohort_tokens_total')}
+                                                      'cohort_tokens_total',
+                                                      'cohort_tokens_total_lower_bound')}
                           for name, row in summary['conditions'].items()},
             'scenarios': summary['scenarios'], 'trials': summary['trials'],
             'provenance': summary['provenance']}
