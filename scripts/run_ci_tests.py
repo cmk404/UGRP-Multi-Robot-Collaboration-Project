@@ -104,6 +104,7 @@ TEST_PATTERNS = (
     "tests/test_pair_coarse_concurrency.py",
     "tests/test_pair_navigation*.py",
     "tests/test_pair_transport*.py",
+    "tests/test_pair_owncam_approach.py", "tests/test_zone_tagged_cargo_scene.py",
     "tests/test_dispatch_adaptive.py",
     "tests/test_dispatch_pair_navigation.py",
     "tests/test_dispatch_evaluation.py",

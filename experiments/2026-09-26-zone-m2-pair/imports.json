@@ -1,0 +1,229 @@
+{
+ "purpose": "M2 pair long_beam carry without runtime GT: read-only imports of unmerged dependencies. Files are byte-identical to the pinned source commits; M2 code never edits them (new modules only). When the source PRs merge, these paths merge without conflict if unchanged.",
+ "imports": [
+  {
+   "path": "docs/zone_scenario_feasibility.md",
+   "source_commit": "8f2aa31",
+   "source_branch": "kiro/zone-scenario-feasibility",
+   "source_pr": "PR #202",
+   "sha256": "1098cd3dca2e7f82abe5057115e3cddec04ea8b210202bafd55ad9b6abaf5351"
+  },
+  {
+   "path": "experiments/2026-09-25-zone-owncam-loop/calibration_loop.json",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb"
+  },
+  {
+   "path": "experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "ca54d946dd76fc333d1bf4e443c416cc8d75a7d84429daab8bd8fff5ae484558"
+  },
+  {
+   "path": "harness/owncam_drive.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "a8aede7813956e2de12c25b139b02f48e11dab5be8cbf82a2d25344547d51e82"
+  },
+  {
+   "path": "harness/owncam_drive_v2.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "217423249775b024504b56b59203a1eab50b667bf273387ba23c0974c0ad4462"
+  },
+  {
+   "path": "harness/owncam_localizer.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "0304d7c491dfe6ae68cea6550f7a13e3c99e8e1d3f8e8b6c4b7b1d06893b1d63"
+  },
+  {
+   "path": "harness/owncam_pair_beam.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "6bc959a766676ba62fe9126e2d90fcfa62c7353ee79f83fa1ac8caeb4eae82d6"
+  },
+  {
+   "path": "harness/owncam_pair_beam_v2.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "b4dad971e241542460a9f7ae259356039033d18c9d4f16c940b2370ced388f97"
+  },
+  {
+   "path": "harness/owncam_pair_hold_v3.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "1af3eeb8351ebefcfd2eca0a24f6e3d1876b288f40ef857f708eca1e78cc5bd2"
+  },
+  {
+   "path": "harness/owncam_pose_source.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "9e0b458e88969327e51fba73d43fa7e868d57547e5976e279098cde793f9f72b"
+  },
+  {
+   "path": "harness/team_carry_status.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "1a1822266637ed987c74e8be5c3407227f27cd7b0dac2d1c6e1f84e525d67c29"
+  },
+  {
+   "path": "harness/zone_scenario_feasibility.py",
+   "source_commit": "8f2aa31",
+   "source_branch": "kiro/zone-scenario-feasibility",
+   "source_pr": "PR #202",
+   "sha256": "e00376beb0f503c5092f848021963e13cf82c138398ada76c13e6576b2ea349a"
+  },
+  {
+   "path": "maps/zones/zone_wide_door_tags_v2.json",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "f9b0ef0d9f35457b34711c0ec5d11688af3130238560195c982660137ad3e73b"
+  },
+  {
+   "path": "maps/zones/zone_wide_two_doors_tags_v2.json",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "10f9b2f854a161843d9dc53bb518431cd9a35317b4252491f8e4186a25e3b206"
+  },
+  {
+   "path": "scripts/check_zone_scenarios.py",
+   "source_commit": "8f2aa31",
+   "source_branch": "kiro/zone-scenario-feasibility",
+   "source_pr": "PR #202",
+   "sha256": "35ef7d5e6b33db35f2727f2521a8ee86c9283ec142d3dc713661951844d0b1f6"
+  },
+  {
+   "path": "scripts/run_owncam_closed_loop.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "925c43d38d7cd3ef1eae9c9ab611cafe62a9a127d8946e88db58af12bf4e93eb"
+  },
+  {
+   "path": "scripts/study_owncam_pair_beam.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "3e4c77e279cde780e19b1a1eb2643c626c46dac15e4671001607c5fa6b9c3cff"
+  },
+  {
+   "path": "sim/zone_landmarks.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "e171482355dcbcd902f68527d380df28a506188b2058c99a07575f0916aa55f6"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v2/frames.json",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "b2d4b0a1a829c47363f8a0e5a7f40f56543c560c70728b5037b924136ba7c11f"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v2/grip_613_r1_00059.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "4135e5ae11d0dba68ae6abf0938b6c14744c1d04d92d964391b25bf5859ee8e8"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v2/lift_613_r1_00063.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "a29881f38a8d98d3462f95873dd4df212531b6bfc83573694de81c0c233b05a2"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v2/p45_611_r1_00073.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "ef127cefaf655beff936b72c7d8442d9b5e295811608741430ce374c94cbce88"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v2/search_611_r1_00072.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "b293ca7f0375728743a6830c9128c20ff02d29bd86a0ee98755cb719353ef547"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v3/carry_626_r1_00081.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "0b9457b124eb9154c640ad656a8be77327741d6a9e196367f2b891ff0f2eada0"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v3/dropped_611drop_r1_00070.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "8c66e57462db68eae3d1efe5403bb7ba2479def11acda297237dab85cdcf2a0f"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v3/lift_611drop_r1_00059.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "0d9182c3dacae4f632437ae9b45701d1d9ce215ce091339c5f73e1560b6a0a1c"
+  },
+  {
+   "path": "tests/fixtures/owncam_pair_v3/lift_626_r1_00078.jpg",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "d41bc8401005485db61c887973b15b12f31442f2a11ba38abbeaf5f37eeabbef"
+  },
+  {
+   "path": "tests/test_owncam_localizer.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "9aa5b2ce7f661bd6d70a77527284c7777b18a709900fe023819244a5f943864e"
+  },
+  {
+   "path": "tests/test_owncam_pair_beam.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "ea5eea1c4c4357758858910a9041efc54724899789a7dde70f020398b044affb"
+  },
+  {
+   "path": "tests/test_owncam_pair_hold_v3.py",
+   "source_commit": "29700fd",
+   "source_branch": "claude/zone-owncam-pair",
+   "source_pr": "PR #200",
+   "sha256": "231041ca4960bc836a78efd806749dd8192bf6df3326ea24ddafe31753c3103d"
+  },
+  {
+   "path": "tests/test_zone_landmarks_sim.py",
+   "source_commit": "e10f88d",
+   "source_branch": "claude/zone-m1-owncam",
+   "source_pr": "PR #201",
+   "sha256": "8d9bacf5e34fcad2de441ed7eec0e5f9460bf6b5835d2a21bea990ffdbb22950"
+  },
+  {
+   "path": "tests/test_zone_scenario_feasibility.py",
+   "source_commit": "8f2aa31",
+   "source_branch": "kiro/zone-scenario-feasibility",
+   "source_pr": "PR #202",
+   "sha256": "a5ad32ed45e914ba891af1c3101d18bda0af4fafa78245e88d4961f39b7dab59"
+  }
+ ]
+}
