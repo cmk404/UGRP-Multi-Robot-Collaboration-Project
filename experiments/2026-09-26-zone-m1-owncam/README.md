@@ -16,7 +16,9 @@
 - **dev 진단 성공 2건(같은 s94).** A5 조건(v6·`cargo_noslip_v1`·새 판정식)에서도 dev-a6 s94가 완주했다(아래 표). 첫 완주는 dev-a5 s94(+15°, `6352fde`)였다. 조건은 A5 이전(`local_contact_fine`, v5, 이전 판정식)이다. **M1 코호트 증거가 아니다.**
   - 경로: 탐색(오차 2.3 cm) → 자기 RGB 면 추정 파지 → 운반·문 통과(둘러보기 16회) → 배치(GT 슬롯 오차 2.3 / 1.3 cm) → 다시 보기 IN_SLOT.
   - 기록: 벽·peer·다른 상자 접촉 0, weld OFF, 자세 출처 `owncam_pf_v2:757f7f09`만, SIM 544 s.
-- **접촉 프로필.** dev-a1–a5는 전부 `local_contact_fine`로 실행했다(등록 에피소드 기본값). A5 이후(dev-a6부터)는 `cargo_noslip_v1`이다(`noslip_iterations` 10 기록). 사용자 결정은 아직 대기 중이다(#181·#189).
+- **접촉 프로필.** dev-a1–a5는 전부 `local_contact_fine`로 실행했다(등록 에피소드 기본값). A5 이후(dev-a6부터)는 `cargo_noslip_v1`이다(`noslip_iterations` 10 기록). **approved by user 2026-09-26**: 연구 전체 접촉 프로필로 승인됐다.
+  - 동결 소스(러너 문자열과 A6의 `contact_profile_status`)에는 승인 전 표기 "pending user approval"이 그대로 남아 있다. 소스를 바꾸지 않았기 때문이다. 이 기록 파일의 표기가 우선한다.
+  - 이 결정만으로는 사전 등록 절차가 바뀌지 않는다.
 
 ## Codex 사전 검토(#201, `ea45e3d`) 반영: A5, `aa2dced`
 | # | 지적 | 조치 |
@@ -41,7 +43,7 @@
 | A2 | dev-a2 s91·s92: v5 정면 면 추정 실패, s91 peer 접촉 226 step | bay 반폭 x 0.15 m(접근점이 목표 x − 0.40 m), dev 전용 회전 상자 진단 s94(+15°)·s95(−20°) |
 | A3 | dev-a3 s93·s94: 러너가 스킬에 robot_id를 넘기지 않음(r2·r3 거부) | 스킬에 에피소드 robot_id 전달 |
 | A4 | dev-a4 s94: 문 통과 뒤 스킬 자체 mecanum 주행의 yaw 표류(최대 11°), yaw 게이트에 19회 걸림, SIM_LIMIT | 운반 구간 드라이버(loop v2 plant)가 사전 배치 목표까지 주행. 스킬은 잔차만 보정 |
-| A5 | Codex 사전 검토 1–7, #181 v6(`ac34651`) | 스킬 v6(정적 keep-out, 공개 re-anchor hook), `cargo_noslip_v1` 주 조건(사용자 결정 대기), 0.5 m bay, 확인 프레임별 look-back 게이트, 유지·파지·예외 판정, test 가드와 채택 규칙. 조건과 판정도 바꾼 amendment이므로 `scope_note`에 적었다 |
+| A5 | Codex 사전 검토 1–7, #181 v6(`ac34651`) | 스킬 v6(정적 keep-out, 공개 re-anchor hook), `cargo_noslip_v1` 주 조건(approved by user 2026-09-26), 0.5 m bay, 확인 프레임별 look-back 게이트, 유지·파지·예외 판정, test 가드와 채택 규칙. 조건과 판정도 바꾼 amendment이므로 `scope_note`에 적었다 |
 
 ## dev 결과 (전부 보고, `results.json`)
 | 시도 | 에피소드 | 결과 | 도달 단계 |

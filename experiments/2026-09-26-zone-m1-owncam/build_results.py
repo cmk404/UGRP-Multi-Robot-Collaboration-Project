@@ -21,7 +21,8 @@ ATTEMPTS = {
     'dev-a4': 'ea45e3d, amendment A3: skill gets the episode robot id',
     'dev-a5': '6352fde, amendment A4: loaded carry leg through the door to the pre-place goal',
     'dev-a6': 'amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge',
-    'dev-a7': 'amendment A6: skill v9 (A5 conditions); pre-freeze dev check s93 + s95',
+    'dev-a7': 'amendment A6: skill v9 (A5 conditions); pre-freeze dev check s93 + s95 - crashed at setup (runner StaticKeepout import, e10f88d), no physics',
+    'dev-a8': 'amendment A6b: runner keep-out import fix only; A6 dev check s93 + s95 relaunched',
 }
 if (RAW/'test').exists():
     ATTEMPTS['test'] = 'test split, once, frozen source (see frozen_source.json)'

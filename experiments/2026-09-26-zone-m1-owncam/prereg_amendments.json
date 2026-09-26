@@ -150,6 +150,17 @@
         "contact_profile": "cargo_noslip_v1",
         "contact_profile_status": "pending user approval"
       }
+    },
+    {
+      "id": "A6b-runner-keepout-import",
+      "date": "2026-09-26",
+      "before_test": true,
+      "evidence": "dev-a7 (source e10f88d) s93 and s95 both crashed at setup, before physics (only attempt_started.json written): AttributeError: module 'harness.wrist_zone_skill_v9' has no attribute 'StaticKeepout'. The runner built keep-outs via skill_mod.StaticKeepout; v9 inherits v6's isinstance check but does not re-export the class. No episode ran, so dev-a7 produced no outcome.",
+      "changes": [
+        "runner only: static_layout_keepouts() builds the same spawn-row discs with harness.wrist_zone_skill_v6.StaticKeepout (identical ids, centres, radius 0.17 m, source tag) for v6 and v9",
+        "new unit test constructs every STATIC_KEEPOUT_SKILLS skill through the runner's keep-out path",
+        "no behaviour change: skill v9, A5 conditions, contact profile, controller, calibration, judge and test guard unchanged; A6 dev_check_rule applies unchanged to the relaunch dev-a8 (s93 + s95 once each)"
+      ]
     }
   ]
 }
