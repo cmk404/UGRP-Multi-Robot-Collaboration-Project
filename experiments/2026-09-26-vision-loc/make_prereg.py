@@ -30,7 +30,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     tab = json.loads((HERE/'episodes.json').read_text())
     test_eps = [e['episode_id'] for e in tab['episodes'] if e['split'] == 'test']
-    cfg = Path(args.config)
+    cfg = Path(args.config).resolve()
     info = json.loads(Path(args.train_info).read_text())
     prereg = {
         'schema': 'ugrp.vision_loc.prereg.v1',
@@ -47,7 +47,7 @@ def main(argv=None):
             'filters': {'vision': 'student', 'boundary': 'PR #210 detector baseline', 'deadreck': 'baseline',
                         'oracle': 'EVAL-ONLY diagnostic (teacher labels), never a student result'},
             'frozen_files_sha256': {f: sha_file(HERE/f) for f in FROZEN_FILES}},
-        'dev_selection': {'file': str(Path(args.dev_selection).relative_to(HERE)), 'sha256': sha_file(args.dev_selection)},
+        'dev_selection': {'file': str(Path(args.dev_selection).resolve().relative_to(HERE)), 'sha256': sha_file(args.dev_selection)},
         'test_episodes': test_eps,
         'scoring': {'once': True, 'metrics': 'vision_loc_cli.py score (pooled over the 6 test episodes and per episode)',
                     'groups': {'door_zone': '|x - 2.2| < 0.6 and -0.45 < y < 0.55 (GT), as PR #210',

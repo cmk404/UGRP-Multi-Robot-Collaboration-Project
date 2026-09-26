@@ -77,6 +77,9 @@ DEFAULT_OBS = {
     'columns': 96,             # evenly spaced image columns
     'strip_half_px': 2,        # class probabilities averaged over 2*2+1 image columns
     'min_run_px': 3,           # a wall / floor / background run must be this long
+    # floor runs shorter than this are dropped (None: min_run_px). A thin 'floor' sliver between a wall and
+    # the carried box is a segmentation error at the box top edge, not visible floor (dev s910 carry frames)
+    'min_floor_run_px': None,
     'use_top_edge': True,
     'consistency_px': None,    # drop sharp edges inconsistent with neighbour columns (None: keep all)
     # Sub-pixel refinement of sharp edges on the image itself: the segmentation head predicts at 1/8 of
@@ -326,7 +329,8 @@ def column_observations(probs: np.ndarray, columns: np.ndarray, params: Mapping 
             continue
         top, bot = int(rows[0]), int(rows[-1])
         lab = np.argmax(np.nan_to_num(p[top:bot + 1]), 1)
-        runs = [(c, s + top, e + top) for c, s, e in _runs(lab) if e - s + 1 >= r_min]
+        r_floor = int(p_['min_floor_run_px'] or r_min)
+        runs = [(c, s + top, e + top) for c, s, e in _runs(lab) if e - s + 1 >= (r_floor if c == FLOOR else r_min)]
         if not runs:
             continue
         # merge adjacent runs of one class separated by dropped short runs

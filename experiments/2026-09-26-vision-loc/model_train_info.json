@@ -1,0 +1,306 @@
+{
+ "schema": "ugrp.vision_loc.seg_model.v1",
+ "checkpoint": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/model/seg-v2/seg_lraspp_mbv3.pt",
+ "sha256": "348539030fda962cc5ba64e21c956619bc4db9321a99cd3ae6746611a9939fd9",
+ "bytes": 13071401,
+ "params": 3218818,
+ "train_episodes": [
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s901",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s902",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s903",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s904",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s905",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s906",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s907",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s908"
+ ],
+ "val_episodes": [
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-dev-s909",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-dev-s910",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-dev-s911"
+ ],
+ "train_frames": 4973,
+ "val_frames": 654,
+ "every": 3,
+ "val_every": 10,
+ "epochs": 4,
+ "batch": 16,
+ "lr": 0.001,
+ "seed": 0,
+ "device": "mps",
+ "torch": "2.11.0",
+ "torchvision": "0.26.0",
+ "wall_s": 812.8,
+ "backbone_weights": "MobileNet_V3_Large_Weights.IMAGENET1K_V1",
+ "precise_bn_frames": 4973,
+ "history": [
+  {
+   "step": 50,
+   "epoch": 0,
+   "loss": 0.39177,
+   "lr": 0.0003810300232540727,
+   "wall_s": 31.1
+  },
+  {
+   "step": 100,
+   "epoch": 0,
+   "loss": 0.10962,
+   "lr": 0.000919530606513485,
+   "wall_s": 50.1
+  },
+  {
+   "step": 150,
+   "epoch": 0,
+   "loss": 0.05559,
+   "lr": 0.0009985564624979968,
+   "wall_s": 68.6
+  },
+  {
+   "step": 200,
+   "epoch": 0,
+   "loss": 0.04238,
+   "lr": 0.0009882998887010977,
+   "wall_s": 87.3
+  },
+  {
+   "step": 250,
+   "epoch": 0,
+   "loss": 0.02947,
+   "lr": 0.0009683854950405111,
+   "wall_s": 106.2
+  },
+  {
+   "step": 300,
+   "epoch": 0,
+   "loss": 0.03492,
+   "lr": 0.0009392071591698557,
+   "wall_s": 124.9
+  },
+  {
+   "step": 310,
+   "epoch": 0,
+   "val": {
+    "pixel_acc": 0.86833,
+    "iou": {
+     "floor": 0.8495,
+     "wall": 0.1913,
+     "self": 0.0,
+     "object": 0.8801,
+     "background": 0.0012
+    },
+    "miou": 0.3844
+   },
+   "wall_s": 157.4,
+   "bn": "running statistics of augmented training batches"
+  },
+  {
+   "step": 350,
+   "epoch": 1,
+   "loss": 0.02419,
+   "lr": 0.000901341986004556,
+   "wall_s": 172.7
+  },
+  {
+   "step": 400,
+   "epoch": 1,
+   "loss": 0.02461,
+   "lr": 0.0008555388934285511,
+   "wall_s": 191.5
+  },
+  {
+   "step": 450,
+   "epoch": 1,
+   "loss": 0.02148,
+   "lr": 0.000802703799791141,
+   "wall_s": 210.3
+  },
+  {
+   "step": 500,
+   "epoch": 1,
+   "loss": 0.02142,
+   "lr": 0.0007438817061636771,
+   "wall_s": 229.2
+  },
+  {
+   "step": 550,
+   "epoch": 1,
+   "loss": 0.01917,
+   "lr": 0.0006802360277429156,
+   "wall_s": 248.5
+  },
+  {
+   "step": 600,
+   "epoch": 1,
+   "loss": 0.0132,
+   "lr": 0.0006130255831957262,
+   "wall_s": 267.3
+  },
+  {
+   "step": 620,
+   "epoch": 1,
+   "val": {
+    "pixel_acc": 0.93429,
+    "iou": {
+     "floor": 0.9441,
+     "wall": 0.618,
+     "self": 0.0,
+     "object": 0.7412,
+     "background": 0.4354
+    },
+    "miou": 0.5478
+   },
+   "wall_s": 303.2,
+   "bn": "running statistics of augmented training batches"
+  },
+  {
+   "step": 650,
+   "epoch": 2,
+   "loss": 0.01627,
+   "lr": 0.0005435796970623436,
+   "wall_s": 314.5
+  },
+  {
+   "step": 700,
+   "epoch": 2,
+   "loss": 0.01434,
+   "lr": 0.000473271907656305,
+   "wall_s": 333.5
+  },
+  {
+   "step": 750,
+   "epoch": 2,
+   "loss": 0.01214,
+   "lr": 0.00040349280048045566,
+   "wall_s": 352.7
+  },
+  {
+   "step": 800,
+   "epoch": 2,
+   "loss": 0.01136,
+   "lr": 0.00033562250447441845,
+   "wall_s": 372.1
+  },
+  {
+   "step": 850,
+   "epoch": 2,
+   "loss": 0.00968,
+   "lr": 0.000271003395077631,
+   "wall_s": 391.6
+  },
+  {
+   "step": 900,
+   "epoch": 2,
+   "loss": 0.01053,
+   "lr": 0.0002109135440015358,
+   "wall_s": 410.5
+  },
+  {
+   "step": 930,
+   "epoch": 2,
+   "val": {
+    "pixel_acc": 0.97224,
+    "iou": {
+     "floor": 0.9711,
+     "wall": 0.8531,
+     "self": 0.0,
+     "object": 0.8878,
+     "background": 0.6877
+    },
+    "miou": 0.6799
+   },
+   "wall_s": 449.4,
+   "bn": "running statistics of augmented training batches"
+  },
+  {
+   "step": 950,
+   "epoch": 3,
+   "loss": 0.01199,
+   "lr": 0.00015654144083570022,
+   "wall_s": 457.1
+  },
+  {
+   "step": 1000,
+   "epoch": 3,
+   "loss": 0.01436,
+   "lr": 0.00010896248645761321,
+   "wall_s": 475.3
+  },
+  {
+   "step": 1050,
+   "epoch": 3,
+   "loss": 0.01166,
+   "lr": 6.911772317222666e-05,
+   "wall_s": 494.2
+  },
+  {
+   "step": 1100,
+   "epoch": 3,
+   "loss": 0.01723,
+   "lr": 3.779522226804249e-05,
+   "wall_s": 513.2
+  },
+  {
+   "step": 1150,
+   "epoch": 3,
+   "loss": 0.00918,
+   "lr": 1.5614497116739205e-05,
+   "wall_s": 532.4
+  },
+  {
+   "step": 1200,
+   "epoch": 3,
+   "loss": 0.00938,
+   "lr": 3.014250102484819e-06,
+   "wall_s": 551.5
+  },
+  {
+   "step": 1240,
+   "epoch": 3,
+   "val": {
+    "pixel_acc": 0.9675,
+    "iou": {
+     "floor": 0.9612,
+     "wall": 0.7378,
+     "self": 0.0,
+     "object": 0.9497,
+     "background": 0.718
+    },
+    "miou": 0.6734
+   },
+   "wall_s": 594.1,
+   "bn": "running statistics of augmented training batches"
+  },
+  {
+   "step": 1240,
+   "epoch": 3,
+   "val": {
+    "pixel_acc": 0.99335,
+    "iou": {
+     "floor": 0.9929,
+     "wall": 0.9538,
+     "self": 0.0,
+     "object": 0.9824,
+     "background": 0.7977
+    },
+    "miou": 0.7453
+   },
+   "wall_s": 812.5,
+   "bn": "precise BN on 4973 clean train frames"
+  }
+ ],
+ "load_average_end": [
+  15.74267578125,
+  26.79345703125,
+  37.9951171875
+ ],
+ "train_episode_hashes": {
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s901": "9a11f45384de31091b53bb20a11b728a469994725645f94c56d6765eb69897a4",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s902": "b3a56b4e593c1dc9b9b5b66402f7d3fa1c6515cbdb024f24b3f92182a07d4859",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s903": "d10ab6d12920ab4650cafe3ff38a9954c784349efe3fbb4975b88ffa98cbf1d6",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s904": "70fc2638cc73e1b0e5b23513a179cf659ef8b0ee6b161ce789132f6d3e189009",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s905": "0cfb508392bda6c34a33bc40ed5303c036491c603ef1b8d9035f83483fd7aca7",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s906": "6cc227eaa9bd0c1bc4ea9c5db67b0cd5a7eb8462cbe9e92ab47beb0bc47f9392",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s907": "064f9e6e7187384900e615578b74fab82c2ec39c53d849de7d98d724744592e4",
+  "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/render/vl-train-s908": "e459d02f5a3e5f5c9be19b0da14c7d68e9b094425d1eae6ae95ee3051beb928d"
+ }
+}

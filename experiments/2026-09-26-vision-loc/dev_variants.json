@@ -1,0 +1,866 @@
+{
+ "schema": "ugrp.vision_loc.dev_variants.v1",
+ "split": "dev (oracle grid also train s903)",
+ "variants": {
+  "oracle_o1_eff8": {
+   "note": "oracle labels, eff 8 (s910 dev + s903 train; calibration from train s901 only)",
+   "filter": "oracle",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-oracle-grid2/o1_eff8/metrics.json",
+   "metrics_sha256": "d1c548e6a2643a6882850af980c434da17674d61b2c03530c52961db649e6fb3",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-train-s903"
+   ],
+   "pooled": {
+    "all": {
+     "n": 3705,
+     "pos_p50_m": 0.0285,
+     "pos_p90_m": 0.0705,
+     "pos_p99_m": 0.1056,
+     "lat_abs_p99_m": 0.1053,
+     "yaw_p90_deg": 1.2717
+    },
+    "door_loaded": {
+     "n": 492,
+     "pos_p50_m": 0.0243,
+     "pos_p90_m": 0.0536,
+     "pos_p99_m": 0.0701,
+     "lat_abs_p99_m": 0.0578,
+     "yaw_p90_deg": 1.118
+    },
+    "loaded": {
+     "n": 2033,
+     "pos_p50_m": 0.0222,
+     "pos_p90_m": 0.0566,
+     "pos_p99_m": 0.0689,
+     "lat_abs_p99_m": 0.0621,
+     "yaw_p90_deg": 0.6856
+    },
+    "unloaded": {
+     "n": 1672,
+     "pos_p50_m": 0.0463,
+     "pos_p90_m": 0.0841,
+     "pos_p99_m": 0.1239,
+     "lat_abs_p99_m": 0.1227,
+     "yaw_p90_deg": 1.926
+    }
+   },
+   "false_detections": null
+  },
+  "oracle_o2_eff12": {
+   "note": "oracle, eff 12",
+   "filter": "oracle",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-oracle-grid2/o2_eff12/metrics.json",
+   "metrics_sha256": "ed5fc7cf5159a6c1ba8bd918ba4be500273e838ba9a4050d14cb6339ac2e4ae5",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-train-s903"
+   ],
+   "pooled": {
+    "all": {
+     "n": 3705,
+     "pos_p50_m": 0.0262,
+     "pos_p90_m": 0.0761,
+     "pos_p99_m": 0.1227,
+     "lat_abs_p99_m": 0.1219,
+     "yaw_p90_deg": 1.0511
+    },
+    "door_loaded": {
+     "n": 492,
+     "pos_p50_m": 0.0233,
+     "pos_p90_m": 0.0543,
+     "pos_p99_m": 0.0739,
+     "lat_abs_p99_m": 0.0601,
+     "yaw_p90_deg": 1.0043
+    },
+    "loaded": {
+     "n": 2033,
+     "pos_p50_m": 0.0199,
+     "pos_p90_m": 0.0477,
+     "pos_p99_m": 0.0757,
+     "lat_abs_p99_m": 0.0592,
+     "yaw_p90_deg": 0.699
+    },
+    "unloaded": {
+     "n": 1672,
+     "pos_p50_m": 0.0409,
+     "pos_p90_m": 0.0859,
+     "pos_p99_m": 0.1957,
+     "lat_abs_p99_m": 0.1948,
+     "yaw_p90_deg": 1.7224
+    }
+   },
+   "false_detections": null
+  },
+  "oracle_o4_eff12_disc": {
+   "note": "oracle, eff 12, discriminative-column tempering",
+   "filter": "oracle",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-oracle-grid2/o4_eff12_disc/metrics.json",
+   "metrics_sha256": "1d6759c810f8136d5ebbc85231feea7a759f29884485929fc5a70ca6085aa48e",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-train-s903"
+   ],
+   "pooled": {
+    "all": {
+     "n": 3705,
+     "pos_p50_m": 0.0273,
+     "pos_p90_m": 0.0764,
+     "pos_p99_m": 0.1147,
+     "lat_abs_p99_m": 0.112,
+     "yaw_p90_deg": 0.8871
+    },
+    "door_loaded": {
+     "n": 492,
+     "pos_p50_m": 0.026,
+     "pos_p90_m": 0.0784,
+     "pos_p99_m": 0.1113,
+     "lat_abs_p99_m": 0.0845,
+     "yaw_p90_deg": 1.3598
+    },
+    "loaded": {
+     "n": 2033,
+     "pos_p50_m": 0.0204,
+     "pos_p90_m": 0.0734,
+     "pos_p99_m": 0.111,
+     "lat_abs_p99_m": 0.1108,
+     "yaw_p90_deg": 0.8435
+    },
+    "unloaded": {
+     "n": 1672,
+     "pos_p50_m": 0.0439,
+     "pos_p90_m": 0.0778,
+     "pos_p99_m": 0.1615,
+     "lat_abs_p99_m": 0.1598,
+     "yaw_p90_deg": 0.9589
+    }
+   },
+   "false_detections": null
+  },
+  "oracle_o5_eff20_disc": {
+   "note": "oracle, eff 20, discriminative",
+   "filter": "oracle",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-oracle-grid2/o5_eff20_disc/metrics.json",
+   "metrics_sha256": "f1ca64389a681982e00d3c208f66a7f21eed477596786ffb65e3fc1f05503d43",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-train-s903"
+   ],
+   "pooled": {
+    "all": {
+     "n": 3705,
+     "pos_p50_m": 0.0252,
+     "pos_p90_m": 0.0923,
+     "pos_p99_m": 0.1138,
+     "lat_abs_p99_m": 0.1068,
+     "yaw_p90_deg": 0.9657
+    },
+    "door_loaded": {
+     "n": 492,
+     "pos_p50_m": 0.0249,
+     "pos_p90_m": 0.0817,
+     "pos_p99_m": 0.1111,
+     "lat_abs_p99_m": 0.089,
+     "yaw_p90_deg": 1.4818
+    },
+    "loaded": {
+     "n": 2033,
+     "pos_p50_m": 0.0191,
+     "pos_p90_m": 0.087,
+     "pos_p99_m": 0.109,
+     "lat_abs_p99_m": 0.0936,
+     "yaw_p90_deg": 0.924
+    },
+    "unloaded": {
+     "n": 1672,
+     "pos_p50_m": 0.0396,
+     "pos_p90_m": 0.0994,
+     "pos_p99_m": 0.1572,
+     "lat_abs_p99_m": 0.1551,
+     "yaw_p90_deg": 0.9992
+    }
+   },
+   "false_detections": null
+  },
+  "vision_320_s910": {
+   "note": "learned seg at the 320x240 training size: class boundary ~3 px low (1/8 head); aborted after s910",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-vision-grid-320-aborted/s910_v_eff8_sig2.5.json",
+   "metrics_sha256": "dd6e31b86023b57890091aa9a6726c9413300aba67174eb7a5fe37538eb93aa2",
+   "episodes": [
+    "vl-dev-s910"
+   ],
+   "pooled": {
+    "all": {
+     "n": 2122,
+     "pos_p50_m": 0.0768,
+     "pos_p90_m": 0.1756,
+     "pos_p99_m": 0.2597,
+     "lat_abs_p99_m": 0.1839,
+     "yaw_p90_deg": 4.7003
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.098,
+     "pos_p90_m": 0.2474,
+     "pos_p99_m": 0.2701,
+     "lat_abs_p99_m": 0.1151,
+     "yaw_p90_deg": 16.8441
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0976,
+     "pos_p90_m": 0.1832,
+     "pos_p99_m": 0.2667,
+     "lat_abs_p99_m": 0.1831,
+     "yaw_p90_deg": 7.5772
+    },
+    "unloaded": {
+     "n": 872,
+     "pos_p50_m": 0.0634,
+     "pos_p90_m": 0.1081,
+     "pos_p99_m": 0.1878,
+     "lat_abs_p99_m": 0.184,
+     "yaw_p90_deg": 2.6119
+    }
+   },
+   "false_detections": null
+  },
+  "w1_480_eff8": {
+   "note": "inference 480x360, no refinement, eff 8",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-grid-480/w1_480_eff8/metrics.json",
+   "metrics_sha256": "b6f97f6317d21964bc80a970b34f28f03cb0d0ab00094547e9db37feaf4eb697",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.1329,
+     "pos_p90_m": 1.4343,
+     "pos_p99_m": 2.9759,
+     "lat_abs_p99_m": 2.2441,
+     "yaw_p90_deg": 89.2101
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0651,
+     "pos_p90_m": 0.1611,
+     "pos_p99_m": 0.1785,
+     "lat_abs_p99_m": 0.0553,
+     "yaw_p90_deg": 4.8446
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0516,
+     "pos_p90_m": 0.1381,
+     "pos_p99_m": 0.1754,
+     "lat_abs_p99_m": 0.1383,
+     "yaw_p90_deg": 2.4933
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.3254,
+     "pos_p90_m": 1.8639,
+     "pos_p99_m": 3.0032,
+     "lat_abs_p99_m": 2.25,
+     "yaw_p90_deg": 98.0473
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 484125,
+     "false_edges": 22103,
+     "teacher_edges": 476859,
+     "missed_edges": 7,
+     "false_edge_rate": 0.04566,
+     "missed_edge_rate": 1e-05
+    },
+    "t": {
+     "edges": 34623,
+     "false_edges": 12232,
+     "teacher_edges": 45966,
+     "missed_edges": 577,
+     "false_edge_rate": 0.35329,
+     "missed_edge_rate": 0.01255
+    }
+   }
+  },
+  "w2_480_eff12": {
+   "note": "inference 480x360, no refinement, eff 12",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-grid-480/w2_480_eff12/metrics.json",
+   "metrics_sha256": "49d13db17d2b5aecb5e195d9c05b52be44e3bd2c21427baff4ee407a7c130fa2",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.1421,
+     "pos_p90_m": 2.3449,
+     "pos_p99_m": 2.6679,
+     "lat_abs_p99_m": 2.2642,
+     "yaw_p90_deg": 110.4899
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0715,
+     "pos_p90_m": 0.149,
+     "pos_p99_m": 0.1584,
+     "lat_abs_p99_m": 0.068,
+     "yaw_p90_deg": 5.004
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0528,
+     "pos_p90_m": 0.1435,
+     "pos_p99_m": 0.1584,
+     "lat_abs_p99_m": 0.1484,
+     "yaw_p90_deg": 3.1201
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.9759,
+     "pos_p90_m": 2.3868,
+     "pos_p99_m": 2.6929,
+     "lat_abs_p99_m": 2.2657,
+     "yaw_p90_deg": 114.2356
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 484125,
+     "false_edges": 22103,
+     "teacher_edges": 476859,
+     "missed_edges": 7,
+     "false_edge_rate": 0.04566,
+     "missed_edge_rate": 1e-05
+    },
+    "t": {
+     "edges": 34623,
+     "false_edges": 12232,
+     "teacher_edges": 45966,
+     "missed_edges": 577,
+     "false_edge_rate": 0.35329,
+     "missed_edge_rate": 0.01255
+    }
+   }
+  },
+  "w3_480r6_eff8": {
+   "note": "480x360 + class-guided refinement 6 px, eff 8",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-grid-480r6/w3_480r6_eff8/metrics.json",
+   "metrics_sha256": "61993534d231cab55b51bcc58786d088a6a968a53f06c9e02013819689df41c9",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.0826,
+     "pos_p90_m": 2.2363,
+     "pos_p99_m": 3.018,
+     "lat_abs_p99_m": 2.2731,
+     "yaw_p90_deg": 61.1288
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0406,
+     "pos_p90_m": 0.0688,
+     "pos_p99_m": 0.0797,
+     "lat_abs_p99_m": 0.061,
+     "yaw_p90_deg": 4.2155
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0299,
+     "pos_p90_m": 0.1506,
+     "pos_p99_m": 0.1616,
+     "lat_abs_p99_m": 0.1616,
+     "yaw_p90_deg": 2.179
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.1083,
+     "pos_p90_m": 2.27,
+     "pos_p99_m": 3.0489,
+     "lat_abs_p99_m": 2.2737,
+     "yaw_p90_deg": 78.1415
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 484125,
+     "false_edges": 25645,
+     "teacher_edges": 476859,
+     "missed_edges": 7,
+     "false_edge_rate": 0.05297,
+     "missed_edge_rate": 1e-05
+    },
+    "t": {
+     "edges": 34623,
+     "false_edges": 6159,
+     "teacher_edges": 45966,
+     "missed_edges": 577,
+     "false_edge_rate": 0.17789,
+     "missed_edge_rate": 0.01255
+    }
+   }
+  },
+  "w4_480r6_eff12": {
+   "note": "480x360 + refinement 6 px, eff 12",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-grid-480r6/w4_480r6_eff12/metrics.json",
+   "metrics_sha256": "5ef0eaa308884e9efadb8e6c0b1f444bcbbf4f55faa5bb804489e24d4d49d9b4",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.0745,
+     "pos_p90_m": 2.2771,
+     "pos_p99_m": 2.2827,
+     "lat_abs_p99_m": 2.2812,
+     "yaw_p90_deg": 14.957
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0409,
+     "pos_p90_m": 0.0772,
+     "pos_p99_m": 0.0891,
+     "lat_abs_p99_m": 0.078,
+     "yaw_p90_deg": 4.2074
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0361,
+     "pos_p90_m": 0.127,
+     "pos_p99_m": 0.1359,
+     "lat_abs_p99_m": 0.1359,
+     "yaw_p90_deg": 2.1407
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.0807,
+     "pos_p90_m": 2.2793,
+     "pos_p99_m": 2.2829,
+     "lat_abs_p99_m": 2.2814,
+     "yaw_p90_deg": 15.223
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 484125,
+     "false_edges": 25645,
+     "teacher_edges": 476859,
+     "missed_edges": 7,
+     "false_edge_rate": 0.05297,
+     "missed_edge_rate": 1e-05
+    },
+    "t": {
+     "edges": 34623,
+     "false_edges": 6159,
+     "teacher_edges": 45966,
+     "missed_edges": 577,
+     "false_edge_rate": 0.17789,
+     "missed_edge_rate": 0.01255
+    }
+   }
+  },
+  "w5_480r6_floor10_eff8": {
+   "note": "w3 + floor runs < 10 px dropped (s910 + s911)",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-s910-w5_480r6_floor10_eff8/metrics.json",
+   "metrics_sha256": "1a9c0054811ba42f3c4c83e5e88532b9c4cfd757c1309ce97d347d5f830652bc",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911"
+   ],
+   "pooled": {
+    "all": {
+     "n": 2932,
+     "pos_p50_m": 0.0472,
+     "pos_p90_m": 0.1244,
+     "pos_p99_m": 0.1505,
+     "lat_abs_p99_m": 0.1502,
+     "yaw_p90_deg": 2.0215
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0421,
+     "pos_p90_m": 0.0741,
+     "pos_p99_m": 0.1031,
+     "lat_abs_p99_m": 0.0629,
+     "yaw_p90_deg": 2.0244
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0463,
+     "pos_p90_m": 0.1424,
+     "pos_p99_m": 0.1508,
+     "lat_abs_p99_m": 0.1506,
+     "yaw_p90_deg": 1.6494
+    },
+    "unloaded": {
+     "n": 1682,
+     "pos_p50_m": 0.0477,
+     "pos_p90_m": 0.0893,
+     "pos_p99_m": 0.1431,
+     "lat_abs_p99_m": 0.1422,
+     "yaw_p90_deg": 2.294
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 168425,
+     "false_edges": 15329,
+     "teacher_edges": 168486,
+     "missed_edges": 7,
+     "false_edge_rate": 0.09101,
+     "missed_edge_rate": 4e-05
+    },
+    "t": {
+     "edges": 22807,
+     "false_edges": 3995,
+     "teacher_edges": 32122,
+     "missed_edges": 375,
+     "false_edge_rate": 0.17517,
+     "missed_edge_rate": 0.01167
+    }
+   }
+  },
+  "w6_480r6_cons4_eff8": {
+   "note": "w3 + neighbour-consistency filter 4 px (s910 + s911)",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-s910-w6_480r6_cons4_eff8/metrics.json",
+   "metrics_sha256": "3bee3e9f03975c4642f9c3d7431afd0051e431ce512dcbc8b2dfeeb2154dd337",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911"
+   ],
+   "pooled": {
+    "all": {
+     "n": 2932,
+     "pos_p50_m": 0.0426,
+     "pos_p90_m": 0.1217,
+     "pos_p99_m": 0.1515,
+     "lat_abs_p99_m": 0.1515,
+     "yaw_p90_deg": 2.1597
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0423,
+     "pos_p90_m": 0.0688,
+     "pos_p99_m": 0.0794,
+     "lat_abs_p99_m": 0.0594,
+     "yaw_p90_deg": 4.4619
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0294,
+     "pos_p90_m": 0.1364,
+     "pos_p99_m": 0.1505,
+     "lat_abs_p99_m": 0.1505,
+     "yaw_p90_deg": 2.3089
+    },
+    "unloaded": {
+     "n": 1682,
+     "pos_p50_m": 0.0508,
+     "pos_p90_m": 0.0922,
+     "pos_p99_m": 0.1691,
+     "lat_abs_p99_m": 0.1691,
+     "yaw_p90_deg": 2.0626
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 166122,
+     "false_edges": 12014,
+     "teacher_edges": 168486,
+     "missed_edges": 3183,
+     "false_edge_rate": 0.07232,
+     "missed_edge_rate": 0.01889
+    },
+    "t": {
+     "edges": 20279,
+     "false_edges": 2824,
+     "teacher_edges": 32122,
+     "missed_edges": 2866,
+     "false_edge_rate": 0.13926,
+     "missed_edge_rate": 0.08922
+    }
+   }
+  },
+  "w7_480r6_floor10_cons4_eff8": {
+   "note": "w3 + floor 10 px + consistency 4 px (s910 + s911)",
+   "filter": "vision",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-s910-w7_480r6_floor10_cons4_eff8/metrics.json",
+   "metrics_sha256": "c947b33f0e12b9e5a91334e8ade1d4fc736f4fd3498019712a6da349cc59c5f3",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911"
+   ],
+   "pooled": {
+    "all": {
+     "n": 2932,
+     "pos_p50_m": 0.0353,
+     "pos_p90_m": 0.1046,
+     "pos_p99_m": 0.1434,
+     "lat_abs_p99_m": 0.1434,
+     "yaw_p90_deg": 1.9221
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0401,
+     "pos_p90_m": 0.0723,
+     "pos_p99_m": 0.0875,
+     "lat_abs_p99_m": 0.0685,
+     "yaw_p90_deg": 4.1816
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.032,
+     "pos_p90_m": 0.1396,
+     "pos_p99_m": 0.1438,
+     "lat_abs_p99_m": 0.1438,
+     "yaw_p90_deg": 2.1358
+    },
+    "unloaded": {
+     "n": 1682,
+     "pos_p50_m": 0.0393,
+     "pos_p90_m": 0.0722,
+     "pos_p99_m": 0.1434,
+     "lat_abs_p99_m": 0.1434,
+     "yaw_p90_deg": 1.8406
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 162878,
+     "false_edges": 11395,
+     "teacher_edges": 168486,
+     "missed_edges": 3031,
+     "false_edge_rate": 0.06996,
+     "missed_edge_rate": 0.01799
+    },
+    "t": {
+     "edges": 20280,
+     "false_edges": 2821,
+     "teacher_edges": 32122,
+     "missed_edges": 2817,
+     "false_edge_rate": 0.1391,
+     "missed_edge_rate": 0.0877
+    }
+   }
+  },
+  "boundary": {
+   "note": "PR #210 detector (wall height 0.40), same PF",
+   "filter": "boundary",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-baselines/b_baselines/metrics.json",
+   "metrics_sha256": "59696fb7e75dbd391418518d081c70b4377af87a3dd36984d127091e1720873b",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.345,
+     "pos_p90_m": 2.4428,
+     "pos_p99_m": 2.8356,
+     "lat_abs_p99_m": 2.2789,
+     "yaw_p90_deg": 148.5709
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.2111,
+     "pos_p90_m": 0.2917,
+     "pos_p99_m": 0.3374,
+     "lat_abs_p99_m": 0.1321,
+     "yaw_p90_deg": 7.7755
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.1862,
+     "pos_p90_m": 0.2676,
+     "pos_p99_m": 0.3012,
+     "lat_abs_p99_m": 0.2736,
+     "yaw_p90_deg": 7.6129
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.5869,
+     "pos_p90_m": 2.4877,
+     "pos_p99_m": 2.8465,
+     "lat_abs_p99_m": 2.2794,
+     "yaw_p90_deg": 154.9006
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 475142,
+     "false_edges": 45774,
+     "teacher_edges": 476859,
+     "missed_edges": 1,
+     "false_edge_rate": 0.09634,
+     "missed_edge_rate": 0.0
+    },
+    "t": {
+     "edges": 38881,
+     "false_edges": 6904,
+     "teacher_edges": 45966,
+     "missed_edges": 62,
+     "false_edge_rate": 0.17757,
+     "missed_edge_rate": 0.00135
+    }
+   }
+  },
+  "deadreck": {
+   "note": "command integration",
+   "filter": "deadreck",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-baselines/b_baselines/metrics.json",
+   "metrics_sha256": "59696fb7e75dbd391418518d081c70b4377af87a3dd36984d127091e1720873b",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.7235,
+     "pos_p90_m": 1.2001,
+     "pos_p99_m": 2.08,
+     "lat_abs_p99_m": 1.3774,
+     "yaw_p90_deg": 130.8083
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.3666,
+     "pos_p90_m": 0.6078,
+     "pos_p99_m": 0.6377,
+     "lat_abs_p99_m": 0.1752,
+     "yaw_p90_deg": 12.4035
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.6077,
+     "pos_p90_m": 1.2313,
+     "pos_p99_m": 1.2333,
+     "lat_abs_p99_m": 0.2547,
+     "yaw_p90_deg": 13.883
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.7415,
+     "pos_p90_m": 1.0779,
+     "pos_p99_m": 2.107,
+     "lat_abs_p99_m": 1.4091,
+     "yaw_p90_deg": 139.5396
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 475142,
+     "false_edges": 45774,
+     "teacher_edges": 476859,
+     "missed_edges": 1,
+     "false_edge_rate": 0.09634,
+     "missed_edge_rate": 0.0
+    },
+    "t": {
+     "edges": 38881,
+     "false_edges": 6904,
+     "teacher_edges": 45966,
+     "missed_edges": 62,
+     "false_edge_rate": 0.17757,
+     "missed_edge_rate": 0.00135
+    }
+   }
+  },
+  "oracle_b": {
+   "note": "oracle, eff 12, train calibration",
+   "filter": "oracle",
+   "metrics_file": "/Users/changmin/projects/ugrp/outputs/vision-loc-20260926/dev-baselines/b_baselines/metrics.json",
+   "metrics_sha256": "59696fb7e75dbd391418518d081c70b4377af87a3dd36984d127091e1720873b",
+   "episodes": [
+    "vl-dev-s910",
+    "vl-dev-s911",
+    "vl-dev-s909"
+   ],
+   "pooled": {
+    "all": {
+     "n": 6528,
+     "pos_p50_m": 0.1001,
+     "pos_p90_m": 2.5445,
+     "pos_p99_m": 2.9285,
+     "lat_abs_p99_m": 2.2715,
+     "yaw_p90_deg": 130.6756
+    },
+    "door_loaded": {
+     "n": 246,
+     "pos_p50_m": 0.0264,
+     "pos_p90_m": 0.0659,
+     "pos_p99_m": 0.0933,
+     "lat_abs_p99_m": 0.0588,
+     "yaw_p90_deg": 1.2614
+    },
+    "loaded": {
+     "n": 1250,
+     "pos_p50_m": 0.0203,
+     "pos_p90_m": 0.0482,
+     "pos_p99_m": 0.0857,
+     "lat_abs_p99_m": 0.0545,
+     "yaw_p90_deg": 0.628
+    },
+    "unloaded": {
+     "n": 5278,
+     "pos_p50_m": 0.4362,
+     "pos_p90_m": 2.6257,
+     "pos_p99_m": 2.9577,
+     "lat_abs_p99_m": 2.272,
+     "yaw_p90_deg": 138.9366
+    }
+   },
+   "false_detections": {
+    "b": {
+     "edges": 475142,
+     "false_edges": 45774,
+     "teacher_edges": 476859,
+     "missed_edges": 1,
+     "false_edge_rate": 0.09634,
+     "missed_edge_rate": 0.0
+    },
+    "t": {
+     "edges": 38881,
+     "false_edges": 6904,
+     "teacher_edges": 45966,
+     "missed_edges": 62,
+     "false_edge_rate": 0.17757,
+     "missed_edge_rate": 0.00135
+    }
+   }
+  }
+ },
+ "notes": [
+  "Segmentation checkpoint seg-v1 (running BN statistics of augmented batches) read walls as floor in eval mode (dev wall IoU 0.74); retrained as seg-v2 with precise BN (dev wall IoU 0.954). seg-v1 kept, unused.",
+  "Motion refit on train (scripts/eval_owncam_localization.fit_motion): dev s910 command integration p90 1.23 -> 2.12 m (yaw p90 14.2 -> 2.6 deg); rejected, the M1 motion model stays.",
+  "Pan-induced chassis yaw (loaded) added to the camera model after the dev s910 oracle showed ~4 deg yaw offsets after every loaded look sweep (calibration_train.json pan_base_yaw).",
+  "Line-of-sight expected rows replaced the floor-trace cast (door-jamb columns off by up to 400 px).",
+  "Selection rule (written before looking at w1-w4): smallest pooled dev door_loaded lateral p99, then door_loaded p90, then all p90. Only dev s910 crosses door_1 (s909 teacher stuck at the box approach, s911 stopped by the keep-out guard), so door metrics rest on 246 frames of one episode.",
+  "dev s909: the teacher robot is wedged at its approach point for ~560 SIM s while it keeps issuing turn commands; every filter (oracle too) integrates the commanded turns and is lost (p90 ~2.5 m). The PF has no relocalisation; recorded as an open issue.",
+  "w1-w4 on s909 were started before the 480x360 r6 observations of s909 existed (w3/w4 s909 rerun, same code)."
+ ]
+}
