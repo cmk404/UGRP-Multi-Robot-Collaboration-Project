@@ -45,10 +45,10 @@ def build(pretrained_backbone: bool = True) -> torch.nn.Module:
     return lraspp_mobilenet_v3_large(weights=None, weights_backbone=weights, num_classes=len(vl.CLASSES))
 
 
-def preprocess(bgr_raw: np.ndarray) -> np.ndarray:
-    """Raw fisheye BGR frame -> (3, IN_H, IN_W) float32 normalised RGB of the undistorted view."""
+def preprocess(bgr_raw: np.ndarray, size: tuple[int, int] = (IN_W, IN_H)) -> np.ndarray:
+    """Raw fisheye BGR frame -> (3, H, W) float32 normalised RGB of the undistorted view (default 320 x 240)."""
     und = vl.mp.undistort(bgr_raw)
-    small = cv2.resize(und, (IN_W, IN_H), interpolation=cv2.INTER_AREA)
+    small = cv2.resize(und, tuple(size), interpolation=cv2.INTER_AREA)
     rgb = cv2.cvtColor(small, cv2.COLOR_BGR2RGB).astype(np.float32)/255.
     return ((rgb - MEAN)/STD).transpose(2, 0, 1)
 
@@ -213,7 +213,7 @@ def evaluate(model, dl, dev) -> dict:
 class Segmenter:
     """Run-time wrapper: raw own frame -> (H, W, 5) class probabilities at 640 x 480."""
 
-    def __init__(self, ckpt: Path, dev: str | None = None):
+    def __init__(self, ckpt: Path, dev: str | None = None, infer_size: tuple[int, int] = (IN_W, IN_H)):
         blob = torch.load(str(ckpt), map_location='cpu', weights_only=False)
         if tuple(blob['classes']) != vl.CLASSES:
             raise ValueError('checkpoint classes differ')
@@ -222,10 +222,13 @@ class Segmenter:
         self.model = build(False)
         self.model.load_state_dict(blob['state_dict'])
         self.model.eval().to(self.dev)
+        # Inference input size (a dev choice; the network is fully convolutional). Its head predicts at
+        # 1/8 of the input, so 480 x 360 halves the class-boundary quantisation of the 320 x 240 training size.
+        self.infer_size = (int(infer_size[0]), int(infer_size[1]))
 
     @torch.no_grad()
     def probs(self, bgr_raw: np.ndarray) -> np.ndarray:
-        x = torch.from_numpy(preprocess(bgr_raw))[None].to(self.dev)
+        x = torch.from_numpy(preprocess(bgr_raw, self.infer_size))[None].to(self.dev)
         logits = self.model(x)['out']
         up = F.interpolate(logits, size=(vl.HEIGHT, vl.WIDTH), mode='bilinear', align_corners=False)
         return torch.softmax(up, 1)[0].permute(1, 2, 0).float().cpu().numpy()

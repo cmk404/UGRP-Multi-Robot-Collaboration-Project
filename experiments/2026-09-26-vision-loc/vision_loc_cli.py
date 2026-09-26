@@ -340,8 +340,9 @@ def load_obs(path: Path) -> tuple[dict, dict]:
 def segment(args):
     import seg_model
     require_frozen(args.episodes, checkpoint=args.checkpoint, config=args.config)
-    seg = seg_model.Segmenter(Path(args.checkpoint), args.device)
-    obs_params = {**vl.DEFAULT_OBS, **load_json(args.config).get('obs', {})}
+    cfg = load_json(args.config)
+    seg = seg_model.Segmenter(Path(args.checkpoint), args.device, tuple(cfg.get('infer_size', (320, 240))))
+    obs_params = {**vl.DEFAULT_OBS, **cfg.get('obs', {})}
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
@@ -353,11 +354,13 @@ def segment(args):
         for row in frames:
             bgr = cv2.imread(str(ep_dir/row['file']), cv2.IMREAD_COLOR)
             probs = seg.probs(bgr)
-            obs.append(vl.column_observations(probs, cols, obs_params))
+            und = vl.mp.undistort(bgr) if obs_params.get('refine_px') else None
+            obs.append(vl.column_observations(probs, cols, obs_params, und))
             idx.append(int(row['frame']))
             counts.append(np.bincount(probs.argmax(2).ravel(), minlength=5).tolist())
         wall = time.time() - t0
         meta = {'episode': ep, 'checkpoint_sha256': seg.sha256, 'obs_params': obs_params, 'device': str(seg.dev),
+                'infer_size': list(seg.infer_size),
                 'frames': len(idx), 'wall_s': round(wall, 1), 'load_average': list(os.getloadavg()),
                 'source': 'own frames only (inputs/frames.jsonl + frames/)'}
         save_obs(out/f'{ep}.obs.npz', idx, obs, meta)
@@ -643,12 +646,13 @@ def bench(args):
     ep_dir = RENDER_ROOT/args.episodes[0]
     frames = vl.read_jsonl(ep_dir/'inputs'/'frames.jsonl')[:args.n]
     imgs = [cv2.imread(str(ep_dir/r['file']), cv2.IMREAD_COLOR) for r in frames]
-    obs_params = {**vl.DEFAULT_OBS, **load_json(args.config).get('obs', {})}
+    cfg = load_json(args.config)
+    obs_params = {**vl.DEFAULT_OBS, **cfg.get('obs', {})}
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
-    res = {'episode': args.episodes[0], 'n': len(imgs), 'torch': torch.__version__,
+    res = {'episode': args.episodes[0], 'infer_size': cfg.get('infer_size', (320, 240)), 'n': len(imgs), 'torch': torch.__version__,
            'threads': torch.get_num_threads(), 'load_average_start': list(os.getloadavg())}
     for dev in args.devices.split(','):
-        seg = seg_model.Segmenter(Path(args.checkpoint), dev)
+        seg = seg_model.Segmenter(Path(args.checkpoint), dev, tuple(cfg.get('infer_size', (320, 240))))
         for im in imgs[:5]:
             seg.probs(im)
         t_net, t_obs = [], []
@@ -656,7 +660,7 @@ def bench(args):
             a = time.perf_counter()
             p = seg.probs(im)
             b = time.perf_counter()
-            vl.column_observations(p, cols, obs_params)
+            vl.column_observations(p, cols, obs_params, vl.mp.undistort(im) if obs_params.get('refine_px') else None)
             t_net.append(b - a)
             t_obs.append(time.perf_counter() - b)
         res[dev] = {'net_incl_undistort_ms_p50': round(1e3*float(np.median(t_net)), 2),

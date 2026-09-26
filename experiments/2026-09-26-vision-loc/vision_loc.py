@@ -79,6 +79,10 @@ DEFAULT_OBS = {
     'min_run_px': 3,           # a wall / floor / background run must be this long
     'use_top_edge': True,
     'consistency_px': None,    # drop sharp edges inconsistent with neighbour columns (None: keep all)
+    # Sub-pixel refinement of sharp edges on the image itself: the segmentation head predicts at 1/8 of
+    # its 320x240 input (a 16 px grid at 640x480), so its class crossing is coarse; the refined row is
+    # the strongest luminance/chroma step within +-refine_px of it (PR #210 ``refine`` idea). None: off.
+    'refine_px': None,
 }
 DEFAULT_MEASUREMENT = {
     'sigma_px': 2.5,           # row noise of the expected edge (extrinsic + label)
@@ -260,8 +264,54 @@ def _crossing(p: np.ndarray, v_above: int, a: int, b: int) -> float:
     return v_above + .5
 
 
-def column_observations(probs: np.ndarray, columns: np.ndarray, params: Mapping | None = None) -> ColumnObs:
-    """Interval observations of every column from class probabilities (H, W, K) (see ``ColumnObs``)."""
+def refine_rows(und_bgr: np.ndarray, columns: np.ndarray, half: int, rows: np.ndarray, window: int,
+                sp: np.ndarray | None = None, above: int = WALL, below: int = FLOOR, span: int = 5) -> np.ndarray:
+    """Row of the strongest vertical luminance/chroma step within +-window of each row, class-guided.
+
+    The step strength between rows v and v+1 is weighted by the segmentation's
+    mean probability of ``above`` over the ``span`` rows above and of ``below``
+    over the ``span`` rows below (``sp``: strip probabilities (H, C, K) of the
+    same columns), so floor-tile lines and other edges inside one class lose.
+    NaN rows stay NaN.
+    """
+    img = und_bgr.astype(np.float32)
+    lum = .114*img[..., 0] + .587*img[..., 1] + .299*img[..., 2]
+    chroma = img[..., 0] - img[..., 2]
+    out = np.array(rows, float)
+    for j, u in enumerate(columns):
+        v0 = rows[j]
+        if not np.isfinite(v0):
+            continue
+        lo, hi = max(0, u - half), min(WIDTH, u + half + 1)
+        L, C = lum[:, lo:hi].mean(1), chroma[:, lo:hi].mean(1)
+        vs = np.arange(int(round(v0)) - window, int(round(v0)) + window + 1)
+        vs = vs[(vs >= span) & (vs <= HEIGHT - span - 2)]
+        if vs.size < 3:
+            continue
+        g = np.hypot(L[vs + 1] - L[vs], C[vs + 1] - C[vs])       # step between rows v and v+1
+        if sp is not None:
+            pa = np.nan_to_num(sp[:, j, above])
+            pb = np.nan_to_num(sp[:, j, below])
+            ca = np.concatenate([[0.], np.cumsum(pa)])
+            cb = np.concatenate([[0.], np.cumsum(pb)])
+            wa = (ca[vs + 1] - ca[vs + 1 - span])/span              # rows v-span+1 .. v
+            wb = (cb[vs + 1 + span] - cb[vs + 1])/span              # rows v+1 .. v+span
+            g = g*wa*wb
+        k = int(np.argmax(g))
+        off = 0.
+        if 0 < k < len(g) - 1:
+            den = g[k - 1] - 2*g[k] + g[k + 1]
+            off = .5*(g[k - 1] - g[k + 1])/den if abs(den) > 1e-9 else 0.
+        out[j] = float(vs[k] + .5 + np.clip(off, -.5, .5))
+    return out
+
+
+def column_observations(probs: np.ndarray, columns: np.ndarray, params: Mapping | None = None,
+                        und_bgr: np.ndarray | None = None) -> ColumnObs:
+    """Interval observations of every column from class probabilities (H, W, K) (see ``ColumnObs``).
+
+    ``und_bgr``: the undistorted own frame, used only when ``refine_px`` is set.
+    """
     p_ = {**DEFAULT_OBS, **(params or {})}
     sp = strip_probs(probs, columns, int(p_['strip_half_px']))
     r_min = int(p_['min_run_px'])
@@ -314,6 +364,14 @@ def column_observations(probs: np.ndarray, columns: np.ndarray, params: Mapping 
             above = [r for r in merged if r[2] < f[1]]
             if not above or above[-1][0] == BACKGROUND:
                 b_kind[j], b_lo[j], b_hi[j] = INTERVAL, NEG_INF, f[1] - .5       # free floor to the top
+    if p_.get('refine_px') and und_bgr is not None:
+        half, win = int(p_['strip_half_px']), int(p_['refine_px'])
+        cols_a = np.asarray(columns)
+        for kind, lo, hi, a, b in ((b_kind, b_lo, b_hi, WALL, FLOOR), (t_kind, t_lo, t_hi, BACKGROUND, WALL)):
+            e = kind == EDGE
+            if e.any():
+                r = refine_rows(und_bgr, cols_a[e], half, lo[e], win, sp[:, e], a, b)
+                lo[e] = hi[e] = r
     if p_.get('consistency_px') is not None:
         tol = float(p_['consistency_px'])
         for kind, lo, hi in ((b_kind, b_lo, b_hi), (t_kind, t_lo, t_hi)):
