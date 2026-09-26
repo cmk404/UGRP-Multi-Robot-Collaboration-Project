@@ -2,10 +2,13 @@
 
 열린 draft PR들이 **실제로 쓰거나 인용한 자료**를 한곳에 모은 목록이다. 최종 보고서의 참고문헌과 재사용 근거로 쓴다. 사용자 요청(2026-09-26): "PR할 때 뭐 참고했는지 기록하고! 보고서 쓸 때 필요할듯". 작성은 Kiro(`kiro/references-0926`)가 했다.
 
-- **대상:** 열린 PR 15개의 본문·diff·코드 주석·실험 README·설계 문서다. 기준은 origin/main `a67b6e3`과 [5절](#5-pr별-색인)의 PR head다. 그 뒤의 변경은 반영하지 않았다.
+- **대상:** 2026-09-26 작업을 시작할 때 열려 있던 draft PR 15개의 본문·diff·코드 주석·실험 README·설계 문서다. 그중 #184–#187은 작업 중(07:39–07:40Z) main에 병합됐다. 기준은 origin/main `a67b6e3`과 [5절](#5-pr별-색인)의 PR head다. 그 뒤의 변경은 반영하지 않았다.
 - **넣은 기준:** import, 명시적 인용, "재사용/adapted" 문구처럼 diff에 근거가 있는 것만 넣었다. 서지 정보는 원문에서 확인한 것만 적었다.
 - **확인:** 2026-09-26에 외부 URL이 모두 열리는지(HTTP 200) 확인했다. 논문의 제목·저자·연도는 arXiv API, NCBI esummary, 출판사 페이지에서 가져왔다. 라이선스와 커밋은 GitHub API로, 버전은 PyPI로 확인했다.
-- **나중에(작업 중이라 제외):** #194 `kiro/zone-study-core`, #207 `kiro/zone-teacher-fix`, #208 `kiro/zone-map-v3`, #209 `kiro/sim-speed`, #210 `kiro/markerless-research`, #211 `kiro/zone-owncam-memory`, #212 `kiro/disk-rules`. #209와 #211의 본문에는 자체 `## 참고 자료` 절이 이미 있다.
+- **나중에(작업 중이라 제외):** #194 `kiro/zone-study-core`, #207 `kiro/zone-teacher-fix`, #208 `kiro/zone-map-v3`, #209 `kiro/sim-speed`, #210 `kiro/markerless-research`, #211 `kiro/zone-owncam-memory`, #212 `kiro/disk-rules`.
+  - #209와 #211의 본문에는 자체 `## 참고 자료` 절이 이미 있다.
+  - #210과 #212는 작업 중 병합됐고 처리하지 않았다.
+  - 작업 중 새로 열린 #227 `kiro/zone-vision-loc`도 진행 중인 작업이다. 본문에 자체 `## 참고 자료` 절이 있어 대상에서 뺐다.
 
 ## 1. 논문
 
@@ -59,9 +62,9 @@ main OSS 조사의 차단 목록이며 #191 04장이 인용했다.
 
 ## 3. 저장소 안에서 재사용한 모듈·PR
 
-"도입 PR"은 main에 처음 들어온 PR이다. "미병합"은 기준 시점에 열린 PR의 파일이다.
+"도입 PR"은 main에 처음 들어온 PR이다. "미병합"은 기준 시점 `a67b6e3`에 main에 없던 파일이다. "쓴 PR"은 조사한 15개 PR 가운데 그 모듈을 쓴 PR이다.
 
-| 모듈 | 도입 PR | 쓴 열린 PR | 용도 |
+| 모듈 | 도입 PR | 쓴 PR | 용도 |
 |---|---|---|---|
 | `harness/owncam_localizer.py`(O1 적응) | #177 | #201(수정), #203, #205, #206 | 자기 카메라 위치 추정 |
 | `harness/wall_tags.py`(O2), `sim/zone_landmarks.py`, `scripts/record_owncam_localization.py`(`LoggingPort`) | #177 | #201 #203 #205 #206 | 태그 관측과 PnP, 태그 지도, 발행 명령 기록 |
@@ -90,8 +93,8 @@ main OSS 조사의 차단 목록이며 #191 04장이 인용했다.
 | `harness/zone_dialogue_metrics.py` | #172 | #184 #185(읽기), #188(수정: 규칙 v1 동결, v2 신설) | 한국어 비율, 영어 단어, ID 검사, 대화 행위 규칙 |
 | `harness/three_robot_plan.py`(`parse`) | #62 | #184 | 코드 울타리 JSON 파싱 |
 | `harness/zone_goal_v2.py` | #165 | #187(#190은 #187 경유) | 화물 편성 대조 |
-| `harness/zone_study_contract.py`, `zone_study_inputs.py`, `zone_map_schematic.py` | #187(미병합) | #190(병합해 사용), #184(로컬 어댑터), #185(잠정 schema), #206(#194의 값을 고정 복사) | 연구 계약, 주문서, 지도 도식 |
-| `harness/zone_sim_cost.py`, `zone_event_scheduler.py` | #186(미병합) | #206(`TRIGGERS` 고정 복사) | SIM 비용, 사건 큐 |
+| `harness/zone_study_contract.py`, `zone_study_inputs.py`, `zone_map_schematic.py` | #187(작업 중 병합) | #190(병합해 사용), #184(로컬 어댑터), #185(잠정 schema), #206(#194의 값을 고정 복사) | 연구 계약, 주문서, 지도 도식 |
+| `harness/zone_sim_cost.py`, `zone_event_scheduler.py` | #186(작업 중 병합) | #206(`TRIGGERS` 고정 복사) | SIM 비용, 사건 큐 |
 | `scripts/tensorboard_tools/export.py`, `scripts/export_tensorboard.py` | #87 | #195 #199(`Writer` import), #201 #203 #205 #206(스냅샷) | TensorBoard 변환 |
 
 변환에 쓴 원본 결과:
@@ -102,7 +105,7 @@ main OSS 조사의 차단 목록이며 #191 04장이 인용했다.
 
 ### 저장소 문서
 
-| 문서 | 도입 PR | 쓴 열린 PR |
+| 문서 | 도입 PR | 쓴 PR |
 |---|---|---|
 | [Codex 통합 설계](design/2026-09-25-zone-dialogue-study-design-codex.md) | #180 | #184(경로·PR 인용), #186(5절 비용식·실행 의미), #187(이름만), #190(본문에서 6절), #192(9절 작업 패키지), #191. #185는 인용 없이 조건 이름만 같다. `r1` 고정 지휘자, 별도 commander, 교사 실행기 권고는 사용자 결정으로 대체됐다(#184·#187에 명시) |
 | [Codex PR 검토](design/2026-09-25-zone-pr-review-codex.md) | #175 | #188(PR #172 절의 후속), #191 |
@@ -139,10 +142,12 @@ main OSS 조사의 차단 목록이며 #191 04장이 인용했다.
 | #193 | `4249ace` | – | O2 O3 O4 O7 | #163 #164 #167 #170(구조만) #149, 초기 모듈 | W1(간접) |
 | #195 | `425b560` | – | O6 | #87 변환기, #178 결과 | – |
 | #199 | `e19c88a` | – | O6 | #87 `Writer`, #193·#189 결과 | TensorBoard 안내(절 추가), W2 |
-| #201 | `22c8484` | – | O1(수정) O2 O3 O4, `unittest` | #177 #178 #197 #181 #176 #163 #148 #167 | 반대 검토(번호만), W1(간접) |
-| #203 | `c9a3662` | – | O1(간접) O2 O3 O4 O7 | #200 #201 #202 바이트 복사, #43 #148 #149 #164 #167 | W1(간접) |
+| #201 | `22c8484`(→`1b836a1`) | – | O1(수정) O2 O3 O4, `unittest` | #177 #178 #197 #181 #176 #163 #148 #167 | 반대 검토(번호만), W1(간접) |
+| #203 | `c9a3662`(→`78c2979`) | – | O1(간접) O2 O3 O4 O7 | #200 #201 #202 바이트 복사, #43 #148 #149 #164 #167 | W1(간접) |
 | #205 | `6990a6e` | – | O2 O4 O7(O3는 #203에서 이어받음) | #203, #200 파일 | W1(간접) |
 | #206 | `c8a2355` | – | O2 O3 O4 O7(O1은 #201에서 이어받음) | #201 #193 #181 #178·#197 #148 #167, #194·#186 값 고정 복사 | W1(간접) |
+
+#201·#203은 추출 뒤 head가 바뀌었다(괄호 안). 새 커밋은 origin/main 병합과 `scripts/run_ci_tests.py` 등 CI 목록 수정뿐이다. #203의 `imports.json` 32개 파일 해시와, #201·#203의 `cargo_noslip_v1` 표기 줄·PythonRobotics 출처 문구는 새 head에서 다시 확인했고 그대로다.
 
 ## 6. `cargo_noslip_v1` 승인 표기
 
@@ -157,5 +162,6 @@ main OSS 조사의 차단 목록이며 #191 04장이 인용했다.
   - 추가 줄의 import
   - `arXiv|doi|et al|논문|paper|https?://|adapted|upstream|license|재사용` 검색
 - **상속 구분:** 다른 브랜치를 병합한 PR은 고유 변경과 상속을 나눴다(#206 ← #201·#193, #205 ← #203, #190 ← #187).
+- **PR 본문:** 15개 PR의 본문 끝에 같은 근거로 `## 참고 자료` 절을 붙였다. 기존 본문은 그대로 두고 덧붙이기만 했다. #184–#187은 병합된 뒤에 본문만 덧붙였다.
 - **버전:** 대부분 PR의 커밋 기록에는 라이브러리 버전이 없다. 위 버전은 requirements의 고정값이다. #201·#206의 로컬 raw manifest(`outputs/`, Git 밖)에는 python 3.12.13, mujoco 3.12.0, opencv 5.0.0, numpy 2.5.2가 기록돼 있다.
 - **범위 밖:** main에 이미 병합된 문서의 다른 인용은 여기 모으지 않았다(예: `docs/reference_alignment.md`의 ACT·Diffusion Policy, OSS 조사의 다른 후보). 목록에 없다고 해서 쓰지 않았다는 뜻은 아니다.
