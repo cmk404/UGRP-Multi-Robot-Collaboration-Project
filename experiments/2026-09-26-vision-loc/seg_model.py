@@ -143,8 +143,14 @@ def train(train_eps, val_eps, out: Path, *, epochs: int = 4, batch: int = 16, lr
                                 'lr': float(sched.get_last_lr()[0]), 'wall_s': round(time.time() - t0, 1)})
                 log(json.dumps(history[-1]))
         val = evaluate(model, vdl, dev)
-        history.append({'step': step, 'epoch': epoch, 'val': val, 'wall_s': round(time.time() - t0, 1)})
+        history.append({'step': step, 'epoch': epoch, 'val': val, 'wall_s': round(time.time() - t0, 1),
+                        'bn': 'running statistics of augmented training batches'})
         log(json.dumps(history[-1]))
+    n_bn = precise_bn(model, items, dev, workers=workers)
+    val = evaluate(model, vdl, dev)
+    history.append({'step': step, 'epoch': epochs - 1, 'val': val, 'wall_s': round(time.time() - t0, 1),
+                    'bn': f'precise BN on {n_bn} clean train frames'})
+    log(json.dumps(history[-1]))
     out.mkdir(parents=True, exist_ok=True)
     ckpt = out/'seg_lraspp_mbv3.pt'
     torch.save({'schema': SCHEMA, 'state_dict': {k: v.cpu() for k, v in model.state_dict().items()},
@@ -157,9 +163,40 @@ def train(train_eps, val_eps, out: Path, *, epochs: int = 4, batch: int = 16, lr
             'train_frames': len(items), 'val_frames': len(val_items), 'every': every, 'val_every': val_every,
             'epochs': epochs, 'batch': batch, 'lr': lr, 'seed': seed, 'device': str(dev),
             'torch': torch.__version__, 'torchvision': torchvision.__version__, 'wall_s': round(time.time() - t0, 1),
-            'backbone_weights': 'MobileNet_V3_Large_Weights.IMAGENET1K_V1', 'history': history}
+            'backbone_weights': 'MobileNet_V3_Large_Weights.IMAGENET1K_V1', 'precise_bn_frames': n_bn,
+            'history': history}
     (out/'train_info.json').write_text(json.dumps(info, indent=1))
     return info
+
+
+@torch.no_grad()
+def precise_bn(model, items, dev, *, batch: int = 32, workers: int = 3) -> int:
+    """Recompute every BatchNorm's running mean/variance on clean (un-augmented) TRAIN frames.
+
+    Training batches carry per-sample photometric jitter, so the running
+    statistics collected during training describe a wider input distribution
+    than a clean frame: in eval mode walls were read as floor (dev wall IoU
+    0.74 in eval mode vs 0.99 wall recall with batch statistics on the same
+    frames). This is the standard "precise BN" step (cumulative average over a
+    pass of the training data, e.g. fvcore ``update_bn_stats``; torch
+    ``torch.optim.swa_utils.update_bn`` does the same), done here on TRAIN frames.
+    """
+    bns = [m for m in model.modules() if isinstance(m, torch.nn.modules.batchnorm._BatchNorm)]
+    saved = [m.momentum for m in bns]
+    for m in bns:
+        m.reset_running_stats()
+        m.momentum = None                       # cumulative moving average
+    dl = torch.utils.data.DataLoader(FrameDataset(items, False), batch_size=batch, shuffle=False,
+                                     num_workers=workers)
+    model.train()
+    n = 0
+    for x, _ in dl:
+        model(x.to(dev))
+        n += len(x)
+    for m, mom in zip(bns, saved):
+        m.momentum = mom
+    model.eval()
+    return n
 
 
 @torch.no_grad()
