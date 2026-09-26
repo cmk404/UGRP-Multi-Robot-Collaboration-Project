@@ -85,6 +85,10 @@ PR #205 `6990a6e`(`kiro/zone-m2-pair-v3`)의 `scripts/run_m2_pair.py`를 이 PR�
 - `slice-s93-to-carry`(exact-v1): SIM 173.8 s에 파지 직후 단계에서 정지(정착 포함 175.4 s, 전체 397.2 s의 44%, instruction 2,750 G = 전체의 41%). 정지 시각 전까지 전체 실행과 qpos 체크포인트 347·명령 2,642·프레임 927장 JPEG 바이트·로그가 **동일**(`equivalence/s93_slice_to_carry_vs_exact1_full.json`). 탐색·접근·파지 단계 개발 반복에 쓴다.
 - 제안(미구현): 문 앞에서 상자를 든 채 시작, 슬롯 앞에서 배치부터 시작. 둘 다 (1) weld 없이 파지 상태를 물리적으로 만드는 초기화, (2) 제어기·스킬 v9의 중간 단계 진입점(현재 위치 추정·보유 상태)이 필요하다. 해당 파일은 PR #201·자기 카메라 위치 추정 작업 소유여서 이 PR에서 고치지 않았다. 대안으로 전체 실행의 MuJoCo 상태(`mj_getState`)와 제어기 상태를 같은 SIM 시각에 저장·복원하는 checkpoint slice가 있으나, 러너 closure 구조 변경이 필요하다. 어떤 slice도 동결·시험 판단을 대신하지 않는다.
 
+## TensorBoard
+
+`outputs/tensorboard/0926-sim-speed`(14 run, `make_tb_snapshot.py`, `d28a36a`): `speed/*`(120 s 시점·전체 CPU, instruction, P 코어 비율, 동등성), `result/sim_s·commands·wall_s`(wall은 참고값), 전체 임무 M1만 `evaluation/reported_success`. 중단 2건은 텍스트만. EventAccumulator 값 37개가 원본 `profile.json`/`result.json`과 일치했고, 공용 서버(PID 9291, 재시작 없음)의 `/data/runs`·scalars API에서 14 run을 확인했다. `outputs/tensorboard-view.json`에는 `sim_speed_20260926` 키만 추가했다(다른 키 값·순서 불변, 파일은 indent 2로 다시 저장). [대시보드](http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Finstructions_g_at_120s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Fcpu_process_s_at_120s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22speed%2Fequivalent%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Freported_success%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fsim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fcommands%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fwall_s%22%7D%5D&smoothing=0&runFilter=%5E0926-sim-speed%2F#timeseries). 브라우저 화면은 열어 보지 않고 API로 값을 확인했다.
+
 ## 권장 설정
 
 1. M1 개발 실행은 `--speedups exact-v1`. 새 동결·시험 코호트도 이 설정을 고정해 쓸 수 있다(동일성 검증됨, manifest에 기록).
@@ -100,6 +104,7 @@ PR #205 `6990a6e`(`kiro/zone-m2-pair-v3`)의 `scripts/run_m2_pair.py`를 이 PR�
 - OSS·라이브러리
   - MuJoCo 3.12.0 (Apache-2.0): `mj_step`, `MjData.contact.geom` 배열, `mujoco.Renderer`, `mjtRndFlag`(진단에만 사용). 설치본 `mujoco/cgl/__init__.py`에서 CGL 가속 컨텍스트를 확인했다.
   - NumPy 2.5.2 (BSD-3): `np.dot`의 Accelerate BLAS 합산 순서를 경험적으로 확인하고 자체 검사로 고정. `np.flatnonzero` 마스크 필터.
+  - OpenCV 5.0.0 (Apache-2.0): GCD 스레드 진단(`setNumThreads`). TensorBoard 2.21 이벤트 protobuf — 기존 `scripts/tensorboard_tools/export.py`의 `Writer` 재사용.
   - Python 표준 라이브러리 (PSF): `fcntl.flock`, `cProfile`, `resource.getrusage`, `time.thread_time`.
   - macOS `proc_pid_rusage(RUSAGE_INFO_V6)` (libproc): instruction·cycle·P 코어 시간. 구조체는 Xcode SDK `sys/resource.h`의 `rusage_info_v6`로 확인.
   - 채택하지 않음: `filelock`(Unlicense, 단일 잠금이라 계수 세마포어 아님, 미설치), `posix_ipc`(BSD, 이름 있는 세마포어가 비정상 종료 시 해제되지 않음), GNU parallel `sem`(GPL-3, 미설치), util-linux `flock(1)`(macOS에 없음), pyinstrument(BSD-3, 미설치)·py-spy(MIT, macOS에서 root 필요) — 대신 cProfile과 스레드 CPU 구간 계측을 사용.
