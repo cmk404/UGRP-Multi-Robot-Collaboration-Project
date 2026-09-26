@@ -95,7 +95,19 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 
 ## 경계별로 깨진 것
 
-(스모크 완료 후 기록)
+| # | 경계 | 무엇이 깨졌나 | 처리 |
+|---|---|---|---|
+| B1 | 지도 → 결정 입력 | A 계약 v1의 닫힌 `landmarks.placement`가 tags_v2 키(`near_door_spacing_m`, `near_door_radius_m`, `door_posts`)를 거절했다. tags_v2 지도로는 **모든 호출**이 `ContractViolation`으로 실패했다(dev 첫 실행). | 계약 v2로 세 키를 닫힌·타입 검사 스키마로 선언했다(#229). #194에 알렸다. |
+| B2 | 결정 → 실행기 | #206 `action_record`가 A에 없는 조건명 `no_llm_scripted`를 쓴다. #194와 합치면 #206 자체 테스트 1개가 실패한다. | 러너는 A의 `action_log_record`를 쓴다. 테스트 실패는 #206에 남겼다. |
+| B3 | 결정 → 실행기 | 수락된 abort 뒤에도 호스트에 예약된 macro가 실행된다(#221 P1). | `HostRobotLink.call`이 macro를 버리고 hold한다(검사 + 변이 M4). |
+| B4 | 결정 → 실행기 | 실행기 `deliver`는 `cyan`만 받는다. 2대 주문은 실행할 수 없고, 짝 상태 채널은 모든 조건에 있지만 소비자가 없다. | 목록으로 남겼다(#206/#221). |
+| B5 | 결정 → 실행기 | 실행기 API에 pause/resume이 없다. 사고 중 hold는 쉬는 로봇에만 적용되고, 실행 중 작업은 계속된다. | `THINK_HOLD_POLICY`로 명시했고 네 조건이 같다. 설계 결정이 필요하다. |
+| B6 | 실행기 → 상태 | 장면 설정이 첫 프레임 전에 SIM을 약 1.3 s 진행한다. `t0 = 0.5` 가정에서는 첫 호출에 자기 프레임이 없었다(dev 첫 실행). | 설정 뒤 첫 0.1 s 경계에서 시작하고 로봇마다 프레임 1장을 찍는다. |
+| B7 | 실행기 → 상태 | 출발 직후(약 5–13 s) r1·r3이 `blockage_seen(UNMAPPED_OBSTRUCTION_IN_LANE)`을 낸다. pickup 상자를 막힘으로 본 것으로 추정되며, 이것이 네 조건 모두에서 `blockage` 호출을 만든다. | 확인하지 않았다. #193/#206의 판단 의미 문제로 남긴다. |
+| B8 | 실행기 → 상태 | r3의 P1-3 `SEARCH_NOT_FOUND`(#206 smoke-s700과 같음). | #221의 관측점 거리 결함. |
+| D1 | 대화 → 비용 | 재질문 타이머가 행동마다 쌓여 영구 연쇄가 생겼다(#194 오프라인 규칙 상속). v1은 4조건 모두 HTTP 90/90을 445–478 s에 소진했고, 81회가 `continue`였다. 채널 조건은 메시지 깨우기로 연쇄가 늘어난다(시뮬레이터 없는 비교: 21/63/42/63). | `single_pending_own_timer.v1`(21/27/24/27). 검사와 변이 M8을 추가했다. v2 물리 재실행 결과는 아래에 있다. #194에 알렸다. |
+| D2 | 대화 → 비용 | fixture는 `own_command_history` 길이로 다음 주문을 고른다. 그래서 메시지 깨우기로 늘어난 거절 명령 수가 조건마다 다른 다음 claim을 만든다. | fixture의 고정 규칙에서 생긴 효과이며 통신 효과가 아니다. 실제 LLM 파일럿에서는 사라진다. |
+| C1 | CI | 병합한 #201의 workflow `zone-m1-owncam-run`의 `docs` 값(`prereg.json (+ prereg_amendments.json)`)이 파일 경로가 아니다. 그래서 `tests/test_simulation_scenes.py::test_workflow_entries_resolve_to_existing_source_and_documentation`가 실패한다. | 소유 밖이라 고치지 않았다. |
 
 ## 참고 자료
 
