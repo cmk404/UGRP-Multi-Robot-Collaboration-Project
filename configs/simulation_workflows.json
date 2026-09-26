@@ -124,6 +124,20 @@
       "output_kind": "directory"
     },
     {
+      "id": "zone-teacher-fix",
+      "purpose": "구역 교사 막힘 수정 진단(PR #169 B2·B3·B4·B5·B8): 물리 실행 전 팀 경로 게이트와 수정 교사 실행기로 교사 실현 가능성만 확인",
+      "entry": "scripts/run_zone_teacher_fix.py",
+      "docs": "experiments/2026-09-26-zone-teacher-fix/README.md",
+      "requires": "protocol v2 zone dispatch arguments with an explicit --contact-profile; privileged ground-truth TEACHER executor (poses, IK, contact forces, weld OFF), never the study executor and never a robot, RGB-skill or student success",
+      "version": "1.0.0",
+      "runner": "scripts.run_zone_teacher_fix",
+      "output_flag": "--output",
+      "side_effect": "model_calls",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [],
+      "output_kind": "directory"
+    },
+    {
       "id": "zone-cargo-probe",
       "purpose": "구역 화물 목록의 물리 가능성 검사(정답 교사, weld OFF)",
       "entry": "scripts/probe_zone_cargo.py",

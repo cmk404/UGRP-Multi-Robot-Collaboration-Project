@@ -31,11 +31,14 @@ from harness import zone_cargo_perception as _cargo_v1
 from harness import zone_cargo_perception_v2 as _cargo_v2
 from harness.zone_cargo_perception import DEDUPE_M, grasp_handles
 
-PROFILES = {'top_cargo_v1': _cargo_v1, 'top_cargo_v2': _cargo_v2}
+# top_cargo_v2_track (zone teacher fix B5, 2026-09-26): the top_cargo_v2 detector and rules, plus
+# labels that follow an item moved off its pickup spot (harness.zone_label_tracking). Opt-in only.
+PROFILES = {'top_cargo_v1': _cargo_v1, 'top_cargo_v2': _cargo_v2, 'top_cargo_v2_track': _cargo_v2}
 DEFAULT_PROFILE = 'top_cargo_v2'
 # Beams below this confidence need confirmation (v2 only; v1 keeps its cohort behaviour).
 BEAM_CONFIRM_BELOW = .5
-CONFIRM_PROFILES = ('top_cargo_v2',)
+CONFIRM_PROFILES = ('top_cargo_v2', 'top_cargo_v2_track')
+TRACK_PROFILES = ('top_cargo_v2_track',)
 BEAM_FRAGMENT_M = .35          # half a beam: a weak beam this close to a confident one is its fragment
 BEAM_SAME_PLACE_M = .05
 PICKUP_MARGIN_M = .05
@@ -98,6 +101,12 @@ def _track_radius(kind):
     return DEDUPE_M.get(kind, DEDUPE_M['box'])
 
 
+def _handles(kind, xy, yaw):
+    handles = grasp_handles({'kind': kind, 'floor_xy_m': xy, 'yaw_rad': yaw})
+    return {h['role']: {'grip_xy_m': h['grip_xyz_m'][:2], 'approach_base_xyyaw': h['approach_base_xyyaw']}
+            for h in handles['handles']}
+
+
 def label_items(detections, static_map, profile=DEFAULT_PROFILE, *, later=()):
     """Initial labels of every item in the pickup area (boxes and cargo); weak beams need confirmation."""
     pickup = static_map['regions']['pickup']
@@ -112,10 +121,7 @@ def label_items(detections, static_map, profile=DEFAULT_PROFILE, *, later=()):
             value = {'kind': kind, 'floor_xy_m': list(d['floor_xy_m'])}
             if kind not in static_map['box_kinds']:
                 value['yaw_rad'] = d['yaw_rad']
-                handles = grasp_handles({'kind': kind, 'floor_xy_m': d['floor_xy_m'], 'yaw_rad': d['yaw_rad']})
-                value['handles'] = {h['role']: {'grip_xy_m': h['grip_xyz_m'][:2],
-                                                'approach_base_xyyaw': h['approach_base_xyyaw']}
-                                    for h in handles['handles']}
+                value['handles'] = _handles(kind, d['floor_xy_m'], d['yaw_rad'])
             labels[f'{kind}-{i}'] = value
     return labels
 
@@ -129,6 +135,11 @@ def view_from_detections(detections, static_map, labels, profile=DEFAULT_PROFILE
         if any(d['kind'] == item['kind'] and math.dist(d['floor_xy_m'], item['floor_xy_m']) <= _track_radius(item['kind'])
                for d in detections):
             remaining[label] = item
+    moved = None
+    if profile in TRACK_PROFILES:
+        from harness.zone_label_tracking import track_moved_labels
+        moved = track_moved_labels(labels, counted, static_map, remaining, radius=_track_radius,
+                                   handles=_handles, box_kinds=static_map['box_kinds'])
     zones = {}
     for rid, region in static_map['regions'].items():
         if not rid.startswith('zone_'):
@@ -138,10 +149,13 @@ def view_from_detections(detections, static_map, labels, profile=DEFAULT_PROFILE
             if _inside(d['floor_xy_m'], region):
                 counts[d['kind']] = counts.get(d['kind'], 0) + 1
         zones[rid.split('_', 1)[1]] = counts
-    return {'source': source_text(profile), 'profile': profile, 'pickup_items_still_visible': sorted(remaining),
+    view = {'source': source_text(profile), 'profile': profile, 'pickup_items_still_visible': sorted(remaining),
             'zone_counts_seen': zones, 'detections': len(detections),
             'unconfirmed_beams': [{'floor_xy_m': d['floor_xy_m'], 'confidence': d['confidence'],
                                    'camera': d['camera'], 'reason': d['reason']} for d in unconfirmed]}
+    if moved is not None:
+        view['moved_labels'] = moved
+    return view
 
 
 def observe_items(tops, static_map, labels, profile=DEFAULT_PROFILE):

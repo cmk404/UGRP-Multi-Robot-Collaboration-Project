@@ -1,0 +1,467 @@
+{
+  "scope": "post-hoc offline diagnostics, not pre-registered; no physics; evaluation data only for scoring",
+  "b5_scoring": {
+    "beam_replay_pose": {
+      "t_s": 1800.015750252024,
+      "xy_m": [
+        0.9502,
+        -1.4372
+      ],
+      "yaw_rad": 1.5706,
+      "files_sha256": {
+        "states.npz": "b158ab50e05d396ed8c68aa1c0c3d32ae892c37d1f940de13b36515049c2375c",
+        "model.mjb": "a6e3ab71ab05ad6c196b69610d1184eaee4793994cb51b88101469d979533cae"
+      },
+      "scope": "observer-only post-run replay; evaluation only"
+    },
+    "track_label_xy_m": [
+      0.948,
+      -1.4379
+    ],
+    "track_error_m": 0.0023,
+    "baseline_label_xy_m": [
+      0.4012,
+      -2.1499
+    ],
+    "baseline_error_m": 0.8996
+  },
+  "n1_start_box_detection": {
+    "mix-dynamic-s21": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "green": 1,
+        "red": 1
+      },
+      "missed": {},
+      "labels_at_start": {
+        "green-1": "green",
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "green",
+            [
+              -0.197,
+              -1.651
+            ]
+          ]
+        ],
+        "top-nw": [
+          [
+            "red",
+            [
+              -0.194,
+              0.747
+            ]
+          ]
+        ],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "a7e22e5bfb6b06d82905500f58f32b1a602e364347109b1040fb3714a8e161de",
+        "001-start-top-nw.jpg": "f22d0c1bf4aee5426a7177814112b683c775e6d5f56af1af3de533f8c09aa792",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      }
+    },
+    "mix-independent-s21": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "green": 1,
+        "red": 1
+      },
+      "missed": {},
+      "labels_at_start": {
+        "green-1": "green",
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "green",
+            [
+              -0.197,
+              -1.651
+            ]
+          ]
+        ],
+        "top-nw": [
+          [
+            "red",
+            [
+              -0.194,
+              0.747
+            ]
+          ]
+        ],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "a7e22e5bfb6b06d82905500f58f32b1a602e364347109b1040fb3714a8e161de",
+        "001-start-top-nw.jpg": "f22d0c1bf4aee5426a7177814112b683c775e6d5f56af1af3de533f8c09aa792",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      }
+    },
+    "mix-dynamic-s22": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "red": 1
+      },
+      "missed": {
+        "green": 1
+      },
+      "labels_at_start": {
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "red",
+            [
+              0.4,
+              -1.652
+            ]
+          ]
+        ],
+        "top-nw": [],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "8be79445530a92a1238b8c0560b2048d069ec993edfc445ff70f28b6bda16ae3",
+        "001-start-top-nw.jpg": "19549091ae959469e6d58853e7eaf2f34a2ca81fcd54e34400de5ce6bf4c0ef9",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      },
+      "missed_setup_positions_eval_only": {
+        "box_01": {
+          "kind": "green",
+          "xy_m": [
+            0.4,
+            -0.05
+          ]
+        }
+      },
+      "relaxed_inspection": {
+        "top-nw/green": [
+          {
+            "centroid_px": [
+              437.7,
+              456.8
+            ],
+            "relaxed_area_px": 89,
+            "strict_mask_px_in_component": 39,
+            "strict_area_gate_px": 50,
+            "hue_median": 69.0,
+            "sat_median": 98.0,
+            "sat_p10_p90": [
+              93.0,
+              103.0
+            ],
+            "val_median": 254.0,
+            "strict_sat_min": 100
+          }
+        ]
+      }
+    },
+    "mix-independent-s22": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "red": 1
+      },
+      "missed": {
+        "green": 1
+      },
+      "labels_at_start": {
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "red",
+            [
+              0.4,
+              -1.652
+            ]
+          ]
+        ],
+        "top-nw": [],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "8be79445530a92a1238b8c0560b2048d069ec993edfc445ff70f28b6bda16ae3",
+        "001-start-top-nw.jpg": "19549091ae959469e6d58853e7eaf2f34a2ca81fcd54e34400de5ce6bf4c0ef9",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      },
+      "missed_setup_positions_eval_only": {
+        "box_01": {
+          "kind": "green",
+          "xy_m": [
+            0.4,
+            -0.05
+          ]
+        }
+      },
+      "relaxed_inspection": {
+        "top-nw/green": [
+          {
+            "centroid_px": [
+              437.7,
+              456.8
+            ],
+            "relaxed_area_px": 89,
+            "strict_mask_px_in_component": 39,
+            "strict_area_gate_px": 50,
+            "hue_median": 69.0,
+            "sat_median": 98.0,
+            "sat_p10_p90": [
+              93.0,
+              103.0
+            ],
+            "val_median": 254.0,
+            "strict_sat_min": 100
+          }
+        ]
+      }
+    },
+    "mix-dynamic-s23": {
+      "setup_box_counts": {
+        "green": 1,
+        "red": 1
+      },
+      "start_top_zone_v2_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "missed": {},
+      "labels_at_start": {
+        "green-1": "green",
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "red",
+            [
+              0.997,
+              -1.651
+            ]
+          ]
+        ],
+        "top-nw": [
+          [
+            "green",
+            [
+              0.998,
+              0.749
+            ]
+          ]
+        ],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "e68a7f18cf334efa9395225d30fa1b163a2ef620ef0d9addb9642447894915d8",
+        "001-start-top-nw.jpg": "66c3eae0ff24662be280efcf0b38952625ba649a7c01584b3941f9834d80291e",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      }
+    },
+    "mix-independent-s23": {
+      "setup_box_counts": {
+        "green": 1,
+        "red": 1
+      },
+      "start_top_zone_v2_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "missed": {},
+      "labels_at_start": {
+        "green-1": "green",
+        "red-1": "red",
+        "can-1": "can",
+        "heavy_crate-1": "heavy_crate",
+        "long_beam-1": "long_beam",
+        "tile-1": "tile"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "red",
+            [
+              0.997,
+              -1.651
+            ]
+          ]
+        ],
+        "top-nw": [
+          [
+            "green",
+            [
+              0.998,
+              0.749
+            ]
+          ]
+        ],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "e68a7f18cf334efa9395225d30fa1b163a2ef620ef0d9addb9642447894915d8",
+        "001-start-top-nw.jpg": "66c3eae0ff24662be280efcf0b38952625ba649a7c01584b3941f9834d80291e",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      }
+    },
+    "tri-dynamic-s21": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "green": 1,
+        "red": 1
+      },
+      "missed": {},
+      "labels_at_start": {
+        "green-1": "green",
+        "red-1": "red",
+        "tri_frame-1": "tri_frame"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "green",
+            [
+              -0.197,
+              -1.651
+            ]
+          ]
+        ],
+        "top-nw": [
+          [
+            "red",
+            [
+              -0.194,
+              0.747
+            ]
+          ]
+        ],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "631d69922bbea3d1ad2c06f30de231ac575aea50369a578cf17ac84b3657117e",
+        "001-start-top-nw.jpg": "9dadc616852a293b345b9c4f6fa3429939848d5dde76c1bd63ffea30f58d5755",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      }
+    },
+    "tri-dynamic-s22": {
+      "setup_box_counts": {
+        "red": 1,
+        "green": 1
+      },
+      "start_top_zone_v2_counts": {
+        "red": 1
+      },
+      "missed": {
+        "green": 1
+      },
+      "labels_at_start": {
+        "red-1": "red",
+        "tri_frame-1": "tri_frame"
+      },
+      "detections_per_camera": {
+        "top-sw": [
+          [
+            "red",
+            [
+              0.4,
+              -1.652
+            ]
+          ]
+        ],
+        "top-nw": [],
+        "top-se": [],
+        "top-ne": []
+      },
+      "files_sha256": {
+        "001-start-top-sw.jpg": "b9c909412e93ef59efe1929cdcdbdda64185a7047695b724d641363e019c7d8f",
+        "001-start-top-nw.jpg": "9e4620d0f66be9c39caa323ba2a5b534ca9192d43bd81a830e91e68f03cf7678",
+        "001-start-top-se.jpg": "4781304de4fd981c53c5fdbafd7430b43eeed3b72e91929e63037f25055a9343",
+        "001-start-top-ne.jpg": "fd30ee62b3ad84228502f1880f4b062a62b253ff9956fec7649dbb3eb12114e7"
+      },
+      "missed_setup_positions_eval_only": {
+        "box_01": {
+          "kind": "green",
+          "xy_m": [
+            0.4,
+            -0.05
+          ]
+        }
+      },
+      "relaxed_inspection": {
+        "top-nw/green": [
+          {
+            "centroid_px": [
+              437.7,
+              456.8
+            ],
+            "relaxed_area_px": 89,
+            "strict_mask_px_in_component": 39,
+            "strict_area_gate_px": 50,
+            "hue_median": 69.0,
+            "sat_median": 98.0,
+            "sat_p10_p90": [
+              93.0,
+              103.0
+            ],
+            "val_median": 254.0,
+            "strict_sat_min": 100
+          }
+        ]
+      }
+    }
+  },
+  "relaxed_sat_min_for_inspection_only": 60
+}
