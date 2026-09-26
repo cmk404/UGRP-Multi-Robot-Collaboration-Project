@@ -1,0 +1,75 @@
+{
+ "schema": "ugrp.zone_own_executor_near_clip_fixture.v1",
+ "label_source": "visual inspection of each JPEG by Kiro (2026-09-26), independent of the detector under test; context from the v1 smoke README and eval-only GT (box 0.27 m ahead of the viewpoint)",
+ "raw_root": "/Users/changmin/projects/ugrp/outputs/zone-own-executor-20260926/smoke-4371f36",
+ "frames": [
+  {
+   "file": "s700_r3_00172.jpg",
+   "episode": "smoke-s700",
+   "robot_id": "r3",
+   "frame": 172,
+   "sha256": "b3a74ea2a80c0f4e719591341f676e36a53da8e35f5428a5e21915333be87c66",
+   "raw_sha256_in_frames_jsonl": "b3a74ea2a80c0f4e719591341f676e36a53da8e35f5428a5e21915333be87c66",
+   "commanded_servo": {
+    "1": 2000,
+    "3": 740,
+    "4": 2320,
+    "5": 1320,
+    "6": 1500
+   },
+   "label": "clipped_near",
+   "note": "cyan box cut by the lower fisheye edge; SEARCH_POSE pan 1500 at the west viewpoint; the smoke v1 run ended SEARCH_NOT_FOUND (README s700 r3)"
+  },
+  {
+   "file": "s701_r3_00668.jpg",
+   "episode": "smoke-s701",
+   "robot_id": "r3",
+   "frame": 668,
+   "sha256": "58a0c5cde267f8aae4a52332db04dac477987e39d7bd811d237a99853493a1df",
+   "raw_sha256_in_frames_jsonl": "58a0c5cde267f8aae4a52332db04dac477987e39d7bd811d237a99853493a1df",
+   "commanded_servo": {
+    "1": 2000,
+    "3": 740,
+    "4": 2320,
+    "5": 1320,
+    "6": 1500
+   },
+   "label": "clipped_near",
+   "note": "cyan box cut by the lower fisheye edge at the west viewpoint (SEARCH_POSE pan 1500); v1 run ended SEARCH_NOT_FOUND (README s701 r3)"
+  },
+  {
+   "file": "s700_r3_00160.jpg",
+   "episode": "smoke-s700",
+   "robot_id": "r3",
+   "frame": 160,
+   "sha256": "fca126310b3dadb87fcf6687dff7bf88ab4193615051d2df5de05a5a47b01a4b",
+   "raw_sha256_in_frames_jsonl": "fca126310b3dadb87fcf6687dff7bf88ab4193615051d2df5de05a5a47b01a4b",
+   "commanded_servo": {
+    "1": 2000,
+    "3": 740,
+    "4": 2320,
+    "5": 1320,
+    "6": 2030
+   },
+   "label": "no_cyan",
+   "note": "search sweep pan 2030: wall and tags, no cyan in view"
+  },
+  {
+   "file": "s701_r3_00000.jpg",
+   "episode": "smoke-s701",
+   "robot_id": "r3",
+   "frame": 0,
+   "sha256": "c2487d338cf774725abdf98a4d54d1bd0b7aaf7cedc012da24a22910cf64b8b3",
+   "raw_sha256_in_frames_jsonl": "c2487d338cf774725abdf98a4d54d1bd0b7aaf7cedc012da24a22910cf64b8b3",
+   "commanded_servo": {
+    "1": 2000,
+    "3": 740,
+    "4": 2320,
+    "5": 1320,
+    "6": 1500
+   },
+   "label": "visible_not_clipped",
+   "note": "cyan box fully inside the image (~0.65 m ahead at spawn), not cut by any edge"
+  }
+ ]
+}

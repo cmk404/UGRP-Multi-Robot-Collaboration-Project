@@ -1,7 +1,8 @@
-"""Package F own-camera executor: API, events, M1 contract, isolation between robots, 3-robot host.
+"""Package F own-camera executor: API, events, M1 contract, isolation between robots.
 
-Everything except ``test_team_host_*`` runs without a simulator. The host test builds one
-3-robot sync-SIM world for ~3 SIM s (skipped when MuJoCo cannot render).
+Simulator-free. Guards: tests/test_zone_own_executor_guards.py; host cancel path and the MuJoCo
+host: tests/test_zone_own_executor_host.py; input boundaries and adapters:
+tests/test_zone_own_executor_boundaries.py.
 """
 from __future__ import annotations
 
@@ -37,29 +38,8 @@ SHEET = {'orders': [
     {'order_id': 'o3', 'kind': 'red', 'count': 1, 'destination_zone': 'B',
      'initial_location': {'pickup_bay': 'P1', 'slot': 'P1-1'}}]}
 
-# Package A (PR #194, 189b177) harness/zone_study_contract.py, pinned: robot-facing keys that must never appear.
-A_FORBIDDEN_KEYS = frozenset({
-    'pose', 'poses', 'qpos', 'qvel', 'ctrl', 'measured_joints', 'joint_positions', 'joint_angles', 'body_id',
-    'body_name', 'geom_id', 'site_id', 'xpos', 'xquat', 'ground_truth', 'truth', 'gt', 'simulator', 'sim_state',
-    'mj_model', 'mj_data', 'contacts', 'contact_forces', 'forces', 'wrench', 'weld', 'referee', 'referee_v2',
-    'top', 'top_frame', 'top_frames', 'top_image', 'top_images', 'top_rgb', 'top_view', 'top_views', 'top_camera',
-    'top_cameras', 'cctv', 'cctv_top', 'nav_cam', 'nav_cam_rgb', 'nav_camera', 'teacher', 'teacher_receipt',
-    'teacher_receipts', 'receipt', 'receipts', 'grasp_success', 'placed', 'placed_at', 'delivered', 'deliveries',
-    'delivery_confirmed', 'completion', 'completed', 'complete', 'finished', 'success', 'succeeded', 'done',
-    'zone_counts', 'zone_counts_seen', 'remaining_need', 'global_progress', 'progress', 'team_board', 'peer_board',
-    'peer_status', 'peer_states', 'active_claims', 'peer_claims', 'peer_commands', 'peer_command_history',
-    'peer_rgb', 'peer_images', 'other_robots', 'busy', 'hidden_event', 'hidden_events', 'event_schedule',
-    'injected_failures', 'eval', 'evaluation', 'eval_only', 'score', 'scores', 'makespan', 'metrics'})
-A_FORBIDDEN_SUBSTRINGS = ('_pose', 'pose_', 'ground_truth', 'teacher', 'receipt', 'top_rgb', 'top_frame', 'top_image',
-                          'cctv', 'nav_cam', 'qpos', 'qvel', 'hidden_event', 'body_id', 'xpos', 'sim_state', 'peer_',
-                          'referee', 'weld', 'grasp_success')
-A_ACTION_FIELDS = ('schema', 'run_id', 'condition', 'seed', 'actor', 'action_id', 'request_id', 'submitted_at_sim_s',
-                   'kind', 'arguments', 'order_id', 'role', 'accepted', 'rejected_reason', 'local_state')
-A_COMMAND_ARGUMENT_KEYS = ('target_ref', 'target_zone', 'order_id', 'item', 'role', 'passage', 'distance_m',
-                           'turn_deg', 'speed', 'duration_s', 'gripper', 'observe', 'waypoints', 'reason_code')
-A_BELIEF_KEYS = ('region', 'last_visual_anchor', 'last_requested_destination', 'last_visually_confirmed_region',
-                 'confidence', 'sources', 'held_item_guess', 'blocked_passages', 'notes_ko')
-
+# Package A contract (harness/zone_study_contract.py on main), imported, never copied.
+from harness import zone_study_contract as A  # noqa: E402
 
 def _jpeg(value=120):
     import cv2
@@ -142,7 +122,10 @@ def test_executor_source_reads_no_simulator_state():
     import ast
     import textwrap
     names = set()
-    for cls in (zox.ZoneOwnExecutor, zox._DeliverController, zox._SharedLocDriver):
+    from harness import zone_own_deliver, zone_own_guards, zone_own_status
+    for cls in (zox.ZoneOwnExecutor, zone_own_deliver._DeliverController, zone_own_guards.GuardedDriver,
+                zone_own_guards.SweepGuard, zone_own_guards.UncertaintyGate, zone_own_guards.ProgressMonitor,
+                zone_own_status.OwnStatusMixin):
         tree = ast.parse(textwrap.dedent(inspect.getsource(cls)))
         names |= {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
         names |= {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
@@ -311,7 +294,9 @@ def test_local_timeout_is_a_timeout_wake():
     ev = ex.drain_events()
     assert ev[-1]['event'] == 'job_failed' and ev[-1]['detail']['reason'] == 'LOCAL_TIMEOUT'
     assert ev[-1]['scheduler_trigger'] == 'timeout'
-    assert set(zox.EVENT_TO_TRIGGER.values()) - {None} <= set(zox.D_TRIGGERS)
+    from harness.zone_event_scheduler import TRIGGERS
+    assert set(zox.EVENT_TO_TRIGGER.values()) - {None} <= set(TRIGGERS)
+    assert all(zox.EVENT_TO_TRIGGER[e] is not None for e in ('job_done', 'job_failed', 'blockage_seen', 'pose_uncertain'))
 
 
 def test_goto_targets_come_from_the_static_map_only():
@@ -340,59 +325,23 @@ def test_status_and_belief_carry_no_forbidden_keys():
     d.run(1.)
     for payload in (ex.status(), ex.belief_projection()):
         for path, key in _keys(payload):
-            assert key not in A_FORBIDDEN_KEYS, path
-            assert not any(s in key for s in A_FORBIDDEN_SUBSTRINGS), path
+            assert key not in A.FORBIDDEN_KEYS, path
+            assert not any(s in key for s in A.FORBIDDEN_KEY_SUBSTRINGS), path
+        assert A.forbidden_key_hits(payload) == []
     st = ex.status()
     assert st['holding']['answer'] == 'no' and st['blocked_ahead']['answer'] == 'unknown'
     assert st['localization']['level'] == 'unknown' and st['region'] == 'unknown'
-    assert tuple(ex.belief_projection()) == A_BELIEF_KEYS
+    assert tuple(ex.belief_projection()) == A.BELIEF_KEYS
 
 
-def test_action_record_adapter_matches_package_a_schema():
+def test_action_record_adapter_is_validated_by_package_a():
     ex = make()
-    acks = [ex.hold(1.), ex.deliver('o1', 'A2'), ex.abort()]
-    for i, ack in enumerate(acks):
-        rec = zox.action_record(ack, run_id='t', condition='no_llm_scripted', seed=1, request_id=f'q{i}')
-        assert tuple(rec) == A_ACTION_FIELDS
-        assert rec['kind'] in zox.A_ACTION_KINDS and rec['local_state'] in zox.A_LOCAL_STATES
-        assert set(rec['arguments']) <= set(A_COMMAND_ARGUMENT_KEYS)
-    try:                                           # once PR #194 is merged, compare with the real module
-        from harness import zone_study_contract as a
-    except ImportError:
-        return
-    assert zox.A_ACTION_KINDS == a.ACTION_KINDS and zox.A_LOCAL_STATES == a.LOCAL_STATES
-    assert a.action_record_violations(rec) == []
-
-
-# ---------------------------------------------------------------- 3-robot host (simulator)
-def test_team_host_feeds_each_executor_only_its_own_camera():
-    pytest.importorskip('mujoco')                   # lazy: importing this file must stay simulator-free
-    spec = {'map': 'zone_wide_door_tags_v2', 'seed': 703, 'goal': {'A': {'cyan': 1}, 'B': {'cyan': 1}, 'C': {'cyan': 1}},
-            'extra_boxes': {'red': 2, 'green': 1}, 'contact_profile': 'cargo_noslip_v1', 'order_sheet': SHEET}
-    student = {'mode': 'm1', 'calibration': 'experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json',
-               'skill_module': 'harness.wrist_zone_skill_v9', 'skill_class': 'WristZoneDeliveryV9'}
-    seen = []
-
-    def layer(host, kind, event, now):
-        if kind == 'start':
-            for rid in zox.ROBOTS:
-                host.call(rid, 'look_around')
-        else:
-            seen.append(event)
-
-    host = zox.OwnCamTeamHost(spec, student, root=ROOT, study_layer=layer)
-    try:
-        host.run(3.)
-        assert host.eval_only['max_eq_active'] == 0 and host.contact_record['noslip_iterations'] > 0
-        for rid, slot in host.robots.items():
-            ex = slot.executor
-            assert slot.frames and all(f['robot_id'] == rid and f['camera'] == 'robot_cam' for f in slot.frames)
-            assert ex.cameras_seen == {'robot_cam'} and all(s.startswith('owncam_pf_v2:') for s in ex.pose_sources_seen)
-            reach = _reachable(ex, limit=200_000)
-            assert id(host) not in reach and id(host.world) not in reach
-            assert not any(id(s.port) in reach or id(s.executor) in reach for r, s in host.robots.items() if r != rid)
-            assert all(c['t'] >= 0 for c in slot.commands) and slot.commands[0]['kind'] == 'initial_servo_command'
-        assert {e['robot_id'] for e in seen if e['event'] == 'job_started'} == set(zox.ROBOTS)
-        assert host.eval_only['gt'] and 'robots' in host.eval_only['gt'][0]
-    finally:
-        host.close()
+    acks = [ex.hold(1.), ex.deliver('o1', 'A2'), ex.abort(), ex.goto(None), ex.hold(float('nan'))]
+    for condition in A.MAIN_CONDITIONS:
+        for i, ack in enumerate(acks):
+            rec = zox.action_record(ack, run_id='t', condition=condition, seed=1, request_id=f'q{i}')
+            assert tuple(rec) == tuple(A.ACTION_FIELDS) and A.action_record_violations(rec) == []
+            assert set(rec['arguments']) <= set(A.COMMAND_ARGUMENT_KEYS)
+    # the v1 smoke label is not a package A condition (Codex review 2 of PR #206, P2-8)
+    with pytest.raises(A.ContractViolation):
+        zox.action_record(acks[0], run_id='t', condition='no_llm_scripted', seed=1, request_id='q')
