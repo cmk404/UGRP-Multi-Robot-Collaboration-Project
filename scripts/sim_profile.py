@@ -47,6 +47,49 @@ def rusage_cpu() -> dict:
     return {'user_s': r.ru_utime, 'sys_s': r.ru_stime}
 
 
+_RI_FIELDS = ('user_time', 'system_time', 'pkg_idle_wkups', 'interrupt_wkups', 'pageins', 'wired_size', 'resident_size',
+              'phys_footprint', 'proc_start_abstime', 'proc_exit_abstime', 'child_user_time', 'child_system_time',
+              'child_pkg_idle_wkups', 'child_interrupt_wkups', 'child_pageins', 'child_elapsed_abstime',
+              'diskio_bytesread', 'diskio_byteswritten', 'cpu_time_qos_default', 'cpu_time_qos_maintenance',
+              'cpu_time_qos_background', 'cpu_time_qos_utility', 'cpu_time_qos_legacy', 'cpu_time_qos_user_initiated',
+              'cpu_time_qos_user_interactive', 'billed_system_time', 'serviced_system_time', 'logical_writes',
+              'lifetime_max_phys_footprint', 'instructions', 'cycles', 'billed_energy', 'serviced_energy',
+              'interval_max_phys_footprint', 'runnable_time', 'flags', 'user_ptime', 'system_ptime', 'pinstructions',
+              'pcycles')
+
+
+def proc_counters() -> dict | None:
+    """macOS ``proc_pid_rusage`` (RUSAGE_INFO_V6): retired instructions/cycles and P-core CPU share.
+
+    CPU seconds depend on whether the scheduler put the threads on P or E cores
+    (load dependent on Apple silicon); retired instructions do not. None when unavailable.
+    """
+    if sys.platform != 'darwin':
+        return None
+    import ctypes
+    try:
+        lib = ctypes.CDLL('/usr/lib/libproc.dylib')
+    except OSError:
+        return None
+
+    class RU(ctypes.Structure):
+        _fields_ = [('uuid', ctypes.c_uint8*16)] + [(n, ctypes.c_uint64) for n in _RI_FIELDS] + [('pad', ctypes.c_uint64*32)]
+    r = RU()
+    if lib.proc_pid_rusage(os.getpid(), 6, ctypes.byref(r)) != 0:
+        return None
+    return {'instructions': int(r.instructions), 'cycles': int(r.cycles), 'p_instructions': int(r.pinstructions),
+            'cpu_abstime': int(r.user_time + r.system_time), 'p_cpu_abstime': int(r.user_ptime + r.system_ptime)}
+
+
+def counter_delta(a: dict | None, b: dict | None) -> dict | None:
+    if not a or not b:
+        return None
+    d = {k: b[k] - a[k] for k in a}
+    return {'instructions_g': round(d['instructions']/1e9, 3), 'cycles_g': round(d['cycles']/1e9, 3),
+            'p_core_instruction_share': round(d['p_instructions']/d['instructions'], 3) if d['instructions'] else None,
+            'p_core_cpu_share': round(d['p_cpu_abstime']/d['cpu_abstime'], 3) if d['cpu_abstime'] else None}
+
+
 class Recorder:
     """Thread-CPU accumulators and trajectory checkpoints (no behaviour change)."""
 
@@ -106,7 +149,8 @@ class Recorder:
                 c, m0 = rusage_cpu(), rec.cpu_origin
                 rec.cpu_at_mark = {'sim_t': float(d.time), 'step': rec.steps,
                                    'process_s': round(c['user_s'] - m0[0]['user_s'] + c['sys_s'] - m0[0]['sys_s'], 3),
-                                   'main_thread_s': round(time.thread_time() - m0[1], 3)}
+                                   'main_thread_s': round(time.thread_time() - m0[1], 3),
+                                   'counters': counter_delta(m0[2], proc_counters())}
         mj_step.__wrapped__ = orig
         self._set(mujoco, 'mj_step', mj_step)
 
@@ -211,8 +255,8 @@ def main(argv=None):
     if args.sections:
         rec.install_sections()
     run, meta = m1_prepare(rec, args)
-    load0, wall0, cpu0, main0 = os.getloadavg(), time.time(), rusage_cpu(), time.thread_time()
-    rec.cpu_origin = (cpu0, main0)
+    load0, wall0, cpu0, main0, ctr0 = os.getloadavg(), time.time(), rusage_cpu(), time.thread_time(), proc_counters()
+    rec.cpu_origin = (cpu0, main0, ctr0)
     prof = None
     if args.cprofile:
         import cProfile
@@ -228,7 +272,7 @@ def main(argv=None):
         if prof is not None:
             prof.disable()
         main_s = time.thread_time() - main0
-        cpu1, wall1, load1 = rusage_cpu(), time.time(), os.getloadavg()
+        cpu1, wall1, load1, ctr1 = rusage_cpu(), time.time(), os.getloadavg(), proc_counters()
         rec.restore()
         proc_s = (cpu1['user_s'] - cpu0['user_s']) + (cpu1['sys_s'] - cpu0['sys_s'])
         render_s = rec.render_thread_cpu_s
@@ -241,6 +285,7 @@ def main(argv=None):
                       'other_threads': None if render_s is None else round(proc_s - main_s - render_s, 3)},
             'wall_s_informational': round(wall1 - wall0, 1),
             'load_average': {'start': [round(v, 2) for v in load0], 'end': [round(v, 2) for v in load1]},
+            'counters': counter_delta(ctr0, ctr1),
             'cpu_at_sim_mark': rec.cpu_at_mark,
             'mj_steps': rec.steps, 'qpos_every': rec.qpos_every, 'checkpoints': len(rec.checkpoints),
             'sections_thread_cpu_s': {k: round(v, 4) for k, v in sorted(rec.cpu.items())},
@@ -267,7 +312,7 @@ def main(argv=None):
                 buf = io.StringIO()
                 pstats.Stats(prof, stream=buf).sort_stats(sort).print_stats(70)
                 (out/f'profile_{sort}.txt').write_text(buf.getvalue())
-        print(json.dumps({k: summary[k] for k in ('episode', 'cpu_s', 'wall_s_informational', 'mj_steps')} |
+        print(json.dumps({k: summary[k] for k in ('episode', 'cpu_s', 'counters', 'wall_s_informational', 'mj_steps')} |
                          {'sim_s': summary.get('sim_s'), 'outcome': summary.get('outcome')}), flush=True)
 
 

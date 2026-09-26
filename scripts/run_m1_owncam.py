@@ -58,7 +58,7 @@ RUNTIME_FILES = ('harness/m1_owncam_delivery.py', 'harness/m1_owncam_contract.py
                  'harness/wrist_zone_skill_v9.py', 'harness/owncam_view.py', 'harness/markerless_box.py',
                  'harness/visual_box_skill.py', 'harness/visual_attachment.py',
                  'sim/zone_cargo_contact.py', 'sim/zone_landmarks.py', 'sim/zone_scene.py', 'sim/camera_robot_port.py',
-                 'scripts/run_m1_owncam.py')
+                 'sim/exact_speedups.py', 'sim/physics_drive_kernel.py', 'scripts/run_m1_owncam.py')
 
 
 def git(*args):
@@ -74,7 +74,8 @@ def jsonl(path, rows):
     path.write_text(''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows))
 
 
-def run(spec, out, student):
+def run(spec, out, student, speedups=None):
+    """``speedups``: a ``sim.exact_speedups`` set name ('none' = original path, 'exact-v1' = bit-exact CPU cuts)."""
     import importlib
 
     import cv2
@@ -89,6 +90,8 @@ def run(spec, out, student):
     from scripts.record_owncam_localization import LoggingPort
     from sim.camera_robot_port import CameraRobotPort
     from sim.multi_masterpi_production import MultiMasterPiProductionV2
+    from sim.exact_speedups import ContactPrefilter, install_drive_kernel
+    from sim.exact_speedups import resolve as resolve_speedups
     from sim.research_dispatch_arena import digest
     from sim.zone_arena import LAYOUTS
     from sim.zone_landmarks import TaggedZoneScene
@@ -187,6 +190,12 @@ def run(spec, out, student):
     other_boxes = {g for g, n in enumerate(names) if n.startswith('cargo_box_') and g not in box_geom}
     left_finger = {g for g, n in enumerate(names) if n == rid + '__left_finger'}
     right_finger = {g for g, n in enumerate(names) if n == rid + '__right_finger'}
+    speedup_set, speedup_items = resolve_speedups(speedups)
+    speedup_record = {'set': speedup_set, 'items': list(speedup_items),
+                      'note': 'execution infrastructure only; same trajectory/commands/frames (sim.exact_speedups)'}
+    if 'drive_kernel' in speedup_items:
+        speedup_record['drive_kernel'] = install_drive_kernel(world)
+    prefilter = ContactPrefilter(model.ngeom, own_geoms | box_geom) if 'contact_prefilter' in speedup_items else None
     force6 = np.zeros(6)
     retention = {'carry_steps': 0, 'both_finger_steps': 0, 'min_box_z_m': None, 'low_box_steps': 0,
                  'max_box_penetration_m': 0., 'max_box_normal_force_n': 0., 'kind_steps': {}}
@@ -233,7 +242,7 @@ def run(spec, out, student):
             world._physics_step_for(world.controllers[rid])
             now = float(data.time)
             kinds_now, lf, rf = set(), False, False
-            for i in range(data.ncon):
+            for i in (range(data.ncon) if prefilter is None else prefilter.indices(data)):
                 c = data.contact[i]
                 pair = {int(c.geom1), int(c.geom2)}
                 mine = pair & (own_geoms | box_geom)
@@ -416,6 +425,7 @@ def run(spec, out, student):
                 'calibration_sha256': sha_bytes(calibration_path.read_bytes()), 'pose_source': ctl.pose.source,
                 'weld': scene.manifest['weld'], 'contact_profile': contact_record,
                 'timestep_s': float(model.opt.timestep), 'frame_period_s': FRAME_S, 'tick_s': TICK_S, 'sync_sim': True,
+                'speedups': speedup_record,
                 'env': {'python': platform.python_version(), 'platform': platform.platform(),
                         'mujoco': mujoco.__version__, 'opencv': cv2.__version__, 'numpy': np.__version__,
                         'threads': {k: os.environ.get(k) for k in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS',
@@ -501,6 +511,8 @@ def main(argv=None):
     p.add_argument('--split', choices=('dev', 'test'), default='dev',
                    help='dev by default; the one-shot test split needs --split test and --frozen')
     p.add_argument('--frozen', default='', help='frozen_source.json (required for --split test)')
+    p.add_argument('--speedups', default='none', choices=('none', 'exact-v1'),
+                   help='bit-exact CPU speedups (sim.exact_speedups); recorded in manifest.json')
     args = p.parse_args(argv)
     prereg_path = Path(args.prereg).resolve()
     prereg = json.loads(prereg_path.read_text())
@@ -518,7 +530,7 @@ def main(argv=None):
         raise SystemExit(f'--only names episodes outside the {args.split} split: {sorted(unknown)}')
     for spec in selected:
         spec = {**spec, 'contact_profile': student.get('contact_profile', spec.get('contact_profile'))}
-        result, manifest = run(spec, Path(args.output)/spec['episode_id'], student)
+        result, manifest = run(spec, Path(args.output)/spec['episode_id'], student, speedups=args.speedups)
         print(json.dumps({'episode': spec['episode_id'], 'outcome': result['outcome'], 'm1_success': result['m1_success'],
                           'failed': result['m1_failed_checks'], 'diagnostic_success': result['diagnostic_success'],
                           'false_success': result['false_success'], 'sim_s': result['sim_s'], 'looks': result['looks'],
