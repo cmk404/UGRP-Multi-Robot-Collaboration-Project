@@ -451,10 +451,12 @@ def test_teacher_stops_the_second_robot_and_injected_grasps_stay_open():
     assert a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
     b.phase, b.outcome = 'failed', 'grasp_failed_by_teacher'  # a failed grasp leaves the box free
     assert not a._taken_by_peer('cargo_box_00')
-    b.phase = 'align_box'  # the peer already aligning wins over one still driving
-    assert a._taken_by_peer('cargo_box_00')
-    b.phase, a.assigned_at, b.assigned_at = 'to_box', 60.8, 47.3  # both driving: the earlier job keeps the box
-    assert a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
+    # Audit L1 fix (2026-09-25): a peer's job alone (driving or aligning) never
+    # stops a robot; only physical station blocking does (_station_blocked).
+    b.phase = 'align_box'
+    assert not a._taken_by_peer('cargo_box_00')
+    b.phase, a.assigned_at, b.assigned_at = 'to_box', 60.8, 47.3
+    assert not a._taken_by_peer('cargo_box_00') and not b._taken_by_peer('cargo_box_00')
     assert a._grip() == CLOSED
     a.job['inject'] = 'grasp_stays_open'
     assert a._grip() == OPEN

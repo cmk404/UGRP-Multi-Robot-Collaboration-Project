@@ -118,3 +118,7 @@ dev(66장면, 같은 소스로 다시 채점)도 방향이 같다. can 131/132, 
 - 역할 이름은 대칭 아래 바뀔 수 있다. 로봇 배정은 손잡이 위치로 해야 한다.
 - can 위치(서쪽 과노출에서 ±2.5 cm)와 `clipped`/낮은 신뢰도 항목은 접근 전에 자기 RGB 근거리 관측으로 다시 확인하는 것을 권한다.
 - 다음 버전 후보: 틀 억제 영역을 막대 띠로 줄이기, can 마스크에 밝은 옆면 포함, 빔 끝 덮개 제외. 모두 새 dev 분할에서 정하고, 이번 test는 재사용하지 않는다.
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 worktree의 원자료 `outputs/zone-cargo-perception-20260925/`(dev-r1, test-07a958d)가 지워졌고 복구할 수 없다. 파일 해시는 `results.json`의 `artifacts`에 있다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.

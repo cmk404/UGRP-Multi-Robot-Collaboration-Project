@@ -1,0 +1,1584 @@
+{
+  "schema": "ugrp.owncam_loop_results.v1",
+  "attempts": {
+    "dev-a1": "dev attempt 1 (155cb71): v1 calibration",
+    "dev-a2": "dev attempt 2 (a5559e7): + loaded/unloaded elevation bias",
+    "dev-a3": "dev attempt 3 (d3466db): + wide look sweep",
+    "dev-a4": "dev attempt 4 (9361a8d, frozen): + motion refit, loaded travel-based looks; reported dev",
+    "test": "test split, once, frozen source 9361a8d (records-only head 521ae7b)"
+  },
+  "summary_k_of_n": {
+    "dev-a1/box": {
+      "n": 1,
+      "pass": 0
+    },
+    "dev-a1/nobox": {
+      "n": 1,
+      "pass": 1
+    },
+    "dev-a2/box": {
+      "n": 1,
+      "pass": 0
+    },
+    "dev-a2/nobox": {
+      "n": 1,
+      "pass": 1
+    },
+    "dev-a3/box": {
+      "n": 3,
+      "pass": 2
+    },
+    "dev-a3/nobox": {
+      "n": 3,
+      "pass": 3
+    },
+    "dev-a4/box": {
+      "n": 3,
+      "pass": 3
+    },
+    "dev-a4/nobox": {
+      "n": 3,
+      "pass": 3
+    },
+    "test/box": {
+      "n": 3,
+      "pass": 1
+    },
+    "test/nobox": {
+      "n": 3,
+      "pass": 3
+    }
+  },
+  "runs": [
+    {
+      "attempt": "dev-a1",
+      "episode": "dev-box-s31",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "155cb7119be417f1ffa2e0176cfc4611b8db08b1",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": false,
+      "R1_gt_distance_m": 0.054,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.07135,
+      "R3_p90_yaw_deg": 1.22795,
+      "R3_frames": 620,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0853,
+      "R4_end_box_z_m": 0.1658,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": false,
+        "R4_box_held": true
+      },
+      "student_sim_s": 140.1,
+      "teacher_sim_s": 20.0,
+      "looks": 20,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "refix",
+        "refix",
+        "uncertain",
+        "refix",
+        "refix",
+        "uncertain",
+        "uncertain",
+        "uncertain",
+        "no_tag",
+        "no_tag",
+        "uncertain",
+        "refix",
+        "no_tag",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 2216,
+      "student_frames": 701,
+      "tag_visibility": 0.73,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          31.08,
+          30.51,
+          32.47
+        ],
+        "end": [
+          26.19,
+          42.91,
+          39.52
+        ]
+      },
+      "wall_s": 430.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "a9df9b7ccd3e3a37ecb04247bc61091248afdf0bb7d9417143f45efb8452a159",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a1",
+      "episode": "dev-nobox-s31",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "155cb7119be417f1ffa2e0176cfc4611b8db08b1",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0202,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.0237,
+      "R3_p90_yaw_deg": 0.7398,
+      "R3_frames": 161,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 60.2,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 807,
+      "student_frames": 302,
+      "tag_visibility": 0.868,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.43,
+          28.01,
+          32.06
+        ],
+        "end": [
+          33.26,
+          30.92,
+          32.62
+        ]
+      },
+      "wall_s": 154.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "a9df9b7ccd3e3a37ecb04247bc61091248afdf0bb7d9417143f45efb8452a159",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a2",
+      "episode": "dev-box-s31",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "a5559e7bd62da3180ff75afd4c811f371c2148b1",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": false,
+      "R1_gt_distance_m": 0.0594,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.075006,
+      "R3_p90_yaw_deg": 1.1753200000000001,
+      "R3_frames": 423,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0853,
+      "R4_end_box_z_m": 0.1671,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": false,
+        "R4_box_held": true
+      },
+      "student_sim_s": 101.2,
+      "teacher_sim_s": 20.0,
+      "looks": 13,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "refix",
+        "refix",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1582,
+      "student_frames": 506,
+      "tag_visibility": 0.668,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          9.52,
+          6.58,
+          5.5
+        ],
+        "end": [
+          16.7,
+          18.15,
+          11.57
+        ]
+      },
+      "wall_s": 282.0,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a2",
+      "episode": "dev-nobox-s32",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "a5559e7bd62da3180ff75afd4c811f371c2148b1",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0363,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.049762000000000015,
+      "R3_p90_yaw_deg": 1.7152600000000002,
+      "R3_frames": 193,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 68.7,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 892,
+      "student_frames": 344,
+      "tag_visibility": 0.849,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          9.52,
+          6.58,
+          5.5
+        ],
+        "end": [
+          31.12,
+          18.68,
+          10.8
+        ]
+      },
+      "wall_s": 177.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "7c336d6c28285c72e796437b13c5d83e098d96d703c79ab0a265ec3ab4a90f1a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-box-s31",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0558,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.044045,
+      "R3_p90_yaw_deg": 1.0227,
+      "R3_frames": 516,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0853,
+      "R4_end_box_z_m": 0.1666,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 116.5,
+      "teacher_sim_s": 20.0,
+      "looks": 10,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1840,
+      "student_frames": 583,
+      "tag_visibility": 0.726,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          17.14,
+          16.9,
+          13.93
+        ],
+        "end": [
+          31.6,
+          26.11,
+          19.72
+        ]
+      },
+      "wall_s": 367.7,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-box-s32",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.052,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.04506000000000001,
+      "R3_p90_yaw_deg": 1.04203,
+      "R3_frames": 640,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.085,
+      "R4_end_box_z_m": 0.1652,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 154.9,
+      "teacher_sim_s": 24.6,
+      "looks": 13,
+      "look_reasons": [
+        "no_tag",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 2424,
+      "student_frames": 775,
+      "tag_visibility": 0.732,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          17.14,
+          16.9,
+          13.93
+        ],
+        "end": [
+          15.63,
+          22.29,
+          18.83
+        ]
+      },
+      "wall_s": 449.0,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "7c336d6c28285c72e796437b13c5d83e098d96d703c79ab0a265ec3ab4a90f1a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-box-s33",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "time_limit",
+      "pass": false,
+      "R1_gt_distance_m": 0.0689,
+      "R1_declared": false,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.05104000000000002,
+      "R3_p90_yaw_deg": 0.9650400000000003,
+      "R3_frames": 573,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0851,
+      "R4_end_box_z_m": 0.1633,
+      "gates_pass": {
+        "R1_exit_waypoint": false,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 240.1,
+      "teacher_sim_s": 21.1,
+      "looks": 21,
+      "look_reasons": [
+        "no_tag",
+        "door_checkpoint_1.5",
+        "no_tag",
+        "refix",
+        "no_tag",
+        "refix",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "no_tag",
+        "uncertain",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag",
+        "no_tag"
+      ],
+      "student_commands": 3719,
+      "student_frames": 1201,
+      "tag_visibility": 0.718,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          15.83,
+          19.99,
+          18.64
+        ],
+        "end": [
+          9.87,
+          12.45,
+          15.33
+        ]
+      },
+      "wall_s": 606.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "000f20409721a94032070bd5270bf0167905766bbb5d30eb946f2546e8ac58a8",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-nobox-s31",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0213,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.021316000000000005,
+      "R3_p90_yaw_deg": 0.48580000000000106,
+      "R3_frames": 209,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 76.3,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1063,
+      "student_frames": 382,
+      "tag_visibility": 0.887,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.68,
+          21.87,
+          18.72
+        ],
+        "end": [
+          15.83,
+          19.99,
+          18.64
+        ]
+      },
+      "wall_s": 175.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-nobox-s32",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0331,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.058314000000000005,
+      "R3_p90_yaw_deg": 1.41674,
+      "R3_frames": 243,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 84.7,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1147,
+      "student_frames": 424,
+      "tag_visibility": 0.868,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.68,
+          21.87,
+          18.72
+        ],
+        "end": [
+          14.89,
+          19.5,
+          18.49
+        ]
+      },
+      "wall_s": 196.2,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "7c336d6c28285c72e796437b13c5d83e098d96d703c79ab0a265ec3ab4a90f1a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a3",
+      "episode": "dev-nobox-s33",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "d3466db141928a52c291a73386d331f1a8c3a554",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0274,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.048567,
+      "R3_p90_yaw_deg": 1.7878100000000001,
+      "R3_frames": 232,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 102.2,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1322,
+      "student_frames": 512,
+      "tag_visibility": 0.887,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.89,
+          19.5,
+          18.49
+        ],
+        "end": [
+          15.48,
+          17.45,
+          17.88
+        ]
+      },
+      "wall_s": 252.7,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "721ba0316d5f23d98ff0513fd4c9811d854362b7fb2642f1a2afdc83e761a605",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "000f20409721a94032070bd5270bf0167905766bbb5d30eb946f2546e8ac58a8",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-box-s31",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0545,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.03916100000000001,
+      "R3_p90_yaw_deg": 0.9576000000000003,
+      "R3_frames": 310,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0853,
+      "R4_end_box_z_m": 0.1679,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 75.3,
+      "teacher_sim_s": 20.0,
+      "looks": 6,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "travel",
+        "uncertain",
+        "uncertain",
+        "arrival_check"
+      ],
+      "student_commands": 1164,
+      "student_frames": 377,
+      "tag_visibility": 0.674,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.58,
+          12.41,
+          14.48
+        ],
+        "end": [
+          12.78,
+          13.0,
+          14.25
+        ]
+      },
+      "wall_s": 239.6,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-box-s32",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0589,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.052871999999999995,
+      "R3_p90_yaw_deg": 1.17766,
+      "R3_frames": 339,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.085,
+      "R4_end_box_z_m": 0.167,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 104.4,
+      "teacher_sim_s": 24.6,
+      "looks": 8,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "travel",
+        "travel",
+        "door_checkpoint_0.6",
+        "uncertain",
+        "travel",
+        "uncertain",
+        "arrival_check"
+      ],
+      "student_commands": 1589,
+      "student_frames": 522,
+      "tag_visibility": 0.732,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          13.81,
+          13.08,
+          14.35
+        ],
+        "end": [
+          11.25,
+          13.21,
+          14.1
+        ]
+      },
+      "wall_s": 324.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "7c336d6c28285c72e796437b13c5d83e098d96d703c79ab0a265ec3ab4a90f1a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-box-s33",
+      "split": "dev",
+      "condition": "box",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0476,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.057536,
+      "R3_p90_yaw_deg": 0.9881100000000004,
+      "R3_frames": 350,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0851,
+      "R4_end_box_z_m": 0.1649,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 187.5,
+      "teacher_sim_s": 21.1,
+      "looks": 15,
+      "look_reasons": [
+        "uncertain",
+        "travel",
+        "travel",
+        "door_checkpoint_1.5",
+        "travel",
+        "refix",
+        "refix",
+        "uncertain",
+        "uncertain",
+        "door_checkpoint_0.6",
+        "uncertain",
+        "uncertain",
+        "uncertain",
+        "travel",
+        "arrival_check"
+      ],
+      "student_commands": 2825,
+      "student_frames": 938,
+      "tag_visibility": 0.683,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          13.71,
+          14.15,
+          14.49
+        ],
+        "end": [
+          13.14,
+          19.09,
+          17.14
+        ]
+      },
+      "wall_s": 508.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "000f20409721a94032070bd5270bf0167905766bbb5d30eb946f2546e8ac58a8",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-nobox-s31",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0194,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.02468,
+      "R3_p90_yaw_deg": 0.54453,
+      "R3_frames": 210,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 76.5,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1065,
+      "student_frames": 383,
+      "tag_visibility": 0.869,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          14.58,
+          12.41,
+          14.48
+        ],
+        "end": [
+          13.81,
+          13.08,
+          14.35
+        ]
+      },
+      "wall_s": 187.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "fd88ece8befef0ed225becfda247d7e98361e26ad32a302bb6f8d6bbde5c2dd1",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-nobox-s32",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0303,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.03592,
+      "R3_p90_yaw_deg": 1.3470799999999998,
+      "R3_frames": 235,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 83.1,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1131,
+      "student_frames": 416,
+      "tag_visibility": 0.877,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          12.78,
+          13.0,
+          14.25
+        ],
+        "end": [
+          13.71,
+          14.15,
+          14.49
+        ]
+      },
+      "wall_s": 201.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "7c336d6c28285c72e796437b13c5d83e098d96d703c79ab0a265ec3ab4a90f1a",
+      "weld": "off"
+    },
+    {
+      "attempt": "dev-a4",
+      "episode": "dev-nobox-s33",
+      "split": "dev",
+      "condition": "nobox",
+      "code_sha": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.021,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.022614999999999996,
+      "R3_p90_yaw_deg": 1.6175299999999995,
+      "R3_frames": 240,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 120.4,
+      "teacher_sim_s": null,
+      "looks": 7,
+      "look_reasons": [
+        "uncertain",
+        "uncertain",
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1624,
+      "student_frames": 603,
+      "tag_visibility": 0.912,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          11.25,
+          13.21,
+          14.1
+        ],
+        "end": [
+          36.49,
+          24.16,
+          18.35
+        ]
+      },
+      "wall_s": 300.5,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "000f20409721a94032070bd5270bf0167905766bbb5d30eb946f2546e8ac58a8",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-box-s41",
+      "split": "test",
+      "condition": "box",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0416,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.043325999999999996,
+      "R3_p90_yaw_deg": 0.9388,
+      "R3_frames": 257,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0852,
+      "R4_end_box_z_m": 0.1676,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 74.0,
+      "teacher_sim_s": 23.3,
+      "looks": 6,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "travel",
+        "travel",
+        "uncertain",
+        "arrival_check"
+      ],
+      "student_commands": 1151,
+      "student_frames": 371,
+      "tag_visibility": 0.693,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          11.15,
+          17.94,
+          16.8
+        ],
+        "end": [
+          11.43,
+          14.33,
+          15.46
+        ]
+      },
+      "wall_s": 217.4,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "235aac1f51d78f1d748ac7839e64fd47a8167b17def54f7ddd9f44d096d1da3a",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-box-s42",
+      "split": "test",
+      "condition": "box",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": false,
+      "R1_gt_distance_m": 0.0578,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.07981200000000004,
+      "R3_p90_yaw_deg": 1.1138200000000005,
+      "R3_frames": 445,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.085,
+      "R4_end_box_z_m": 0.1674,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": false,
+        "R4_box_held": true
+      },
+      "student_sim_s": 102.2,
+      "teacher_sim_s": 31.7,
+      "looks": 8,
+      "look_reasons": [
+        "door_checkpoint_1.5",
+        "travel",
+        "door_checkpoint_0.6",
+        "uncertain",
+        "travel",
+        "travel",
+        "uncertain",
+        "arrival_check"
+      ],
+      "student_commands": 1565,
+      "student_frames": 512,
+      "tag_visibility": 0.633,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          12.41,
+          14.8,
+          15.66
+        ],
+        "end": [
+          59.06,
+          46.87,
+          30.72
+        ]
+      },
+      "wall_s": 332.2,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "84dd60573adafbd0d53a9f1ebac2d728b9eae77d03f5c044fe1107e081a68629",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-box-s43",
+      "split": "test",
+      "condition": "box",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "time_limit",
+      "pass": false,
+      "R1_gt_distance_m": 0.7425,
+      "R1_declared": false,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.023272000000000022,
+      "R3_p90_yaw_deg": 2.94444,
+      "R3_frames": 137,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": 0.0852,
+      "R4_end_box_z_m": 0.1626,
+      "gates_pass": {
+        "R1_exit_waypoint": false,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true,
+        "R4_box_held": true
+      },
+      "student_sim_s": 240.1,
+      "teacher_sim_s": 34.1,
+      "looks": 21,
+      "look_reasons": [
+        "uncertain",
+        "travel",
+        "travel",
+        "travel",
+        "travel",
+        "uncertain",
+        "refix",
+        "refix",
+        "uncertain",
+        "uncertain",
+        "refix",
+        "uncertain",
+        "refix",
+        "door_checkpoint_1.5",
+        "refix",
+        "uncertain",
+        "uncertain",
+        "refix",
+        "uncertain",
+        "door_checkpoint_0.6",
+        "uncertain"
+      ],
+      "student_commands": 3637,
+      "student_frames": 1201,
+      "tag_visibility": 0.724,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          59.11,
+          45.8,
+          29.87
+        ],
+        "end": [
+          24.07,
+          39.32,
+          37.33
+        ]
+      },
+      "wall_s": 647.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "07e2e3e088e5aa94698298124dd02bdece0110da55336fdf570cc47f8258dac8",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-nobox-s41",
+      "split": "test",
+      "condition": "nobox",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0223,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.048364,
+      "R3_p90_yaw_deg": 1.4421100000000004,
+      "R3_frames": 242,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 85.1,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1151,
+      "student_frames": 426,
+      "tag_visibility": 0.878,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          11.15,
+          17.94,
+          16.8
+        ],
+        "end": [
+          12.41,
+          14.8,
+          15.66
+        ]
+      },
+      "wall_s": 183.4,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "235aac1f51d78f1d748ac7839e64fd47a8167b17def54f7ddd9f44d096d1da3a",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-nobox-s42",
+      "split": "test",
+      "condition": "nobox",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0229,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.028926,
+      "R3_p90_yaw_deg": 1.6659800000000022,
+      "R3_frames": 249,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 111.1,
+      "teacher_sim_s": null,
+      "looks": 6,
+      "look_reasons": [
+        "uncertain",
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1471,
+      "student_frames": 556,
+      "tag_visibility": 0.887,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          11.43,
+          14.33,
+          15.46
+        ],
+        "end": [
+          59.11,
+          45.8,
+          29.87
+        ]
+      },
+      "wall_s": 273.3,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "84dd60573adafbd0d53a9f1ebac2d728b9eae77d03f5c044fe1107e081a68629",
+      "weld": "off"
+    },
+    {
+      "attempt": "test",
+      "episode": "test-nobox-s43",
+      "split": "test",
+      "condition": "nobox",
+      "code_sha": "521ae7b68c20f0dfc8924484810b52c49093213d",
+      "code_dirty": false,
+      "outcome": "arrived",
+      "pass": true,
+      "R1_gt_distance_m": 0.0308,
+      "R1_declared": true,
+      "R2_wall_contacts": 0,
+      "R3_p90_pos_m": 0.023668,
+      "R3_p90_yaw_deg": 0.51274,
+      "R3_frames": 209,
+      "R3_uninitialized": 0,
+      "R4_min_box_z_m": null,
+      "R4_end_box_z_m": null,
+      "gates_pass": {
+        "R1_exit_waypoint": true,
+        "R2_no_wall_contact": true,
+        "R3_estimate_near_door": true
+      },
+      "student_sim_s": 76.3,
+      "teacher_sim_s": null,
+      "looks": 5,
+      "look_reasons": [
+        "uncertain",
+        "door_checkpoint_1.5",
+        "door_checkpoint_0.6",
+        "no_tag",
+        "arrival_check"
+      ],
+      "student_commands": 1063,
+      "student_frames": 382,
+      "tag_visibility": 0.88,
+      "contacts_student": {
+        "wall": 0,
+        "peer_robot": 0,
+        "other_box": 0
+      },
+      "load_average": {
+        "start": [
+          59.06,
+          46.87,
+          30.72
+        ],
+        "end": [
+          43.28,
+          46.68,
+          33.82
+        ]
+      },
+      "wall_s": 183.8,
+      "threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1"
+      },
+      "calibration_sha256": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+      "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
+      "scene_xml_sha256": "07e2e3e088e5aa94698298124dd02bdece0110da55336fdf570cc47f8258dac8",
+      "weld": "off"
+    }
+  ]
+}

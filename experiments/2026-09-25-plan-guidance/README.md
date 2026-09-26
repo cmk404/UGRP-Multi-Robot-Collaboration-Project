@@ -65,3 +65,7 @@ PR #144, 실행 번들 `rgb-standard-dispatch-v45`. 계획 협상에 주는 입�
 python3 experiments/2026-09-25-plan-guidance/run_cohort.py --output outputs/plan-guidance-NEW
 .venv-sim-worker-mac/bin/python experiments/2026-09-25-plan-guidance/analyze.py outputs/plan-guidance-NEW --write results.json
 ```
+
+## 원본 상태 (2026-09-26 추가)
+
+2026-09-26 병합 worktree 제거로 참고 실행 원본(`…/post-run-replay/…/20260925-000852-dispatch-ee5eac42`)이 지워졌고 복구할 수 없다. 코호트 15회 원본은 기본 체크아웃 `outputs/plan-guidance-20260925/`에 그대로 있다. 결과·판정은 바꾸지 않았다. 상세는 [raw_status.json](raw_status.json)과 [사고 기록](../2026-09-26-disk-incident/README.md)에 있다.

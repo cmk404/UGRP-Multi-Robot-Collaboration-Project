@@ -1,0 +1,80 @@
+{
+ "schema": "ugrp.markerless_probe.posthoc.v1",
+ "posthoc": true,
+ "note": "written after the test run; diagnostic only, not a pre-registered result",
+ "selection": "door_zone/carry frames, boundary error >= 0.15 m, every 6th frame",
+ "likelihood_at_gt_vs_estimate": {
+  "carry": {
+   "frames": 204,
+   "too_few_columns": 0,
+   "share_gt_scores_higher": 0.255,
+   "median_ll_gt_minus_est": -1.06,
+   "mean_matched_columns_gt": 0.403,
+   "mean_matched_columns_est": 0.467
+  },
+  "door_zone": {
+   "frames": 213,
+   "too_few_columns": 0,
+   "share_gt_scores_higher": 0.31,
+   "median_ll_gt_minus_est": -0.642,
+   "mean_matched_columns_gt": 0.283,
+   "mean_matched_columns_est": 0.354
+  }
+ },
+ "door_zone_error_direction": {
+  "test/m1test-s101": {
+   "frames": 394,
+   "dx_median_m": -0.198,
+   "dy_median_m": 0.093,
+   "dyaw_median_deg": -3.48,
+   "err_median_m": 0.229,
+   "share_err_gt_30cm": 0.464,
+   "scan_columns_median": 38.0
+  },
+  "test/m1test-s102": {
+   "frames": 400,
+   "dx_median_m": -0.348,
+   "dy_median_m": 0.587,
+   "dyaw_median_deg": 2.37,
+   "err_median_m": 0.808,
+   "share_err_gt_30cm": 1.0,
+   "scan_columns_median": 37.0
+  },
+  "test/m1test-s103": {
+   "frames": 164,
+   "dx_median_m": 0.037,
+   "dy_median_m": 0.073,
+   "dyaw_median_deg": -0.02,
+   "err_median_m": 0.085,
+   "share_err_gt_30cm": 0.0,
+   "scan_columns_median": 36.0
+  },
+  "test/m1test-s104": {
+   "frames": 292,
+   "dx_median_m": 0.093,
+   "dy_median_m": 0.257,
+   "dyaw_median_deg": -5.8,
+   "err_median_m": 0.303,
+   "share_err_gt_30cm": 0.503,
+   "scan_columns_median": 37.0
+  },
+  "test/m1test-s105": {
+   "frames": 293,
+   "dx_median_m": -0.107,
+   "dy_median_m": 0.39,
+   "dyaw_median_deg": 1.9,
+   "err_median_m": 0.429,
+   "share_err_gt_30cm": 0.587,
+   "scan_columns_median": 38.0
+  },
+  "test/m1test-s106": {
+   "frames": 351,
+   "dx_median_m": 0.128,
+   "dy_median_m": -0.057,
+   "dyaw_median_deg": -1.29,
+   "err_median_m": 0.161,
+   "share_err_gt_30cm": 0.219,
+   "scan_columns_median": 37.0
+  }
+ }
+}

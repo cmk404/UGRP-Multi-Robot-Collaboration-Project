@@ -15,6 +15,7 @@ import numpy as np
 
 from harness.static_keepouts import inside_rect, keepout_rects, passage_zones, rect_distance
 from harness.visual_arm import solve_grip_ik, tool_pose
+from harness.zone_team_jobs import RendezvousRule, RoleClaim
 
 FOLDED = {1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500}
 GRASP_RADIUS_M = .155
@@ -61,6 +62,12 @@ STILL_M = .02
 LIFTED_Z_M = .045
 # A peer in these phases holds (or is closing on) the box.
 TAKEN_PHASES = ('grasp', 'lift', 'carry', 'align_slot', 'release', 'retract', 'back_off')
+# Physical station blocking (audit L1 fix, 2026-09-25): the one team-formation
+# rule of harness.zone_team_jobs, applied to a box's single grasp station. All
+# colour boxes share that station (west of the box, facing east), so the rule
+# is evaluated with one colour kind.
+STATION_RULE = RendezvousRule()
+BOX_STATION_KIND = 'red'
 
 
 def _wrap(angle):
@@ -297,19 +304,29 @@ class TeacherRobot:
         return OPEN if self.job.get('inject') == 'grasp_stays_open' else CLOSED
 
     def _taken_by_peer(self, body):
+        """The box is already being grasped (or was placed) by another job: a
+        visible event at the box. A peer that is only assigned the same box, or
+        driving to it, never stops this robot (audit L1 fix, 2026-09-25)."""
         for other in self.team.values():
             if other is self or not other.job or other.job['box_body'] != body:
                 continue
             if other.phase in TAKEN_PHASES or other.outcome == 'placed_by_teacher':
                 return True
-            if other.phase == 'align_box' and self.phase == 'to_box':
-                return True
-            # Both still driving to the same box would block each other at its
-            # one pregrasp spot: the robot sent first keeps it (tie: lower id).
-            if other.phase == 'to_box' and self.phase == 'to_box' and (
-                    (other.assigned_at, other.rid) < (self.assigned_at, self.rid)):
-                return True
         return False
+
+    def _station_blocked(self, body):
+        """Physical station blocking (RendezvousRule.occupancy): this robot is
+        near the box's grasp station and another robot (any robot; its job is
+        not read) stands physically nearer to it. Robot ids never decide."""
+        box = self.box_xyz(body)
+        claim = RoleClaim(self.rid, body, BOX_STATION_KIND, 'A', 'west')
+        poses = {rid: robot.pose() for rid, robot in self.team.items()}
+        occupancy = STATION_RULE.occupancy({self.rid: claim}, poses, {body: (float(box[0]), float(box[1]), 0.)})
+        return occupancy[self.rid] == 'station_blocked'
+
+    def planning_rects(self):
+        """Static keep-out rectangles for this robot's planner (map walls)."""
+        return self.rects
 
     def _set(self, phase, now, **detail):
         self.phase, self.phase_started, self.path = phase, now, None
@@ -337,7 +354,7 @@ class TeacherRobot:
             return True
         if self.path is None or now >= self.replan_at or self.path_goal != tuple(goal):
             self.path = plan_path((x, y), goal, self.map['bounds_m'], discs,
-                                  radius=self.radius(carrying), rects=self.rects)
+                                  radius=self.radius(carrying), rects=self.planning_rects())
             self.path_goal, self.replan_at = tuple(goal), now + 1.
             if self.path is None:
                 if self.blocked_since is None:
@@ -381,10 +398,12 @@ class TeacherRobot:
 
     def _grasp_targets(self, xy):
         bx, by = self.to_base(xy)
-        grasp = solve_grip_ik(bx, by, GRASP_Z_M, -90)
+        # A job may name another grip height (zone cargo: the low tile, 7 mm).
+        grip_z = float((self.job or {}).get('grasp_z_m', GRASP_Z_M))
+        grasp = solve_grip_ik(bx, by, grip_z, -90)
         pitch = tool_pose(grasp).pitch_deg
         hover = solve_grip_ik(bx, by, HOVER_Z_M, pitch)
-        path = [solve_grip_ik(bx, by, float(z), pitch) for z in np.linspace(HOVER_Z_M, GRASP_Z_M, 8)[1:]]
+        path = [solve_grip_ik(bx, by, float(z), pitch) for z in np.linspace(HOVER_Z_M, grip_z, 8)[1:]]
         return hover, path
 
     @property
@@ -412,7 +431,7 @@ class TeacherRobot:
         if req['target'] is None:
             clear = PEER_CLEARANCE_M + other.radius(other.phase == 'carry') + GRID_M
             req['target'] = retreat_point(self.pose()[:2], req['avoid'], self.map['bounds_m'], discs,
-                                          clear=clear, radius=radius, rects=self.rects)
+                                          clear=clear, radius=radius, rects=self.planning_rects())
             self.log('yield_target', self.rid, now, to=other.rid,
                      target=req['target'] and [round(v, 3) for v in req['target']])
             if req['target'] is None:
@@ -448,7 +467,7 @@ class TeacherRobot:
                               carrying=carrying)
             req['target'] = retreat_point(self.pose()[:2], req['avoid'] + [other.pose()[:2]], self.map['bounds_m'],
                                           discs, clear=PASSAGE_CLEAR_M, radius=self.radius(carrying),
-                                          rects=self.rects)
+                                          rects=self.planning_rects())
             self.log('passage_yield_target', self.rid, now, to=other.rid, passage=req['pid'],
                      target=req['target'] and [round(v, 3) for v in req['target']])
             if req['target'] is None:
@@ -488,11 +507,16 @@ class TeacherRobot:
             self._finish('teacher_path_blocked', now)
             return
         if self.phase in ('to_box', 'align_box') and self._taken_by_peer(job['box_body']):
-            # No-communication runs can send two robots to one box: the one that
-            # arrives second stops (teacher truth decides; robots only get the
-            # "stopped before finishing" receipt).
+            # No-communication runs can send two robots to one box. A robot stops
+            # only on what it could see at the box: the box is already being
+            # grasped, or another robot stands nearer its grasp station (teacher
+            # truth decides; robots only get the "stopped before finishing" receipt).
             self.port.hold(now)
             self._finish('box_taken_by_peer', now)
+            return
+        if self.phase in ('to_box', 'align_box') and self._station_blocked(job['box_body']):
+            self.port.hold(now)
+            self._finish('station_blocked', now)
             return
         if self.phase == 'to_box':
             box = self.box_xyz(job['box_body'])
@@ -668,7 +692,7 @@ class ZoneTeacherExecutor:
             discs = self.discs_for(robot, exclude=robot.job['box_body'] if carrying else None,
                                    carrying=carrying, peers=False)
             avoid = plan_path(robot.pose()[:2], robot.path_goal, robot.map['bounds_m'], discs, radius=radius,
-                              rects=robot.rects)
+                              rects=robot.planning_rects())
             if avoid is None:
                 continue
             clear = PEER_CLEARANCE_M + radius

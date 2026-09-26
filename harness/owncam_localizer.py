@@ -173,7 +173,10 @@ class OwnCamLocalizer:
             dt = min(STEP_S, t - self.t)
             u = self.cmd if self.t < self.cmd_expires - 1e-9 else np.zeros(3)
             target = gain @ u
-            alpha = 1. - math.exp(-dt/max(mp['tau_s'], 1e-6))
+            # Optional separate stop lag (loop v2 dev fit): wheels commanded to zero
+            # (hold / expired command) stop much faster than they spin up.
+            tau = mp.get('tau_stop_s', mp['tau_s']) if not np.any(u) else mp['tau_s']
+            alpha = 1. - math.exp(-dt/max(tau, 1e-6))
             self.vel = self.vel + alpha*(target - self.vel)
             if self.initialized:
                 std = rel*np.abs(self.vel) + ab
@@ -198,6 +201,10 @@ class OwnCamLocalizer:
     # ------------------------------------------------------------ measurement
     def _loglik(self, px, detections, pose):
         mp = self.params['measurement']
+        if self.load.loaded and self.params.get('measurement_loaded'):
+            # Holding cargo sags the arm below its commanded-PWM FK (offline dev
+            # calibration); only the robot's own commands decide 'loaded'.
+            mp = {**mp, **self.params['measurement_loaded']}
         total = np.zeros(len(px))
         used = 0
         floor = math.log(mp['outlier_prob'])
@@ -207,8 +214,17 @@ class OwnCamLocalizer:
                 continue
             t_obs, n_obs = observed_tag_in_camera(det)
             p_c, n_c = predicted_tag_in_camera(px, tag, pose)
-            az = np.arctan2(p_c[:, 0], p_c[:, 2]) - math.atan2(t_obs[0], t_obs[2])
-            el = np.arctan2(p_c[:, 1], p_c[:, 2]) - math.atan2(t_obs[1], t_obs[2])
+            corr = mp.get('camera_correction')
+            if corr:
+                # Small camera-frame extrinsic correction (loop v2, dev fit): the
+                # camera sits delta off and rotated by omega from its commanded FK.
+                om = np.asarray(corr['omega_rad'], float)
+                p_c = p_c - np.asarray(corr['delta_m'], float) + np.cross(om, p_c)
+                n_c = n_c + np.cross(om, n_c)
+            # azimuth_scale: horizontal bearing scale of the camera model (1 = v1)
+            az = np.arctan2(p_c[:, 0], p_c[:, 2]) - math.atan2(t_obs[0], t_obs[2])/mp.get('azimuth_scale', 1.)
+            # observed - predicted elevation minus its calibrated bias (0 in v1)
+            el = math.atan2(t_obs[1], t_obs[2]) - np.arctan2(p_c[:, 1], p_c[:, 2]) - mp.get('elevation_bias_rad', 0.)
             r_obs = float(np.linalg.norm(t_obs))
             # Detector range bias (small tags: sub-pixel corner offset), fitted
             # offline on dev as log(r_obs/r_true) = a + b*r_obs.
