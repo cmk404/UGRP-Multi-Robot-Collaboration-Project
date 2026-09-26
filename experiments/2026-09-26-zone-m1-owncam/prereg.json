@@ -1,0 +1,220 @@
+{
+  "schema": "ugrp.m1_owncam_prereg.v1",
+  "registered": "2026-09-26, in ONE commit with the controller/runner source and BEFORE any M1 data (dev or test) was collected (Codex review #7); the source is frozen separately before the test split (frozen_source.json)",
+  "question": "M1: can one robot, with NO pose stub at runtime, find the cyan box in the pickup area with its own wrist RGB, grasp it (wrist skill), carry it through the door on its own-camera estimate, place it in the ordered zone slot and confirm the placement by an own-camera look-back?",
+  "student": {
+    "controller": "harness/m1_owncam_delivery.py",
+    "skill": "v4",
+    "skill_module": "harness/wrist_zone_skill_v4.py (PR #181 branch, imported read-only)",
+    "calibration": "experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json",
+    "pose_source": "owncam_pf_v2:<calibration params sha8> (harness/owncam_pose_source.py)"
+  },
+  "order_sheet": "box colour (cyan), pickup area = the static pickup-grid rows (search viewpoints only), destination slot id + static slot centre. NO box position: the pickup point handed to the skill is the own-RGB search estimate (detect_own near detections mapped with the own pose estimate), recorded as pickup_source=own_rgb_search (Codex review #3)",
+  "episodes": [
+    {
+      "episode_id": "m1dev-s91",
+      "split": "dev",
+      "seed": 91,
+      "spawn_y": 0.55,
+      "slot_id": "A1",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1dev-s92",
+      "split": "dev",
+      "seed": 92,
+      "spawn_y": -0.85,
+      "slot_id": "C2",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "C": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1dev-s93",
+      "split": "dev",
+      "seed": 93,
+      "spawn_y": -2.25,
+      "slot_id": "B3",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "B": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s101",
+      "split": "test",
+      "seed": 101,
+      "spawn_y": 0.55,
+      "slot_id": "A2",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s102",
+      "split": "test",
+      "seed": 102,
+      "spawn_y": -0.85,
+      "slot_id": "B1",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "B": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s103",
+      "split": "test",
+      "seed": 103,
+      "spawn_y": -2.25,
+      "slot_id": "C1",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "C": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s104",
+      "split": "test",
+      "seed": 104,
+      "spawn_y": 0.55,
+      "slot_id": "A3",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "A": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s105",
+      "split": "test",
+      "seed": 105,
+      "spawn_y": -0.85,
+      "slot_id": "B2",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "B": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    },
+    {
+      "episode_id": "m1test-s106",
+      "split": "test",
+      "seed": 106,
+      "spawn_y": -2.25,
+      "slot_id": "C3",
+      "map": "zone_wide_door_tags_v2",
+      "goal": {
+        "C": {
+          "cyan": 1
+        }
+      },
+      "extra_boxes": {
+        "red": 2,
+        "green": 1
+      },
+      "contact_profile": "local_contact_fine"
+    }
+  ],
+  "primary_metric": "test m1_success k/6 (harness.m1_contract.judge): all pose sources owncam_pf*, pickup from own RGB, skill claims IN_SLOT by own look-back, GT box final centre within the slot (|dx|,|dy| <= 0.06 m, z < 0.05 m), no wall contact (robot or held box, every physics step), weld OFF (no active equality), no face-normal map fallback, look-back pose gate satisfied, within SIM 720 s",
+  "claim_rule": "M1 is reported as demonstrated on this cohort only if test m1_success >= 5/6 AND false_success == 0; otherwise report k/6 and the stage breakdown",
+  "secondary": [
+    "diagnostic_success (GT in slot AND own claim; never counts as M1)",
+    "false_success (own claim IN_SLOT but GT outside) - safety",
+    "stage reached: initialized, search target found (error to GT box, eval only), grasp attached, carry leg arrived at door exit, release confirmed, look-back verdict",
+    "SIM time, looks, commands, contacts (peer robot, other boxes)",
+    "pose error vs std at gates (eval only)"
+  ],
+  "pose_limits": {
+    "nav_unloaded": {
+      "max_std_xy_m": 0.08,
+      "max_std_yaw_rad": 0.1
+    },
+    "nav_loaded": {
+      "max_std_xy_m": 0.07,
+      "max_std_yaw_rad": 0.05236,
+      "note": "after the door exit; the carry leg to the door uses OwnCamDriverV2 policy"
+    },
+    "release": {
+      "max_std_xy_m": 0.05,
+      "max_std_yaw_rad": 0.035,
+      "max_since_look_s": 15.0
+    },
+    "look_back": {
+      "max_std_xy_m": 0.035,
+      "max_std_yaw_rad": 0.035,
+      "max_since_look_s": 3.0
+    },
+    "max_age_s": 0.3,
+    "on_violation": "stop and look (LOOK_P20 + WIDE_LOOK_PANS); after 3 gate looks in a row: POSE_UNCERTAIN (no release, no claim)"
+  },
+  "stop_rule": {
+    "episode": [
+      "controller outcome: NOT_INITIALIZED, SEARCH_NOT_FOUND, SEARCH_LEG_*, APPROACH_LEG_*, CARRY_LEG_*, CARRY_REANCHOR_UNCONFIRMED, POSE_UNCERTAIN, SKILL_<skill finish reason>",
+      "SIM 720 s"
+    ],
+    "retry": "dev (seeds 91-93) may be rerun while debugging; every attempt is kept in its own output folder and reported; test (seeds 101-106) runs ONCE on the frozen source",
+    "exclusion": "only an infrastructure failure (process killed / host error with no result.json, not a controller or skill exception) may be rerun once, kept and labelled; a controller/skill exception counts as a failed episode"
+  },
+  "contact_profile": "local_contact_fine for all episodes (the cargo_noslip_v1 choice is a pending user decision, PR #181); weld OFF",
+  "budget": "at most 2 concurrent sims, thread caps 1, load average logged per run",
+  "label_note": "results of the skill-isolation runner (gt_stub_eval_only) and of loop v1/v2 are not M1 and are not pooled"
+}

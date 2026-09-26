@@ -1,0 +1,280 @@
+{
+ "schema": "ugrp.owncam_loop_prereg.v1",
+ "fixed_at": "2026-09-25, before any closed-loop run",
+ "question": "Can one robot drive through door_1 of zone_wide_door_tags_v2 on its own-camera estimate only (no GT at run time), without a box and while carrying the cyan box in the shared CARRY_POSTURE?",
+ "episodes": [
+  {
+   "episode_id": "dev-nobox-s31",
+   "split": "dev",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 31,
+   "spawn_y": 0.55,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "dev-box-s31",
+   "split": "dev",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 31,
+   "spawn_y": 0.55,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "dev-nobox-s32",
+   "split": "dev",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 32,
+   "spawn_y": -0.85,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "dev-box-s32",
+   "split": "dev",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 32,
+   "spawn_y": -0.85,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "dev-nobox-s33",
+   "split": "dev",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 33,
+   "spawn_y": -2.25,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "dev-box-s33",
+   "split": "dev",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 33,
+   "spawn_y": -2.25,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-nobox-s41",
+   "split": "test",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 41,
+   "spawn_y": -0.85,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-box-s41",
+   "split": "test",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 41,
+   "spawn_y": -0.85,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-nobox-s42",
+   "split": "test",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 42,
+   "spawn_y": -2.25,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-box-s42",
+   "split": "test",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 42,
+   "spawn_y": -2.25,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-nobox-s43",
+   "split": "test",
+   "condition": "nobox",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 43,
+   "spawn_y": 0.55,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  },
+  {
+   "episode_id": "test-box-s43",
+   "split": "test",
+   "condition": "box",
+   "map": "zone_wide_door_tags_v2",
+   "seed": 43,
+   "spawn_y": 0.55,
+   "goal": {
+    "A": {
+     "cyan": 1
+    }
+   },
+   "extra_boxes": {
+    "red": 2,
+    "green": 1
+   },
+   "contact_profile": "local_contact_fine",
+   "box_kind": "cyan"
+  }
+ ],
+ "student_inputs": "own issued commands, own wrist RGB (JPEG q90 of robot_cam 640x480), static tagged map v2, frozen v1 calibration (experiments/2026-09-25-zone-owncam-loc/calibration_frozen.json), fixed pickup-grid cells as static keep-outs; never live poses",
+ "teacher_part": "box condition only: the GT teacher drives to the cyan box, grasps and lifts it (weld OFF); the student takes over at the teacher carry phase and does everything after (posture change, looks, planning, driving). Teacher part is reported separately and never counted as student success",
+ "goal": "door-exit waypoint W = (door_x + 0.45, door_y) = (2.65, 0.05); the student ends by declaring arrival",
+ "gates": {
+  "R1_exit_waypoint": "at the declared arrival, GT base distance to W <= 0.10 m (no declaration = fail)",
+  "R2_no_wall_contact": "no contact between any geom of the robot (or the held box) and a wall geom during the student part",
+  "R3_estimate_near_door": "p90 of |estimate - GT| position over observed frames with GT in the door region (|x-2.2|<=0.6, |y-0.05|<=0.5) < 0.06 m (yaw p90 reported)",
+  "R4_box_held": "box condition: GT box z > 0.045 m at every sample of the student part and at arrival",
+  "episode_pass": "R1 and R2 and R3 (and R4 for box)"
+ },
+ "reporting": "dev and test separately, per condition, k/3; no pooling across splits or conditions; peer-robot and box contacts, looks, SIM time, commands, tag visibility reported",
+ "stop_rule": {
+  "episode": [
+   "student declares arrival",
+   "SIM 240 s after the student starts",
+   "estimator not initialized after 3 consecutive stop-and-look sweeps (not_initialized)",
+   "estimate std_xy > 0.15 m after 3 consecutive sweeps without a fix (lost)",
+   "3 consecutive planner failures (no_path)",
+   "box condition: teacher grasp not reached within 400 s SIM (teacher failure, not a student episode)"
+  ],
+  "cohort": "dev may be run repeatedly while debugging; every dev attempt is kept and the last dev run on the frozen source is reported as dev. Test runs once on the frozen source after #176 confirms the shared posture (or explicitly after a documented no-reply); no reruns except an infrastructure crash (kept and labelled)",
+  "wall_contact": "does not stop the episode (recorded)"
+ },
+ "postures": {
+  "CARRY_POSTURE": {
+   "1": 1500,
+   "3": 777,
+   "4": 2053,
+   "5": 1646,
+   "6": 1500
+  },
+  "LOOK_P20": {
+   "3": 1072,
+   "4": 2400,
+   "5": 1482
+  },
+  "LOOK_PANS": [
+   1500,
+   1230,
+   1770,
+   1500
+  ],
+  "nobox_drive": "SEARCH_POSE {1:2000,3:740,4:2320,5:1320,6:1500}"
+ },
+ "label_note": "offline re-analysis of the v1 recordings (PR #177) stays post hoc and is not part of this cohort"
+}

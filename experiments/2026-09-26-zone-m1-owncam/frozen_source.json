@@ -1,0 +1,70 @@
+{
+  "schema": "ugrp.m1_owncam_frozen.v1",
+  "source_sha": "ca2fdb8b863dae55e382ef321fc252d662bd03d5",
+  "frozen_note": "source frozen after the A5 dev check, before any test episode ran",
+  "student": {
+    "skill": "v9",
+    "calibration": "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json",
+    "contact_profile": "cargo_noslip_v1",
+    "controller_schema": "ugrp.m1_owncam_delivery.v3",
+    "runner_schema": "ugrp.m1_owncam_run.v3",
+    "amendments_applied": [
+      "A1-dev-a1-s91",
+      "A2-dev-a2-s91-s92",
+      "A3-dev-a3-s93-runner-robot-id",
+      "A4-dev-a4-s94-carry-to-preplace",
+      "A5-codex-prereview-and-skill-v6",
+      "A6-skill-v9",
+      "A6b-runner-keepout-import"
+    ],
+    "amendments_sha256": "585a607d695e71430721f1f7e9f466317d3d308f99d9d0a2bac2f10b3b6f1767"
+  },
+  "test_episodes": [
+    "m1test-s101",
+    "m1test-s102",
+    "m1test-s103",
+    "m1test-s104",
+    "m1test-s105",
+    "m1test-s106"
+  ],
+  "records_only_paths": [
+    "experiments/2026-09-26-zone-m1-owncam/frozen_source.json",
+    "experiments/2026-09-26-zone-m1-owncam/results.json",
+    "experiments/2026-09-26-zone-m1-owncam/raw_index.json",
+    "experiments/2026-09-26-zone-m1-owncam/README.md"
+  ],
+  "sha256": {
+    "harness/m1_owncam_delivery.py": "767cda1a6b523e19c0f7ef0f32e6b453799978e623b8e37bfa493b23f9993e09",
+    "harness/m1_owncam_contract.py": "0e261ab85311f7127b6f09d5c16a37837873b70adb5140091b1f85d374846f5d",
+    "harness/owncam_pose_source.py": "9e0b458e88969327e51fba73d43fa7e868d57547e5976e279098cde793f9f72b",
+    "harness/owncam_localizer.py": "0304d7c491dfe6ae68cea6550f7a13e3c99e8e1d3f8e8b6c4b7b1d06893b1d63",
+    "harness/owncam_drive.py": "a8aede7813956e2de12c25b139b02f48e11dab5be8cbf82a2d25344547d51e82",
+    "harness/owncam_drive_v2.py": "217423249775b024504b56b59203a1eab50b667bf273387ba23c0974c0ad4462",
+    "harness/wall_tags.py": "eb0327012047cc413b7bb930fb7884cdfe4c18239058d954b1cce56593e0336e",
+    "harness/map_goto.py": "97970eb906d7d780de150cfbdfea074c8d3c758cc049bd9ff078aef34e30eda0",
+    "harness/zone_color_boxes.py": "9b38265c27f86a735333b25326a10177ed073cc6c3e0f945ee5c318398813966",
+    "harness/wrist_zone_skill.py": "964e337eccdaef0bad17fec204b54234875bbb6a9e6e3300847e4c967d5312cd",
+    "harness/wrist_zone_skill_v2.py": "70f9f9a2b0d81e0477a87cc9fa1a07f90eae0c2365e76244b5e28636be90ae6a",
+    "harness/wrist_zone_skill_v3.py": "81114b8053b0d7f687c205f55d036e8a33fb5d66f50c846450b934654d8a8689",
+    "harness/wrist_zone_skill_v4.py": "2864710c767fdf43b77f7662ecda8ad042830a072ab8437d315f3d901b419d22",
+    "harness/wrist_zone_skill_v5.py": "9b90dc16468ebce3369a782c3e51306b49ef5eae657e6eb8a6e0763d62b95c64",
+    "harness/m1_contract.py": "9fe6d855e0b2d74d64ed2e7f144a360e32447fe6e81ae4b8c50cc25efa189075",
+    "harness/wrist_zone_skill_v6.py": "47ec5cd0c36d59c9226d283ce062e6e6b133bd68a06c0cde4b30c7d830ca0234",
+    "harness/wrist_zone_skill_v7.py": "c021fe2b017d95eb37596262506c56138b1dd6f2d219f0e9ae639f4c45630ad9",
+    "harness/wrist_zone_skill_v8.py": "5c2b27e06eeeaf2b51eff585182739afde0597025d7c5f868b7ea7f128a4b12e",
+    "harness/wrist_zone_skill_v9.py": "b51ee37461430fc3d5cb893f2aaa5bf782fab37efdb4a9cafcff1bf5eacd19ea",
+    "harness/owncam_view.py": "d8dbda447e9ec2a4ccd96e5a19d751bf80676b18ff4e636002724528cdd97260",
+    "harness/markerless_box.py": "f1bc74126d91b17dbe7527c5444e5dff7c3a2ce469a1a90834f85dbae57bd46c",
+    "harness/visual_box_skill.py": "65fcaf24e4f3409941438304d3cdc6451514d65bac93a16f0b72d904f13850ab",
+    "harness/visual_attachment.py": "3f7378be87807f2b044ad8ec62956518e2d6b39c7172b10e427d38894aab280e",
+    "sim/zone_cargo_contact.py": "2ce68eafc285ff86261559f612a71c5178d2cf87ee7777cb71c0b9a9a3c28541",
+    "sim/zone_landmarks.py": "e171482355dcbcd902f68527d380df28a506188b2058c99a07575f0916aa55f6",
+    "sim/zone_scene.py": "2d4efd94524c9050b5e22c2aeee35c65f97ae94630796b3d817fb8de43f60439",
+    "sim/camera_robot_port.py": "be94c99a2a597a81e55ab0cbaba44f9340d3c2bbb7a3d14a2078f1d903bc8910",
+    "scripts/run_m1_owncam.py": "b98d3986a68674bdd236b879d4adb83438d9e74a77528532dbb0735f5aca3f23",
+    "experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json": "126cadaa9265ed2ae2b034f675e67c227193a2e1678f6b0c82dd53b186e6fc72",
+    "experiments/2026-09-26-zone-m1-owncam/prereg.json": "d1994c785c2c42b717b7e1e5fee007db7a4d431a7f3e1a8ba4fa30a33a8a44c8",
+    "experiments/2026-09-26-zone-m1-owncam/prereg_amendments.json": "585a607d695e71430721f1f7e9f466317d3d308f99d9d0a2bac2f10b3b6f1767",
+    "experiments/2026-09-26-zone-owncam-loop-v2/calibration_loop_v2.json": "ca54d946dd76fc333d1bf4e443c416cc8d75a7d84429daab8bd8fff5ae484558"
+  }
+}

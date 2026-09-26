@@ -1,0 +1,540 @@
+{
+ "schema": "ugrp.zone_own_executor_smoke_results.v1",
+ "smoke_dir": "/Users/changmin/projects/ugrp/outputs/zone-own-executor-20260926/smoke-4371f36",
+ "source_sha": [
+  "4371f3686f0b52a6d513cdf77de5e8c5dde169b9"
+ ],
+ "dirty": [
+  false
+ ],
+ "gates": {
+  "E1": {
+   "pass": true,
+   "detail": {
+    "smoke-s700": null,
+    "smoke-s701": null
+   }
+  },
+  "E2": {
+   "pass": true,
+   "detail": {
+    "smoke-s700": {
+     "starts_ok": true,
+     "ends_ok": true,
+     "open_jobs_at_end": [],
+     "every_robot_got_deliver": true
+    },
+    "smoke-s701": {
+     "starts_ok": true,
+     "ends_ok": true,
+     "open_jobs_at_end": [],
+     "every_robot_got_deliver": true
+    }
+   }
+  },
+  "E3": {
+   "pass": true,
+   "detail": {
+    "smoke-s700": {
+     "r1": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ],
+     "r2": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ],
+     "r3": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ]
+    },
+    "smoke-s701": {
+     "r1": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ],
+     "r2": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ],
+     "r3": [
+      0,
+      [
+       "robot_cam"
+      ]
+     ]
+    }
+   }
+  },
+  "E4": {
+   "pass": false,
+   "clause_a_own_camera_sources": true,
+   "clause_b_counts_as_m1_literal": false,
+   "detail": {
+    "smoke-s700": {
+     "r1": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": true,
+      "pickup_from_own_rgb": true
+     },
+     "r2": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": true,
+      "pickup_from_own_rgb": true
+     },
+     "r3": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": false,
+      "pickup_from_own_rgb": false
+     }
+    },
+    "smoke-s701": {
+     "r1": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": false,
+      "pickup_from_own_rgb": false
+     },
+     "r2": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": true,
+      "pickup_from_own_rgb": true
+     },
+     "r3": {
+      "sources": [
+       "owncam_pf_v2:757f7f09"
+      ],
+      "counts_as_m1": false,
+      "pickup_from_own_rgb": false
+     }
+    }
+   }
+  },
+  "E5": {
+   "pass": true,
+   "detail": {
+    "smoke-s700": [
+     0,
+     10
+    ],
+    "smoke-s701": [
+     0,
+     10
+    ]
+   }
+  },
+  "E6": {
+   "pass": true,
+   "detail": {
+    "smoke-s700": 0,
+    "smoke-s701": 0
+   }
+  }
+ },
+ "smoke_pass": false,
+ "m1_style_success": "3/6",
+ "own_camera_confirmed": "3/6",
+ "robots": [
+  {
+   "episode": "smoke-s700",
+   "robot_id": "r1",
+   "order": "o2",
+   "pickup_slot": "P2-2",
+   "zone_slot": "C2",
+   "deliver_outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "confirmation": "own_camera_confirmed",
+   "deliver_sim_s": [
+    121.4,
+    457.384
+   ],
+   "deliver_duration_s": 335.98,
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "diagnostic_success": true,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "job_done",
+    "job_started",
+    "blockage_seen",
+    "job_done"
+   ],
+   "gt_assigned_box_in_slot": true,
+   "contact_steps": {
+    "box": 746401
+   },
+   "retention": {
+    "carry_steps": 688068,
+    "both_finger_steps": 688068,
+    "low_box_steps": 0,
+    "min_box_z_m": 0.08487454486503569
+   },
+   "pose_error_eval_only": {
+    "n": 3357,
+    "p50": 0.0158,
+    "p90": 0.05669
+   },
+   "frames": 3357,
+   "commands": 6010,
+   "exception": null
+  },
+  {
+   "episode": "smoke-s700",
+   "robot_id": "r2",
+   "order": "o3",
+   "pickup_slot": "P2-1",
+   "zone_slot": "B2",
+   "deliver_outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "confirmation": "own_camera_confirmed",
+   "deliver_sim_s": [
+    241.4,
+    653.121
+   ],
+   "deliver_duration_s": 411.72,
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "diagnostic_success": true,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "job_done",
+    "job_started",
+    "blockage_seen",
+    "blockage_seen",
+    "job_done"
+   ],
+   "gt_assigned_box_in_slot": true,
+   "contact_steps": {
+    "box": 1102234
+   },
+   "retention": {
+    "carry_steps": 1044160,
+    "both_finger_steps": 1044160,
+    "low_box_steps": 0,
+    "min_box_z_m": 0.08462848021874667
+   },
+   "pose_error_eval_only": {
+    "n": 3365,
+    "p50": 0.03974,
+    "p90": 0.10725
+   },
+   "frames": 3365,
+   "commands": 7002,
+   "exception": null
+  },
+  {
+   "episode": "smoke-s700",
+   "robot_id": "r3",
+   "order": "o1",
+   "pickup_slot": "P1-3",
+   "zone_slot": "A2",
+   "deliver_outcome": "SEARCH_NOT_FOUND",
+   "confirmation": "failed",
+   "deliver_sim_s": [
+    1.3,
+    70.5
+   ],
+   "deliver_duration_s": 69.2,
+   "m1_success": false,
+   "m1_failed_checks": [
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "diagnostic_success": false,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "blockage_seen",
+    "job_failed"
+   ],
+   "gt_assigned_box_in_slot": false,
+   "contact_steps": {},
+   "retention": {
+    "carry_steps": 0,
+    "both_finger_steps": 0,
+    "low_box_steps": 0,
+    "min_box_z_m": null
+   },
+   "pose_error_eval_only": {
+    "n": 3262,
+    "p50": 0.03233,
+    "p90": 0.04924
+   },
+   "frames": 3262,
+   "commands": 952,
+   "exception": null
+  },
+  {
+   "episode": "smoke-s701",
+   "robot_id": "r1",
+   "order": "o3",
+   "pickup_slot": "P2-1",
+   "zone_slot": "B2",
+   "deliver_outcome": "LOCAL_TIMEOUT",
+   "confirmation": "failed",
+   "deliver_sim_s": [
+    241.4,
+    961.4
+   ],
+   "deliver_duration_s": 720.0,
+   "m1_success": false,
+   "m1_failed_checks": [
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "within_sim_limit",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "diagnostic_success": false,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "pose_uncertain",
+    "job_done",
+    "job_started",
+    "blockage_seen",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "pose_uncertain",
+    "job_failed"
+   ],
+   "gt_assigned_box_in_slot": false,
+   "contact_steps": {
+    "box": 1021687
+   },
+   "retention": {
+    "carry_steps": 0,
+    "both_finger_steps": 0,
+    "low_box_steps": 0,
+    "min_box_z_m": null
+   },
+   "pose_error_eval_only": {
+    "n": 4803,
+    "p50": 0.07604,
+    "p90": 0.12132
+   },
+   "frames": 4803,
+   "commands": 10582,
+   "exception": null
+  },
+  {
+   "episode": "smoke-s701",
+   "robot_id": "r2",
+   "order": "o1",
+   "pickup_slot": "P1-3",
+   "zone_slot": "A2",
+   "deliver_outcome": "SKILL_OWN_RGB_PLACEMENT_IN_SLOT",
+   "confirmation": "own_camera_confirmed",
+   "deliver_sim_s": [
+    1.3,
+    299.197
+   ],
+   "deliver_duration_s": 297.9,
+   "m1_success": true,
+   "m1_failed_checks": [],
+   "diagnostic_success": true,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "blockage_seen",
+    "blockage_seen",
+    "job_done",
+    "pose_uncertain"
+   ],
+   "gt_assigned_box_in_slot": true,
+   "contact_steps": {
+    "box": 790287
+   },
+   "retention": {
+    "carry_steps": 732494,
+    "both_finger_steps": 732494,
+    "low_box_steps": 0,
+    "min_box_z_m": 0.08331786510086568
+   },
+   "pose_error_eval_only": {
+    "n": 4900,
+    "p50": 0.00532,
+    "p90": 0.028
+   },
+   "frames": 4900,
+   "commands": 5511,
+   "exception": null
+  },
+  {
+   "episode": "smoke-s701",
+   "robot_id": "r3",
+   "order": "o2",
+   "pickup_slot": "P1-2",
+   "zone_slot": "C2",
+   "deliver_outcome": "SEARCH_NOT_FOUND",
+   "confirmation": "failed",
+   "deliver_sim_s": [
+    121.4,
+    153.7
+   ],
+   "deliver_duration_s": 32.3,
+   "m1_success": false,
+   "m1_failed_checks": [
+    "pickup_from_own_rgb",
+    "skill_claims_in_slot",
+    "gt_box_in_slot",
+    "look_back_pose_gate_ok",
+    "grasp_physical_both_fingers",
+    "box_retained_in_carry"
+   ],
+   "diagnostic_success": false,
+   "false_success": false,
+   "events": [
+    "job_started",
+    "job_done",
+    "job_started",
+    "blockage_seen",
+    "job_failed"
+   ],
+   "gt_assigned_box_in_slot": false,
+   "contact_steps": {},
+   "retention": {
+    "carry_steps": 0,
+    "both_finger_steps": 0,
+    "low_box_steps": 0,
+    "min_box_z_m": null
+   },
+   "pose_error_eval_only": {
+    "n": 4803,
+    "p50": 0.03073,
+    "p90": 0.03519
+   },
+   "frames": 4803,
+   "commands": 485,
+   "exception": null
+  }
+ ],
+ "runs": {
+  "smoke-s700": {
+   "run": {
+    "outcome": "STUDY_LAYER_DONE",
+    "sim_s": 653.621
+   },
+   "wall_s": 5357.0,
+   "load_average": {
+    "start": [
+     46.61,
+     70.05,
+     52.6
+    ],
+    "end": [
+     110.49,
+     66.02,
+     58.51
+    ]
+   }
+  },
+  "smoke-s701": {
+   "run": {
+    "outcome": "STUDY_LAYER_DONE",
+    "sim_s": 961.9
+   },
+   "wall_s": 6733.1,
+   "load_average": {
+    "start": [
+     46.61,
+     70.05,
+     52.6
+    ],
+    "end": [
+     15.64,
+     33.23,
+     33.53
+    ]
+   }
+  }
+ }
+}

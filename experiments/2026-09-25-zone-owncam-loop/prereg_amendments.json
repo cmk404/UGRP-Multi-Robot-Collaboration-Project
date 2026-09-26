@@ -1,0 +1,45 @@
+{
+  "schema": "ugrp.prereg_amendments.v1",
+  "prereg": "experiments/2026-09-25-zone-owncam-loop/prereg.json",
+  "prereg_sha256": "38873a0da0d8933790759647e3839b6f3670cdb7b645aa62573a59731b2d7e30",
+  "rule": "dev-only changes made before any test episode ran; seeds, spawns, map, gates R1-R4, stop rules and the cohort rule are unchanged. prereg.json is kept byte-identical.",
+  "amendments": [
+    {
+      "date": "2026-09-26",
+      "commit": "a5559e7",
+      "field": "student_inputs (calibration)",
+      "was": "frozen v1 calibration experiments/2026-09-25-zone-owncam-loc/calibration_frozen.json",
+      "now": "experiments/2026-09-25-zone-owncam-loop/calibration_loop.json = frozen v1 params + measurement.elevation_bias_rad -1.07 deg + measurement_loaded (elevation bias -2.5 deg, elevation std/floor 1.5 deg), selected by the robot's own gripper/arm commands (LoadState)",
+      "why": "dev-a1 dev-box-s31 failed R3 (p90 7.1 cm); offline dev residuals at GT: loaded elevation -2.4 deg (LOOK_P20) / -2.8 deg (CARRY_POSTURE) vs -1.07 deg unloaded (arm sag under the box, below commanded-PWM FK); azimuth and range unbiased",
+      "evidence": "GT used offline on dev recordings only; v1 estimates unchanged (dev-ls-s11 estimate hash identical)"
+    },
+    {
+      "date": "2026-09-26",
+      "commit": "d3466db",
+      "field": "postures.LOOK_PANS (driver sweep)",
+      "was": "LOOK_PANS [1500, 1230, 1770, 1500]",
+      "now": "WIDE_LOOK_PANS [1500, 1230, 970, 1770, 2030, 1500] (+-48 deg); LOOK_PANS stays the shared #176 constant, CARRY_POSTURE and LOOK_P20 unchanged",
+      "why": "dev-a2 dev-box-s31 still failed R3 (p90 7.5 cm): with the box held, near/low tags are hidden behind the box and from inside the doorway the +-24 deg sweep only sees the east wall at ~3.4 m (narrow bearing cone, y and yaw trade off, 4-8 cm y drift during looks). Wider pans reach north-wall tags at ~1.4-2 m",
+      "evidence": "dev-a2 frames/eval_only analysis offline; offline replays showed range-floor / max-range changes do not fix it and dropping door-region updates makes it worse (x +22 cm)"
+    },
+    {
+      "date": "2026-09-26",
+      "commit": "9361a8d",
+      "field": "student_inputs (calibration: motion)",
+      "was": "v1 motion / motion_loaded gains (fitted on #177 recordings with the teacher's command profile)",
+      "now": "row-scaled forward/lateral gains; loaded tau 0.44 -> 1.0 s (calibration_loop.json motion_refit_2026_09_26)",
+      "why": "on dev loop drive segments the loaded model over-predicted forward travel ~14% (2-3 cm per 2.4 s drive), which set the error growth between looks",
+      "evidence": "fit_motion_rowscale.py on dev-a1..a3 segments (GT offline): loaded rms fwd/lat 2.2/0.8 -> 0.8/0.3 cm per segment, leave-one-run-out p90 1.1 cm"
+    },
+    {
+      "date": "2026-09-26",
+      "commit": "9361a8d",
+      "field": "stop-and-look trigger (box held)",
+      "was": "look when no tag has been seen for 3 s (all conditions)",
+      "now": "box held: look after 0.35 m of estimated travel since the last look (LOADED_LOOK_EVERY_M); unloaded unchanged; std and door-checkpoint triggers unchanged",
+      "why": "CARRY_POSTURE sees no tags by design, so the 3 s rule fired after every ~3 s of driving; dev-a3 dev-box-s33 (spawn y -2.25) spent ~70% of its time looking and hit the 240 s limit with 21 looks",
+      "evidence": "dev-a3/dev-box-s33 student_log (look reasons) and result.json"
+    }
+  ],
+  "posture_confirmation": "PR #176 comment 2026-09-25T16:25:46Z confirms CARRY_POSTURE {1:1500,3:777,4:2053,5:1646,6:1500} and LOOK_P20 {1:1500,3:1072,4:2400,5:1482,6:pan}; #176 merged (7ee43a9)"
+}

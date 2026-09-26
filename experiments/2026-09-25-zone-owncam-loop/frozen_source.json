@@ -1,0 +1,20 @@
+{
+  "schema": "ugrp.frozen_source.v1",
+  "frozen_at": "2026-09-26",
+  "code_commit": "9361a8d71c594edc2db8a2d24c062287207ed37f",
+  "rule": "test split (test-*-s41/42/43) runs once on these bytes; later commits touch only experiments/ records",
+  "dev_reported": "outputs/owncam-loop-20260925/dev-a4 (last dev run on this source, 6/6 pass)",
+  "files_sha256": {
+    "harness/owncam_drive.py": "5c7c725c9345a2ab0d98ff171a8cea1db9c909b8f33e1f168f4fdbbec35c86dd",
+    "harness/owncam_localizer.py": "f19749eab63eef6fa32633591d4e7206258119c03bdd43c6503b03d3fa1cc5f0",
+    "harness/wall_tags.py": "eb0327012047cc413b7bb930fb7884cdfe4c18239058d954b1cce56593e0336e",
+    "harness/map_goto.py": "97970eb906d7d780de150cfbdfea074c8d3c758cc049bd9ff078aef34e30eda0",
+    "harness/visual_arm.py": "f60e4829fb734da2cdf52619a5e38c0de87da6137bac6fd42516560361de527a",
+    "sim/zone_landmarks.py": "e171482355dcbcd902f68527d380df28a506188b2058c99a07575f0916aa55f6",
+    "scripts/run_owncam_closed_loop.py": "8b27e47b8928aac8e1cf65aeb72084595fd19a83a9e6e5df99612f0ab3f51eea",
+    "experiments/2026-09-25-zone-owncam-loop/calibration_loop.json": "479bb315b79dabcbdbc2302ec40140cae53ca9c204462226f0675b57dc2990bb",
+    "experiments/2026-09-25-zone-owncam-loop/prereg.json": "38873a0da0d8933790759647e3839b6f3670cdb7b645aa62573a59731b2d7e30",
+    "maps/zones/zone_wide_door_tags_v2.json": "f9b0ef0d9f35457b34711c0ec5d11688af3130238560195c982660137ad3e73b",
+    "sim/masterpi_camera_profile.py": "ec224a88f07b7f1e30b9f306951818ec3907c27554daab1361db6cc8b00f3a1a"
+  }
+}
