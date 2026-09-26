@@ -1,0 +1,1508 @@
+{
+ "schema": "ugrp.zone_own_perception_v3_1_eval.v1.adversarial",
+ "frames_dir": "outputs/2026-09-26-zone-own-perception-v3-1/test-frames",
+ "split": "test",
+ "split_file_sha256": "58f5fee3364990e8165601914cc48560f893f8346ec58418c9848173e4bc9dec",
+ "render_source_sha": "a89f1858d244059b8a7cb64fbdcf808e780219f5",
+ "score_source_sha": "a89f1858d244059b8a7cb64fbdcf808e780219f5",
+ "score_source_dirty": false,
+ "transforms": {
+  "info_free": [
+   "black",
+   "black_10",
+   "near_black_uniform",
+   "near_black_noise",
+   "dimmed_scene",
+   "uniform_grey",
+   "blur_s4",
+   "blur_s8",
+   "blur_s16",
+   "lens_cover_dark",
+   "lens_cover_lit"
+  ],
+  "occluded": [
+   "partial_cover_dark"
+  ],
+  "occluded_lit_report_only": [
+   "partial_cover_lit"
+  ]
+ },
+ "load_average_1min": {
+  "start": 28.6552734375,
+  "end": 24.2568359375
+ },
+ "wall_s": 384.0,
+ "results": {
+  "matrix": {
+   "v3_1:black": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:black_10": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:near_black_uniform": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:near_black_noise": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:dimmed_scene": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:uniform_grey": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:blur_s4": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:blur_s8": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:blur_s16": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:lens_cover_dark": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3_1:lens_cover_lit": {
+    "answers": 5040,
+    "not_unknown": 0,
+    "confident_not_unknown": 0,
+    "examples": []
+   },
+   "v3:black": {
+    "answers": 168,
+    "not_unknown": 12,
+    "confident_not_unknown": 12,
+    "examples": [
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:black_10": {
+    "answers": 168,
+    "not_unknown": 12,
+    "confident_not_unknown": 12,
+    "examples": [
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:near_black_uniform": {
+    "answers": 168,
+    "not_unknown": 13,
+    "confident_not_unknown": 13,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:near_black_noise": {
+    "answers": 168,
+    "not_unknown": 19,
+    "confident_not_unknown": 19,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "red",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "tile",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:dimmed_scene": {
+    "answers": 168,
+    "not_unknown": 12,
+    "confident_not_unknown": 12,
+    "examples": [
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:uniform_grey": {
+    "answers": 168,
+    "not_unknown": 44,
+    "confident_not_unknown": 44,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "red",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "tile",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "no",
+      "NOTHING_AT_GRIP_BANDS_ARE_LIT_FLOOR"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "NOTHING_AT_GRIP_BANDS_ARE_LIT_FLOOR"
+     ]
+    ]
+   },
+   "v3:blur_s4": {
+    "answers": 168,
+    "not_unknown": 21,
+    "confident_not_unknown": 21,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "yes",
+      "EXPECTED_KIND_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_handle",
+      "own:carry",
+      "heavy_crate",
+      "no",
+      "HANDLES_FOUND_ALL_OUTSIDE_REACH"
+     ]
+    ]
+   },
+   "v3:blur_s8": {
+    "answers": 168,
+    "not_unknown": 21,
+    "confident_not_unknown": 21,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "yes",
+      "EXPECTED_KIND_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_handle",
+      "own:carry",
+      "heavy_crate",
+      "no",
+      "HANDLES_FOUND_ALL_OUTSIDE_REACH"
+     ]
+    ]
+   },
+   "v3:blur_s16": {
+    "answers": 168,
+    "not_unknown": 17,
+    "confident_not_unknown": 17,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "OTHER_KIND_IN_ITS_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "yes",
+      "EXPECTED_KIND_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "tri_frame",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_handle",
+      "own:carry",
+      "heavy_crate",
+      "no",
+      "HANDLES_FOUND_ALL_OUTSIDE_REACH"
+     ]
+    ]
+   },
+   "v3:lens_cover_dark": {
+    "answers": 168,
+    "not_unknown": 19,
+    "confident_not_unknown": 19,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "red",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "tile",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "tile",
+      "yes",
+      "EXPECTED_KIND_IN_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "yes",
+      "EXPECTED_KIND_SHAPE_AT_GRIP"
+     ]
+    ]
+   },
+   "v3:lens_cover_lit": {
+    "answers": 168,
+    "not_unknown": 32,
+    "confident_not_unknown": 32,
+    "examples": [
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "cyan",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "green",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "red",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "tile",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:carry",
+      "yellow",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "held_item_at_grip",
+      "own:held_check",
+      "can",
+      "no",
+      "EXPECTED_KIND_ABSENT_FROM_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "heavy_crate",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ],
+     [
+      "team_cargo_at_grip",
+      "own:carry",
+      "long_beam",
+      "no",
+      "OTHER_KIND_COLOUR_IN_AT_GRIP_BAND"
+     ]
+    ]
+   }
+  },
+  "views": {
+   "v3_1:black": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:black_10": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:near_black_uniform": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:near_black_noise": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:dimmed_scene": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:uniform_grey": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:blur_s4": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:blur_s8": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:blur_s16": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:lens_cover_dark": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:lens_cover_lit": {
+    "views": 100,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 100,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:partial_cover_dark": {
+    "views": 100,
+    "confirmed": 21,
+    "confirmed_wrong": 0,
+    "unknown": 79,
+    "confirmed_cases": [
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_wrong_kind",
+      "team_cargo_identity",
+      "no"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "yes"
+     ],
+     [
+      "wrong_end_long_beam",
+      "team_cargo_identity",
+      "yes"
+     ]
+    ],
+    "confirmed_wrong_cases": []
+   },
+   "v3_1:partial_cover_lit": {
+    "views": 100,
+    "confirmed": 37,
+    "confirmed_wrong": 7,
+    "unknown": 63,
+    "confirmed_cases": [
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "no"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "yes"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "no",
+      "yes"
+     ],
+     [
+      "held_box_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_tile_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:black": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:black_10": {
+    "views": 100,
+    "confirmed": 24,
+    "confirmed_wrong": 16,
+    "unknown": 76,
+    "confirmed_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "yes",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "yes",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:near_black_uniform": {
+    "views": 100,
+    "confirmed": 28,
+    "confirmed_wrong": 17,
+    "unknown": 72,
+    "confirmed_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_can_absent",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_nothing_carry",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_tile_expect_box_carry",
+      "held_item_at_grip",
+      "no"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "yes",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "yes",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:near_black_noise": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:dimmed_scene": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:uniform_grey": {
+    "views": 100,
+    "confirmed": 52,
+    "confirmed_wrong": 24,
+    "unknown": 48,
+    "confirmed_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "held_box_carry",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_can_absent",
+      "held_item_at_grip",
+      "no"
+     ],
+     [
+      "held_can_wrong_kind",
+      "held_item_at_grip",
+      "no"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_box_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_tile_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:blur_s4": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:blur_s8": {
+    "views": 100,
+    "confirmed": 73,
+    "confirmed_wrong": 2,
+    "unknown": 27,
+    "confirmed_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_identity",
+      "yes"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:blur_s16": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:lens_cover_dark": {
+    "views": 0,
+    "confirmed": 0,
+    "confirmed_wrong": 0,
+    "unknown": 0,
+    "confirmed_cases": [],
+    "confirmed_wrong_cases": []
+   },
+   "v3:lens_cover_lit": {
+    "views": 100,
+    "confirmed": 64,
+    "confirmed_wrong": 30,
+    "unknown": 36,
+    "confirmed_cases": [
+     [
+      "carry_beam_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "no"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_identity",
+      "no"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_wrong_kind",
+      "team_cargo_identity",
+      "no"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "no",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_identity",
+      "no",
+      "yes"
+     ],
+     [
+      "held_box_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_tile_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "wrong_end_long_beam",
+      "team_cargo_identity",
+      "no",
+      "yes"
+     ]
+    ]
+   },
+   "v3:partial_cover_dark": {
+    "views": 100,
+    "confirmed": 35,
+    "confirmed_wrong": 0,
+    "unknown": 65,
+    "confirmed_cases": [
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_heavy_crate",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_wrong_kind",
+      "team_cargo_identity",
+      "no"
+     ],
+     [
+      "held_can",
+      "held_item_at_grip",
+      "yes"
+     ],
+     [
+      "held_can_absent",
+      "held_item_at_grip",
+      "no"
+     ]
+    ],
+    "confirmed_wrong_cases": []
+   },
+   "v3:partial_cover_lit": {
+    "views": 100,
+    "confirmed": 47,
+    "confirmed_wrong": 7,
+    "unknown": 53,
+    "confirmed_cases": [
+     [
+      "carry_crate_expect_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_nothing_expect_crate",
+      "team_cargo_at_grip",
+      "no"
+     ],
+     [
+      "carry_tri_frame",
+      "team_cargo_at_grip",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_heavy_crate",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_handle",
+      "yes"
+     ],
+     [
+      "grasp_long_beam",
+      "team_cargo_identity",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "no"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "yes"
+     ]
+    ],
+    "confirmed_wrong_cases": [
+     [
+      "carry_long_beam",
+      "team_cargo_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "grasp_tri_frame",
+      "team_cargo_handle",
+      "no",
+      "yes"
+     ],
+     [
+      "held_box_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ],
+     [
+      "held_tile_carry",
+      "held_item_at_grip",
+      "no",
+      "yes"
+     ]
+    ]
+   }
+  }
+ }
+}
