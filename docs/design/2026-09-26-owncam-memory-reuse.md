@@ -4,6 +4,49 @@
 - 사용자 요청(2026-09-26): "뭔가 주변을 봤으면 그걸 기억해두면 되지, 꼭 계속계속 둘러봐야 하나?", "확인하고 기억 같은 것들 바로 직접 만들지 말고, 이미 만들어진 것들을 활용해주라. 그리고 PR할 때 뭐 참고했는지 기록하고!"
 - 이 문서는 **코드 작성 전에** 쓴 재사용 조사다. 구현·실험 결과는 `experiments/2026-09-26-zone-owncam-memory/`에 둔다.
 - 같은 날 `kiro/markerless-research`(마커 없는 위치 추정 조사)는 아직 문헌 문서가 없고 탐침 코드만 있다. 이 문서는 기억·능동 관측만 다루고 마커 없는 위치 추정은 다루지 않는다.
+- **2026-09-26 개정(A1–A3, 계정 2에서 이어서 작업).** 사용자: "표식은 없애기로 했잖아. 그걸 기억하면 안 되지 않을까?" 기억을 표식(AprilTag)과 무관하게 바꿨다. 0절이 현재 설계다. 1–3절은 첫 판(memory_v1, `ad78ef2`)의 기록으로 남기고, 태그에 기대던 부분은 **[대체됨 A1]**로 표시했다.
+
+## 0. 개정 설계(memory_v2): 표식 비의존 기억
+
+### 0.1 무엇이 바뀌었나
+
+| 항목 | memory_v1 (`ad78ef2`, dev-a1만) | memory_v2 (A1–A3) |
+|---|---|---|
+| 기억하는 위치 근거 | 태그 ID별 고정 기록 | **지도 표식 관측**: 표식 ID·종류(정적 지도 기하에서 만든 것), 방위·고도·거리, 그때의 자기 추정과 σ, 프레임 ID, 제공자 |
+| 어디를 볼지 | 지도 태그 목록의 예상 시야 | **정적 지도 기하**(문기둥, 벽 모서리, 문 틈, 벽면)의 예상 시야 × 제공자가 그 표식을 볼 확률 |
+| 태그의 위치 | 기억의 핵심 입력 | 교체 가능한 **임시 제공자** 하나(`harness/owncam_landmark_tags.py`). 결과는 모두 "interim, tag provider" |
+| 태그가 없으면 | 계획 불가 | 상자·바닥 기억은 그대로, 둘러보기는 전체로 대체. 비전 검출기(`kiro/zone-vision-loc`, PR #227)를 붙이면 같은 계획기가 문기둥·모서리로 pan을 고른다 |
+| 상자 위치 | `detect_own` 기본 카메라 값 | PF 교정의 카메라 고도 편향으로 다시 투영(A2). 트랙 σ 하한 = max(0.02 m, 관측 때 자기 σ) |
+| 자세 고정의 신선도 | σ만 봄 | 정지한 둘러보기 자세 고정만 신선하다고 본다(이동 ≤ 0.5 m, 60 s). 도착 확인 생략·짧은 보기 조기 종료에 필요(A3) |
+
+기억 핵심(`harness/owncam_memory.py`, `owncam_landmarks.py`, `owncam_drive_mem.py`)은 태그 목록·`wall_tags`를 읽지 않는다. 테스트(`test_memory_core_is_tag_free`, `test_tags_are_never_read_and_never_required`, `test_the_memory_runs_on_a_map_without_tags`)가 이를 검사한다. 자기 위치를 내는 PF(동결 M1, `owncam_localizer.py`)는 아직 태그를 쓴다. 이것은 기억 밖이며 PR #227 비전 위치 추정이 대체할 부분이다.
+
+### 0.2 표식 목록(catalogue) — `harness/owncam_landmarks.py`
+
+- 입력: 지도의 벽 사각형(`obstacles` kind=wall), 문 통로(`passages` kind=door), 실제 문기둥(`landmarks.door_posts`, v2 지도). `landmarks.tags`는 읽지 않는다. 목록 해시는 태그가 있든 없든 같다(테스트).
+- 모서리: 벽 면들이 이루는 선의 모든 교점에서 네 사분면의 빈 공간 여부를 본다. 빈 사분면 1개 = `wall_corner`(방 모서리), 3개 = 볼록한 벽 끝이다. 벽 끝이 문 통로 0.12 m 안에 있으면 `door_post`, 아니면 `wall_end`. 문마다 `door_gap` 1개, 벽의 빈 면마다 `wall_face` 1개(계획용 0.25 m 표본).
+- 결과(`zone_wide_door_tags_v1`): 모서리 8, 문기둥 모서리 4(`door_1:post_lo:-x` 등), 문 틈 1, 벽면 10. v3(0.40 m 벽, `kiro/zone-map-v3`)와 태그 없는 `zone_wide_door_walls_v3_notags`(PR #227)에서도 같은 ID가 나온다(벽 높이만 다름).
+- 기각한 대안: 지도를 격자로 그려 `cv2.findContours` + `cv2.approxPolyDP`로 꼭짓점을 찾는 방법. 1 cm 반올림 오차가 생기고 면의 정체(어느 벽의 어느 면)가 없어진다.
+
+### 0.3 표식 관측과 제공자 인터페이스
+
+- 관측 기록(`LandmarkObservation`): `t, frame_id, landmark_id, landmark_type, provider, interim, azimuth_rad, elevation_rad, range_m, pose_xyyaw, std_xy_m, std_yaw_rad, posture, settled, feature_id, supports`. PR #210 설계 4(b)의 관측 항목(`obs_id, t_sim, observer_pose(σ 포함), entity, evidence, source`)과 같은 뜻의 필드를 둔다. 개체는 좌표가 아니라 지도 표식 ID로 붙인다.
+- 제공자(`LandmarkProvider`): `observe`(한 프레임의 관측), `support`(계획 행마다 볼 확률·예상 특징 수), `noise`(방위·고도·거리 잡음과 PF 완화 지수), `face_points_identified`(벽면 위 점이 각각 식별되는가).
+  - 임시 태그 제공자: 위치 PF가 이미 검출한 태그를 다시 쓴다(두 번 검출하지 않음). 태그마다 0.30 m 안의 같은 면 표식을 `supports`로, 가장 가까운 점 표식(없으면 벽면)을 `landmark_id`로 둔다. v1 지도 태그 70개 = 모서리 16, 벽면 50, 문기둥 4에 붙는다. 검출 확률표·잡음은 memory_v1 값 그대로다.
+  - 기하 제공자(태그 없음): `detector(image, servo, catalogue, view)` 자리에 비전 검출기를 붙인다. 지금은 검출기가 없어 아무것도 보지 않고, 계획은 전체 둘러보기가 된다. 검출 확률·잡음 기본값은 자리표시값이며 이번 실험에 쓰지 않는다.
+- 계획: pan마다 지도 표식의 바닥 접점(가려지면 중간·윗점)을 투영해 시야·빈 쪽·벽 가림을 본다. 제공자 확률로 가중한 방위·고도(·거리) Fisher 정보로 탐욕 선택한다. 식별되지 않는 벽면 선은 면 방향 정보를 뺀다.
+- 등가 확인(`experiments/2026-09-26-zone-owncam-memory/planner_equivalence_check.json`): 무작위 자기 추정 400개에서 v2(목록 + 임시 태그 제공자)는 v1과 둘러보기 방식이 400/400, 짧은 보기의 첫 pan이 385/392 같았다. 태그 목록을 직접 쓰지 않아도 오늘 실행의 행동은 거의 같다.
+
+### 0.4 A2·A3 근거 (dev-a1, 평가 전용 GT로만 채점)
+
+- A2: dev-a1 ON에서 목표 트랙이 GT에서 0.123 m 떨어진 채 σ 0.029 m로 확정됐다(사전 등록 거짓 확인 기준 0.10 m 초과). `detect_own`은 기본 카메라로 광선을 푼다. PF 교정은 이미 무부하 카메라 고도 편향 −0.01868 rad를 추정해 두었다. 이 값으로 다시 투영하면 거리 편향이 사라진다(`box_bias_check.json`). 새로 맞춘 값은 없다.
+- A3: 같은 실행에서 SEARCH_POSE로 달리며 태그를 계속 보았는데도 자기 오차가 0.02 → 0.16 m로 커졌고 PF σ는 0.033 m였다. 도착 확인을 σ만 보고 건너뛰어 파지가 0.15 m 어긋난 채 시작했다(파지 단계 127 s, OFF 44 s). 정지한 둘러보기 고정만 신선한 것으로 친다.
+
+### 0.5 다른 작업과의 정렬
+
+- `kiro/memory-literature`(자세·물체 기억 문헌 조사): 이 문서를 고친 시점에 문서(`docs/design/2026-09-26-memory-literature.md`)가 아직 원격에 없다. 나오면 대조해 PR에 반영한다.
+- PR #210(`kiro/markerless-research`) 4(b): 관측 항목 필드·개체 우선·신선도·도착 시 재검증 규칙을 따른다. 들은 주장(`source: heard`)은 이 PR 범위 밖이다(단독 M1).
+- PR #227(`kiro/zone-vision-loc`): 태그 없는 지도와 벽·문 분할 모델 → PF 측정. 같은 모델의 검출 결과를 기하 제공자의 `detector`로 넣으면 기억은 바뀌지 않는다.
 
 ## 1. 문제: 기준선은 왜 계속 둘러보나
 
@@ -31,9 +74,9 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 
 | 후보 | 제공하는 것 | 이 과제에 맞는가 | 라이선스 | 판정 |
 |---|---|---|---|---|
-| `harness/owncam_localizer.py` (PR #177/#197/#201; PythonRobotics PF 적응) | 발행 명령 + 태그 PnP 파티클 필터. 자세 평균·공분산·`since_tag_s` | 자세 기억 그 자체다. 태그 고정은 이미 사후분포에 누적된다 | 저장소 코드(MIT 부분 포함) | **채택**(수정 없음). 기억은 `PoseReport`를 읽기만 한다 |
+| `harness/owncam_localizer.py` (PR #177/#197/#201; PythonRobotics PF 적응) | 발행 명령 + 태그 PnP 파티클 필터. 자세 평균·공분산·`since_tag_s` | 자세 기억 그 자체다. 태그 고정은 이미 사후분포에 누적된다 | 저장소 코드(MIT 부분 포함) | **채택**(수정 없음). 기억은 `PoseReport`를 읽기만 한다. [A1 주] PF의 태그 사용은 기억 밖이며 PR #227이 대체한다. 교정의 카메라 고도 편향은 A2에서 상자 재투영에 다시 쓴다 |
 | `harness/owncam_pose_source.py` (`PoseReport`, `PoseLimits`, `check_limits`) | 추정 시각·σ·마지막 유효 관측, 한계 검사 | 신선도·재확인 한계에 그대로 쓴다 | 저장소 | **채택** |
-| `harness/wall_tags.py` (`TagDetector`, `predicted_tag_in_camera`, `camera_in_base`) | 태그 검출, 지도 태그의 카메라 좌표 예측, 명령 PWM FK | "보여야 할 태그" 예측의 핵심 | 저장소 | **채택** |
+| `harness/wall_tags.py` (`TagDetector`, `predicted_tag_in_camera`, `camera_in_base`) | 태그 검출, 지도 태그의 카메라 좌표 예측, 명령 PWM FK | "보여야 할 태그" 예측의 핵심 | 저장소 | ~~채택~~ **[대체됨 A1]** 임시 태그 제공자 안에서만 쓴다(`tag_world_frame`). 기억 핵심은 `harness.visual_arm.camera_extrinsics`(같은 FK)를 직접 쓴다 |
 | `harness/zone_color_boxes.detect_own` | 자기 RGB 상자 검출(`near` / `far_coarse`), 차체 좌표 | 상자 트랙의 측정값 | 저장소 | **채택** |
 | `harness/markerless_box._pixel_ground_point` | 어안 픽셀 → 바닥 교점 | 카메라 바닥 시야 다각형(빈 바닥 관측) | 저장소 | **채택** |
 | `harness/map_goto.plan_path` (keep-out 사각형) | A* | 기억한 상자를 σ만큼 부풀린 keep-out으로 넘긴다 | 저장소 | **채택** |
@@ -46,6 +89,16 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 | `harness/multi_object_tracking.py` `CargoTracker` | TOP 영상 순열 대응, 모호하면 정지(latch) | TOP은 평가 전용이라 입력으로 못 쓴다 | 저장소 | **기각**(코드). 원칙만 따른다: 한 검출이 두 트랙에 걸리면 어느 쪽도 갱신하지 않는다 |
 | `harness/camera_landmark_tracker.py`, `camera_visual_observer.py`, `dispatch_beam_tracker.py` | 픽셀 공간 LLM 관측·TOP 빔 추적 | 지도 좌표 기억이 아니고 TOP/LLM 경로다 | 저장소 | **기각** |
 | `harness/zone_perception.py`, `zone_cargo_perception_v2.py`, `known_map_navigation.py`, `heading_map_navigation.py`, `dispatch_navigation_map.py`, `real_map.py` | TOP 기반 인식, 이전 지도 주행 | TOP·실물 경로 | 저장소 | **기각** |
+
+### 2.1b A1 개정 때 추가로 본 후보 (2026-09-26)
+
+| 후보 | 제공하는 것 | 맞는가 | 라이선스 | 판정 |
+|---|---|---|---|---|
+| PR #210 `docs/design/2026-09-26-markerless-localization-and-memory.md` 4(b) | 관측 항목 형식(관측 ID·SIM 시각·관찰자 자세와 σ·개체·근거·출처), 개체 우선, 신선도, 도착 시 재검증 | 기억 기록 형식에 맞다. 코드는 없다 | 저장소 | **설계 채택**: `LandmarkObservation` 필드, 지도 표식 ID로 개체를 붙임 |
+| PR #227 `kiro/zone-vision-loc` (`zone_wide_door_walls_v3_notags.json`, 벽·문 분할 → PF) | 태그 없는 지도, 앞으로의 비전 검출 | 검출기는 아직 없음 | 저장소 | **인터페이스 정렬**: 기하 제공자의 `detector` 자리. 표식 목록이 이 지도에서 같은 ID를 낸다 |
+| `kiro/zone-map-v3` (PR #208) `zone_wide_door_tags_v3.json` | 0.40 m 벽, 희소 태그 | 표식 목록 동작 확인 | 저장소 | **확인만**(v3 비교 여부는 사전 등록 `map_v3_rule`대로 정한다) |
+| `experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json` `elevation_bias_rad` | PF가 쓰는 카메라 고도 편향 | 같은 카메라의 상자 광선에도 같은 편향이 있다 | 저장소 | **채택**(A2, 값 그대로) |
+| OpenCV `cv2.findContours` / `cv2.approxPolyDP` | 격자 윤곽 → 꼭짓점 | 직교 벽 지도에는 사분면 검사가 정확하다 | Apache-2.0 | **기각**(1 cm 반올림, 면 정체 손실) |
 
 ### 2.2 공개 코드·라이브러리
 
@@ -74,7 +127,7 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 ### 3.2 기억하는 것 (`harness/owncam_memory.py`, schema `ugrp.owncam_memory.v1`)
 | 항목 | 표현 | 갱신 | 신선도 |
 |---|---|---|---|
-| 태그 고정 기록 | 프레임마다 `{t, frame_id, 태그 ID, 자세 이름, pan, 추정 xyyaw, σ}`; 0.25 m 칸 × 자세 × pan별 시도/성공 수 | 태그 검출이 있는 프레임과 예상했는데 못 본 프레임 | 자세 σ 자체가 시간에 따라 커진다(PF). 칸별 성공률은 에피소드 안에서만 쓴다 |
+| ~~태그 고정 기록~~ **[대체됨 A1 → 0.3 표식 관측]** | 프레임마다 `{t, frame_id, 태그 ID, 자세 이름, pan, 추정 xyyaw, σ}`; 0.25 m 칸 × 자세 × pan별 시도/성공 수 | 태그 검출이 있는 프레임과 예상했는데 못 본 프레임 | 자세 σ 자체가 시간에 따라 커진다(PF). 칸별 성공률은 에피소드 안에서만 쓴다 |
 | 상자 트랙 | 종류별 2D 칼만 트랙 `x, P`, 처음·마지막 관측 시각, near/far 횟수, 출처 frame_id, `last_absent` | `detect_own` 검출을 지도 좌표로 옮겨 갱신. 측정 공분산 = 검출 잡음(거리 비례) + 자세 공분산 전파(`J Σ Jᵀ`) | 매 조회 전 `P += q·dt`. σ와 나이로 `fresh / stale` |
 | 빈 바닥·막힘 격자 | 0.05 m log-odds 격자(지도 경계) | 정지한 탐색 프레임의 near 바닥 시야 다각형 = 빈 바닥(상자 없음), 상자 검출 = 점유. 점유는 상자 종류를 기록 | 매 조회 전 log-odds × exp(−dt/τ), τ = 120 s. OctoMap식 상하한 clamp |
 
@@ -84,10 +137,10 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 | 계기 | OFF (loop v2 + M1) | ON (기억) |
 |---|---|---|
 | σ가 한계를 넘음 (`uncertain`) | 전체 둘러보기(6 pan) | **짧게 보기**: 지도·추정으로 태그가 보일 pan을 Fisher 정보 탐욕으로 1–3곳 고른다. 이 칸에서 전에 실패한 pan은 낮게 친다. 목표 사후 σ에 닿으면 멈춘다 |
-| 보여야 할 태그가 안 보임 | 없음(빈손은 태그 3 s 미검출 → 둘러보기) | 정지·정착 프레임에서 한 변 ≥ 20 px로 보여야 할 태그를 연속 3프레임 못 보면 **전체** 둘러보기 |
+| 보여야 할 태그가 안 보임 **[대체됨 A1: 보여야 할 지도 표식을 제공자가 연속 3프레임 못 봄]** | 없음(빈손은 태그 3 s 미검출 → 둘러보기) | 정지·정착 프레임에서 한 변 ≥ 20 px로 보여야 할 태그를 연속 3프레임 못 보면 **전체** 둘러보기 |
 | 짐 상태 이동 0.5 m마다 | 둘러보기 | 없음(σ가 커지면 위 규칙) |
 | 문 1.5 m·0.6 m 앞 | 둘러보기 | σ가 문 요구(0.05 m, 2°) 안이면 건너뜀, 밖이면 짧게 보기 |
-| 도착 직전 확인 | 둘러보기 | σ가 고정 기준 안이면 건너뜀 |
+| 도착 직전 확인 | 둘러보기 | σ가 고정 기준 안이면 건너뜀 **[A3: 정지 둘러보기 고정이 신선할 때만]** |
 | 짧게 보기 뒤 고정 실패 | – | 전체 둘러보기로 1회 재시도(OFF의 refix 규칙과 같은 상한) |
 | M1 gate(`release`, `look_back`, `post_manipulation`, `preplace`) | 전체 둘러보기 | 첫 번째는 짧게 보기, 같은 gate의 재시도는 전체. gate 한계·횟수(3회)는 같다 |
 | 탐색 관측점 | 관측점마다 이전 검출 삭제, 6 pan | 검출을 트랙으로 누적. 바닥 시야가 이미 관측된 pan은 건너뛰고, pickup 영역 시야의 90% 이상이 관측된 관측점은 건너뛴다. 모두 건너뛴 뒤에도 못 찾으면 건너뛴 관측점을 전체로 다시 본다 |
@@ -124,7 +177,7 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 공개 코드·라이브러리:
 - filterpy 1.4.5 — https://github.com/rlabbe/filterpy (MIT). `filterpy/kalman/kalman_filter.py`의 `predict`·`update`를 적응(`harness/owncam_memory_kf.py`).
 - PythonRobotics commit `b2020cd` — https://github.com/AtsushiSakai/PythonRobotics (MIT). `SLAM/EKFSLAM/ekf_slam.py`의 마할라노비스 대응·새 랜드마크 규칙을 적응. `particle_filter.py`는 기존 `owncam_localizer.py`가 적응. 격자 3종은 검토 후 기각.
-- OpenCV 5.0.0 (`opencv-python-headless` 5.0.0.93, Apache-2.0) — `cv2.fisheye.projectPoints`, `cv2.fisheye.undistortPoints`, `cv2.fillPoly`.
+- OpenCV 5.0.0 (`opencv-python-headless` 5.0.0.93, Apache-2.0) — `cv2.fisheye.distortPoints`(표식·태그 투영), `cv2.fisheye.undistortPoints`(기존 `TagDetector`). A1 표식 목록에는 `cv2.findContours`/`cv2.approxPolyDP`를 검토 후 기각.
 - ConceptGraphs — https://github.com/concept-graphs/concept-graphs (MIT), 설계 참고만.
 - VLMaps — https://github.com/vlmaps/vlmaps (MIT), 설계 참고만.
 - CoELA — https://github.com/UMass-Embodied-AGI/CoELA (LICENSE 파일 없음), 설계 참고만.
@@ -133,6 +186,7 @@ M1 test(`experiments/2026-09-26-zone-m1-owncam`, 동결 `ca2fdb8`, `zone_wide_do
 저장소 안 재사용(경로):
 - `harness/owncam_localizer.py`, `harness/owncam_pose_source.py`, `harness/wall_tags.py`, `harness/zone_color_boxes.py`, `harness/markerless_box.py`, `harness/map_goto.py`, `harness/owncam_drive.py`, `harness/owncam_drive_v2.py`, `harness/m1_owncam_delivery.py`, `scripts/run_m1_owncam.py` (PR #177, #178, #197, #201).
 - 설계 참고: `harness/coela_modules.py`, PR #193 `harness/zone_own_outcome.py`·`judge_route_blockage`, PR #206 `status().blocked_ahead`, `harness/multi_object_tracking.py`.
+- A1–A3 개정: PR #210 `docs/design/2026-09-26-markerless-localization-and-memory.md` 4(b)(관측 항목 형식), PR #227 `kiro/zone-vision-loc` `experiments/2026-09-26-vision-loc/maps/zone_wide_door_walls_v3_notags.json`(태그 없는 지도, 검출기 자리), PR #208 `maps/zones/zone_wide_door_tags_v3.json`, `experiments/2026-09-26-zone-m1-owncam/calibration_m1_dev.json`(`elevation_bias_rad`, A2), `harness/visual_arm.py` `camera_extrinsics`(명령 PWM FK), `harness/owncam_drive_v2.py` `LOADED_LOOK_EVERY_M_V2`(A3 0.5 m 근거).
 
 문서·웹 페이지:
 - filterpy 문서 https://filterpy.readthedocs.io/en/latest/ 와 저장소 README(의존성 NumPy·SciPy·Matplotlib 확인).

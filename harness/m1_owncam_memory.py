@@ -5,8 +5,11 @@ source, not modified): the same inputs, pose source, wrist skill, planner,
 gates and pose limits. This subclass adds one ``harness.owncam_memory``
 memory per robot, fed with the robot's own frames and commands only:
 
-* every own frame feeds the memory (tag fixes, expected view, own-RGB box
-  tracks, free / blocked floor); the pose source's tag detections are reused;
+* every own frame feeds the memory (landmark observations, expected view, own-RGB
+  box tracks, free / blocked floor). Landmark observations come from the INTERIM tag
+  provider (``harness.owncam_landmark_tags``: the pose source's tag detections,
+  re-labelled as observations of static-map landmarks; results are "interim, tag
+  provider"); the memory itself is landmark-agnostic (``harness.owncam_landmarks``);
 * legs use the memory look policy (``harness.owncam_drive_mem``);
 * gate looks: the first look of a gate is a planned short look stopped at the
   gate's target, a repeated look of the same gate is full; the initial and the
@@ -21,6 +24,10 @@ memory per robot, fed with the robot's own frames and commands only:
   fresh and not absent (else one re-look, then back to the search); before
   the release the destination slot must not be remembered as occupied.
 
+v2 (prereg amendment A1-A3, 2026-09-26; v1 = commit ad78ef2, dev-a1 only): landmark-
+agnostic memory with the interim tag provider, the A2 box re-projection, and short looks
+that stop early only after a look-posture fix in the current dwell (A3).
+
 Nothing here imports the simulator.
 """
 from __future__ import annotations
@@ -31,10 +38,11 @@ from harness.m1_owncam_delivery import (CLOSER_VIEW_STANDOFF_M, LIMITS, MAX_GATE
                                         M1OwnCamDelivery, _LegDriver)
 from harness.owncam_drive import CARRY_POSTURE, LOOK_P20, SEARCH_POSE, SETTLE_S, WIDE_LOOK_PANS
 from harness.owncam_drive_mem import MemoryLookPolicy
+from harness.owncam_landmark_tags import INTERIM_LABEL, TagLandmarkProvider
 from harness.owncam_memory import OwnCamMemory
 from harness.owncam_pose_source import check_limits
 
-SCHEMA = 'ugrp.m1_owncam_memory.v1'
+SCHEMA = 'ugrp.m1_owncam_memory.v2'
 # Short-look early-stop targets per gate (own PF sigma xy m, yaw rad): 0.8 x the gate limit.
 GATE_TARGETS = {'release': (.04, .028), 'preplace': (.04, .028), 'look_back': (.028, .028),
                 'nav_loaded': (.045, math.radians(1.3)), 'nav_unloaded': (.035, math.radians(1.3))}
@@ -71,7 +79,8 @@ class _LegDriverMem(MemoryLookPolicy, _LegDriver):
 class M1OwnCamDeliveryMem(M1OwnCamDelivery):
     def __init__(self, static_map, params, **kwargs):
         super().__init__(static_map, params, **kwargs)
-        self.memory = OwnCamMemory(static_map, params, robot_id=self.robot_id, on_event=self._memory_event)
+        self.memory = OwnCamMemory(static_map, params, robot_id=self.robot_id,
+                                   provider=TagLandmarkProvider(static_map, params), on_event=self._memory_event)
         self.pose.detector = _RecordingDetector(self.pose.detector)
         self.target_track_id: str | None = None
         self.closer_done_tracks: list[str] = []
@@ -93,8 +102,8 @@ class M1OwnCamDeliveryMem(M1OwnCamDelivery):
         servo = {int(k): int(v) for k, v in obs['actuator_state']['servo_pulses'].items()}
         loaded = report.load_state == 'loaded'
         out = self.memory.observe_frame(now, frame_id=int(obs['frame_id']), image=obs['image'], servo=servo,
-                                        tag_detections=self.pose.detector.last, report=report,
-                                        arm_settled_s=now - self.pose.loc.last_servo_cmd_t, loaded=loaded)
+                                        report=report, arm_settled_s=now - self.pose.loc.last_servo_cmd_t,
+                                        loaded=loaded, provider_inputs={'tag_detections': self.pose.detector.last})
         if loaded and not self._held:
             self.memory.mark_held(now)
         elif self._held and not loaded:
@@ -332,7 +341,7 @@ class M1OwnCamDeliveryMem(M1OwnCamDelivery):
                 and now - s['since'] >= SETTLE_S:
             rep = self.pose.report(now)
             txy, tyaw = s['short_target']
-            if rep.initialized and rep.std_xy_m <= txy and rep.std_yaw_rad <= tyaw:
+            if rep.initialized and rep.std_xy_m <= txy and rep.std_yaw_rad <= tyaw and self.memory.look_fix_since(s['since']):
                 dropped = list(s['queue'])
                 s['queue'].clear()
                 self._event(now, 'short_look_early_stop', reason=s['reason'], dropped_pans=dropped,
@@ -344,6 +353,7 @@ class M1OwnCamDeliveryMem(M1OwnCamDelivery):
         out = super().summary()
         now = self.memory.t if self.memory.t is not None else 0.
         out['base_schema'], out['schema'] = out['schema'], SCHEMA
+        out['landmark_provider'] = {**self.memory.provider.describe(), 'result_label': INTERIM_LABEL}
         out['memory'] = self.memory.snapshot(now)
         out['memory_grid'] = self.memory.grid_record()
         out['target_track_id'] = self.target_track_id

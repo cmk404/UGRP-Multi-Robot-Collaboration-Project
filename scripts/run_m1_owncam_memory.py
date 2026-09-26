@@ -5,7 +5,12 @@ contact profile, frame rate, judge, contract checks and ``eval_only/`` split);
 the condition only selects the controller class the runner constructs:
 
 * ``off``        -> ``harness.m1_owncam_delivery.M1OwnCamDelivery`` (frozen M1 student, no memory)
-* ``memory_v1``  -> ``harness.m1_owncam_memory.M1OwnCamDeliveryMem`` (the same student + memory)
+* ``memory_v2``  -> ``harness.m1_owncam_memory.M1OwnCamDeliveryMem`` (the same student + the
+  landmark-agnostic memory v2 with the INTERIM tag provider; results are labelled
+  "interim, tag provider")
+
+``memory_v1`` (commit ad78ef2) ran only in dev-a1 and is replaced by ``memory_v2``
+(prereg amendment A1-A3) before any test episode.
 
 Guards before every episode: thread caps OMP/OPENBLAS/VECLIB/MKL = 1, at least
 ``MIN_FREE_GIB`` free on the output disk, the registered prereg sha256, and for
@@ -31,10 +36,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-SCHEMA = 'ugrp.m1_owncam_memory_run.v1'
+SCHEMA = 'ugrp.m1_owncam_memory_run.v2'
 CONDITIONS = {'off': ('harness.m1_owncam_delivery', 'M1OwnCamDelivery'),
-              'memory_v1': ('harness.m1_owncam_memory', 'M1OwnCamDeliveryMem')}
+              'memory_v2': ('harness.m1_owncam_memory', 'M1OwnCamDeliveryMem')}
+RESULT_LABELS = {'off': None, 'memory_v2': 'interim, tag provider'}
 MEMORY_FILES = ('harness/owncam_memory.py', 'harness/owncam_memory_kf.py', 'harness/owncam_drive_mem.py',
+                'harness/owncam_landmarks.py', 'harness/owncam_landmark_tags.py',
                 'harness/m1_owncam_memory.py', 'scripts/run_m1_owncam_memory.py')
 THREAD_VARS = ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS', 'MKL_NUM_THREADS')
 MIN_FREE_GIB = 30.
@@ -74,7 +81,8 @@ def controller_class(condition: str):
     return getattr(importlib.import_module(module), name)
 
 
-def run_episode(spec: dict, out: Path, student: dict, condition: str, *, prereg_sha256: str, freeze=None):
+def run_episode(spec: dict, out: Path, student: dict, condition: str, *, prereg_sha256: str, freeze=None,
+                amendments_sha256: str | None = None):
     """One episode through the frozen M1 runner with the condition's controller class."""
     import harness.m1_owncam_delivery as base
     from scripts import run_m1_owncam as runner
@@ -93,11 +101,13 @@ def run_episode(spec: dict, out: Path, student: dict, condition: str, *, prereg_
     finally:
         base.M1OwnCamDelivery = original
     record = {'schema': SCHEMA, 'episode': spec['episode_id'], 'condition': condition,
+              'result_label': RESULT_LABELS.get(condition),
               'controller_class': f'{cls.__module__}.{cls.__name__}',
               'controller_schema': result.get('controller', {}).get('schema'),
               'memory_files_sha256': {f: sha_file(ROOT/f) for f in MEMORY_FILES},
               'code_sha': git('rev-parse', 'HEAD'), 'dirty': bool(git('status', '--porcelain', '--', *FROZEN_PATHS)),
-              'prereg_sha256': prereg_sha256, 'freeze': freeze, 'threads': threads,
+              'prereg_sha256': prereg_sha256, 'amendments_sha256': amendments_sha256, 'freeze': freeze,
+              'threads': threads,
               'free_gib_before': round(gib, 2), 'free_gib_after': round(free_gib(out), 2),
               'load_average': {'start': [round(v, 2) for v in load0], 'end': [round(v, 2) for v in os.getloadavg()]},
               'wall_s': round(time.time() - started, 1),
@@ -151,9 +161,12 @@ def main(argv=None):
     for spec in (e for e in episodes if not only or e['episode_id'] in only):
         spec = {**spec, 'contact_profile': student['contact_profile']}
         out = Path(args.output)/args.condition/spec['episode_id']
+        amend = prereg_path.parent/'prereg_amendments.json'
         result, manifest, record = run_episode(spec, out, student, args.condition,
-                                               prereg_sha256=sha_file(prereg_path), freeze=freeze)
-        print(json.dumps({'episode': spec['episode_id'], 'condition': args.condition, 'outcome': result['outcome'],
+                                               prereg_sha256=sha_file(prereg_path), freeze=freeze,
+                                               amendments_sha256=sha_file(amend) if amend.is_file() else None)
+        print(json.dumps({'episode': spec['episode_id'], 'condition': args.condition,
+                          'result_label': RESULT_LABELS.get(args.condition), 'outcome': result['outcome'],
                           'm1_success': result['m1_success'], 'false_success': result['false_success'],
                           'sim_s': result['sim_s'], 'looks': result['looks'], 'commands': result['commands'],
                           'wall_s': manifest['wall_s'], 'load': record['load_average'],

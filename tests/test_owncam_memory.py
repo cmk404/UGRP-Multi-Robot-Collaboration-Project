@@ -1,4 +1,5 @@
-"""Own-camera observation memory ("look once, remember"): boundary, reuse adapters, memory and policy."""
+"""Own-camera observation memory v2 ("look once, remember", landmark-agnostic): boundary, catalogue,
+interim tag provider, reuse adapters, memory and policy."""
 from __future__ import annotations
 
 import ast
@@ -17,11 +18,16 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 RUNTIME = (ROOT/'harness'/'owncam_memory.py', ROOT/'harness'/'owncam_memory_kf.py',
-           ROOT/'harness'/'owncam_drive_mem.py', ROOT/'harness'/'m1_owncam_memory.py')
+           ROOT/'harness'/'owncam_drive_mem.py', ROOT/'harness'/'m1_owncam_memory.py',
+           ROOT/'harness'/'owncam_landmarks.py', ROOT/'harness'/'owncam_landmark_tags.py')
 ALLOWED = {'__future__', 'math', 'copy', 'collections.abc', 'numpy', 'cv2', 'harness.owncam_drive',
-           'harness.owncam_memory_kf', 'harness.wall_tags', 'sim.masterpi_camera_profile', 'harness.zone_color_boxes',
+           'harness.owncam_memory_kf', 'harness.visual_arm', 'sim.masterpi_camera_profile', 'harness.zone_color_boxes',
            'harness.owncam_memory', 'harness.owncam_drive_mem', 'harness.m1_owncam_delivery',
-           'harness.owncam_pose_source'}
+           'harness.owncam_pose_source', 'harness.owncam_landmarks', 'harness.owncam_landmark_tags', 'hashlib', 'json',
+           'dataclasses', 'harness.wall_tags'}
+# Only the INTERIM tag provider and the M1 wiring may know about tags (user decision 2026-09-26).
+TAG_FREE = (ROOT/'harness'/'owncam_memory.py', ROOT/'harness'/'owncam_landmarks.py',
+            ROOT/'harness'/'owncam_drive_mem.py', ROOT/'harness'/'owncam_memory_kf.py')
 FORBIDDEN = ('mujoco', 'xpos', 'xquat', 'xmat', 'qpos', 'qvel', 'base_xyz', 'base_rpy', 'eval_only', 'gt_trajectory',
              'frames_eval', 'MjData', 'setup_only', 'position_m', 'GtStubPoseSource', 'cctv_top', 'nav_cam')
 CAL = ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'calibration_m1_dev.json'
@@ -66,9 +72,23 @@ class BoundaryTests(unittest.TestCase):
                     self.assertFalse(any(token in s for s in strings if not s.startswith(('"""', 'Own', 'M1'))
                                          and '\n' not in s))
 
+    def test_memory_core_is_tag_free(self):
+        for path in TAG_FREE:
+            tree = ast.parse(path.read_text())
+            mods = {node.module for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
+            names = {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)} | \
+                {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+            keys = {n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+            with self.subTest(path=path.name):
+                self.assertNotIn('harness.wall_tags', mods)
+                self.assertNotIn('harness.owncam_landmark_tags', mods)
+                self.assertFalse({'TagDetector', 'tag_world_frame', 'visible_tags', 'tag_ids'} & names)
+                self.assertNotIn('tags', keys)
+
     def test_memory_modules_import_with_mujoco_poisoned(self):
         code = ("import sys; sys.modules['mujoco'] = None\n"
                 "import harness.owncam_memory, harness.owncam_memory_kf, harness.owncam_drive_mem, harness.m1_owncam_memory\n"
+                "import harness.owncam_landmarks, harness.owncam_landmark_tags\n"
                 "bad = [m for m in sys.modules if m.startswith(('sim.multi_masterpi', 'sim.zone_scene', 'sim.zone_arena', "
                 "'scripts.zone_teacher', 'sim.session'))]\n"
                 "assert not bad, bad\n")
@@ -121,11 +141,62 @@ class KalmanAdapterTests(unittest.TestCase):
         self.assertAlmostEqual(R[1, 1], 0., places=12)
 
 
+def tag_det(tag_id, t_ct=(0., 0., 1.)):
+    """A pose-source tag detection row (only the fields the interim provider reads)."""
+    return {'id': int(tag_id), 'solutions': [{'t_ct': list(t_ct), 'R_ct': np.eye(3).tolist(), 'reproj_px': .1}]}
+
+
+class CatalogueTests(unittest.TestCase):
+    def test_v1_catalogue_is_derived_from_walls_and_doors(self):
+        from harness.owncam_landmarks import LandmarkCatalogue
+        cat = LandmarkCatalogue(tagged('zone_wide_door_tags_v1'))
+        d = cat.describe()
+        self.assertEqual(d['counts'], {'wall_corner': 8, 'wall_end': 0, 'door_post': 4, 'door_gap': 1, 'wall_face': 10})
+        posts = sorted(lm.xy for lm in cat.landmarks if lm.type == 'door_post')
+        self.assertEqual(posts, [(2.175, -0.2), (2.175, 0.3), (2.225, -0.2), (2.225, 0.3)])
+        self.assertIn('door_1:post_lo:-x', cat.by_id)
+        corner = cat.by_id['corner:wall_north+wall_west:+x-y']
+        self.assertEqual((corner.xy, corner.free_quadrants), ((-1.025, 1.425), ((1, -1),)))
+        self.assertEqual(cat.by_id['door_1:gap'].xy, (2.2, .05))
+        json.dumps([lm.as_dict() for lm in cat.landmarks])
+
+    def test_tags_are_never_read_and_never_required(self):
+        from harness.owncam_landmarks import LandmarkCatalogue
+        full = tagged('zone_wide_door_tags_v1')
+        bare = json.loads(json.dumps(full))
+        bare['landmarks'] = {'tags': []}
+        self.assertEqual(LandmarkCatalogue(full).sha256, LandmarkCatalogue(bare).sha256)
+        no_landmarks = {k: v for k, v in full.items() if k != 'landmarks'}
+        self.assertEqual(LandmarkCatalogue(no_landmarks).sha256, LandmarkCatalogue(full).sha256)
+
+    def test_door_posts_of_v2_and_two_doors(self):
+        from harness.owncam_landmarks import LandmarkCatalogue
+        v2 = LandmarkCatalogue(tagged('zone_wide_door_tags_v2'))
+        self.assertEqual(v2.describe()['counts']['door_post'], 4)
+        two = LandmarkCatalogue(tagged('zone_wide_two_doors_tags_v1'))
+        self.assertEqual(two.describe()['counts']['door_gap'], 2)
+        self.assertTrue(any(i.startswith('door_wide:post_hi') for i in two.by_id))
+
+    def test_seen_from_respects_the_free_side(self):
+        from harness.owncam_landmarks import LandmarkCatalogue
+        cat = LandmarkCatalogue(tagged('zone_wide_door_tags_v1'))
+        plan = cat.plan_points()
+        i = plan['ids'].index('corner:wall_north+wall_west:+x-y')
+        self.assertTrue(cat.seen_from(np.array([i]), (0., 0.))[0])
+        self.assertFalse(cat.seen_from(np.array([i]), (-2., 0.))[0])
+        f = plan['ids'].index('face:wall_divider_1:-x:0')
+        self.assertTrue(cat.seen_from(np.array([f]), (1., -1.))[0])
+        self.assertFalse(cat.seen_from(np.array([f]), (3., -1.))[0])
+
+
 class ViewModelTests(unittest.TestCase):
     def setUp(self):
-        from harness.owncam_memory import ViewModel
+        from harness.owncam_landmark_tags import TagLandmarkProvider
+        from harness.owncam_memory import OwnCamMemory
         self.static = tagged('zone_wide_door_tags_v1')
-        self.view = ViewModel(self.static, params())
+        self.mem = OwnCamMemory(self.static, params(), robot_id='r1', provider=TagLandmarkProvider(self.static, params()),
+                                detect=lambda image, servo: [])
+        self.view, self.cat, self.prov = self.mem.view, self.mem.catalogue, self.mem.provider
 
     def test_predicted_tags_match_a_synthetic_render(self):
         from tests.test_owncam_localizer import synthetic_detections
@@ -134,41 +205,119 @@ class ViewModelTests(unittest.TestCase):
             seen = {int(d['id']) for d in synthetic_detections(self.static, pose, servo, rng) if d['side_px'] >= 14}
             # the synthetic generator has no black fisheye border: keep tags inside the pinhole render
             # (sim.masterpi_camera_profile.raw_fisheye_remap), as the simulated frames have content there
-            index = {int(t): i for i, t in enumerate(self.view.tag_ids)}
+            index = {int(t): i for i, t in enumerate(self.prov.tag_ids)}
             for tid in list(seen):
-                corners = self.view.to_camera(self.view.tag_corners[index[tid]], np.asarray(pose), servo, False)[0]
+                corners = self.view.to_camera(self.prov.tag_corners[index[tid]], np.asarray(pose), servo, False)[0]
                 _, ideal, _ = self.view.project(corners)
                 if np.any(ideal < 0) or np.any(ideal[:, 0] > 639) or np.any(ideal[:, 1] > 479):
                     seen.discard(tid)
-            pred = {v['id'] for v in self.view.visible_tags(pose, servo, False)}
+            pred = {v['id'] for v in self.prov.visible_tags(pose, servo, False)}
             with self.subTest(pose=pose):
                 self.assertTrue(seen, 'synthetic view has tags')
                 self.assertLessEqual(len(seen - pred), max(1, len(seen)//5))   # large synthetic tags are predicted
 
     def test_walls_occlude_and_back_faces_are_invisible(self):
         cam = np.array([1.0, -1.0, .21])
-        # the floor just behind the 0.10 m divider (x = 2.2) is hidden; a 0.05 m tag 0.8 m beyond it
+        # the floor just behind the 0.10 m divider (x = 2.2) is hidden; a 0.05 m point 0.8 m beyond it
         # is seen over the wall from a 0.21 m camera; the floor in front of the wall is seen
         pts = np.array([[2.4, -1.0, 0.], [3.0, -1.0, .05], [2.0, -1.0, 0.]])
         self.assertEqual(self.view.occluded(cam, pts).tolist(), [True, False, False])
-        west = self.view.visible_tags((0., -.85, math.pi), SEARCH, False)
-        east = self.view.visible_tags((0., -.85, 0.), SEARCH, False)
+        west = self.view.visible_landmarks(self.cat, (0., -.85, math.pi), SEARCH, False)
+        east = self.view.visible_landmarks(self.cat, (0., -.85, 0.), SEARCH, False)
         self.assertTrue(west and east)
-        self.assertTrue(all(self.static['landmarks']['tags'][v['index']]['normal_xy'][0] > 0 for v in west))
+        self.assertTrue(all(r['id'].startswith(('face:wall_west', 'corner:wall_north+wall_west',
+                                                'corner:wall_south+wall_west')) for r in west))
+        self.assertTrue(any(r['id'].startswith('door_1:post') or r['id'].startswith('face:wall_divider') for r in east))
+        self.assertFalse(any(':+x' in r['id'] and 'divider' in r['id'] for r in east))   # far faces of the divider
 
     def test_held_box_band_limits_loaded_views(self):
-        free = self.view.visible_tags((1.4, .05, 0.), CARRY, False)
-        held = self.view.visible_tags((1.4, .05, 0.), CARRY, True)
-        self.assertTrue(all(max(v['px'][1] for v in [h]) <= 172 for h in held))
+        free = self.view.visible_landmarks(self.cat, (1.4, .05, 0.), CARRY, False)
+        held = self.view.visible_landmarks(self.cat, (1.4, .05, 0.), CARRY, True)
+        self.assertTrue(all(r['px'][1] <= 168 for r in held))
         self.assertLessEqual(len(held), len(free))
 
-    def test_fisher_information_is_informative_for_visible_tags(self):
-        vis = self.view.visible_tags((-.5, -.85, 0.), SEARCH, False)
-        info = self.view.fisher((-.5, -.85, 0.), SEARCH, False, vis)
+    def test_fisher_information_is_informative_for_visible_landmarks(self):
+        pose = (-.5, -.85, 0.)
+        rows = self.view.visible_landmarks(self.cat, pose, SEARCH, False)
+        sup = self.prov.support(rows, pose, SEARCH, False)
+        info = self.view.landmark_fisher(pose, SEARCH, False, rows, sup['w'], self.prov.noise(False),
+                                         identified_face_points=True)
         self.assertEqual(info.shape, (3, 3))
         self.assertTrue(np.all(np.linalg.eigvalsh(info) > -1e-6))
         self.assertGreater(info[2, 2], 1e3)                           # bearings pin yaw
-        np.testing.assert_allclose(self.view.fisher((0., 0., 0.), SEARCH, False, []), 0.)
+        np.testing.assert_allclose(self.view.landmark_fisher(pose, SEARCH, False, [], np.zeros(0),
+                                                             self.prov.noise(False), identified_face_points=True), 0.)
+        # a wall-face line without identified points carries no information along the face
+        face = [r for r in rows if r['type'] == 'wall_face']
+        line = self.view.landmark_fisher(pose, SEARCH, False, face, np.ones(len(face)),
+                                         {'azimuth_std_rad': .01, 'elevation_std_rad': .02},
+                                         identified_face_points=False)
+        u = np.array([face[0]['face_dir'][0], face[0]['face_dir'][1], 0.])
+        self.assertLess(float(u @ line @ u), 1e-6*max(1., float(np.trace(line))))
+
+    def test_box_detection_is_reprojected_with_the_pf_camera_model(self):
+        from harness.owncam_memory import BOX_CENTRE_Z_M, camera_in_base, correct_box_detection
+        p = params()
+        o, r = camera_in_base(SEARCH)
+        truth = np.array([1.1, -.5, BOX_CENTRE_Z_M])
+        seen = self.view._correct((truth - o) @ r, False)          # how the real camera sees the true point
+        ray = r @ seen                                              # read with the nominal camera (detect_own)
+        nominal = o + (BOX_CENTRE_Z_M - o[2])/ray[2]*ray
+        self.assertGreater(math.dist(nominal[:2], truth[:2]), .05)     # the uncorrected range bias
+        fixed = correct_box_detection(nominal[:2], SEARCH, p, loaded=False)
+        np.testing.assert_allclose(fixed, truth[:2], atol=1e-6)
+        seen_l = self.view._correct((truth - o) @ r, True)
+        ray_l = r @ seen_l
+        nominal_l = o + (BOX_CENTRE_Z_M - o[2])/ray_l[2]*ray_l
+        np.testing.assert_allclose(correct_box_detection(nominal_l[:2], SEARCH, p, loaded=True), truth[:2], atol=2e-4)
+
+
+class TagProviderTests(unittest.TestCase):
+    def setUp(self):
+        from harness.owncam_landmark_tags import TagLandmarkProvider
+        from harness.owncam_memory import OwnCamMemory
+        self.static = tagged('zone_wide_door_tags_v1')
+        self.mem = OwnCamMemory(self.static, params(), robot_id='r1', provider=TagLandmarkProvider(self.static, params()),
+                                detect=lambda image, servo: [])
+
+    def test_every_tag_is_anchored_to_a_static_map_landmark(self):
+        prov = self.mem.provider
+        self.assertTrue(prov.interim)
+        self.assertEqual(prov.describe()['label'], 'interim, tag provider')
+        for (lid, ltype), sup in zip(prov.anchor, prov.supports):
+            self.assertIn(lid, self.mem.catalogue.by_id)
+            self.assertIn(ltype, ('wall_corner', 'door_post', 'wall_face'))
+            self.assertIn(lid, sup)
+
+    def test_observations_are_generic_landmark_records(self):
+        prov = self.mem.provider
+        tid = int(prov.tag_ids[0])
+        out = self.mem.observe_frame(1., frame_id=10, image=None, servo=SEARCH, report=report(0., -.85, 0.),
+                                     arm_settled_s=1., loaded=False, provider_inputs={'tag_detections': [tag_det(tid)]})
+        self.assertEqual(len(self.mem.observations), 1)
+        o = self.mem.observations[0]
+        self.assertEqual(o['feature_id'], f'tag:{tid}')
+        self.assertIn(o['landmark_id'], self.mem.catalogue.by_id)
+        self.assertEqual((o['provider'], o['interim'], o['frame_id'], o['posture']), ('tags_interim', True, 10, 'search'))
+        self.assertEqual(o['pose_xyyaw'], [0., -.85, 0.])
+        self.assertAlmostEqual(o['range_m'], 1.)
+        self.assertEqual(out['observed'], [o['landmark_id']])
+        self.assertEqual(self.mem.last_fix['landmarks'], [o['landmark_id']])
+        self.assertIsNone(self.mem.last_look_fix)                  # search posture: not a look fix
+
+    def test_support_follows_the_tags_next_to_each_landmark(self):
+        pose = (0., -.85, 0.)
+        rows = self.mem.view.visible_landmarks(self.mem.catalogue, pose, SEARCH, False)
+        sup = self.mem.provider.support(rows, pose, SEARCH, False)
+        self.assertEqual(len(sup['w']), len(rows))
+        self.assertGreater(sup['p_any'], .9)
+        self.assertTrue(all(f.startswith('tag:') for f in sup['features']))
+        from harness.owncam_landmark_tags import TagLandmarkProvider
+        bare = json.loads(json.dumps(self.static))
+        bare['landmarks']['tags'] = []
+        empty = TagLandmarkProvider(bare, params())
+        empty.bind(self.mem.view, self.mem.catalogue)
+        self.assertEqual(float(np.sum(empty.support(rows, pose, SEARCH, False)['w'])), 0.)
 
 
 class _Det:
@@ -184,17 +333,22 @@ class _Det:
 
 class MemoryTests(unittest.TestCase):
     def setUp(self):
+        from harness.owncam_landmark_tags import TagLandmarkProvider
         from harness.owncam_memory import OwnCamMemory
         self.det = _Det()
         self.events = []
-        self.mem = OwnCamMemory(tagged('zone_wide_door_tags_v1'), params(), robot_id='r1', detect=self.det,
+        static = tagged('zone_wide_door_tags_v1')
+        self.mem = OwnCamMemory(static, params(), robot_id='r1', detect=self.det,
+                                provider=TagLandmarkProvider(static, params()),
                                 on_event=lambda k, row: self.events.append(k))
 
     def feed(self, t, rep, servo=SEARCH, settled=1., loaded=False, tags=()):
-        return self.mem.observe_frame(t, frame_id=int(t*10), image=None, servo=servo, tag_detections=[
-            {'id': i} for i in tags], report=rep, arm_settled_s=settled, loaded=loaded)
+        return self.mem.observe_frame(t, frame_id=int(t*10), image=None, servo=servo, report=rep,
+                                      arm_settled_s=settled, loaded=loaded,
+                                      provider_inputs={'tag_detections': [tag_det(i) for i in tags]})
 
     def test_box_track_confirms_ages_and_goes_absent(self):
+        from harness.owncam_memory import correct_box_detection
         rep = report(-.47, -.85, 0.)
         self.det.rows = [('cyan', 'near', .87, 0.)]
         self.feed(1., rep)
@@ -203,7 +357,9 @@ class MemoryTests(unittest.TestCase):
         self.feed(1.2, rep)
         self.assertEqual(tr.state, 'confirmed')
         self.assertIn('track_confirmed', self.events)
-        np.testing.assert_allclose(tr.x, [.40, -.85], atol=.02)
+        cx, cy = correct_box_detection((.87, 0.), SEARCH, params())
+        self.assertLess(cx, .87)                                    # the A2 re-projection shortens the range
+        np.testing.assert_allclose(tr.x, [-.47 + cx, -.85 + cy], atol=.01)
         self.assertIs(self.mem.best_target('cyan', 2.), tr)
         self.assertEqual(self.mem.reverify(tr.track_id, 2.)['status'], 'fresh')
         self.assertEqual(self.mem.reverify(tr.track_id, 200.)['status'], 'stale')      # remembered, but old
@@ -213,6 +369,15 @@ class MemoryTests(unittest.TestCase):
             self.feed(3. + .2*k, rep)
         self.assertEqual(tr.state, 'absent')
         self.assertEqual(self.mem.reverify(tr.track_id, 4.)['status'], 'absent')
+
+    def test_track_sigma_keeps_the_pose_floor(self):
+        from harness.owncam_memory import TRACK_FLOOR_M
+        rep = report(-.47, -.85, 0., sxy=.06, syaw=.001)
+        self.det.rows = [('cyan', 'near', .6, 0.)]
+        for k in range(40):
+            self.feed(1. + .2*k, rep)
+        tr = self.mem.tracks[0]
+        self.assertGreaterEqual(tr.sigma_m(), max(TRACK_FLOOR_M, .06/math.sqrt(2)) - 1e-6)
 
     def test_unsettled_loaded_or_unknown_posture_frames_do_not_touch_boxes(self):
         rep = report(-.47, -.85, 0.)
@@ -257,54 +422,91 @@ class MemoryTests(unittest.TestCase):
         self.assertEqual(far.state, 'tentative')
 
     def test_missing_expected_view_needs_three_settled_frames(self):
-        rep = report(1.25, -.55, 0., load='loaded')
-        strict = self.mem.view.visible_tags((1.25, -.55, 0.), CARRY, True, strict=True, sigma=(.03, .01))
-        self.assertTrue(strict, 'the carry view ~1 m before the divider expects its tags')
+        pose = (1.25, -.55, 0.)
+        rep = report(*pose, load='loaded')
+        strict = self.mem.view.visible_landmarks(self.mem.catalogue, pose, CARRY, True, strict=True, sigma=(.03, .01))
+        sup = self.mem.provider.support(strict, pose, CARRY, True, strict=True, sigma=(.03, .01))
+        expected = [r['id'] for r, w in zip(strict, sup['w']) if w >= .9]
+        self.assertTrue(expected, 'the carry view ~1 m before the divider expects its landmarks')
         for k in range(2):
             self.feed(1. + .2*k, rep, servo=CARRY, loaded=True)
         self.assertFalse(self.mem.view_missing())
         self.feed(1.4, rep, servo=CARRY, loaded=True)
         self.assertTrue(self.mem.view_missing())
-        self.feed(1.6, rep, servo=CARRY, loaded=True, tags=[strict[0]['id']])
+        prov = self.mem.provider
+        tid = next(int(t) for t, sup_ids in zip(prov.tag_ids, prov.supports) if set(sup_ids) & set(expected))
+        self.feed(1.6, rep, servo=CARRY, loaded=True, tags=[tid])
         self.assertFalse(self.mem.view_missing())
 
-    def test_look_plan_is_short_with_tags_and_full_without(self):
+    def test_look_plan_is_short_with_landmarks_and_full_without_a_detector(self):
+        from harness.owncam_memory import OwnCamMemory
         est = {'initialized': True, 'x': 1.4, 'y': .05, 'yaw': 0., 'cov': np.diag([.001, .001, .003]).tolist()}
         plan = self.mem.plan_look(est, loaded=True, now=1., reason='uncertain')
         self.assertEqual(plan['mode'], 'short')
         self.assertTrue(1 <= len(plan['pans']) <= 3)
         self.assertLess(plan['predicted_std_yaw_rad'], plan['prior_std_yaw_rad'])
-        blind = dict(tagged('zone_wide_door_tags_v1'))
-        blind['landmarks'] = {**blind['landmarks'], 'tags': blind['landmarks']['tags'][:1]}
+        # tag-free provider without a detector (vision pending): nothing supported -> full look
+        tag_free = OwnCamMemory(tagged('zone_wide_door_tags_v1'), params(), robot_id='r1', detect=_Det())
+        self.assertEqual(tag_free.provider.name, 'geometric')
+        self.assertEqual(tag_free.plan_look(est, loaded=True, now=1., reason='uncertain')['mode'], 'full')
+        # a geometric detector hook makes the same planner choose pans from door posts / corners
+        from harness.owncam_landmarks import GeometricLandmarkProvider
+        geo = OwnCamMemory(tagged('zone_wide_door_tags_v1'), params(), robot_id='r1', detect=_Det(),
+                           provider=GeometricLandmarkProvider(detector=lambda *a: []))
+        p2 = geo.plan_look({**est, 'x': .5, 'y': -.5}, loaded=False, now=1., reason='uncertain')
+        self.assertEqual(p2['mode'], 'short')
+
+    def test_the_memory_runs_on_a_map_without_tags(self):
         from harness.owncam_memory import OwnCamMemory
-        empty = OwnCamMemory(blind, params(), robot_id='r1', detect=_Det())
-        self.assertEqual(empty.plan_look(est, loaded=True, now=1., reason='uncertain')['mode'], 'full')
+        bare = tagged('zone_wide_door_tags_v1')
+        bare = {k: v for k, v in bare.items() if k != 'landmarks'}
+        mem = OwnCamMemory(bare, params(), robot_id='r1', detect=self.det)
+        self.det.rows = [('cyan', 'near', .87, 0.)]
+        for k in range(2):
+            mem.observe_frame(1. + .2*k, frame_id=k, image=None, servo=SEARCH, report=report(-.47, -.85, 0.),
+                              arm_settled_s=1., loaded=False)
+        self.assertEqual(mem.tracks[0].state, 'confirmed')
+        json.dumps(mem.snapshot(2.))
 
     def test_remembered_pan_failures_lower_the_detection_prior(self):
         pose = (1.4, .05, 0.)
-        vis = self.mem.view.visible_tags(pose, {**CARRY, 3: 1072, 4: 2400, 5: 1482, 6: 2030}, True)
-        p0 = self.mem._pan_detect_prob(pose, 'look', True, 2030, vis)
+        p0 = self.mem._pan_detect_prob(pose, 'look', True, 2030, .9)
         self.mem.pan_stats[self.mem._stat_key(pose, 'look', True, 2030)] = [10, 0]
-        self.assertLess(self.mem._pan_detect_prob(pose, 'look', True, 2030, vis), p0/3)
+        self.assertLess(self.mem._pan_detect_prob(pose, 'look', True, 2030, .9), p0/3)
+
+    def test_stale_look_fix(self):
+        from harness.owncam_memory import LOOK_P20
+        rep = report(-.47, -.85, 0.)
+        self.assertFalse(self.mem.look_fix_fresh(1., (-.47, -.85)))
+        tid = int(self.mem.provider.tag_ids[0])
+        self.feed(1., rep, servo={**LOOK_P20, 1: 2000, 6: 1500}, tags=[tid])
+        self.assertTrue(self.mem.look_fix_fresh(2., (-.47, -.85)))
+        self.assertTrue(self.mem.look_fix_since(1.))
+        self.assertFalse(self.mem.look_fix_since(1.5))
+        self.assertFalse(self.mem.look_fix_fresh(2., (.2, -.85)))          # 0.67 m of own travel
+        self.assertFalse(self.mem.look_fix_fresh(100., (-.47, -.85)))       # too old
 
     def test_snapshot_is_json(self):
         rep = report(-.47, -.85, 0.)
         self.det.rows = [('cyan', 'near', .87, 0.)]
-        self.feed(1., rep, tags=[3])
+        self.feed(1., rep, tags=[int(self.mem.provider.tag_ids[0])])
         snap = self.mem.snapshot(1.)
         json.dumps(snap)
         json.dumps(self.mem.grid_record())
-        self.assertEqual(snap['schema'], 'ugrp.owncam_memory.v1')
+        self.assertEqual(snap['schema'], 'ugrp.owncam_memory.v2')
+        self.assertEqual(snap['provider']['label'], 'interim, tag provider')
+        self.assertEqual(snap['catalogue']['counts']['door_post'], 4)
         self.assertEqual(snap['kf_sources']['filterpy']['version'], '1.4.5')
 
 
 class DriverPolicyTests(unittest.TestCase):
     def _leg(self, loaded):
         from harness.m1_owncam_memory import _LegDriverMem
+        from harness.owncam_landmark_tags import TagLandmarkProvider
         from harness.owncam_localizer import OwnCamLocalizer
         from harness.owncam_memory import OwnCamMemory
         static = tagged('zone_wide_door_tags_v1')
-        mem = OwnCamMemory(static, params(), robot_id='r1', detect=_Det())
+        mem = OwnCamMemory(static, params(), robot_id='r1', detect=_Det(), provider=TagLandmarkProvider(static, params()))
         loc = OwnCamLocalizer(static, params(), seed=0)
         leg = _LegDriverMem(mem, loc, static, params(), loaded=loaded, goal_xy=(2.65, .05), door_xy=(2.2, .05),
                             initial_servo=CARRY if loaded else SEARCH)
@@ -349,14 +551,27 @@ class DriverPolicyTests(unittest.TestCase):
         leg.arm_target = {6: 2030}
         leg.servo[6] = 2030
         leg.tick(1.)
+        self.assertEqual(leg.look_counts['early_stop'], 0)                      # A3: no look fix in this dwell yet
+        mem.last_look_fix = {'t': .5, 'xy': [1.4, .05]}
+        leg.state, leg.state_since, leg.look_queue = 'look_pan', 0., [970]
+        leg.arm_target = {6: 2030}
+        leg.tick(1.)
         self.assertEqual(leg.look_counts['early_stop'], 1)
 
-    def test_confident_arrival_check_is_skipped(self):
+    def test_confident_arrival_check_is_skipped_only_with_a_fresh_look_fix(self):
         leg, mem = self._leg(False)
         leg.loc.estimate = lambda: {**self._est(2.65, .02, .01), 't': 0.}
         leg.loc.predict_to = lambda t: None
         leg.state = 'drive'
-        self.assertEqual(leg._start_look(0., 'arrival_check'), [{'kind': 'hold'}])
+        leg._start_look(0., 'arrival_check')                                   # A3: no look fix yet -> look
+        self.assertEqual(leg.state, 'look_arm')
+        self.assertEqual((leg.look_counts['skipped'], leg.look_counts['stale_fix']), (0, 1))
+        leg, mem = self._leg(False)
+        leg.loc.estimate = lambda: {**self._est(2.65, .02, .01), 't': 0.}
+        leg.loc.predict_to = lambda t: None
+        leg.state = 'drive'
+        mem.last_look_fix = {'t': 0., 'xy': [2.4, .05]}
+        self.assertEqual(leg._start_look(1., 'arrival_check'), [{'kind': 'hold'}])
         self.assertEqual(leg.state, 'drive')
         self.assertEqual(leg.look_counts['skipped'], 1)
 
@@ -430,13 +645,15 @@ class ControllerTests(unittest.TestCase):
         ctl.pose.report = lambda now: rep
         ctl.memory._detect.rows = [('cyan', 'near', .65, 0.)]
         for k in range(2):
-            ctl.memory.observe_frame(1. + .2*k, frame_id=k + 1, image=None, servo=SEARCH, tag_detections=[],
-                                     report=rep, arm_settled_s=1., loaded=False)
+            ctl.memory.observe_frame(1. + .2*k, frame_id=k + 1, image=None, servo=SEARCH, report=rep,
+                                     arm_settled_s=1., loaded=False, provider_inputs={'tag_detections': []})
         d = ctl._init(2.)
         self.assertEqual(d['mode'], 'tick')
         self.assertEqual(ctl.phase, 'approach_leg')
         self.assertEqual(ctl.pickup_source, 'own_rgb_search')
-        self.assertAlmostEqual(ctl.target_xy[0], -.2, delta=.03)
+        from harness.owncam_memory import correct_box_detection
+        self.assertAlmostEqual(ctl.target_xy[0], -.85 + correct_box_detection((.65, 0.), SEARCH, params())[0], delta=.01)
+        self.assertEqual(ctl.summary()['landmark_provider']['result_label'], 'interim, tag provider')
 
     def test_viewpoints_with_known_floor_are_skipped_then_revisited(self):
         ctl = self._ctl()
@@ -457,9 +674,11 @@ class RunnerTests(unittest.TestCase):
         from harness.m1_owncam_delivery import M1OwnCamDelivery
         from harness.m1_owncam_memory import M1OwnCamDeliveryMem
         self.assertIs(R.controller_class('off'), M1OwnCamDelivery)
-        self.assertIs(R.controller_class('memory_v1'), M1OwnCamDeliveryMem)
-        with self.assertRaises(SystemExit):
-            R.controller_class('memory_v0')
+        self.assertIs(R.controller_class('memory_v2'), M1OwnCamDeliveryMem)
+        for gone in ('memory_v0', 'memory_v1'):                                # v1 = ad78ef2, dev-a1 only
+            with self.assertRaises(SystemExit):
+                R.controller_class(gone)
+        self.assertEqual(R.RESULT_LABELS['memory_v2'], 'interim, tag provider')
         with self.assertRaises(SystemExit):
             R.check_threads({'OMP_NUM_THREADS': '1'})
         self.assertEqual(set(R.check_threads({k: '1' for k in R.THREAD_VARS})), set(R.THREAD_VARS))
@@ -482,10 +701,11 @@ class RunnerTests(unittest.TestCase):
              mock.patch.object(R, 'free_gib', return_value=100.):
             import tempfile
             with tempfile.TemporaryDirectory() as tmp:
-                _, _, rec = R.run_episode({'episode_id': 'e'}, Path(tmp)/'on'/'e', {}, 'memory_v1', prereg_sha256='0')
+                _, _, rec = R.run_episode({'episode_id': 'e'}, Path(tmp)/'on'/'e', {}, 'memory_v2', prereg_sha256='0')
+                self.assertEqual(rec['result_label'], 'interim, tag provider')
                 self.assertEqual(rec['controller_class'], 'harness.m1_owncam_memory.M1OwnCamDeliveryMem')
                 R.run_episode({'episode_id': 'e'}, Path(tmp)/'off'/'e', {}, 'off', prereg_sha256='0')
-        self.assertEqual(seen, [('M1OwnCamDeliveryMem', 'memory_v1'), ('M1OwnCamDelivery', 'off')])
+        self.assertEqual(seen, [('M1OwnCamDeliveryMem', 'memory_v2'), ('M1OwnCamDelivery', 'off')])
         self.assertIs(base.M1OwnCamDelivery, original)
         with mock.patch.object(R, 'free_gib', return_value=5.), \
              mock.patch.dict('os.environ', {k: '1' for k in R.THREAD_VARS}), self.assertRaises(SystemExit):
