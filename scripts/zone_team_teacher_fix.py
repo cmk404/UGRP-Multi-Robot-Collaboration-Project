@@ -108,7 +108,7 @@ class FixTeamRobot(TeamRobot):
                     self.arm.tick(now)
                     self.port.hold(now)
                     return
-            if self.staged is not None:
+            elif self.staged is not None:
                 self.log('station_unstaged', self.rid, now, team=self.staged[0],
                          held_s=round(now - self.staged[1], 2))
                 self.staged = None

@@ -244,6 +244,11 @@ def test_a_staged_robot_holds_and_replans_to_its_station_when_the_route_clears(m
     team[0] = None
     robot.tick(20., None)
     assert phases == ['to_box'] and ticks == [20.] and logs == ['station_staged', 'station_unstaged']
+    # staged inside the team's hull: it yields at once and stays staged while yielding
+    team[0] = 'long_beam_0@g1'
+    robot.ex.yield_if_in_team_path = lambda r, jid, now: True
+    robot.tick(30., None)
+    assert robot.staged == ('long_beam_0@g1', 30.) and ticks == [20., 30.] and logs[-1] == 'station_staged'
 
 
 # --- B5: labels follow an item set down off its pickup spot (opt-in profile) ------
