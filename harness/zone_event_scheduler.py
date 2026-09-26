@@ -37,7 +37,9 @@ from __future__ import annotations
 
 import collections
 import heapq
+from collections.abc import Mapping
 from dataclasses import dataclass, field
+from types import MappingProxyType
 
 from harness.zone_sim_cost import (Attempt, CallCostRecord, FAILED_OUTCOMES, MessageCostRecord,
                                    TRIGGER_TO_CONTRACT, call_cost, censored_call_record,
@@ -67,6 +69,11 @@ KIND_ORDER = {'message': 0, 'call_done': 1, 'timer': 2, 'observe': 3, 'call_star
 
 def _round(value):
     return round(float(value), 6)
+
+
+def _usage_dict(usage):
+    """JSON copy of a provider usage report (None stays None)."""
+    return None if usage is None else dict(usage)
 
 
 @dataclass(frozen=True)
@@ -124,10 +131,29 @@ class CallReply:
     #: any other utterance and are never delivered. Only a failed last attempt
     #: can carry them.
     unparsed_utterances: int = 0
+    #: Third review, finding 16: False when the transport could NOT read what
+    #: the provider billed (a plain exception). The flag travels with the reply
+    #: into the call ledger, the censored row and package A's ``cost_terms``, so
+    #: its 0 tokens stay a labelled lower bound instead of a confirmed 0.
+    usage_known: bool = True
+    #: The provider's OWN usage report of this call (e.g. ``{'input_tokens':
+    #: 812, 'output_tokens': 95, 'image_tokens': 0, 'cached_tokens': 0}``) or
+    #: None when no provider answered (offline fixture) or it reported nothing.
+    #: Kept APART from the standardised billed size in ``attempts`` that the
+    #: SIM cost uses (third review, finding 18 follow-up).
+    provider_usage: object = None
 
     def __post_init__(self):
         if not self.attempts:
             raise ValueError('a reply needs at least one attempt')
+        if not isinstance(self.usage_known, bool):
+            raise ValueError('usage_known must be a bool')
+        if self.provider_usage is not None:
+            if not isinstance(self.provider_usage, Mapping) or any(
+                    isinstance(v, bool) or not isinstance(v, int) or v < 0
+                    for v in self.provider_usage.values()):
+                raise ValueError('provider_usage must map names to non-negative ints, or be None')
+            object.__setattr__(self, 'provider_usage', MappingProxyType(dict(self.provider_usage)))
         if isinstance(self.unparsed_utterances, bool) or not isinstance(self.unparsed_utterances, int) \
                 or self.unparsed_utterances < 0:
             raise ValueError('unparsed_utterances must be a non-negative int')
@@ -158,10 +184,11 @@ class TransportFailure(Exception):
     ``error`` attempt, recorded with ``usage_known=False``.
     """
 
-    def __init__(self, message, *, attempts, unparsed_utterances=0):
+    def __init__(self, message, *, attempts, unparsed_utterances=0, provider_usage=None):
         super().__init__(message)
         self.attempts = tuple(attempts)
         self.unparsed_utterances = int(unparsed_utterances)
+        self.provider_usage = provider_usage
 
 
 @dataclass
@@ -557,12 +584,12 @@ class EventScheduler:
             entry = self.ledger.get(call.call_id)
             if entry is None or entry['status'] != 'outstanding':
                 continue
-            usage_known = True
             if reply is None:
-                errors = len(self.transport_errors)
                 reply = self._reply_of(call)
                 cost = call_cost(reply.attempts, self.params)
-                usage_known = not any(row.get('usage_known') is False for row in self.transport_errors[errors:])
+            # third review, finding 16: the flag is the REPLY's, whether it was
+            # fetched before the horizon or just now; it is never reset to True.
+            usage_known = reply.usage_known
             reserved = entry.get('reserved_attempts', 1)
             actual = len(cost.attempts)
             over = self.budget.commit(call.actor, reserved=reserved, actual=actual)
@@ -588,6 +615,7 @@ class EventScheduler:
                                   'would_release_sim_s': _round(call.started_sim_s + cost.sim_s),
                                   'messages': len(reply.messages),
                                   'unparsed_utterances': reply.unparsed_utterances,
+                                  'provider_usage': _usage_dict(reply.provider_usage),
                                   'cost': cost.to_dict()})
             self._log(f'call_censored {call.actor} {call.call_id} elapsed={elapsed:.3f}',
                       kind='call_censored', actor=call.actor, call_id=call.call_id)
@@ -661,11 +689,12 @@ class EventScheduler:
                                                     input_tokens=attempts[-1].input_tokens,
                                                     output_tokens=attempts[-1].output_tokens,
                                                     utterances=attempts[-1].utterances),)
-            return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances)
+            return CallReply(attempts=attempts, unparsed_utterances=attempts[-1].utterances,
+                             provider_usage=exc.provider_usage)
         except Exception as exc:  # noqa: BLE001 - a failed call must still cost SIM time
             self.transport_errors.append({'call_id': call.call_id, 'actor': call.actor,
                                          'error': f'{type(exc).__name__}: {exc}', 'usage_known': False})
-            return CallReply(attempts=(Attempt(outcome='error'),))
+            return CallReply(attempts=(Attempt(outcome='error'),), usage_known=False)
         if not isinstance(reply, CallReply):
             raise TypeError(f'transport returned {type(reply).__name__}, expected CallReply')
         return reply
@@ -794,6 +823,7 @@ class EventScheduler:
         failed = cost.outcome in FAILED_OUTCOMES
         breach = bool(unreserved)
         notes = {'messages': len(reply.messages), 'unparsed_utterances': reply.unparsed_utterances,
+                 'usage_known': reply.usage_known, 'provider_usage': _usage_dict(reply.provider_usage),
                  'failed': failed, 'attempts_over_budget': over, 'unreserved_attempts': unreserved}
         if failed or breach:
             # finding 5: a failed call PAYS but executes nothing. Its action and

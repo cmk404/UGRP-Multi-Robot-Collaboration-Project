@@ -213,7 +213,14 @@ def parse_trial(obj):
 
 
 #: What an A-aligned record may archive per request next to its call rows.
-REQUEST_ARCHIVE_KEYS = ('request_id', 'input_keys', 'input_sha256', 'request_sha256')
+#: Third review, finding 1: the archive now carries the WHOLE final request
+#: (system/user text, image manifest, token counts), which package I re-hashes.
+REQUEST_ARCHIVE_KEYS = ('request_id', 'input_keys', 'input_sha256', 'request_sha256',
+                        'prompt_version', 'system', 'user', 'image_refs', 'tokens', 'billed_tokens',
+                        'provider_usage', 'call_id', 'robot', 'sim_s', 'payload_validated', 'status',
+                        'images', 'messages_out', 'unparsed_utterances', 'error')
+#: The part of an archived request that makes it re-hashable.
+REQUEST_BODY_KEYS = ('system', 'user', 'image_refs', 'tokens', 'billed_tokens')
 
 
 def _adapt_contract_rows(trial):
@@ -237,6 +244,13 @@ def _adapt_contract_rows(trial):
     for row in _rows(trial, 'request_archive'):
         if set(row) - set(REQUEST_ARCHIVE_KEYS) or not isinstance(row.get('request_id'), str):
             raise TrialError(f'request_archive[] carries only {REQUEST_ARCHIVE_KEYS}')
+        if any(k in row for k in REQUEST_BODY_KEYS):
+            # an archive that carries a body must BE the request: re-derive the
+            # digest and the counts from the stored text (third review, finding 1)
+            from harness.zone_study_prompts_ko import verify_archived_request
+            problems = verify_archived_request(row)
+            if problems:
+                raise TrialError(f'request_archive {row["request_id"]}: ' + '; '.join(problems))
         archive[row['request_id']] = row
     trial['requests'] = []
     for call in _rows(trial, 'calls'):
@@ -247,6 +261,7 @@ def _adapt_contract_rows(trial):
                 raise TrialError(f'request_archive {call["request_id"]}: input_sha256 differs from the call log')
             view['input_keys'] = list(stored.get('input_keys') or ())
             view['request_sha256'] = stored.get('request_sha256')
+        view['request_rehashed'] = stored is not None and all(k in stored for k in REQUEST_BODY_KEYS)
         trial['requests'].append(view)
     trial['utterances'] = [_utterance_view(row) for row in _rows(trial, 'messages')]
 
@@ -395,7 +410,24 @@ def model_aggregate(trial):
         'cached': sum(int((c.get('input_tokens') or {}).get('cached') or 0) for c in calls),
     }
     latencies = [float(c['wall_latency_s']) * 1000.0 for c in done if c.get('wall_latency_s') is not None]
+    # Third review, finding 16: a call whose billed usage is unknown (a plain
+    # transport exception) carries 0 tokens as a LOWER BOUND. The flag is read
+    # from every call, completed or censored, and the token totals are then
+    # reported as incomplete instead of as a confirmed number.
+    unknown = [c for c in calls if _usage_unknown(c)]
+    # the provider's own usage report, kept apart from the standardised billed
+    # size above; None unless EVERY call carries one (offline: no provider).
+    reports = [(c.get('cost_terms') or {}).get('provider_usage') for c in calls]
+    provider = None
+    if calls and all(isinstance(r, dict) for r in reports):
+        provider = {}
+        for report in reports:
+            for key, value in report.items():
+                provider[key] = provider.get(key, 0) + int(value)
     out = {'source': 'calls', 'logical_calls': len(calls),
+           'usage_unknown_calls': len(unknown), 'tokens_complete': not unknown,
+           'provider_usage': provider,
+           'provider_usage_calls': sum(1 for r in reports if isinstance(r, dict)),
            'completed_calls': len(done),
            'http_attempts': sum(int(c.get('http_attempts') or 0) for c in calls),
            'censored_calls': len(censored),
@@ -410,6 +442,18 @@ def model_aggregate(trial):
         out['mismatch'] = _summary_mismatch(summary, out)
         out['source'] = 'calls+summary'
     return out
+
+
+def _usage_unknown(call):
+    """True when a call's billed usage is not known (third review, finding 16).
+
+    Completed calls of older records carry no flag and count as known; a
+    censored call without the flag counts as unknown (its 0 is not a fact).
+    """
+    terms = call.get('cost_terms') or {}
+    if terms.get('usage_known') is False:
+        return True
+    return call.get('status') == CENSORED_STATUS and 'usage_known' not in terms
 
 
 def _summary_mismatch(summary, derived):
@@ -496,6 +540,12 @@ def audit_input_boundary(trial):
         missing_evidence.append('no request rows')
     if unconfirmed:
         missing_evidence.append(f'{len(unconfirmed)} request(s) without payload_validated')
+    # third review, finding 1: an A-aligned request whose final text was not
+    # archived cannot be audited afterwards, so it is not evidence of a clean
+    # boundary either (a provisional record authors ``requests`` itself)
+    not_archived = [r for r in _rows(trial, 'requests') if r.get('request_rehashed') is False]
+    if not_archived:
+        missing_evidence.append(f'{len(not_archived)} request(s) without a re-hashable final request')
     clean = (not leaks and not unknown and not grounds and not unvalidated
              and not channel['violations'] and condition != REFERENCE_CONDITION
              and not missing_evidence)
@@ -667,6 +717,15 @@ def _item_kind(row, orders):
     return None
 
 
+def _allowed_zones(row, by_item, orders):
+    """Zones a delivered item may legitimately end in (empty = not ordered)."""
+    item = row.get('item_id')
+    if item in by_item:
+        return {by_item[item]['zone']}
+    kind = _item_kind(row, orders)
+    return {o['zone'] for o in orders if o['identity'] == 'kind_fungible' and o['kind'] == kind}
+
+
 def delivery_state(trial):
     """Final delivery state per order, plus the misdelivery HISTORY.
 
@@ -728,10 +787,19 @@ def delivery_state(trial):
         # order of that kind, WITHOUT consuming its quantity
         misdelivered[item] = {'zone': row.get('zone'), 'sim_s': row.get('sim_s'),
                               'order_id': candidates[0]['order_id']}
-    history = [{'item_id': r.get('item_id'), 'zone': r.get('zone'), 'sim_s': r['sim_s']}
-               for r in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0))
-               if isinstance(r.get('item_id'), str)
-               and (by_item.get(r['item_id']) or {}).get('zone') not in (None, r.get('zone'))]
+    # Third review, finding 11: the history used to look only at items an order
+    # names by id, so a fungible ``red_1: C -> B`` recovery counted one delivery
+    # and ZERO recoveries. A drop is a misplacement when its zone is none of the
+    # zones its item may go to: the order's zone for a named item, the zones of
+    # every fungible order of its kind otherwise. Unordered items stay surplus.
+    history = []
+    for r in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0)):
+        if not isinstance(r.get('item_id'), str):
+            continue
+        allowed = _allowed_zones(r, by_item, orders)
+        if allowed and r.get('zone') not in allowed:
+            history.append({'item_id': r['item_id'], 'zone': r.get('zone'), 'sim_s': r['sim_s'],
+                            'identity': 'specific_item' if r['item_id'] in by_item else 'kind_fungible'})
     fulfilled = {}
     for order in orders:
         got = sum(1 for d in delivered.values() if d['order_id'] == order['order_id'])
@@ -791,6 +859,7 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
                          f'({"; ".join(model["mismatch"])}); calls/messages are the only aggregation '
                          'source (review finding 10)')
     tokens = (model or {}).get('tokens') or {}
+    tokens_complete = (model or {}).get('tokens_complete', True) is not False
     # Second review, finding 10: a missing cost source stays None in the FINAL
     # metrics too (it used to become 0 here), and the terms do not overlap:
     # think + utterance == call total; delivery is the transport delay.
@@ -822,8 +891,11 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'ordered_items': ordered_count,
         'delivered_items': len(delivered),
         'misdelivered_items': len(misdelivered),
-        'misdeliveries_recovered': sum(1 for row in state['misdelivery_history']
-                                       if row['item_id'] in delivered),
+        # distinct ITEMS that were once misplaced and ended delivered (named or
+        # fungible); the raw wrong drops are counted apart
+        'misdeliveries_recovered': len({row['item_id'] for row in state['misdelivery_history']
+                                        if row['item_id'] in delivered}),
+        'misplacement_events': len(state['misdelivery_history']),
         'deliveries_outside_window': len(state['outside_window']),
         'orders_complete': state['orders_complete'],
         'orders_by_id': state['by_order'],
@@ -845,12 +917,18 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'model_calls_censored': (model or {}).get('censored_calls'),
         'model_cost_source': (model or {}).get('source'),
         'http_attempts': (model or {}).get('http_attempts'),
-        'tokens_input': tokens.get('input'),
-        'tokens_output': tokens.get('output'),
+        # third review, finding 16: an unknown usage makes the totals None; the
+        # counted numbers stay visible as an explicit lower bound.
+        'tokens_input': tokens.get('input') if tokens_complete else None,
+        'tokens_output': tokens.get('output') if tokens_complete else None,
+        'tokens_input_lower_bound': tokens.get('input'),
+        'tokens_output_lower_bound': tokens.get('output'),
+        'usage_unknown_calls': (model or {}).get('usage_unknown_calls'),
+        'provider_usage': (model or {}).get('provider_usage'),
         'tokens_image': tokens.get('image'),
         'tokens_cached': tokens.get('cached'),
-        'tokens_total': (None if model is None or any(tokens.get(k) is None
-                                                      for k in ('input', 'output', 'image'))
+        'tokens_total': (None if model is None or not tokens_complete
+                         or any(tokens.get(k) is None for k in ('input', 'output', 'image'))
                          else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
         'model_calls_per_delivered': round((model or {}).get('logical_calls') / len(delivered), 4)
                                      if delivered and (model or {}).get('logical_calls') is not None
@@ -961,7 +1039,7 @@ _STRUCT_TO_COARSE = {
 }
 
 
-def extract_claims(utterance, labels=()):
+def extract_claims(utterance, labels=(), orders=None):
     """Checkable propositions in an utterance.
 
     An explicit ``claims`` list (Package A) wins. Otherwise rule-based cues plus
@@ -976,17 +1054,100 @@ def extract_claims(utterance, labels=()):
     another robot's hold came out true. The DECLARED ids are now matched
     directly and the envelope sender is passed in, so the same proposition gets
     the same verdict in both encodings.
+
+    Third review, finding 12: an order id, a kind and an item id can all name
+    the SAME referent. ``orders`` (package I's ``_orders`` rows) lets both
+    encodings map every referent onto one canonical target — an item id, else a
+    kind, else an order — and a sentence that names an item AND its order or
+    kind ("order-1의 cyan_1을 …") is ONE claim, not one true plus one false.
     """
+    orders = list(orders or ())
     given = utterance.get('claims')
     if isinstance(given, list):
-        return [dict(c) for c in given if isinstance(c, dict) and c.get('type') in CLAIM_KINDS]
+        return _dedupe([normalize_claim(dict(c), orders) for c in given
+                        if isinstance(c, dict) and c.get('type') in CLAIM_KINDS])
     message = utterance.get('message')
     if utterance.get('encoding') in STRUCTURED_ENCODINGS and isinstance(message, dict):
-        return _structured_claims(message, sender=utterance.get('sender'))
+        return _dedupe([normalize_claim(c, orders)
+                        for c in _structured_claims(message, sender=utterance.get('sender'))])
     text = utterance.get('text') or ''
     if not text.strip():
         return []
-    return _text_claims(text, utterance, labels)
+    kinds = tuple(o['kind'] for o in orders if isinstance(o.get('kind'), str) and o['kind'])
+    return _text_claims(text, utterance, tuple(dict.fromkeys(tuple(labels) + kinds)), orders)
+
+
+#: Canonical target keys of a claim, most specific first.
+CLAIM_TARGET_KEYS = ('item_id', 'order_id', 'kind')
+
+
+def claim_referent(ref, orders):
+    """``(key, value)`` a referent string resolves to under the order sheet.
+
+    An item id stays an item; an order that names exactly one item is that item;
+    any other order stays an order; a declared kind is a kind. Anything else is
+    kept as an item id (it will match no referee row), so an undeclared name is
+    judged the same way in both encodings.
+    """
+    if not isinstance(ref, str) or not ref:
+        return None
+    for order in orders:
+        if ref in order['item_ids']:
+            return ('item_id', ref)
+    for order in orders:
+        if ref == order['order_id']:
+            if len(order['item_ids']) == 1:
+                return ('item_id', order['item_ids'][0])
+            return ('order_id', ref)
+    if any(ref == o['kind'] for o in orders):
+        return ('kind', ref)
+    return ('item_id', ref)
+
+
+def normalize_claim(claim, orders):
+    """One claim with its target in canonical form (see :func:`claim_referent`)."""
+    if claim.get('type') == 'blocked' or not orders:
+        return dict(claim)
+    out = {k: v for k, v in claim.items() if k not in CLAIM_TARGET_KEYS}
+    ref = next((claim[k] for k in CLAIM_TARGET_KEYS if claim.get(k) is not None), None)
+    key, value = claim_referent(ref, orders) or ('item_id', None)
+    out[key] = value
+    return {'type': out.pop('type'), key: out.pop(key), **out}
+
+
+def _covers(broad, narrow, orders):
+    """True when referent ``broad`` (order/kind) contains referent ``narrow``."""
+    bkey, bval = broad
+    nkey, nval = narrow
+    if (bkey, bval) == (nkey, nval) or bkey == 'item_id':
+        return False
+    order = next((o for o in orders if o['order_id'] == bval), None) if bkey == 'order_id' else None
+    if nkey == 'item_id':
+        kind = _item_kind({'item_id': nval}, orders)
+        if bkey == 'order_id':
+            return order is not None and (nval in order['item_ids']
+                                          or (order['identity'] == 'kind_fungible' and kind == order['kind']))
+        if bkey == 'kind':
+            return kind == bval or any(nval in o['item_ids'] and o['kind'] == bval for o in orders)
+    if nkey == 'order_id' and bkey == 'kind':
+        return any(o['order_id'] == nval and o['kind'] == bval for o in orders)
+    return False
+
+
+def _most_specific(refs, orders):
+    """Canonical referents of one sentence, a broader one dropped when it covers a narrower one."""
+    resolved = list(dict.fromkeys(r for r in (claim_referent(ref, orders) for ref in refs) if r))
+    return [r for r in resolved if not any(_covers(r, other, orders) for other in resolved if other != r)]
+
+
+def _dedupe(claims):
+    out, seen = [], set()
+    for claim in claims:
+        key = tuple(sorted(claim.items(), key=lambda kv: kv[0]))
+        if key not in seen:
+            seen.add(key)
+            out.append(claim)
+    return out
 
 
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?。])\s+|\n+')
@@ -1025,7 +1186,7 @@ def _ids(fragment, labels):
     return items, ZONE_RE.findall(fragment), PASSAGE_RE.findall(fragment)
 
 
-def _text_claims(text, utterance, labels):
+def _text_claims(text, utterance, labels, orders=()):
     """Claims scoped to the sentence carrying the cue.
 
     Sentence scoping stops ``door_narrow가 막혀 있습니다. door_wide로 우회하십시오.``
@@ -1033,34 +1194,39 @@ def _text_claims(text, utterance, labels):
     claim (the zone of a delivery, the item of a hold) falls back to ids named
     elsewhere in the same utterance.
     """
+    orders = list(orders or ())
     all_items, all_zones, _ = _ids(text, labels)
-    claims, seen = [], set()
+    claims = []
 
-    def add(claim):
-        key = tuple(sorted(claim.items(), key=lambda kv: kv[0]))
-        if key not in seen:
-            seen.add(key)
-            claims.append(claim)
+    def targets(items):
+        # third review, finding 12: every referent in canonical form, and an
+        # order or kind that only qualifies a named item is not a second claim
+        found = items or all_items
+        if not found:
+            return [('item_id', None)]
+        if not orders:
+            return [('item_id', item) for item in found]
+        return _most_specific(found, orders)
 
     for sentence in SENTENCE_SPLIT.split(text):
         if not sentence.strip():
             continue
         items, zones, passages = _ids(sentence, labels)
         if re.search(CLAIM_CUES['delivered'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'delivered', 'item_id': item,
-                     'zone': (zones or all_zones or [None])[0]})
+            for key, value in targets(items):
+                claims.append({'type': 'delivered', key: value,
+                               'zone': (zones or all_zones or [None])[0]})
         if re.search(CLAIM_CUES['holding'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'holding', 'item_id': item, 'robot': utterance.get('sender')})
+            for key, value in targets(items):
+                claims.append({'type': 'holding', key: value, 'robot': utterance.get('sender')})
         if re.search(CLAIM_CUES['blocked'], sentence):
             for passage in passages or [None]:
-                add({'type': 'blocked', 'passage': passage})
+                claims.append({'type': 'blocked', 'passage': passage})
         if re.search(CLAIM_CUES['absent'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'absent', 'item_id': item,
-                     'location_ref': utterance.get('location_ref')})
-    return claims
+            for key, value in targets(items):
+                claims.append({'type': 'absent', key: value,
+                               'location_ref': utterance.get('location_ref')})
+    return _dedupe(claims)
 
 
 def _structured_claims(message, *, sender=None):
@@ -1093,16 +1259,20 @@ def check_claim(claim, trial, at_sim_s):
     silently turned into a failure or a success.
     """
     referee = _referee(trial)
+    orders = _orders(trial)
+    # third review, finding 12: the claim is judged on its CANONICAL target, so
+    # an item, its order and its kind get one verdict in both encodings
+    claim = normalize_claim(claim, orders)
     kind = claim.get('type')
     if kind == 'delivered':
         rows = _rows(referee, 'deliveries')
         if 'deliveries' not in referee:
             return 'unverifiable'
-        item, zone = claim.get('item_id'), claim.get('zone')
-        if item is None:
+        zone = claim.get('zone')
+        if not _has_target(claim):
             return 'unverifiable'
         for row in rows:
-            if row.get('item_id') != item:
+            if not _row_matches(claim, row, orders):
                 continue
             when = row.get('sim_s')
             if when is not None and at_sim_s is not None and float(when) > float(at_sim_s):
@@ -1113,11 +1283,11 @@ def check_claim(claim, trial, at_sim_s):
     if kind == 'holding':
         if 'holds' not in referee:
             return 'unverifiable'
-        item, robot = claim.get('item_id'), claim.get('robot')
-        if item is None or at_sim_s is None:
+        robot = claim.get('robot')
+        if not _has_target(claim) or at_sim_s is None:
             return 'unverifiable'
         for row in _rows(referee, 'holds'):
-            if row.get('item_id') != item or (robot and row.get('robot') != robot):
+            if not _row_matches(claim, row, orders) or (robot and row.get('robot') != robot):
                 continue
             start = float(row.get('from_s') or 0.0)
             stop = row.get('to_s')
@@ -1141,9 +1311,10 @@ def check_claim(claim, trial, at_sim_s):
     if kind == 'absent':
         if 'slot_states' not in referee:
             return 'unverifiable'
-        item = claim.get('item_id')
+        if not _has_target(claim):
+            return 'unverifiable'
         for row in _rows(referee, 'slot_states'):
-            if row.get('item_id') != item:
+            if not _row_matches(claim, row, orders):
                 continue
             when = row.get('sim_s')
             if when is not None and at_sim_s is not None and float(when) > float(at_sim_s):
@@ -1151,6 +1322,25 @@ def check_claim(claim, trial, at_sim_s):
             return 'true' if row.get('present') is False else 'false'
         return 'unverifiable'
     return 'unverifiable'
+
+
+def _has_target(claim):
+    return any(claim.get(k) is not None for k in CLAIM_TARGET_KEYS)
+
+
+def _row_matches(claim, row, orders):
+    """Does a referee row concern the claim's canonical target?"""
+    item = row.get('item_id')
+    if claim.get('item_id') is not None:
+        return item == claim['item_id']
+    if claim.get('kind') is not None:
+        return _item_kind(row, orders) == claim['kind']
+    order = next((o for o in orders if o['order_id'] == claim.get('order_id')), None)
+    if order is None:
+        return False
+    if item in order['item_ids']:
+        return True
+    return order['identity'] == 'kind_fungible' and _item_kind(row, orders) == order['kind']
 
 
 def grounds_verdict(utterance):
@@ -1194,7 +1384,7 @@ def dialogue_metrics(trial, lookback_s=DEFAULT_LOOKBACK_S):
         acts = act_types(utt)
         coarse_counts.update(acts['coarse'])
         fine_counts.update(acts['fine'])
-        claims = extract_claims(utt, labels)
+        claims = extract_claims(utt, labels, orders=_orders(trial))
         at = utt.get('sim_s')
         claim_rows = [dict(c, verdict=check_claim(c, trial, at)) for c in claims]
         verdicts.update(r['verdict'] for r in claim_rows)

@@ -21,6 +21,7 @@ Design choices taken where the review left one open (user decision 2026-09-26):
 from __future__ import annotations
 
 import copy
+import dataclasses
 import json
 
 import pytest
@@ -1283,3 +1284,230 @@ def test_r2_extra_a_trial_without_audit_evidence_is_unverified():
     assert ev.boundary_status(audit) == 'unverified' and audit['unconfirmed_payloads']
     row = ev.summarise([bare])['conditions']['peer_ko']
     assert row['boundary_unverified_trials'] == 1 and row['boundary_clean_trials'] == 0
+
+
+# =========================================================================== #
+# Third review (codex-194-r3): #1, #11, #12, #16 were only partly resolved.
+# =========================================================================== #
+
+# --- #1: the SAVED record carries the whole final request -------------------
+
+def _saved_record(tmp_path, condition='peer_ko'):
+    trial, result = _trial(condition)
+    record = trial.trial_record(result)
+    path = tmp_path / f'{record["trial_id"]}.json'
+    path.write_text(json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True))
+    return trial, result, path
+
+
+@pytest.mark.parametrize('condition', ['peer_ko', 'structured', 'reference_R'])
+def test_r3_f01_a_saved_trial_record_reopens_and_rehashes_from_disk(tmp_path, condition):
+    trial, result, path = _saved_record(tmp_path, condition)
+    reopened = off.reopen_trial_record(path)
+    assert reopened['ok'], reopened['problems']
+    assert reopened['calls'] == reopened['archived'] == reopened['rehashed'] == len(result.calls) > 0
+    record = json.loads(path.read_text())               # from DISK, not from memory
+    calls = {row['request_id']: row for row in record['calls']}
+    for row in record['request_archive']:
+        assert {'system', 'user', 'image_refs', 'tokens', 'billed_tokens', 'provider_usage'} <= set(row)
+        assert row['image_refs'] and len(row['image_refs']) == row['tokens']['images']
+        assert pk.request_digest_from_refs(row['system'], row['user'], row['image_refs']) \
+            == row['request_sha256']
+        assert pk.count_tokens(row['system']) == row['tokens']['system']
+        assert pk.count_tokens(row['user']) == row['tokens']['user']
+        # three sizes kept apart: local count, standardised billed size, provider report
+        assert row['billed_tokens']['total_text_billed'] == calls[row['request_id']]['input_tokens']['text']
+        assert row['billed_tokens']['system_actual'] == row['tokens']['system']
+        assert row['provider_usage'] is None                  # offline: no provider answered
+    # package I accepts the reopened record and counts every request as re-hashed
+    parsed = ev.parse_trial(copy.deepcopy(record))
+    assert all(req['request_rehashed'] for req in parsed['requests'])
+
+
+@pytest.mark.parametrize('edit', ['user', 'system', 'image', 'tokens', 'billed', 'drop_system', 'drop_row'])
+def test_r3_f01_an_edited_saved_archive_is_detected_on_reopen(tmp_path, edit):
+    _, _, path = _saved_record(tmp_path)
+    record = json.loads(path.read_text())
+    row = record['request_archive'][0]
+    if edit == 'user':
+        row['user'] = row['user'].replace('order_sheet', 'order_shee7', 1)
+    elif edit == 'system':
+        row['system'] += ' '
+    elif edit == 'image':
+        row['image_refs'][0]['bytes_sha256'] = '0' * 64
+    elif edit == 'tokens':
+        row['tokens']['user'] += 1
+    elif edit == 'billed':
+        row['billed_tokens']['total_text_billed'] -= 50        # a cheaper SIM cost, same text
+    elif edit == 'drop_system':
+        row.pop('system')
+    else:
+        record['request_archive'].pop(0)
+    path.write_text(json.dumps(record, ensure_ascii=False))
+    reopened = off.reopen_trial_record(path)
+    assert not reopened['ok'] and reopened['problems'], edit
+    if edit != 'drop_row':
+        with pytest.raises(ev.TrialError):
+            ev.parse_trial(copy.deepcopy(record))
+
+
+def test_r3_f01_a_four_field_archive_is_not_evidence_of_a_clean_boundary():
+    trial, result = _trial('peer_ko')
+    record = trial.trial_record(result)
+    record['request_archive'] = [{k: r[k] for k in ('request_id', 'input_keys', 'input_sha256',
+                                                   'request_sha256')} for r in record['request_archive']]
+    audit = ev.audit_input_boundary(ev.parse_trial(copy.deepcopy(record)))
+    assert ev.boundary_status(audit) == 'unverified'
+    assert any('re-hashable' in why for why in audit['missing_evidence'])
+
+
+# --- #11: a fungible item's wrong drop stays in the history -----------------
+
+def test_r3_f11_a_fungible_recovery_is_one_delivery_and_one_recovery():
+    trial = _delivery_trial(deliveries=[
+        {'item_id': 'red_1', 'zone': 'C', 'sim_s': 100.0},       # wrong zone
+        {'item_id': 'red_1', 'zone': 'B', 'sim_s': 150.0}])      # recovered
+    state = ev.delivery_state(trial)
+    assert set(state['delivered']) == {'red_1'} and state['misdelivered'] == {}
+    assert state['misdelivery_history'] == [{'item_id': 'red_1', 'zone': 'C', 'sim_s': 100.0,
+                                             'identity': 'kind_fungible'}]
+    metrics = ev.efficiency_metrics(trial)
+    assert metrics['delivered_items'] == 1
+    assert metrics['misdeliveries_recovered'] == 1 and metrics['misplacement_events'] == 1
+    # a named item and a fungible one recover alike; an unordered drop is no history
+    both = _delivery_trial(deliveries=[
+        {'item_id': 'cyan_1', 'zone': 'B', 'sim_s': 90.0}, {'item_id': 'red_1', 'zone': 'A', 'sim_s': 95.0},
+        {'item_id': 'tile_9', 'zone': 'C', 'sim_s': 99.0},
+        {'item_id': 'cyan_1', 'zone': 'A', 'sim_s': 120.0}, {'item_id': 'red_1', 'zone': 'B', 'sim_s': 130.0}])
+    history = ev.delivery_state(both)['misdelivery_history']
+    assert [(h['item_id'], h['identity']) for h in history] == [('cyan_1', 'specific_item'),
+                                                                ('red_1', 'kind_fungible')]
+    assert ev.efficiency_metrics(both)['misdeliveries_recovered'] == 2
+    # a wrong drop that is never corrected is history but not a recovery
+    stuck = _delivery_trial(deliveries=[{'item_id': 'red_1', 'zone': 'C', 'sim_s': 100.0}])
+    assert ev.efficiency_metrics(stuck)['misdeliveries_recovered'] == 0
+    assert ev.efficiency_metrics(stuck)['misplacement_events'] == 1
+
+
+# --- #12: kind / order / item referents are normalised -----------------------
+
+_R3_ORDERS = [{'order_id': 'order-1', 'kind': 'cyan', 'count': 1, 'item_ids': ['cyan_1'],
+               'identity': 'specific_item', 'destination_zone': 'A'},
+              {'order_id': 'order-2', 'kind': 'red', 'count': 2, 'item_ids': [],
+               'identity': 'kind_fungible', 'destination_zone': 'B'},
+              {'order_id': 'order-3', 'kind': 'beam', 'count': 2, 'item_ids': ['beam_1', 'beam_2'],
+               'identity': 'specific_item', 'destination_zone': 'C'}]
+_R3_REFEREE = {'deliveries': [{'item_id': 'cyan_1', 'zone': 'A', 'sim_s': 100.0},
+                              {'item_id': 'beam_1', 'zone': 'C', 'sim_s': 110.0}],
+               'holds': [{'item_id': 'red_1', 'robot': 'r1', 'from_s': 0.0, 'to_s': 300.0}],
+               'conflicts': [], 'deadlocks': []}
+_R3_LABELS = ('order-1', 'order-2', 'order-3', 'cyan_1', 'beam_1', 'beam_2')
+
+
+def _r3_trial():
+    return _delivery_trial(orders=copy.deepcopy(_R3_ORDERS), referee=copy.deepcopy(_R3_REFEREE))
+
+
+def _verdicts(utterance, trial):
+    claims = ev.extract_claims(utterance, _R3_LABELS, orders=ev._orders(trial))
+    return claims, [ev.check_claim(claim, trial, 150.0) for claim in claims]
+
+
+@pytest.mark.parametrize('text, claim', [
+    ('order-1의 cyan_1을 A에 내려놓았습니다.', {'type': 'delivered', 'item_id': 'cyan_1', 'zone': 'A'}),
+    ('order-1을 A에 내려놓았습니다.', {'type': 'delivered', 'item_id': 'cyan_1', 'zone': 'A'}),
+    ('cyan cyan_1을 A에 내려놓았습니다.', {'type': 'delivered', 'item_id': 'cyan_1', 'zone': 'A'}),
+    ('order-3의 beam_1을 C에 내려놓았습니다.', {'type': 'delivered', 'item_id': 'beam_1', 'zone': 'C'}),
+])
+def test_r3_f12_an_item_named_with_its_order_or_kind_is_one_true_claim(text, claim):
+    trial = _r3_trial()
+    claims, verdicts = _verdicts({'sender': 'r1', 'encoding': 'free_ko', 'text': text}, trial)
+    assert claims == [claim] and verdicts == ['true'], (text, claims, verdicts)
+
+
+@pytest.mark.parametrize('sender, want', [('r1', 'true'), ('r3', 'false')])
+def test_r3_f12_a_kind_hold_claim_gets_one_verdict_in_both_encodings(sender, want):
+    trial = _r3_trial()
+    free = _verdicts({'sender': sender, 'encoding': 'free_ko', 'text': 'red를 들고 있습니다.'}, trial)
+    schema = _verdicts({'sender': sender, 'encoding': 'schema',
+                        'message': {'act': 'inform', 'item': 'red', 'state': 'held'}}, trial)
+    assert free[0] == schema[0] == [{'type': 'holding', 'kind': 'red', 'robot': sender}]
+    assert free[1] == schema[1] == [want]
+
+
+def test_r3_f12_an_order_level_claim_is_judged_the_same_in_both_encodings():
+    trial = _r3_trial()
+    free = _verdicts({'sender': 'r2', 'encoding': 'free_ko', 'text': 'order-3을 C에 내려놓았습니다.'}, trial)
+    schema = _verdicts({'sender': 'r2', 'encoding': 'schema',
+                        'message': {'act': 'inform', 'item': 'order-3', 'zone': 'C', 'state': 'placed'}},
+                       trial)
+    assert free == schema == ([{'type': 'delivered', 'order_id': 'order-3', 'zone': 'C'}], ['true'])
+    wrong = _verdicts({'sender': 'r2', 'encoding': 'free_ko', 'text': 'order-3을 A에 내려놓았습니다.'}, trial)
+    assert wrong[1] == ['false']
+
+
+def test_r3_f12_dialogue_metrics_count_one_claim_for_a_qualified_item():
+    trial = _r3_trial()
+    trial['utterances'] = [{'message_id': 'm-1', 'sender': 'r1', 'encoding': 'free_ko', 'sim_s': 150.0,
+                            'text': 'order-1의 cyan_1을 A에 내려놓았습니다.'}]
+    metrics = ev.dialogue_metrics(trial)
+    assert (metrics['claims_checked'], metrics['claims_true'], metrics['claims_false']) == (1, 1, 0)
+
+
+# --- #16: the usage-unknown flag survives end to end -------------------------
+
+class _PlainFailure:
+    """A transport whose reply raises a plain exception: usage unknown."""
+
+    def submit(self, call):
+        return call
+
+    def reply(self, token):
+        raise RuntimeError('connection reset')
+
+
+def test_r3_f16_a_fetched_unknown_usage_reply_stays_unknown_when_censored():
+    params = dataclasses.replace(zc.params(), error_s=5.0)
+    sched = ds.EventScheduler(_PlainFailure(), cost_params=params)
+    sched.trigger('r1', 'start')
+    sched.arm_observations(('r1',), period_s=1.0)
+    sched.run(until_s=3.0)             # fetched at t>=1 (min_call_s), would finish at 5
+    row = sched.censored[0]
+    assert row['reason'] == 'charged_after_horizon', row
+    assert row['usage_known'] is False and sched.transport_errors[0]['usage_known'] is False
+    log = sched.contract_log(run_id='run', condition_name='peer_ko', seed=SEED, provenance=_provenance())
+    record = log['calls'][0]
+    assert record['status'] == 'censored' and record['cost_terms']['usage_known'] is False
+    derived = ev.model_aggregate({'calls': log['calls'], 'messages': []})
+    assert derived['usage_unknown_calls'] == 1 and derived['tokens_complete'] is False
+
+
+def test_r3_f16_a_completed_unknown_usage_call_makes_the_token_totals_incomplete():
+    sched = ds.EventScheduler(_PlainFailure(), policy=ds.CallPolicy(max_calls_per_actor=1))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    assert sched.calls and sched.calls[0].notes['usage_known'] is False
+    log = sched.contract_log(run_id='run', condition_name='peer_ko', seed=SEED, provenance=_provenance())
+    assert all(r['cost_terms']['usage_known'] is False for r in log['calls'] if r['status'] != 'censored')
+    trial = _delivery_trial(calls=log['calls'])
+    metrics = ev.efficiency_metrics(trial)
+    assert metrics['usage_unknown_calls'] >= 1
+    assert metrics['tokens_total'] is None and metrics['tokens_input'] is None
+    assert metrics['tokens_input_lower_bound'] == 0
+
+
+def test_r3_provider_usage_is_kept_apart_from_the_billed_size():
+    usage = {'input_tokens': 912, 'output_tokens': 64, 'image_tokens': 258, 'cached_tokens': 0}
+    reply = ds.CallReply(attempts=(zc.Attempt(input_tokens=833, output_tokens=40),), provider_usage=usage)
+    sched = ds.EventScheduler(ds.ReplayTransport({'r1': [reply]}), policy=ds.CallPolicy(max_calls_per_actor=1))
+    sched.trigger('r1', 'start')
+    sched.run(until_s=60.0)
+    record = sched.contract_log(run_id='run', condition_name='peer_ko', seed=SEED,
+                                provenance=_provenance())['calls'][0]
+    assert record['input_tokens']['text'] == 833 and record['output_tokens'] == 40      # billed
+    assert record['cost_terms']['provider_usage'] == usage                              # provider
+    assert record['cost_terms']['usage_known'] is True
+    derived = ev.model_aggregate({'calls': [record], 'messages': []})
+    assert derived['provider_usage'] == usage and derived['tokens']['input'] == 833
+    with pytest.raises(ValueError):
+        ds.CallReply(provider_usage={'input_tokens': -1})

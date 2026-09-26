@@ -805,18 +805,25 @@ def request_digest_from_refs(system, user, image_refs) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
-def archive_request(request) -> dict:
+def archive_request(request, *, provider_usage=None) -> dict:
     """What an offline/online log keeps of one final request (second review, finding 1).
 
     The exact system and user text, the image manifest with the byte digests
     and the request digest. ``verify_archived_request`` re-derives the digest,
     so an archive that dropped or edited any part of the request is detected.
+
+    Three sizes are kept APART (third review): ``tokens`` is the frozen local
+    count of the text that actually went out, ``billed_tokens`` the
+    standardised size the SIM cost charges (``FIXED_PROMPT_POLICY``), and
+    ``provider_usage`` the provider's own usage report, None when no provider
+    answered (offline fixture) or it reported nothing.
     """
     return {'request_id': request['request_id'], 'request_sha256': request['request_sha256'],
             'input_sha256': request['input_sha256'], 'prompt_version': request['prompt_version'],
             'system': request['messages'][0]['content'], 'user': request['messages'][1]['content'],
             'image_refs': copy.deepcopy(request['image_refs']),
-            'tokens': dict(request['tokens']), 'billed_tokens': dict(request['billed_tokens'])}
+            'tokens': dict(request['tokens']), 'billed_tokens': dict(request['billed_tokens']),
+            'provider_usage': None if provider_usage is None else dict(provider_usage)}
 
 
 def verify_archived_request(row) -> list:
@@ -833,6 +840,7 @@ def verify_archived_request(row) -> list:
         if image.get('bytes_sha256') != image.get('sha256'):
             problems.append(f'archived request {row.get("request_id")!r}: {image.get("label")} bytes differ '
                             'from their reference')
+    problems.extend(_count_problems(row))
     try:
         body = json.loads(row['user'])
     except ValueError:
@@ -842,6 +850,39 @@ def verify_archived_request(row) -> list:
         if payload_sha256(body) != row['input_sha256']:
             problems.append(f'archived request {row.get("request_id")!r}: user JSON does not match input_sha256')
     return problems
+
+
+def _count_problems(row) -> list:
+    """The stored token counts re-derive from the stored text (third review, finding 1).
+
+    An archive that kept the text but edited ``tokens`` or ``billed_tokens``
+    would change the SIM cost without changing the request digest, so the
+    counts are recomputed from the archived system/user text and compared.
+    """
+    rid = row.get('request_id')
+    tokens, billed = row.get('tokens'), row.get('billed_tokens')
+    if not isinstance(tokens, Mapping) or not isinstance(billed, Mapping):
+        return [f'archived request {rid!r} misses its token counts (tokens, billed_tokens)']
+    if tokens.get('tokenizer') != TOKENIZER_VERSION:
+        return [f'archived request {rid!r}: tokenizer {tokens.get("tokenizer")!r} is not {TOKENIZER_VERSION}']
+    want = request_tokens(row['system'], row['user'], row['image_refs'])
+    out = [f'archived request {rid!r}: tokens.{k} {tokens.get(k)!r} != recount {v!r}'
+           for k, v in want.items() if tokens.get(k) != v]
+    for key, value in (('system_actual', want['system']), ('user', want['user']),
+                       ('images', want['images']), ('tokenizer', TOKENIZER_VERSION),
+                       ('policy', FIXED_PROMPT_POLICY)):
+        if billed.get(key) != value:
+            out.append(f'archived request {rid!r}: billed_tokens.{key} {billed.get(key)!r} != {value!r}')
+    reference = billed.get('system_billed')
+    if isinstance(reference, bool) or not isinstance(reference, int) or reference < 0:
+        out.append(f'archived request {rid!r}: billed_tokens.system_billed {reference!r} is not a size')
+    elif billed.get('total_text_billed') != reference + want['user']:
+        out.append(f'archived request {rid!r}: billed_tokens.total_text_billed != system_billed + user')
+    usage = row.get('provider_usage')
+    if usage is not None and (not isinstance(usage, Mapping) or any(
+            isinstance(v, bool) or not isinstance(v, int) or v < 0 for v in usage.values())):
+        out.append(f'archived request {rid!r}: provider_usage must be None or non-negative ints')
+    return out
 
 
 def _from_uri(uri) -> bytes:

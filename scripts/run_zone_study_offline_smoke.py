@@ -91,6 +91,17 @@ def main(argv=None) -> int:
     for record in bundle['trial_records']:
         (records / f'{record["trial_id"]}.json').write_text(
             json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + '\n')
+    # third review, finding 1: every SAVED record is read back from disk and
+    # each archived final request re-hashed; the run fails if any does not.
+    reopened = [off.reopen_trial_record(records / f'{record["trial_id"]}.json')
+                for record in bundle['trial_records']]
+    disk = {'ok': all(r['ok'] for r in reopened), 'records': len(reopened),
+            'calls': sum(r['calls'] for r in reopened),
+            'rehashed_requests': sum(r['rehashed'] for r in reopened),
+            'problems': [p for r in reopened for p in r['problems']][:50],
+            'files': {Path(r['path']).name: r['file_sha256'] for r in reopened}}
+    bundle['disk_rehash'] = {k: v for k, v in disk.items() if k != 'files'}
+    bundle['ok'] = bool(bundle['ok'] and disk['ok'])
     trials = {k: v for k, v in bundle.items() if k != 'trial_records'}
     (out / 'smoke.json').write_text(json.dumps(trials, ensure_ascii=False, indent=2,
                                                sort_keys=True) + '\n')
@@ -107,6 +118,10 @@ def main(argv=None) -> int:
     print(f'trials={len(bundle["trials"])}  probes={len(bundle["backflow_probes"])}  '
           f'ok={bundle["ok"]}')
     print(f'actor_isolation={bundle["actor_isolation"]}')
+    print(f'disk_rehash: ok={disk["ok"]} records={disk["records"]} calls={disk["calls"]} '
+          f'rehashed_requests={disk["rehashed_requests"]}')
+    for problem in disk['problems']:
+        print(f'    ! {problem}')
     header = f'{"run_id":34} {"calls":>5} {"msgs":>4} {"sent":>4} {"free":>4} {"f2f":>3} ' \
              f'{"lead":>5} {"think_s":>8} {"talk_s":>7} chan cost'
     print(header)

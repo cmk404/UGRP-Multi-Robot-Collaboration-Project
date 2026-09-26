@@ -227,11 +227,11 @@ class TrialResult:
                  'calls': [copy.deepcopy(c) for c in self.calls],
                  'messages': [copy.deepcopy(m) for m in self.messages],
                  'actions': [copy.deepcopy(a) for a in self.actions],
-                 # the payload keys and the final-request digest of every call, for
-                 # package I's input-boundary audit (second review, finding 1)
-                 'request_archive': [{k: r[k] for k in ('request_id', 'input_keys', 'input_sha256',
-                                                        'request_sha256')}
-                                     for r in self.requests],
+                 # the WHOLE final request of every call — system and user text,
+                 # image manifest, local/billed/provider token counts — so the
+                 # saved record can be reopened and re-hashed from disk (third
+                 # review, finding 1; it used to keep four fields only)
+                 'request_archive': [copy.deepcopy(r) for r in self.requests],
                  'literals': list(literals),
                  'idle': {rid: {'thinking': self.cost['thinking_sim_s'].get(rid, 0.)} for rid in ROBOTS},
                  'referee': {},
@@ -420,7 +420,9 @@ class OfflineTrial:
 
     def _archive(self, call, bundled, request, *, status, messages_out, unparsed_utterances=0, error=None):
         """Keep the FINAL request of this call (second review, finding 1)."""
-        row = pk.archive_request(request)
+        # offline: no provider answered, so its usage report is None — kept
+        # apart from the frozen local count (``tokens``) and the billed size
+        row = pk.archive_request(request, provider_usage=None)
         row.update({'call_id': call.call_id, 'robot': call.actor, 'sim_s': call.started_sim_s,
                     'payload_validated': True, 'status': status,
                     'input_keys': sorted(bundled.payload),
@@ -689,6 +691,40 @@ def request_checks(result: TrialResult) -> dict:
     if calls - archived:
         problems.append(f'calls without an archived request: {sorted(calls - archived)[:5]}')
     return {'ok': not problems, 'problems': problems, 'archived': len(result.requests)}
+
+
+def reopen_trial_record(path) -> dict:
+    """Reopen a SAVED trial record and re-hash every archived request from disk.
+
+    Third review, finding 1: the request archive was checked in memory only, so
+    a save path that dropped the system/user text passed. This reads the JSON
+    file back, re-derives every ``request_sha256`` and token count from the
+    stored text, requires one archived request per call row with the same
+    ``input_sha256``, and parses the record with package I.
+    """
+    from harness import zone_study_eval as ev
+
+    path = Path(path)
+    record = json.loads(path.read_text())
+    problems = []
+    archive = {}
+    for row in record.get('request_archive') or ():
+        problems.extend(pk.verify_archived_request(row))
+        archive[row.get('request_id')] = row
+    for call in record.get('calls') or ():
+        row = archive.get(call.get('request_id'))
+        if row is None:
+            problems.append(f'{call.get("request_id")!r}: the saved record has no archived request')
+        elif row.get('input_sha256') != call.get('input_sha256'):
+            problems.append(f'{call.get("request_id")!r}: archived input_sha256 differs from the call row')
+    try:
+        ev.parse_trial(copy.deepcopy(record))
+    except Exception as exc:                        # noqa: BLE001 - reported, not swallowed
+        problems.append(f'package I refused the saved record: {type(exc).__name__}: {exc}')
+    return {'ok': not problems, 'problems': problems, 'path': str(path),
+            'file_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+            'calls': len(record.get('calls') or ()), 'archived': len(archive),
+            'rehashed': sum(1 for row in archive.values() if not pk.verify_archived_request(row))}
 
 
 def channel_checks(trial: 'OfflineTrial', result: TrialResult) -> dict:

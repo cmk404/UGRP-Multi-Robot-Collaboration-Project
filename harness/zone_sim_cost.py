@@ -45,6 +45,7 @@ re-emit the same numbers as A's ``ugrp.zone_study_call.v1`` /
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field, replace
 import hashlib
 import itertools
@@ -392,13 +393,20 @@ def contract_call_record(record, *, run_id, condition_name, seed, request_id, ca
     agree. ``wall_latency_s`` is recorded but never used for SIM order.
     """
     cost = record.cost
+    notes = getattr(record, 'notes', None) or {}
+    terms = cost.cost_terms()
+    # third review, finding 16: an unknown usage stays labelled end to end, and
+    # the provider's own report is kept APART from the standardised billed size
+    # (``input_tokens`` / ``output_tokens``) the SIM cost is computed from.
+    terms['usage_known'] = bool(notes.get('usage_known', True))
+    terms['provider_usage'] = copy.deepcopy(notes.get('provider_usage'))
     return call_log_record(
         run_id=run_id, condition_name=condition_name, seed=seed, actor=record.actor,
         request_id=request_id, call_index=call_index,
         trigger=contract_trigger(record.trigger, mapping=trigger_map),
         requested_at_sim_s=_round(record.started_sim_s),
         released_at_sim_s=_round(record.started_sim_s + cost.sim_s),
-        cost_terms=cost.cost_terms(), input_sha256=input_sha256,
+        cost_terms=terms, input_sha256=input_sha256,
         input_tokens=dict(input_tokens or cost.input_tokens),
         output_tokens=cost.breakdown['output_tokens'],
         status=status or cost.status, provenance=provenance,
@@ -435,6 +443,7 @@ def censored_call_record(row, *, run_id, condition_name, seed, request_id, call_
              'reason': row.get('reason', 'unfinished_at_horizon'),
              'params_version': (row.get('cost') or {}).get('params_version'),
              'params_digest': (row.get('cost') or {}).get('params_digest'),
+             'provider_usage': copy.deepcopy(row.get('provider_usage')),
              'note': ('SIM time elapsed until the horizon; the action was never released. Provider usage '
                       'is the recorded API usage' if known else
                       'SIM time elapsed until the horizon; the API usage is unknown (lower bound 0)')}
