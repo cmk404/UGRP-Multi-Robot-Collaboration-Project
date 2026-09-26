@@ -76,6 +76,13 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 - 스모크: `smoke-i700`(layout seed 700, trial seed 700 → leader r2), 주 4조건 × 1회, horizon 480 SIM s, `cargo_noslip_v1`, weld OFF, 동기 SIM, 스레드 1, 동시 2개.
 - raw: `/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-45999d9c/`(로컬 전용, 원격 백업 아님).
 
+## dev 배선 실행 (결과 아님)
+
+`outputs/zone-study-integration-20260926/dev/`에 있다. 모두 `--dev-horizon-s`로 실행했고 번들 검사를 적용하지 않았다.
+- dev1(`peer_ko`, 12 s): 첫 호출에 자기 프레임이 없어 멈췄다. 장면 설정이 SIM을 1.3 s까지 진행한 것이 원인이다(B6). 이를 고친 뒤 커밋했다.
+- dev2(`peer_ko`)·dev3(`leader_ko`·`no_comm`), 14 s: 경로 연결, 채널, 비용, 재해시 검사를 통과했다.
+- 그 전에는 tags_v2 지도의 모든 호출이 A 검증에서 실패했다(시뮬레이터 없는 시험, B1).
+
 ## 결과 v1 — `smoke-i700`, 소스 `45999d9c`, 번들 `25d7634a` (배선, 연구 결과 아님)
 
 `results_v1.json`(`build_results.py --prereg prereg.json`)에 기록했다. **사전 등록 게이트 P1–P8은 4조건 모두 통과했다.** 사후 검사 P9(재질문 간격)는 실패했으며, 아래 D1이 그 결함이다.

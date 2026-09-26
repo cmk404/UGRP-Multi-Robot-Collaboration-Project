@@ -10,6 +10,7 @@ PNG. Local 127.0.0.1 pages only.
 import asyncio
 import base64
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -61,6 +62,7 @@ async def main(url, out):
     finally:
         proc.terminate()
         proc.wait(timeout=10)
+        shutil.rmtree(prof, ignore_errors=True)
 
 
 if __name__ == '__main__':
