@@ -52,12 +52,54 @@
 | plumb4 (SIM 170 s) | `cc7a3c5` | 먼 bay는 서쪽 관측점 다음에 추가 관측점을 둔다(`lane_viewpoints`: bay 서쪽 가장자리, 행 사이 통로(행 ± 0.40 m)). 확인 전에 호스트 디스크가 가득 찼다(`OSError: No space left on device`, 여유 1.8 GB, 다른 작업 합산). r1·r2의 프레임 쓰기가 실패했다 → 호스트 I/O 오류는 로봇 실패가 아니라 인프라 실패로 올리도록 고쳤다 |
 | plumb5 (SIM 140 s) | `54621bb` | r1: 서쪽 관측점 2곳 → 통로 관측점 (0.70, 0.35)에서 탐색 → 131 s에 상자(1.6, −0.05) 서쪽 접근점(평가 GT 1.19, −0.10)에 도착했다. 한도로 끊김. `blockage_seen`(`door_1` 포함)은 지도에 없는 상자·로봇을 본 것이다. 평가 전용 위치 오차 p50 r1 1.7 cm, r2 5.5 cm, r3 11.8 cm(r3은 대기 중 spawn에서 태그 1개만 보임) |
 
-## 결과
+## 결과 (소스 `4371f36`, 깨끗한 트리, 두 에피소드 병렬 1회씩)
 
-(스모크 실행 뒤 기록)
+**게이트: E1·E2·E3·E5·E6 통과, E4 문자 그대로는 실패 → 사전 등록 기준 스모크 불통과.**
+- E4 (a) 모든 로봇의 자세 출처가 `owncam_pf_v2:757f7f09` 하나다. 이 절은 통과다.
+- E4 (b) "자기 RGB 탐색에 도달한 모든 로봇의 `counts_as_m1`이 true"는 실패다.
+  - 6개 deliver 작업이 모두 탐색에 도달했다.
+  - 그런데 M1 판정기는 탐색이 목표를 **찾았을 때만** `counts_as_m1`을 true로 둔다(`pickup_from_own_rgb`). 그래서 목표를 못 찾은 3대는 false다.
+  - 사전 등록 문구가 판정기 정의와 어긋난 것이다. GT를 쓴 것이 아니다. 문구를 사후에 재해석하지 않고 실패로 기록한다.
+- 그 밖의 확인:
+  - 실행기마다 들어간 프레임은 모두 자기 `robot_cam`이다(6 로봇-에피소드 모두 `foreign_frames_fed=0`).
+  - weld eq_active 최대 0, noslip 10.
+  - 거짓 확인 0: GT상 슬롯이 비어 있는데 확인한 경우가 없다.
+
+**로봇별 결과.** m1-style 성공 3/6, 자기 카메라 확인 3/6. 확인한 3건은 모두 평가 GT에서 슬롯 안이다.
+
+| 에피소드 | 로봇 | pickup → 목적 | deliver 결과 | 작업 SIM s | m1-style | 평가 전용 메모 |
+|---|---|---|---|---:|---|---|
+| s700 | r3 (바로 시작) | P1-3 → A2 | `SEARCH_NOT_FOUND` | 69 | 실패 | 상자 (−0.2, 0.75)가 서쪽 관측점(x −0.47)에서 0.27 m 앞이다. 프레임 아래 가장자리에 잘려 적합되지 않았다(r3 프레임 172 확인) |
+| s700 | r1 (120 s 대기) | P2-2 → C2 | IN_SLOT, 확인 | 336 | **성공** | 슬롯 오차(자기 RGB) −1.4 / 4.1 cm |
+| s700 | r2 (240 s 대기) | P2-1 → B2 | IN_SLOT, 확인 | 412 | **성공** | −0.9 / 0.6 cm |
+| s701 | r2 (바로 시작) | P1-3 → A2 | IN_SLOT, 확인 | 298 | **성공** | −0.5 / −1.4 cm |
+| s701 | r3 (120 s 대기) | P1-2 → C2 | `SEARCH_NOT_FOUND` | 32 | 실패 | 상자 (−0.2, −0.85). s700 r3과 같은 근거리 잘림이다(plumb3의 같은 배치에서는 찾았다) |
+| s701 | r1 (240 s 대기) | P2-1 → B2 | `LOCAL_TIMEOUT` | 720 | 실패 | 먼 관측(far_coarse)으로 가까운 관측점까지 가는 M1 구간에서, 못 본 초록 상자(0.4, −1.65)에 약 660 SIM s 동안 걸려 있었다. 그 사이 `pose_uncertain` 사건이 약 65회 반복됐다 |
+
+- 운반 판정(평가 전용): 성공 3건 모두 운반 step 100%에서 양손가락이 접촉했고, 상자 최저 z는 ≥ 0.083 m였다.
+- 로봇 간 접촉 step: 0 (6/6).
+- 벽 접촉 step: 0 (6/6).
+- 위치 오차 p50(평가 전용): 0.5–7.6 cm. 가장 큰 값은 s701 r1이 걸려 있던 구간이다.
+- 에피소드 SIM 654 / 962 s. wall 5357 / 6733 s.
+- 1분 부하 평균: 46.6(시작) → 110.5 / 15.6(끝). 다른 작업과 합산한 값이다. 동기 SIM이라 결과에는 영향이 없고 wall만 늘었다.
+
+**해석 범위.**
+- 이 스모크는 실행기의 배관·격리·정직한 보고를 시험한 것이다. 3/6은 성공률이 아니다.
+- 성공 3건은 M1 사슬(PR #201)이 3대 동시 장면에서도 끝까지 돈다는 사례일 뿐이다. M1 test 코호트와 합산하지 않는다.
+
+**발견한 문제(수정은 새 사전 등록으로).**
+1. 서쪽 관측점 x −0.47은 첫 열(x −0.2) 상자에 너무 가깝다.
+2. far_coarse 뒤 가까운 관측 구간은 못 본 상자를 피하지 못한다(M1 사슬 쪽).
+3. `pose_uncertain` 가장자리 검출에 이력(hysteresis)이 없어 한 자리에서 반복된다.
+4. 사전 등록 E4 문구.
+
+## TensorBoard
+
+스냅샷 `outputs/tensorboard/0926-zone-own-executor-smoke`(로봇-에피소드 6개 + PR #201 dev-a8 단일 로봇 기준 2개)은 `build_results.py --tensorboard`로 만들었다. 공용 서버(6006)에서 8 run이 로드되는 것을 API로 확인했다. 표시값(`evaluation/reported_success`, `result/sim_s`, `result/commands`, `result/wall_s`, `result/model_calls=0`)도 원본과 일치했다. 보기 설정은 `outputs/tensorboard-view.json`의 `zone_own_executor_smoke_20260926`에 있다. `result/sim_s`는 deliver 작업 시간이고, `result/wall_s`는 3대 에피소드 전체 wall이다.
 
 ## 파일
 
 - `run_smoke.py`: 러너. 결과·manifest·로봇별 입력·실행기 로그와 `eval_only/`를 분리해 쓴다.
 - `prereg.json`: 사전 등록.
+- `build_results.py` → `results.json`(게이트·로봇별 표), `raw_index.json`(원본 JSON/JSONL 파일별 SHA-256). 스모크 원본은 `smoke-4371f36/`에 있다.
 - 원본: `/Users/changmin/projects/ugrp/outputs/zone-own-executor-20260926/`. 로컬에만 있고 원격 백업이 아니다.
