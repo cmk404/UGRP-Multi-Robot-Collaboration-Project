@@ -144,6 +144,7 @@
 | `tests/test_markerless_probe.py` | 합성 렌더 검출, 기하 왕복, 합성 추적, 입력 경계 |
 
 - 원본(로컬 전용, 원격 백업 아님): 입력 `outputs/m1-owncam-20260926/`, 추정 `outputs/markerless-probe-20260926/test/`(해시는 `results/raw_index.json`).
+- dev 원본: `outputs/markerless-probe-20260926/dev-runs/`(추정·지표·보정 적합·로그, 8.5 MB). 폴더와 변형의 대응: `dev1`=v0, `dev2`=v2, `dev_v1`=v1, `dev_v2`=v1b, `dev_v3`=v3, `dev_v4`=v4. 보정 적합 `calibration_dev_fit5.json`이 동결본 `calibration_dev.json`과 같다.
 - TensorBoard: `outputs/tensorboard/0926-markerless-probe`(28 run: 에피소드 6 × 필터 4 + 전체 4).
   - EventAccumulator 재독: 요약 스칼라·시계열 276건 대조, 불일치 0(시계열 48,952점).
   - 공용 서버(127.0.0.1:6006, PID 9293, logdir `outputs/tensorboard`, 재시작 안 함) HTTP 대조: 136건, 불일치 0. HParams 세션 28개가 목록에 나온다.
