@@ -1,0 +1,22 @@
+{
+ "schema": "ugrp.zone_own_perception_v3_split.v1",
+ "created": "2026-09-26",
+ "purpose": "Offline dev/test split for the v3 wrist-RGB-only judgments (package B v3): held item at the FK-predicted grip silhouette, carried team cargo from shape, grasp-stage look posture.",
+ "rule": "Postures, thresholds and gates are chosen on dev only. The test split is rendered and scored once, after the README pre-registration is committed.",
+ "scene_family": "zones/* (CargoZoneScene, cargo_noslip_v1, weld OFF)",
+ "note": "New seeds, disjoint from v1 (dev 41-44, test 71-74) and v2 (dev 141-144, test 171-174).",
+ "splits": {
+  "dev": [
+   {"variant": "zone_wide_door", "seed": 241},
+   {"variant": "zone_wide_corridor", "seed": 242},
+   {"variant": "zone_wide_two_doors", "seed": 243},
+   {"variant": "zone_wide_door", "seed": 244}
+  ],
+  "test": [
+   {"variant": "zone_wide_door", "seed": 271},
+   {"variant": "zone_wide_corridor", "seed": 272},
+   {"variant": "zone_wide_two_doors", "seed": 273},
+   {"variant": "zone_wide_corridor", "seed": 274}
+  ]
+ }
+}
