@@ -139,6 +139,12 @@ class OwnCamLocalizer:
                                if o.get('kind') == 'wall'], float).reshape(-1, 4)
         self.last_tag_t = None
         self.stats = {'updates': 0, 'resets': 0, 'resamples': 0}
+        # Optional caller-selected motion profile (M1: the controller names its own
+        # manipulation phases); None = the v1/v2 loaded/unloaded selection.
+        self.motion_profile: str | None = None
+        self.last_best_loglik: float | None = None
+        self.last_servo_cmd_t = -1e9           # own arm/look command time (kidnap test uses settled frames)
+        self.kidnap_run = 0
 
     # ------------------------------------------------------------ commands
     def command(self, row: Mapping) -> None:
@@ -149,10 +155,13 @@ class OwnCamLocalizer:
         kind = row['kind']
         if kind == 'initial_servo_command':
             self.servo = {int(k): int(v) for k, v in row['pulses'].items()}
+            self.last_servo_cmd_t = t
         elif kind == 'arm':
             self.servo[int(row['servo_id'])] = int(row['pulse'])
+            self.last_servo_cmd_t = t
         elif kind == 'look':
             self.servo[6] = int(row['pan_pulse'])
+            self.last_servo_cmd_t = t
         elif kind == 'mecanum':
             self.cmd = np.array([row['forward'], row['left'], row['turn']], float)
             self.cmd_expires = t + float(row['duration_s'])
@@ -163,11 +172,23 @@ class OwnCamLocalizer:
             self.cmd = np.zeros(3)
             self.cmd_expires = -1.
 
+    def set_motion_profile(self, t: float, name: str | None) -> None:
+        """Select ``params['motion_profiles'][name]`` from time ``t`` on (None: default selection)."""
+        if name is not None and name not in self.params.get('motion_profiles', {}):
+            raise KeyError(f'unknown motion profile {name!r}')
+        self.predict_to(t)
+        self.motion_profile = name
+
+    def _motion_params(self):
+        if self.motion_profile is not None:
+            return self.params['motion_profiles'][self.motion_profile]
+        return self.params['motion_loaded'] if self.load.loaded and 'motion_loaded' in self.params \
+            else self.params['motion']
+
     # ------------------------------------------------------------ predict
     def predict_to(self, t: float) -> None:
         while self.t < t - 1e-9:
-            mp = self.params['motion_loaded'] if self.load.loaded and 'motion_loaded' in self.params \
-                else self.params['motion']
+            mp = self._motion_params()
             gain = np.asarray(mp['gain'], float)
             rel, ab = np.asarray(mp['noise_rel']), np.asarray(mp['noise_abs'])
             dt = min(STEP_S, t - self.t)
@@ -176,16 +197,24 @@ class OwnCamLocalizer:
             # Optional separate stop lag (loop v2 dev fit): wheels commanded to zero
             # (hold / expired command) stop much faster than they spin up.
             tau = mp.get('tau_stop_s', mp['tau_s']) if not np.any(u) else mp['tau_s']
-            alpha = 1. - math.exp(-dt/max(tau, 1e-6))
+            if np.any(u) and 'tau_axis_s' in mp:
+                # Optional per-axis spin-up lag (M1 dev fit: with the arm lowered for a
+                # grasp, forward pulses lag far more than turns); v1/v2 path unchanged.
+                alpha = 1. - np.exp(-dt/np.maximum(np.asarray(mp['tau_axis_s'], float), 1e-6))
+            else:
+                alpha = 1. - math.exp(-dt/max(tau, 1e-6))
             self.vel = self.vel + alpha*(target - self.vel)
             if self.initialized:
                 std = rel*np.abs(self.vel) + ab
-                v = self.vel[None, :]*self.scale + self.rng.normal(size=(self.n, 3))*std
+                # use_scale False (M1 'fine' profile): the per-particle slip scales track the
+                # navigation plant and do not transfer to the arm-lowered plant.
+                sc = self.scale if mp.get('use_scale', True) else 1.
+                v = self.vel[None, :]*sc + self.rng.normal(size=(self.n, 3))*std
                 c, s = np.cos(self.px[:, 2]), np.sin(self.px[:, 2])
                 self.px[:, 0] += (c*v[:, 0] - s*v[:, 1])*dt
                 self.px[:, 1] += (s*v[:, 0] + c*v[:, 1])*dt
                 self.px[:, 2] = wrap(self.px[:, 2] + v[:, 2]*dt)
-                if np.any(np.abs(self.vel) > 1e-6):
+                if np.any(np.abs(self.vel) > 1e-6) and mp.get('use_scale', True):
                     self.scale += self.rng.normal(size=(self.n, 3))*mp['scale_walk']*math.sqrt(dt)
                 self.logw += self._map_logprior(self.px)
             self.t += dt
@@ -298,7 +327,22 @@ class OwnCamLocalizer:
                 self.logw = self._map_logprior(self.px)
                 self.initialized = True
             ll = self._loglik(self.px, dets, pose)
-            if ll.max() < self.params['reset']['min_best_loglik']:
+            rp = self.params['reset']
+            self.last_best_loglik = float(ll.max())
+            # Optional kidnap test (M1 dev): with tag_temper the joint log-likelihood is
+            # a per-tag mean, whose robust floor (log outlier_prob - margin) a single tag
+            # can never go below min_best_loglik. Frames taken while the arm is still
+            # moving to a just-issued pose sit at that floor too (M1 dev s91: all of
+            # them within 0 s of an own servo command, none after 0.3 s), so only
+            # settled frames count, and kidnap_frames of them in a row.
+            per_tag = rp.get('min_best_loglik_per_tag')
+            kidnapped = False
+            if per_tag is not None and t - self.last_servo_cmd_t >= rp.get('kidnap_settle_s', 0.):
+                temper = self.params['measurement'].get('tag_temper', 0.)
+                self.kidnap_run = self.kidnap_run + 1 if ll.max() < per_tag*len(dets)**(1. - temper) else 0
+                kidnapped = self.kidnap_run >= rp.get('kidnap_frames', 1)
+            if ll.max() < rp['min_best_loglik'] or kidnapped:
+                self.stats['kidnap_resets'] = self.stats.get('kidnap_resets', 0) + int(kidnapped)
                 k = int(self.n*self.params['reset']['fraction'])
                 idx = self.rng.choice(self.n, size=k, replace=False)
                 self.px[idx] = self._reset_from(dets, pose, k)

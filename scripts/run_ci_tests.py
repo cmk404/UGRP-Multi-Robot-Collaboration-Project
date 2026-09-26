@@ -63,6 +63,7 @@ TEST_PATTERNS = (
     "tests/test_zone_team_a2.py",
     "tests/test_zone_cargo_perception_v2.py",
     "tests/test_owncam_localizer.py", "tests/test_zone_landmarks_sim.py",
+    "tests/test_m1_owncam.py",
     "tests/test_rgb_execution*.py",
     "tests/test_rgb_communication*.py",
     "tests/test_act_map_suite.py",
