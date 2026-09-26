@@ -10,8 +10,9 @@ tagged zone map and never receive a live pose. Each robot decides only from:
   (``harness.pair_owncam_approach.coarse_order_sheet``), the roles, the carry legs
   and speeds (the pair study task sheet);
 * the approved pair barrier (``PairCarrySync``; readiness reports carry own frame ids);
-* optionally the CANDIDATE executor status channel (``--status-channel on``,
-  pending user decision; ON and OFF are reported separately).
+* the executor status channel (``--status-channel on``, default since door v3: user decision
+  2026-09-26 puts it in ALL conditions, no_comm included -- executor states only, no task or plan
+  content; ``off`` = barrier-only diagnostic).
 
 Phases per robot: ``approach`` (own-camera localizer, ``PairApproachDriver``: look
 sweep -> A* drive with final heading -> arrival look at the pre-station 0.30 m behind
@@ -50,6 +51,7 @@ if str(ROOT) not in sys.path:
 from harness import owncam_pair_beam as ob  # noqa: E402
 from harness import owncam_pair_beam_v2 as ob2  # noqa: E402
 from harness import owncam_pair_hold_v3 as hv3  # noqa: E402
+from harness import owncam_pair_lift_v3 as lv3  # noqa: E402
 from harness import pair_owncam_approach as pa  # noqa: E402
 from harness import team_carry_status as tcs  # noqa: E402
 from harness.pair_carry_sync import PairCarrySync  # noqa: E402
@@ -138,10 +140,47 @@ DOOR_SCENARIOS = {
     824: {'beam': (1.06, 0.04, -0.06), 'start': {'r1': (0.02, 0.1, 0.09), 'r2': (0.07, 0.03, 0.02)}},
     825: {'beam': (1.07, 0.12, 0.05), 'start': {'r1': (0.08, -0.0, -0.22), 'r2': (0.06, 0.02, 0.03)}},
     826: {'beam': (1.02, 0.1, -0.02), 'start': {'r1': (0.02, 0.01, 0.09), 'r2': (0.08, -0.07, -0.04)}},
+    # stage 2c test (door v3; pre-registered; gen_stage2c_seeds.py, rng 20260930; 837-838 = open-at-lift arm)
+    831: {'beam': (1.07, 0.11, -0.0), 'start': {'r1': (0.07, -0.03, -0.16), 'r2': (0.04, 0.06, -0.16)}},
+    832: {'beam': (1.08, 0.09, 0.03), 'start': {'r1': (0.05, -0.08, -0.26), 'r2': (0.02, -0.01, -0.09)}},
+    833: {'beam': (1.06, 0.1, -0.09), 'start': {'r1': (0.08, 0.03, 0.31), 'r2': (0.09, 0.03, 0.1)}},
+    834: {'beam': (0.99, 0.1, -0.1), 'start': {'r1': (0.01, 0.09, 0.02), 'r2': (0.07, 0.03, 0.02)}},
+    835: {'beam': (0.96, 0.07, 0.03), 'start': {'r1': (0.02, -0.03, 0.0), 'r2': (0.09, -0.07, 0.07)}},
+    836: {'beam': (0.96, -0.01, 0.04), 'start': {'r1': (0.07, 0.06, 0.32), 'r2': (0.08, 0.07, -0.31)}},
+    837: {'beam': (0.98, 0.07, -0.05), 'start': {'r1': (0.1, 0.02, 0.01), 'r2': (0.07, -0.04, -0.06)}},
+    838: {'beam': (0.98, 0.02, 0.02), 'start': {'r1': (0.02, 0.08, -0.06), 'r2': (0.04, 0.1, 0.26)}},
 }
 SCENARIOS.update(DOOR_SCENARIOS)
 STAGE2_TEST_SEEDS = tuple(range(811, 817))
 STAGE2B_TEST_SEEDS = tuple(range(821, 827))
+STAGE2C_TEST_SEEDS = tuple(range(831, 839))  # 831-836 ON/OFF arms, 837-838 open-at-lift arm (pre-registered)
+
+
+class JawOverridePort:
+    """EXPERIMENTER intervention (evaluation only): hold one robot's jaw open from a chosen lift on.
+
+    Sits between the robot's LoggingPort and the simulator port, so the robot's own issued-command
+    history is unchanged (it still commands CLOSED); only the simulator receives OPEN for servo 1.
+    Used to record lifts with the beam NOT in the jaws (lift co-motion specificity; door v3).
+    """
+
+    def __init__(self, port, open_pulse):
+        self._port, self.open_pulse = port, int(open_pulse)
+        self.active_since, self.replaced = None, 0
+
+    def activate(self, now):
+        if self.active_since is None:
+            self.active_since = round(float(now), 3)
+            self._port.apply({'kind': 'arm', 'servo_id': 1, 'pulse': self.open_pulse}, now)
+
+    def apply(self, action, sim_time):
+        if self.active_since is not None and action.get('kind') == 'arm' and int(action.get('servo_id', -1)) == 1:
+            self.replaced += 1
+            action = {**action, 'pulse': self.open_pulse}
+        return self._port.apply(action, sim_time)
+
+    def __getattr__(self, name):
+        return getattr(self._port, name)
 
 
 def git(*args):
@@ -320,7 +359,7 @@ class M2DoorStudent(M2Student):
         moved = self.align_cmds0 is not None and self.commands > self.align_cmds0
         self.vo_obs.append({'t': now, 'g': list(beam['grip_base_m']), 'h': float(beam['axis_heading_rad']),
                             'end_visible': bool(beam.get('end_visible')), 'moved_before': moved})
-        if self.version == 'v2' and len(self.vo_obs) == 1 and not moved:
+        if self.version in ('v2', 'v3') and len(self.vo_obs) == 1 and not moved:
             gx, gy = beam['grip_base_m']
             if abs(gx - EXPECT_GRIP_X_M) > CONSIST_X_M or abs(gy) > CONSIST_Y_M:
                 self.pending_reapproach = [round(gx, 3), round(gy, 3)]      # acted on at the next tick
@@ -355,7 +394,7 @@ class M2DoorStudent(M2Student):
         self.set('align', now, restart='checkpoint', posture=self.look_name)
 
     def _wait(self, key, nxt, now, on_go):
-        if not (self.version == 'v2' and self.seg > 0 and key == 'lift'):
+        if not (self.version in ('v2', 'v3') and self.seg > 0 and key == 'lift'):
             return super()._wait(key, nxt, now, on_go)
         limit = CP_LIFT_WAIT_S                     # copy of PairStudent._wait with the checkpoint limit
         waited = now - self.state_t
@@ -389,7 +428,7 @@ class M2DoorStudent(M2Student):
         return super().tick(now)
 
     def _grasp(self, now, arm_idle):
-        if self.version != 'v2':
+        if self.version not in ('v2', 'v3'):
             return super()._grasp(now, arm_idle)
         if not arm_idle:
             return
@@ -399,10 +438,44 @@ class M2DoorStudent(M2Student):
         self.log(self.rid, 'grip_view', now, **view, m2=m2)
         if not m2['seen']:
             return self.fail('GRIP_NOT_SEEN', now)
-        self.anchor = ob2.co_motion_signature(obs['image'])
-        self.anchor_kind = 'co_motion_v2'
+        if self.version == 'v3':
+            self.anchor = lv3.co_motion_signature(obs['image'])
+            self.anchor_kind = 'co_motion_v3'
+        else:
+            self.anchor = ob2.co_motion_signature(obs['image'])
+            self.anchor_kind = 'co_motion_v2'
         self.claims['gripped'] = {'grip_view': view, 'grip_view_m2': m2, 'sim_time': now}
         self.set('wait_lift', now)
+
+    def _signature(self, image):
+        if self.anchor_kind == 'co_motion_v3':
+            return lv3.co_motion_signature(image)
+        return super()._signature(image)
+
+    def _lift(self, now, arm_idle):
+        """Door v3: PairStudent._lift with the low-light co-motion signature (lv3); v1/v2 unchanged.
+
+        Stage 2b 824 (ed15489): r2's third lift on the darker floor east of the door scored v2 IoU 0.0
+        while GT held (5.48 N, beam 0.061 m) -- the v2 beam mask needs V >= 120, the lower beam face
+        was V ~103. The logged ``held_iou`` stays the selected check; v2's IoU is logged beside it.
+        """
+        if self.version != 'v3':
+            return super()._lift(now, arm_idle)
+        if not arm_idle:
+            return
+        obs = self.look(now)
+        sig3 = lv3.co_motion_signature(obs['image'])
+        iou = ob.signature_iou(self.anchor, sig3)
+        sig = ob.held_signature(obs['image'])
+        self.log(self.rid, 'lift_view', now, held_iou=round(iou, 3), check=lv3.PROFILE, seg=self.seg,
+                 signature_fraction=round(ob.signature_fraction(sig), 4))
+        if iou < lv3.HOLD_MIN_IOU:
+            return self.fail('LOAD_NOT_HELD_AFTER_LIFT', now)
+        self.anchor, self.anchor_kind = sig, 'lime_v1'                      # carry hold anchor (v1 lime)
+        self.anchor_full = hv3.hold_view_mask(obs['image'])                 # v3 whole-view anchor (same lift view)
+        self.claims.setdefault('lifts', []).append({'seg': self.seg, 'held_iou': round(iou, 3), 'sim_time': now})
+        self.claims['lifted'] = {'held_iou': round(iou, 3), 'sim_time': now}
+        self.set('wait_carry', now)
 
     def _vo_pose(self):
         """Pose at the grasp from the arrival estimate and own beam views (first grasp, door v2)."""
@@ -421,7 +494,7 @@ class M2DoorStudent(M2Student):
     def _queue_grasp(self, now):
         if self.pregrasp_done:
             return super()._queue_grasp(now)
-        if self.version == 'v2' and self.seg == 0:
+        if self.version in ('v2', 'v3') and self.seg == 0:
             self.vo_pose = self._vo_pose()
             self.log(self.rid, 'vo_pose', now, pose=None if self.vo_pose is None else [round(v, 4) for v in self.vo_pose],
                      observations=len(self.vo_obs))
@@ -434,7 +507,7 @@ class M2DoorStudent(M2Student):
         drv.loc = OwnCamLocalizer(drv.map, drv.loc.params, seed=int(drv.loc.rng.integers(1 << 30)))
         drv.loc.command({'t': float(now), 'kind': 'initial_servo_command', 'pulses': dict(drv.servo)})
         self.pregrasp_sweeps += 1
-        self.pg_pans = list(PREGRASP_PANS_V2 if self.version == 'v2' else WIDE_LOOK_PANS)
+        self.pg_pans = list(PREGRASP_PANS_V2 if self.version in ('v2', 'v3') else WIDE_LOOK_PANS)
         self.arm.queue({**LOOK_P20, 6: self.pg_pans.pop(0)}, now, duration=.8, settle=.6)
         self.set('pregrasp_look', now, sweep=self.pregrasp_sweeps)
 
@@ -551,18 +624,24 @@ def main():
     p.add_argument('--seed', type=int, choices=sorted(SCENARIOS), required=True)
     p.add_argument('--stage', choices=('open_floor', 'door'), default='open_floor')
     p.add_argument('--contact-profile', choices=CONTACT_PROFILES, default='cargo_noslip_v1')
-    p.add_argument('--status-channel', choices=('on', 'off'), required=True,
-                   help='CANDIDATE executor status channel (pending user decision); off = barrier only')
+    p.add_argument('--status-channel', choices=('on', 'off'), default='on',
+                   help='executor status channel (aligning/ready/lift/carry/put_down/abort; no task or plan '
+                        'content). User decision 2026-09-26: ON in all conditions incl. no_comm. '
+                        'off = barrier-only diagnostic (failure-propagation comparison), not a study condition')
     p.add_argument('--on-failure', choices=('continue', 'halt_all'), default='continue',
                    help='continue: runner never stops the partner (M2); halt_all: pair study comparator')
     p.add_argument('--hold-check', choices=study.HOLD_CHECKS, default='fullframe_v3')
-    p.add_argument('--door-version', choices=('v1', 'v2'), default='v1',
-                   help='door stage v1 (stage 2 cohort fa682a6) or v2 (own-RGB pose at the first grasp, '
-                        'checkpoint re-align, wide checkpoint sweeps, approach/beam consistency check)')
+    p.add_argument('--door-version', choices=('v1', 'v2', 'v3'), default='v1',
+                   help='door stage v1 (stage 2 cohort fa682a6), v2 (own-RGB pose at the first grasp, '
+                        'stored-grip re-grasp, wide checkpoint sweeps, approach/beam consistency check; stage 2b '
+                        'ed15489) or v3 (= v2 + low-light grasp->lift co-motion check owncam_pair_lift_v3)')
     p.add_argument('--approach', choices=('v1', 'v2'), default='v1',
                    help='approach driver: v1 (stage 1/3 cohorts) or v2 (turn in place first + relocalize)')
     p.add_argument('--inject-drop', default=None,
                    help='EXPERIMENTER deliberate drop "<robot>:<seconds after its carry start>" (evaluation only)')
+    p.add_argument('--inject-open-at-lift', default=None,
+                   help='EXPERIMENTER jaw-open intervention "<robot>:<segment>": from that robot\'s lift in that '
+                        'carry segment the simulator jaw is held OPEN (robot still issues CLOSED; evaluation only)')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--allow-dirty', action='store_true')
     a = p.parse_args()
@@ -573,6 +652,14 @@ def main():
             raise SystemExit('--inject-drop robot must be r1 or r2')
         injection = {'robot': rid_inj, 'after_carry_start_s': float(secs), 'applied_at_s': None,
                      'action': 'gripper servo 1 -> OPEN (experimenter, not a controller command)'}
+    jaw_injection = None
+    if a.inject_open_at_lift:
+        rid_j, seg_j = a.inject_open_at_lift.split(':')
+        if rid_j not in ROLES or a.stage != 'door':
+            raise SystemExit('--inject-open-at-lift needs --stage door and robot r1 or r2')
+        jaw_injection = {'robot': rid_j, 'segment': int(seg_j), 'applied_at_s': None, 'replaced_servo1_commands': 0,
+                         'action': 'simulator jaw servo 1 held OPEN from the lift (experimenter; the robot still '
+                                   'issues CLOSED, its own command history is unchanged)'}
     dirty = bool(git('status', '--porcelain'))
     if dirty and not a.allow_dirty:
         raise SystemExit('commit and freeze the source before a recorded run (or --allow-dirty)')
@@ -636,7 +723,10 @@ def main():
             if drivers[rid].outcome is None or (a.stage == 'door' and not feed_stop[rid]):
                 drivers[rid].on_command(row)       # open floor: until the pre-station; door: until the grasp
         sink({'t': 0.0, 'kind': 'initial_servo_command', 'pulses': dict(initial)})
-        ports[rid] = LoggingPort(raw[rid], sink)
+        target = raw[rid]
+        if jaw_injection is not None and jaw_injection['robot'] == rid:
+            target = jaw_port = JawOverridePort(raw[rid], study.OPEN)
+        ports[rid] = LoggingPort(target, sink)
     events = []
 
     def log(rid, kind, now, **detail):
@@ -777,6 +867,11 @@ def main():
                     if victim.state == 'carry' and now - victim.state_t >= injection['after_carry_start_s']:
                         ports[injection['robot']].apply({'kind': 'arm', 'servo_id': 1, 'pulse': study.OPEN}, now)
                         injection['applied_at_s'] = round(now, 3)
+                if jaw_injection is not None and jaw_injection['applied_at_s'] is None:
+                    victim = students[jaw_injection['robot']]
+                    if victim.state == 'lift' and victim.seg == jaw_injection['segment']:
+                        jaw_port.activate(now)
+                        jaw_injection['applied_at_s'] = jaw_port.active_since
                 if first_failure is not None and a.on_failure == 'halt_all':
                     for rid in ROLES:
                         ports[rid].hold(now)
@@ -882,6 +977,27 @@ def main():
     }
     evaluation['completed_sequence'] = all(s == 'done' for s in reached.values())
     evaluation['drop_injection'] = injection
+    if jaw_injection is not None:
+        jaw_injection['replaced_servo1_commands'] = jaw_port.replaced
+        victim = students[jaw_injection['robot']]
+        jaw_injection['victim_failure'] = victim.failure
+        jaw_injection['victim_failed_at_intervened_lift'] = bool(
+            victim.failure == 'LOAD_NOT_HELD_AFTER_LIFT' and victim.seg == jaw_injection['segment'])
+    evaluation['open_at_lift_injection'] = jaw_injection
+    # unplanned beam drops (evaluation only): beam z falls below 0.035 m after > 0.045 m while no robot lowers it
+    truth_rows = [json.loads(line) for line in (out / 'evaluation-only.jsonl').read_text().splitlines()]
+    drops, up = [], False
+    for r in truth_rows:
+        z = r['beam_xyz'][2]
+        if z > .045:
+            up = True
+        elif up and z < .035:
+            up = False
+            if not any(s in ('lower', 'wait_open', 'released', 'cp_open', 'done') for s in r['states'].values()):
+                drops.append({'t': r['t'], 'states': r['states']})
+    evaluation['unplanned_drops'] = drops
+    done_t = [e['sim_time_s'] for e in events if e['event'] == 'state' and e.get('state') in terminal]
+    evaluation['makespan_sim_s'] = round(max(done_t), 3) if len(done_t) >= len(ROLES) else None
     evaluation['success_gt'] = bool(evaluation['completed_sequence'] and evaluation['lifted_clear_gt']
                                     and evaluation['on_floor_released'] and evaluation['final_error_m'] <= .10)
     if a.stage == 'door':
@@ -905,11 +1021,13 @@ def main():
         'scenario_setup_only': sc, 'order_sheet': sheet,
         'order_sheet_stations': stations_sheet, 'prestations': prestations,
         'contact_profile': a.contact_profile,
-        'contact_profile_note': 'cargo_noslip_v1 primary, PENDING the user decision on the profile',
+        'contact_profile_note': ('cargo_noslip_v1: study-wide contact profile approved by the user 2026-09-26'
+                                 if a.contact_profile == 'cargo_noslip_v1' else 'non-default contact profile (comparison)'),
         'weld': 'off', 'pose_source': 'owncam_pf_v2 localizer (own RGB + static tag map + own commands); no GT',
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
         'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS, 'stage2b_test_seed': a.seed in STAGE2B_TEST_SEEDS,
+        'stage2c_test_seed': a.seed in STAGE2C_TEST_SEEDS, 'lift_check': lv3.PROFILE if a.door_version == 'v3' and a.stage == 'door' else 'owncam_pair_beam_v2 co_motion',
         'approach_version': a.approach, 'door_version': a.door_version if a.stage == 'door' else None, 'depot_slots': depot,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
@@ -918,13 +1036,15 @@ def main():
                             'envelope': pa.APPROACH_ENVELOPE, 'frame_s': FRAME_S,
                             'events': {r: drivers[r].log for r in ROLES}},
         'status_channel': {'enabled': a.status_channel == 'on', 'profile': tcs.PROFILE,
-                           'status': 'CANDIDATE, pending user decision; executor states only, no free text, no GT',
+                           'status': ('user decision 2026-09-26: in all conditions (no_comm included); executor '
+                                      'states only, no task/plan content, no free text, no GT'
+                                      if a.status_channel == 'on' else 'OFF: barrier-only diagnostic, not a study condition'),
                            'messages': len(channel.log) if channel else 0,
                            'rejected': channel.rejected if channel else [],
                            'partner_aligning_waits': {r: s.status_waits for r, s in students.items()}},
         'controller_inputs': ('own robot_cam JPEG + own issued commands + static tag map + loop-v2 calibration + '
                               'coarse order sheet (beam pose on 0.10 m / 10 deg grid, roles, legs) + PairCarrySync '
-                              'barrier (own frame ids)' + (' + partner executor status (candidate channel)' if channel else '')),
+                              'barrier (own frame ids)' + (' + partner executor status channel (approved infrastructure)' if channel else '')),
         'task_sheet': {'legs': study.LEGS, 'speed_m_s': study.SPEED_M_S, 'roles': ROLES,
                        'prestation_back_m': study.PRESTATION_BACK_M},
         'final_states': reached, 'failures': {r: s.failure for r, s in students.items()},
