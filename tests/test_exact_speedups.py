@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import hashlib
+import platform
+import sys
 import unittest
 from unittest import mock
 
@@ -11,6 +13,12 @@ import numpy as np
 from sim import exact_speedups
 from sim.exact_speedups import ContactPrefilter, ExactDriveKernel, install_drive_kernel, resolve
 from sim.multi_masterpi_production import MultiMasterPiProductionV2
+from sim.physics_drive_kernel import PhysicsDriveKernel
+
+# The kernel installs only where np.dot sums in the paired order (Accelerate on arm64 Macs); elsewhere the runner
+# keeps the original path, which test_install_status_follows_the_self_check covers.
+EXACT = exact_speedups.dot_order_matches()
+NOT_EXACT = 'np.dot summation order differs on this BLAS build: the exact kernel is not installed here'
 
 
 def state_digest(world) -> str:
@@ -46,9 +54,47 @@ class ExactSpeedupTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             resolve('fast-but-different')
 
+    @unittest.skipUnless(sys.platform == 'darwin' and platform.machine() == 'arm64', 'the Mac build of the claim')
     def test_dot_order_self_check_on_this_build(self) -> None:
-        # The kernel is only installed when this holds; on another BLAS the runner falls back (tested below).
-        self.assertTrue(exact_speedups.dot_order_matches())
+        self.assertTrue(EXACT)
+
+    def test_install_status_follows_the_self_check(self) -> None:
+        status = install_drive_kernel(self.world)
+        self.assertEqual(status, 'exact_drive_kernel' if EXACT else 'fallback_original_dot_order_mismatch')
+        self.assertEqual(type(self.world._fast_drive_kernel) is ExactDriveKernel, EXACT)
+
+    def test_foreign_kernel_is_refused_not_kept(self) -> None:
+        """Codex review #5: the allclose-only PhysicsDriveKernel must not pass as exact."""
+        foreign = PhysicsDriveKernel(self.world)
+        self.world._fast_drive_kernel = foreign
+        with self.assertRaisesRegex(RuntimeError, 'PhysicsDriveKernel'):
+            install_drive_kernel(self.world)
+        self.assertIs(self.world._fast_drive_kernel, foreign)          # neither kept as exact nor replaced
+
+        class Subclass(ExactDriveKernel):
+            pass
+        for other in (object(), mock.Mock(spec=ExactDriveKernel)):
+            self.world._fast_drive_kernel = other
+            with self.subTest(other=type(other).__name__), self.assertRaises(RuntimeError):
+                install_drive_kernel(self.world)
+        if EXACT:
+            self.world._fast_drive_kernel = Subclass(self.world)
+            with self.assertRaises(RuntimeError):
+                install_drive_kernel(self.world)
+
+    @unittest.skipUnless(EXACT, NOT_EXACT)
+    def test_exact_kernel_reinstall_and_version(self) -> None:
+        self.assertEqual(install_drive_kernel(self.world), 'exact_drive_kernel')
+        kernel = self.world._fast_drive_kernel
+        self.assertEqual(install_drive_kernel(self.world), 'exact_drive_kernel_already_installed')
+        self.assertIs(self.world._fast_drive_kernel, kernel)
+        kernel.version = 'exact-drive-v0'                               # an older exact version
+        with self.assertRaisesRegex(RuntimeError, 'exact-drive-v0'):
+            install_drive_kernel(self.world)
+        kernel.version = ExactDriveKernel.version
+        kernel.world = object()                                         # bound to another world
+        with self.assertRaises(RuntimeError):
+            install_drive_kernel(self.world)
 
     def test_fallback_when_dot_order_differs(self) -> None:
         with mock.patch.object(exact_speedups, 'dot_order_matches', return_value=False):
@@ -64,6 +110,7 @@ class ExactSpeedupTests(unittest.TestCase):
         return (d.ctrl.tobytes(), d.xfrc_applied.tobytes(),
                 tuple(c.motor_state.tobytes() for c in self.world.controllers.values()))
 
+    @unittest.skipUnless(EXACT, NOT_EXACT)
     def test_random_states_bitwise_equal_to_original_step(self) -> None:
         rng = np.random.default_rng(26)
         d = self.world.data
@@ -82,6 +129,7 @@ class ExactSpeedupTests(unittest.TestCase):
             d.ctrl[:], d.xfrc_applied[:] = ctrl, xfrc
             self.assertEqual(self._one_step(True), original, f'sample {index}')
 
+    @unittest.skipUnless(EXACT, NOT_EXACT)
     def test_real_steps_identical_trajectory(self) -> None:
         cmds = {'r1': [.6, .2, .6, .2], 'r2': [-.3, .4, .4, -.3], 'r3': [.05, -.05, .05, -.05]}
         digests = []

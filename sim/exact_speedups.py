@@ -74,6 +74,8 @@ def dot_order_matches(samples: int = SELF_CHECK_SAMPLES, seed: int = 20260926) -
 class ExactDriveKernel(PhysicsDriveKernel):
     """``PhysicsDriveKernel`` with ``np.dot``'s summation order: bit-identical to the original loop."""
 
+    version = 'exact-drive-v1'
+
     def __init__(self, world) -> None:
         if not dot_order_matches():
             raise RuntimeError('np.dot summation order differs on this build; use the original drive path')
@@ -134,9 +136,21 @@ class ExactDriveKernel(PhysicsDriveKernel):
 
 
 def install_drive_kernel(world) -> str:
-    """Attach the exact kernel through the world's existing ``_fast_drive_kernel`` hook; returns the status."""
-    if getattr(world, '_fast_drive_kernel', None) is not None:
-        return 'already_installed'
+    """Attach the exact kernel through the world's existing ``_fast_drive_kernel`` hook; returns the status.
+
+    An exact kernel of this version already bound to ``world`` is kept (``'exact_drive_kernel_already_installed'``).
+    Any other kernel in the hook (e.g. the ``allclose``-only ``PhysicsDriveKernel`` of another runner, an older
+    exact version or one bound to a different world) raises instead of being silently kept or replaced: the run
+    would otherwise be recorded as exact while stepping with non-identical arithmetic (Codex review of PR #209).
+    """
+    current = getattr(world, '_fast_drive_kernel', None)
+    if current is not None:
+        if (type(current) is ExactDriveKernel and getattr(current, 'version', None) == ExactDriveKernel.version
+                and current.world is world):
+            return 'exact_drive_kernel_already_installed'
+        raise RuntimeError(f'world already has drive kernel {type(current).__module__}.{type(current).__qualname__} '
+                           f'(version {getattr(current, "version", None)!r}); refusing to keep or replace it for '
+                           f'{ExactDriveKernel.version}: build a new world or leave the hook empty')
     try:
         world._fast_drive_kernel = ExactDriveKernel(world)
     except RuntimeError:

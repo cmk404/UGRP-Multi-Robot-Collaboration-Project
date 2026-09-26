@@ -194,7 +194,11 @@ def run(spec, out, student, speedups=None):
     speedup_record = {'set': speedup_set, 'items': list(speedup_items),
                       'note': 'execution infrastructure only; same trajectory/commands/frames (sim.exact_speedups)'}
     if 'drive_kernel' in speedup_items:
-        speedup_record['drive_kernel'] = install_drive_kernel(world)
+        try:
+            speedup_record['drive_kernel'] = install_drive_kernel(world)
+        except BaseException:
+            world.close()          # a foreign kernel in the hook: refuse the run, release the renderer
+            raise
     prefilter = ContactPrefilter(model.ngeom, own_geoms | box_geom) if 'contact_prefilter' in speedup_items else None
     force6 = np.zeros(6)
     retention = {'carry_steps': 0, 'both_finger_steps': 0, 'min_box_z_m': None, 'low_box_steps': 0,
