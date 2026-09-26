@@ -6,15 +6,19 @@ Subcommands (see docs/disk_management.md):
 new       Create a worktree from origin/main whose sparse checkout omits heavy
           media under experiments/ (archives, videos, images). Enforces a
           per-agent cap on registered worktrees.
-sparsify  Apply the same sparse profile to an existing clean worktree.
-retire    After a merge, move every ignored non-cache entry (outputs/, logs, ...)
-          into the primary checkout's outputs/retired-worktrees/<label>/, verify
-          file count and bytes, and only then run `git worktree remove`
-          (never --force). Dry run unless --execute is given.
+sparsify  Apply the same sparse profile to an existing clean, idle worktree.
+retire    After a merge (or after its HEAD was pushed to an archive branch), move
+          every ignored non-cache entry out of the worktree, verify count, bytes
+          and sha256 of every file, and only then run `git worktree remove`
+          (never --force). Ignored `outputs/<name>` goes to the same relative
+          path in the primary checkout when that path is free; everything else
+          (and colliding names) goes to outputs/retired-worktrees/<label>/.
+          Dry run unless --execute is given.
 
 This tool never deletes raw data, never runs `git worktree remove --force`, and
-never touches a worktree that has uncommitted changes, untracked files or a
-process whose working directory or open files are inside it.
+never touches a worktree that has uncommitted changes, untracked files, recent
+modifications, or a process whose working directory or open files are inside
+it or whose command line names it.
 """
 
 from __future__ import annotations
@@ -31,6 +35,11 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts import tree_manifest  # noqa: E402
+from scripts.worktree_guard import Refused, refuse_if_in_use  # noqa: E402
 AGENTS = ("kiro", "claude", "codex")
 DEFAULT_CAP = 8
 SPARSE_PROFILE = "agent-media-v1"
@@ -53,10 +62,7 @@ CACHE_SUFFIXES = (".pyc", ".pyo")
 CACHE_NAMES = {".DS_Store"}
 MARKER = "ugrp-worktree.json"
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
-
-
-class Refused(RuntimeError):
-    """A safety check failed; nothing was changed."""
+DEFAULT_IDLE_MINUTES = 60
 
 
 def sparse_patterns() -> list[str]:
@@ -193,33 +199,6 @@ def gib(value: int) -> str:
     return f"{value / 2**30:.2f} GiB"
 
 
-def processes_using(path: Path) -> list[dict]:
-    """Processes of this user whose cwd or open files are inside path (via lsof)."""
-    # lsof reports kernel (resolved) paths; also accept the path as given.
-    targets = {os.path.realpath(path), os.path.abspath(path)}
-    result = subprocess.run(["lsof", "-n", "-P", "-w", "-F", "pcfn"], capture_output=True, text=True)
-    if result.returncode not in (0, 1) or not result.stdout:
-        raise Refused(f"cannot inspect open files with lsof (exit {result.returncode}); refusing")
-    found: dict[int, dict] = {}
-    pid = None
-    command = ""
-    fd = ""
-    for line in result.stdout.splitlines():
-        tag, value = line[:1], line[1:]
-        if tag == "p":
-            pid, command = int(value), ""
-        elif tag == "c":
-            command = value
-        elif tag == "f":
-            fd = value
-        elif tag == "n" and pid is not None and pid != os.getpid():
-            if any(value == t or value.startswith(t + os.sep) for t in targets):
-                entry = found.setdefault(pid, {"pid": pid, "command": command, "files": []})
-                if len(entry["files"]) < 5:
-                    entry["files"].append(f"{fd}:{value}")
-    return sorted(found.values(), key=lambda row: row["pid"])
-
-
 def status_entries(path: Path, *extra: str) -> list[tuple[str, str]]:
     raw = git(path, "status", "--porcelain=v1", "-z", *extra)
     entries = []
@@ -277,6 +256,15 @@ def merged_evidence(primary: Path, row: dict, base: str, pr: int | None) -> str 
         if item and item.get("state") == "MERGED" and item.get("headRefOid") == head:
             return f"PR #{item['number']} MERGED with head {head[:12]} (squash or rebase merge)"
     return None
+
+
+def archived_evidence(primary: Path, row: dict, archive_ref: str, remote: str) -> str:
+    """Unmerged work may be retired once its exact HEAD is on the remote under archive_ref."""
+    ref = archive_ref if archive_ref.startswith("refs/") else f"refs/heads/{archive_ref}"
+    out = git(primary, "ls-remote", remote, ref, check=False).split()
+    if not out or out[0] != row["head"]:
+        raise Refused(f"{remote} {ref} is {out[0][:12] if out else 'missing'}, not HEAD {row['head'][:12]}")
+    return f"HEAD {row['head'][:12]} archived at {remote} {ref} (ls-remote)"
 
 
 def open_pr_numbers(primary: Path, branch: str | None) -> list[int] | None:
@@ -378,26 +366,31 @@ def cmd_sparsify(args: argparse.Namespace) -> int:
     changed = [rel for code, rel in status_entries(path, "--untracked-files=no")]
     if changed:
         raise Refused(f"tracked changes present ({len(changed)}), e.g. {changed[:3]}; commit or ask the owner")
-    busy = processes_using(path)
-    if busy and not args.allow_busy:
-        raise Refused("worktree in use: " + "; ".join(f"{p['pid']} {p['command']}" for p in busy))
+    if not args.allow_busy:
+        refuse_if_in_use(path, args.idle_minutes, worktree_git_dir(path))
     before = tree_usage(path)
     if args.dry_run:
         print(f"would sparsify {path} (now {gib(before[1])}, {before[0]} files)")
         return 0
     apply_sparse(path)
     after = tree_usage(path)
+    still_changed = [rel for code, rel in status_entries(path, "--untracked-files=no")]
+    head_after = git(path, "rev-parse", "HEAD").strip()
+    if still_changed or head_after != row["head"] or sparse_enabled(primary):
+        raise RuntimeError(f"post-check failed: changes {still_changed[:3]}, head {head_after[:12]},"
+                           f" primary sparse {sparse_enabled(primary)}")
     marker = row.get("marker") or {"schema": "ugrp.agent-worktree.v1", "owner": row["owner"]}
     marker.update({"sparse_profile": SPARSE_PROFILE, "sparse_patterns_sha256": patterns_sha256(),
                    "sparsified_at": dt.datetime.now().astimezone().isoformat()})
     write_marker(path, marker)
-    print(json.dumps({"path": str(path), "before_bytes": before[1], "after_bytes": after[1],
-                      "before_files": before[0], "after_files": after[0]}, indent=2))
+    print(json.dumps({"path": str(path), "head": head_after, "before_bytes": before[1], "after_bytes": after[1],
+                      "before_files": before[0], "after_files": after[0], "tracked_clean_after": True,
+                      "primary_sparse": False}, indent=2))
     return 0
 
 
-def cmd_retire(args: argparse.Namespace) -> int:
-    primary = primary_checkout(args.primary)
+def retire_checks(primary: Path, args: argparse.Namespace) -> tuple[dict, str]:
+    """All refusals happen here, before anything is moved."""
     if not args.no_fetch:
         git(primary, "fetch", "origin")
     row = find_row(primary, args.path)
@@ -406,9 +399,13 @@ def cmd_retire(args: argparse.Namespace) -> int:
     path = row["path"]
     if not path.is_dir():
         raise Refused(f"worktree directory is missing: {path} (use `git worktree prune` after checking)")
-    evidence = merged_evidence(primary, row, args.base, args.pr)
+    if args.archive_ref:
+        evidence = archived_evidence(primary, row, args.archive_ref, args.remote)
+    else:
+        evidence = merged_evidence(primary, row, args.base, args.pr)
     if evidence is None:
-        raise Refused(f"not merged: HEAD {row['head'][:12]} is not in {args.base} and no merged PR has this head")
+        raise Refused(f"not merged: HEAD {row['head'][:12]} is not in {args.base} and no merged PR has this head;"
+                      " push it to an archive branch and pass --archive-ref")
     if not args.no_pr_check:
         open_prs = open_pr_numbers(primary, row["branch"])
         if open_prs is None:
@@ -418,9 +415,62 @@ def cmd_retire(args: argparse.Namespace) -> int:
     dirty = status_entries(path, "--untracked-files=all")
     if dirty:
         raise Refused(f"uncommitted or untracked files ({len(dirty)}), e.g. {[r for _, r in dirty[:3]]}")
-    busy = processes_using(path)
-    if busy:
-        raise Refused("worktree in use: " + "; ".join(f"{p['pid']} {p['command']} {p['files'][:2]}" for p in busy))
+    refuse_if_in_use(path, args.idle_minutes, worktree_git_dir(path))
+    return row, evidence
+
+
+def retire_plan(primary: Path, path: Path, keep: list[str], label: str, same_path: bool) -> list[dict]:
+    """Where each ignored entry goes: free outputs/<name> keeps its relative path in the primary."""
+    items = []
+    for rel in keep:
+        source = path / rel
+        if same_path and rel == "outputs" and source.is_dir() and not source.is_symlink():
+            items += [f"outputs/{name}" for name in sorted(os.listdir(source))]
+        else:
+            items.append(rel)
+    archive = primary / "outputs" / "retired-worktrees" / label
+    plan, taken = [], set()
+    for rel in items:
+        target = primary / rel
+        parts = Path(rel).parts
+        free = not (target.exists() or target.is_symlink()) and target not in taken
+        if not (same_path and len(parts) == 2 and parts[0] == "outputs" and free):
+            target = archive / rel
+        taken.add(target)
+        count, size = logical_usage(path / rel)
+        plan.append({"path": rel, "destination": str(target), "entries": count, "bytes": size,
+                     "placement": "same-path" if target == primary / rel else "retired-worktrees"})
+    return plan
+
+
+def move_verified(path: Path, plan: list[dict], manifest_tsv: Path) -> list[dict]:
+    """Hash, rename, hash again; stop at the first difference (the worktree is then kept)."""
+    done = []
+    with open(manifest_tsv, "w", encoding="utf-8") as out:
+        out.write("item\tdestination\tpath\ttype\tsize\tsha256_or_target\n")
+        for item in plan:
+            source, target = path / item["path"], Path(item["destination"])
+            before = tree_manifest.build(source)
+            if target.exists() or target.is_symlink():
+                raise RuntimeError(f"destination appeared during retirement: {target}")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            os.rename(source, target)
+            after = tree_manifest.build(target)
+            problems = tree_manifest.compare(before, after)
+            if problems or source.exists() or source.is_symlink():
+                raise RuntimeError(f"verification failed for {item['path']}: {problems[:3]}")
+            for rel in sorted(after):
+                e = after[rel]
+                out.write("\t".join([item["path"], str(target), rel, e["type"], str(e.get("size", "")),
+                                      e.get("sha256") or e.get("target") or ""]) + "\n")
+            done.append({**item, **tree_manifest.totals(after), "manifest_sha256": tree_manifest.digest(after)})
+    return done
+
+
+def cmd_retire(args: argparse.Namespace) -> int:
+    primary = primary_checkout(args.primary)
+    row, evidence = retire_checks(primary, args)
+    path = row["path"]
     ignored = [rel for code, rel in status_entries(path, "--ignored=traditional", "--untracked-files=normal")
                if code == "!!"]
     keep = [rel.rstrip("/") for rel in ignored if not is_cache(rel)]
@@ -429,55 +479,49 @@ def cmd_retire(args: argparse.Namespace) -> int:
     if not NAME_RE.match(label):
         raise Refused(f"invalid label: {label}")
     retired_root = primary / "outputs" / "retired-worktrees"
-    dest = retired_root / label
-    plan = []
-    for rel in keep:
-        count, size = logical_usage(path / rel)
-        plan.append({"path": rel, "entries": count, "bytes": size})
+    receipt_dir = retired_root / label
+    if receipt_dir.exists() or receipt_dir.is_symlink():
+        raise Refused(f"destination exists: {receipt_dir}; pass a new --label")
+    plan = retire_plan(primary, path, keep, label, not args.archive_layout)
+    retired_root.mkdir(parents=True, exist_ok=True)
+    if plan and path.stat().st_dev != retired_root.stat().st_dev:
+        raise Refused("worktree and primary outputs are on different filesystems; move manually")
     summary = {
-        "schema": "ugrp.worktree-retirement.v1", "worktree": str(path), "branch": row["branch"],
-        "head": row["head"], "owner": row["owner"], "merged_evidence": evidence,
-        "destination": str(dest) if plan else None, "moved": plan,
-        "moved_entries": sum(p["entries"] for p in plan), "moved_bytes": sum(p["bytes"] for p in plan),
-        "deleted_caches": caches, "checkout_bytes_freed_est": None,
+        "schema": "ugrp.worktree-retirement.v2", "worktree": str(path), "branch": row["branch"],
+        "head": row["head"], "owner": row["owner"], "merged_evidence": evidence, "receipt": str(receipt_dir),
+        "moved": plan, "moved_entries": sum(p["entries"] for p in plan), "moved_bytes": sum(p["bytes"] for p in plan),
+        "deleted_caches": caches,
+        "checkout_bytes_freed_est": tree_usage(path)[1] - sum(tree_usage(path / p["path"])[1] for p in plan),
     }
-    if plan and (dest.exists() or dest.is_symlink()):
-        raise Refused(f"destination exists: {dest}; pass a new --label")
-    if plan:
-        retired_root.mkdir(parents=True, exist_ok=True)
-        if path.stat().st_dev != retired_root.stat().st_dev:
-            raise Refused("worktree and primary outputs are on different filesystems; move manually")
-    total_files, total_bytes = tree_usage(path)
-    moved_alloc = sum(tree_usage(path / p["path"])[1] for p in plan)
-    summary["checkout_bytes_freed_est"] = total_bytes - moved_alloc
     if not args.execute:
         print(json.dumps({"dry_run": True, **summary}, ensure_ascii=False, indent=2))
         return 0
-    moved = []
-    for item in plan:
-        source, target = path / item["path"], dest / item["path"]
-        target.parent.mkdir(parents=True, exist_ok=True)
-        os.rename(source, target)
-        moved.append(item["path"])
-        count, size = logical_usage(target)
-        if (count, size) != (item["entries"], item["bytes"]) or source.exists() or source.is_symlink():
-            raise RuntimeError(f"verification failed for {item['path']}: before {item['entries']}/{item['bytes']}"
-                               f" after {count}/{size}; worktree NOT removed, moved so far: {moved}")
-    summary["verified"] = True
-    summary["retired_at"] = dt.datetime.now().astimezone().isoformat()
-    if plan:
-        (dest / "RETIRED.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+    receipt_dir.mkdir(parents=True)
+    try:
+        summary["moved"] = move_verified(path, plan, receipt_dir / "MANIFEST.tsv")
+    except Exception as exc:  # keep a receipt of what already moved; never remove the worktree
+        summary.update({"verified": False, "error": f"{type(exc).__name__}: {exc}"})
+        write_receipt(retired_root, receipt_dir, summary)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(f"retirement stopped; worktree NOT removed: {exc}", file=sys.stderr)
+        return 1
+    summary.update({"verified": True, "verification": "file count, bytes and sha256 of every file equal after move",
+                    "retired_at": dt.datetime.now().astimezone().isoformat()})
     remove = subprocess.run(["git", "-C", str(primary), "worktree", "remove", str(path)], capture_output=True, text=True)
     summary["worktree_remove_exit"] = remove.returncode
     summary["worktree_remove_stderr"] = remove.stderr.strip()
-    retired_root.mkdir(parents=True, exist_ok=True)
-    with (retired_root / "retirements.jsonl").open("a") as log:
-        log.write(json.dumps(summary, ensure_ascii=False) + "\n")
+    write_receipt(retired_root, receipt_dir, summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     if remove.returncode != 0:
-        print(f"git worktree remove failed; data already moved to {dest}", file=sys.stderr)
+        print(f"git worktree remove failed; data already moved (see {receipt_dir})", file=sys.stderr)
         return 1
     return 0
+
+
+def write_receipt(retired_root: Path, receipt_dir: Path, summary: dict) -> None:
+    (receipt_dir / "RETIRED.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
+    with (retired_root / "retirements.jsonl").open("a") as log:
+        log.write(json.dumps(summary, ensure_ascii=False) + "\n")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -502,6 +546,8 @@ def main(argv: list[str] | None = None) -> int:
     sparsify.add_argument("path", type=Path)
     sparsify.add_argument("--dry-run", action="store_true")
     sparsify.add_argument("--allow-busy", action="store_true", help="owner confirmed running processes are safe")
+    sparsify.add_argument("--idle-minutes", type=float, default=DEFAULT_IDLE_MINUTES,
+                          help="refuse when anything changed this recently (0 disables)")
     retire = sub.add_parser("retire", help="move ignored data to retired-worktrees, then remove the worktree")
     retire.add_argument("path", type=Path)
     retire.add_argument("--execute", action="store_true", help="act; default is a dry run")
@@ -511,6 +557,12 @@ def main(argv: list[str] | None = None) -> int:
     retire.add_argument("--no-fetch", action="store_true")
     retire.add_argument("--no-pr-check", action="store_true", help="skip the gh open-PR check (checked by hand)")
     retire.add_argument("--allow-open-pr", action="store_true", help="owner confirmed the open PR needs no worktree")
+    retire.add_argument("--archive-ref", help="unmerged work: remote branch that already holds exactly this HEAD")
+    retire.add_argument("--remote", default="origin", help="remote checked with ls-remote for --archive-ref")
+    retire.add_argument("--archive-layout", action="store_true",
+                        help="put everything under outputs/retired-worktrees/<label>/ (no same-path placement)")
+    retire.add_argument("--idle-minutes", type=float, default=DEFAULT_IDLE_MINUTES,
+                        help="refuse when anything changed this recently (0 disables)")
     args = parser.parse_args(argv)
     handler = {"new": cmd_new, "sparsify": cmd_sparsify, "retire": cmd_retire}[args.action]
     try:

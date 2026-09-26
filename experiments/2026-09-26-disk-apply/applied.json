@@ -1,0 +1,1406 @@
+{
+ "item1_retire_merged": {
+  "totals": {
+   "worktrees": 22,
+   "all_verified": true,
+   "checkout_gib_freed_est": 23.01,
+   "moved_files": 1538,
+   "moved_gib": 0.242
+  },
+  "rows": [
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-decisions-0926",
+    "owner": "kiro",
+    "branch": "kiro/decisions-0926",
+    "head": "0d3eef1886f6888e3909f3ccaa4759307894b21d",
+    "evidence": "HEAD 0d3eef1886f6 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1120563200,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-decisions-0926/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-decisions-0926.json",
+    "receipt_sha256": "a231c4aa9a178c6f20fb2a232e82cdbe8c61ab32261c1cbe64ce56afff0517a5"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-markerless-research",
+    "owner": "kiro",
+    "branch": "kiro/markerless-research",
+    "head": "9a725092be29d538d08efdf0788986fb276a7a4c",
+    "evidence": "HEAD 9a725092be29 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1121402880,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-markerless-research/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "experiments/2026-09-26-markerless-probe/__pycache__",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-markerless-research.json",
+    "receipt_sha256": "ec0981afcea58b2fe0a8ccdd9725da9683c36d72bc85e9426a0abdae3dd6c2c9"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-noslip-audit",
+    "owner": "kiro",
+    "branch": "kiro/zone-noslip-audit",
+    "head": "63ad9da318a9a0861ffd2df9b2cd176c8a31fc52",
+    "evidence": "HEAD 63ad9da318a9 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1123287040,
+    "moved": [
+     {
+      "path": ".venv-sim",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/kiro-noslip-audit/.venv-sim",
+      "placement": "retired-worktrees",
+      "files": 0,
+      "links": 1,
+      "bytes": 39,
+      "manifest_sha256": "31be33e7de1d76bc7b2eb1eb132d4a682d10d497f360efb963954f82a7c2e493"
+     },
+     {
+      "path": ".venv-sim-worker-mac",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/kiro-noslip-audit/.venv-sim-worker-mac",
+      "placement": "retired-worktrees",
+      "files": 0,
+      "links": 1,
+      "bytes": 50,
+      "manifest_sha256": "d12df5de7069900c09ad027b75e49d43740e19710ef34c9372afc5360692a9f2"
+     },
+     {
+      "path": "outputs/noslip-audit",
+      "destination": "~/projects/ugrp/outputs/noslip-audit",
+      "placement": "same-path",
+      "files": 211,
+      "links": 0,
+      "bytes": 24555051,
+      "manifest_sha256": "242e5114f7c1ee5675a043d0739ff9b9c18d53e55999f7aaa9c0ddbff5ef621e"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-noslip-audit/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "92f8b4e20d5ca59d3b1b4799e6f33b842ad41f55702d619ef0b0d6d77d783e2b",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/red_block/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-noslip-audit.json",
+    "receipt_sha256": "31d9c1a4c9258be637a9a77ad8656334ca86f8964eefdea802918fd7e881b6ed"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-records-review",
+    "owner": "kiro",
+    "branch": "kiro/records-owncam-review",
+    "head": "6a7442c30720b264af13bca62e0da10fd9895467",
+    "evidence": "HEAD 6a7442c30720 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1120288768,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-records-review/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "scripts/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-records-review.json",
+    "receipt_sha256": "11961b005a20c0b2b30ea9e2bfdf12ce064d8812c540cea0fa120ea10b05d3be"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-scenario-feasibility",
+    "owner": "kiro",
+    "branch": "kiro/zone-scenario-feasibility",
+    "head": "8f2aa31db53e4c65990e3ee82e764060edfd6ff4",
+    "evidence": "HEAD 8f2aa31db53e is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122934784,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-scenario-feasibility/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-scenario-feasibility.json",
+    "receipt_sha256": "507f019d29c343e13121240ca75cb41055f3a8061b335191ece1c93f6f562d5e"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-sim-cost",
+    "owner": "kiro",
+    "branch": "kiro/zone-sim-cost",
+    "head": "6be139590336bf281af912145740c9766a180019",
+    "evidence": "HEAD 6be139590336 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122668544,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-sim-cost/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-sim-cost.json",
+    "receipt_sha256": "fef88b9d4378851f51125d0182083f684b96cb8921279d96c42cb31460398d9c"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-study-contract",
+    "owner": "kiro",
+    "branch": "kiro/zone-study-contract",
+    "head": "8587bb9017c035ab2a043194ccd7b2e656bfb232",
+    "evidence": "HEAD 8587bb9017c0 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122574336,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-study-contract/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-study-contract.json",
+    "receipt_sha256": "2e570292c5708b7c6504d4c4b0cb34eb830a53e97906b7fcc6f20be446091440"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-study-eval",
+    "owner": "kiro",
+    "branch": "kiro/zone-study-eval",
+    "head": "a68ce05683cd2c530c9b7ac34e2b1223ba4fea00",
+    "evidence": "HEAD a68ce05683cd is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1121329152,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-study-eval/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-study-eval.json",
+    "receipt_sha256": "029b5f61cf51e2a57973d706e2e21e1eecd10202f8ae4a9e5781f703b72cbf68"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-study-protocol",
+    "owner": "kiro",
+    "branch": "kiro/zone-study-protocol",
+    "head": "e8c80eb093d66c99b35a49b3f030869ad1819abf",
+    "evidence": "HEAD e8c80eb093d6 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1139118080,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-study-protocol/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/benchmarks/__pycache__",
+     "scripts/red_block/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-study-protocol.json",
+    "receipt_sha256": "4adddaaa1a40da2067ba9cf2bc556da76a80c00af595fb1573849bb2a75d6ca6"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-tb-0925",
+    "owner": "kiro",
+    "branch": "kiro/tb-0925",
+    "head": "19b358987afa7d0ea33ec64e20bb192ebf424f16",
+    "evidence": "HEAD 19b358987afa is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1120694272,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/kiro-tb-0925/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-kiro-tb-0925.json",
+    "receipt_sha256": "5d411aabc40a08fbada5988937ad422fb90a502c4638099246caec098e5d3b1d"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/owncam-loc-ts",
+    "owner": "claude",
+    "branch": "claude/owncam-loc-timestep-fix",
+    "head": "09be45c48b5f3f2f9dbf645be321c6c9dbe5b771",
+    "evidence": "HEAD 09be45c48b5f is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1120133120,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-owncam-loc-ts/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-owncam-loc-ts.json",
+    "receipt_sha256": "75d7466d18e6cf2f390fdf6848e064fff3d88c26fb1bca0238b4f0d79c107d2d"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/records-0926",
+    "owner": "claude",
+    "branch": "claude/records-0926",
+    "head": "db53f3dccc90f3c98733fb38c2716903dddaa517",
+    "evidence": "HEAD db53f3dccc90 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1119981568,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-records-0926/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-records-0926.json",
+    "receipt_sha256": "f2acb7dda97458fe60e070ce376e3eecb75354bc6fa11647fff7bfe99a443fe1"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/ro-pr181",
+    "owner": "claude",
+    "branch": null,
+    "head": "666442578d80f207fe318c6860496340bd5c5bd7",
+    "evidence": "HEAD 666442578d80 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1120227328,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-ro-pr181/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-ro-pr181.json",
+    "receipt_sha256": "cbf0bdf5d5331e4d25164768010cf6d1c4671e410ce96dffa3fc1297b142633f"
+   },
+   {
+    "worktree": "~/projects/ugrp-kiro-agent",
+    "owner": "claude",
+    "branch": "claude/kiro-agent",
+    "head": "16d360710a06c188a9b5f4c431b9e18881ff8c3f",
+    "evidence": "HEAD 16d360710a06 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1119965184,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-ugrp-kiro-agent/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "scripts/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-ugrp-kiro-agent.json",
+    "receipt_sha256": "e7aae37d91024b9e0355efdc72820bc328b4d7a9aca76b1e00163e0cccbc0218"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-loop-v2",
+    "owner": "claude",
+    "branch": "claude/zone-owncam-loop-v2",
+    "head": "835f9a4e475d9b1d987cbce605d2da69ead42f16",
+    "evidence": "HEAD 835f9a4e475d is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122926592,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-loop-v2/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "experiments/2026-09-26-zone-owncam-loop-v2/__pycache__",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-loop-v2.json",
+    "receipt_sha256": "7abccec34cd17d8d8478b66148fbe25822d9bad47e54c216e78b2b7c54e83079"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-loop",
+    "owner": "claude",
+    "branch": "claude/zone-owncam-loop",
+    "head": "71334f18cac5f963cc70e5ae673d8c817ecc2bf2",
+    "evidence": "HEAD 71334f18cac5 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122623488,
+    "moved": [
+     {
+      "path": "MUJOCO_LOG.TXT",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-loop/MUJOCO_LOG.TXT",
+      "placement": "retired-worktrees",
+      "files": 1,
+      "links": 0,
+      "bytes": 136,
+      "manifest_sha256": "8e5d609aea2a803fa1c75c14fe2d78d9c3e5f18d6740fbfe998a631ef39ea2bc"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-loop/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "512f49142ef57ce0428782026876d4766bab2b22013c8db507d24c23120db1ba",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-loop.json",
+    "receipt_sha256": "5a8d6659f397bff5397392e80995ef3487dc7673c9b4378030237e2c8917fd2c"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-pair",
+    "owner": "claude",
+    "branch": "claude/zone-owncam-pair",
+    "head": "29700fd08d804e3ed7e8fd6948b03259f19adb3a",
+    "evidence": "HEAD 29700fd08d80 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1122500608,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-pair/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "experiments/2026-09-26-zone-owncam-pair/__pycache__",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-pair.json",
+    "receipt_sha256": "27f1e72b6b87138eab9cecb65470105723f196bdf84484e32fc5ad6d8162e266"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-skill-v2",
+    "owner": "claude",
+    "branch": "claude/zone-owncam-skill-v2",
+    "head": "6c81e3939f735a8c1a445bc8ecc44205b8af70fc",
+    "evidence": "HEAD 6c81e3939f73 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1126453248,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-skill-v2/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "experiments/2026-09-25-zone-owncam-skill/__pycache__",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-skill-v2.json",
+    "receipt_sha256": "08b54cd48b1b37e95f0b2d783b9ffa37c3f8f8b083764a609f942853faaa3fe8"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-skill-v7-frozen",
+    "owner": "claude",
+    "branch": null,
+    "head": "57e2fd17845209272c80f917f028797d65779487",
+    "evidence": "HEAD 57e2fd178452 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1123016704,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-skill-v7-frozen/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-skill-v7-frozen.json",
+    "receipt_sha256": "bdf2b7c666064cf5f1e1af2232ee1747946ae34f4e911102be7f4ccb1e7e3842"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-skill-v8-frozen",
+    "owner": "claude",
+    "branch": null,
+    "head": "39f214c6c237d4002fef9b40e1ff0152b5b26678",
+    "evidence": "HEAD 39f214c6c237 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1123516416,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-skill-v8-frozen/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-skill-v8-frozen.json",
+    "receipt_sha256": "e42067045c2d0f61559a5b86f9f0b566946f1f175732f2fc69fb925f405cb089"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-owncam-skill-v9-frozen",
+    "owner": "claude",
+    "branch": null,
+    "head": "04a5e3cde69c6042674eec4ca552b26dc284af67",
+    "evidence": "HEAD 04a5e3cde69c is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1123930112,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-owncam-skill-v9-frozen/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-owncam-skill-v9-frozen.json",
+    "receipt_sha256": "b3488ddf1155a804a82456035c34e4e385715ecd3db0b9c1cf2e7007638b75d4"
+   },
+   {
+    "worktree": "~/projects/ugrp-worktrees/zone-team-a2-dev",
+    "owner": "claude",
+    "branch": "claude/zone-team-a2-dev",
+    "head": "64daf56d936466920ca65147604d06502d98d8ac",
+    "evidence": "HEAD 64daf56d9364 is an ancestor of origin/main",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1128329216,
+    "moved": [
+     {
+      "path": "MUJOCO_LOG.TXT",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-team-a2-dev/MUJOCO_LOG.TXT",
+      "placement": "retired-worktrees",
+      "files": 1,
+      "links": 0,
+      "bytes": 136,
+      "manifest_sha256": "b5a79a793bc02592f2550e9f5b195e3a62e5182a67c4e5b21e004d6abeb531b0"
+     },
+     {
+      "path": "outputs/zone-team-a2-media",
+      "destination": "~/projects/ugrp/outputs/zone-team-a2-media",
+      "placement": "same-path",
+      "files": 4,
+      "links": 0,
+      "bytes": 3549175,
+      "manifest_sha256": "78787988eb71715fc2b7dfd08c7dc12b268b4a8a24d7f221a39c2039acbcd91e"
+     },
+     {
+      "path": "outputs/zone-team-a2-v2-20260925",
+      "destination": "~/projects/ugrp/outputs/zone-team-a2-v2-20260925",
+      "placement": "same-path",
+      "files": 1321,
+      "links": 0,
+      "bytes": 231735102,
+      "manifest_sha256": "07271cefe76c20cb9256b1de57ec8dd7d5cc4496a4129089f2d98d82955d545e"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/claude-zone-team-a2-dev/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "344eff95fff5f311da3884ef36402885d8c8a9d081223600db35e62406f5bbbf",
+    "deleted_caches": [
+     ".pytest_cache",
+     "experiments/2026-09-25-zone-hard-routes/__pycache__",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item1/exec-zone-team-a2-dev.json",
+    "receipt_sha256": "4254e1bcd1a494ab6fa258bf27ca2c40d1aa18a1405911598c51402ee2bdb9f4"
+   }
+  ]
+ },
+ "item2_sparsify": {
+  "totals": {
+   "worktrees": 17,
+   "before_gib": 18.09,
+   "after_gib": 2.5,
+   "freed_gib": 15.59,
+   "all_status_unchanged": true
+  },
+  "rows": [
+   {
+    "worktree": "~/projects/ugrp-wt/claude-todo-dr-sim2real",
+    "head": "cd01e170c1602883683c460688e423183333c5c6",
+    "before_bytes": 1128398848,
+    "after_bytes": 140840960,
+    "before_files": 5645,
+    "after_files": 4101,
+    "status_ignored_unchanged": true,
+    "idle_override": "18:29:51 index write came from this job's own 'git status' (no --no-optional-locks) at 18:29:50; HEAD 16:32, logs/HEAD 16:40, no file outside .git newer than 60 min, no process cwd/cmdline; dry-run at 18:27 passed with the default 60-min window",
+    "receipt_sha256": "ec2c94e3a03c4f260eda114f1d6258bf39056eb0f12624dbecdfc4104bb1db9d"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-ko-pilot-fix",
+    "head": "d6557d7919f63f2ea6d5ea2ae212af6e6e6cf07d",
+    "before_bytes": 1120878592,
+    "after_bytes": 136876032,
+    "before_files": 5499,
+    "after_files": 3959,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "44a5cf03298062e0a5822733370b51686a57fd29dbb3fa598599a619e99bc8c3"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-m2-pair-s2c-frozen",
+    "head": "ca44f66f555db40e9d045f050e1a6eeb3e97e9fc",
+    "before_bytes": 1122938880,
+    "after_bytes": 138936320,
+    "before_files": 5593,
+    "after_files": 4053,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "cc1915fc47516462a68b56feab49750a9144b811155519ab64e76ceb0dc21fef"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-m2-pair",
+    "head": "6990a6ed6654277747490979c35c6e4736fe6bec",
+    "before_bytes": 1123860480,
+    "after_bytes": 139857920,
+    "before_files": 5622,
+    "after_files": 4082,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "06ff79c0f23562fe743fe4d8d19d3c9a1f5b518aff79c386a182e13d30d3a7bb"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-own-executor",
+    "head": "c8a2355ae4de95fc721ddfec3cfd77aaba8fe4fd",
+    "before_bytes": 1126957056,
+    "after_bytes": 142954496,
+    "before_files": 5733,
+    "after_files": 4193,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "cc5b399ade6152a7a491318e56c14fbca40da406f8c6b6e3f6b8321035c18102"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-own-perception",
+    "head": "4249acee9ddc289d7f8ca92e4e63a1ceb49ff421",
+    "before_bytes": 1414651904,
+    "after_bytes": 430649344,
+    "before_files": 19092,
+    "after_files": 17552,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "dc4bcb6354e51ea2bf349b671adc5bec08f394c2e3d77c811fff389d25b8be84"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-records-0926b",
+    "head": "0b8cb270eccbf4097ef4af628047026575fc089a",
+    "before_bytes": 1121030144,
+    "after_bytes": 137027584,
+    "before_files": 5506,
+    "after_files": 3966,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "f16230e915a7ae0614e1070f815af71632a0ca2efac78c3efcc17ff2d36040b2"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-report-draft",
+    "head": "6b582eee84959398b3c7b089b4205faf4746d4df",
+    "before_bytes": 1121128448,
+    "after_bytes": 137125888,
+    "before_files": 5514,
+    "after_files": 3974,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "2b70f9a8f2f91744d10e25c52ef1f001ce16b47bbc3b08a8573710e51e94aa45"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-study-scenarios",
+    "head": "3186100117c49e44c6a156a864d1e5bb69da1db8",
+    "before_bytes": 1122934784,
+    "after_bytes": 138932224,
+    "before_files": 5559,
+    "after_files": 4019,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "55b90f40364637390e7b50f474b3091fe6131fa0222489bc4da898fc37c28e9d"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-tb-loop",
+    "head": "425b560ba4a6916704c33f5d0fabc826cdb01672",
+    "before_bytes": 1121132544,
+    "after_bytes": 137129984,
+    "before_files": 5504,
+    "after_files": 3964,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "a338a0b6a5d5c996dc1755344b1374db4135d89b80f0c18dcf8708c984784a0a"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/kiro-tb-perc",
+    "head": "e19c88a08ec5b9c595615409ecff4a0a14a65057",
+    "before_bytes": 1123045376,
+    "after_bytes": 139042816,
+    "before_files": 5594,
+    "after_files": 4054,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "e6245a3361dac284daab9c9ea224b70a43d74e1c2c06ba0ce87b3a34ad39bc9a"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m1-owncam",
+    "head": "1b836a1dc777e5eb8b603fa02ff694593ee53d8b",
+    "before_bytes": 1151016960,
+    "after_bytes": 163459072,
+    "before_files": 6515,
+    "after_files": 4971,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "dbc6c44cba602d72329741122fc18e0787ecd3333a1f16f69ccaa1218f9e851c"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m2-pair-s1-frozen",
+    "head": "3fdf0112f7e91eda187f0d6bd3ff23e873f34fb1",
+    "before_bytes": 1122353152,
+    "after_bytes": 138350592,
+    "before_files": 5566,
+    "after_files": 4026,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "ea336ad9be0dc32b7567d4ecd7ebd7fa1748092d40c7ed170f710350312ee616"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m2-pair-s2-frozen",
+    "head": "fa682a6d9c6db482d9a96593b2a9c1e44dbf0a56",
+    "before_bytes": 1122566144,
+    "after_bytes": 138563584,
+    "before_files": 5575,
+    "after_files": 4035,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "b23df5437166b222920d2b8315233596b073ae8d520fae2ebd5cbef81daca2d4"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m2-pair-s2b-frozen",
+    "head": "ed15489ab5e86c785f7f7f9daa37a7c2860c9a95",
+    "before_bytes": 1122689024,
+    "after_bytes": 138686464,
+    "before_files": 5579,
+    "after_files": 4039,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "a3c2c5fe7fd061a7ddef7e08af30689816b981bccb0d48d504eafc6b90654bc3"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m2-pair-s3-frozen",
+    "head": "5f748734fc8f06efeac9f13975ef24ad7faa1047",
+    "before_bytes": 1122398208,
+    "after_bytes": 138395648,
+    "before_files": 5570,
+    "after_files": 4030,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "f5395987b4581504c2e7dbd114fae818c581cc03dfdd529fe290d5b1005e5ef2"
+   },
+   {
+    "worktree": "~/projects/ugrp-wt/zone-m2-pair",
+    "head": "78c2979730065a5d79a302f78428e1e5120fc277",
+    "before_bytes": 1132556288,
+    "after_bytes": 144998400,
+    "before_files": 5814,
+    "after_files": 4270,
+    "status_ignored_unchanged": true,
+    "idle_override": null,
+    "receipt_sha256": "d601707b131a041721bd393c33366f0fafd23fc93d7b6c1275467f018b214474"
+   }
+  ]
+ },
+ "item3_codex_unmerged": {
+  "totals": {
+   "worktrees": 9,
+   "all_verified": true,
+   "checkout_gib_freed_est": 9.2,
+   "moved_files": 31276,
+   "moved_gib": 2.6,
+   "archived_refs_match": true
+  },
+  "archive": [
+   {
+    "name": "a3-fresh-audit-755dca3",
+    "branch": null,
+    "head": "755dca3f1b5bdb0d12be43cea86ae2c438d45c80",
+    "archive_ref": "refs/heads/codex/archive-a3-fresh-audit-755dca3-0926",
+    "remote_sha": "755dca3f1b5bdb0d12be43cea86ae2c438d45c80",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! harness/__pycache__/\n!! outputs/\n!! scripts/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/a3-fresh-audit-755dca3-0926.bundle",
+     "bytes": 48078,
+     "sha256": "06e63d2869a8e531f3ee076d89bb0b5f69f505d820150d8c9fdf3531c1c5e8e1",
+     "prerequisite": "66fd9c63f54343dc644b1f13537192544f487e15",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "755dca3f1b5bdb0d12be43cea86ae2c438d45c80"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/a3-fresh-audit-755dca3-0926.json",
+    "record_sha256": "224d7e78141041a8e4d810c07788840e02f18f16efb90ef2698c9df867137a25"
+   },
+   {
+    "name": "a3-fresh-audit-de69eb3",
+    "branch": null,
+    "head": "de69eb313c17380f5bbfcb71fd40264cc3f0541e",
+    "archive_ref": "refs/heads/codex/archive-a3-fresh-audit-de69eb3-0926",
+    "remote_sha": "de69eb313c17380f5bbfcb71fd40264cc3f0541e",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! harness/__pycache__/\n!! outputs/\n!! scripts/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/a3-fresh-audit-de69eb3-0926.bundle",
+     "bytes": 48707,
+     "sha256": "9d315bdafe0078fa993bf1f8d9ccc3595138778379c51fe151031b05a295bcdf",
+     "prerequisite": "02d17b72eeeb0ce760d081d908e527b3064f9064",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "de69eb313c17380f5bbfcb71fd40264cc3f0541e"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/a3-fresh-audit-de69eb3-0926.json",
+    "record_sha256": "cdde2a0cd55fa0ce10fc9027363434d11a2f28e60beb3c8a67739065d6319bc0"
+   },
+   {
+    "name": "communication-observer",
+    "branch": "codex/communication-observer",
+    "head": "5e25bd85b8576889e89c46590559554763fe825b",
+    "archive_ref": "refs/heads/codex/archive-communication-observer-0926",
+    "remote_sha": "5e25bd85b8576889e89c46590559554763fe825b",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! MUJOCO_LOG.TXT\n!! harness/__pycache__/\n!! scripts/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/communication-observer-0926.bundle",
+     "bytes": 17469,
+     "sha256": "0da2d8e9551daf65d8a71852861b1533a33b34eab27976c69bbf036b1fa41cba",
+     "prerequisite": "efe19d03d1b0d6e803f74c02cfdf11d3baa74def",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "5e25bd85b8576889e89c46590559554763fe825b"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/communication-observer-0926.json",
+    "record_sha256": "9d2e5e972f638697e39875e35a7c74b5d2b145e55ff39f64e5251376094db1d0"
+   },
+   {
+    "name": "dispatch-process-perception",
+    "branch": "codex/dispatch-process-perception",
+    "head": "3045d542e80f7a0a7f6d682b8f13fe76b8b8c75c",
+    "archive_ref": "refs/heads/codex/archive-dispatch-process-perception-0926",
+    "remote_sha": "3045d542e80f7a0a7f6d682b8f13fe76b8b8c75c",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! harness/__pycache__/\n!! scripts/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/dispatch-process-perception-0926.bundle",
+     "bytes": 7392,
+     "sha256": "7d2a0cd243b17a64fc0f72bb7c94b7ce07a4ceb8c5ce2fdd4b5f5ad52b8a4825",
+     "prerequisite": "817872651083143fe4ff46b11dba30915e34f5ff",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "3045d542e80f7a0a7f6d682b8f13fe76b8b8c75c"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/dispatch-process-perception-0926.json",
+    "record_sha256": "9afd3e6fe38f5b21f8de29dca69ab57b254268643669fb8cae61716a93fef293"
+   },
+   {
+    "name": "dispatch-top-pipeline",
+    "branch": "codex/dispatch-top-pipeline",
+    "head": "434fe1cee125064a9583bf039e5a901d864e3cbb",
+    "archive_ref": "refs/heads/codex/archive-dispatch-top-pipeline-0926",
+    "remote_sha": "434fe1cee125064a9583bf039e5a901d864e3cbb",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! harness/__pycache__/\n!! scripts/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/dispatch-top-pipeline-0926.bundle",
+     "bytes": 11647,
+     "sha256": "30956c9adee39efdd7b3bd935b6a7a7ffe22d95f589ea9f6bcf961c869c697c5",
+     "prerequisite": "81446dd0d3b97942b714442b086a4892a04b71b9",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "434fe1cee125064a9583bf039e5a901d864e3cbb"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/dispatch-top-pipeline-0926.json",
+    "record_sha256": "eb7ca017e5a6fc922d8fc9b4d0c943e8a3e685cf07831a7c01474e59f56ec9e7"
+   },
+   {
+    "name": "pr137-main-integration",
+    "branch": "codex/pr137-main-integration",
+    "head": "8f20d58e736a34996ac3ffa1a73f8e5a6a5ad8ff",
+    "archive_ref": "refs/heads/codex/archive-pr137-main-integration-0926",
+    "remote_sha": "8f20d58e736a34996ac3ffa1a73f8e5a6a5ad8ff",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! harness/__pycache__/\n!! scripts/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/pr137-main-integration-0926.bundle",
+     "bytes": 1250041,
+     "sha256": "fe84c363eaba651805399a7f0742dbd8443b8ec58210af9d9f5f7f79a1bdded6",
+     "prerequisite": "bb579ee4cc88792c7a92b709f066bea2c55adb26",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "8f20d58e736a34996ac3ffa1a73f8e5a6a5ad8ff"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/pr137-main-integration-0926.json",
+    "record_sha256": "819550b835e136cc2766618db6fd1c695d0e9b427ea0e29c139ab642101a332d"
+   },
+   {
+    "name": "realtime-owner-commit",
+    "branch": "codex/realtime-owner-commit",
+    "head": "b3e15ec608533b1b6bcd6e880fcb68ec0d4d843a",
+    "archive_ref": "refs/heads/codex/archive-realtime-owner-commit-0926",
+    "remote_sha": "b3e15ec608533b1b6bcd6e880fcb68ec0d4d843a",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! harness/__pycache__/\n!! scripts/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/realtime-owner-commit-0926.bundle",
+     "bytes": 4888,
+     "sha256": "78ea0a2fcc9edefd6df6b57d701b8632ca5816b45d86e6fd38a16bbe7cc79736",
+     "prerequisite": "d4b205998d89812ef1ef30eca1cf4fe5c20682a7",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "b3e15ec608533b1b6bcd6e880fcb68ec0d4d843a"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/realtime-owner-commit-0926.json",
+    "record_sha256": "48c7431b29aab369090d1c3a24c7f54f1521cd4f900412462662b219ece2a955"
+   },
+   {
+    "name": "realtime-stage-continuity",
+    "branch": "codex/realtime-stage-continuity",
+    "head": "55ae7125ff3c7ad85170f0a1eb5db996eecfc6c0",
+    "archive_ref": "refs/heads/codex/archive-realtime-stage-continuity-0926",
+    "remote_sha": "55ae7125ff3c7ad85170f0a1eb5db996eecfc6c0",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! MUJOCO_LOG.TXT\n!! harness/__pycache__/\n!! scripts/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/realtime-stage-continuity-0926.bundle",
+     "bytes": 8146,
+     "sha256": "e364ace44dd737923d46c4d0985ad01bf144c44465d1508d5c919427dff669d0",
+     "prerequisite": "f2d6ced5c270e1a4b4e7a3a39a363aee79fe5ef8",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "55ae7125ff3c7ad85170f0a1eb5db996eecfc6c0"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/realtime-stage-continuity-0926.json",
+    "record_sha256": "c7ce09895e84cdc465b83a8617404232efafa028e4efe3f88e087905b85cfc52"
+   },
+   {
+    "name": "rgb-common-physical-recovery",
+    "branch": "codex/rgb-common-physical-recovery",
+    "head": "11b9d91ab326c6a2e61bbd57e5d37f1bc2db1739",
+    "archive_ref": "refs/heads/codex/archive-rgb-common-physical-recovery-0926",
+    "remote_sha": "11b9d91ab326c6a2e61bbd57e5d37f1bc2db1739",
+    "remote_matches_head": true,
+    "uncommitted_patch": null,
+    "status_porcelain_ignored": "!! .pytest_cache/\n!! harness/__pycache__/\n!! outputs/\n!! scripts/__pycache__/\n!! scripts/tensorboard_tools/__pycache__/\n!! sim/__pycache__/\n!! tests/__pycache__/\n!! tests/fixtures/rgb_communication_scenarios/__pycache__/\n",
+    "bundle": {
+     "path": "~/projects/ugrp/outputs/archive/codex-worktrees/rgb-common-physical-recovery-0926.bundle",
+     "bytes": 1032170,
+     "sha256": "1b3b58bbb9981128f5ad091fc9875d02f9a187e9492462738d5755c5d5bdc0d8",
+     "prerequisite": "6bc02ec951e83e61f8400cbbce075a1055cdc499",
+     "verify_exit": 0,
+     "head_in_bundle": [
+      "11b9d91ab326c6a2e61bbd57e5d37f1bc2db1739"
+     ]
+    },
+    "record": "~/projects/ugrp/outputs/archive/codex-worktrees/rgb-common-physical-recovery-0926.json",
+    "record_sha256": "c23b12a8247248b2bd6b6c0b9b455fbb3669145ef1b2f6d9f1c07dca709efb01"
+   }
+  ],
+  "rows": [
+   {
+    "worktree": "~/.codex/worktrees/a3-fresh-audit-755dca3/ugrp",
+    "owner": "codex",
+    "branch": null,
+    "head": "755dca3f1b5bdb0d12be43cea86ae2c438d45c80",
+    "evidence": "HEAD 755dca3f1b5b archived at origin refs/heads/codex/archive-a3-fresh-audit-755dca3-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1087709184,
+    "moved": [
+     {
+      "path": "outputs/a3-b-independent-755dca3.json",
+      "destination": "~/projects/ugrp/outputs/a3-b-independent-755dca3.json",
+      "placement": "same-path",
+      "files": 1,
+      "links": 0,
+      "bytes": 5949,
+      "manifest_sha256": "152c8db3290dfdb6e3d166760eb2777d8436a714520ca1c2654cccaa63914e3b"
+     },
+     {
+      "path": "outputs/a3-b-independent-755dca3.py",
+      "destination": "~/projects/ugrp/outputs/a3-b-independent-755dca3.py",
+      "placement": "same-path",
+      "files": 1,
+      "links": 0,
+      "bytes": 11198,
+      "manifest_sha256": "a568145b7053a07d254839c52bdd0030409dc71dec3d47e49309278d1f584dfa"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-a3-fresh-audit-755dca3/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "011653bda1e54a11dce78c0f8a9845b55c381d28efa085ec46aa5684206a4bba",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-a3-fresh-audit-755dca3.json",
+    "receipt_sha256": "b80dc9f5fbeeb45a401e682b2cb4ba8a31b0767528c0cd32e8c8d63533043e20"
+   },
+   {
+    "worktree": "~/.codex/worktrees/a3-fresh-audit-de69eb3/ugrp",
+    "owner": "codex",
+    "branch": null,
+    "head": "de69eb313c17380f5bbfcb71fd40264cc3f0541e",
+    "evidence": "HEAD de69eb313c17 archived at origin refs/heads/codex/archive-a3-fresh-audit-de69eb3-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1087709184,
+    "moved": [
+     {
+      "path": "outputs/a3-b-independent-de69eb3.json",
+      "destination": "~/projects/ugrp/outputs/a3-b-independent-de69eb3.json",
+      "placement": "same-path",
+      "files": 1,
+      "links": 0,
+      "bytes": 5949,
+      "manifest_sha256": "a0245f54c032b442a6b4af5385d32cce054142f4139f64128b1fac5fd7c99c2f"
+     },
+     {
+      "path": "outputs/a3-b-independent-de69eb3.py",
+      "destination": "~/projects/ugrp/outputs/a3-b-independent-de69eb3.py",
+      "placement": "same-path",
+      "files": 1,
+      "links": 0,
+      "bytes": 11199,
+      "manifest_sha256": "b7ef382a5c391611b3eb9dc3c5d4f97968a51b08eb95c4cfebd2272a350ba4de"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-a3-fresh-audit-de69eb3/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "038ec2c45156211871c6143ac4d41d948f1b089cc45a007c784739e6383889c7",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-a3-fresh-audit-de69eb3.json",
+    "receipt_sha256": "73581f8a29793608365a4190b922ddf67e69eb9e6e08acbaf1730463aebed329"
+   },
+   {
+    "worktree": "~/.codex/worktrees/communication-observer/ugrp",
+    "owner": "codex",
+    "branch": "codex/communication-observer",
+    "head": "5e25bd85b8576889e89c46590559554763fe825b",
+    "evidence": "HEAD 5e25bd85b857 archived at origin refs/heads/codex/archive-communication-observer-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1099157504,
+    "moved": [
+     {
+      "path": "MUJOCO_LOG.TXT",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/codex-communication-observer/MUJOCO_LOG.TXT",
+      "placement": "retired-worktrees",
+      "files": 1,
+      "links": 0,
+      "bytes": 1156,
+      "manifest_sha256": "82d4ddca3766f84ff780c7b95dfa4d39d43775dbcca1db8d396e7b9944e22444"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-communication-observer/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "c6faa685ec9f5f04f8728c9e6a968d86055560effd2c0599dadaa7c512c0c0dd",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-communication-observer.json",
+    "receipt_sha256": "254453aa35140beb0e1b64e65e0adff98ce351f7f148b6423ef858dd57b8c7ca"
+   },
+   {
+    "worktree": "~/.codex/worktrees/dispatch-process-perception/ugrp",
+    "owner": "codex",
+    "branch": "codex/dispatch-process-perception",
+    "head": "3045d542e80f7a0a7f6d682b8f13fe76b8b8c75c",
+    "evidence": "HEAD 3045d542e80f archived at origin refs/heads/codex/archive-dispatch-process-perception-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1099698176,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-dispatch-process-perception/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-dispatch-process-perception.json",
+    "receipt_sha256": "975eb31309cac0f7ccb2679652d49a2750eaf8354efa3934f48d4e344b0e874c"
+   },
+   {
+    "worktree": "~/.codex/worktrees/dispatch-top-pipeline/ugrp",
+    "owner": "codex",
+    "branch": "codex/dispatch-top-pipeline",
+    "head": "434fe1cee125064a9583bf039e5a901d864e3cbb",
+    "evidence": "HEAD 434fe1cee125 archived at origin refs/heads/codex/archive-dispatch-top-pipeline-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1099878400,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-dispatch-top-pipeline/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-dispatch-top-pipeline.json",
+    "receipt_sha256": "9f0efc19960770dc8945ce9e7dccf6724b06e1fbbd29cb43462c480d1c3050df"
+   },
+   {
+    "worktree": "~/.codex/worktrees/pr137-main-integration/ugrp",
+    "owner": "codex",
+    "branch": "codex/pr137-main-integration",
+    "head": "8f20d58e736a34996ac3ffa1a73f8e5a6a5ad8ff",
+    "evidence": "HEAD 8f20d58e736a archived at origin refs/heads/codex/archive-pr137-main-integration-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1103089664,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-pr137-main-integration/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     "harness/__pycache__",
+     "scripts/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-pr137-main-integration.json",
+    "receipt_sha256": "546602665a8bfde71ed4965ef65c49fb5ada0c793dd512f19b275b51036d89d3"
+   },
+   {
+    "worktree": "~/.codex/worktrees/realtime-owner-commit/ugrp",
+    "owner": "codex",
+    "branch": "codex/realtime-owner-commit",
+    "head": "b3e15ec608533b1b6bcd6e880fcb68ec0d4d843a",
+    "evidence": "HEAD b3e15ec60853 archived at origin refs/heads/codex/archive-realtime-owner-commit-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1098964992,
+    "moved": [],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-realtime-owner-commit/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "16c98ee750cf782eaef9df9313b0d74d3bc7a184648e8f80307ea44935d924f5",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-realtime-owner-commit.json",
+    "receipt_sha256": "9329c8f97520d7101571f095e38a101d660305c5b08eda6b22423590481750a2"
+   },
+   {
+    "worktree": "~/.codex/worktrees/realtime-stage-continuity/ugrp",
+    "owner": "codex",
+    "branch": "codex/realtime-stage-continuity",
+    "head": "55ae7125ff3c7ad85170f0a1eb5db996eecfc6c0",
+    "evidence": "HEAD 55ae7125ff3c archived at origin refs/heads/codex/archive-realtime-stage-continuity-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1099333632,
+    "moved": [
+     {
+      "path": "MUJOCO_LOG.TXT",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/codex-realtime-stage-continuity/MUJOCO_LOG.TXT",
+      "placement": "retired-worktrees",
+      "files": 1,
+      "links": 0,
+      "bytes": 136,
+      "manifest_sha256": "aa050192b6dd8751c582277edd29cac6cf04e8c792280e1181a2822b153e0c6c"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-realtime-stage-continuity/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "9a9d3d7aff04cd42e07a965e138bee972891112dd52a33a1e3baa12b236f6350",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-realtime-stage-continuity.json",
+    "receipt_sha256": "297bcd8c862f8115dc5b7ccba48ad96287570d10acc6dc980f01dfe897a0b5be"
+   },
+   {
+    "worktree": "~/.codex/worktrees/rgb-common-physical-recovery/ugrp",
+    "owner": "codex",
+    "branch": "codex/rgb-common-physical-recovery",
+    "head": "11b9d91ab326c6a2e61bbd57e5d37f1bc2db1739",
+    "evidence": "HEAD 11b9d91ab326 archived at origin refs/heads/codex/archive-rgb-common-physical-recovery-0926 (ls-remote)",
+    "verified": true,
+    "worktree_remove_exit": 0,
+    "checkout_bytes_freed_est": 1103884288,
+    "moved": [
+     {
+      "path": "outputs/rgb-common-physical-recovery-20260923",
+      "destination": "~/projects/ugrp/outputs/rgb-common-physical-recovery-20260923",
+      "placement": "same-path",
+      "files": 31252,
+      "links": 0,
+      "bytes": 2783409314,
+      "manifest_sha256": "a05701167bdfd1d6139ba133550213f098d86edf88bc5100e109f2fda158b257"
+     },
+     {
+      "path": "outputs/simulation-runs",
+      "destination": "~/projects/ugrp/outputs/retired-worktrees/codex-rgb-common-physical-recovery/outputs/simulation-runs",
+      "placement": "retired-worktrees",
+      "files": 18,
+      "links": 0,
+      "bytes": 8623630,
+      "manifest_sha256": "43051b8f93565740e4fd35bc729cd3a88ed0dc625f9c84c9e7f6f25afc24c4ed"
+     }
+    ],
+    "moved_manifest_tsv": "~/projects/ugrp/outputs/retired-worktrees/codex-rgb-common-physical-recovery/MANIFEST.tsv",
+    "moved_manifest_tsv_sha256": "e20bd954b78f8a5de729a9d75315610d4e47969140ba4774c6bc96b42769c99c",
+    "deleted_caches": [
+     ".pytest_cache",
+     "harness/__pycache__",
+     "scripts/__pycache__",
+     "scripts/tensorboard_tools/__pycache__",
+     "sim/__pycache__",
+     "tests/__pycache__",
+     "tests/fixtures/rgb_communication_scenarios/__pycache__"
+    ],
+    "receipt": "~/projects/ugrp/outputs/disk-apply-20260926/item3/exec-rgb-common-physical-recovery.json",
+    "receipt_sha256": "3a11f54d627fc03444db0f630105a5e06ca0deb4022be10905b4683c425f04e1"
+   }
+  ]
+ },
+ "item4_dedupe": {
+  "tool": "fclones 0.35.0 (Homebrew bottle, MIT) group --min 4KiB --hash-fn sha256; dedupe --modified-before",
+  "plan": {
+   "groups_in": 145399,
+   "groups_planned": 141699,
+   "files_planned": 653736,
+   "redundant_bytes_planned": 28452808557,
+   "dropped": {
+    "hard_link": 3978,
+    "group_too_small": 3700,
+    "recent_file": 2103,
+    "active_folder": 4275
+   },
+   "active_folders": [
+    "agent-locks",
+    "archive/codex-worktrees",
+    "disk-apply-20260926",
+    "owncam-memory-20260926",
+    "retired-worktrees/claude-owncam-loc-ts",
+    "retired-worktrees/claude-records-0926",
+    "retired-worktrees/claude-ro-pr181",
+    "retired-worktrees/claude-ugrp-kiro-agent",
+    "retired-worktrees/claude-zone-owncam-loop",
+    "retired-worktrees/claude-zone-owncam-loop-v2",
+    "retired-worktrees/claude-zone-owncam-pair",
+    "retired-worktrees/claude-zone-owncam-skill-v2",
+    "retired-worktrees/claude-zone-owncam-skill-v7-frozen",
+    "retired-worktrees/claude-zone-owncam-skill-v8-frozen",
+    "retired-worktrees/claude-zone-owncam-skill-v9-frozen",
+    "retired-worktrees/claude-zone-team-a2-dev",
+    "retired-worktrees/codex-a3-fresh-audit-755dca3",
+    "retired-worktrees/codex-a3-fresh-audit-de69eb3",
+    "retired-worktrees/codex-communication-observer",
+    "retired-worktrees/codex-dispatch-process-perception",
+    "retired-worktrees/codex-dispatch-top-pipeline",
+    "retired-worktrees/codex-pr137-main-integration",
+    "retired-worktrees/codex-realtime-owner-commit",
+    "retired-worktrees/codex-realtime-stage-continuity",
+    "retired-worktrees/codex-rgb-common-physical-recovery",
+    "retired-worktrees/kiro-decisions-0926",
+    "retired-worktrees/kiro-markerless-research",
+    "retired-worktrees/kiro-noslip-audit",
+    "retired-worktrees/kiro-records-review",
+    "retired-worktrees/kiro-scenario-feasibility",
+    "retired-worktrees/kiro-sim-cost",
+    "retired-worktrees/kiro-study-contract",
+    "retired-worktrees/kiro-study-eval",
+    "retired-worktrees/kiro-study-protocol",
+    "retired-worktrees/kiro-tb-0925",
+    "vision-loc-20260926",
+    "zone-env-v3-20260926",
+    "zone-study-integration-20260926"
+   ],
+   "open_files_under_outputs": 7,
+   "modified_before": "2026-09-26T17:49:08.087656+09:00"
+  },
+  "fclones_log_tail": "[2026-09-26 18:53:42.585] fclones:  info: Processed 512037 files and reclaimed up to 28.5 GB space",
+  "fclones_log_errors": 0,
+  "df_before": {
+   "at": "2026-09-26 18:50:49 +0900",
+   "avail_gib": 87.75
+  },
+  "df_after": {
+   "at": "2026-09-26 18:54:28 +0900",
+   "avail_gib": 114.52
+  },
+  "df_gain_gib": 26.77,
+  "planned_redundant_gib": 26.5,
+  "verify": {
+   "files_checked": 653736,
+   "problems": 0,
+   "examples": [],
+   "seconds": 288.7,
+   "checked": "bytes, sha256 (hashlib), mode, mtime_ns"
+  },
+  "raw_sha256": "dc1cd5d611f16c2dff22706c6d2945b70b927cab0b0e435bedf332ac021a1558"
+ },
+ "skipped": [
+  {
+   "worktree": "~/projects/ugrp-worktrees/zone-hard-routes",
+   "items": [
+    1
+   ],
+   "merged": "PR #173",
+   "reason": "in use: Claude shell processes 53386/53824 (and 74139 at census) have cwd inside its outputs/"
+  },
+  {
+   "worktree": "~/projects/ugrp-worktrees/zone-team-a2",
+   "items": [
+    1,
+    2
+   ],
+   "merged": "PR #169",
+   "reason": "in use: running kiro-teacher-fix job (PR #207) scripts read its outputs/zone-team-a2-20260925 by absolute path"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-vision-loc",
+   "items": [
+    1
+   ],
+   "merged": "ancestor of main (PR #210 head)",
+   "reason": "running Kiro job (vision-loc); untracked files; modified within 60 min"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-memory-literature",
+   "items": [
+    1
+   ],
+   "merged": "ancestor of main",
+   "reason": "running Kiro job named by the user; modified within 60 min; already sparse (0.13 GiB)"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-references-0926",
+   "items": [
+    1
+   ],
+   "merged": "ancestor of main",
+   "reason": "running Kiro job (references); modified within 60 min; already sparse (0.13 GiB)"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-study-core",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "PR #194: modified within 60 min (git index/logs, AGENTS.md, maps/zones files); sparsify refused"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-map-v3",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "PR #208: running Kiro job (zone-map-v3); untracked files; modified within 60 min"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-owncam-memory",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "PR #211: running Kiro job (memory); untracked files; modified within 60 min"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-sim-speed",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "PR #209: running sim_profile processes 67205/67209 with cwd inside"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-teacher-fix",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "PR #207: running Kiro job (teacher-fix); tracked changes; modified within 60 min"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-vision-loc-v3src",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "detached source of PR #208; already sparse (0.01 GiB); modified within 60 min"
+  },
+  {
+   "worktree": "~/projects/ugrp-wt/kiro-disk-rules",
+   "items": [
+    2
+   ],
+   "merged": null,
+   "reason": "this job's own worktree; already sparse"
+  }
+ ],
+ "raw_inputs": {
+  "~/projects/ugrp/outputs/disk-apply-20260926/census-before.json": "ab8262c002a794b160e6b0c7146ad2a9a6b707f699021e55ca0b112891650de0",
+  "~/projects/ugrp/outputs/disk-apply-20260926/disk-report-before.json": "c1155328bde8d36b45c372ea3b9871eae954fff227bf5e41359d4356cd06b94e",
+  "~/projects/ugrp/outputs/disk-apply-20260926/moves-check.json": "7d51e661d126e4b967477f48bae3891797d2dc7878a7c9fe11d8a93c5b8c5486"
+ }
+}
