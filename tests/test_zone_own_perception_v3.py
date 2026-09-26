@@ -318,3 +318,15 @@ def test_v3_runtime_sources_do_not_mention_sim_state_or_top_inputs():
         _, _, code = rest.partition('"""')
         for token in banned:
             assert token not in code, f'{name} must not reference {token} in code'
+
+
+def test_handle_contact_plane_shortens_the_floor_projection():
+    """The v3 handle range intersects the contact pixel with the handle plane."""
+    pose = dict(v3.GRASP_LOOK_POSTURE)
+    far = v3._plane_point((320., 240.), pose, 0., SIZE)
+    near = v3._plane_point((320., 240.), pose, v3.HANDLE_CONTACT_PLANE_Z_M, SIZE)
+    assert far is not None and near is not None
+    assert near[0] < far[0]
+    assert near[2] == pytest.approx(v3.HANDLE_CONTACT_PLANE_Z_M)
+    from sim.zone_cargo import HANDLE_HEIGHT_M
+    assert v3.HANDLE_CONTACT_PLANE_Z_M == HANDLE_HEIGHT_M

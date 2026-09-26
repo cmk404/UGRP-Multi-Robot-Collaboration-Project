@@ -129,6 +129,16 @@ TEAM_EMPTY_OCCUPIED_MAX = .08       # ... and the union of all team bands is uno
 # confident errors (``long_beam`` identity 2/4, the rest unknown).
 GRASP_LOOK_POSTURE = {1: 2000, 3: 699, 4: 2400, 5: 1321, 6: 1500}
 
+# Handle contact plane (PREREGISTERED). v2 projects the lowest dark pixel of a
+# handle onto the floor, but seen from above that pixel is on the handle, not
+# under it: the beam's grip band lies on top of the 32 mm bar and a 46 mm lug's
+# floor edge is hidden by its own top. Dev (``dev-frames``, v2 detections, contact
+# pixel intersected with the plane z, error to the true grip point): z = 0 is
+# +3.7 to +6.7 cm too far (the v2 test "7 mm outside the band" error), z = 0.032 m
+# is +0.3 to +1.2 cm for all three kinds in both look postures. 0.032 m is the
+# catalogue handle height (``sim.zone_cargo.HANDLE_HEIGHT_M``).
+HANDLE_CONTACT_PLANE_Z_M = .032
+
 CONFIDENCE = {
     'held_kind_matched': .88,
     'held_kind_conflict': .82,
@@ -512,14 +522,72 @@ def judge_team_cargo_at_grip(image, servo_pose: Mapping[int | str, int | float],
                    observed='not_observed', **common)
 
 
+# --------------------------------------------------------------------------- my handle is here
+
+def _plane_point(pixel, pose, z, size):
+    frame = np.zeros((size[1], size[0], 3), np.uint8)
+    origin, axes, k, d, _ = _v1._optics(frame, pose)
+    norm = cv2.fisheye.undistortPoints(np.asarray(pixel, np.float64).reshape(1, 1, 2), k, d).reshape(2)
+    direction = np.asarray((norm[0], norm[1], 1.)) @ axes
+    if not np.all(np.isfinite(direction)) or direction[2] >= -1e-3:
+        return None
+    t = (z-origin[2])/direction[2]
+    return origin+t*direction if t > 0 else None
+
+
+def judge_team_cargo_handle(image, servo_pose: Mapping[int | str, int | float], *, expected_kind: str,
+                            reach_band_m: tuple[float, float] = _v2.HANDLE_REACH_BAND_M,
+                            lateral_m: float = _v2.HANDLE_LATERAL_M) -> dict[str, Any]:
+    """"My handle is here", with the handle contact on the handle plane.
+
+    Detection is v2's (dark component touching the kind's colour); only the
+    range of each handle changes: its contact pixel is intersected with the plane
+    ``HANDLE_CONTACT_PLANE_Z_M`` instead of the floor. The yes/no/unknown rules are
+    v2's.
+    """
+    base = _v2.judge_team_cargo_handle(image, servo_pose, expected_kind=expected_kind,
+                                       reach_band_m=reach_band_m, lateral_m=lateral_m)
+    base = {**base, 'schema': SCHEMA, 'profile': PROFILE, 'v2_answer': base['answer'],
+            'v2_reason': base['reason'], 'contact_plane_z_m': HANDLE_CONTACT_PLANE_Z_M}
+    handles = base.get('handles') or []
+    if not handles:
+        return base
+    frame = _v1._frame(image)
+    pose = _v1._pose(servo_pose)
+    size = (frame.shape[1], frame.shape[0])
+    corrected = []
+    for row in handles:
+        point = _plane_point(row['contact_px'], pose, HANDLE_CONTACT_PLANE_Z_M, size)
+        if point is None:
+            continue
+        x, y = float(point[0]), float(point[1])
+        inside = reach_band_m[0] <= x <= reach_band_m[1] and abs(y) <= lateral_m
+        corrected.append({**row, 'estimated_base_m': [round(x, 4), round(y, 4)],
+                          'floor_projection_base_m': row['estimated_base_m'],
+                          'range_m': round(math.hypot(x, y), 4), 'in_reach': bool(inside)})
+    base['handles'] = corrected
+    if not corrected:
+        return {**base, 'answer': 'unknown', 'confidence': _v2.CONFIDENCE['handle_unknown'],
+                'reason': 'NO_HANDLE_FEATURE_ON_THE_ITEM', 'observed': 'not_observed'}
+    in_reach = [row for row in corrected if row['in_reach']]
+    if in_reach:
+        nearest = min(in_reach, key=lambda row: abs(row['estimated_base_m'][1]))
+        return {**base, 'answer': 'yes', 'confidence': _v2.CONFIDENCE['handle_in_reach'],
+                'reason': 'HANDLE_IN_REACH_BAND', 'observed': 'handle_here', 'nearest': nearest}
+    nearest = min(corrected, key=lambda row: row['range_m'])
+    return {**base, 'answer': 'no', 'confidence': _v2.CONFIDENCE['handle_out_of_reach'],
+            'reason': 'HANDLES_FOUND_ALL_OUTSIDE_REACH', 'observed': 'handle_elsewhere', 'nearest': nearest}
+
+
 # --------------------------------------------------------------------------- grasp stage
 
 def judge_team_cargo_grasp_stage(image, servo_pose: Mapping[int | str, int | float], *,
                                  expected_kind: str) -> dict[str, Any]:
     """Kind and "my handle is here" from one frame in the grasp-stage look posture.
 
-    Both answers are v2's judgments, unchanged, applied to a frame taken in
-    ``GRASP_LOOK_POSTURE``; the posture is what v3 changes. The frame must belong
+    The kind is v2's judgment, unchanged; the handle is v2's detection with the
+    v3 handle contact plane. Both come from one frame taken in
+    ``GRASP_LOOK_POSTURE``, which is what v3 changes. The frame must belong
     to that posture (issued pulses within v1's tolerance), otherwise both answers
     are ``unknown``.
     """
@@ -537,7 +605,7 @@ def judge_team_cargo_grasp_stage(image, servo_pose: Mapping[int | str, int | flo
         return _answer('team_cargo_grasp_stage', 'unknown', 0., 'NOT_IN_GRASP_LOOK_POSTURE',
                        observed='not_observed', identity=dict(unknown), handle=dict(unknown), **common)
     identity = _v2.judge_team_cargo_identity(frame, pose, expected_kind=expected_kind)
-    handle = _v2.judge_team_cargo_handle(frame, pose, expected_kind=expected_kind)
+    handle = judge_team_cargo_handle(frame, pose, expected_kind=expected_kind)
     return _answer('team_cargo_grasp_stage', identity['answer'], identity['confidence'], identity['reason'],
                    observed=identity.get('observed'), identity=identity, handle=handle, **common)
 
@@ -545,4 +613,5 @@ def judge_team_cargo_grasp_stage(image, servo_pose: Mapping[int | str, int | flo
 __all__ = ['SCHEMA', 'PROFILE', 'ANSWERS', 'JUDGMENTS', 'PROVENANCE', 'TEAM_KINDS', 'SOLO_KINDS',
            'RENDER_NEAR_CLIP_M', 'HOLD_TOLERANCE_M', 'GRASP_LOOK_POSTURE', 'held_parts', 'held_silhouette',
            'held_band',
-           'judge_held_item', 'judge_team_cargo_at_grip', 'judge_team_cargo_grasp_stage']
+           'judge_held_item', 'judge_team_cargo_at_grip', 'judge_team_cargo_handle',
+           'judge_team_cargo_grasp_stage', 'HANDLE_CONTACT_PLANE_Z_M', 'HELD_HUE_WINDOW']
