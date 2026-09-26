@@ -216,6 +216,26 @@ class M2Student(study.PairStudent):
             self.report('approach', obs, now, ready=True, reason='at_prestation')
 
 
+def depot_assignment(static, spawns, prestations):
+    """Door v2 order-sheet rule: depot slot per role by minimum total planned path length (static).
+
+    Stage 2 cohort fa682a6: with r1 at the south depot slot the two approach paths crossed and the
+    robots touched at t~27 s (813: 105 contact samples; r1's localizer then settled 0.57 m wrong).
+    Computed offline from the static map, the depot slots and the order-sheet pre-stations only.
+    """
+    from harness.map_goto import plan_path
+    best = None
+    for pair in (('r1', 'r2'), ('r2', 'r1')):
+        slots = dict(zip(ROLES, pair))
+        total = 0.
+        for rid, slot in slots.items():
+            res = plan_path(static, spawns[slot][:2], prestations[rid][:2], pa.APPROACH_ENVELOPE, escape_start_m=.25)
+            total += res['length_m'] if res else 1e9
+        if best is None or total < best[0] - 1e-9:
+            best = (total, slots)
+    return best[1]
+
+
 def grip_view_m2(image):
     """Door v2 grip check: black band fills the view AND beam colour at the top OR bottom third.
 
@@ -536,8 +556,11 @@ def main():
     true_grasps = world_grasps(inst)                                   # evaluation only
     stations_true = {r: list(true_grasps[role]['base_xyyaw']) for r, role in ROLES.items()}
     # ---- setup-only start poses --------------------------------------------------------------
+    depot = {r: r for r in ROLES}
+    if a.stage == 'door' and a.door_version == 'v2':
+        depot = depot_assignment(static, spawns, prestations)
     for rid in ROLES:
-        sx, sy, _z, syaw = spawns[rid]
+        sx, sy, _z, syaw = spawns[depot[rid]]
         dx, dy, dyaw = sc['start'][rid]
         world.robot(rid).set_base_pose_for_test((sx + dx, sy + dy, study.BASE_Z), syaw + dyaw)
     mujoco.mj_forward(m, d)
@@ -838,7 +861,7 @@ def main():
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
         'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS,
-        'approach_version': a.approach, 'door_version': a.door_version if a.stage == 'door' else None,
+        'approach_version': a.approach, 'door_version': a.door_version if a.stage == 'door' else None, 'depot_slots': depot,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': drivers['r1'].version,
