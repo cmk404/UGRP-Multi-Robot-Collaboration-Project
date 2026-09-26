@@ -74,9 +74,18 @@ SCENARIOS = {
     701: {'beam': (0.62, -1.23, 0.13), 'start': {'r1': (.00, .00, .00), 'r2': (.00, .00, .00)}},
     702: {'beam': (0.47, -0.78, -0.31), 'start': {'r1': (.08, -.05, .30), 'r2': (-.06, .07, -.25)}},
     703: {'beam': (0.78, -1.62, 0.38), 'start': {'r1': (-.05, .08, -.35), 'r2': (.07, .04, .20)}},
+    # stage 1 test (pre-registered, experiments/2026-09-26-zone-m2-pair/README.md; gen_stage1_seeds.py, rng 20260926)
+    711: {'beam': (0.64, -1.14, 0.51), 'start': {'r1': (0.08, -0.08, -0.09), 'r2': (-0.06, 0.0, 0.34)}},
+    712: {'beam': (0.53, -1.0, 0.18), 'start': {'r1': (0.05, 0.04, 0.33), 'r2': (-0.1, 0.03, -0.23)}},
+    713: {'beam': (0.45, -1.12, -0.04), 'start': {'r1': (0.0, -0.08, -0.29), 'r2': (-0.08, -0.09, 0.09)}},
+    714: {'beam': (0.44, -1.8, -0.21), 'start': {'r1': (-0.02, -0.03, -0.19), 'r2': (0.03, 0.01, 0.21)}},
+    715: {'beam': (0.43, -1.22, -0.29), 'start': {'r1': (0.05, -0.03, 0.36), 'r2': (-0.06, 0.06, -0.01)}},
+    716: {'beam': (0.66, -0.95, 0.38), 'start': {'r1': (0.0, 0.09, -0.06), 'r2': (-0.09, -0.01, -0.18)}},
+    717: {'beam': (0.37, -1.64, -0.25), 'start': {'r1': (0.01, 0.08, 0.37), 'r2': (0.09, -0.07, 0.13)}},
+    718: {'beam': (0.57, -1.82, -0.17), 'start': {'r1': (0.03, 0.05, 0.18), 'r2': (-0.1, 0.02, -0.01)}},
 }
 DEV_SEEDS = (701, 702, 703)
-TEST_SEEDS: tuple = ()          # pre-registered in experiments/2026-09-26-zone-m2-pair/README.md before any run
+STAGE1_TEST_SEEDS = tuple(range(711, 719))   # pre-registered in experiments/2026-09-26-zone-m2-pair/README.md
 
 
 def git(*args):
@@ -491,7 +500,7 @@ def main():
         'contact_profile_note': 'cargo_noslip_v1 primary, PENDING the user decision on the profile',
         'weld': 'off', 'pose_source': 'owncam_pf_v2 localizer (own RGB + static tag map + own commands); no GT',
         'gt_at_runtime': False, 'on_failure': a.on_failure,
-        'development_seed': a.seed in DEV_SEEDS,
+        'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': pa.PairApproachDriver.version,
