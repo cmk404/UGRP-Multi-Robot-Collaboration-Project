@@ -95,3 +95,42 @@ def test_door_schedule_moves_own_base_onto_the_axis_and_keeps_axial_identical():
         assert (align['turn'] < 0) if rid == 'r1' else (align['turn'] > 0)
     (a0, a1, ca), (b0, b1, cb) = scheds['r1'][1], scheds['r2'][1]
     assert (a0, a1) == (b0, b1) and ca['forward'] == -cb['forward'] > 0
+
+
+def _driver_v2(goal, pose):
+    params = json.loads(CAL.read_text())['params']
+    drv = pa.PairApproachDriverV2(static_map(), params, goal_xyyaw=goal,
+                                  initial_servo={1: 2000, 3: 740, 4: 2320, 5: 1320, 6: 1500})
+    drv.loc.initialized = True
+    drv.loc.px[:] = np.array(pose, float)
+    drv.loc.px[:, :2] += np.random.default_rng(0).normal(scale=.002, size=(drv.loc.n, 2))
+    drv.loc.last_tag_t = 0.
+    drv.state, drv.state_since = 'drive', 0.
+    return drv
+
+
+def test_v2_rotates_in_place_before_translating():
+    drv = _driver_v2((1.0, -1.0, math.pi - .1), (0., -1., 0.))
+    cmds = drv.tick(0.)
+    assert cmds[0]['kind'] == 'mecanum' and cmds[0]['forward'] == 0. and cmds[0]['left'] == 0.
+    assert abs(cmds[0]['turn']) == pa.TURN_IN_PLACE
+
+
+def test_v2_looks_after_each_rotation_step():
+    drv = _driver_v2((1.0, -1.0, math.pi - .1), (0., -1., 0.))
+    drv.tick(0.)                                  # sets the step reference
+    drv.loc.px[:, 2] = pa.TURN_STEP_RAD + .01     # estimated rotation reached one step
+    cmds = drv.tick(.1)
+    assert cmds == [{'kind': 'hold'}] and drv.state == 'look_arm' and drv.look_reason == 'turn_step'
+
+
+def test_v2_relocalizes_after_unfixed_looks_then_gives_up():
+    from harness.owncam_drive import MAX_LOOKS_WITHOUT_FIX
+    drv = _driver_v2((1.0, -1.0, 0.), (0., -1., 0.))
+    old = drv.loc
+    drv.looks_without_fix = MAX_LOOKS_WITHOUT_FIX
+    drv.tick(0.)
+    assert drv.loc is not old and not drv.loc.initialized and drv.look_reason == 'relocalize'
+    drv.state, drv.relocalizations, drv.looks_without_fix = 'drive', pa.MAX_RELOCALIZE, MAX_LOOKS_WITHOUT_FIX
+    drv.tick(1.)
+    assert drv.outcome == 'lost'

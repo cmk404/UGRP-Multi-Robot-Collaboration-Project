@@ -262,6 +262,8 @@ def main():
     p.add_argument('--on-failure', choices=('continue', 'halt_all'), default='continue',
                    help='continue: runner never stops the partner (M2); halt_all: pair study comparator')
     p.add_argument('--hold-check', choices=study.HOLD_CHECKS, default='fullframe_v3')
+    p.add_argument('--approach', choices=('v1', 'v2'), default='v1',
+                   help='approach driver: v1 (stage 1/3 cohorts) or v2 (turn in place first + relocalize)')
     p.add_argument('--inject-drop', default=None,
                    help='EXPERIMENTER deliberate drop "<robot>:<seconds after its carry start>" (evaluation only)')
     p.add_argument('--output', type=Path, required=True)
@@ -325,7 +327,8 @@ def main():
                              'half_extents_m': [PARTNER_KEEPOUT_HALF_M, PARTNER_KEEPOUT_HALF_M],
                              'source': "partner's order-sheet station (static task sheet), not a live pose"})
         initial = {int(k): int(v) for k, v in world.robot(rid).servo_command_pulses.items()}
-        drivers[rid] = pa.PairApproachDriver(static, calibration['params'], goal_xyyaw=prestations[rid],
+        driver_cls = pa.PairApproachDriverV2 if a.approach == 'v2' else pa.PairApproachDriver
+        drivers[rid] = driver_cls(static, calibration['params'], goal_xyyaw=prestations[rid],
                                              door_xy=None, keepouts=keepouts, initial_servo=initial, seed=a.seed)
 
         def sink(row, rid=rid):
@@ -610,7 +613,7 @@ def main():
         'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
-        'approach_driver': {'schema': pa.SCHEMA, 'version': pa.PairApproachDriver.version,
+        'approach_driver': {'schema': pa.SCHEMA, 'version': drivers['r1'].version,
                             'calibration': str(CALIBRATION.relative_to(ROOT)), 'calibration_sha256': sha_file(CALIBRATION),
                             'envelope': pa.APPROACH_ENVELOPE, 'frame_s': FRAME_S,
                             'events': {r: drivers[r].log for r in ROLES}},

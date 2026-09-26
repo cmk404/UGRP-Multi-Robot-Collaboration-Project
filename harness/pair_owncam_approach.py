@@ -139,3 +139,68 @@ class PairApproachDriver(OwnCamDriverV2):
         self._event(now, 'arrived', estimate=[round(est['x'], 4), round(est['y'], 4), round(est['yaw'], 4)],
                     std_xy_m=est['std_xy_m'], goal=[round(v, 4) for v in (*self.goal, self.goal_yaw)])
         return self._finish(now, 'arrived')
+
+
+# ---------------------------------------------------------------------------------------------
+# v2 (after stage 3 seed 723): r2 turned ~pi WHILE driving; the loop-v2 motion model (fit with the
+# heading held east) under-predicted the combined turn, the estimate left by 0.43 rad / 0.76 m and
+# settled in a confident wrong mode (std ~0.06), and the inherited unloaded look rule (look when
+# std > 0.05, 'lost' only above 0.15) looped 20 looks without moving. v2 changes only:
+#   * rotate IN PLACE to the final heading first, in steps of at most TURN_STEP_RAD of estimated
+#     rotation, with a stop-and-look after every step; translate only with the heading held
+#     (|heading error| <= TURN_FIRST_RAD), as the M1 driver does;
+#   * relocalize from scratch (fresh localizer, same init look sweep) after MAX_LOOKS_WITHOUT_FIX
+#     looks without a fix; after MAX_RELOCALIZE such restarts the outcome is 'lost'.
+TURN_FIRST_RAD = .25
+TURN_STEP_RAD = .8
+TURN_IN_PLACE = .10          # issued turn command while rotating in place
+MAX_RELOCALIZE = 2
+
+
+class PairApproachDriverV2(PairApproachDriver):
+    version = 'pair_approach_v2'
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.turn_ref = None
+        self.relocalizations = 0
+
+    def _relocalize(self, now):
+        from harness.owncam_localizer import OwnCamLocalizer
+        self.relocalizations += 1
+        seed = int(self.loc.rng.integers(1 << 30))
+        self.loc = OwnCamLocalizer(self.map, self.loc.params, seed=seed)
+        self.loc.command({'t': float(now), 'kind': 'initial_servo_command', 'pulses': dict(self.servo)})
+        self.looks_without_fix = 0
+        self.turn_ref = None
+        self.path = None
+        self._event(now, 'relocalize', count=self.relocalizations)
+        return self._start_look(now, 'relocalize')
+
+    def tick(self, now: float) -> list[dict]:
+        from harness.owncam_drive import MAX_LOOKS_WITHOUT_FIX
+        if self.outcome:
+            return []
+        if self.state != 'drive' or self.state_since is None:
+            return super().tick(now)
+        if self.looks_without_fix >= MAX_LOOKS_WITHOUT_FIX:
+            if self.relocalizations >= MAX_RELOCALIZE:
+                return self._finish(now, 'lost')
+            return self._relocalize(now)
+        self.loc.predict_to(now)
+        est = self.loc.estimate()
+        if not est.get('initialized'):
+            return self._start_look(now, 'not_initialized')
+        herr = float(wrap(self.goal_yaw - est['yaw']))
+        if abs(herr) > TURN_FIRST_RAD:
+            if self.turn_ref is None:
+                self.turn_ref = est['yaw']
+            if abs(float(wrap(est['yaw'] - self.turn_ref))) >= TURN_STEP_RAD:
+                self.turn_ref = None
+                return self._start_look(now, 'turn_step')
+            return [{'kind': 'mecanum', 'forward': 0., 'left': 0., 'turn': math.copysign(TURN_IN_PLACE, herr),
+                     'duration_s': .15}]
+        if self.turn_ref is not None:            # rotation finished: look once before translating
+            self.turn_ref = None
+            return self._start_look(now, 'turn_done')
+        return super().tick(now)
