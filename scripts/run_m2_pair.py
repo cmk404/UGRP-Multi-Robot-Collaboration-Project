@@ -212,8 +212,9 @@ class M2DoorStudent(M2Student):
     puts its OWN base onto the order-sheet door axis with its own heading target (the pair formation
     rotates onto the axis because both ends go there), then the fixed axial carry from the sheet."""
 
-    def __init__(self, *args, door_plan, axial_m, sheet_beam_x, **kw):
+    def __init__(self, *args, door_plan, axial_m, sheet_beam_x, regrasp='stored', **kw):
         super().__init__(*args, **kw)
+        self.regrasp = regrasp
         self.door_plan, self.axial_m = door_plan, float(axial_m)
         # Segmented carry (dev 801/802 at 076cf53: open-loop formation yaw drift 0.06-0.1 rad/m over the
         # 2.2 m carry; the held view shows only the beam): checkpoints from the order sheet, identical
@@ -297,13 +298,22 @@ class M2DoorStudent(M2Student):
     def _cp_open(self, now, arm_idle):
         if not arm_idle:
             return
-        self.log(self.rid, 'checkpoint', now, seg=self.seg)
+        self.log(self.rid, 'checkpoint', now, seg=self.seg, regrasp=self.regrasp)
         self.seg += 1                      # new barrier keys from here on
         self.pregrasp_done = False
         self.pregrasp_sweeps = 0
         self.grasp_estimate = None
         self.claims.pop('door_align', None)
-        self._queue_grasp(now)             # relocalize (own sweep), then re-grasp at the unchanged arm pose
+        if self.regrasp == 'realign':
+            # door v2 (stage 2 cohort fa682a6, seed 811): re-grasping at the stored grip point let the
+            # beam creep in the jaws at every lower/open (grip view bottom-beam 0.33 -> 0.19 -> 0.04,
+            # third grasp missed). Re-run the own-RGB align (same order as the first grasp:
+            # align -> stationary relocalization sweep -> grasp).
+            self.aligned_streak = 0
+            self.look_name, pose = ob2.look_posture(self.grip_base[0])     # own last grip distance
+            self.arm.queue(pose, now, duration=.8)
+            return self.set('align', now, restart='checkpoint', posture=self.look_name)
+        self._queue_grasp(now)             # door v1: relocalize, then re-grasp at the unchanged arm pose
 
     def door_schedule(self, t0):
         sign = 1. if ROLES[self.rid] == 'end_neg' else -1.
@@ -348,6 +358,8 @@ def main():
     p.add_argument('--on-failure', choices=('continue', 'halt_all'), default='continue',
                    help='continue: runner never stops the partner (M2); halt_all: pair study comparator')
     p.add_argument('--hold-check', choices=study.HOLD_CHECKS, default='fullframe_v3')
+    p.add_argument('--door-regrasp', choices=('stored', 'realign'), default='stored',
+                   help='door stage checkpoint re-grasp: stored grip point (door v1) or own-RGB re-align (door v2)')
     p.add_argument('--approach', choices=('v1', 'v2'), default='v1',
                    help='approach driver: v1 (stage 1/3 cohorts) or v2 (turn in place first + relocalize)')
     p.add_argument('--inject-drop', default=None,
@@ -463,7 +475,7 @@ def main():
         students = {r: M2DoorStudent(r, ports[r], arms[r], sync_for, log, save,
                                      (channel, tcs.StatusPublisher(channel, r)) if channel else None,
                                      a.hold_check, drivers[r], eval_hook, door_plan=DOOR_PLAN, axial_m=axial_m,
-                                     sheet_beam_x=sheet['beam_xyyaw'][0])
+                                     sheet_beam_x=sheet['beam_xyyaw'][0], regrasp=a.door_regrasp)
                     for r in ROLES}
     else:
         students = {r: M2Student(r, ports[r], arms[r], sync_for, log, save,
@@ -696,7 +708,7 @@ def main():
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
         'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS,
-        'approach_version': a.approach,
+        'approach_version': a.approach, 'door_regrasp': a.door_regrasp if a.stage == 'door' else None,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': drivers['r1'].version,
