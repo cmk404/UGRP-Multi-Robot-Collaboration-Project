@@ -67,7 +67,7 @@ TEST_PATTERNS = (
     "tests/test_zone_sim_cost.py", "tests/test_zone_event_scheduler.py",
     "tests/test_zone_study_eval.py", "tests/test_zone_study_offline.py",
     "tests/test_zone_study_review_fixes.py",
-    "tests/test_zone_study_integration.py",
+    "tests/test_zone_study_integration.py", "tests/test_zone_study_integration_seams.py",
     "tests/test_zone_own_perception.py", "tests/test_zone_own_perception_v2.py",
     "tests/test_owncam_localizer.py", "tests/test_zone_landmarks_sim.py",
     "tests/test_rgb_execution*.py",

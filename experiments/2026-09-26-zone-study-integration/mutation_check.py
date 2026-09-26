@@ -46,10 +46,12 @@ for name, path, old, new, tests in M:
     assert src.count(old) == 1, (name, src.count(old))
     try:
         p.write_text(src.replace(old, new))
-        r = subprocess.run([PY, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', 'tests/test_zone_study_integration.py', '-k', tests],
+        r = subprocess.run([PY, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', 'tests/test_zone_study_integration.py', 'tests/test_zone_study_integration_seams.py', '-k', tests],
                            capture_output=True, text=True, cwd=ROOT)
         tail = [l for l in r.stdout.splitlines() if 'passed' in l or 'failed' in l][-1:]
-        out.append({'mutation': name, 'tests': tests, 'detected': r.returncode != 0, 'summary': tail})
+        if r.returncode not in (0, 1):
+            raise SystemExit(f'{name}: pytest exit {r.returncode} (no test selected or a collection error)')
+        out.append({'mutation': name, 'tests': tests, 'detected': r.returncode == 1, 'summary': tail})
     finally:
         p.write_text(src)
 (HERE / 'mutations.json').write_text(json.dumps({'source_sha': subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip(), 'mutations': out, 'all_detected': all(m['detected'] for m in out)}, indent=1, ensure_ascii=False) + '\n')
