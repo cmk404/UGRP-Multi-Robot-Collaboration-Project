@@ -98,6 +98,8 @@ def test_report_splits_worktrees_tiers_and_budget_without_writing(project, capsy
     assert budget["project_bytes"] == sum(row["bytes"] for row in budget["rows"].values())
     text = capsys.readouterr().out
     assert "[worktrees]" in text and "PR state unknown" in text and "[budget]" in text
+    # Report copies are committed to experiments/; keep them `git diff --check` clean.
+    assert [line for line in text.splitlines() if line != line.rstrip()] == []
 
 
 def test_tier_rules():

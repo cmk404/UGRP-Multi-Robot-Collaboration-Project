@@ -434,8 +434,9 @@ def print_text(report: dict, top: int) -> None:
             print("  HEAD in base" + (" and no open PR" if known else " (PR state unknown; check before retiring)") +
                   " -> owner may retire with scripts/agent_worktree.py retire <path>:")
             for row in sorted(candidates, key=lambda r: -r["bytes"]):
-                print(f"    {fmt(row['bytes'])} outputs {fmt(row['outputs'])}  {row['path']} "
-                      f"{' '.join(row.get('prs', []))}")
+                line = (f"    {fmt(row['bytes'])} outputs {fmt(row['outputs'])}  {row['path']} "
+                        f"{' '.join(row.get('prs', []))}")
+                print(line.rstrip())
         held = [r for r in wt["rows"] if r.get("merged") and r.get("retire_candidate") is False]
         if held:
             print(f"  HEAD in base but PR still open (not candidates): {len(held)}")
@@ -456,7 +457,7 @@ def print_text(report: dict, top: int) -> None:
         print("  by age: " + ", ".join(f"{k} {v / GIB:.2f}" for k, v in sorted(ret["by_age"].items())))
         over = ret["over_experiment_budget"]
         print(f"  entries over {ret['experiment_raw_budget_gib']:g} GiB: " +
-              ", ".join(f"{r['name']} {r['bytes'] / GIB:.2f}" for r in over[:top]))
+              (", ".join(f"{r['name']} {r['bytes'] / GIB:.2f}" for r in over[:top]) or "none"))
     if "budget" in report:
         b = report["budget"]
         print(f"\n[budget] project {fmt(b['project_bytes'])} / {fmt(b['project_budget_bytes'])}; "
