@@ -6,7 +6,9 @@
     "dev-a3": "ce33ffd, amendment A2: bay half 0.15 m, rotated-box dev diagnostics (runner robot_id bug: non-r1 robots rejected)",
     "dev-a4": "ea45e3d, amendment A3: skill gets the episode robot id",
     "dev-a5": "6352fde, amendment A4: loaded carry leg through the door to the pre-place goal",
-    "dev-a6": "amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge"
+    "dev-a6": "amendment A5: skill v6, cargo_noslip_v1, per-frame look-back gate, retention/grasp judge",
+    "dev-a7": "amendment A6: skill v9 (A5 conditions); pre-freeze dev check s93 + s95 - crashed at setup (runner StaticKeepout import, e10f88d), no physics",
+    "dev-a8": "amendment A6b: runner keep-out import fix only; A6 dev check s93 + s95 relaunched"
   },
   "test_status": "not run",
   "test_expected": [
@@ -1064,6 +1066,32 @@
       "static_map_sha256": "fc20c915ac5d3a2c5085c79c07deb2718ca977e3eec2cf9688ab242b2617a083",
       "scene_xml_sha256": "288048787be6b36949269329282d07accf5c1270debdc3d14f3f7618f9d7b925",
       "weld": "off"
+    },
+    {
+      "attempt": "dev-a7",
+      "episode": "m1dev-s93",
+      "split": "dev",
+      "outcome": "INFRASTRUCTURE_FAILURE",
+      "infrastructure_failure": true,
+      "m1_success": false,
+      "counts_as_m1": false,
+      "diagnostic_success": false,
+      "false_success": false,
+      "code_sha": "e10f88d4981598841f7a8f9a33c3860a4c38336d",
+      "freeze": null
+    },
+    {
+      "attempt": "dev-a7",
+      "episode": "m1devdiag-s95",
+      "split": "dev",
+      "outcome": "INFRASTRUCTURE_FAILURE",
+      "infrastructure_failure": true,
+      "m1_success": false,
+      "counts_as_m1": false,
+      "diagnostic_success": false,
+      "false_success": false,
+      "code_sha": "e10f88d4981598841f7a8f9a33c3860a4c38336d",
+      "freeze": null
     }
   ]
 }

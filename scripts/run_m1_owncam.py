@@ -149,12 +149,7 @@ def run(spec, out, student):
     skill_cls = getattr(skill_mod, name)
     keepout_records = []
     if student['skill'] in STATIC_KEEPOUT_SKILLS:
-        # Static layout only: every idle-spawn spot of the arena spec (#181 v6 contract), never a live pose.
-        from sim.zone_arena import layout
-        arena = layout(static['base_map']['map_id'])       # the tagged map's base layout (zone_wide_door)
-        keepouts = tuple(skill_mod.StaticKeepout(f'spawn_row_{i}', (float(arena['spawn_x']), float(y)),
-                                                 SPAWN_KEEPOUT_RADIUS_M, 'static_layout_idle_spawn')
-                         for i, y in enumerate(arena['spawn_rows_y']))
+        keepouts = static_layout_keepouts(static)
         skill_kwargs = {**skill_kwargs, 'static_keepouts': keepouts, 'static_bounds_m': static['bounds_m']}
         keepout_records = [k.record() for k in keepouts]
     rows_y = LAYOUTS['zone_wide']['pickup_rows_y']
@@ -433,6 +428,19 @@ def run(spec, out, student):
     (out/'manifest.json').write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + '\n')
     world.close()
     return result, manifest
+
+
+def static_layout_keepouts(static):
+    """Every idle-spawn spot of the tagged map's base layout as #181 StaticKeepout discs (never a live pose).
+
+    The class is v6's: v7-v9 inherit v6's isinstance check and v9 does not re-export it
+    (dev-a7 crashed at setup on ``skill_mod.StaticKeepout``).
+    """
+    from harness.wrist_zone_skill_v6 import StaticKeepout
+    from sim.zone_arena import layout
+    arena = layout(static['base_map']['map_id'])       # zone_wide_door
+    return tuple(StaticKeepout(f'spawn_row_{i}', (float(arena['spawn_x']), float(y)), SPAWN_KEEPOUT_RADIUS_M,
+                               'static_layout_idle_spawn') for i, y in enumerate(arena['spawn_rows_y']))
 
 
 def effective_student(prereg_path: Path, prereg: dict) -> dict:

@@ -363,6 +363,22 @@ class PreReviewTests(unittest.TestCase):
         self.assertEqual(step(102., bad)['outcome'], 'POSE_UNCERTAIN')
         self.assertEqual(len(Skill.decided), 1)
 
+    def test_runner_keepouts_build_every_static_keepout_skill(self):
+        import importlib
+
+        import scripts.run_m1_owncam as runner
+        from harness.wrist_zone_skill_v5 import CoarseOrderSheet
+        from sim.zone_landmarks import tagged_map
+        static = tagged_map('zone_wide_door_tags_v2')
+        keep = runner.static_layout_keepouts(static)
+        self.assertEqual([k.xy_m for k in keep], [(-.85, -2.25), (-.85, -.85), (-.85, .55)])
+        order = CoarseOrderSheet('cyan', 'b', (.4, -.05), (.25, .25), 'A1', (4.6, 0.))
+        for name in runner.STATIC_KEEPOUT_SKILLS:                 # the exact runner path (dev-a7 crash)
+            module, cls, _, kwargs = runner.SKILLS[name]
+            sk = getattr(importlib.import_module(module), cls)(order, robot_id='r3', static_keepouts=keep,
+                                                               static_bounds_m=static['bounds_m'], **kwargs)
+            self.assertFalse(sk.approach_point()['blocked'])
+
     def test_test_adoption_rules(self):
         import importlib.util
         spec = importlib.util.spec_from_file_location('m1_build', ROOT/'experiments'/'2026-09-26-zone-m1-owncam'/'build_results.py')
