@@ -70,7 +70,10 @@ OCCLUDED = ('partial_cover_dark',)
 OCCLUDED_LIT = ('partial_cover_lit',)
 TRANSFORMS = INFO_FREE + OCCLUDED + OCCLUDED_LIT
 POSTURES = {'carry': dict(ev3.CARRY), 'held_check': dict(ev3.HELD_CHECK)}
-V3_MATRIX_EVERY = 4
+V3_MATRIX_EVERY = 10
+# v3 side by side in the per-view tracker pass (v3 costs ~0.2 s per call): these transforms only.
+V3_TRANSFORMS = ('black_10', 'near_black_uniform', 'uniform_grey', 'blur_s8', 'lens_cover_lit',
+                 'partial_cover_dark', 'partial_cover_lit')
 
 
 def _git(*args):
@@ -211,10 +214,10 @@ def render(args):
 
 # ------------------------------------------------------------------ score
 
-def _answers_for_tick(family, posture, frame, pose, question, v3, v31):
+def _answers_for_tick(family, posture, frame, pose, question, v3, v31, with_v3=True):
     expected = question['expected_kind']
     rows = []
-    for version, mod in (('v3_1', v31), ('v3', v3)):
+    for version, mod in (('v3_1', v31), ('v3', v3))[:2 if with_v3 else 1]:
         if family == 'held':
             rows.append((version, 'held_item_at_grip', mod.judge_held_item(frame, pose, expected_kind=expected)))
         elif family == 'carry':
@@ -233,7 +236,7 @@ def _gate_info(answer):
                                                            'edge_share', 'sharpness')}
 
 
-def score_views(frames_dir, transform=None, transform_seed='v3_1'):
+def score_views(frames_dir, transform=None, transform_seed='v3_1', with_v3=True):
     """Score every view; with ``transform`` each tick frame is first replaced by its adversarial version."""
     import cv2
     from harness import zone_own_outcome_v3 as outcome
@@ -259,7 +262,8 @@ def score_views(frames_dir, transform=None, transform_seed='v3_1'):
                 bgr, params = adversarial_frame(transform, bgr, random.Random(f'{rng.random()}'))
                 frame = _jpeg(bgr)
             pose = {int(k): int(v) for k, v in tick_in['commanded_arm_pwm'].items()}
-            for version, judgment, answer in _answers_for_tick(family, posture, frame, pose, question, v3, v31):
+            for version, judgment, answer in _answers_for_tick(family, posture, frame, pose, question, v3, v31,
+                                                                with_v3):
                 series.setdefault((version, judgment), []).append(answer)
                 records.append({'record': 'tick', 'view_id': vid, 'case': labels['case'], 'family': family,
                                 'posture': posture, 'version': version, 'judgment': judgment,
@@ -360,7 +364,7 @@ def adversarial(args):
     poses = {**POSTURES, 'grasp_look_v3': dict(v31.GRASP_LOOK_POSTURE)}
     matrix = []
     # 1) every v3.1 judgment x ordered kind x posture on tick 0 of every view, information-free
-    #    transforms. v3 side by side (0.2 s per call) on every 4th view in the frame's own posture.
+    #    transforms. v3 side by side (0.2 s per call) on every 10th view in the frame's own posture.
     views = [v for v in manifest['views'] if 'skipped' not in v]
     for index, view in enumerate(views):
         vid = view['view_id']
@@ -385,7 +389,7 @@ def adversarial(args):
     # 2) the view's own judgments over all ticks, through the tracker, every transform
     records = []
     for name in TRANSFORMS:
-        rows, _ = score_views(frames_dir, transform=name)
+        rows, _ = score_views(frames_dir, transform=name, with_v3=name in V3_TRANSFORMS)
         records += rows
     (out/'records.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in records))
     load['end'] = os.getloadavg()[0]

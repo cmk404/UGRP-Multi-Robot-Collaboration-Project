@@ -173,3 +173,9 @@ dev: door 241 `9f0a5ea0` / `f20ee9e4` / `f0ae1517`; corridor 242 `add31594` / `0
 | test | `test-frames` (11 MB), 채점 `test-score` = `test-summary.json` |
 
 로컬 보관은 원격 백업이 아니다.
+
+## 검토 뒤 추가 (2026-09-26, PR #193 Codex 검토) — 위 결과는 바꾸지 않았다
+
+- **P1:** 정보 없는 검은 영상(BGR 10/10/10) + CARRY + `heavy_crate`에 v3 `judge_team_cargo_at_grip`이 `yes`/0.70(모양 단서)을 내고 트래커가 확정한다. CARRY의 crate 실루엣이 유효 화면 전체라 어두운 영역 IoU가 1.0이 된다. v3 test 코호트에는 이런 입력이 없었다. **v3의 런타임 채택은 권하지 않으며** 수정은 [v3.1](../2026-09-26-zone-own-perception-v3-1/README.md)에 있다. 이 파일의 v3 test 수치는 v3로 한 번 채점한 기록 그대로다.
+- **P2:** 위 발견 3(lug로 드는 fixture)은 **v2의 "검은 운반 crate" 인공물만 설명한다.** v3의 운반 crate 성공은 색 판별이며, 이 결과는 **실제 팔 그림자가 인식을 해치지 않는다는 증거가 아니다**(조명 한 가지, 모양 단서 미입증). 조명을 바꾼 그림자 stress 세트는 v3.1 기록에 있다.
+- held-check 자세에서 can이 없는 프레임은 균일한 V 37(밝기 폭 8)이며, v3의 `held_can_absent`·`held_can_wrong_kind` 정답은 이 정보 없는 영상에서 나온 것이다(v3.1 dev 분석).

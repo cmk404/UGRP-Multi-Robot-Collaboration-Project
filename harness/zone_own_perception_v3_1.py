@@ -36,6 +36,8 @@ synthetic adversarial set before the new v3.1 test split was rendered
 """
 from __future__ import annotations
 
+import hashlib
+from collections import OrderedDict
 from collections.abc import Mapping, Sequence
 from functools import lru_cache
 from typing import Any
@@ -110,6 +112,22 @@ def image_information(image) -> dict[str, Any]:
     did not. The measures read only the frame.
     """
     frame = _v1._frame(image)
+    key = hashlib.blake2b(frame.tobytes(), digest_size=16).hexdigest()+str(frame.shape)
+    if key in _INFO_CACHE:
+        _INFO_CACHE.move_to_end(key)
+        return dict(_INFO_CACHE[key])
+    row = _measure_information(frame)
+    _INFO_CACHE[key] = row
+    while len(_INFO_CACHE) > _INFO_CACHE_SIZE:
+        _INFO_CACHE.popitem(last=False)
+    return dict(row)
+
+
+_INFO_CACHE: OrderedDict = OrderedDict()
+_INFO_CACHE_SIZE = 64
+
+
+def _measure_information(frame):
     height, width = frame.shape[:2]
     usable = _v1._usable_region(width, height)
     inner = _inner_region(width, height)
