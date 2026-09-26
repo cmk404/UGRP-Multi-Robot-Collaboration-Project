@@ -50,8 +50,11 @@ def rusage_cpu() -> dict:
 class Recorder:
     """Thread-CPU accumulators and trajectory checkpoints (no behaviour change)."""
 
-    def __init__(self, qpos_every: int = 0):
+    def __init__(self, qpos_every: int = 0, cpu_mark_sim_s: float = 0.):
         self.main_ident = threading.get_ident()
+        self.cpu_mark_sim_s = float(cpu_mark_sim_s)
+        self.cpu_at_mark: dict | None = None
+        self.cpu_origin: tuple | None = None
         self.cpu = defaultdict(float)
         self.calls = defaultdict(int)
         self.qpos_every = int(qpos_every)
@@ -97,6 +100,13 @@ class Recorder:
             if rec.qpos_every and rec.steps % rec.qpos_every == 0:
                 h = hashlib.sha256(d.qpos.tobytes() + d.qvel.tobytes() + d.act.tobytes()).hexdigest()
                 rec.checkpoints.append({'step': rec.steps, 't': float(d.time), 'sha256': h})
+            if (rec.cpu_mark_sim_s and rec.cpu_at_mark is None and rec.cpu_origin is not None
+                    and d.time >= rec.cpu_mark_sim_s):
+                # CPU used up to a fixed SIM instant, so full and truncated runs compare like for like
+                c, m0 = rusage_cpu(), rec.cpu_origin
+                rec.cpu_at_mark = {'sim_t': float(d.time), 'step': rec.steps,
+                                   'process_s': round(c['user_s'] - m0[0]['user_s'] + c['sys_s'] - m0[0]['sys_s'], 3),
+                                   'main_thread_s': round(time.thread_time() - m0[1], 3)}
         mj_step.__wrapped__ = orig
         self._set(mujoco, 'mj_step', mj_step)
 
@@ -185,6 +195,8 @@ def main(argv=None):
     p.add_argument('--cprofile', action='store_true')
     p.add_argument('--sections', action='store_true')
     p.add_argument('--qpos-every', type=int, default=2000, help='mj_step calls per trajectory checkpoint (0 = off)')
+    p.add_argument('--cpu-mark-sim-s', type=float, default=120.,
+                   help='also record process/main-thread CPU at the first mj_step with SIM time >= this (0 = off)')
     p.add_argument('--speedups', default=None, help="passed to the runner (e.g. 'none', 'exact-v1')")
     p.add_argument('--cv-threads', type=int, default=None, help='cv2.setNumThreads before the run (default: unchanged)')
     args = p.parse_args(argv)
@@ -193,13 +205,14 @@ def main(argv=None):
     import cv2
     if args.cv_threads is not None:
         cv2.setNumThreads(int(args.cv_threads))
-    rec = Recorder(args.qpos_every)
+    rec = Recorder(args.qpos_every, args.cpu_mark_sim_s)
     rec.install_step_hook()
     rec.install_render_thread_probe()
     if args.sections:
         rec.install_sections()
     run, meta = m1_prepare(rec, args)
     load0, wall0, cpu0, main0 = os.getloadavg(), time.time(), rusage_cpu(), time.thread_time()
+    rec.cpu_origin = (cpu0, main0)
     prof = None
     if args.cprofile:
         import cProfile
@@ -228,6 +241,7 @@ def main(argv=None):
                       'other_threads': None if render_s is None else round(proc_s - main_s - render_s, 3)},
             'wall_s_informational': round(wall1 - wall0, 1),
             'load_average': {'start': [round(v, 2) for v in load0], 'end': [round(v, 2) for v in load1]},
+            'cpu_at_sim_mark': rec.cpu_at_mark,
             'mj_steps': rec.steps, 'qpos_every': rec.qpos_every, 'checkpoints': len(rec.checkpoints),
             'sections_thread_cpu_s': {k: round(v, 4) for k, v in sorted(rec.cpu.items())},
             'sections_calls': dict(sorted(rec.calls.items())),
