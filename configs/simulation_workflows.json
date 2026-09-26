@@ -111,11 +111,11 @@
     },
     {
       "id": "zone-dispatch",
-      "purpose": "구역별 수량 목표 협업 벤치마크(교사 실행기; 기본 zone_wide, 벽·문 경로 변형 포함, zone_open 은퇴)",
+      "purpose": "구역별 수량 목표 협업 벤치마크(교사 실행기; 기본 zone_wide, 벽·문 경로 변형 포함, zone_open 은퇴; 화물 종류·팀 운반 목표는 protocol v2: 역할 선언·팀 형성 규칙·팀 교사)",
       "entry": "scripts/run_zone_dispatch.py",
       "docs": "docs/zone_dispatch.md",
-      "requires": "model endpoint in llm mode; privileged TEACHER motion executor, never an RGB-skill success",
-      "version": "1.1.0",
+      "requires": "model endpoint in llm mode; privileged TEACHER motion executor, never an RGB-skill success; protocol v2 (goals with catalogue cargo, or --protocol v2): an explicit --contact-profile (A2 smokes: cargo_noslip_v1), cargo scene and the GT team executor",
+      "version": "1.2.0",
       "runner": "scripts.run_zone_dispatch",
       "output_flag": "--output",
       "side_effect": "model_calls",
@@ -593,6 +593,22 @@
       "adapter": "managed_legacy_cli",
       "required_inputs": [
         "--episodes"
+      ],
+      "output_kind": "directory"
+    },
+    {
+      "id": "zone-owncam-loop-run",
+      "purpose": "자기 카메라 폐루프 문 통과(학생은 자기 RGB·정적 태그 지도·자기 명령만 사용, 평가 정답 분리)",
+      "entry": "scripts/run_owncam_closed_loop.py",
+      "docs": "docs/zone_owncam_localization.md",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; the student never receives live poses (GT only in eval_only/ and for the box-condition teacher grasp, reported separately); weld OFF",
+      "version": "1.0.0",
+      "runner": "scripts.run_owncam_closed_loop",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg"
       ],
       "output_kind": "directory"
     },
