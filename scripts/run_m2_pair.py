@@ -99,7 +99,6 @@ STAGE3_TEST_SEEDS = tuple(range(721, 725))   # failure propagation (experimenter
 # Order sheet for the door task (static): door axis y, the pair's target headings, and a FIXED axial
 # carry distance (the same number for both robots, so both timed schedules have the same length).
 DOOR_PLAN = {'door_id': 'door_1', 'axis_y_m': .05, 'target_beam_x_m': 3.20, 'checkpoints_beam_x_m': (1.55, 2.40),
-             'checkpoints_beam_x_m_v2': (1.45, 2.40),
              'headings_rad': {'r1': 0., 'r2': math.pi}}
 DOOR_ALIGN_S = 6.               # own lateral/heading correction onto the door axis (both robots, from GO)
 DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
@@ -273,7 +272,10 @@ class M2DoorStudent(M2Student):
     def __init__(self, *args, door_plan, axial_m, sheet_beam_x, version='v1', **kw):
         super().__init__(*args, **kw)
         self.version = version
-        self.regrasp = 'realign' if version == 'v2' else 'stored'
+        # door v2 re-grasps at the stored grip point like v1: dev10 813/814 showed the own-RGB re-align fails
+        # on the darker floor at/after the door (band merges with the floor), and the stage 2 cohort's
+        # third-grasp failures were grip-view false negatives (fixed by grip_view_m2), not creep.
+        self.regrasp = 'stored'
         self.vo_obs = []               # own beam observations in the first align (door v2)
         self.vo_pose = None
         self.reapproaches = 0
@@ -289,7 +291,7 @@ class M2DoorStudent(M2Student):
         # Segmented carry (dev 801/802 at 076cf53: open-loop formation yaw drift 0.06-0.1 rad/m over the
         # 2.2 m carry; the held view shows only the beam): checkpoints from the order sheet, identical
         # sheet distances for both robots; at each checkpoint lower, open, relocalize, re-grasp.
-        cps = door_plan['checkpoints_beam_x_m_v2' if version == 'v2' else 'checkpoints_beam_x_m']
+        cps = door_plan['checkpoints_beam_x_m']
         stops = [float(sheet_beam_x), *cps, door_plan['target_beam_x_m']]
         self.segments = [round(b - a, 4) for a, b in zip(stops, stops[1:])]
         self.seg = 0
