@@ -11,6 +11,16 @@ import time
 import pytest
 
 from harness import zone_sim_cost as zc
+from harness.zone_study_contract import (CALL_LOG_SCHEMA, CALL_STATUS, MESSAGE_LOG_SCHEMA,
+                                         message_envelope, validate_log_record)
+
+#: Minimal package A ``provenance`` object (closed keys, see PROVENANCE_KEYS).
+_PROVENANCE = {'registry_sha256': 'a' * 64, 'order_sheet_sha256': 'b' * 64,
+               'map_file_sha256': 'c' * 64, 'public_map_sha256': 'd' * 64,
+               'code_sha': 'deadbee', 'execution_bundle_id': 'zone_study_offline_v1',
+               'model': 'none-fixture', 'provider': None, 'model_settings_sha256': None,
+               'prompt_template_sha256': None, 'cost_profile_id': 'zone_sim_cost.v1',
+               'input_profile_id': 'zone_study_inputs.v1'}
 
 
 def _attempt(**kw):
@@ -187,18 +197,66 @@ def test_params_are_frozen_and_digest_every_field():
         assert other.version != p.version           # a sweep variant is never mistaken for the base
 
 
-def test_cost_record_and_message_record_carry_the_local_schema():
+def test_cost_rows_carry_the_cost_schema_and_re_emit_package_a_records():
     p = zc.params()
     cost = zc.call_cost([_attempt(output_tokens=30, utterances=1)], p)
     call = zc.CallCostRecord(call_id='call-0001-r1', actor='r1', trigger='blockage', started_sim_s=4.,
                              finished_sim_s=4. + cost.sim_s, cost=cost, merged_triggers=('idle',))
     row = json.loads(json.dumps(call.to_dict(), ensure_ascii=False))
-    assert row['schema'] == zc.LOCAL_CALL_SCHEMA == 'ugrp.zone_sim_cost.local_call.v0'
+    assert row['schema'] == zc.CALL_COST_SCHEMA == 'ugrp.zone_sim_cost.call_cost.v1'
     assert row['sim_cost_s'] == cost.sim_s and row['trigger'] == 'blockage'
-    assert row['merged_triggers'] == ['idle'] and row['cost']['params_digest'] == p.digest()
-    msg = zc.MessageCostRecord(message_id='call-0001-r1-m1', sender='r1', recipient='r2', encoding='ko',
-                               sent_sim_s=4.7, delivered_sim_s=4.8, broadcast=True, call_id='call-0001-r1')
+    assert row['status'] == 'ok' and row['merged_triggers'] == ['idle']
+    assert row['cost']['params_digest'] == p.digest()
+    msg = zc.MessageCostRecord(message_id='call-0001-r1-m1', sender='r1', recipient='r2',
+                               encoding='free_ko', sent_sim_s=4.7, delivered_sim_s=4.8, broadcast=True,
+                               call_id='call-0001-r1')
+    assert json.loads(json.dumps(msg.to_dict()))['schema'] == zc.MESSAGE_COST_SCHEMA
     assert json.loads(json.dumps(msg.to_dict()))['delivered_sim_s'] == pytest.approx(4.8)
+    # the same numbers under package A's call log schema, validated by A
+    record = zc.contract_call_record(call, run_id='run-1', condition_name='peer_ko', seed=13,
+                                    request_id='req_1', call_index=0, input_sha256='a' * 64,
+                                    provenance=_PROVENANCE)
+    validate_log_record(record)
+    assert record['schema'] == CALL_LOG_SCHEMA
+    assert record['sim_cost_s'] == pytest.approx(cost.sim_s)
+    assert record['released_at_sim_s'] - record['requested_at_sim_s'] == pytest.approx(cost.sim_s)
+    assert record['trigger'] == 'own_view_change'          # A's enum for a blockage trigger
+    assert record['status'] == 'ok' and record['http_attempts'] == 1
+    assert record['cost_terms']['params_digest'] == p.digest()
+    assert record['output_tokens'] == 30 and record['cost_terms']['utterances'] == 1
+
+
+def test_every_scheduler_trigger_and_outcome_maps_onto_package_a():
+    from harness.zone_event_scheduler import TRIGGERS
+    from harness.zone_study_inputs import TRIGGERS as A_TRIGGERS
+
+    assert set(zc.TRIGGER_TO_CONTRACT) == set(TRIGGERS)
+    assert set(zc.TRIGGER_TO_CONTRACT.values()) <= set(A_TRIGGERS)
+    assert {zc.contract_trigger(t) for t in TRIGGERS} <= set(A_TRIGGERS)
+    with pytest.raises(KeyError):
+        zc.contract_trigger('peer_job_end')               # not a call trigger of this study
+    assert set(zc.OUTCOME_STATUS) == set(zc.OUTCOMES)
+    assert set(zc.OUTCOME_STATUS.values()) <= set(CALL_STATUS)
+    for outcome, status in zc.OUTCOME_STATUS.items():
+        assert zc.call_cost([_attempt(outcome=outcome)]).status == status
+
+
+def test_broadcast_edges_become_one_package_a_message_record():
+    envelope = message_envelope('peer_ko', 'call-0001-r1-m1', 'r1', ['r2', 'r3'],
+                                {'text': 'door_narrow가 막혀 있습니다.'}, created_at_sim_s=4.7)
+    edges = [zc.MessageCostRecord(message_id='call-0001-r1-m1', sender='r1', recipient=rid,
+                                  encoding='free_ko', sent_sim_s=4.7, delivered_sim_s=4.8,
+                                  broadcast=True, call_id='call-0001-r1')
+             for rid in ('r3', 'r2')]                     # order must not matter
+    rows = zc.contract_message_records(edges, run_id='run-1', condition_name='peer_ko', seed=13,
+                                       envelopes={'call-0001-r1-m1': envelope})
+    assert len(rows) == 1
+    validate_log_record(rows[0])
+    assert rows[0]['schema'] == MESSAGE_LOG_SCHEMA and rows[0]['encoding'] == 'free_ko'
+    assert [d['recipient'] for d in rows[0]['deliveries']] == ['r2', 'r3']
+    assert rows[0]['delivered_at_sim_s'] == pytest.approx(4.8)
+    assert rows[0]['delivery_delay_s'] == pytest.approx(.1)
+    assert rows[0]['korean_ok'] is True
 
 
 def test_cost_does_not_depend_on_wall_time():

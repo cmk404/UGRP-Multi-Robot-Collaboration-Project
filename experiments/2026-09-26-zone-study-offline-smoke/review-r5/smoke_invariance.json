@@ -1,0 +1,67 @@
+{
+ "schema": "ugrp.smoke_invariance_check.v1",
+ "source_sha": "f44ea845c9c51aaf3c927c6d90288c9426faeb7d",
+ "code_sha_label": "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+ "note_ko": "코호트 재실행이 아니다. 메모리 안에서 두 시행만 돌렸고 파일은 쓰지 않았다. provenance.code_sha를 v4 실행 SHA로 표시해 기록 전체를 v4 예시와 바이트 비교했다. 모델 호출·물리 0회",
+ "load_average_before": [
+  128.83,
+  124.1,
+  87.72
+ ],
+ "load_average_after": [
+  124.67,
+  123.36,
+  87.88
+ ],
+ "threads": {
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "VECLIB_MAXIMUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "trials": [
+  {
+   "condition": "peer_ko",
+   "scenario": "s1_normal_mixed",
+   "seed": 601,
+   "trace_sha256": "2129829b3326a21968981d2e09f302c3a37dbb2dcf53b12d29f0246575549999",
+   "trace_matches_v4": true,
+   "request_input_sha256_match_v4": true,
+   "calls": 90,
+   "calls_v4": 90,
+   "censored_calls": 0,
+   "censored_calls_v4": 0,
+   "cost_ok": true,
+   "channel_ok": true,
+   "unreported_attempts": [],
+   "over_budget_attempts": [],
+   "wall_s": 5.5,
+   "record_identical_to_v4_example": true
+  },
+  {
+   "condition": "no_comm",
+   "scenario": "s1_normal_mixed",
+   "seed": 601,
+   "trace_sha256": "a53de4ef67d2d3825dc0dc38907d9757e6414d883871f48fd614f3816f80524b",
+   "trace_matches_v4": true,
+   "request_input_sha256_match_v4": true,
+   "calls": 69,
+   "calls_v4": 69,
+   "censored_calls": 3,
+   "censored_calls_v4": 3,
+   "cost_ok": true,
+   "channel_ok": true,
+   "unreported_attempts": [],
+   "over_budget_attempts": [],
+   "wall_s": 4.1
+  }
+ ],
+ "machine_sim_cap": {
+  "cap": 6,
+  "literal_grep": 15,
+  "real_sim_eval_processes_other_jobs": 6,
+  "breakdown_ko": "다른 작업의 실제 시뮬·평가 프로세스 6개(kiro-vision-loc 실험 2, run_zone_study_integration 2, run_m1_owncam_memory 2), 공용 TensorBoard 뷰어 1(PID 9291), kiro-cli 에이전트 8(프롬프트에 run_ 포함)",
+  "own_processes": 1,
+  "note_ko": "이 확인은 MuJoCo·시뮬레이터를 import하지 않는 메모리 내 2시행(합계 약 10초)으로, tests/test_zone_study_offline.py가 도는 것과 같은 규모다. ugrp_session으로 시뮬 프로세스를 새로 띄우지 않았다. 다만 머신이 상한(6)에 도달한 상태에서 기다리지 않고 실행했으므로 그대로 적는다"
+ }
+}

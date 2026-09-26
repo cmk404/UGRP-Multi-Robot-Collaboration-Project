@@ -1,0 +1,185 @@
+{
+  "call_status_enum": [
+    "ok",
+    "invalid_json",
+    "rejected_message",
+    "timeout",
+    "http_error",
+    "budget_exhausted",
+    "policy_refusal",
+    "input_rejected",
+    "censored"
+  ],
+  "condition_registry_sha256": "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181",
+  "contract_version": "ugrp.zone_study_contract.v1",
+  "cost_params": {
+    "call_overhead_s": 1.0,
+    "delivery_s": 0.1,
+    "error_s": 0.5,
+    "input_token_s": 0.0002,
+    "note": "provisional development start values (2026-09-26); see docs/zone_sim_cost.md",
+    "output_token_s": 0.02,
+    "per_recipient_s": 0.0,
+    "provisional": true,
+    "quantum_s": 0.1,
+    "scale": 1.0,
+    "schema": "ugrp.zone_sim_cost.v1",
+    "timeout_s": 20.0,
+    "utterance_s": 0.3,
+    "version": "zone_sim_cost.v1"
+  },
+  "cost_params_sha256": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+  "execution_bundle_id": "zone_study_offline_v1",
+  "fixed_prompt_policy": {
+    "billed_system_tokens_seed601": 833,
+    "policy": "fixed_prompt_equalized.v1"
+  },
+  "fixed_prompt_token_spread": {
+    "channel": 221,
+    "common": 0
+  },
+  "fixed_prompt_tokens": {
+    "leader_ko:r1": {
+      "channel_tokens": 258,
+      "common_tokens": 477,
+      "tokens": 735
+    },
+    "leader_ko:r2": {
+      "channel_tokens": 273,
+      "common_tokens": 476,
+      "tokens": 749
+    },
+    "leader_ko:r3": {
+      "channel_tokens": 258,
+      "common_tokens": 477,
+      "tokens": 735
+    },
+    "no_comm:r1": {
+      "channel_tokens": 149,
+      "common_tokens": 463,
+      "tokens": 612
+    },
+    "no_comm:r2": {
+      "channel_tokens": 149,
+      "common_tokens": 463,
+      "tokens": 612
+    },
+    "no_comm:r3": {
+      "channel_tokens": 149,
+      "common_tokens": 463,
+      "tokens": 612
+    },
+    "peer_ko:r1": {
+      "channel_tokens": 257,
+      "common_tokens": 463,
+      "tokens": 720
+    },
+    "peer_ko:r2": {
+      "channel_tokens": 257,
+      "common_tokens": 463,
+      "tokens": 720
+    },
+    "peer_ko:r3": {
+      "channel_tokens": 257,
+      "common_tokens": 463,
+      "tokens": 720
+    },
+    "reference_R:commander": {
+      "channel_tokens": 153,
+      "common_tokens": 451,
+      "tokens": 604
+    },
+    "structured:r1": {
+      "channel_tokens": 370,
+      "common_tokens": 463,
+      "tokens": 833
+    },
+    "structured:r2": {
+      "channel_tokens": 370,
+      "common_tokens": 463,
+      "tokens": 833
+    },
+    "structured:r3": {
+      "channel_tokens": 370,
+      "common_tokens": 463,
+      "tokens": 833
+    }
+  },
+  "horizon_sim_s": 300.0,
+  "input_profile": {
+    "command_history_entries": 12,
+    "image_slots": 2,
+    "inbox_messages": 8,
+    "output_token_budget": 768,
+    "own_rgb_frames": 2,
+    "profile_id": "zone_study_inputs.v1",
+    "text_token_budget": 8000
+  },
+  "maps": {
+    "zone_wide_corridor_tags_v1": {
+      "map_file": "maps/zones/zone_wide_corridor_tags_v1.json",
+      "map_file_sha256": "a349d42d60f3fcefd1efa29016aeb39e15e40c0092268c0485814e7f9f3916db",
+      "public_map_sha256": "08eeebbad8f069eddfe403c811913905cd89270a36c9b40940d74c9159bcc321"
+    },
+    "zone_wide_door_tags_v1": {
+      "map_file": "maps/zones/zone_wide_door_tags_v1.json",
+      "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+      "public_map_sha256": "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba"
+    },
+    "zone_wide_two_doors_tags_v1": {
+      "map_file": "maps/zones/zone_wide_two_doors_tags_v1.json",
+      "map_file_sha256": "2562d2f09940e9ba864cf1fe71740592e5305835a6c1af24b3493298a583c4ed",
+      "public_map_sha256": "4c7de01361aedabc7471ba780763cbbd3a5888147b55c5dfbe44055f8cfee524"
+    }
+  },
+  "model": "none-fixture-v1",
+  "prompt_tokenizer": "ugrp.zone_study_tokens.v1",
+  "prompt_version": "ugrp.zone_study_prompts_ko.v1",
+  "protocol_version": "ugrp.zone_study_protocol.v1",
+  "record_version": "v3",
+  "request_archive": {
+    "fields": [
+      "system",
+      "user",
+      "image_refs",
+      "tokens",
+      "billed_tokens",
+      "provider_usage"
+    ],
+    "token_sizes_ko": "tokens=실제 전송 텍스트의 고정 토크나이저 계수, billed_tokens=SIM 비용 표준화 청구 크기, provider_usage=공급자 보고(오프라인은 null)"
+  },
+  "review_fixes": [
+    "docs/design/2026-09-26-zone-study-packages-review-codex.md (18 findings, v2)",
+    "Codex second re-review (02114ad: 11 partial + extra)",
+    "Codex third re-review codex-194-r3 (#1, #11, #12, #16 partial -> fixed in dc8ac28 + eb5572b)"
+  ],
+  "scenario_configs_sha256": {
+    "configs/zone_study_scenarios/s1_normal_mixed.json": "87a75bca98ccc211dfadbfe929dbc5c77cda1e0346116b11223fdeebf26469b3",
+    "configs/zone_study_scenarios/s2_unmapped_blockage.json": "d215cbacc174f0c9c13dedf29b269a4eb1a5e44fbfa8fea735c2cefa8afe4c7e",
+    "configs/zone_study_scenarios/s3_late_rendezvous.json": "3eed7cf5d6ece35cf5b3a8bfb234356121a6f810d73d6fa24b2baca3e0cca960",
+    "configs/zone_study_scenarios/s4_narrow_door_standoff.json": "93418ea99279832720dae5ba8b3d70560a5386f769d364731970d793e9071f35",
+    "configs/zone_study_scenarios/s5_moved_dropped_item.json": "40a3de6647527892351bf32e40353e7a9906e763a0089584bf5457a4e00816d6",
+    "configs/zone_study_scenarios/s6_novel_relation.json": "3dcc864c6895e887061cf8991de8b25829ebee6dfb188164c227a16ee1859bd0"
+  },
+  "seeds": {
+    "s1_normal_mixed": 601,
+    "s2_unmapped_blockage": 611,
+    "s3_late_rendezvous": 621,
+    "s4_narrow_door_standoff": 631,
+    "s5_moved_dropped_item": 641,
+    "s6_novel_relation": 651
+  },
+  "seeds_per_scenario": 1,
+  "stored_frames": {
+    "frame_dir": "tests/fixtures/markerless_box/blue_floor_release",
+    "frames": {
+      "0245-wrist.jpg": "8dd2cca8f94948701c85a90b4722c6913743bc6b6e46f7315b2d11ecef80e6c0",
+      "0246-wrist.jpg": "18b1cd2a38a71eaae3489133d71f345ef550a2592232a873c1a36ba90d2d52db",
+      "0249-wrist.jpg": "dda79d27c776efa58157f241a7420c904b80cc9de4e012a5786e7a402569cf78",
+      "0250-wrist.jpg": "056975677c24f32057f9cee1762a5dc033b39b04e813c41d37ebfe94a0cce3c2",
+      "0253-wrist.jpg": "79273dfde405a43501f72aab8b98871bc190d57d08730cb2bc7c75016c35ddf8",
+      "0258-wrist.jpg": "f9492289b6a213504fccea1081d77c62a97434c12cf19b04cc2a8f74e5f42e12",
+      "0266-wrist.jpg": "1bb8bf6c3dd570dc5d1a8b7caff93294b37a9e16deb899f8155aa7f951de50e8"
+    }
+  }
+}

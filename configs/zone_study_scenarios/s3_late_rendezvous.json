@@ -1,0 +1,81 @@
+{
+  "schema": "ugrp.zone_scenario.v1",
+  "scenario_id": "s3_late_rendezvous",
+  "map_id": "zone_wide_door_tags_v1",
+  "landmark_detail": "full",
+  "seeds": [621, 622, 623],
+  "orders": [
+    {
+      "order_id": "order-1",
+      "kind": "long_beam",
+      "count": 1,
+      "identity": "specific_item",
+      "item_ids": ["beam_1"],
+      "required_robots": 2,
+      "destination_zone": "A",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-3"}
+    },
+    {
+      "order_id": "order-2",
+      "kind": "cyan",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-1"}
+    },
+    {
+      "order_id": "order-3",
+      "kind": "tile",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-2"}
+    },
+    {
+      "order_id": "order-4",
+      "kind": "red",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-1"}
+    }
+  ],
+  "eval": {
+    "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "늦은 집결. 2대 빔 운반 1건과 단독 작업 2건을 함께 두고, r3이 한동안 움직이지 못하게 한다. 짝은 상대가 왜 오지 않는지 관측으로 알 수 없으며 대기·재배정·취소 중 하나를 골라야 한다.",
+    "tests_ko": "집결 지연 비용: idle robot-seconds를 '팀 집결 대기'로 분해해 조건별로 비교한다. 대화 조건은 지연을 알리고 대기/재배정을 합의할 수 있고, 무통신은 60초 대기 한도와 자기 타이머만으로 결정한다.",
+    "notes_ko": "고정 지연 대상은 r3이다. leader_ko의 지휘자는 seed % 3으로 순환하므로(621→r1, 622→r2, 623→r3) 세 seed 중 정확히 한 번 '지연된 로봇이 지휘자'인 경우가 생기며, 이 조합은 모든 조건에서 동일하게 짝지어진다. 지연과 지휘 순환의 상호작용은 결과 해석에서 분리해 보고한다.",
+    "setup": {
+      "arena_variant": "zone_wide_door",
+      "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+      "contact_profile": "local_contact_fine",
+      "weld": "off",
+      "robot_spawns": "arena_default",
+      "placements": [
+        {"item_id": "beam_1", "kind": "long_beam", "order_id": "order-1", "slot": "P1-3", "pose_m": [0.125, 0.45, 1.5708]},
+        {"item_id": "cyan_1", "kind": "cyan", "order_id": "order-2", "slot": "P1-1", "pose_m": [0.4, -2.45, 0.0]},
+        {"item_id": "tile_1", "kind": "tile", "order_id": "order-3", "slot": "P2-2", "pose_m": [1.0, -0.85, 0.0]},
+        {"item_id": "red_1", "kind": "red", "order_id": "order-4", "slot": "P2-1", "pose_m": [1.0, -2.45, 0.0]}
+      ]
+    },
+    "hidden_events": [
+      {
+        "event_id": "r3_hold_late",
+        "kind": "robot_hold",
+        "trigger": {"kind": "sim_time", "at_sim_s": 12.0},
+        "target": {"robot_id": "r3", "duration_s": 40.0},
+        "discovery": {"kind": "own_camera_self"},
+        "notes_ko": "r3의 주행 명령이 40 SIM초 동안 받아들여지지 않는다. r3 자신은 자기 명령 상태(local_timeout)로 알 수 있고, 다른 로봇은 영상이나 메시지로만 추정한다."
+      }
+    ],
+    "budget": {
+      "sim_seconds": 1800,
+      "http_attempts_per_trial": 90,
+      "http_attempts_per_actor": 30,
+      "output_tokens_per_call": 768
+    }
+  }
+}

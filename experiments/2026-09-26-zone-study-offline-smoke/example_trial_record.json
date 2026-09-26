@@ -1,0 +1,481 @@
+{
+  "_trimmed_ko": "원본은 calls 90개, messages 4개, actions 90개다. 여기서는 schema를 보이기 위해 calls·actions를 2개로 줄였다. 원본 해시는 raw_index.json을 따른다.",
+  "actions": [
+    {
+      "accepted": true,
+      "action_id": "act-call-0001-r1",
+      "actor": "r1",
+      "arguments": {
+        "order_id": "order-1",
+        "role": "west",
+        "target_zone": "A"
+      },
+      "condition": "leader_ko",
+      "kind": "claim_order",
+      "local_state": "command_issued",
+      "order_id": "order-1",
+      "rejected_reason": null,
+      "request_id": "req_call_0001_r1",
+      "role": "west",
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_action.v1",
+      "seed": 601,
+      "submitted_at_sim_s": 3.5
+    },
+    {
+      "accepted": true,
+      "action_id": "act-call-0002-r2",
+      "actor": "r2",
+      "arguments": {
+        "order_id": "order-2",
+        "role": "west",
+        "target_zone": "B"
+      },
+      "condition": "leader_ko",
+      "kind": "claim_order",
+      "local_state": "command_issued",
+      "order_id": "order-2",
+      "rejected_reason": null,
+      "request_id": "req_call_0002_r2",
+      "role": "west",
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_action.v1",
+      "seed": 601,
+      "submitted_at_sim_s": 4.4
+    }
+  ],
+  "budget": {
+    "http_attempts": 90,
+    "sim_horizon_s": 300.0
+  },
+  "calls": [
+    {
+      "action_id": "act-call-0001-r1",
+      "actor": "r1",
+      "call_index": 0,
+      "condition": "leader_ko",
+      "cost_terms": {
+        "alpha_s": 1.0,
+        "attempts": 1,
+        "beta_s_per_token": 1.4,
+        "error_s": 0.0,
+        "gamma_s_per_utterance": 0.3,
+        "input_s": 0.8,
+        "outcomes": [
+          "ok"
+        ],
+        "output_tokens": 70,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "quantum_s": 0.1,
+        "raw_s": 3.5,
+        "timeout_s": 0.0,
+        "utterances": 1
+      },
+      "decision_sources": [
+        "static_map",
+        "order_sheet",
+        "own_rgb",
+        "own_commands"
+      ],
+      "http_attempts": 1,
+      "input_sha256": "98e24544c49375f6510f960b5735e75352358948977a0175cdd3328eebba1adf",
+      "input_tokens": {
+        "cached": 0,
+        "image": 0,
+        "text": 4000
+      },
+      "message_ids": [
+        "call-0001-r1-m1"
+      ],
+      "output_tokens": 70,
+      "payload_validated": true,
+      "provenance": {
+        "code_sha": "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c",
+        "cost_profile_id": "zone_sim_cost.v1",
+        "execution_bundle_id": "zone_study_offline_v1",
+        "input_profile_id": "zone_study_inputs.v1",
+        "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+        "model": "none-fixture-v1",
+        "model_settings_sha256": null,
+        "order_sheet_sha256": "b438f7d90e291ad841e184537a0c2ee80a5bd597d4d891f37de4c47bd7e4988f",
+        "prompt_template_sha256": "b0ec067f6c5fb566214198a5679872a315ff8015d482489be0f067e20a8bd205",
+        "provider": null,
+        "public_map_sha256": "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba",
+        "registry_sha256": "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181"
+      },
+      "released_at_sim_s": 3.5,
+      "request_id": "req_call_0001_r1",
+      "requested_at_sim_s": 0.0,
+      "role": "follower",
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_call.v1",
+      "seed": 601,
+      "sim_cost_s": 3.5,
+      "status": "ok",
+      "trigger": "start",
+      "wall_latency_s": null
+    },
+    {
+      "action_id": "act-call-0003-r3",
+      "actor": "r3",
+      "call_index": 0,
+      "condition": "leader_ko",
+      "cost_terms": {
+        "alpha_s": 1.0,
+        "attempts": 1,
+        "beta_s_per_token": 1.4,
+        "error_s": 0.0,
+        "gamma_s_per_utterance": 0.3,
+        "input_s": 0.8,
+        "outcomes": [
+          "ok"
+        ],
+        "output_tokens": 70,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "quantum_s": 0.1,
+        "raw_s": 3.5,
+        "timeout_s": 0.0,
+        "utterances": 1
+      },
+      "decision_sources": [
+        "static_map",
+        "order_sheet",
+        "own_rgb",
+        "own_commands"
+      ],
+      "http_attempts": 1,
+      "input_sha256": "ed20a1d554f652786334865f167efcfd6ab87131caf7aaea56e28b2936e14c22",
+      "input_tokens": {
+        "cached": 0,
+        "image": 0,
+        "text": 4000
+      },
+      "message_ids": [
+        "call-0003-r3-m1"
+      ],
+      "output_tokens": 70,
+      "payload_validated": true,
+      "provenance": {
+        "code_sha": "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c",
+        "cost_profile_id": "zone_sim_cost.v1",
+        "execution_bundle_id": "zone_study_offline_v1",
+        "input_profile_id": "zone_study_inputs.v1",
+        "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+        "model": "none-fixture-v1",
+        "model_settings_sha256": null,
+        "order_sheet_sha256": "b438f7d90e291ad841e184537a0c2ee80a5bd597d4d891f37de4c47bd7e4988f",
+        "prompt_template_sha256": "b0ec067f6c5fb566214198a5679872a315ff8015d482489be0f067e20a8bd205",
+        "provider": null,
+        "public_map_sha256": "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba",
+        "registry_sha256": "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181"
+      },
+      "released_at_sim_s": 3.5,
+      "request_id": "req_call_0003_r3",
+      "requested_at_sim_s": 0.0,
+      "role": "follower",
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_call.v1",
+      "seed": 601,
+      "sim_cost_s": 3.5,
+      "status": "ok",
+      "trigger": "start",
+      "wall_latency_s": null
+    }
+  ],
+  "condition": "leader_ko",
+  "end_reason": "budget_exhausted",
+  "end_sim_s": 300.0,
+  "idle": {
+    "r1": {
+      "thinking": 78.9
+    },
+    "r2": {
+      "thinking": 79.8
+    },
+    "r3": {
+      "thinking": 78.9
+    }
+  },
+  "leader_id": "r2",
+  "literals": [
+    "order-1",
+    "order-2",
+    "order-3",
+    "order-4",
+    "order-5",
+    "order-6",
+    "beam_1",
+    "cyan",
+    "red",
+    "can",
+    "tile",
+    "long_beam",
+    "green",
+    "any",
+    "west",
+    "end_neg",
+    "end_pos",
+    "door_1",
+    "A",
+    "B",
+    "C",
+    "r1",
+    "r2",
+    "r3"
+  ],
+  "messages": [
+    {
+      "act": null,
+      "body": {
+        "text": "order-1을 west 역할로 맡겠습니다. A 구역으로 갑니다."
+      },
+      "body_sha256": "136161742dbb3240426ff9892b36ea35d44bdf004e2208d3482f67c0fc4795cf",
+      "chars": 36,
+      "condition": "leader_ko",
+      "created_at_sim_s": 3.5,
+      "delivered_at_sim_s": 3.6,
+      "deliveries": [
+        {
+          "delivered_at_sim_s": 3.6,
+          "recipient": "r2",
+          "status": "delivered"
+        }
+      ],
+      "delivery_delay_s": 0.1,
+      "encoding": "free_ko",
+      "korean_ok": true,
+      "message_id": "w1-r1-1",
+      "recipients": [
+        "r2"
+      ],
+      "rejected_reason": null,
+      "reply_to": null,
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_message_log.v1",
+      "seed": 601,
+      "sender": "r1",
+      "status": "delivered"
+    },
+    {
+      "act": null,
+      "body": {
+        "text": "r1은 order-2을 B 구역으로 west 역할로 운반하십시오."
+      },
+      "body_sha256": "ff46f8a1b7d7c9441239994f6a401f545d28668fffb1e42574e58f3fb582ba7b",
+      "chars": 36,
+      "condition": "leader_ko",
+      "created_at_sim_s": 4.4,
+      "delivered_at_sim_s": 4.5,
+      "deliveries": [
+        {
+          "delivered_at_sim_s": 4.5,
+          "recipient": "r1",
+          "status": "delivered"
+        }
+      ],
+      "delivery_delay_s": 0.1,
+      "encoding": "free_ko",
+      "korean_ok": true,
+      "message_id": "w1-r2-2",
+      "recipients": [
+        "r1"
+      ],
+      "rejected_reason": null,
+      "reply_to": null,
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_message_log.v1",
+      "seed": 601,
+      "sender": "r2",
+      "status": "delivered"
+    },
+    {
+      "act": null,
+      "body": {
+        "text": "r3은 order-2을 B 구역으로 west 역할로 운반하십시오."
+      },
+      "body_sha256": "0954c50068c46f066389910dc8be2554155622ac01d6853226489dda89b32bfa",
+      "chars": 36,
+      "condition": "leader_ko",
+      "created_at_sim_s": 4.4,
+      "delivered_at_sim_s": 4.5,
+      "deliveries": [
+        {
+          "delivered_at_sim_s": 4.5,
+          "recipient": "r3",
+          "status": "delivered"
+        }
+      ],
+      "delivery_delay_s": 0.1,
+      "encoding": "free_ko",
+      "korean_ok": true,
+      "message_id": "w1-r2-3",
+      "recipients": [
+        "r3"
+      ],
+      "rejected_reason": null,
+      "reply_to": null,
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_message_log.v1",
+      "seed": 601,
+      "sender": "r2",
+      "status": "delivered"
+    },
+    {
+      "act": null,
+      "body": {
+        "text": "order-3을 any 역할로 맡겠습니다. C 구역으로 갑니다."
+      },
+      "body_sha256": "a828af1363222cfa7a90ae6c57d5727fc02ee8a61469493eaa0010e72b4d8142",
+      "chars": 35,
+      "condition": "leader_ko",
+      "created_at_sim_s": 3.5,
+      "delivered_at_sim_s": 3.6,
+      "deliveries": [
+        {
+          "delivered_at_sim_s": 3.6,
+          "recipient": "r2",
+          "status": "delivered"
+        }
+      ],
+      "delivery_delay_s": 0.1,
+      "encoding": "free_ko",
+      "korean_ok": true,
+      "message_id": "w1-r3-4",
+      "recipients": [
+        "r2"
+      ],
+      "rejected_reason": null,
+      "reply_to": null,
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "schema": "ugrp.zone_study_message_log.v1",
+      "seed": 601,
+      "sender": "r3",
+      "status": "delivered"
+    }
+  ],
+  "model": {
+    "http_attempts": 90,
+    "logical_calls": 90,
+    "sim_cost_s": {
+      "delivery": 0.4,
+      "talk": 1.2,
+      "think": 237.6
+    },
+    "tokens": {
+      "cached": 0,
+      "image": 0,
+      "input": 360000,
+      "output": 3720
+    },
+    "wall_latency_ms": []
+  },
+  "orders": [
+    {
+      "count": 2,
+      "destination_zone": "A",
+      "identity": "kind_fungible",
+      "initial_location": {
+        "pickup_bay": "P1",
+        "slot": "P1-1"
+      },
+      "item_ids": [],
+      "kind": "cyan",
+      "order_id": "order-1",
+      "required_robots": 1
+    },
+    {
+      "count": 1,
+      "destination_zone": "B",
+      "identity": "kind_fungible",
+      "initial_location": {
+        "pickup_bay": "P2",
+        "slot": "P2-1"
+      },
+      "item_ids": [],
+      "kind": "red",
+      "order_id": "order-2",
+      "required_robots": 1
+    },
+    {
+      "count": 1,
+      "destination_zone": "C",
+      "identity": "kind_fungible",
+      "initial_location": {
+        "pickup_bay": "P1",
+        "slot": "P1-2"
+      },
+      "item_ids": [],
+      "kind": "can",
+      "order_id": "order-3",
+      "required_robots": 1
+    },
+    {
+      "count": 1,
+      "destination_zone": "B",
+      "identity": "kind_fungible",
+      "initial_location": {
+        "pickup_bay": "P2",
+        "slot": "P2-2"
+      },
+      "item_ids": [],
+      "kind": "tile",
+      "order_id": "order-4",
+      "required_robots": 1
+    },
+    {
+      "count": 1,
+      "destination_zone": "A",
+      "identity": "specific_item",
+      "initial_location": {
+        "pickup_bay": "P2",
+        "slot": "P2-3"
+      },
+      "item_ids": [
+        "beam_1"
+      ],
+      "kind": "long_beam",
+      "order_id": "order-5",
+      "required_robots": 2
+    },
+    {
+      "count": 1,
+      "destination_zone": "C",
+      "identity": "kind_fungible",
+      "initial_location": {
+        "pickup_bay": "P1",
+        "slot": "P1-3"
+      },
+      "item_ids": [],
+      "kind": "green",
+      "order_id": "order-6",
+      "required_robots": 1
+    }
+  ],
+  "provenance": {
+    "code_sha": "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c",
+    "cost_profile_id": "zone_sim_cost.v1",
+    "execution_bundle_id": "zone_study_offline_v1",
+    "input_profile_id": "zone_study_inputs.v1",
+    "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+    "model": "none-fixture-v1",
+    "model_settings_sha256": null,
+    "order_sheet_sha256": "b438f7d90e291ad841e184537a0c2ee80a5bd597d4d891f37de4c47bd7e4988f",
+    "prompt_template_sha256": "b0ec067f6c5fb566214198a5679872a315ff8015d482489be0f067e20a8bd205",
+    "provider": null,
+    "public_map_sha256": "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba",
+    "registry_sha256": "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181"
+  },
+  "referee": {},
+  "robots": [
+    "r1",
+    "r2",
+    "r3"
+  ],
+  "scenario": "s1_normal_mixed",
+  "schema": "ugrp.zone_study_trial.v1",
+  "seed": 601,
+  "t0_sim_s": 0.0,
+  "trial_id": "leader_ko-s1_normal_mixed-s601"
+}

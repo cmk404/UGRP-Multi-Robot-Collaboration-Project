@@ -1,0 +1,849 @@
+{
+  "ci_collection": {
+    "modules_matched": 217,
+    "pattern_added": "tests/test_zone_study_review_r6*.py",
+    "r6_modules": [
+      "tests/test_zone_study_review_r6.py",
+      "tests/test_zone_study_review_r6_paths_contract.py"
+    ],
+    "self_check": "test_r6_both_files_of_this_round_are_collected_by_the_ci_patterns"
+  },
+  "collected": 85,
+  "junit_note_ko": "JUnit 원본(/tmp/kiro-r6-*.xml)은 임시 파일이다. 해시만 남긴다.",
+  "post_fix": {
+    "cases": [
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[failure_partly_known]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[failure_without_attempts]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[plain_exception]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_codex_counterexample_a_caller_that_runs_again_cannot_send_for_free"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_at_the_horizon_is_censored_with_its_attempt"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_transport_that_reserved_a_retry_in_submit_keeps_both_when_it_raises"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_the_team_cap_holds_when_two_actors_fail_in_submit"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_not_sent_is_the_only_refunded_submit_failure[0]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_not_sent_is_the_only_refunded_submit_failure[1]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_boundary_not_sent_raised_by_reply_is_not_a_refund"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_p1_boundary_an_interrupt_in_submit_keeps_the_reservation"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_sent_count_refunds_a_reserved_retry_that_never_left[False]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_sent_count_refunds_a_reserved_retry_that_never_left[True]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_without_a_declaration_every_reserved_attempt_still_counts_as_sent"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_count_above_the_reported_attempts_is_padded_to_it"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_count_above_the_reservation_stays_a_budget_breach"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[0]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[-1]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[True]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[False]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[1.5]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[1]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[nan]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[inf]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[value8]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_the_count_must_agree_with_the_reported_attempts"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_at_most_one_pending_timer_per_actor"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[None]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[nan]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[inf]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[-inf]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[True]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[12]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[at6]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_label_actor_and_past_are_checked"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[no_comm]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[peer_ko]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[leader_ko]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[structured]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_reask_the_offline_bundle_id_names_the_new_rule"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_both_files_of_this_round_are_collected_by_the_ci_patterns"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_codex_counterexample_a_symlinked_parent_does_not_escape"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_report_refuses_a_symlink_escape_before_writing_any_file"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[dangling_leaf]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[inside_alias]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[leaf_to_outside]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_a_symlinked_logdir_itself_is_written_at_its_real_path"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_written_run_lands_inside_the_real_logdir"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs0-duplicate run path]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs1-duplicate run path]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs2-contain another run]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs3-contain another run]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_boundary_a_logdir_that_is_a_file_is_refused_before_any_write"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_a_symlink_that_appears_after_the_check_is_refused_at_write_time"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_write_events_rechecks_each_run_just_before_creating_it"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_real_path_containment_still_holds_if_a_symlink_goes_unnoticed"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_boundary_plain_runs_and_existing_runs_behave_as_in_r5"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_accepts_the_tags_v2_landmark_placement"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_a_tags_v1_payload_is_valid_under_v1_and_v2"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[extra_live_key]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[extra_neutral_key]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_width]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[bool_width]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_heights]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_heights]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[object_height]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[list_posts]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_posts]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_radius]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_radius]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[bool_spacing]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[renamed_live_key]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_non_finite_geometry_is_refused[nan]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_non_finite_geometry_is_refused[inf]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[zero]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[empty_heights]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[empty_posts]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[no_posts]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v1_registry_hash_of_the_frozen_records_is_reproduced"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_manifest_declares_the_versioned_placement"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[ugrp.zone_study_contract.v3]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[None]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[2]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[v1]"
+      }
+    ],
+    "counts": {
+      "passed": 85
+    },
+    "junit_sha256": "2137309552ad402e13af82a70dad0b90b8f8645903d261c0b8002d21df6f3e87",
+    "source": "8ab8f7edbc78e7cb27985dfe81dde092823e01b1"
+  },
+  "post_fix_without_tensorboard": {
+    "counts": {
+      "passed": 83,
+      "skipped": 2
+    },
+    "how_ko": "sys.modules[\"tensorboard\"]=None로 CI offline 작업을 흉내 냄",
+    "junit_sha256": "1c9e6d188f736ff863f9656d19af2853ae805718daf54cb99c768233c1a40026",
+    "skipped": [
+      {
+        "message": "the offline CI job has no tensorboard; the _run_paths tests are the enforced check",
+        "outcome": "skipped",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_written_run_lands_inside_the_real_logdir"
+      },
+      {
+        "message": "write_events imports tensorboard after the path check",
+        "outcome": "skipped",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_write_events_rechecks_each_run_just_before_creating_it"
+      }
+    ],
+    "source": "8ab8f7edbc78e7cb27985dfe81dde092823e01b1"
+  },
+  "pre_fix": {
+    "cases": [
+      {
+        "message": "harness.zone_event_scheduler.TransportFailure: sent, usage of the final attempt unknown",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[failure_partly_known]"
+      },
+      {
+        "message": "harness.zone_event_scheduler.TransportFailure: sent, no usage",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[failure_without_attempts]"
+      },
+      {
+        "message": "RuntimeError: connection reset after the request was written",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_after_sending_is_a_charged_unknown_usage_call[plain_exception]"
+      },
+      {
+        "message": "assert 2 == 1  +  where 2 = <test_zone_study_review_r6._SubmitSendsThenRaises object at 0x108e6e3c0>.sent",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_codex_counterexample_a_caller_that_runs_again_cannot_send_for_free"
+      },
+      {
+        "message": "RuntimeError: connection reset after the request was written",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_submit_failure_at_the_horizon_is_censored_with_its_attempt"
+      },
+      {
+        "message": "RuntimeError: connection reset after the request was written",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_a_transport_that_reserved_a_retry_in_submit_keeps_both_when_it_raises"
+      },
+      {
+        "message": "RuntimeError: connection reset after the request was written",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_the_team_cap_holds_when_two_actors_fail_in_submit"
+      },
+      {
+        "message": "AttributeError: module 'harness.zone_event_scheduler' has no attribute 'NotSent'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_not_sent_is_the_only_refunded_submit_failure[0]"
+      },
+      {
+        "message": "AttributeError: module 'harness.zone_event_scheduler' has no attribute 'NotSent'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_not_sent_is_the_only_refunded_submit_failure[1]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'unsent_calls'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_boundary_not_sent_raised_by_reply_is_not_a_refund"
+      },
+      {
+        "message": "AssertionError: assert ('outstanding' == 'interrupted'      - interrupted   + outstanding)",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_p1_boundary_an_interrupt_in_submit_keeps_the_reservation"
+      },
+      {
+        "message": "ValueError: not enough values to unpack (expected 2, got 1)",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_sent_count_refunds_a_reserved_retry_that_never_left[False]"
+      },
+      {
+        "message": "ValueError: not enough values to unpack (expected 2, got 1)",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_sent_count_refunds_a_reserved_retry_that_never_left[True]"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6::test_r6_sent_without_a_declaration_every_reserved_attempt_still_counts_as_sent"
+      },
+      {
+        "message": "AssertionError: assert ['error', 'error'] == ['error', 'invalid']      At index 1 diff: 'error' != 'invalid'   Use -v to get more diff",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_count_above_the_reported_attempts_is_padded_to_it"
+      },
+      {
+        "message": "IndexError: list index out of range",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_a_declared_count_above_the_reservation_stays_a_budget_breach"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[0]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[-1]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[True]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[False]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[1.5]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[1]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[nan]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[inf]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_a_malformed_sent_count_is_refused[value8]"
+      },
+      {
+        "message": "TypeError: CallReply.__init__() got an unexpected keyword argument 'sent_attempts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_sent_boundary_the_count_must_agree_with_the_reported_attempts"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_at_most_one_pending_timer_per_actor"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[None]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[nan]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[inf]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[-inf]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[True]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[12]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_a_malformed_time_is_refused[at6]"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'arm_reask'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_boundary_label_actor_and_past_are_checked"
+      },
+      {
+        "message": "AttributeError: 'EventScheduler' object has no attribute 'reask_counts'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[no_comm]"
+      },
+      {
+        "message": "AssertionError: assert ({'r1': [3.599999999999998, 3.5, 6.400000000000002, 3.599999999999998, 3.5, 6.399999999999999, ...], 'r2': [3.599999999...9999999999999, ...], 'r3': [3.599999999999998, 3.5, 6.400000000000002, 3.59",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[peer_ko]"
+      },
+      {
+        "message": "AssertionError: assert ({'r1': [4.5, 9.0, 4.4999999999999964, 9.0, 4.5, 9.0, ...], 'r3': [4.5, 9.0, 4.4999999999999964, 9.0, 4.5, 9.0, ...], 'r2': [3.5, 10.0, 3.5000000000000036, 10.0, 3.5, 10.0, ...]} and False)  +  whe",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[leader_ko]"
+      },
+      {
+        "message": "AssertionError: assert ({'r1': [3.599999999999998, 3.5, 6.400000000000002, 3.599999999999998, 3.5, 6.5, ...], 'r2': [3.599999999999998, 3.5, 6...3.599999999999998, 3.5, 6.5, ...], 'r3': [3.599999999999998, 3.5, 6.4000000",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_offline_trial_never_runs_parallel_reask_chains[structured]"
+      },
+      {
+        "message": "AssertionError: assert 'zone_study_offline_v1' == 'zone_study_offline_v2'      - zone_study_offline_v2   ?                     ^   + zone_study_offline_v1   ?                     ^",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_reask_the_offline_bundle_id_names_the_new_rule"
+      },
+      {
+        "message": "AssertionError: assert {'tests/test_..._contract.py'} <= {'tests/test_...lock.py', ...}      Extra items in the left set:   'tests/test_zone_study_review_r6_paths_contract.py'   'tests/test_zone_study_review_r6.py'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6::test_r6_both_files_of_this_round_are_collected_by_the_ci_patterns"
+      },
+      {
+        "message": "Failed: DID NOT RAISE ValueError",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_codex_counterexample_a_symlinked_parent_does_not_escape"
+      },
+      {
+        "message": "Failed: DID NOT RAISE ValueError",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_report_refuses_a_symlink_escape_before_writing_any_file"
+      },
+      {
+        "message": "FileExistsError: [Errno 17] File exists: '/private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_every_symlinked_run0/events/peer_ko/trial'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[dangling_leaf]"
+      },
+      {
+        "message": "FileExistsError: TensorBoard run(s) already exist under /private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_every_symlinked_run1/events: ['peer_ko/trial']; write a new snapsh",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[inside_alias]"
+      },
+      {
+        "message": "FileExistsError: TensorBoard run(s) already exist under /private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_every_symlinked_run2/events: ['peer_ko/trial']; write a new snapsh",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_every_symlinked_run_component_is_refused[leaf_to_outside]"
+      },
+      {
+        "message": "AssertionError: assert [PosixPath('/...ort/peer_ko')] == [PosixPath('/...ort/peer_ko')]      At index 0 diff: PosixPath('/private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_a",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_a_symlinked_logdir_itself_is_written_at_its_real_path"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_written_run_lands_inside_the_real_logdir"
+      },
+      {
+        "message": "FileExistsError: [Errno 17] File exists: '/private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_runs_that_share_or_0/events/peer_ko/trial'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs0-duplicate run path]"
+      },
+      {
+        "message": "AssertionError: Regex pattern did not match.   Expected regex: 'duplicate run path'   Actual message: 'duplicate run name in the scalar payload'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs1-duplicate run path]"
+      },
+      {
+        "message": "Failed: DID NOT RAISE ValueError",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs2-contain another run]"
+      },
+      {
+        "message": "FileExistsError: [Errno 17] File exists: '/private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_runs_that_share_or_3/events/peer_ko/a'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_runs_that_share_or_nest_a_real_path_are_refused[runs3-contain another run]"
+      },
+      {
+        "message": "Failed: DID NOT RAISE NotADirectoryError",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_boundary_a_logdir_that_is_a_file_is_refused_before_any_write"
+      },
+      {
+        "message": "AttributeError: module 'scripts.zone_study_report' has no attribute '_still_inside'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_a_symlink_that_appears_after_the_check_is_refused_at_write_time"
+      },
+      {
+        "message": "FileExistsError: [Errno 17] File exists: '/private/var/folders/s9/blmccn613zx6k7fdfcczknrm0000gn/T/pytest-of-changmin/pytest-869/test_r6_p2_write_events_rechec0/events/peer_ko/a'",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_write_events_rechecks_each_run_just_before_creating_it"
+      },
+      {
+        "message": "Failed: DID NOT RAISE ValueError",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_the_real_path_containment_still_holds_if_a_symlink_goes_unnoticed"
+      },
+      {
+        "outcome": "passed",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_p2_boundary_plain_runs_and_existing_runs_behave_as_in_r5"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_accepts_the_tags_v2_landmark_placement"
+      },
+      {
+        "message": "AttributeError: module 'harness.zone_study_contract' has no attribute 'CONTRACT_VERSIONS'. Did you mean: 'CONTRACT_VERSION'?",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_a_tags_v1_payload_is_valid_under_v1_and_v2"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[extra_live_key]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[extra_neutral_key]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_width]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[bool_width]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_heights]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_heights]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[object_height]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[list_posts]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_posts]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[str_radius]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[none_radius]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[bool_spacing]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_keeps_the_placement_closed_and_typed[renamed_live_key]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_non_finite_geometry_is_refused[nan]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_non_finite_geometry_is_refused[inf]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[zero]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[empty_heights]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[empty_posts]"
+      },
+      {
+        "message": "harness.zone_study_contract.ContractViolation: robot-facing payload violates the study contract: static_map.public_map.landmarks.placement carries key(s) outside the contract: ['door_posts', 'near_door_radius_m', 'near_d",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v2_boundary_valid_edge_values_are_accepted[no_posts]"
+      },
+      {
+        "message": "AttributeError: module 'harness.zone_study_contract' has no attribute 'CONTRACT_VERSION_V1'. Did you mean: 'CONTRACT_VERSION'?",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_v1_registry_hash_of_the_frozen_records_is_reproduced"
+      },
+      {
+        "message": "AttributeError: module 'harness.zone_study_contract' has no attribute 'CONTRACT_VERSION_V1'. Did you mean: 'CONTRACT_VERSION'?",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_manifest_declares_the_versioned_placement"
+      },
+      {
+        "message": "TypeError: registry_sha256() takes 0 positional arguments but 1 was given",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[ugrp.zone_study_contract.v3]"
+      },
+      {
+        "message": "TypeError: registry_sha256() takes 0 positional arguments but 1 was given",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[]"
+      },
+      {
+        "message": "TypeError: registry_sha256() takes 0 positional arguments but 1 was given",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[None]"
+      },
+      {
+        "message": "TypeError: registry_sha256() takes 0 positional arguments but 1 was given",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[2]"
+      },
+      {
+        "message": "TypeError: registry_sha256() takes 0 positional arguments but 1 was given",
+        "outcome": "failure",
+        "test": "test_zone_study_review_r6_paths_contract::test_r6_contract_boundary_an_unknown_version_is_refused[v1]"
+      }
+    ],
+    "counts": {
+      "failure": 82,
+      "passed": 3
+    },
+    "junit_sha256": "956d822addf3a1976e9e0b7765de7783ff837a613ba3c21ab26d7d2a038d6ef7",
+    "note_ko": "통과 3건은 대조군이다: 선언 없는 전송 계층의 보수적 과대 계산(5차 규칙 유지), logdir 링크 자체의 실제 경로 쓰기, 일반 run 경로·기존 run 거절(r5 동작 유지).",
+    "source": "444603f55bc32cda76b68258cb6a7b3a2bf4ed34 (Codex r6 검토 SHA d13dccee + main 병합; harness·scripts·tests·configs·maps·sim를 git archive로 /tmp에 풀고 최종 r6 테스트 2개만 올림)"
+  },
+  "related_modules": {
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "689a127f99b320173884e57e829554d879c5caa30be911e517024d40a559bf35",
+    "modules": [
+      "tests/test_zone_event_scheduler.py",
+      "tests/test_zone_sim_cost.py",
+      "tests/test_zone_study_contract.py",
+      "tests/test_zone_study_eval.py",
+      "tests/test_zone_study_inputs.py",
+      "tests/test_zone_study_offline.py",
+      "tests/test_zone_study_protocol.py",
+      "tests/test_zone_study_review_fixes.py",
+      "tests/test_zone_study_review_r5.py",
+      "tests/test_zone_study_review_r6.py",
+      "tests/test_zone_study_review_r6_paths_contract.py",
+      "tests/test_zone_study_scenarios.py",
+      "tests/test_simulation_workflow_manager.py"
+    ],
+    "skipped": 0,
+    "source": "8ab8f7edbc78e7cb27985dfe81dde092823e01b1",
+    "tests": 709
+  },
+  "tests": {
+    "tests/test_zone_study_review_r6.py": {
+      "lines": 421,
+      "sha256": "83d4a9ad06dfc305e596e4edc02c687d29d5cb000ad0bb10e6c679b81a1f3678"
+    },
+    "tests/test_zone_study_review_r6_paths_contract.py": {
+      "lines": 289,
+      "sha256": "7fc540ef097bc10c4d28a22583f413198169b075f101fbb5c2b6b675d1776bfe"
+    }
+  }
+}

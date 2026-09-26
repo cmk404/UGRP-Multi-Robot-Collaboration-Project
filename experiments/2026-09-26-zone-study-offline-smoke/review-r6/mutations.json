@@ -1,0 +1,438 @@
+{
+  "schema": "ugrp.kiro_mutation_check.v1",
+  "at": "2026-09-26T21:08:37+0900",
+  "tests": [
+    "tests/test_zone_study_review_r6.py",
+    "tests/test_zone_study_review_r6_paths_contract.py"
+  ],
+  "baseline": {
+    "exit_code": 0,
+    "tail": "85 passed in 5.67s"
+  },
+  "restored": {
+    "exit_code": 0,
+    "tail": "85 passed in 5.78s"
+  },
+  "mutants": [
+    {
+      "id": "M-p1-refund-all",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: every submit exception refunds and re-raises (old rule)",
+      "applied": true,
+      "original": "        except Exception as exc:  # noqa: BLE001 - the request may have left: settle, never refund\n            call.token = _SubmitFailed(exc)\n",
+      "mutant": "        except Exception as exc:  # noqa: BLE001 - the request may have left: settle, never refund\n            self.budget.release(actor, entry['reserved_attempts'])\n            raise\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "7 failed, 78 passed in 7.06s"
+    },
+    {
+      "id": "M-p1-notsent-no-refund",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: NotSent keeps its reservation",
+      "applied": true,
+      "original": "            self.budget.release(actor, entry['reserved_attempts'])\n            entry['status'] = 'not_sent'\n",
+      "mutant": "            entry['status'] = 'not_sent'\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 6.82s"
+    },
+    {
+      "id": "M-p1-notsent-swallowed",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: NotSent is settled like any failure (not re-raised)",
+      "applied": true,
+      "original": "                      actor=actor, call_id=call.call_id)\n            raise\n",
+      "mutant": "                      actor=actor, call_id=call.call_id)\n            call.token = _SubmitFailed(exc)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 6.35s"
+    },
+    {
+      "id": "M-p1-submit-token-to-reply",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: a failed submit is fetched through reply()",
+      "applied": true,
+      "original": "        if isinstance(call.token, _SubmitFailed):\n",
+      "mutant": "        if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "3 failed, 82 passed in 6.04s"
+    },
+    {
+      "id": "M-p1-stage-label",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: submit failures are labelled as reply failures",
+      "applied": true,
+      "original": "            return self._failure_reply(call, call.token.error, stage='submit')\n",
+      "mutant": "            return self._failure_reply(call, call.token.error, stage='reply')\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "3 failed, 82 passed in 6.70s"
+    },
+    {
+      "id": "M-p1-interrupt-unrecorded",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "P1: an interrupt leaves no ledger reason",
+      "applied": true,
+      "original": "            entry.update({'status': 'interrupted', 'error': f'{type(exc).__name__}: {exc}'})\n",
+      "mutant": "            pass\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.85s"
+    },
+    {
+      "id": "M-sent-ignored",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: the declared sent count is ignored (count every reservation)",
+      "applied": true,
+      "original": "        counted = reserved if sent is None else sent\n",
+      "mutant": "        counted = reserved\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "3 failed, 82 passed in 5.70s"
+    },
+    {
+      "id": "M-sent-failure-dropped",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: a TransportFailure loses its declared count",
+      "applied": true,
+      "original": "                    len(exc.attempts), exc.sent_attempts)\n",
+      "mutant": "                    len(exc.attempts), None)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 5.74s"
+    },
+    {
+      "id": "M-sent-reply-dropped",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: a CallReply loses its declared count",
+      "applied": true,
+      "original": "        return reply, len(reply.attempts), reply.sent_attempts\n",
+      "mutant": "        return reply, len(reply.attempts), None\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.68s"
+    },
+    {
+      "id": "M-sent-min1",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: 0 / negative counts accepted",
+      "applied": true,
+      "original": " or value < 1:\n        raise ValueError(f'sent_attempts must be None",
+      "mutant": ":\n        raise ValueError(f'sent_attempts must be None",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.62s"
+    },
+    {
+      "id": "M-sent-bool",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: bool accepted as a count",
+      "applied": true,
+      "original": "    if isinstance(value, bool) or not isinstance(value, int) or value < 1:\n",
+      "mutant": "    if not isinstance(value, int) or value < 1:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.64s"
+    },
+    {
+      "id": "M-sent-fewer",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: a count below the reported attempts accepted",
+      "applied": true,
+      "original": "    if value < len(attempts):\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.72s"
+    },
+    {
+      "id": "M-sent-known-mismatch",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "sent: a known-usage reply may declare a different count",
+      "applied": true,
+      "original": "    if usage_known and value != len(attempts):\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.67s"
+    },
+    {
+      "id": "M-reask-no-single",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: arming while one is pending arms another timer",
+      "applied": true,
+      "original": "        if actor in self._reask_pending:\n            self.reask_counts[actor]['skipped'] += 1\n            return False\n",
+      "mutant": "",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "4 failed, 81 passed in 6.59s"
+    },
+    {
+      "id": "M-reask-never-cleared",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: a fired re-ask never clears the pending marker",
+      "applied": true,
+      "original": "            self._reask_pending.pop(actor, None)\n",
+      "mutant": "            pass\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "5 failed, 80 passed in 1.53s"
+    },
+    {
+      "id": "M-reask-any-timer-clears",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: any timer of the actor clears the marker",
+      "applied": true,
+      "original": "        if payload.get('reask'):\n            # the one pending re-ask",
+      "mutant": "        if True:\n            # the one pending re-ask",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.67s"
+    },
+    {
+      "id": "M-reask-finite",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: non-finite times accepted",
+      "applied": true,
+      "original": " or not math.isfinite(at):\n",
+      "mutant": ":\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "3 failed, 82 passed in 5.66s"
+    },
+    {
+      "id": "M-reask-label",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: unknown labels accepted",
+      "applied": true,
+      "original": "        if label not in TRIGGERS:\n            raise ValueError(f'unknown re-ask label",
+      "mutant": "        if False:\n            raise ValueError(f'unknown re-ask label",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.75s"
+    },
+    {
+      "id": "M-reask-past",
+      "file": "harness/zone_event_scheduler.py",
+      "what": "reask: a time in the SIM past accepted",
+      "applied": true,
+      "original": "        if at < self.clock - 1e-9:\n            raise ValueError('cannot arm a re-ask",
+      "mutant": "        if False:\n            raise ValueError('cannot arm a re-ask",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.68s"
+    },
+    {
+      "id": "M-offline-old-timer",
+      "file": "harness/zone_study_offline.py",
+      "what": "reask: the offline loop arms a timer after every action (old rule)",
+      "applied": true,
+      "original": "            self.scheduler.arm_reask(actor, 'idle', at=at)\n",
+      "mutant": "            self.scheduler.timer(actor, 'idle', at=at)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "4 failed, 81 passed in 6.57s"
+    },
+    {
+      "id": "M-offline-bundle-id",
+      "file": "harness/zone_study_offline.py",
+      "what": "reask: the bundle id is not bumped",
+      "applied": true,
+      "original": "EXECUTION_BUNDLE_ID = 'zone_study_offline_v2'\n",
+      "mutant": "EXECUTION_BUNDLE_ID = 'zone_study_offline_v1'\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.72s"
+    },
+    {
+      "id": "M-p2-no-symlink-check",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: symlinked run components are not refused",
+      "applied": true,
+      "original": "            if root.joinpath(*parts[:depth]).is_symlink():\n",
+      "mutant": "            if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "5 failed, 80 passed in 5.71s"
+    },
+    {
+      "id": "M-p2-no-containment",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: the resolved path is not compared with the real logdir",
+      "applied": true,
+      "original": "        if real == real_root or not real.is_relative_to(real_root):\n",
+      "mutant": "        if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.77s"
+    },
+    {
+      "id": "M-p2-case-sensitive-dup",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: duplicates compared case-sensitively",
+      "applied": true,
+      "original": "        key = unicodedata.normalize('NFC', str(real)).casefold()\n",
+      "mutant": "        key = str(real)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.73s"
+    },
+    {
+      "id": "M-p2-no-nested",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: nested runs accepted",
+      "applied": true,
+      "original": "    if nested:\n        raise ValueError",
+      "mutant": "    if False:\n        raise ValueError",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 5.80s"
+    },
+    {
+      "id": "M-p2-no-recheck",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: write_events does not re-check before mkdir",
+      "applied": true,
+      "original": "        _still_inside(path, directory)\n        path.mkdir(parents=True)\n",
+      "mutant": "        path.mkdir(parents=True)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.86s"
+    },
+    {
+      "id": "M-p2-recheck-weak",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: the re-check ignores a planted symlink",
+      "applied": true,
+      "original": "    if path.resolve() != path or os.path.lexists(path):\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 5.74s"
+    },
+    {
+      "id": "M-p2-lexical-paths",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: the unresolved lexical path is returned and written",
+      "applied": true,
+      "original": "        paths.append(real)\n",
+      "mutant": "        paths.append(root.joinpath(*parts))\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 5.74s"
+    },
+    {
+      "id": "M-p2-file-logdir",
+      "file": "scripts/zone_study_report.py",
+      "what": "P2: a logdir that is a file is not refused up front",
+      "applied": true,
+      "original": "    if root.exists() and not root.is_dir():\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.82s"
+    },
+    {
+      "id": "M-c-v1-widened",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: v1 accepts the v2 placement keys",
+      "applied": true,
+      "original": "PLACEMENT_KEYS_BY_VERSION = {CONTRACT_VERSION_V1: PLACEMENT_KEYS_V1, CONTRACT_VERSION: PLACEMENT_KEYS}\n",
+      "mutant": "PLACEMENT_KEYS_BY_VERSION = {CONTRACT_VERSION_V1: PLACEMENT_KEYS, CONTRACT_VERSION: PLACEMENT_KEYS}\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 6.11s"
+    },
+    {
+      "id": "M-c-v2-not-widened",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: v2 keeps the v1 placement keys (the integration bug)",
+      "applied": true,
+      "original": "PLACEMENT_KEYS = PLACEMENT_KEYS_V1 + ('near_door_spacing_m', 'near_door_radius_m', 'door_posts')\n",
+      "mutant": "PLACEMENT_KEYS = PLACEMENT_KEYS_V1\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "21 failed, 64 passed in 6.82s"
+    },
+    {
+      "id": "M-c-registry-ignores-version",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: registry hash ignores the version",
+      "applied": true,
+      "original": "    return digest({name: condition_manifest(name, contract_version=contract_version)\n",
+      "mutant": "    return digest({name: condition_manifest(name)\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "6 failed, 79 passed in 6.28s"
+    },
+    {
+      "id": "M-c-version-lenient",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: unknown versions accepted",
+      "applied": true,
+      "original": "    if not isinstance(contract_version, str) or contract_version not in CONTRACT_VERSIONS:\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "5 failed, 80 passed in 5.87s"
+    },
+    {
+      "id": "M-c-door-heights",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: door-post heights are not type checked",
+      "applied": true,
+      "original": "    if not (isinstance(heights, Sequence) and not isinstance(heights, (str, bytes))\n            and all(_is_num(h) for h in heights)):\n",
+      "mutant": "    if False:\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "3 failed, 82 passed in 5.84s"
+    },
+    {
+      "id": "M-c-door-numbers",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: door-post sizes are not type checked",
+      "applied": true,
+      "original": "            out.extend(_num(value[key], f'{label}.{key}'))\n",
+      "mutant": "            pass\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "2 failed, 83 passed in 5.93s"
+    },
+    {
+      "id": "M-c-door-closed",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: door_posts accepts extra keys",
+      "applied": true,
+      "original": "    out = _closed(value, DOOR_POST_KEYS, label)\n    if out:\n        return out\n",
+      "mutant": "    out = []\n    if not isinstance(value, Mapping):\n        return [f'{label} must be an object']\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.81s"
+    },
+    {
+      "id": "M-c-manifest-placement",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: the manifest omits the placement schema",
+      "applied": true,
+      "original": "                                   **placement,\n",
+      "mutant": "",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.79s"
+    },
+    {
+      "id": "M-c-version-not-threaded",
+      "file": "harness/zone_study_contract.py",
+      "what": "contract: payload_violations ignores the requested version",
+      "applied": true,
+      "original": "    hits.extend(_public_map_hits(public, contract_version))\n",
+      "mutant": "    hits.extend(_public_map_hits(public))\n",
+      "exit_code": 1,
+      "detected": true,
+      "pytest_tail": "1 failed, 84 passed in 5.78s"
+    }
+  ],
+  "detected": 38,
+  "applied": 38
+}

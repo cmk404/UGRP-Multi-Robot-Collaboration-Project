@@ -8,11 +8,18 @@ never re-enter a robot request, memory, wake-up or executor decision. The
 functions here are pure: they take a trial record and return new dictionaries,
 never mutating the input, so the same record can also be hashed/archived.
 
-Package A (``kiro/zone-study-contract``) owns the final log schema. Until its
-PR lands this module accepts the *provisional* record described in
-``docs/zone_study_metrics.md`` and identified by ``PROVISIONAL_SCHEMA``. Add the
-contract schema id to ``SUPPORTED_SCHEMAS`` (and adapt in ``parse_trial``) when
-it appears; do not silently accept unknown schemas.
+Package A (``harness/zone_study_contract.py``) owns the condition registry and
+the call/message/action log schema. The conditions, their Korean labels and the
+message encodings here come from A. Two record shapes are accepted:
+
+* ``ugrp.zone_study_trial.v1`` (:data:`TRIAL_SCHEMA`) — the A-aligned trial
+  envelope. Its ``calls``/``messages``/``actions`` rows ARE A's log records and
+  are validated by ``A.validate_log_record``; :func:`parse_trial` maps them onto
+  the ``requests``/``utterances`` views the metrics below read.
+* ``ugrp.zone_study_trial.provisional.v1`` (:data:`PROVISIONAL_SCHEMA`) — the
+  earlier hand-written shape, kept so archived pilot logs still parse.
+
+Unknown schemas are refused, never silently accepted.
 
 Study decisions (user, 2026-09-25/26) that this module encodes:
 
@@ -36,36 +43,41 @@ import statistics
 from pathlib import Path
 
 from harness import zone_dialogue_metrics as zm
+from harness.zone_study_contract import (ACTION_LOG_SCHEMA, CALL_LOG_SCHEMA, CONDITIONS as A_CONDITIONS,
+                                         MAIN_CONDITIONS as A_MAIN_CONDITIONS, MESSAGE_LOG_SCHEMA,
+                                         allowed_edges as A_allowed_edges, forbidden_key_hits,
+                                         leader_for_seed as A_leader_for_seed, validate_log_record)
+from harness.zone_study_contract import (COMMANDER, CONFIDENCE as CONFIDENCE_LEVELS, ROBOTS, ROLE_NAMES,
+                                         STRUCTURED_ACTS, STRUCTURED_STATES)
 
+#: A-aligned trial envelope: ``calls``/``messages``/``actions`` are A log records.
+TRIAL_SCHEMA = 'ugrp.zone_study_trial.v1'
 PROVISIONAL_SCHEMA = 'ugrp.zone_study_trial.provisional.v1'
-#: Schemas this module knows how to read. Package A's contract id is appended
-#: here (with an adapter in :func:`parse_trial`) once its PR is merged.
-SUPPORTED_SCHEMAS = (PROVISIONAL_SCHEMA,)
+#: Schemas this module knows how to read.
+SUPPORTED_SCHEMAS = (TRIAL_SCHEMA, PROVISIONAL_SCHEMA)
 
-#: Main conditions in reporting order, then the reference ceiling.
-MAIN_CONDITIONS = ('no_comm', 'peer_ko', 'leader_ko', 'peer_structured')
-REFERENCE_CONDITION = 'central_rgb_reference'
-CONDITIONS = MAIN_CONDITIONS + (REFERENCE_CONDITION,)
+#: Main conditions in reporting order, then the reference ceiling (package A).
+MAIN_CONDITIONS = A_MAIN_CONDITIONS
+REFERENCE_CONDITION = next(name for name, c in A_CONDITIONS.items() if not c.is_main)
+CONDITIONS = tuple(A_CONDITIONS)
 
-CONDITION_LABELS_KO = {
-    'no_comm': '① 무통신',
-    'peer_ko': '② 자유 한국어 대화',
-    'leader_ko': '③ 한국어 지휘 겸임',
-    'peer_structured': '④ 정형 메시지',
-    REFERENCE_CONDITION: 'R 전지적 지휘 참조 상한',
-}
-#: Package C (``kiro/zone-study-protocol``, PR 184) names two conditions
-#: differently. Accept both spellings and normalise to the names above so the
-#: integration does not need a rewrite; the original is kept in
-#: ``condition_as_logged``.
-CONDITION_ALIASES = {'structured': 'peer_structured', 'reference_R': REFERENCE_CONDITION}
-#: Package C's message envelope field names, mapped onto the ones used here.
+#: Report labels: package A's ``korean_label`` with the study's numbering.
+_NUMBER_KO = {'no_comm': '①', 'peer_ko': '②', 'leader_ko': '③', 'structured': '④',
+              REFERENCE_CONDITION: 'R'}
+CONDITION_LABELS_KO = {name: f'{_NUMBER_KO.get(name, "")} {c.korean_label}'.strip()
+                       for name, c in A_CONDITIONS.items()}
+#: Condition spellings of the provisional records, normalised onto package A's
+#: names. The value as logged is kept in ``condition_as_logged``.
+CONDITION_ALIASES = {'peer_structured': 'structured', 'central_rgb_reference': REFERENCE_CONDITION}
+#: Utterance field names of the provisional records, mapped onto the ones used here.
 UTTERANCE_ALIASES = {'from_robot': 'sender', 'sent_at_sim_s': 'sim_s',
                      'delivered_at_sim_s': 'delivered_sim_s', 'structured': 'message'}
 
-#: Free-text channels. ``structured`` carries no free text by construction.
-FREE_TEXT_ENCODINGS = ('ko_free',)
-STRUCTURED_ENCODINGS = ('structured',)
+#: Free-text and fixed-schema channels, using package A's encoding literals.
+FREE_TEXT_ENCODINGS = ('free_ko',)
+STRUCTURED_ENCODINGS = ('schema',)
+#: Encoding spellings of the provisional records, normalised onto A's literals.
+ENCODING_ALIASES = {'ko_free': 'free_ko', 'structured': 'schema'}
 
 SUCCESS_END_REASON = 'orders_complete'
 #: Every non-success terminal reason still counts in the denominators.
@@ -75,12 +87,13 @@ FAILURE_END_REASONS = (
 )
 END_REASONS = (SUCCESS_END_REASON,) + FAILURE_END_REASONS
 
-#: Robot-facing input keys allowed on every model call (own-camera study).
-ALLOWED_INPUT_KEYS = frozenset({
-    'static_map', 'static_map_figure', 'order_sheet', 'own_rgb', 'own_rgb_history',
-    'own_commands', 'own_command_state', 'own_belief', 'inbox', 'robot_id',
-    'request_id', 'sim_time_s', 'action_schema', 'condition_instruction',
-})
+#: Robot-facing input keys allowed on every model call. Package A's per-condition
+#: allowlists are the source of truth; the extra names are request bookkeeping the
+#: provisional records used.
+ALLOWED_INPUT_KEYS = frozenset().union(*(c.input_allowlist for c in A_CONDITIONS.values())) | {
+    'static_map_figure', 'own_rgb', 'own_rgb_history', 'own_commands', 'own_command_state',
+    'own_belief', 'action_schema', 'condition_instruction', 'dialogue_window',
+}
 #: Input keys that mean evaluation data leaked back into a robot request.
 FORBIDDEN_INPUT_KEYS = frozenset({
     'top_rgb', 'top_camera', 'top_labels', 'top_zone_counts', 'nav_cam',
@@ -124,6 +137,7 @@ CLAIM_CUES = {
     'blocked': r'막혀|막힌|막았|차단|blocked',
     'absent': r'없습니다|없어|비었|비어 ?있|텅 ?비|absent|empty',
 }
+ZONES = ('A', 'B', 'C')
 ZONE_RE = re.compile(r'(?<![A-Za-z0-9_-])([ABC])(?![A-Za-z0-9_])')
 ITEM_RE = re.compile(r'(?<![A-Za-z0-9_])([a-z][a-z_]*-\d+)(?![0-9])')
 PASSAGE_RE = re.compile(r'(?<![A-Za-z0-9_])((?:door|corridor|passage)_[a-z0-9_]+)')
@@ -151,9 +165,12 @@ class TrialError(ValueError):
 # --------------------------------------------------------------------------- #
 
 def parse_trial(obj):
-    """Validate a provisional trial record and return an independent copy.
+    """Validate a trial record and return an independent copy.
 
-    The input mapping is never mutated; callers keep their raw archived log.
+    For :data:`TRIAL_SCHEMA` the ``calls``/``messages``/``actions`` rows are
+    package A log records: each one is validated by ``A.validate_log_record`` and
+    then mapped onto the ``requests``/``utterances`` views the metrics read. The
+    input mapping is never mutated; callers keep their raw archived log.
     """
     if not isinstance(obj, dict):
         raise TrialError('trial record must be a JSON object')
@@ -168,10 +185,15 @@ def parse_trial(obj):
     if condition not in CONDITIONS:
         raise TrialError(f'unknown condition {condition!r}; known: {CONDITIONS}'
                          f' (aliases: {sorted(CONDITION_ALIASES)})')
+    if schema == TRIAL_SCHEMA:
+        _adapt_contract_rows(trial)
     for utt in _rows(trial, 'utterances'):
         for old, new in UTTERANCE_ALIASES.items():
             if old in utt and new not in utt:
                 utt[new] = utt.pop(old)
+        if utt.get('encoding') in ENCODING_ALIASES:
+            utt['encoding_as_logged'] = utt['encoding']
+            utt['encoding'] = ENCODING_ALIASES[utt['encoding']]
     reason = trial.get('end_reason')
     if reason not in END_REASONS:
         raise TrialError(f'unknown end_reason {reason!r}; known: {END_REASONS}')
@@ -188,6 +210,99 @@ def parse_trial(obj):
     if trial.get('end_sim_s') is None:
         raise TrialError('trial record needs end_sim_s')
     return trial
+
+
+#: What an A-aligned record may archive per request next to its call rows.
+#: Third review, finding 1: the archive now carries the WHOLE final request
+#: (system/user text, image manifest, token counts), which package I re-hashes.
+REQUEST_ARCHIVE_KEYS = ('request_id', 'input_keys', 'input_sha256', 'request_sha256',
+                        'prompt_version', 'system', 'user', 'image_refs', 'tokens', 'billed_tokens',
+                        'provider_usage', 'call_id', 'robot', 'sim_s', 'payload_validated', 'status',
+                        'images', 'messages_out', 'unparsed_utterances', 'error')
+#: The part of an archived request that makes it re-hashable.
+REQUEST_BODY_KEYS = ('system', 'user', 'image_refs', 'tokens', 'billed_tokens')
+
+
+def _adapt_contract_rows(trial):
+    """Validate package A log rows in place and build the metric views.
+
+    ``requests`` and ``utterances`` are derived, never authored: an A-aligned
+    record that also carries them by hand is refused, so there is exactly one
+    source for every number.
+    """
+    for key in ('requests', 'utterances'):
+        if key in trial:
+            raise TrialError(f'{TRIAL_SCHEMA} derives {key} from the package A log rows; '
+                             'do not author it as well')
+    expected = {'calls': CALL_LOG_SCHEMA, 'messages': MESSAGE_LOG_SCHEMA, 'actions': ACTION_LOG_SCHEMA}
+    for key, log_schema in expected.items():
+        for row in _rows(trial, key):
+            if row.get('schema') != log_schema:
+                raise TrialError(f'{key}[] must carry schema {log_schema}, got {row.get("schema")!r}')
+            validate_log_record(row)
+    archive = {}
+    for row in _rows(trial, 'request_archive'):
+        if set(row) - set(REQUEST_ARCHIVE_KEYS) or not isinstance(row.get('request_id'), str):
+            raise TrialError(f'request_archive[] carries only {REQUEST_ARCHIVE_KEYS}')
+        if any(k in row for k in REQUEST_BODY_KEYS):
+            # an archive that carries a body must BE the request: re-derive the
+            # digest and the counts from the stored text (third review, finding 1)
+            from harness.zone_study_prompts_ko import verify_archived_request
+            problems = verify_archived_request(row)
+            if problems:
+                raise TrialError(f'request_archive {row["request_id"]}: ' + '; '.join(problems))
+        archive[row['request_id']] = row
+    trial['requests'] = []
+    for call in _rows(trial, 'calls'):
+        view = _request_view(call)
+        stored = archive.get(call['request_id'])
+        if stored is not None:
+            if stored.get('input_sha256') not in (None, call['input_sha256']):
+                raise TrialError(f'request_archive {call["request_id"]}: input_sha256 differs from the call log')
+            view['input_keys'] = list(stored.get('input_keys') or ())
+            view['request_sha256'] = stored.get('request_sha256')
+        view['request_rehashed'] = stored is not None and all(k in stored for k in REQUEST_BODY_KEYS)
+        trial['requests'].append(view)
+    trial['utterances'] = [_utterance_view(row) for row in _rows(trial, 'messages')]
+
+
+def _request_view(call):
+    """One package A call record as the request row the boundary audit reads.
+
+    A's call record carries no ``input_keys``: the payload was validated at build
+    time, and ``payload_validated`` is the auditable fact. A run that also stored
+    the payload keys may pass them through ``input_keys``.
+    """
+    return {'request_id': call['request_id'], 'robot': call['actor'], 'role': call['role'],
+            'sim_s': call['requested_at_sim_s'], 'released_sim_s': call['released_at_sim_s'],
+            'sim_cost_s': call['sim_cost_s'], 'trigger': call['trigger'], 'status': call['status'],
+            'payload_validated': call['payload_validated'], 'input_sha256': call['input_sha256'],
+            'decision_sources': list(call['decision_sources']),
+            'message_ids': list(call['message_ids']),
+            'http_attempts': call['http_attempts'], 'output_tokens': call['output_tokens'],
+            'input_tokens': dict(call['input_tokens'])}
+
+
+def _utterance_view(message):
+    """One package A message record as the utterance row the dialogue metrics read.
+
+    The SIM cost of speaking is charged on the CALL that produced the message
+    (package D), so ``sim_cost_s`` stays ``None`` here and the authoritative talk
+    cost is ``model.sim_cost_s``.
+    """
+    body = message.get('body')
+    free = message.get('encoding') in FREE_TEXT_ENCODINGS
+    view = {'message_id': message['message_id'], 'sender': message['sender'],
+            'recipients': list(message['recipients']), 'encoding': message['encoding'],
+            'sim_s': message['created_at_sim_s'], 'delivered_sim_s': message['delivered_at_sim_s'],
+            'reply_to': message.get('reply_to'), 'status': message['status'],
+            'act': message.get('act'), 'chars': message.get('chars'),
+            'korean_ok': message.get('korean_ok'), 'sim_cost_s': None}
+    if free:
+        view['text'] = body.get('text') if isinstance(body, dict) else None
+    else:
+        view['message'] = copy.deepcopy(body)
+    return view
 
 
 def load_trial(path):
@@ -232,6 +347,192 @@ def _rows(container, key):
 
 
 # --------------------------------------------------------------------------- #
+# model cost: ONE aggregation source (2026-09-26 review finding 10)
+
+#: Call statuses that mean the call never finished inside the horizon. Their SIM
+#: cost is real but the API resources they used are unknown, so they are counted
+#: separately instead of as zero.
+CENSORED_STATUS = 'censored'
+
+
+def _opt_float(value):
+    return None if value is None else float(value)
+
+
+def model_aggregate(trial):
+    """Model calls, HTTP attempts, tokens and SIM cost, derived from the LOG rows.
+
+    2026-09-26 review finding 10: ``efficiency_metrics`` read a separate
+    ``trial['model']`` summary, so a record with a perfectly good call log
+    reported 0 calls, 0 tokens and 0 thinking cost, and a wrong summary was never
+    compared with the log. The package A ``calls``/``messages`` rows are now the
+    single source; a summary that is ALSO present must agree with them.
+
+    Second review:
+
+    * the SIM cost terms do not overlap. A call's charged ``sim_cost_s``
+      already contains the utterance term, so ``think`` = call total minus the
+      utterance term and ``talk`` = the utterance term (``think + talk ==
+      call``); ``delivery`` is the separate transport delay.
+    * the API resource totals (tokens, HTTP attempts) include censored calls:
+      the request was made even though its action was never released.
+    * a missing number stays ``None`` (no cost source at all returns ``None``,
+      and a summary without a term does not turn it into 0).
+    """
+    calls = _rows(trial, 'calls')
+    summary = trial.get('model') if isinstance(trial.get('model'), dict) else None
+    marker = None if summary is None else _summary_usage_marker(summary)
+    if not calls:
+        if summary is None:
+            return None
+        tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
+        cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
+        # fifth review, P2: the unknown marker of a summary-only record travels
+        # with its counts, so the known 833 + 40 stay a LOWER bound of 873
+        return {'source': 'summary', 'logical_calls': summary.get('logical_calls'),
+                'http_attempts': summary.get('http_attempts'),
+                'censored_calls': summary.get('censored_calls'),
+                'usage_unknown_calls': marker['usage_unknown_calls'],
+                'tokens_complete': marker['tokens_complete'],
+                'tokens': {k: _summary_count(tokens, k) for k in ('input', 'output', 'image', 'cached')},
+                'call_sim_s': _opt_float(cost.get('call')),
+                'think_sim_s': _opt_float(cost.get('think')),
+                'talk_sim_s': _opt_float(cost.get('talk')),
+                'delivery_sim_s': _opt_float(cost.get('delivery')),
+                'wall_latency_ms': [float(v) for v in (summary.get('wall_latency_ms') or [])
+                                    if v is not None],
+                'mismatch': []}
+    censored = [c for c in calls if c.get('status') == CENSORED_STATUS]
+    done = [c for c in calls if c.get('status') != CENSORED_STATUS]
+    call_total = sum(float(c.get('sim_cost_s') or 0.0) for c in done)
+    talk = sum(float((c.get('cost_terms') or {}).get('gamma_s_per_utterance') or 0.0) for c in done)
+    delivery = sum(float(m.get('delivery_delay_s') or 0.0) for m in _rows(trial, 'messages'))
+    tokens = {
+        'input': sum(int((c.get('input_tokens') or {}).get('text') or 0) for c in calls),
+        'output': sum(int(c.get('output_tokens') or 0) for c in calls),
+        'image': sum(int((c.get('input_tokens') or {}).get('image') or 0) for c in calls),
+        'cached': sum(int((c.get('input_tokens') or {}).get('cached') or 0) for c in calls),
+    }
+    latencies = [float(c['wall_latency_s']) * 1000.0 for c in done if c.get('wall_latency_s') is not None]
+    # Third review, finding 16: a call whose billed usage is unknown (a plain
+    # transport exception) carries 0 tokens as a LOWER BOUND. The flag is read
+    # from every call, completed or censored, and the token totals are then
+    # reported as incomplete instead of as a confirmed number.
+    unknown = [c for c in calls if _usage_unknown(c)]
+    # the provider's own usage report, kept apart from the standardised billed
+    # size above; None unless EVERY call carries one (offline: no provider).
+    reports = [(c.get('cost_terms') or {}).get('provider_usage') for c in calls]
+    provider = None
+    if calls and all(isinstance(r, dict) for r in reports):
+        provider = {}
+        for report in reports:
+            for key, value in report.items():
+                provider[key] = provider.get(key, 0) + int(value)
+    out = {'source': 'calls', 'logical_calls': len(calls),
+           'usage_unknown_calls': len(unknown), 'tokens_complete': not unknown,
+           'provider_usage': provider,
+           'provider_usage_calls': sum(1 for r in reports if isinstance(r, dict)),
+           'completed_calls': len(done),
+           'http_attempts': sum(int(c.get('http_attempts') or 0) for c in calls),
+           'censored_calls': len(censored),
+           'censored_usage_unknown': sum(1 for c in censored
+                                         if not (c.get('cost_terms') or {}).get('usage_known')),
+           'censored_elapsed_sim_s': round(sum(float(c.get('sim_cost_s') or 0.0) for c in censored), 6),
+           'tokens': tokens,
+           'call_sim_s': round(call_total, 6),
+           'think_sim_s': round(call_total - talk, 6), 'talk_sim_s': round(talk, 6),
+           'delivery_sim_s': round(delivery, 6), 'wall_latency_ms': latencies, 'mismatch': []}
+    if summary is not None:
+        out['mismatch'] = _summary_mismatch(summary, out, marker)
+        out['source'] = 'calls+summary'
+    return out
+
+
+def _summary_count(tokens, key):
+    """A summary token count: None, or a non-negative integral number.
+
+    Fifth review, P2: ``int(tokens[k])`` turned ``NaN`` into a crash, ``-1`` into
+    a negative lower bound and ``'833'`` into a silent cast; they are refused.
+    """
+    value = tokens.get(key)
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) \
+            or value < 0 or value != int(value):
+        raise TrialError(f'model.tokens.{key} must be a non-negative integer or null, got {value!r}')
+    return int(value)
+
+
+def _summary_usage_marker(summary):
+    """``tokens_complete`` / ``usage_unknown_calls`` of a model summary, validated.
+
+    Fifth review, P2: a summary-only record lost both, so its known tokens were
+    reported as a confirmed total. A summary may state either or both; when both
+    are present they must agree, and an incomplete summary must count its
+    unknown calls. A legacy summary with neither is complete, count unreported.
+    """
+    complete = summary.get('tokens_complete')
+    count = summary.get('usage_unknown_calls')
+    if complete is not None and not isinstance(complete, bool):
+        raise TrialError(f'model.tokens_complete must be true, false or absent, got {complete!r}')
+    if count is not None:
+        if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+            raise TrialError(f'model.usage_unknown_calls must be a non-negative int, got {count!r}')
+        if complete is not None and complete != (count == 0):
+            raise TrialError(f'model.tokens_complete={complete} and usage_unknown_calls={count} '
+                             'contradict each other')
+        return {'tokens_complete': count == 0, 'usage_unknown_calls': count}
+    if complete is False:
+        raise TrialError('model.tokens_complete=false needs model.usage_unknown_calls (how many '
+                         'calls have an unknown usage)')
+    return {'tokens_complete': True, 'usage_unknown_calls': None}
+
+
+def _usage_unknown(call):
+    """True when a call's billed usage is not known (third review, finding 16).
+
+    Completed calls of older records carry no flag and count as known; a
+    censored call without the flag counts as unknown (its 0 is not a fact).
+    """
+    terms = call.get('cost_terms') or {}
+    if terms.get('usage_known') is False:
+        return True
+    return call.get('status') == CENSORED_STATUS and 'usage_known' not in terms
+
+
+def _summary_mismatch(summary, derived, marker):
+    """Where a separate ``model`` summary disagrees with the call log.
+
+    Second review: image/cache tokens and the delivery and call-total SIM cost
+    are compared too, so a summary cannot disagree with the log on them. Fifth
+    review: so is a stated unknown-usage count.
+    """
+    tokens = summary.get('tokens') if isinstance(summary.get('tokens'), dict) else {}
+    cost = summary.get('sim_cost_s') if isinstance(summary.get('sim_cost_s'), dict) else {}
+    out = []
+    checks = [('logical_calls', summary.get('logical_calls'), derived['logical_calls']),
+              ('usage_unknown_calls', marker['usage_unknown_calls'], derived['usage_unknown_calls']),
+              ('censored_calls', summary.get('censored_calls'), derived['censored_calls']),
+              ('http_attempts', summary.get('http_attempts'), derived['http_attempts']),
+              ('sim_cost_s.censored_elapsed', cost.get('censored_elapsed'),
+               derived['censored_elapsed_sim_s']),
+              ('tokens.input', _summary_count(tokens, 'input'), derived['tokens']['input']),
+              ('tokens.output', _summary_count(tokens, 'output'), derived['tokens']['output']),
+              ('tokens.image', _summary_count(tokens, 'image'), derived['tokens']['image']),
+              ('tokens.cached', _summary_count(tokens, 'cached'), derived['tokens']['cached']),
+              ('sim_cost_s.call', cost.get('call'), derived['call_sim_s']),
+              ('sim_cost_s.think', cost.get('think'), derived['think_sim_s']),
+              ('sim_cost_s.talk', cost.get('talk'), derived['talk_sim_s']),
+              ('sim_cost_s.delivery', cost.get('delivery'), derived['delivery_sim_s'])]
+    for name, given, got in checks:
+        if given is None:
+            continue
+        if abs(float(given) - float(got)) > 1e-6:
+            out.append(f'{name}: summary {given} vs call log {got}')
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # input-boundary audit
 # --------------------------------------------------------------------------- #
 
@@ -239,15 +540,20 @@ def audit_input_boundary(trial):
     """Check that no recorded robot request carried evaluation-only inputs.
 
     Returns a report with one row per offending request. ``clean`` is False as
-    soon as a forbidden or unknown input key, a forbidden grounds citation, or a
-    channel/topology violation appears.
+    soon as a forbidden or unknown input key, an unvalidated payload, a forbidden
+    grounds citation, or a channel/topology violation appears.
+
+    For an A-aligned record the per-call boundary was enforced when the payload
+    was built, so ``payload_validated`` is the auditable fact; a run that also
+    archived the payload keys may add ``input_keys`` and both are checked.
     """
     condition = trial['condition']
-    leaks, unknown = [], []
+    leaks, unknown, unvalidated, unconfirmed = [], [], [], []
     for req in _rows(trial, 'requests'):
         keys = req.get('input_keys')
         keys = list(keys) if isinstance(keys, (list, tuple)) else []
-        bad = sorted(set(keys) & FORBIDDEN_INPUT_KEYS)
+        bad = sorted(set(keys) & FORBIDDEN_INPUT_KEYS
+                     | {k for k in keys if forbidden_key_hits({k: None})})
         odd = sorted(set(keys) - FORBIDDEN_INPUT_KEYS - ALLOWED_INPUT_KEYS)
         if bad:
             leaks.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
@@ -255,6 +561,12 @@ def audit_input_boundary(trial):
         if odd:
             unknown.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
                             'unknown_input_keys': odd})
+        if req.get('payload_validated') is False:
+            unvalidated.append({'request_id': req.get('request_id'), 'robot': req.get('robot'),
+                                'status': req.get('status')})
+        elif req.get('payload_validated') is not True:
+            # no auditable fact either way: not a violation, not clean either
+            unconfirmed.append({'request_id': req.get('request_id'), 'robot': req.get('robot')})
     if condition == REFERENCE_CONDITION:
         # R is the all-seeing commander: peer RGB is expected there, so the
         # request audit is reported but does not gate the main conditions.
@@ -266,10 +578,27 @@ def audit_input_boundary(trial):
         if bad:
             grounds.append({'message_id': utt.get('message_id'), 'forbidden_grounds': bad})
     channel = channel_compliance(trial)
-    clean = (not leaks and not unknown and not grounds
-             and not channel['violations'] and condition != REFERENCE_CONDITION)
+    # Second review: the absence of evidence is not evidence of a clean
+    # boundary. A trial without request rows, or with requests whose validation
+    # was never recorded, is ``unverified`` (``boundary_status``).
+    missing_evidence = []
+    if not _rows(trial, 'requests'):
+        missing_evidence.append('no request rows')
+    if unconfirmed:
+        missing_evidence.append(f'{len(unconfirmed)} request(s) without payload_validated')
+    # third review, finding 1: an A-aligned request whose final text was not
+    # archived cannot be audited afterwards, so it is not evidence of a clean
+    # boundary either (a provisional record authors ``requests`` itself)
+    not_archived = [r for r in _rows(trial, 'requests') if r.get('request_rehashed') is False]
+    if not_archived:
+        missing_evidence.append(f'{len(not_archived)} request(s) without a re-hashable final request')
+    clean = (not leaks and not unknown and not grounds and not unvalidated
+             and not channel['violations'] and condition != REFERENCE_CONDITION
+             and not missing_evidence)
     return {'condition': condition, 'requests_checked': len(_rows(trial, 'requests')),
             'input_leaks': leaks, 'unknown_input_keys': unknown,
+            'unvalidated_payloads': unvalidated, 'unconfirmed_payloads': unconfirmed,
+            'missing_evidence': missing_evidence,
             'forbidden_grounds': grounds, 'channel_violations': channel['violations'],
             'clean': clean,
             'note': 'R은 전지적 참조 상한이므로 주 조건 경계 판정에서 제외한다.'
@@ -277,11 +606,82 @@ def audit_input_boundary(trial):
                     '평가 로그·정답·TOP은 로봇 입력으로 되돌리지 않는다.'}
 
 
+#: Every audit list that makes a trial NOT clean. One tuple, so the trial report,
+#: the cohort summary and the text report cannot disagree (review finding 14).
+BOUNDARY_FAILURE_KEYS = ('input_leaks', 'unknown_input_keys', 'unvalidated_payloads',
+                         'forbidden_grounds', 'channel_violations')
+
+
+def boundary_failures(boundary):
+    """``{key: count}`` of every audit failure of one trial (0 entries dropped)."""
+    return {key: len(boundary.get(key) or ()) for key in BOUNDARY_FAILURE_KEYS
+            if boundary.get(key)}
+
+
+def boundary_status(boundary):
+    """``clean`` | ``violation`` | ``unverified`` — one rule for every consumer.
+
+    2026-09-26 review finding 14: the cohort summary counted only
+    ``input_leaks``/``forbidden_grounds``/``channel_violations``, so a trial with
+    ``payload_validated=False`` or an unknown input key was reported as having no
+    problem while its own ``boundary.clean`` was already False.
+    """
+    if boundary_failures(boundary):
+        return 'violation'
+    if boundary.get('clean'):
+        return 'clean'
+    return 'unverified'
+
+
+def _channel_edges(condition, leader, seed, robots):
+    """(allowed edges, rotation problem) of one trial.
+
+    The hub-and-spoke edges come from the DECLARED leader, and the declared
+    leader is separately checked against the seed rotation (review findings 9
+    and 13): a fixed leader across seeds is a design violation, not a per-message
+    channel violation.
+    """
+    spec = A_CONDITIONS[condition]
+    problem = None
+    if spec.leader_rotation and isinstance(seed, int) and not isinstance(seed, bool):
+        expected = A_leader_for_seed(condition, seed)
+        if leader and leader != expected:
+            problem = {'message_id': None, 'kind': 'leader_rotation_mismatch',
+                       'leader_id': leader, 'expected_leader': expected, 'seed': seed}
+    if spec.topology == 'none':
+        return frozenset(), problem
+    if spec.topology == 'mesh':
+        try:
+            return A_allowed_edges(condition), problem
+        except Exception:
+            return None, problem
+    if spec.topology == 'star':
+        hub = leader or (A_leader_for_seed(condition, seed)
+                         if isinstance(seed, int) and not isinstance(seed, bool) else None)
+        if hub is None:
+            return None, problem
+        team = tuple(robots) or tuple(A_CONDITIONS[condition].actors)
+        return frozenset([(hub, f) for f in team if f != hub]
+                         + [(f, hub) for f in team if f != hub]), problem
+    return None, problem
+
+
 def channel_compliance(trial):
-    """Per-condition channel rules: no_comm silence, hub-and-spoke, no free text."""
+    """Per-condition channel rules: no_comm silence, hub-and-spoke, no free text.
+
+    2026-09-26 review finding 13: a leader message addressed to BOTH followers
+    satisfies every hub-and-spoke edge of packages A and C, but this function
+    counted it as a ``leader_broadcast`` violation, which penalised the leader
+    condition for something the design allows. The check is now A's
+    ``allowed_edges`` per recipient, and no separate broadcast rule exists.
+    """
     condition, leader = trial['condition'], trial.get('leader_id')
     robots = list(trial.get('robots') or ())
+    seed = trial.get('seed')
+    edges, rotation_problem = _channel_edges(condition, leader, seed, robots)
     violations, sends = [], collections.Counter()
+    if rotation_problem:
+        violations.append(rotation_problem)
     for utt in _rows(trial, 'utterances'):
         sender = utt.get('sender')
         recipients = [r for r in (utt.get('recipients') or []) if r]
@@ -291,14 +691,7 @@ def channel_compliance(trial):
         if condition == 'no_comm':
             violations.append({'message_id': utt.get('message_id'), 'kind': 'no_comm_message'})
             continue
-        if condition == 'leader_ko':
-            if sender != leader and any(r != leader for r in recipients):
-                violations.append({'message_id': utt.get('message_id'), 'kind': 'follower_to_follower',
-                                   'sender': sender, 'recipients': recipients})
-            if sender == leader and len(recipients) > 1:
-                violations.append({'message_id': utt.get('message_id'), 'kind': 'leader_broadcast',
-                                   'recipients': recipients})
-        if condition == 'peer_structured':
+        if condition == 'structured':
             if encoding not in STRUCTURED_ENCODINGS:
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'non_structured_encoding',
                                    'encoding': encoding})
@@ -314,31 +707,154 @@ def channel_compliance(trial):
             if robots and recipient not in robots and recipient != 'commander':
                 violations.append({'message_id': utt.get('message_id'), 'kind': 'unknown_recipient',
                                    'recipient': recipient})
-    return {'violations': violations, 'sends_by_actor': dict(sends)}
+            elif edges is not None and (sender, recipient) not in edges:
+                kind = 'follower_to_follower' if condition == 'leader_ko' else 'edge_not_allowed'
+                violations.append({'message_id': utt.get('message_id'), 'kind': kind,
+                                   'sender': sender, 'recipient': recipient})
+    return {'violations': violations, 'sends_by_actor': dict(sends),
+            'edges': sorted(edges) if edges is not None else None}
 
 
 # --------------------------------------------------------------------------- #
 # efficiency
 # --------------------------------------------------------------------------- #
 
+def _orders(trial):
+    """Order rows with their identity, kind, destination and required count."""
+    out = []
+    for order in _rows(trial, 'orders'):
+        items = [i for i in (order.get('item_ids') or []) if i]
+        count = int(order.get('count') or len(items) or 0)
+        identity = order.get('identity') or ('specific_item' if items else 'kind_fungible')
+        out.append({'order_id': order.get('order_id'), 'kind': order.get('kind'),
+                    'zone': order.get('destination_zone'), 'count': max(count, len(items)),
+                    'item_ids': items, 'identity': identity})
+    return out
+
+
 def _ordered_items(trial):
     """Item ids the order sheet asked for; falls back to per-order counts."""
     ids, count = [], 0
-    for order in _rows(trial, 'orders'):
-        item_ids = [i for i in (order.get('item_ids') or []) if i]
-        ids.extend(item_ids)
-        count += int(order.get('count') or len(item_ids) or 0)
+    for order in _orders(trial):
+        ids.extend(order['item_ids'])
+        count += order['count']
     return ids, max(count, len(ids))
 
 
 def _destinations(trial):
     dest = {}
-    for order in _rows(trial, 'orders'):
-        zone = order.get('destination_zone')
-        for item in (order.get('item_ids') or []):
-            if item:
-                dest[item] = zone
+    for order in _orders(trial):
+        for item in order['item_ids']:
+            dest[item] = order['zone']
     return dest
+
+
+def _item_kind(row, orders):
+    """Kind of a delivered item: the row's own field, else the id prefix an order names."""
+    if isinstance(row.get('kind'), str) and row['kind']:
+        return row['kind']
+    item = row.get('item_id')
+    if not isinstance(item, str):
+        return None
+    kinds = {o['kind'] for o in orders if isinstance(o['kind'], str)}
+    for kind in sorted(kinds, key=len, reverse=True):
+        if item == kind or item.startswith(kind + '_') or item.startswith(kind + '-'):
+            return kind
+    return None
+
+
+def _allowed_zones(row, by_item, orders):
+    """Zones a delivered item may legitimately end in (empty = not ordered)."""
+    item = row.get('item_id')
+    if item in by_item:
+        return {by_item[item]['zone']}
+    kind = _item_kind(row, orders)
+    return {o['zone'] for o in orders if o['identity'] == 'kind_fungible' and o['kind'] == kind}
+
+
+def delivery_state(trial):
+    """Final delivery state per order, plus the misdelivery HISTORY.
+
+    2026-09-26 review finding 11:
+
+    * the FINAL state of an item counts, not its first referee row, so a
+      misdelivery that the team corrected is a delivery and the wrong drop stays
+      visible in ``misdeliveries``;
+    * a ``kind_fungible`` order has no item ids, so an item is matched by KIND
+      and zone up to the ordered count instead of being called misdelivered;
+    * only rows inside the trial window ``[t0, end]`` count, and a row whose
+      item/kind belongs to no order is ``surplus``, never a delivery.
+    """
+    orders = _orders(trial)
+    t0 = float(trial.get('t0_sim_s') or 0.0)
+    end = float(trial['end_sim_s'])
+    by_item = {i: o for o in orders for i in o['item_ids']}
+    rows = []
+    for row in _rows(_referee(trial), 'deliveries'):
+        when = row.get('sim_s')
+        when = float(when) if isinstance(when, (int, float)) and not isinstance(when, bool) else None
+        if when is not None and (when < t0 - 1e-9 or when > end + 1e-9):
+            rows.append({**row, 'sim_s': when, 'outside_window': True})
+            continue
+        rows.append({**row, 'sim_s': when, 'outside_window': False})
+    inside = [r for r in rows if not r['outside_window']]
+    # final state per item id: the LAST row wins (a correction overrides a mistake)
+    final = {}
+    for row in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0)):
+        if isinstance(row.get('item_id'), str):
+            final[row['item_id']] = row
+    delivered, misdelivered, surplus = {}, {}, []
+    fungible_used = collections.Counter()
+    # Second review, finding 11: a WRONG-zone fungible item used to consume the
+    # order's quantity, so ``red_0 -> C`` (wrong) plus ``red_1, red_2 -> B``
+    # (right) for a 2-red order counted only one delivery. Correct placements
+    # fill the quota first; a wrong placement never consumes it.
+    wrong_fungible = []
+    for item, row in sorted(final.items()):
+        zone = row.get('zone')
+        order = by_item.get(item)
+        if order is None:
+            kind = _item_kind(row, orders)
+            candidates = [o for o in orders if o['identity'] == 'kind_fungible' and o['kind'] == kind]
+            order = next((o for o in candidates
+                          if fungible_used[o['order_id']] < o['count'] and o['zone'] == zone), None)
+            if order is None:
+                if candidates and not any(o['zone'] == zone for o in candidates):
+                    wrong_fungible.append((item, row, candidates))
+                else:
+                    surplus.append(item)        # right zone, quota already filled, or no order
+                continue
+            fungible_used[order['order_id']] += 1
+        correct = order['zone'] == zone
+        (delivered if correct else misdelivered)[item] = {
+            'zone': zone, 'sim_s': row.get('sim_s'), 'order_id': order['order_id']}
+    for item, row, candidates in wrong_fungible:
+        # a wrong-zone item of an ordered kind: a misdelivery against the first
+        # order of that kind, WITHOUT consuming its quantity
+        misdelivered[item] = {'zone': row.get('zone'), 'sim_s': row.get('sim_s'),
+                              'order_id': candidates[0]['order_id']}
+    # Third review, finding 11: the history used to look only at items an order
+    # names by id, so a fungible ``red_1: C -> B`` recovery counted one delivery
+    # and ZERO recoveries. A drop is a misplacement when its zone is none of the
+    # zones its item may go to: the order's zone for a named item, the zones of
+    # every fungible order of its kind otherwise. Unordered items stay surplus.
+    history = []
+    for r in sorted(inside, key=lambda r: (r['sim_s'] if r['sim_s'] is not None else 0.0)):
+        if not isinstance(r.get('item_id'), str):
+            continue
+        allowed = _allowed_zones(r, by_item, orders)
+        if allowed and r.get('zone') not in allowed:
+            history.append({'item_id': r['item_id'], 'zone': r.get('zone'), 'sim_s': r['sim_s'],
+                            'identity': 'specific_item' if r['item_id'] in by_item else 'kind_fungible'})
+    fulfilled = {}
+    for order in orders:
+        got = sum(1 for d in delivered.values() if d['order_id'] == order['order_id'])
+        fulfilled[order['order_id']] = {'ordered': order['count'], 'delivered': got,
+                                        'complete': got >= order['count']}
+    return {'delivered': delivered, 'misdelivered': misdelivered, 'surplus': surplus,
+            'misdelivery_history': history, 'by_order': fulfilled,
+            'outside_window': [r for r in rows if r['outside_window']],
+            'orders_complete': bool(orders) and all(v['complete'] for v in fulfilled.values())}
 
 
 def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
@@ -361,19 +877,9 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
     charged = elapsed if success else penalty_factor * horizon
 
     ordered_ids, ordered_count = _ordered_items(trial)
-    dest = _destinations(trial)
-    delivered, misdelivered, seen = {}, {}, set()
-    for row in _rows(referee, 'deliveries'):
-        item = row.get('item_id')
-        if not item or item in seen:
-            continue            # count each item once, first referee delivery wins
-        seen.add(item)
-        zone = row.get('zone')
-        correct = row.get('correct')
-        if correct is None:
-            correct = (dest.get(item) == zone) if item in dest else None
-        (delivered if correct else misdelivered)[item] = {'zone': zone, 'sim_s': row.get('sim_s')}
-    surplus = sorted(set(delivered) - set(ordered_ids)) if ordered_ids else []
+    state = delivery_state(trial)
+    delivered, misdelivered = state['delivered'], state['misdelivered']
+    surplus = state['surplus']
 
     idle_raw = trial.get('idle') if isinstance(trial.get('idle'), dict) else {}
     idle_by_reason = collections.Counter()
@@ -393,12 +899,25 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
     conflicts = _rows(referee, 'conflicts')
     deadlocks = _rows(referee, 'deadlocks')
     replans = _rows(trial, 'replans')
-    model = trial.get('model') if isinstance(trial.get('model'), dict) else {}
-    tokens = model.get('tokens') if isinstance(model.get('tokens'), dict) else {}
-    sim_cost = model.get('sim_cost_s') if isinstance(model.get('sim_cost_s'), dict) else {}
-    talk_cost = float(sim_cost.get('talk') or 0.0) + float(sim_cost.get('delivery') or 0.0)
-    think_cost = float(sim_cost.get('think') or 0.0)
-    latencies = [float(v) for v in (model.get('wall_latency_ms') or []) if v is not None]
+    model = model_aggregate(trial)
+    if model is not None and model['mismatch']:
+        raise TrialError(f'{trial["trial_id"]}: the model summary disagrees with the call log '
+                         f'({"; ".join(model["mismatch"])}); calls/messages are the only aggregation '
+                         'source (review finding 10)')
+    tokens = (model or {}).get('tokens') or {}
+    # both aggregation sources now state the marker (fifth review, P2: the
+    # summary-only source did not, and this default turned it into "complete")
+    tokens_complete = model is None or model['tokens_complete'] is True
+    # Second review, finding 10: a missing cost source stays None in the FINAL
+    # metrics too (it used to become 0 here), and the terms do not overlap:
+    # think + utterance == call total; delivery is the transport delay.
+    utterance_cost = (model or {}).get('talk_sim_s')
+    delivery_cost = (model or {}).get('delivery_sim_s')
+    think_cost = (model or {}).get('think_sim_s')
+    call_cost = (model or {}).get('call_sim_s')
+    talk_cost = (None if utterance_cost is None and delivery_cost is None
+                 else float(utterance_cost or 0.0) + float(delivery_cost or 0.0))
+    latencies = list((model or {}).get('wall_latency_ms') or [])
 
     return {
         'trial_id': trial['trial_id'], 'condition': trial['condition'],
@@ -411,12 +930,23 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'makespan_success_only_s': round(elapsed, 4) if success else None,
         'par_makespan_sim_s': round(charged, 4),
         'penalty_factor': penalty_factor,
-        'talk_sim_cost_s': round(talk_cost, 4),
-        'think_sim_cost_s': round(think_cost, 4),
-        'talk_share_of_makespan': _ratio(talk_cost, elapsed),
+        'talk_sim_cost_s': _round4(talk_cost),
+        'think_sim_cost_s': _round4(think_cost),
+        'utterance_sim_cost_s': _round4(utterance_cost),
+        'delivery_sim_cost_s': _round4(delivery_cost),
+        'call_sim_cost_s': _round4(call_cost),
+        'talk_share_of_makespan': None if talk_cost is None else _ratio(talk_cost, elapsed),
         'ordered_items': ordered_count,
         'delivered_items': len(delivered),
         'misdelivered_items': len(misdelivered),
+        # distinct ITEMS that were once misplaced and ended delivered (named or
+        # fungible); the raw wrong drops are counted apart
+        'misdeliveries_recovered': len({row['item_id'] for row in state['misdelivery_history']
+                                        if row['item_id'] in delivered}),
+        'misplacement_events': len(state['misdelivery_history']),
+        'deliveries_outside_window': len(state['outside_window']),
+        'orders_complete': state['orders_complete'],
+        'orders_by_id': state['by_order'],
         'surplus_items': len(surplus),
         'undelivered_items': max(ordered_count - len(delivered), 0),
         'delivery_rate': _ratio(len(delivered), ordered_count),
@@ -431,19 +961,40 @@ def efficiency_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR):
         'deadlock_sim_s': round(sum(float(d.get('duration_s') or 0.0) for d in deadlocks), 4),
         'replans': len(replans),
         'replans_by_kind': dict(collections.Counter(r.get('kind', 'other') for r in replans)),
-        'model_calls': int(model.get('logical_calls') or 0),
-        'http_attempts': int(model.get('http_attempts') or 0),
-        'tokens_input': int(tokens.get('input') or 0),
-        'tokens_output': int(tokens.get('output') or 0),
-        'tokens_image': int(tokens.get('image') or 0),
-        'tokens_cached': int(tokens.get('cached') or 0),
-        'tokens_total': int(sum(int(tokens.get(k) or 0) for k in ('input', 'output', 'image'))),
-        'model_calls_per_delivered': round(int(model.get('logical_calls') or 0) / len(delivered), 4)
-                                     if delivered else None,
+        'model_calls': (model or {}).get('logical_calls'),
+        'model_calls_censored': (model or {}).get('censored_calls'),
+        'model_cost_source': (model or {}).get('source'),
+        'http_attempts': (model or {}).get('http_attempts'),
+        # third review, finding 16: an unknown usage makes the totals None; the
+        # counted numbers stay visible as an explicit lower bound.
+        'tokens_input': tokens.get('input') if tokens_complete else None,
+        'tokens_output': tokens.get('output') if tokens_complete else None,
+        'tokens_input_lower_bound': tokens.get('input'),
+        'tokens_output_lower_bound': tokens.get('output'),
+        'usage_unknown_calls': (model or {}).get('usage_unknown_calls'),
+        'provider_usage': (model or {}).get('provider_usage'),
+        'tokens_image': tokens.get('image'),
+        'tokens_cached': tokens.get('cached'),
+        'tokens_total': (None if model is None or not tokens_complete
+                         or any(tokens.get(k) is None for k in ('input', 'output', 'image'))
+                         else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
+        # fourth review, finding 16: the displays need the marker and the known
+        # lower bound of the TOTAL too, not only of input/output
+        'tokens_complete': None if model is None else tokens_complete,
+        'tokens_total_lower_bound': (None if model is None
+                                     or any(tokens.get(k) is None for k in ('input', 'output', 'image'))
+                                     else sum(int(tokens[k]) for k in ('input', 'output', 'image'))),
+        'model_calls_per_delivered': round((model or {}).get('logical_calls') / len(delivered), 4)
+                                     if delivered and (model or {}).get('logical_calls') is not None
+                                     else None,
         'wall_latency_ms_mean': round(statistics.mean(latencies), 2) if latencies else None,
         'budget_http_attempts': budget.get('http_attempts'),
         'budget_exhausted': trial['end_reason'] == 'budget_exhausted',
     }
+
+
+def _round4(value):
+    return None if value is None else round(float(value), 4)
 
 
 def _ratio(num, den):
@@ -455,9 +1006,15 @@ def _ratio(num, den):
 # --------------------------------------------------------------------------- #
 
 def _labels(trial):
-    """Item ids that must stay literal in Korean prose."""
+    """Ids that must stay literal in Korean prose.
+
+    Package A's order sheet declares BOTH the order ids and the item ids, and a
+    robot may name either, so both are literals here. An id-bearing token that is
+    in neither list stays reported as a literal-id issue.
+    """
     ids, _ = _ordered_items(trial)
-    return tuple(ids)
+    orders = [str(o['order_id']) for o in _rows(trial, 'orders') if o.get('order_id')]
+    return tuple(dict.fromkeys(list(ids) + orders))
 
 
 #: Identifier-like study words that are literal references, not code-switching.
@@ -536,34 +1093,154 @@ _STRUCT_TO_COARSE = {
 }
 
 
-def extract_claims(utterance, labels=()):
+def extract_claims(utterance, labels=(), orders=None):
     """Checkable propositions in an utterance.
 
     An explicit ``claims`` list (Package A) wins. Otherwise rule-based cues plus
     literal ids give ``delivered/holding/blocked/absent`` claims, matching the
     literal-id policy of PR 172's metrics.
+
+    2026-09-26 review finding 12: the free-text ids were found with a
+    hyphen-number regex, so the real ids of package E (``cyan_1``, ``beam_1``)
+    were never matched and every Korean delivery claim became
+    ``unverifiable``; and the structured branch read a ``sender`` field that a
+    structured body does not have, so ``robot`` was ``None`` and a claim about
+    another robot's hold came out true. The DECLARED ids are now matched
+    directly and the envelope sender is passed in, so the same proposition gets
+    the same verdict in both encodings.
+
+    Third review, finding 12: an order id, a kind and an item id can all name
+    the SAME referent. ``orders`` (package I's ``_orders`` rows) lets both
+    encodings map every referent onto one canonical target — an item id, else a
+    kind, else an order — and a sentence that names an item AND its order or
+    kind ("order-1의 cyan_1을 …") is ONE claim, not one true plus one false.
     """
+    orders = list(orders or ())
     given = utterance.get('claims')
     if isinstance(given, list):
-        return [dict(c) for c in given if isinstance(c, dict) and c.get('type') in CLAIM_KINDS]
+        return _dedupe([normalize_claim(dict(c), orders) for c in given
+                        if isinstance(c, dict) and c.get('type') in CLAIM_KINDS])
     message = utterance.get('message')
     if utterance.get('encoding') in STRUCTURED_ENCODINGS and isinstance(message, dict):
-        return _structured_claims(message)
+        return _dedupe([normalize_claim(c, orders)
+                        for c in _structured_claims(message, sender=utterance.get('sender'))])
     text = utterance.get('text') or ''
     if not text.strip():
         return []
-    return _text_claims(text, utterance, labels)
+    kinds = tuple(o['kind'] for o in orders if isinstance(o.get('kind'), str) and o['kind'])
+    return _text_claims(text, utterance, tuple(dict.fromkeys(tuple(labels) + kinds)), orders)
+
+
+#: Canonical target keys of a claim, most specific first.
+CLAIM_TARGET_KEYS = ('item_id', 'order_id', 'kind')
+
+
+def claim_referent(ref, orders):
+    """``(key, value)`` a referent string resolves to under the order sheet.
+
+    An item id stays an item; an order that names exactly one item is that item;
+    any other order stays an order; a declared kind is a kind. Anything else is
+    kept as an item id (it will match no referee row), so an undeclared name is
+    judged the same way in both encodings.
+    """
+    if not isinstance(ref, str) or not ref:
+        return None
+    for order in orders:
+        if ref in order['item_ids']:
+            return ('item_id', ref)
+    for order in orders:
+        if ref == order['order_id']:
+            if len(order['item_ids']) == 1:
+                return ('item_id', order['item_ids'][0])
+            return ('order_id', ref)
+    if any(ref == o['kind'] for o in orders):
+        return ('kind', ref)
+    return ('item_id', ref)
+
+
+def normalize_claim(claim, orders):
+    """One claim with its target in canonical form (see :func:`claim_referent`)."""
+    if claim.get('type') == 'blocked' or not orders:
+        return dict(claim)
+    out = {k: v for k, v in claim.items() if k not in CLAIM_TARGET_KEYS}
+    ref = next((claim[k] for k in CLAIM_TARGET_KEYS if claim.get(k) is not None), None)
+    key, value = claim_referent(ref, orders) or ('item_id', None)
+    out[key] = value
+    return {'type': out.pop('type'), key: out.pop(key), **out}
+
+
+def _covers(broad, narrow, orders):
+    """True when referent ``broad`` (order/kind) contains referent ``narrow``."""
+    bkey, bval = broad
+    nkey, nval = narrow
+    if (bkey, bval) == (nkey, nval) or bkey == 'item_id':
+        return False
+    order = next((o for o in orders if o['order_id'] == bval), None) if bkey == 'order_id' else None
+    if nkey == 'item_id':
+        kind = _item_kind({'item_id': nval}, orders)
+        if bkey == 'order_id':
+            return order is not None and (nval in order['item_ids']
+                                          or (order['identity'] == 'kind_fungible' and kind == order['kind']))
+        if bkey == 'kind':
+            return kind == bval or any(nval in o['item_ids'] and o['kind'] == bval for o in orders)
+    if nkey == 'order_id' and bkey == 'kind':
+        return any(o['order_id'] == nval and o['kind'] == bval for o in orders)
+    return False
+
+
+def _most_specific(refs, orders):
+    """Canonical referents of one sentence, a broader one dropped when it covers a narrower one."""
+    resolved = list(dict.fromkeys(r for r in (claim_referent(ref, orders) for ref in refs) if r))
+    return [r for r in resolved if not any(_covers(r, other, orders) for other in resolved if other != r)]
+
+
+def _dedupe(claims):
+    out, seen = [], set()
+    for claim in claims:
+        key = tuple(sorted(claim.items(), key=lambda kv: kv[0]))
+        if key not in seen:
+            seen.add(key)
+            out.append(claim)
+    return out
 
 
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?。])\s+|\n+')
 
 
+#: Literals that can appear in a Korean sentence but never name an item.
+NON_ITEM_LITERALS = frozenset(ROBOTS) | {COMMANDER} | frozenset(ROLE_NAMES) | frozenset(STUDY_KEY_WORDS) \
+    | frozenset(STRUCTURED_ACTS) | frozenset(STRUCTURED_STATES) | frozenset(CONFIDENCE_LEVELS) \
+    | {'null', 'true', 'false'}
+
+
+def _declared_items(fragment, labels):
+    """Item/order ids of the run that literally appear in ``fragment``.
+
+    Declared ids win over the generic pattern: ``cyan_1`` and ``beam_1`` are real
+    E ids and do not match a ``kind-<number>`` shape (review finding 12). Zone
+    letters and passage ids are their OWN claim fields, so they are never items.
+    """
+    found = []
+    for label in sorted({l for l in labels if isinstance(l, str) and l}, key=len, reverse=True):
+        # Second review, finding 12: only ITEM/ORDER ids are items. A robot id,
+        # the commander, a grasp role or an enum literal named in the same
+        # sentence ("r1인 제가 cyan_1을 A에 내려놓았습니다.") used to become a
+        # second, false delivery claim, which biased free text against schema.
+        if label in ZONES or PASSAGE_RE.fullmatch(label) or label in NON_ITEM_LITERALS:
+            continue
+        if re.search(r'(?<![A-Za-z0-9_-])' + re.escape(label) + r'(?![A-Za-z0-9_-])', fragment):
+            found.append(label)
+    return found
+
+
 def _ids(fragment, labels):
-    items = [m for m in ITEM_RE.findall(fragment) if not labels or m in labels]
+    items = _declared_items(fragment, labels)
+    if not labels:
+        items = list(dict.fromkeys(items + ITEM_RE.findall(fragment)))
     return items, ZONE_RE.findall(fragment), PASSAGE_RE.findall(fragment)
 
 
-def _text_claims(text, utterance, labels):
+def _text_claims(text, utterance, labels, orders=()):
     """Claims scoped to the sentence carrying the cue.
 
     Sentence scoping stops ``door_narrow가 막혀 있습니다. door_wide로 우회하십시오.``
@@ -571,37 +1248,48 @@ def _text_claims(text, utterance, labels):
     claim (the zone of a delivery, the item of a hold) falls back to ids named
     elsewhere in the same utterance.
     """
+    orders = list(orders or ())
     all_items, all_zones, _ = _ids(text, labels)
-    claims, seen = [], set()
+    claims = []
 
-    def add(claim):
-        key = tuple(sorted(claim.items(), key=lambda kv: kv[0]))
-        if key not in seen:
-            seen.add(key)
-            claims.append(claim)
+    def targets(items):
+        # third review, finding 12: every referent in canonical form, and an
+        # order or kind that only qualifies a named item is not a second claim
+        found = items or all_items
+        if not found:
+            return [('item_id', None)]
+        if not orders:
+            return [('item_id', item) for item in found]
+        return _most_specific(found, orders)
 
     for sentence in SENTENCE_SPLIT.split(text):
         if not sentence.strip():
             continue
         items, zones, passages = _ids(sentence, labels)
         if re.search(CLAIM_CUES['delivered'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'delivered', 'item_id': item,
-                     'zone': (zones or all_zones or [None])[0]})
+            for key, value in targets(items):
+                claims.append({'type': 'delivered', key: value,
+                               'zone': (zones or all_zones or [None])[0]})
         if re.search(CLAIM_CUES['holding'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'holding', 'item_id': item, 'robot': utterance.get('sender')})
+            for key, value in targets(items):
+                claims.append({'type': 'holding', key: value, 'robot': utterance.get('sender')})
         if re.search(CLAIM_CUES['blocked'], sentence):
             for passage in passages or [None]:
-                add({'type': 'blocked', 'passage': passage})
+                claims.append({'type': 'blocked', 'passage': passage})
         if re.search(CLAIM_CUES['absent'], sentence):
-            for item in items or all_items or [None]:
-                add({'type': 'absent', 'item_id': item,
-                     'location_ref': utterance.get('location_ref')})
-    return claims
+            for key, value in targets(items):
+                claims.append({'type': 'absent', key: value,
+                               'location_ref': utterance.get('location_ref')})
+    return _dedupe(claims)
 
 
-def _structured_claims(message):
+def _structured_claims(message, *, sender=None):
+    """Claims of one structured body. ``sender`` comes from the ENVELOPE.
+
+    A structured body carries no ``sender`` field (package A's
+    ``STRUCTURED_FIELDS``), so reading one gave ``robot=None`` and a hold claim
+    was true for whichever robot held the item (review finding 12).
+    """
     act, state = message.get('act'), message.get('state')
     item, zone = message.get('item'), message.get('zone')
     if act not in ('inform', 'correct'):
@@ -609,7 +1297,7 @@ def _structured_claims(message):
     if state == 'placed':
         return [{'type': 'delivered', 'item_id': item, 'zone': zone}]
     if state == 'held':
-        return [{'type': 'holding', 'item_id': item, 'robot': message.get('sender')}]
+        return [{'type': 'holding', 'item_id': item, 'robot': sender}]
     if state == 'blocked':
         return [{'type': 'blocked', 'passage': message.get('passage')}]
     if state == 'absent':
@@ -625,16 +1313,20 @@ def check_claim(claim, trial, at_sim_s):
     silently turned into a failure or a success.
     """
     referee = _referee(trial)
+    orders = _orders(trial)
+    # third review, finding 12: the claim is judged on its CANONICAL target, so
+    # an item, its order and its kind get one verdict in both encodings
+    claim = normalize_claim(claim, orders)
     kind = claim.get('type')
     if kind == 'delivered':
         rows = _rows(referee, 'deliveries')
         if 'deliveries' not in referee:
             return 'unverifiable'
-        item, zone = claim.get('item_id'), claim.get('zone')
-        if item is None:
+        zone = claim.get('zone')
+        if not _has_target(claim):
             return 'unverifiable'
         for row in rows:
-            if row.get('item_id') != item:
+            if not _row_matches(claim, row, orders):
                 continue
             when = row.get('sim_s')
             if when is not None and at_sim_s is not None and float(when) > float(at_sim_s):
@@ -645,11 +1337,11 @@ def check_claim(claim, trial, at_sim_s):
     if kind == 'holding':
         if 'holds' not in referee:
             return 'unverifiable'
-        item, robot = claim.get('item_id'), claim.get('robot')
-        if item is None or at_sim_s is None:
+        robot = claim.get('robot')
+        if not _has_target(claim) or at_sim_s is None:
             return 'unverifiable'
         for row in _rows(referee, 'holds'):
-            if row.get('item_id') != item or (robot and row.get('robot') != robot):
+            if not _row_matches(claim, row, orders) or (robot and row.get('robot') != robot):
                 continue
             start = float(row.get('from_s') or 0.0)
             stop = row.get('to_s')
@@ -673,9 +1365,10 @@ def check_claim(claim, trial, at_sim_s):
     if kind == 'absent':
         if 'slot_states' not in referee:
             return 'unverifiable'
-        item = claim.get('item_id')
+        if not _has_target(claim):
+            return 'unverifiable'
         for row in _rows(referee, 'slot_states'):
-            if row.get('item_id') != item:
+            if not _row_matches(claim, row, orders):
                 continue
             when = row.get('sim_s')
             if when is not None and at_sim_s is not None and float(when) > float(at_sim_s):
@@ -683,6 +1376,25 @@ def check_claim(claim, trial, at_sim_s):
             return 'true' if row.get('present') is False else 'false'
         return 'unverifiable'
     return 'unverifiable'
+
+
+def _has_target(claim):
+    return any(claim.get(k) is not None for k in CLAIM_TARGET_KEYS)
+
+
+def _row_matches(claim, row, orders):
+    """Does a referee row concern the claim's canonical target?"""
+    item = row.get('item_id')
+    if claim.get('item_id') is not None:
+        return item == claim['item_id']
+    if claim.get('kind') is not None:
+        return _item_kind(row, orders) == claim['kind']
+    order = next((o for o in orders if o['order_id'] == claim.get('order_id')), None)
+    if order is None:
+        return False
+    if item in order['item_ids']:
+        return True
+    return order['identity'] == 'kind_fungible' and _item_kind(row, orders) == order['kind']
 
 
 def grounds_verdict(utterance):
@@ -726,7 +1438,7 @@ def dialogue_metrics(trial, lookback_s=DEFAULT_LOOKBACK_S):
         acts = act_types(utt)
         coarse_counts.update(acts['coarse'])
         fine_counts.update(acts['fine'])
-        claims = extract_claims(utt, labels)
+        claims = extract_claims(utt, labels, orders=_orders(trial))
         at = utt.get('sim_s')
         claim_rows = [dict(c, verdict=check_claim(c, trial, at)) for c in claims]
         verdicts.update(r['verdict'] for r in claim_rows)
@@ -818,14 +1530,39 @@ def trial_metrics(trial, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAU
 # cohort summary
 # --------------------------------------------------------------------------- #
 #: Cohort metrics reported per condition. ``None`` values are dropped from the
-#: mean but the trial still counts in ``trials``.
+#: mean but the trial still counts in ``trials`` -- except for the resource
+#: totals in ``COMPLETE_ONLY_METRICS``.
 SUMMARY_METRICS = (
     'par_makespan_sim_s', 'makespan_sim_s', 'makespan_success_only_s',
-    'talk_sim_cost_s', 'think_sim_cost_s', 'delivery_rate', 'delivered_items',
+    'talk_sim_cost_s', 'think_sim_cost_s', 'utterance_sim_cost_s', 'delivery_sim_cost_s',
+    'call_sim_cost_s', 'delivery_rate', 'delivered_items',
     'misdelivered_items', 'undelivered_items', 'idle_robot_s', 'idle_share',
     'conflicts', 'deadlocks', 'deadlock_sim_s', 'replans', 'model_calls',
     'http_attempts', 'tokens_total', 'tokens_input', 'tokens_output',
+    'tokens_total_lower_bound', 'tokens_input_lower_bound', 'tokens_output_lower_bound',
 )
+#: Fourth review, finding 16: a trial with an unknown-usage call has no token
+#: total, and dropping it from the mean printed the KNOWN trials' mean (120) as
+#: the cohort's. These means are None unless every trial's value is known.
+COMPLETE_ONLY_METRICS = ('tokens_total', 'tokens_input', 'tokens_output')
+#: ... and their lower bounds are averaged over EVERY trial: a trial without a
+#: known count contributes 0, which is a valid lower bound of a token count.
+LOWER_BOUND_METRICS = {'tokens_total': 'tokens_total_lower_bound',
+                       'tokens_input': 'tokens_input_lower_bound',
+                       'tokens_output': 'tokens_output_lower_bound'}
+
+
+def _cohort_metrics(eff):
+    """Per-condition means of ``SUMMARY_METRICS`` (see the two rules above)."""
+    out = {name: _mean([e.get(name) for e in eff]) for name in SUMMARY_METRICS}
+    for name in COMPLETE_ONLY_METRICS:
+        values = [e.get(name) for e in eff]
+        out[name] = None if any(v is None for v in values) else _mean(values)
+    for bound in LOWER_BOUND_METRICS.values():
+        values = [e.get(bound) for e in eff]
+        out[bound] = (None if not values or all(v is None for v in values)
+                      else round(sum(float(v or 0) for v in values) / len(values), 4))
+    return out
 
 
 def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_LOOKBACK_S):
@@ -854,13 +1591,28 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
             'censored_trials': sum(e['censored'] for e in eff),
             'seeds': sorted({e['seed'] for e in eff}),
             'leader_ids': sorted({e['leader_id'] for e in eff if e['leader_id']}),
-            'metrics': {name: _mean([e.get(name) for e in eff]) for name in SUMMARY_METRICS},
+            'metrics': _cohort_metrics(eff),
             'cohort_delivered_items': delivered,
             'cohort_ordered_items': ordered,
             'cohort_delivery_rate': _ratio(delivered, ordered),
             'cohort_par_sim_s_per_delivered': round(charged / delivered, 4) if delivered else None,
-            'cohort_model_calls_per_delivered': round(
-                sum(e['model_calls'] for e in eff) / delivered, 4) if delivered else None,
+            # a missing cost source stays missing instead of becoming 0 (finding 10)
+            'cohort_model_calls': (None if any(e['model_calls'] is None for e in eff)
+                                   else sum(e['model_calls'] for e in eff)),
+            'cohort_model_calls_per_delivered': (
+                None if not delivered or any(e['model_calls'] is None for e in eff)
+                else round(sum(e['model_calls'] for e in eff) / delivered, 4)),
+            # third review, finding 16: the cohort mean of ``tokens_total``
+            # drops None, so an unknown usage would vanish here. It is counted,
+            # and the cohort token total is None whenever any trial is incomplete.
+            'usage_unknown_calls': sum(int(e.get('usage_unknown_calls') or 0) for e in eff),
+            'tokens_incomplete_trials': sum(1 for e in eff if int(e.get('usage_unknown_calls') or 0) > 0),
+            'cohort_tokens_total': (None if any(e.get('tokens_total') is None for e in eff)
+                                    else sum(e['tokens_total'] for e in eff)),
+            # fourth review: the known part stays visible next to the null total
+            'cohort_tokens_total_lower_bound': (
+                None if all(e.get('tokens_total_lower_bound') is None for e in eff)
+                else sum(int(e.get('tokens_total_lower_bound') or 0) for e in eff)),
             'idle_by_reason': _sum_dicts(e['idle_by_reason'] for e in eff),
             'replans_by_kind': _sum_dicts(e['replans_by_kind'] for e in eff),
             'conflicts_by_kind': _sum_dicts(e['conflicts_by_kind'] for e in eff),
@@ -888,10 +1640,14 @@ def summarise(trials, penalty_factor=DEFAULT_PENALTY_FACTOR, lookback_s=DEFAULT_
                     d['decision_influence']['changes_with_prior_inbound'] for d in dia),
                 'preceding_acts': _sum_dicts(d['decision_influence']['preceding_acts'] for d in dia),
             },
-            'boundary_clean_trials': sum(r['boundary']['clean'] for r in rows),
-            'boundary_violation_trials': sum(
-                bool(r['boundary']['input_leaks'] or r['boundary']['forbidden_grounds']
-                     or r['boundary']['channel_violations']) for r in rows),
+            'boundary_clean_trials': sum(boundary_status(r['boundary']) == 'clean' for r in rows),
+            'boundary_violation_trials': sum(boundary_status(r['boundary']) == 'violation'
+                                             for r in rows),
+            'boundary_unverified_trials': sum(boundary_status(r['boundary']) == 'unverified'
+                                              for r in rows),
+            'boundary_failures': _sum_dicts(boundary_failures(r['boundary']) for r in rows),
+            'boundary_status_counts': dict(collections.Counter(
+                boundary_status(r['boundary']) for r in rows)),
         }
     return {'penalty_factor': penalty_factor, 'lookback_s': lookback_s,
             'trials': len(per_trial), 'conditions': conditions, 'per_trial': per_trial,
@@ -927,31 +1683,60 @@ def _provenance_check(trials):
 # paired comparison
 # --------------------------------------------------------------------------- #
 
+def _metric_buckets(trials, metric, penalty_factor):
+    """``(condition, scenario, seed)`` -> known values of ``metric``, plus every key seen.
+
+    Fourth review, finding 16: for ``COMPLETE_ONLY_METRICS`` a key whose
+    repetitions are not ALL known has no value (a partial mean of the known
+    repetitions is the same bias as a partial cohort mean).
+    """
+    buckets, seen, unknown = collections.defaultdict(list), set(), set()
+    for trial in trials:
+        eff = efficiency_metrics(trial, penalty_factor=penalty_factor)
+        key = (eff['condition'], eff['scenario'], eff['seed'])
+        seen.add(key)
+        value = eff.get(metric)
+        if value is None:
+            unknown.add(key)
+            continue
+        buckets[key].append(float(value))
+    if metric in COMPLETE_ONLY_METRICS:
+        for key in unknown:
+            buckets.pop(key, None)
+    return buckets, seen
+
+
+def _paired(trials, metric, baseline, variant, penalty_factor):
+    """Matched pairs, and the matched seeds dropped because a value is unknown."""
+    buckets, seen = _metric_buckets(trials, metric, penalty_factor)
+    pairs, excluded = [], []
+    keys = sorted({(s, d) for (c, s, d) in seen if c in (baseline, variant)},
+                  key=lambda k: (str(k[0]), str(k[1])))
+    for scenario, seed in keys:
+        if (baseline, scenario, seed) not in seen or (variant, scenario, seed) not in seen:
+            continue                        # a one-sided seed is not a pair
+        base = buckets.get((baseline, scenario, seed))
+        var = buckets.get((variant, scenario, seed))
+        if not base or not var:
+            excluded.append({'scenario': scenario, 'seed': seed,
+                             'unknown_in': [c for c, values in ((baseline, base), (variant, var))
+                                            if not values]})
+            continue
+        pairs.append({'scenario': scenario, 'seed': seed,
+                      'baseline': statistics.mean(base), 'variant': statistics.mean(var),
+                      'reps': (len(base), len(var))})
+    return pairs, excluded
+
+
 def paired_values(trials, metric, baseline, variant, penalty_factor=DEFAULT_PENALTY_FACTOR):
     """Per-(scenario, seed) pairs of ``metric`` for two conditions.
 
     Repetitions of the same (condition, scenario, seed) are averaged first so
     one pair equals one matched scenario/seed, as the paired-seed design asks.
+    A matched seed whose value is unknown on either side is not a pair; see
+    ``compare_conditions(...)['excluded']``.
     """
-    buckets = collections.defaultdict(list)
-    for trial in trials:
-        eff = efficiency_metrics(trial, penalty_factor=penalty_factor)
-        value = eff.get(metric)
-        if value is None:
-            continue
-        buckets[(eff['condition'], eff['scenario'], eff['seed'])].append(float(value))
-    pairs = []
-    keys = sorted({(s, d) for (c, s, d) in buckets if c in (baseline, variant)},
-                  key=lambda k: (str(k[0]), str(k[1])))
-    for scenario, seed in keys:
-        base = buckets.get((baseline, scenario, seed))
-        var = buckets.get((variant, scenario, seed))
-        if not base or not var:
-            continue
-        pairs.append({'scenario': scenario, 'seed': seed,
-                      'baseline': statistics.mean(base), 'variant': statistics.mean(var),
-                      'reps': (len(base), len(var))})
-    return pairs
+    return _paired(trials, metric, baseline, variant, penalty_factor)[0]
 
 
 def bootstrap_ci(values, statistic=None, confidence=0.95, resamples=10000, seed=0):
@@ -988,7 +1773,7 @@ def compare_conditions(trials, metric, baseline, variant, confidence=0.95,
     for condition in (baseline, variant):
         if condition not in CONDITIONS:
             raise TrialError(f'unknown condition {condition!r}')
-    pairs = paired_values(trials, metric, baseline, variant, penalty_factor)
+    pairs, excluded = _paired(trials, metric, baseline, variant, penalty_factor)
     diffs = [p['variant'] - p['baseline'] for p in pairs]
     ci = bootstrap_ci(diffs, confidence=confidence, resamples=resamples, seed=seed)
     stdev = statistics.stdev(diffs) if len(diffs) > 1 else None
@@ -1008,6 +1793,10 @@ def compare_conditions(trials, metric, baseline, variant, confidence=0.95,
         'pairs_variant_higher': pos, 'pairs_variant_lower': neg,
         'pairs_tied': len(diffs) - pos - neg,
         'pairs': pairs,
+        # fourth review, finding 16: matched seeds dropped because a value is
+        # unknown (e.g. tokens of a trial with an unknown-usage call)
+        'excluded_pairs': len(excluded),
+        'excluded': excluded,
         'small_sample': len(pairs) < SMALL_SAMPLE_PAIRS,
         'reporting': '유의성 검정을 하지 않는다. 구간과 짝별 표만 보고한다.',
     }
@@ -1053,7 +1842,9 @@ def compare_all(trials, metrics=COMPARISON_METRICS, include_reference=False,
             for metric in metrics:
                 row = compare_conditions(trials, metric, baseline, variant, confidence,
                                          resamples, seed, penalty_factor)
-                if row['n_pairs']:
+                # a comparison whose every matched seed was excluded is kept, so
+                # the exclusion is visible instead of the metric disappearing
+                if row['n_pairs'] or row['excluded_pairs']:
                     out.append(row)
     return out
 
@@ -1076,6 +1867,10 @@ SCALAR_TAGS = {
     'result/replans': 'replans',
     'result/model_calls': 'model_calls',
     'result/tokens_total': 'tokens_total',
+    # fourth review, finding 16: the unknown marker and the known lower bound
+    # travel into TensorBoard with the (then absent) exact total
+    'result/tokens_total_lower_bound': 'tokens_total_lower_bound',
+    'result/usage_unknown_calls': 'usage_unknown_calls',
     'result/wall_latency_ms_mean': 'wall_latency_ms_mean',
 }
 DIALOGUE_TAGS = {
@@ -1089,8 +1884,33 @@ DIALOGUE_TAGS = {
     'dialogue/channel_violations': 'channel_violations',
 }
 #: HParams columns to show; the viewer config lives in outputs/tensorboard-view.json.
+#: ``tokens_complete`` is the per-run marker of fourth review finding 16: False
+#: when an unknown-usage call makes the token total a lower bound.
 HPARAM_KEYS = ('condition', 'scenario', 'seed', 'leader_id', 'end_reason',
-               'penalty_factor', 'sim_horizon_s')
+               'penalty_factor', 'sim_horizon_s', 'tokens_complete')
+
+
+#: A trial_id used as ONE TensorBoard run path component (fifth review, P2).
+RUN_COMPONENT = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]*')
+#: v2 (fifth review, P2): trial runs are ``<condition>/<trial_id>``. v1 payloads
+#: (e.g. the v4 smoke report) named them ``<condition>/<scenario>-s<seed>``.
+SCALARS_SCHEMA = 'ugrp.zone_study_scalars.v2'
+
+
+def trial_run_name(eff):
+    """``<condition>/<trial_id>``: one TensorBoard run per trial.
+
+    Fifth review, P2: ``<condition>/<scenario>-s<seed>`` merged repeated trials
+    of one seed into one run, so the viewer showed the values of whichever was
+    written last. The trial_id is unique per cohort (``load_trials`` refuses a
+    duplicate), and it must be one safe path component because the run name
+    becomes a directory under the logdir. Scenario and seed stay in HParams.
+    """
+    trial_id = eff['trial_id']
+    if not isinstance(trial_id, str) or not RUN_COMPONENT.fullmatch(trial_id):
+        raise TrialError(f'trial_id {trial_id!r} cannot name a TensorBoard run: use ASCII letters, '
+                         'digits, "_", "-" and "." (not first), one path component')
+    return f'{eff["condition"]}/{trial_id}'
 
 
 def scalar_export(summary):
@@ -1106,7 +1926,7 @@ def scalar_export(summary):
         scalars = {tag: _num(eff.get(key)) for tag, key in SCALAR_TAGS.items()}
         scalars.update({tag: _num(dia.get(key)) for tag, key in DIALOGUE_TAGS.items()})
         runs.append({
-            'run': f'{eff["condition"]}/{eff["scenario"]}-s{eff["seed"]}',
+            'run': trial_run_name(eff),
             'step': index,
             'hparams': {k: _hparam(eff.get(k, summary.get(k))) for k in HPARAM_KEYS},
             'scalars': {k: v for k, v in scalars.items() if v is not None},
@@ -1118,7 +1938,10 @@ def scalar_export(summary):
                    'cohort/delivery_rate': _num(row['cohort_delivery_rate']),
                    'cohort/par_sim_s_per_delivered': _num(row['cohort_par_sim_s_per_delivered']),
                    'cohort/korean_share': _num(row['dialogue']['korean_share']),
-                   'cohort/truthful_share': _num(row['dialogue']['truthful_share'])}
+                   'cohort/truthful_share': _num(row['dialogue']['truthful_share']),
+                   # fourth review, finding 16: counted, never averaged away
+                   'cohort/usage_unknown_calls': _num(row.get('usage_unknown_calls')),
+                   'cohort/tokens_incomplete_trials': _num(row.get('tokens_incomplete_trials'))}
         for name in SUMMARY_METRICS:
             scalars[f'cohort/{name}'] = _num(row['metrics'].get(name))
         runs.append({'run': f'cohort/{condition}', 'step': 0,
@@ -1126,10 +1949,16 @@ def scalar_export(summary):
                                  'seed': -1, 'leader_id': '',
                                  'end_reason': 'cohort',
                                  'penalty_factor': summary['penalty_factor'],
-                                 'sim_horizon_s': 0.0},
+                                 'sim_horizon_s': 0.0,
+                                 'tokens_complete': row.get('cohort_tokens_total') is not None},
                      'scalars': {k: v for k, v in scalars.items() if v is not None},
                      'boundary_clean': row['boundary_violation_trials'] == 0})
-    return {'schema': 'ugrp.zone_study_scalars.v1',
+    names = collections.Counter(run['run'] for run in runs)
+    repeated = sorted(name for name, count in names.items() if count > 1)
+    if repeated:
+        raise TrialError(f'duplicate TensorBoard run name(s) {repeated}: each trial needs its own '
+                         'trial_id, or the viewer would merge their values')
+    return {'schema': SCALARS_SCHEMA,
             'note': 'EVALUATION-ONLY. 실패·중단·예산 소진을 분모에 유지한 값이다.',
             'hparam_columns': list(HPARAM_KEYS), 'runs': runs}
 

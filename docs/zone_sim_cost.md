@@ -66,6 +66,29 @@ d_q   = quantum * ceil(raw_q / quantum)
 
 호출의 결과는 마지막 시도의 결과다. 재시도로 성공한 호출은 `ok`이지만 실패 시도의 비용도 낸다. 스케줄러는 실패한 호출을 **별도 호출**로 한 번 더 시도할 수도 있고(`CallPolicy.max_retries`), 그 호출은 자기 비용을 따로 낸다.
 
+### 사용량 미상 (`usage_known`)
+
+전송 계층이 공급자가 청구한 사용량을 읽지 못하면(일반 예외, 사용량 보고 없이 실패한 재시도) 그 호출은 `usage_known=False`다. 이 표지는 응답 → 호출 ledger → horizon censor → 패키지 A 호출 기록(`cost_terms.usage_known`, `cost_terms.usage_bound`) → 평가 → 보고서·TensorBoard까지 그대로 간다(Codex 3·4차 검토 #16).
+
+- **표지를 바꾸지 않는다.** 재시도 예산 거절로 재생 응답을 자를 때도 원래 응답의 표지를 물려받는다. 잘린 응답의 `provider_usage`는 보내지 않은 시도까지 포함한 보고이므로 버린다(`None`).
+- **알려진 하한을 지우지 않는다.** 일부 시도의 사용량만 알면 그 수(예: 입력 833·출력 40)를 기록하고 `usage_bound='lower_bound'`로 표시한다. horizon에서 censor된 호출도 같다. 스케줄러가 계산한 청구 SIM 비용(`charged_sim_s`, `would_release_sim_s`)도 비용 모형의 사실이므로 남긴다.
+- 실제 전송 계층은 `TransportFailure(..., attempts=..., usage_known=False)`로 "아는 것이 전부가 아니다"를 알린다. 시도를 하나도 밝히지 않은 `TransportFailure`는 미상으로 기록한다.
+- **보낸 시도와 그 예산을 돌려주지 않는다(Codex 5차 검토 P1).** 준수하는 전송 계층은 시도마다 보내기 직전에 `PendingCall.reserve`로 예약한다. 사용량 미상 응답(예외, `TransportFailure`, `usage_known=False`인 `CallReply`)이 예약보다 적은 시도를 밝히면, 스케줄러는 **예약한 시도를 모두 보낸 것으로 센다.** 빠진 시도는 비용을 내는 `error` 시도로 채워 앞에 두고(응답의 마지막 시도가 호출 결과로 남는다), `unreported_attempts`(`contract_log()`에도 포함)와 `attempts_unreported` 사건에 기록한다. 그래서 `commit`이 예약을 돌려주지 않고, 스케줄러 재시도가 이미 쓴 예산을 다시 쓰지 못한다. 사용량을 **아는** 응답은 자기 시도 수를 밝히는 것으로 보고, 쓰지 않은 예약은 전처럼 반환한다. 예약보다 많은 시도는 전처럼 예산 위반(`over_budget_attempts`)이다.
+- **`submit()` 실패도 호출이다(Codex 6차 검토 P1).** 전에는 `submit()`이 예외를 내면 예약을 돌려주고 예외를 다시 던졌다. 그래서 요청을 보낸 뒤 실패한 호출이 호출·censor 기록에서 빠지고 SIM 비용이 0이었다. HTTP 상한 1에서 호출자가 예외를 처리하고 다시 실행하면 실제 전송 2회·장부 0회였다. 이제 규칙은 다음과 같다.
+  - **`NotSent`만 반환한다.** 전송 계층이 "요청을 하나도 보내지 않았다"를 증명할 때(예: 보내기 전 입력 검증 실패) `NotSent`를 던진다. 스케줄러는 그 호출이 예약한 시도를 모두 돌려주고, `unsent_calls`와 `call_not_sent` 사건에 남기고, 예외를 다시 던진다.
+  - **그 밖의 예외는 실패한 호출로 정산한다.** 보낸 뒤 실패했을 수 있기 때문이다. 호출은 `reply()` 실패와 같이 시도 1회(또는 `submit` 안에서 예약한 수)로 세고, SIM 비용을 내고, hold하고, 기록에 남는다. 사용량은 미상이다(`TransportFailure`가 밝힌 시도·토큰은 하한으로 남는다). `transport_errors`의 `stage`가 `submit`이다. 예외는 다시 던지지 않고 루프가 계속된다.
+  - `reply()`가 던진 `NotSent`는 증명이 되지 않는다. `submit()`이 토큰을 돌려준 순간 첫 요청은 넘겨진 것이기 때문이다. 이 경우는 일반 실패다.
+  - `KeyboardInterrupt` 같은 중단은 예약을 **돌려주지 않고**(`attempt_budget.outstanding`에 남는다) ledger 상태를 `interrupted`로 적은 뒤 다시 던진다.
+- **보낸 수를 아는 전송 계층은 밝힌다(`sent_attempts`, Codex 6차 검토 권고).** 위 5차 규칙은 예약한 재시도를 보내지 않은 경우 실제 1회를 2회로 센다(보수적 과대 청구). `CallReply`와 `TransportFailure`는 `sent_attempts`(첫 요청 포함, 실제로 나간 요청 수)를 받는다. 값이 있으면 예약 수 대신 그 수를 세고 청구하며, 쓰지 않은 예약은 반환한다. `None`(기본값)은 "모른다"이며 5차 규칙대로 예약을 모두 보낸 것으로 센다. 값은 1 이상의 정수여야 한다(0회는 `NotSent`로만 표현한다). 보고한 시도 수보다 작을 수 없고, 사용량이 확정이면 보고한 시도 수와 같아야 한다. bool·소수·문자열·NaN·Inf는 거절한다. 예약보다 큰 값은 전처럼 예산 위반이다.
+
+### 재질문 타이머 (`REASK_POLICY = 'single_pending_own_timer.v1'`)
+
+로봇 자기 재질문 타이머는 `EventScheduler.arm_reask(actor, label, at=...)`로만 건다. **로봇마다 대기 중인 재질문 타이머는 최대 1개다.** 타이머가 대기 중이면 새로 걸지 않고 `False`를 돌려준다(`reask_counts[actor]['skipped']`). 대기 중인 타이머는 처음 건 시각에 울리고, 뒤의 행동이 시각을 옮기지 않는다. 울리면 다음 행동이 다시 걸 수 있다. 일반 `timer()`는 이 표지를 건드리지 않는다. 시각은 유한한 수여야 하고 과거일 수 없다.
+
+- **이유(통합 PR #229, 이슈 #222):** 전에는 행동마다 타이머를 하나씩 더 걸었다. 그래서 호출마다 끝나지 않는 사슬이 하나씩 생겼고, 채널 조건에서 메시지로 시작된 호출이 사슬을 늘려 모든 조건이 445–478 SIM s에 호출 예산 90회를 다 썼다. 오프라인 스모크 v4의 채널 조건 18회도 모두 `budget_exhausted`였다.
+- 통합 러너의 임시 우회(`harness/zone_study_integration.py` `_arm_reask`)와 같은 규칙·같은 식별자다. 통합 쪽은 이 API를 쓰면 지역 우회를 지울 수 있다.
+- 오프라인 루프(`harness/zone_study_offline.py`)는 이 규칙을 쓰며, 실행 번들 ID를 `zone_study_offline_v2`로 올렸다. v1~v4 기록은 옛 규칙(`zone_study_offline_v1`)으로 실행됐다.
+
 ## 3. 실행 의미 (스케줄러 계약)
 
 `harness/zone_event_scheduler.py`가 단일 SIM 사건 큐를 소유한다. makespan에 비용을 사후 덧셈하지 않는다. 기다리는 동안 생기는 통로 경쟁·낙하·보고 지연이 물리에 반영되어야 하기 때문이다.
@@ -99,7 +122,7 @@ d_q   = quantum * ceil(raw_q / quantum)
 |---|---:|---|
 | `min_interval_s` | 2.0 | actor당 최소 호출 간격. 이른 계기는 버리지 않고 뒤로 미룬다 |
 | `max_outstanding_per_actor` | 1 | 동시 미완료 호출 |
-| `idle_reask_s` / `busy_reask_s` | 10 / 60 | 재검토 타이머 시작값 |
+| `idle_reask_s` / `busy_reask_s` | 10 / 60 | 재검토 타이머 시작값. 로봇마다 대기 중인 타이머는 1개(`REASK_POLICY`) |
 | `observe_period_s` | 1.0 | 자기 카메라 관측 주기. `arm_observations()`로 시작한다 |
 | `max_retries` | 1 | 실패 호출의 추가 호출 수 |
 | `max_calls_per_actor` | 30 | 예산. 초과분은 조용히 사라지지 않고 `call_refused`로 기록된다 |
@@ -141,7 +164,7 @@ CallReply(attempts=(zc.Attempt(input_tokens=8000, output_tokens=120, utterances=
                             body='좁은 문 앞이 막혔다. door_wide로 우회한다.', encoding='ko'),))
 ```
 
-`encoding`은 `ko`(자유 한국어)와 `structured`(고정 schema) 두 가지다. 스케줄러는 본문을 해석하지 않는다. 메시지가 호스트의 예약이나 다른 로봇의 행동을 직접 바꾸지 않고, 수신자의 다음 호출 입력이 될 뿐이다.
+`encoding`은 패키지 A의 값 `free_ko`(자유 한국어)와 `schema`(고정 schema) 두 가지이며 `ENCODINGS`는 A의 조건 registry에서 파생한다. 스케줄러는 본문을 해석하지 않는다. 메시지가 호스트의 예약이나 다른 로봇의 행동을 직접 바꾸지 않고, 수신자의 다음 호출 입력이 될 뿐이다.
 
 기록은 `sched.calls`(`CallCostRecord`), `sched.messages`(`MessageCostRecord`), `sched.metrics`, `sched.trace()`로 얻는다. `trace()`는 두 실행의 SIM 결과를 그대로 비교할 수 있는 문자열 tuple이다.
 
@@ -173,7 +196,11 @@ CallReply(attempts=(zc.Attempt(input_tokens=8000, output_tokens=120, utterances=
 확인하지 않은 것:
 
 - **러너 통합.** 의도적으로 하지 않았다. PR 169 이후 러너 담당이 `scripts/zone_dispatch_v2.py`에 연결한다. 그 전까지 실제 물리·모델 호출로 이 비용을 쓴 실행은 없다.
-- **패키지 A 로그 스키마.** `harness/zone_study_contract.py`가 아직 없어 `ugrp.zone_sim_cost.local_call.v0` 로컬 최소 기록을 쓴다. 필드는 그대로 두고 패키지 A 스키마로 다시 내보내면 된다.
+- **패키지 A 로그 스키마(정렬 완료).** 비용 행은 `ugrp.zone_sim_cost.call_cost.v1` / `ugrp.zone_sim_cost.message_cost.v1`이고, **로그 기록은 패키지 A가 소유한다.** `contract_call_record()`가 `ugrp.zone_study_call.v1`을, `contract_message_records()`가 `ugrp.zone_study_message_log.v1`을 만들고 A의 `validate_log_record`로 검사한다. `EventScheduler.contract_log()`가 한 실행 전체를 그 형식으로 내보낸다.
+  - `CallCost.cost_terms()`는 A가 요구하는 `alpha_s`·`beta_s_per_token`·`gamma_s_per_utterance`·`output_tokens`·`utterances`에 이 모듈의 감사 항목(입력 토큰 비용, raw·격자, 시도별 결과, 파라미터 해시)을 더한다.
+  - 스케줄러의 계기 이름은 병합 우선순위를 담고 있어 A의 `TRIGGERS` enum과 1:1이 아니다. `TRIGGER_TO_CONTRACT`가 대응을 고정하며, 대응이 없는 이름은 조용히 넘기지 않고 `KeyError`로 막는다.
+  - 시도 결과는 `OUTCOME_STATUS`로 A의 `CALL_STATUS`에 대응한다(`invalid`→`invalid_json`, `error`→`http_error`).
+  - 방송 한 건은 A 기록 한 행이며 수신자별 전달 시각이 `deliveries`에 들어간다.
 - **CI 등록.** `scripts/run_ci_tests.py`는 다른 브랜치와 충돌하는 공용 파일이라 건드리지 않았다. 통합 담당이 두 테스트 파일을 목록에 추가해야 CI에서 돌아간다.
 - **기본값의 타당성.** 위 표의 근거는 일반적인 처리량 가정이다. 모델·tokenizer를 정한 뒤 검증하고 동결해야 한다.
 - `scale=0`(비용 없음) 조건에서는 전달 지연도 0이라 같은 SIM 시각에 메시지-호출이 이어질 수 있다. 최소 호출 간격과 예산이 이를 유한하게 막지만, 이 진단 조건은 사건 수 상한과 함께 쓰는 것이 안전하다.

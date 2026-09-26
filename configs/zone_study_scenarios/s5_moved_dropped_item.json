@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.zone_scenario.v1",
+  "scenario_id": "s5_moved_dropped_item",
+  "map_id": "zone_wide_door_tags_v1",
+  "landmark_detail": "full",
+  "seeds": [641, 642, 643],
+  "orders": [
+    {
+      "order_id": "order-1",
+      "kind": "cyan",
+      "count": 1,
+      "identity": "specific_item",
+      "item_ids": ["cyan_1"],
+      "required_robots": 1,
+      "destination_zone": "A",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-1"}
+    },
+    {
+      "order_id": "order-2",
+      "kind": "red",
+      "count": 2,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-1"}
+    },
+    {
+      "order_id": "order-3",
+      "kind": "can",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-2"}
+    }
+  ],
+  "eval": {
+    "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "물건 이동·낙하. 주문서의 initial_location은 설정 시점의 계획 정보이므로 갱신되지 않는다. 지정 개체 cyan_1은 실행 중 다른 slot으로 옮겨지고, 운반 중인 red 상자 하나는 떨어진다.",
+    "tests_ko": "오정보 비용과 정정: 빈 slot을 본 로봇이 그 사실을 전달하면 다른 로봇의 헛된 방문이 줄고, 낙하를 알리면 배송 완료 오주장을 정정할 수 있다. 정형 조건은 state=absent/suspected와 correct 행위로 표현 가능해야 하므로 ②−④ 차이가 작을 것으로 예상되는 대조 시나리오다.",
+    "notes_ko": "cyan_1은 30 SIM초에 P1-1에서 P1-3으로 옮겨진다. 주문서는 끝까지 P1-1을 가리키며 갱신하지 않는다. red_1은 62.5 SIM초에 파지에서 놓여 그 자리에 남는다. 두 사건 모두 자기 카메라로만 관측되며 호스트가 알리지 않는다. 낙하 지점은 실행 시점의 물리 결과라 설정에 적지 않는다.",
+    "setup": {
+      "arena_variant": "zone_wide_door",
+      "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+      "contact_profile": "local_contact_fine",
+      "weld": "off",
+      "robot_spawns": "arena_default",
+      "placements": [
+        {"item_id": "cyan_1", "kind": "cyan", "order_id": "order-1", "slot": "P1-1", "pose_m": [0.4, -2.45, 0.0]},
+        {"item_id": "red_1", "kind": "red", "order_id": "order-2", "slot": "P2-1", "pose_m": [1.0, -2.45, 0.0]},
+        {"item_id": "red_2", "kind": "red", "order_id": "order-2", "slot": "P2-1", "pose_m": [1.6, -2.45, 0.0]},
+        {"item_id": "can_1", "kind": "can", "order_id": "order-3", "slot": "P1-2", "pose_m": [0.4, -0.85, 0.0]}
+      ]
+    },
+    "hidden_events": [
+      {
+        "event_id": "cyan_1_moved",
+        "kind": "item_moved",
+        "trigger": {"kind": "sim_time", "at_sim_s": 30.0},
+        "target": {"item_id": "cyan_1", "to_pose_m": [-0.2, 0.75, 0.0]},
+        "discovery": {"kind": "own_camera_near_anchor", "anchor": "P1-1", "radius_m": 1.0},
+        "notes_ko": "P1-1이 비었다는 사실만 slot 근처에서 보인다. 새 위치 P1-3은 별도의 재탐색으로만 알 수 있다."
+      },
+      {
+        "event_id": "red_1_dropped",
+        "kind": "item_dropped",
+        "trigger": {"kind": "sim_time", "at_sim_s": 62.5},
+        "target": {"item_id": "red_1"},
+        "discovery": {"kind": "own_camera_self"},
+        "notes_ko": "운반 중이면 집게가 열려 물건이 떨어진다. 아직 집지 않았다면 사건은 효과 없이 기록만 남기고, 그 사실도 평가에만 적는다."
+      }
+    ],
+    "budget": {
+      "sim_seconds": 1800,
+      "http_attempts_per_trial": 90,
+      "http_attempts_per_actor": 30,
+      "output_tokens_per_call": 768
+    }
+  }
+}

@@ -47,7 +47,14 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
-CONTRACT_VERSION = 'ugrp.zone_study_contract.v1'
+#: Contract versions. v2 (2026-09-26, PR 194 sixth round, adopted unchanged from
+#: the integration PR #229 / issue #223) declares three landmark placement keys
+#: of the tagged maps v2 (``*_tags_v2``). v1 is KEPT for the frozen records: the
+#: offline smoke v1-v4 ran under it, and ``registry_sha256(CONTRACT_VERSION_V1)``
+#: reproduces their registry hash ``f1ff6a49…``.
+CONTRACT_VERSION_V1 = 'ugrp.zone_study_contract.v1'
+CONTRACT_VERSION = 'ugrp.zone_study_contract.v2'
+CONTRACT_VERSIONS = (CONTRACT_VERSION_V1, CONTRACT_VERSION)
 PAYLOAD_SCHEMA = 'ugrp.zone_study_call_input.v1'
 MESSAGE_ENVELOPE_SCHEMA = 'ugrp.zone_study_message.v1'
 CALL_LOG_SCHEMA = 'ugrp.zone_study_call.v1'
@@ -67,6 +74,29 @@ class ContractViolation(ValueError):
 def digest(value: object) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'),
                                      allow_nan=False).encode()).hexdigest()
+
+
+#: Length of the opaque scenario reference a robot receives.
+SCENARIO_REF_HEX = 12
+SCENARIO_REF = re.compile(r'^sc_[0-9a-f]{%d}$' % SCENARIO_REF_HEX)
+
+
+def scenario_ref(scenario_id: str) -> str:
+    """Opaque robot-facing reference of a scenario (2026-09-26 review finding 17).
+
+    The descriptive config id (``s5_moved_dropped_item``) names the hidden event
+    KIND before the robot could observe anything, so the order sheet carries this
+    derived token instead. The mapping back stays in the run manifest and the
+    trial record, which are evaluation data.
+    """
+    if not isinstance(scenario_id, str) or not scenario_id:
+        raise ContractViolation('scenario_id must be a non-empty string')
+    if SCENARIO_REF.match(scenario_id):
+        # Idempotent: E's ``public_part()`` already carries the opaque ref
+        # (second review, finding 17), and the sheet built from it must equal the
+        # sheet built from the full config.
+        return scenario_id
+    return 'sc_' + hashlib.sha256(scenario_id.encode()).hexdigest()[:SCENARIO_REF_HEX]
 
 
 # ---------------------------------------------------------------------------
@@ -194,10 +224,11 @@ def channel_section(name: str, actor: str, seed: int | None = None) -> dict:
             'role': role_of(name, actor, seed)}
 
 
-def condition_manifest(name: str, seed: int | None = None) -> dict:
+def condition_manifest(name: str, seed: int | None = None, *, contract_version: str = CONTRACT_VERSION) -> dict:
     """What a run bundle records about the condition (docs/execution_versioning.md)."""
     spec = condition(name)
-    value = {'contract_version': CONTRACT_VERSION, 'condition': name, 'korean_label': spec.korean_label,
+    value = {'contract_version': _version(contract_version), 'condition': name,
+             'korean_label': spec.korean_label,
              'topology': spec.topology, 'encoding': spec.encoding, 'robot_llm': spec.robot_llm,
              'is_main': spec.is_main, 'actors': list(spec.actors),
              'input_allowlist': sorted(spec.input_allowlist), 'notes': spec.notes}
@@ -210,9 +241,21 @@ def condition_manifest(name: str, seed: int | None = None) -> dict:
     return value
 
 
-def registry_sha256() -> str:
-    """Hash of the whole registry; pin it next to the code SHA of a cohort."""
-    return digest({name: condition_manifest(name) for name in sorted(CONDITIONS)})
+def _version(contract_version: object) -> str:
+    """A known contract version, or ``ValueError`` (never a silent default)."""
+    if not isinstance(contract_version, str) or contract_version not in CONTRACT_VERSIONS:
+        raise ValueError(f'unknown contract version {contract_version!r}; known: {CONTRACT_VERSIONS}')
+    return contract_version
+
+
+def registry_sha256(contract_version: str = CONTRACT_VERSION) -> str:
+    """Hash of the whole registry; pin it next to the code SHA of a cohort.
+
+    ``contract_version`` reproduces the hash an older contract recorded (v1:
+    the offline smoke v1-v4); the conditions themselves did not change in v2.
+    """
+    return digest({name: condition_manifest(name, contract_version=contract_version)
+                   for name in sorted(CONDITIONS)})
 
 
 # ---------------------------------------------------------------------------
@@ -295,19 +338,34 @@ def free_text_report(text: object, *, literals: Sequence[str] = ()) -> dict:
 
     ``literals`` are the run's literal tokens (robot ids, order/item ids, zone
     letters, passage ids, enum values) that must NOT be translated. Every other
-    latin word is reported as a language slip; only a message with no Korean at
-    all is a contract violation.
+    latin word is reported as a language slip.
+
+    User decision 2026-09-26 (review finding 8): a non-Korean body is DELIVERED,
+    flagged and costed, never blocking. So ``blocking_reasons`` carries only the
+    structural failures (no body at all) that make an utterance unsendable, and
+    the language slip lives in ``language_reasons``/``ok``. A/C share this split,
+    so a sender's language mistake can no longer make the RECIPIENT's next call
+    fail to build.
     """
     if not isinstance(text, str) or not text.strip():
-        return {'ok': False, 'reasons': ['free message body needs non-empty text'], 'has_korean': False,
-                'latin_words': [], 'chars': 0}
+        return {'ok': False, 'reasons': ['free message body needs non-empty text'],
+                'blocking_reasons': ['free message body needs non-empty text'],
+                'language_reasons': [], 'has_korean': False, 'latin_words': [], 'chars': 0}
     allowed = set(literals) | ALWAYS_LITERAL
     latin_words = [run for run in LATIN_RUN.findall(text)
                    if run not in allowed and len(re.findall('[A-Za-z]', run)) > 1]
     has_korean = bool(HANGUL.search(text))
-    reasons = [] if has_korean else ['free message body has no Korean text']
-    return {'ok': not reasons, 'reasons': reasons, 'has_korean': has_korean,
+    language = [] if has_korean else ['free message body has no Korean text']
+    return {'ok': not language, 'reasons': language, 'blocking_reasons': [],
+            'language_reasons': language, 'has_korean': has_korean,
             'latin_words': latin_words, 'chars': len(text)}
+
+
+def language_violations(name: str, body: object, *, literals: Sequence[str] = ()) -> list[str]:
+    """Language slips of one message body. Flagged and costed, never blocking."""
+    if condition(name).encoding != 'free_ko' or not isinstance(body, Mapping):
+        return []
+    return list(free_text_report(body.get('text'), literals=literals)['language_reasons'])
 
 
 def message_violations(name: str, sender: str, recipients: Sequence[str], body: object, *,
@@ -333,7 +391,8 @@ def message_violations(name: str, sender: str, recipients: Sequence[str], body: 
         if not isinstance(body, Mapping) or set(body) - {'text'} or 'text' not in body:
             out.append('a free message body must be exactly {"text": "..."}')
         else:
-            out.extend(free_text_report(body['text'])['reasons'])
+            # Language slips are flagged (``language_violations``), not blocking.
+            out.extend(free_text_report(body['text'])['blocking_reasons'])
     else:
         out.extend(structured_violations(body if isinstance(body, Mapping) else {}, vocabulary=vocabulary))
     return out
@@ -403,10 +462,26 @@ SCHEMATIC_REF_KEYS = ('ref', 'kind', 'png_sha256', 'width_px', 'height_px', 'px_
 PUBLIC_MAP_KEYS = ('schema', 'map_id', 'version', 'frame', 'bounds_m', 'walls', 'terrain', 'passages',
                    'regions', 'zone_slots', 'pickup_bays', 'item_kinds_painted', 'approach_convention',
                    'landmark_detail', 'landmarks', 'base_map_id')
+# Closed sub-schemas INSIDE the map projection (2026-09-26 review finding 3): a
+# renamed live field cannot ride along in a wall, a passage, a slot or a tag just
+# because the provider recomputed the projection hash.
+WALL_KEYS = ('id', 'center_m', 'half_extents_m', 'height_m', 'perimeter')
+TERRAIN_KEYS = ('id', 'kind', 'center_m', 'half_extents_m', 'height_m', 'slope_deg', 'passable')
+PASSAGE_KEYS = ('id', 'kind', 'axis', 'center_m', 'half_extents_m', 'connects', 'opens_to', 'lanes',
+                'width_m')
+REGION_KEYS = ('map_key', 'center_m', 'half_extents_m', 'paint_rgba')
+SLOT_KEYS = ('slot_id', 'center_m', 'half_extents_m')
+BAY_KEYS = ('bay_id', 'center_m', 'half_extents_m', 'slots')
+LANDMARKS_KEYS = ('schema', 'family', 'placement', 'tag_count', 'tag_frame', 'tags')
+TAG_KEYS = ('id', 'wall', 'center_m', 'normal_xy', 'size_m', 'yaw_rad')
 ORDER_KEYS = ('order_id', 'kind', 'count', 'item_ids', 'required_robots', 'destination_zone',
               'initial_location', 'identity')
+#: How an order names what must be delivered. A closed enum, not free text.
+ORDER_IDENTITIES = ('specific_item', 'kind_fungible')
 ORDER_SHEET_KEYS = ('schema', 'scenario_id', 'map_id', 'map_file_sha256', 'public_map_sha256', 'orders',
                     'kinds', 'team_size', 'note_ko')
+#: ``order_sheet.kinds.<kind>``: the static team requirement of one kind.
+KIND_KEYS = ('required_robots', 'roles')
 RGB_REF_KEYS = ('ref', 'kind', 'captured_at_sim_s', 'sha256')
 COMMAND_KEYS = ('command_id', 'issued_at_sim_s', 'kind', 'arguments', 'local_state')
 # Arguments of the robot's OWN commands: own-frame targets and map/order ids only.
@@ -454,6 +529,18 @@ def non_ascii_keys(value: object) -> list[str]:
 
 
 def _value_hits(value: object) -> list[str]:
+    """Evaluation-only source names in HOST-built values.
+
+    2026-09-26 second review: the text of a delivered message is what another
+    ROBOT wrote (``"nav_cam은 사용하지 말고 자기 카메라만 보세요."``), not a
+    data source the host attached, so C accepted it and A then refused the
+    recipient's payload. Message bodies are checked by the channel rules
+    (``message_violations``) instead; every other value is still scanned.
+    """
+    if isinstance(value, Mapping) and isinstance(value.get('inbox'), Sequence) \
+            and not isinstance(value.get('inbox'), (str, bytes)):
+        value = {**value, 'inbox': [{k: v for k, v in env.items() if k != 'body'}
+                                    if isinstance(env, Mapping) else env for env in value['inbox']]}
     hits = []
     for path, key, item in _walk(value):
         if not isinstance(item, str):
@@ -479,6 +566,151 @@ def _closed(value: object, keys: Sequence[str], label: str, *, required: Sequenc
     return out
 
 
+def _is_num(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
+def _vec(*lengths: int):
+    def check(value, label):
+        if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) \
+                and len(value) in lengths and all(_is_num(v) for v in value):
+            return []
+        return [f'{label} must be a list of {"/".join(map(str, lengths))} numbers, got {value!r}']
+    return check
+
+
+def _num(value, label):
+    return [] if _is_num(value) else [f'{label} must be a number, got {value!r}']
+
+
+def _int(value, label):
+    return [] if isinstance(value, int) and not isinstance(value, bool) else \
+        [f'{label} must be a whole number, got {value!r}']
+
+
+def _bool(value, label):
+    return [] if isinstance(value, bool) else [f'{label} must be true/false, got {value!r}']
+
+
+def _str(value, label):
+    return [] if isinstance(value, str) else [f'{label} must be a string, got {value!r}']
+
+
+def _opt(check):
+    return lambda value, label: [] if value is None else check(value, label)
+
+
+def _tokens(value, label):
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return [p for i, item in enumerate(value) for p in _token(item, f'{label}[{i}]')]
+    return [f'{label} must be a list of ID tokens, got {value!r}']
+
+
+def _strs(value, label):
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)) \
+            and all(isinstance(v, str) for v in value):
+        return []
+    return [f'{label} must be a list of strings, got {value!r}']
+
+
+def _rgba(value, label):
+    return _str(value, label) if isinstance(value, str) else _vec(4)(value, label)
+
+
+#: Value type of every leaf key a map sub-object may carry (2026-09-26 second
+#: review, finding 3). Closing the KEYS was not enough: ``center_m`` could carry
+#: ``{"survey_xy_m": [...]}`` and a recomputed hash made it pass. A key listed in
+#: a closed sub-schema but missing here is a contract bug (``_typed`` refuses it).
+MAP_LEAF_TYPES = {
+    'center_m': _vec(2, 3), 'half_extents_m': _vec(2, 3), 'height_m': _num, 'slope_deg': _num,
+    'passable': _bool, 'perimeter': _bool, 'axis': _str, 'lanes': _int, 'width_m': _num,
+    'connects': _strs, 'opens_to': _str, 'map_key': _str,
+    'paint_rgba': _rgba, 'normal_xy': _vec(2, 3), 'size_m': _num, 'yaw_rad': _num,
+    'wall': lambda v, l: _token(v, l), 'kind': lambda v, l: _token(v, l),
+    'schema': _str, 'family': _str, 'tag_count': _int, 'tag_frame': _str,
+    'version': _int, 'frame': _str, 'bounds_m': _vec(4), 'item_kinds_painted': _tokens,
+    'approach_convention': _str, 'landmark_detail': _str, 'base_map_id': _opt(lambda v, l: _token(v, l)),
+    'map_id': lambda v, l: _token(v, l),
+    'width_px': _int, 'height_px': _int, 'px_per_m': _num,
+}
+#: ``landmarks.placement``: the fixed tag mounting geometry, numbers only.
+#: Contract v2 (2026-09-26, integration PR #229, issue #223): the tagged maps v2
+#: (``*_tags_v2``, PR #178/#201) add denser tags near doors and two door-post
+#: tags per door edge. Their mounting geometry is static map data, so the
+#: three keys are declared here, closed and typed like the rest.
+DOOR_POST_KEYS = ('offset_from_edge_m', 'width_m', 'height_m', 'tag_center_heights_m')
+
+
+def _door_posts(value, label):
+    out = _closed(value, DOOR_POST_KEYS, label)
+    if out:
+        return out
+    for key in ('offset_from_edge_m', 'width_m', 'height_m'):
+        if key in value:
+            out.extend(_num(value[key], f'{label}.{key}'))
+    heights = value.get('tag_center_heights_m', [])
+    if not (isinstance(heights, Sequence) and not isinstance(heights, (str, bytes))
+            and all(_is_num(h) for h in heights)):
+        out.append(f'{label}.tag_center_heights_m must be a list of numbers, got {heights!r}')
+    return out
+
+
+PLACEMENT_KEYS_V1 = ('cell_thickness_m', 'center_height_m', 'end_margin_m', 'faces', 'plate_m',
+                     'plate_thickness_m', 'size_m', 'spacing_m')
+PLACEMENT_KEYS = PLACEMENT_KEYS_V1 + ('near_door_spacing_m', 'near_door_radius_m', 'door_posts')
+PLACEMENT_TYPES = {**{k: _num for k in PLACEMENT_KEYS}, 'faces': _str, 'door_posts': _door_posts}
+#: The closed placement key set of each contract version (v1 kept for frozen records).
+PLACEMENT_KEYS_BY_VERSION = {CONTRACT_VERSION_V1: PLACEMENT_KEYS_V1, CONTRACT_VERSION: PLACEMENT_KEYS}
+
+
+def _either(*checks):
+    def check(value, label):
+        results = [c(value, label) for c in checks]
+        return [] if any(not r for r in results) else results[0]
+    return check
+
+
+_TOKEN = lambda v, l: _token(v, l)   # noqa: E731 - late binding: _token is defined below
+
+
+def _points(value, label):
+    """Own-frame waypoints: a list of ID tokens or of 2/3-number vectors, never objects."""
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return [p for i, item in enumerate(value)
+                for p in _either(_TOKEN, _vec(2, 3))(item, f'{label}[{i}]')]
+    return [f'{label} must be a list, got {value!r}']
+
+
+#: Value types of the robot's own belief, own command arguments and the
+#: commander's issued orders (second review, finding 3): no nested object can
+#: ride along under an allowed key.
+BELIEF_TYPES = {'region': _str, 'last_visual_anchor': _opt(_str), 'last_requested_destination': _opt(_str),
+                'last_visually_confirmed_region': _opt(_str), 'confidence': _either(_str, _num), 'sources': _strs,
+                'held_item_guess': _opt(_str), 'blocked_passages': _tokens, 'notes_ko': _str}
+COMMAND_ARGUMENT_TYPES = {
+    'target_ref': _opt(_TOKEN), 'target_zone': _opt(_TOKEN), 'order_id': _opt(_TOKEN), 'item': _opt(_TOKEN),
+    'role': _opt(_TOKEN), 'passage': _opt(_TOKEN), 'distance_m': _num, 'turn_deg': _num, 'speed': _num,
+    'duration_s': _num, 'gripper': _either(_str, _num), 'observe': _either(_bool, _str),
+    'waypoints': _points, 'reason_code': _opt(_TOKEN)}
+ISSUED_ORDER_TYPES = {'order_ref': _TOKEN, 'to': _TOKEN, 'at_sim_s': _num, 'instruction': _str}
+
+
+def _typed(value: object, label: str, *, skip: Sequence[str] = (), types: Mapping = MAP_LEAF_TYPES) -> list[str]:
+    """Type check every present leaf of one closed sub-object."""
+    if not isinstance(value, Mapping):
+        return []
+    out = []
+    for key, item in value.items():
+        if key in skip:
+            continue
+        check = types.get(key)
+        if check is None:
+            out.append(f'{label}.{key} has no declared value type in the contract')
+            continue
+        out.extend(check(item, f'{label}.{key}'))
+    return out
+
+
 def _sha(value: object, label: str, *, required: bool = True) -> list[str]:
     if value is None and not required:
         return []
@@ -493,7 +725,13 @@ def vocabulary_from_payload(payload: Mapping) -> Vocabulary:
     items: set = set()
     for order in sheet.get('orders', ()) or ():
         if isinstance(order, Mapping):
-            items |= {order.get('order_id'), order.get('kind'), *(order.get('item_ids') or ())}
+            # Malformed values are reported by the shape checks; the vocabulary
+            # must not raise on them, or a violation would become a crash.
+            candidates = [order.get('order_id'), order.get('kind')]
+            ids = order.get('item_ids')
+            if isinstance(ids, Sequence) and not isinstance(ids, (str, bytes)):
+                candidates.extend(ids)
+            items |= {v for v in candidates if isinstance(v, str)}
     refs = set(ZONE_IDS) | {'pickup'}
     for bay in public.get('pickup_bays', ()) or ():
         if isinstance(bay, Mapping):
@@ -531,7 +769,128 @@ def _rgb_hits(entries: object, label: str, allowed_robots: Sequence[str], now: f
     return hits
 
 
-def _static_map_hits(payload: Mapping) -> list[str]:
+def _token(value: object, label: str) -> list[str]:
+    """A literal ID token, i.e. never a coordinate, a number or a nested object."""
+    if not isinstance(value, str) or not ID_TOKEN.match(value):
+        return [f'{label} must be a literal ID token, got {value!r}']
+    return []
+
+
+def _whole(value: object, label: str, *, minimum: int = 0) -> list[str]:
+    if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+        return [f'{label} must be a whole number >= {minimum}, got {value!r}']
+    return []
+
+
+def _seq(value: object, label: str) -> tuple[list[str], list]:
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        return [f'{label} must be a list'], []
+    return [], list(value)
+
+
+def map_slot_ids(public: object) -> frozenset[str]:
+    """Every pickup-bay and zone slot id the public map declares."""
+    out: set[str] = set()
+    if not isinstance(public, Mapping):
+        return frozenset()
+    for bay in public.get('pickup_bays', ()) or ():
+        if isinstance(bay, Mapping):
+            for slot in bay.get('slots', ()) or ():
+                if isinstance(slot, Mapping) and isinstance(slot.get('slot_id'), str):
+                    out.add(slot['slot_id'])
+    for slots in (public.get('zone_slots') or {}).values():
+        for slot in slots or ():
+            if isinstance(slot, Mapping) and isinstance(slot.get('slot_id'), str):
+                out.add(slot['slot_id'])
+    return frozenset(out)
+
+
+def map_bay_ids(public: object) -> frozenset[str]:
+    if not isinstance(public, Mapping):
+        return frozenset()
+    return frozenset(bay['bay_id'] for bay in public.get('pickup_bays', ()) or ()
+                     if isinstance(bay, Mapping) and isinstance(bay.get('bay_id'), str))
+
+
+def _public_map_hits(public: object, contract_version: str = CONTRACT_VERSION) -> list[str]:
+    """Close the map projection down to its leaf objects, keys AND value types."""
+    hits = _closed(public, PUBLIC_MAP_KEYS, 'static_map.public_map',
+                   required=('map_id', 'bounds_m', 'walls', 'regions'))
+    if not isinstance(public, Mapping):
+        return hits
+    hits.extend(_typed(public, 'static_map.public_map',
+                       skip=('walls', 'terrain', 'passages', 'regions', 'zone_slots', 'pickup_bays',
+                             'landmarks')))
+    for name, keys, required in (('walls', WALL_KEYS, ('id',)), ('terrain', TERRAIN_KEYS, ('id',)),
+                                 ('passages', PASSAGE_KEYS, ('id',))):
+        if name not in public:
+            continue
+        problems, rows = _seq(public.get(name), f'static_map.public_map.{name}')
+        hits.extend(problems)
+        for row in rows:
+            label = f'static_map.public_map.{name}[]'
+            hits.extend(_closed(row, keys, label, required=required))
+            if isinstance(row, Mapping):
+                hits.extend(_token(row.get('id'), f'{label}.id'))
+                hits.extend(_typed(row, label, skip=('id',)))
+    for name in ('regions', 'zone_slots'):
+        section = public.get(name)
+        if name in public and not isinstance(section, Mapping):
+            hits.append(f'static_map.public_map.{name} must be an object')
+            continue
+        for key, value in (section or {}).items():
+            label = f'static_map.public_map.{name}.{key}'
+            hits.extend(_token(key, f'static_map.public_map.{name} key'))
+            if name == 'regions':
+                hits.extend(_closed(value, REGION_KEYS, label))
+                hits.extend(_typed(value, label))
+                continue
+            problems, rows = _seq(value, label)
+            hits.extend(problems)
+            for slot in rows:
+                hits.extend(_closed(slot, SLOT_KEYS, f'{label}[]', required=('slot_id',)))
+                if isinstance(slot, Mapping):
+                    hits.extend(_token(slot.get('slot_id'), f'{label}[].slot_id'))
+                    hits.extend(_typed(slot, f'{label}[]', skip=('slot_id',)))
+    if 'pickup_bays' in public:
+        problems, bays = _seq(public.get('pickup_bays'), 'static_map.public_map.pickup_bays')
+        hits.extend(problems)
+        for bay in bays:
+            label = 'static_map.public_map.pickup_bays[]'
+            hits.extend(_closed(bay, BAY_KEYS, label, required=('bay_id',)))
+            if not isinstance(bay, Mapping):
+                continue
+            hits.extend(_token(bay.get('bay_id'), f'{label}.bay_id'))
+            hits.extend(_typed(bay, label, skip=('bay_id', 'slots')))
+            problems, slots = _seq(bay.get('slots', ()), f'{label}.slots')
+            hits.extend(problems)
+            for slot in slots:
+                hits.extend(_closed(slot, SLOT_KEYS, f'{label}.slots[]', required=('slot_id',)))
+                if isinstance(slot, Mapping):
+                    hits.extend(_token(slot.get('slot_id'), f'{label}.slots[].slot_id'))
+                    hits.extend(_typed(slot, f'{label}.slots[]', skip=('slot_id',)))
+    if 'landmarks' in public:
+        marks = public['landmarks']
+        hits.extend(_closed(marks, LANDMARKS_KEYS, 'static_map.public_map.landmarks'))
+        if isinstance(marks, Mapping):
+            hits.extend(_typed(marks, 'static_map.public_map.landmarks', skip=('placement', 'tags')))
+            if 'placement' in marks:
+                hits.extend(_closed(marks['placement'], PLACEMENT_KEYS_BY_VERSION[contract_version],
+                                    'static_map.public_map.landmarks.placement'))
+                hits.extend(_typed(marks['placement'], 'static_map.public_map.landmarks.placement',
+                                   types=PLACEMENT_TYPES))
+            problems, tags = _seq(marks.get('tags', ()), 'static_map.public_map.landmarks.tags')
+            hits.extend(problems)
+            for tag in tags:
+                hits.extend(_closed(tag, TAG_KEYS, 'static_map.public_map.landmarks.tags[]',
+                                    required=('id',)))
+                if isinstance(tag, Mapping):
+                    hits.extend(_int(tag.get('id'), 'static_map.public_map.landmarks.tags[].id'))
+                    hits.extend(_typed(tag, 'static_map.public_map.landmarks.tags[]', skip=('id',)))
+    return hits
+
+
+def _static_map_hits(payload: Mapping, contract_version: str = CONTRACT_VERSION) -> list[str]:
     static = payload.get('static_map')
     hits = _closed(static, STATIC_MAP_KEYS, 'static_map', required=STATIC_MAP_REQUIRED)
     if not isinstance(static, Mapping):
@@ -539,8 +898,7 @@ def _static_map_hits(payload: Mapping) -> list[str]:
     hits.extend(_sha(static.get('public_map_sha256'), 'static_map.public_map_sha256'))
     hits.extend(_sha(static.get('map_file_sha256'), 'static_map.map_file_sha256', required=False))
     public = static.get('public_map')
-    hits.extend(_closed(public, PUBLIC_MAP_KEYS, 'static_map.public_map',
-                        required=('map_id', 'bounds_m', 'walls', 'regions')))
+    hits.extend(_public_map_hits(public, contract_version))
     if isinstance(public, Mapping) and isinstance(static.get('public_map_sha256'), str) \
             and digest(public) != static['public_map_sha256']:
         hits.append('static_map.public_map_sha256 does not match the projection')
@@ -548,10 +906,17 @@ def _static_map_hits(payload: Mapping) -> list[str]:
         hits.extend(_closed(static['schematic_ref'], SCHEMATIC_REF_KEYS, 'static_map.schematic_ref',
                             required=('ref', 'png_sha256')))
         if isinstance(static['schematic_ref'], Mapping):
-            ref = static['schematic_ref'].get('ref')
+            schematic = static['schematic_ref']
+            ref = schematic.get('ref')
             if not isinstance(ref, str) or not MAP_SCHEMATIC_REF.match(ref):
                 hits.append(f'static_map.schematic_ref: {ref!r} is not a map schematic ref')
-            hits.extend(_sha(static['schematic_ref'].get('png_sha256'), 'static_map.schematic_ref.png_sha256'))
+            elif ref != f'map-{static.get("map_id")}-schematic':
+                hits.append(f'static_map.schematic_ref: {ref!r} is not the schematic of map '
+                            f'{static.get("map_id")!r}')
+            if schematic.get('kind', 'map_schematic') != 'map_schematic':
+                hits.append('static_map.schematic_ref.kind must be map_schematic')
+            hits.extend(_sha(schematic.get('png_sha256'), 'static_map.schematic_ref.png_sha256'))
+            hits.extend(_typed(schematic, 'static_map.schematic_ref', skip=('ref', 'kind', 'png_sha256')))
     return hits
 
 
@@ -562,17 +927,78 @@ def _order_sheet_hits(payload: Mapping) -> list[str]:
         return hits
     if sheet.get('schema') != ORDER_SHEET_SCHEMA:
         hits.append(f'order_sheet must carry schema {ORDER_SHEET_SCHEMA}')
+    # The robot-facing sheet names the scenario only by its opaque ref: a
+    # descriptive id would announce the hidden event kind (review finding 17).
+    if 'scenario_id' in sheet and not SCENARIO_REF.match(str(sheet.get('scenario_id'))):
+        hits.append('order_sheet.scenario_id must be the opaque scenario_ref '
+                    '(sc_<12 hex>), not the descriptive config id')
+    static = payload.get('static_map') if isinstance(payload.get('static_map'), Mapping) else {}
+    public = static.get('public_map') if isinstance(static.get('public_map'), Mapping) else {}
+    bays, slots = map_bay_ids(public), map_slot_ids(public)
+    # second review, finding 3: the non-order fields are typed too.
+    for key in ('map_file_sha256', 'public_map_sha256'):
+        if key in sheet:
+            hits.extend(_sha(sheet.get(key), f'order_sheet.{key}'))
+    if 'map_id' in sheet:
+        hits.extend(_token(sheet.get('map_id'), 'order_sheet.map_id'))
+    if 'team_size' in sheet:
+        hits.extend(_whole(sheet.get('team_size'), 'order_sheet.team_size', minimum=1))
+    if 'note_ko' in sheet:
+        hits.extend(_str(sheet.get('note_ko'), 'order_sheet.note_ko'))
+    if 'kinds' in sheet:
+        table = sheet.get('kinds')
+        if not isinstance(table, Mapping):
+            hits.append('order_sheet.kinds must be an object')
+        else:
+            for kind, row in table.items():
+                label = f'order_sheet.kinds.{kind}'
+                hits.extend(_token(kind, 'order_sheet.kinds key'))
+                hits.extend(_closed(row, KIND_KEYS, label, required=KIND_KEYS))
+                if isinstance(row, Mapping):
+                    hits.extend(_whole(row.get('required_robots'), f'{label}.required_robots', minimum=1))
+                    roles = row.get('roles')
+                    hits.extend(_tokens(roles, f'{label}.roles'))
+                    if isinstance(roles, Sequence) and not isinstance(roles, (str, bytes)):
+                        hits.extend(f'{label}.roles: {r!r} is not a role name' for r in roles
+                                    if r not in ROLE_NAMES)
     orders = sheet.get('orders')
     if not isinstance(orders, Sequence) or isinstance(orders, str):
         return hits + ['order_sheet.orders must be a list']
     for order in orders:
         hits.extend(_closed(order, ORDER_KEYS, 'order_sheet.orders[]',
                             required=('order_id', 'kind', 'count', 'destination_zone', 'initial_location')))
-        if isinstance(order, Mapping):
-            if order.get('destination_zone') not in ZONE_IDS:
-                hits.append(f'order {order.get("order_id")!r} has a destination outside {ZONE_IDS}')
-            hits.extend(_closed(order.get('initial_location'), ('pickup_bay', 'slot'),
-                                'order_sheet.orders[].initial_location', required=('pickup_bay',)))
+        if not isinstance(order, Mapping):
+            continue
+        label = f'order_sheet.orders[{order.get("order_id")!r}]'
+        hits.extend(_token(order.get('order_id'), f'{label}.order_id'))
+        hits.extend(_token(order.get('kind'), f'{label}.kind'))
+        hits.extend(_whole(order.get('count'), f'{label}.count', minimum=1))
+        if 'required_robots' in order:
+            hits.extend(_whole(order.get('required_robots'), f'{label}.required_robots', minimum=1))
+        if 'identity' in order and order.get('identity') not in ORDER_IDENTITIES:
+            hits.append(f'{label}.identity must be one of {ORDER_IDENTITIES}, got {order.get("identity")!r}')
+        if 'item_ids' in order:
+            problems, items = _seq(order.get('item_ids'), f'{label}.item_ids')
+            hits.extend(problems)
+            for item in items:
+                hits.extend(_token(item, f'{label}.item_ids[]'))
+        if order.get('destination_zone') not in ZONE_IDS:
+            hits.append(f'order {order.get("order_id")!r} has a destination outside {ZONE_IDS}')
+        where = order.get('initial_location')
+        hits.extend(_closed(where, ('pickup_bay', 'slot'), f'{label}.initial_location',
+                            required=('pickup_bay',)))
+        if not isinstance(where, Mapping):
+            continue
+        # A coarse location is map VOCABULARY, never a coordinate: a list, a
+        # number or an unknown id here would be exact-pose smuggling.
+        hits.extend(_token(where.get('pickup_bay'), f'{label}.initial_location.pickup_bay'))
+        if bays and isinstance(where.get('pickup_bay'), str) and where['pickup_bay'] not in bays:
+            hits.append(f'{label}.initial_location.pickup_bay {where["pickup_bay"]!r} is not a bay of the '
+                        'static map')
+        if where.get('slot') is not None:
+            hits.extend(_token(where.get('slot'), f'{label}.initial_location.slot'))
+            if slots and isinstance(where.get('slot'), str) and where['slot'] not in slots:
+                hits.append(f'{label}.initial_location.slot {where["slot"]!r} is not a slot of the static map')
     return hits
 
 
@@ -592,6 +1018,10 @@ def _history_hits(payload: Mapping, now: float | None) -> list[str]:
             hits.append(f'own_command_history: local_state {entry.get("local_state")!r} is not a self state')
         hits.extend(_closed(entry.get('arguments', {}), COMMAND_ARGUMENT_KEYS,
                             'own_command_history[].arguments'))
+        hits.extend(_typed(entry.get('arguments', {}), 'own_command_history[].arguments',
+                           types=COMMAND_ARGUMENT_TYPES))
+        hits.extend(_typed({k: v for k, v in entry.items() if k in ('kind',)}, 'own_command_history[]',
+                           types={'kind': lambda v, l: _token(v, l)}))
         issued = entry.get('issued_at_sim_s')
         if isinstance(issued, bool) or not isinstance(issued, (int, float)) or issued < 0:
             hits.append('own_command_history[].issued_at_sim_s must be a non-negative number')
@@ -641,10 +1071,11 @@ def _inbox_hits(payload: Mapping, spec: Condition, seed: int | None, now: float 
     return hits
 
 
-def _shape_hits(payload: Mapping, spec: Condition, seed: int | None) -> list[str]:
+def _shape_hits(payload: Mapping, spec: Condition, seed: int | None,
+                contract_version: str = CONTRACT_VERSION) -> list[str]:
     time_s = payload.get('sim_time_s')
     now = time_s if isinstance(time_s, (int, float)) and not isinstance(time_s, bool) else None
-    hits = _static_map_hits(payload) + _order_sheet_hits(payload)
+    hits = _static_map_hits(payload, contract_version) + _order_sheet_hits(payload)
     if not isinstance(payload.get('request_id'), str) or not ID_TOKEN.match(str(payload.get('request_id'))):
         hits.append('request_id must be a literal id token')
     if 'own_rgb_refs' in payload:
@@ -657,8 +1088,10 @@ def _shape_hits(payload: Mapping, spec: Condition, seed: int | None) -> list[str
     if 'issued_orders' in payload:
         for entry in payload['issued_orders'] if isinstance(payload['issued_orders'], Sequence) else []:
             hits.extend(_closed(entry, ISSUED_ORDER_KEYS, 'issued_orders[]', required=('order_ref', 'to')))
+            hits.extend(_typed(entry, 'issued_orders[]', types=ISSUED_ORDER_TYPES))
     if 'self_belief' in payload:
         hits.extend(_closed(payload['self_belief'], BELIEF_KEYS, 'self_belief'))
+        hits.extend(_typed(payload['self_belief'], 'self_belief', types=BELIEF_TYPES))
     hits.extend(_inbox_hits(payload, spec, seed, now))
     if spec.leader_rotation:
         if seed is None:
@@ -695,9 +1128,13 @@ EVALUATION_ONLY = {
 }
 
 
-def boundary_manifest() -> dict:
+def boundary_manifest(contract_version: str = CONTRACT_VERSION) -> dict:
     """The public/private schema as data: what a robot may see and what stays in evaluation."""
-    return {'contract_version': CONTRACT_VERSION, 'payload_schema': PAYLOAD_SCHEMA,
+    placement = {'static_map.public_map.landmarks.placement':
+                 list(PLACEMENT_KEYS_BY_VERSION[_version(contract_version)])}
+    if 'door_posts' in placement['static_map.public_map.landmarks.placement']:
+        placement['static_map.public_map.landmarks.placement.door_posts'] = list(DOOR_POST_KEYS)
+    return {'contract_version': contract_version, 'payload_schema': PAYLOAD_SCHEMA,
             'robot_facing': dict(ROBOT_FACING),
             'input_allowlist': {name: sorted(spec.input_allowlist) for name, spec in CONDITIONS.items()},
             'evaluation_only': dict(EVALUATION_ONLY), 'forbidden_keys': sorted(FORBIDDEN_KEYS),
@@ -705,21 +1142,103 @@ def boundary_manifest() -> dict:
             'forbidden_value_substrings': list(FORBIDDEN_VALUE_SUBSTRINGS),
             'closed_sub_schemas': {'static_map': list(STATIC_MAP_KEYS),
                                    'static_map.public_map': list(PUBLIC_MAP_KEYS),
+                                   'static_map.public_map.walls[]': list(WALL_KEYS),
+                                   'static_map.public_map.terrain[]': list(TERRAIN_KEYS),
+                                   'static_map.public_map.passages[]': list(PASSAGE_KEYS),
+                                   'static_map.public_map.regions.*': list(REGION_KEYS),
+                                   'static_map.public_map.zone_slots.*[]': list(SLOT_KEYS),
+                                   'static_map.public_map.pickup_bays[]': list(BAY_KEYS),
+                                   'static_map.public_map.pickup_bays[].slots[]': list(SLOT_KEYS),
+                                   'static_map.public_map.landmarks': list(LANDMARKS_KEYS),
+                                   **placement,
+                                   'static_map.public_map.landmarks.tags[]': list(TAG_KEYS),
                                    'static_map.schematic_ref': list(SCHEMATIC_REF_KEYS),
                                    'order_sheet': list(ORDER_SHEET_KEYS),
                                    'order_sheet.orders[]': list(ORDER_KEYS),
+                                   'order_sheet.orders[].initial_location': ['pickup_bay', 'slot'],
                                    'own_rgb_refs[]': list(RGB_REF_KEYS),
                                    'own_command_history[]': list(COMMAND_KEYS),
                                    'own_command_history[].arguments': list(COMMAND_ARGUMENT_KEYS),
                                    'inbox[]': list(ENVELOPE_KEYS), 'channel': list(CHANNEL_KEYS),
                                    'self_belief': list(BELIEF_KEYS),
                                    'issued_orders[]': list(ISSUED_ORDER_KEYS)},
+            'order_identities': list(ORDER_IDENTITIES), 'pinned_keys': list(PINNED_KEYS),
             'own_rgb_ref_pattern': OWN_RGB_REF.pattern, 'map_schematic_ref_pattern': MAP_SCHEMATIC_REF.pattern,
             'own_command_states': list(LOCAL_STATES), 'belief_keys': list(BELIEF_KEYS)}
 
 
-def payload_violations(payload: object, *, seed: int | None = None) -> list[str]:
-    """Every contract violation of a robot-facing per-call payload (empty list = clean)."""
+#: What a caller may pin so a payload is compared with the FROZEN originals
+#: instead of only with the provider's own recomputed hashes (review finding 3).
+PINNED_KEYS = ('order_sheet_sha256', 'public_map_sha256', 'map_file_sha256', 'map_id', 'scenario_id',
+               'schematic_png_sha256')
+
+
+def _pinned_hits(payload: Mapping, pinned: Mapping) -> list[str]:
+    """Compare the payload with the pinned frozen order sheet and static map."""
+    unknown = sorted(set(pinned) - set(PINNED_KEYS))
+    if unknown:
+        return [f'unknown pinned key(s): {unknown}']
+    out = []
+    sheet = payload.get('order_sheet') if isinstance(payload.get('order_sheet'), Mapping) else None
+    static = payload.get('static_map') if isinstance(payload.get('static_map'), Mapping) else None
+    public = (static or {}).get('public_map')
+    if 'order_sheet_sha256' in pinned:
+        got = digest(sheet) if sheet is not None else None
+        if got != pinned['order_sheet_sha256']:
+            out.append('order_sheet does not match the pinned frozen order sheet')
+    if 'public_map_sha256' in pinned:
+        if not isinstance(public, Mapping) or digest(public) != pinned['public_map_sha256']:
+            out.append('static_map.public_map does not match the pinned map projection')
+        if (static or {}).get('public_map_sha256') != pinned['public_map_sha256']:
+            out.append('static_map.public_map_sha256 does not match the pinned map projection')
+    for key in ('map_file_sha256', 'map_id'):
+        if key in pinned and (static or {}).get(key) != pinned[key]:
+            out.append(f'static_map.{key} does not match the pinned map bundle')
+    if 'scenario_id' in pinned and (sheet or {}).get('scenario_id') != pinned['scenario_id']:
+        out.append('order_sheet.scenario_id does not match the pinned scenario reference')
+    # Second review, finding 1: the map FIGURE is part of the frozen map bundle.
+    # ``None`` pins "this run has no schematic", so any schematic_ref is foreign.
+    if 'schematic_png_sha256' in pinned:
+        schematic = (static or {}).get('schematic_ref')
+        got = schematic.get('png_sha256') if isinstance(schematic, Mapping) else None
+        if got != pinned['schematic_png_sha256']:
+            out.append('static_map.schematic_ref does not match the pinned map schematic')
+    return out
+
+
+def thaw_for_json(value: object) -> object:
+    """Plain ``dict``/``list`` copy of any mapping/sequence tree.
+
+    The validator must accept a DEEPLY FROZEN payload (review finding 4:
+    ``harness.zone_study_prompts_ko`` hands out an immutable view), so the JSON
+    check looks at the structure, not at the concrete container type. A value
+    that is neither a mapping, a sequence nor a JSON scalar is left as-is and
+    ``json.dumps`` still rejects it.
+    """
+    if isinstance(value, Mapping):
+        return {k: thaw_for_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)) or (isinstance(value, Sequence)
+                                            and not isinstance(value, (str, bytes))):
+        return [thaw_for_json(item) for item in value]
+    return value
+
+
+def payload_violations(payload: object, *, seed: int | None = None,
+                       pinned: Mapping | None = None,
+                       contract_version: str = CONTRACT_VERSION) -> list[str]:
+    """Every contract violation of a robot-facing per-call payload (empty list = clean).
+
+    ``pinned`` optionally carries the digests of the FROZEN order sheet and map
+    bundle (``PINNED_KEYS``). Without it the validator can only check that the
+    provider's hashes are self-consistent, which a provider that recomputes both
+    the data and the hash would pass (review finding 3).
+
+    ``contract_version`` selects the closed key sets of that version (default:
+    the current one); ``CONTRACT_VERSION_V1`` re-checks a frozen v1 payload
+    strictly, so a v2-only map key is still reported there. An unknown version
+    raises ``ValueError``.
+    """
+    _version(contract_version)
     if not isinstance(payload, Mapping):
         return ['payload must be an object']
     out: list[str] = []
@@ -745,19 +1264,23 @@ def payload_violations(payload: object, *, seed: int | None = None) -> list[str]
     if isinstance(time_s, bool) or not isinstance(time_s, (int, float)) or time_s < 0:
         out.append('sim_time_s must be a non-negative number')
     try:                                  # everything a model receives must be plain JSON
-        json.dumps(payload, allow_nan=False)
+        json.dumps(thaw_for_json(payload), allow_nan=False)
     except (TypeError, ValueError) as error:
         return out + [f'payload is not JSON serialisable: {error}']
     out.extend(forbidden_key_hits(payload))
     out.extend(non_ascii_keys(payload))
     out.extend(_value_hits(payload))
-    out.extend(_shape_hits(payload, spec, seed))
+    out.extend(_shape_hits(payload, spec, seed, contract_version))
+    if pinned:
+        out.extend(_pinned_hits(payload, pinned))
     return out
 
 
-def validate_robot_payload(payload: object, *, seed: int | None = None) -> Mapping:
+def validate_robot_payload(payload: object, *, seed: int | None = None,
+                           pinned: Mapping | None = None,
+                           contract_version: str = CONTRACT_VERSION) -> Mapping:
     """Raise ``ContractViolation`` unless the payload is inside the robot-facing boundary."""
-    problems = payload_violations(payload, seed=seed)
+    problems = payload_violations(payload, seed=seed, pinned=pinned, contract_version=contract_version)
     if problems:
         raise ContractViolation('robot-facing payload violates the study contract: ' + '; '.join(problems))
     return payload
@@ -767,7 +1290,7 @@ def validate_robot_payload(payload: object, *, seed: int | None = None) -> Mappi
 # Log schema (written by the runner, read by package D and package I)
 
 CALL_STATUS = ('ok', 'invalid_json', 'rejected_message', 'timeout', 'http_error', 'budget_exhausted',
-               'policy_refusal', 'input_rejected')
+               'policy_refusal', 'input_rejected', 'censored')
 ACTION_KINDS = ('claim_order', 'goto', 'observe', 'grasp', 'place', 'release', 'wait', 'yield_passage',
                 'abort_job', 'noop')
 DELIVERY_STATUS = ('delivered', 'pending', 'rejected', 'dropped_budget')
@@ -797,7 +1320,7 @@ CALL_FIELDS = {
     'output_tokens': 'int',
     'wall_latency_s': 'float|null; measured API latency, never used for SIM order',
     'http_attempts': 'int; >= 1 for a logical call that reached a provider',
-    'status': f'str; one of {CALL_STATUS}',
+    'status': f'str; one of {CALL_STATUS}; censored = still outstanding at the horizon',
     'action_id': 'str|null; the action this call submitted',
     'message_ids': 'list[str]; messages this call emitted',
     'decision_sources': 'list[str]; own refs, own command ids and message ids the answer cited',

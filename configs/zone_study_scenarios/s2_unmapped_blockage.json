@@ -1,0 +1,80 @@
+{
+  "schema": "ugrp.zone_scenario.v1",
+  "scenario_id": "s2_unmapped_blockage",
+  "map_id": "zone_wide_two_doors_tags_v1",
+  "landmark_detail": "full",
+  "seeds": [611, 612, 613],
+  "orders": [
+    {
+      "order_id": "order-1",
+      "kind": "cyan",
+      "count": 2,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "A",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-3"}
+    },
+    {
+      "order_id": "order-2",
+      "kind": "green",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-2"}
+    },
+    {
+      "order_id": "order-3",
+      "kind": "heavy_crate",
+      "count": 1,
+      "identity": "specific_item",
+      "item_ids": ["crate_1"],
+      "required_robots": 2,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-1"}
+    }
+  ],
+  "eval": {
+    "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "미등록 막힘. 정적 지도에는 door_narrow와 door_wide가 모두 열려 있다고 적혀 있고, 주문서도 끝까지 바뀌지 않는다. 실제 막힘은 비공개 사건이며 문 근처에서 자기 카메라로만 발견된다.",
+    "tests_ko": "정보 이득: 먼저 door_narrow에 도착한 로봇만 막힘을 본다. 그 관측을 전달하면 나머지는 헛된 진입을 건너뛰고 door_wide로 우회할 수 있다. 무통신은 각자 직접 볼 때까지 우회하지 못한다.",
+    "notes_ko": "막힘은 45 SIM초에 door_narrow 개구부를 가로막는 물체로 생긴다. 반대편(동쪽) 구역이나 pickup에서는 벽 뒤라 보이지 않는다는 것이 설계 의도이며, 실제 가시성은 장면 빌더 통합 뒤 자기 카메라 영상으로 따로 검증해야 한다. 경로 계획기에는 아직 관측하지 않은 이 물체를 넣지 않는다.",
+    "setup": {
+      "arena_variant": "zone_wide_two_doors",
+      "map_file_sha256": "2562d2f09940e9ba864cf1fe71740592e5305835a6c1af24b3493298a583c4ed",
+      "contact_profile": "local_contact_fine",
+      "weld": "off",
+      "robot_spawns": "arena_default",
+      "placements": [
+        {"item_id": "cyan_1", "kind": "cyan", "order_id": "order-1", "slot": "P1-3", "pose_m": [-0.2, 0.75, 0.0]},
+        {"item_id": "cyan_2", "kind": "cyan", "order_id": "order-1", "slot": "P1-3", "pose_m": [0.4, 0.75, 0.0]},
+        {"item_id": "green_1", "kind": "green", "order_id": "order-2", "slot": "P1-2", "pose_m": [0.4, -0.85, 0.0]},
+        {"item_id": "crate_1", "kind": "heavy_crate", "order_id": "order-3", "slot": "P2-1", "pose_m": [1.275, -2.15, 0.0], "notes_ko": "west/east 두 lug를 동서로 두어 2대가 마주 보고 든다."}
+      ]
+    },
+    "hidden_events": [
+      {
+        "event_id": "door_narrow_blocked",
+        "kind": "passage_blocked",
+        "trigger": {"kind": "sim_time", "at_sim_s": 45.0},
+        "target": {
+          "passage": "door_narrow",
+          "obstacle": {
+            "obstacle_id": "fallen_pallet_1",
+            "center_m": [2.2, 0.05],
+            "half_extents_m": [0.15, 0.22],
+            "height_m": 0.12
+          }
+        },
+        "discovery": {"kind": "own_camera_near_anchor", "anchor": "door_narrow", "radius_m": 1.2},
+        "notes_ko": "개구부(폭 0.5 m)를 0.44 m 가로막아 적재 로봇이 통과할 수 없다. 높이 0.12 m로 로봇 카메라(0.21 m) 시야에 들어온다."
+      }
+    ],
+    "budget": {
+      "sim_seconds": 1800,
+      "http_attempts_per_trial": 90,
+      "http_attempts_per_actor": 30,
+      "output_tokens_per_call": 768
+    }
+  }
+}

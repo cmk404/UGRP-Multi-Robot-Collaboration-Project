@@ -1,0 +1,53 @@
+{
+  "collection_sha256": "15eaacf9200b94829c8df48e42f844e6db4539f4f91a0be68311f39b3b6694a5",
+  "converter": "scripts/zone_study_report.py --tb-events (c21a6fe9, TensorBoard 2.21.0 protobuf)",
+  "hparams_limit": "The merged HParams experiment of the shared logdir lists only 9 columns from another snapshot's experiment summary, so condition/scenario/leader_id/end_reason/tokens_complete are not selectable as columns. The 35 sessions and their values (tokens_complete=True for all) are returned by the session_groups API. Use Time Series for the numbers and result/usage_unknown_calls for the unknown-usage marker.",
+  "hparams_visible_columns": [
+    "condition",
+    "scenario",
+    "seed",
+    "leader_id",
+    "end_reason",
+    "tokens_complete"
+  ],
+  "pinned_tags": [
+    "evaluation/success",
+    "result/makespan_sim_s",
+    "result/model_calls",
+    "result/think_sim_cost_s",
+    "result/talk_sim_cost_s",
+    "result/tokens_total",
+    "result/usage_unknown_calls",
+    "dialogue/utterances"
+  ],
+  "previous_versions_ko": "v1~v3는 TensorBoard로 변환하지 않았다. v3와 v4의 SIM 값은 30/30 같다(control_runs.json).",
+  "runs": 35,
+  "scalars_written": 789,
+  "snapshot": "/Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-study-offline-smoke-v4",
+  "url": "http://127.0.0.1:6006/?pinnedCards=%5B%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22evaluation%2Fsuccess%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmakespan_sim_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fmodel_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fthink_sim_cost_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Ftalk_sim_cost_s%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Ftokens_total%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22result%2Fusage_unknown_calls%22%7D%2C%7B%22plugin%22%3A%22scalars%22%2C%22tag%22%3A%22dialogue%2Futterances%22%7D%5D&smoothing=0&runFilter=%5E0926-zone-study-offline-smoke-v4%2F#timeseries",
+  "verification": {
+    "server": {
+      "endpoint": "http://127.0.0.1:6006",
+      "hparams_sessions": 35,
+      "mismatches": 0,
+      "owner_ko": "다른 작업의 기존 서버(재시작·수정 안 함)",
+      "pid": 9291,
+      "pinned_tags_on_trial_runs": "8/8 tags on 30/30 runs",
+      "raw_mismatches": 0,
+      "raw_trial_record_checks": 120,
+      "scalars_compared": 789,
+      "snapshot_runs_listed": 35,
+      "total_runs_listed": 1012
+    },
+    "ui": {
+      "method_ko": "저장한 url을 임시 프로필 headless Chrome으로 열고 필터된 35개 run을 선택한 뒤 캡처",
+      "pinned_cards": 8,
+      "runs_selected": "35/35",
+      "screenshot": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4-report/tensorboard-pinned-v4.png",
+      "screenshot_sha256": "41a2ae1e4046ba76ae7242c75615c82999bb1c71197dd63855a5fc6c93190cfe",
+      "spot_check": "leader_ko s1/s2: success 0, makespan 300, model_calls 90, think 317.1/307.9 == scalars.json == raw"
+    },
+    "verified_at": "2026-09-26T16:19:05+0900"
+  },
+  "view_key": "zone_study_offline_smoke_v4_20260926 (outputs/tensorboard-view.json, 이 키만 추가)"
+}

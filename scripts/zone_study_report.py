@@ -21,10 +21,13 @@ Reporting rules kept here on purpose:
 from __future__ import annotations
 
 import argparse
+import collections
 import hashlib
 import json
+import os
 import sys
 import time
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +57,37 @@ def interval(ci):
     return f'[{ci["low"]:.3f}, {ci["high"]:.3f}]'
 
 
+def token_cell(row):
+    """Token mean of one condition, or its known lower bound with the unknown marker.
+
+    Fourth review, finding 16: the table printed the mean of the KNOWN trials
+    (120) with no marker while the JSON said one call's usage was unknown and
+    the cohort total was null. An incomplete cohort now shows ``≥<lower bound>
+    (미상 <calls>)``; the lower bound is averaged over every trial.
+    """
+    unknown = int(row.get('usage_unknown_calls') or 0)
+    total = row['metrics'].get('tokens_total')
+    if total is not None and not unknown:
+        return fmt(total, 0)
+    if not unknown:
+        return '—'
+    bound = row['metrics'].get('tokens_total_lower_bound')
+    return f'≥{fmt(bound, 0)} (미상 {unknown})' if bound is not None else f'— (미상 {unknown})'
+
+
+def token_note(summary):
+    """One sentence under the table when any condition's token total is incomplete."""
+    rows = [row for row in summary['conditions'].values() if int(row.get('usage_unknown_calls') or 0)]
+    if not rows:
+        return []
+    detail = ', '.join(f'{row["label_ko"]} 호출 {row["usage_unknown_calls"]}건'
+                       f'(시행 {row.get("tokens_incomplete_trials", 0)}개)' for row in rows)
+    return ['', f'**토큰 사용량 미상:** {detail}. 토큰 열의 `≥N (미상 k)`는 확정 평균이 아니라 '
+                '알려진 사용량만 더한 시행당 하한 평균이다. 확정 합계(`cohort_tokens_total`)는 '
+                '`null`이며 TensorBoard에서는 `result/usage_unknown_calls`·`cohort/usage_unknown_calls`'
+                '와 HParams `tokens_complete=False`로 표시한다.']
+
+
 def condition_table(summary):
     rows = ['| 조건 | 시행 | 성공 | 성공률 | PAR makespan(SIM초) | 성공 makespan | 배송률 | 발화 비용(초) | idle(로봇초) | 충돌 | 교착 | 재계획 | 호출 | 토큰 |',
             '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|']
@@ -65,8 +99,8 @@ def condition_table(summary):
             ok=fmt(m['makespan_success_only_s'], 1), dr=fmt(row['cohort_delivery_rate'], 3),
             talk=fmt(m['talk_sim_cost_s'], 1), idle=fmt(m['idle_robot_s'], 1),
             cf=fmt(m['conflicts'], 1), dl=fmt(m['deadlocks'], 1), rp=fmt(m['replans'], 1),
-            mc=fmt(m['model_calls'], 1), tok=fmt(m['tokens_total'], 0)))
-    return rows
+            mc=fmt(m['model_calls'], 1), tok=token_cell(row)))
+    return rows + token_note(summary)
 
 
 def dialogue_table(summary):
@@ -119,11 +153,12 @@ def comparison_section(comparisons):
         if c['metric'] != current:
             current = c['metric']
             rows += ['', f'**{current}**', '',
-                     '| 기준 | 비교 | 짝 | 기준 평균 | 비교 평균 | 차이 | 95% 부트스트랩 구간 | dz | rank-biserial | 비교>기준 |',
-                     '|---|---|---:|---:|---:|---:|---|---:|---:|---:|']
-        rows.append('| {b} | {v} | {n} | {bm} | {vm} | {d} | {ci} | {dz} | {rb} | {pos}/{n} |'.format(
+                     '| 기준 | 비교 | 짝 | 제외 짝 | 기준 평균 | 비교 평균 | 차이 | 95% 부트스트랩 구간 | dz | rank-biserial | 비교>기준 |',
+                     '|---|---|---:|---:|---:|---:|---:|---|---:|---:|---:|']
+        rows.append('| {b} | {v} | {n} | {x} | {bm} | {vm} | {d} | {ci} | {dz} | {rb} | {pos}/{n} |'.format(
             b=ev.CONDITION_LABELS_KO[c['baseline']], v=ev.CONDITION_LABELS_KO[c['variant']],
-            n=c['n_pairs'], bm=fmt(c['baseline_mean'], 3), vm=fmt(c['variant_mean'], 3),
+            n=c['n_pairs'], x=c.get('excluded_pairs', 0), bm=fmt(c['baseline_mean'], 3),
+            vm=fmt(c['variant_mean'], 3),
             d=fmt(c['mean_diff'], 3), ci=interval(c['diff_ci']),
             dz=fmt(c['cohens_dz'], 3), rb=fmt(c['rank_biserial'], 3),
             pos=c['pairs_variant_higher']))
@@ -132,30 +167,62 @@ def comparison_section(comparisons):
         rows += ['', f'짝 수가 {ev.SMALL_SAMPLE_PAIRS}개 미만인 비교가 있다(짝 {small}). '
                      '유의성 검정을 하지 않고 구간과 짝별 표만 읽는다. '
                      '차이 부호는 `비교 − 기준`이며 짝별 값은 `metrics.json`에 있다.']
+    excluded = sorted({c['metric'] for c in comparisons if c.get('excluded_pairs')})
+    if excluded:
+        # fourth review, finding 16: a pair whose value is unknown is not
+        # silently dropped from the comparison
+        rows += ['', f'값을 알 수 없는 seed를 짝에서 제외한 지표가 있다({", ".join(excluded)}). '
+                     '토큰 지표에서는 사용량 미상 호출이 있는 시행이 제외 대상이다. '
+                     '제외한 seed는 `metrics.json`의 `excluded`에 있다.']
     return rows
 
 
-def boundary_section(summary):
+def _boundary_failure_totals(summary):
+    totals = collections.Counter()
+    for row in summary['per_trial']:
+        totals.update(ev.boundary_failures(row['boundary']))
+    return dict(totals)
+
+
+def boundary_section(summary, statuses=None, failures=None):
+    """Every audit failure, with the common ``boundary_status`` rule.
+
+    2026-09-26 review finding 14: this section only looked at input leaks,
+    forbidden grounds and channel violations, so a trial whose payload was never
+    validated (``payload_validated=False``) or that carried an unknown input key
+    produced the sentence "no problem" while its own ``boundary.clean`` was
+    already False.
+    """
     rows, main, reference = [], [], []
     for row in summary['per_trial']:
         b = row['boundary']
-        if not (b['input_leaks'] or b['forbidden_grounds'] or b['channel_violations']):
+        if ev.boundary_status(b) == 'clean':
             continue
         target = reference if b['condition'] == ev.REFERENCE_CONDITION else main
         target.append((row['efficiency']['trial_id'], b))
+    counts = statuses or summary.get('boundary_status_counts') or {}
     if not main:
-        rows.append('주 4조건의 모든 시행에서 금지 입력 key·금지 근거 인용·채널 위반이 없었다.')
+        rows.append('주 4조건의 모든 시행에서 금지 입력 key·미검증 payload·알 수 없는 입력 key·'
+                    '금지 근거 인용·채널 위반이 없었다.')
     else:
-        rows.append('| 시행 | 금지 입력 key | 금지 근거 | 채널 위반 |')
-        rows.append('|---|---|---|---:|')
+        rows.append('| 시행 | 상태 | 금지 입력 key | 미검증 payload | 알 수 없는 key | 금지 근거 | 채널 위반 |')
+        rows.append('|---|---|---|---:|---|---|---:|')
         for trial_id, b in main:
             keys = sorted({k for r in b['input_leaks'] for k in r['forbidden_input_keys']})
             grounds = sorted({g for r in b['forbidden_grounds'] for g in r['forbidden_grounds']})
-            rows.append(f'| {trial_id} | {", ".join(keys) or "—"} | '
+            odd = sorted({k for r in b['unknown_input_keys'] for k in r['unknown_input_keys']})
+            rows.append(f'| {trial_id} | {ev.boundary_status(b)} | {", ".join(keys) or "—"} | '
+                        f'{len(b["unvalidated_payloads"])} | {", ".join(odd) or "—"} | '
                         f'{", ".join(grounds) or "—"} | {len(b["channel_violations"])} |')
         rows.append('')
-        rows.append('**평가 자료가 로봇 입력으로 흘러간 시행이 있다. '
+        rows.append('**입력 경계 감사에 실패한 시행이 있다. '
                     '해당 코호트를 통신 효과 근거로 쓰지 않는다.**')
+    if counts:
+        rows.append('')
+        rows.append('시행 상태 집계: ' + ', '.join(f'{k} {v}' for k, v in sorted(counts.items())))
+    failures = failures or summary.get('boundary_failures') or {}
+    if failures:
+        rows.append('감사 실패 항목 합계: ' + ', '.join(f'{k} {v}' for k, v in sorted(failures.items())))
     if reference:
         keys = sorted({k for _, b in reference for r in b['input_leaks']
                        for k in r['forbidden_input_keys']})
@@ -214,7 +281,10 @@ def markdown(summary, comparisons, sources, generated_at):
         '',
         '## 4. 입력 경계 감사',
         '',
-        *boundary_section(summary),
+        *boundary_section(summary,
+                          statuses=dict(collections.Counter(ev.boundary_status(r['boundary'])
+                                                            for r in summary['per_trial'])),
+                          failures=_boundary_failure_totals(summary)),
         '',
         '## 5. 원본',
         '',
@@ -229,26 +299,94 @@ def markdown(summary, comparisons, sources, generated_at):
         '',
         '- 이 보고서는 지표 계산의 정확성만 확인한다. 조건 간 우열은 사전 고정한 코호트를 '
         '실제로 실행한 뒤에만 주장한다.',
-        '- 로그 schema는 Package A(`kiro/zone-study-contract`)가 확정한다. 현재는 '
-        f'`{ev.PROVISIONAL_SCHEMA}` 잠정 형식을 읽는다.',
+        '- 로그 schema는 Package A(`harness/zone_study_contract.py`)가 소유한다. '
+        f'`{ev.TRIAL_SCHEMA}`는 A의 호출·메시지·행동 기록을 담고 A가 검증한다. '
+        f'과거 파일럿 로그를 위해 `{ev.PROVISIONAL_SCHEMA}`도 계속 읽는다.',
         '',
     ]
     return '\n'.join(lines)
 
 
+def _run_paths(scalars, directory):
+    """Resolve every run directory BEFORE anything is written (fifth/sixth review, P2).
+
+    A run name is a relative path of non-empty components without ``.``, ``..``,
+    a backslash or a NUL. Sixth review: that lexical check alone let a SYMLINKED
+    directory inside the logdir carry a new run outside it, because nothing was
+    resolved and ``exists()`` of a run not yet written is False. Now:
+
+    * no component between the logdir and the run may be a symbolic link (even a
+      dangling one, or one that points back inside, which would alias a run);
+    * the REAL path (``Path.resolve``) must lie strictly inside the real logdir,
+      so a symlinked logdir itself is fine and its target is what is written;
+    * duplicates are compared on the real path, case- and Unicode-folded, since
+      the default macOS file system does not tell ``A`` from ``a``;
+    * a run that already exists (at its real path) is refused, never appended to
+      or rewritten: an old snapshot (e.g. v4's ``<condition>/<scenario>-s<seed>``
+      runs) stays as it was.
+
+    Returns the REAL run paths; ``write_events`` writes there and re-checks each
+    one just before creating it.
+    """
+    root = Path(directory)
+    if root.exists() and not root.is_dir():
+        raise NotADirectoryError(f'the TensorBoard logdir {root} is not a directory')
+    real_root = root.resolve()
+    paths, existing, seen = [], [], {}
+    for run in scalars['runs']:
+        name = run.get('run')
+        parts = name.split('/') if isinstance(name, str) else []
+        if (not parts or any(p in ('', '.', '..') or '\\' in p or '\x00' in p for p in parts)
+                or Path(name).is_absolute()):
+            raise ValueError(f'run name {name!r} is not a relative path inside the logdir')
+        for depth in range(1, len(parts) + 1):
+            if root.joinpath(*parts[:depth]).is_symlink():
+                raise ValueError(f'run name {name!r} passes through the symbolic link '
+                                 f'{"/".join(parts[:depth])!r} inside the logdir')
+        real = root.joinpath(*parts).resolve()
+        if real == real_root or not real.is_relative_to(real_root):
+            raise ValueError(f'run name {name!r} resolves to {real}, outside the logdir {real_root}')
+        key = unicodedata.normalize('NFC', str(real)).casefold()
+        if key in seen:
+            raise ValueError(f'duplicate run path in the scalar payload: {seen[key]!r} and {name!r}')
+        seen[key] = name
+        paths.append(real)
+        if real.exists():
+            existing.append(name)
+    # a run that is the parent directory of another would be created by the
+    # other's ``mkdir(parents=True)`` first and then fail half-way through
+    parents = {str(parent) for key in seen for parent in Path(key).parents}
+    nested = sorted(seen[key] for key in seen if key in parents)
+    if nested:
+        raise ValueError(f'run(s) {nested} would contain another run of the payload')
+    if existing:
+        raise FileExistsError(f'TensorBoard run(s) already exist under {directory}: {existing}; '
+                              'write a new snapshot directory instead of rewriting them')
+    return paths
+
+
+def _still_inside(path, directory):
+    """``write_events``: the checked real run path is still the real path now."""
+    if path.resolve() != path or os.path.lexists(path):
+        raise ValueError(f'run path {path} changed after the logdir check (symlink or existing entry)')
+    if not path.is_relative_to(Path(directory).resolve()):
+        raise ValueError(f'run path {path} is outside the logdir {directory}')
+
+
 def write_events(scalars, directory, at):
-    """Optional: real TensorBoard event files, one run per entry. No server change."""
+    """Optional: real TensorBoard event files, one NEW run per entry. No server change."""
+    directory = Path(directory)
+    paths = _run_paths(scalars, directory)
     from tensorboard.compat.proto.event_pb2 import Event
     from tensorboard.compat.proto.summary_pb2 import Summary
     from tensorboard.plugins.hparams import api_pb2, metadata, plugin_data_pb2
     from tensorboard.summary.writer.event_file_writer import EventFileWriter
     from tensorboard.util.tensor_util import make_tensor_proto
 
-    directory = Path(directory)
     written = 0
-    for run in scalars['runs']:
-        path = directory / run['run']
-        path.mkdir(parents=True, exist_ok=True)
+    for run, path in zip(scalars['runs'], paths):
+        _still_inside(path, directory)
+        path.mkdir(parents=True)
         writer = EventFileWriter(str(path), max_queue_size=50, flush_secs=5)
 
         def add(summary, step=0):
@@ -287,6 +425,8 @@ def build(paths, output, penalty_factor=ev.DEFAULT_PENALTY_FACTOR,
     comparisons = ev.compare_all(trials, include_reference=include_reference,
                                  resamples=resamples, seed=seed, penalty_factor=penalty_factor)
     scalars = ev.scalar_export(summary)
+    if tb_events:
+        _run_paths(scalars, Path(tb_events))      # refuse before any report file is written
     sources = sorted((t['source_path'], sha256_file(t['source_path'])) for t in trials)
     at = now if now is not None else time.time()
     generated_at = time.strftime('%Y-%m-%dT%H:%M:%S%z', time.localtime(at))
@@ -305,9 +445,17 @@ def build(paths, output, penalty_factor=ev.DEFAULT_PENALTY_FACTOR,
     if tb_events:
         events = write_events(scalars, tb_events, at)
         (output / 'tensorboard.json').write_text(json.dumps(events, ensure_ascii=False, indent=2))
+    statuses = collections.Counter(ev.boundary_status(r['boundary']) for r in summary['per_trial'])
+    failures = collections.Counter()
+    for row in summary['per_trial']:
+        failures.update(ev.boundary_failures(row['boundary']))
     return {'output': str(output), 'trials': len(trials), 'comparisons': len(comparisons),
             'runs': len(scalars['runs']), 'events': events,
-            'boundary_clean_trials': sum(r['boundary']['clean'] for r in summary['per_trial'])}
+            # review finding 14: one status rule for every consumer
+            'boundary_clean_trials': statuses['clean'],
+            'boundary_violation_trials': statuses['violation'],
+            'boundary_unverified_trials': statuses['unverified'],
+            'boundary_status_counts': dict(statuses), 'boundary_failures': dict(failures)}
 
 
 def main(argv=None):

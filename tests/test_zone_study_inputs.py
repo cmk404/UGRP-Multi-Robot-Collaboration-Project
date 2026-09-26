@@ -435,3 +435,43 @@ def test_log_record_builders_produce_records_that_pass_the_schema(source, bundle
         si.action_log_record(run_id='run-1', condition_name='peer_ko', seed=11, actor='r2',
                             action_id='act-2', request_id='req-1', submitted_at_sim_s=1., kind='goto',
                             arguments={'object_pose': [1., 2.]}, accepted=True)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-26 Codex review regressions
+
+def test_the_robot_only_sees_an_opaque_scenario_reference(source):
+    """Review finding 17: the descriptive config id (``s5_moved_dropped_item``)
+    told the robot the hidden event KIND before it could observe anything."""
+    sheet = source.sheet()
+    assert sheet['scenario_id'] == c.scenario_ref('S1_normal_mixed') == source.scenario_ref
+    assert c.SCENARIO_REF.match(sheet['scenario_id'])
+    assert 'normal_mixed' not in json.dumps(sheet, ensure_ascii=False)
+    # the mapping back stays evaluation-side
+    assert source.manifest()['scenario_id'] == 'S1_normal_mixed'
+    assert source.manifest()['scenario_ref'] == sheet['scenario_id']
+    assert source.scenario_id == 'S1_normal_mixed'
+
+
+def test_a_public_scenario_note_is_refused(source):
+    """Review finding 17: a public ``notes`` string named the hidden event kind,
+    its target and, in s6, the solution."""
+    leaky = scenario()
+    leaky['notes'] = 'cyan_1은 30초에 P1-3으로 옮겨진다'
+    with pytest.raises(c.ContractViolation, match='design_notes_ko'):
+        si.validate_scenario(leaky)
+
+
+def test_pinned_digests_bind_a_payload_to_the_frozen_sources(source, bundle):
+    """Review finding 3: the payload is compared with the FROZEN order sheet and
+    map bundle, not only with the provider's own recomputed hashes."""
+    payload = si.build_call_input(
+        robot_id='r2', condition_name='peer_ko', request_id='req_1', sim_time_s=5.0,
+        static_map=si.static_map_for_call(bundle), source=source, seed=11,
+        own_rgb_refs=[si.own_rgb_ref('r2', 1, 5.0, FRAME_SHA)], own_command_history=[],
+        self_belief=si.belief_skeleton(), inbox=[])
+    assert c.payload_violations(payload, seed=11, pinned=source.pinned) == []
+    tampered = copy.deepcopy(payload)
+    tampered['order_sheet']['orders'][0]['destination_zone'] = 'C'
+    assert c.payload_violations(tampered, seed=11) == []
+    assert c.payload_violations(tampered, seed=11, pinned=source.pinned)

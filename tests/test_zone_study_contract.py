@@ -28,7 +28,7 @@ def _static_map():
 
 
 def _sheet():
-    return {'schema': c.ORDER_SHEET_SCHEMA, 'scenario_id': 'S1', 'map_id': 'zone_x',
+    return {'schema': c.ORDER_SHEET_SCHEMA, 'scenario_id': c.scenario_ref('S1'), 'map_id': 'zone_x',
             'orders': [{'order_id': 'order-1', 'kind': 'long_beam', 'count': 1,
                         'item_ids': ['long_beam-1'], 'required_robots': 2, 'destination_zone': 'A',
                         'initial_location': {'pickup_bay': 'P1', 'slot': 'P1-2'},
@@ -135,17 +135,111 @@ def test_condition_manifest_and_registry_hash_are_stable():
 
 
 # ---------------------------------------------------------------------------
-# Encodings
+# 2026-09-26 Codex review regressions
 
-def test_free_korean_is_required_in_the_free_text_conditions():
+def test_closed_schema_also_closes_types_and_the_map_interior():
+    """Review finding 3: a closed key set alone let an exact coordinate through
+    as a VALUE (``initial_location.slot=[0.4, -2.45]``) and let a new key ride
+    inside the map projection when the provider recomputed its own hash."""
+    payload = _payload()
+    payload['order_sheet']['orders'][0]['initial_location']['slot'] = [0.4, -2.45]
+    problems = c.payload_violations(payload, seed=11)
+    assert any('initial_location.slot' in p for p in problems), problems
+
+    payload = _payload()
+    payload['order_sheet']['orders'][0]['initial_location']['slot'] = 'P9-9'
+    assert any('is not a slot of the static map' in p for p in c.payload_violations(payload, seed=11))
+
+    payload = _payload()
+    payload['order_sheet']['orders'][0]['initial_location']['pickup_bay'] = 'P7'
+    assert any('is not a bay of the static map' in p for p in c.payload_violations(payload, seed=11))
+
+    payload = _payload()
+    payload['static_map']['public_map']['walls'][0]['survey_xy_m'] = [1.0, 2.0]
+    payload['static_map']['public_map_sha256'] = c.digest(payload['static_map']['public_map'])
+    problems = c.payload_violations(payload, seed=11)
+    assert any('public_map.walls[] carries key(s) outside the contract' in p for p in problems), problems
+
+    payload = _payload()
+    payload['static_map']['public_map']['pickup_bays'][0]['slots'][0]['live_pose_m'] = [0., 0.]
+    payload['static_map']['public_map_sha256'] = c.digest(payload['static_map']['public_map'])
+    assert any('slots[] carries key(s) outside the contract' in p
+               for p in c.payload_violations(payload, seed=11))
+
+    for bad in ({'count': 0}, {'count': 1.5}, {'required_robots': 0}, {'identity': 'guess'},
+                {'item_ids': 'long_beam-1'}, {'kind': ['long_beam']}):
+        payload = _payload()
+        payload['order_sheet']['orders'][0].update(bad)
+        assert c.payload_violations(payload, seed=11), bad
+
+
+def test_pinned_frozen_sources_are_compared_not_only_self_consistent():
+    """Review finding 3: a provider that edits the data AND recalculates the hash
+    passes self-consistency, so the caller pins the frozen originals."""
+    payload = _payload()
+    pinned = {'order_sheet_sha256': c.digest(payload['order_sheet']),
+              'public_map_sha256': payload['static_map']['public_map_sha256'],
+              'map_file_sha256': payload['static_map']['map_file_sha256'],
+              'map_id': 'zone_x', 'scenario_id': c.scenario_ref('S1')}
+    assert c.payload_violations(payload, seed=11, pinned=pinned) == []
+
+    moved = copy.deepcopy(payload)
+    moved['order_sheet']['orders'][0]['destination_zone'] = 'B'
+    assert c.payload_violations(moved, seed=11) == []                 # self-consistent
+    assert any('pinned frozen order sheet' in p
+               for p in c.payload_violations(moved, seed=11, pinned=pinned))
+
+    redrawn = copy.deepcopy(payload)
+    redrawn['static_map']['public_map']['version'] = 2
+    redrawn['static_map']['public_map_sha256'] = c.digest(redrawn['static_map']['public_map'])
+    assert c.payload_violations(redrawn, seed=11) == []
+    assert any('pinned map projection' in p
+               for p in c.payload_violations(redrawn, seed=11, pinned=pinned))
+    with pytest.raises(c.ContractViolation):
+        c.validate_robot_payload(redrawn, seed=11, pinned=pinned)
+    assert any('unknown pinned key' in p
+               for p in c.payload_violations(payload, seed=11, pinned={'nonsense': 'x'}))
+
+
+def test_an_english_inbox_message_does_not_block_the_next_call():
+    """Review finding 8: C accepted an English utterance while A rejected the
+    recipient's whole inbox, so the sender's language slip broke the RECEIVER."""
+    envelope = c.message_envelope('peer_ko', 'w1-r1-1', 'r1', ['r2'], {'text': 'Move to A'},
+                                  created_at_sim_s=4.0)
+    payload = _payload(inbox=[envelope])
+    assert c.payload_violations(payload, seed=11) == []
+    assert c.language_violations('peer_ko', envelope['body']) == \
+        ['free message body has no Korean text']
+
+
+def test_the_censored_call_status_exists_for_horizon_truncation():
+    """Review finding 16: a call still outstanding at the horizon must stay in
+    the ledger with its own status instead of disappearing."""
+    assert 'censored' in c.CALL_STATUS
+
+
+# ---------------------------------------------------------------------------
+
+def test_free_korean_is_flagged_but_never_blocking():
+    """2026-09-26 review finding 8 / user decision: an English utterance is
+    DELIVERED, flagged as a language violation and costed. It must not make the
+    envelope invalid, because the RECIPIENT's next payload carries that inbox."""
     c.check_message('peer_ko', 'r1', ['r2', 'r3'], {'text': 'order-1은 제가 A로 가져갑니다'})
-    with pytest.raises(c.ContractViolation, match='no Korean'):
-        c.check_message('peer_ko', 'r1', ['r2'], {'text': 'I take order-1 to zone A'})
+    c.check_message('peer_ko', 'r1', ['r2'], {'text': 'I take order-1 to zone A'})
+    assert c.language_violations('peer_ko', {'text': 'I take order-1 to zone A'}) == \
+        ['free message body has no Korean text']
+    assert c.language_violations('peer_ko', {'text': 'order-1을 A로 가져갑니다'}) == []
+    assert c.language_violations('structured', {'act': 'inform'}) == []
+    with pytest.raises(c.ContractViolation):                 # empty body: unsendable
+        c.check_message('peer_ko', 'r1', ['r2'], {'text': '   '})
     with pytest.raises(c.ContractViolation):
         c.check_message('peer_ko', 'r1', ['r2'], {'text': '가자', 'act': 'inform'})
     report = c.free_text_report('r2, door_narrow는 blocked 입니다', literals={'door_narrow'})
     assert report['ok'] and report['latin_words'] == []
-    assert c.free_text_report('please help')['ok'] is False
+    english = c.free_text_report('please help')
+    assert english['ok'] is False and english['blocking_reasons'] == []
+    assert english['language_reasons'] == ['free message body has no Korean text']
+    assert c.free_text_report('   ')['blocking_reasons'] == ['free message body needs non-empty text']
     assert c.free_text_report('r1, order-1 is blocked 입니다',
                               literals={'order-1'})['latin_words'] == ['is']
 

@@ -5,6 +5,10 @@ receives 0, no follower-to-follower, structured refuses free text, explicit
 recipients, per-window caps), that a message cannot change a host claim, reply
 parsing and schema violations, language drift being flagged and not repaired,
 and leader rotation by seed.
+
+Every input bundle here is a REAL package A payload built by
+``harness.zone_study_inputs.build_call_input`` from a real static map bundle, so
+these tests fail if package C drifts from A's contract.
 """
 import copy
 import dataclasses
@@ -21,52 +25,90 @@ import pytest
 from harness import zone_study_prompts_ko as pk
 from harness import zone_study_protocol as zp
 from harness.zone_dialogue_metrics import hangul_ratio
+from harness.zone_map_schematic import map_bundle, static_map_section
+from harness.zone_study_contract import ContractViolation, condition as contract_condition
+from harness.zone_study_inputs import (SCENARIO_SCHEMA, OrderSheetSource, build_call_input,
+                                       command_entry, own_rgb_ref, vocabulary)
 
 ROBOTS = zp.ROBOTS
-ORDER_SHEET = {
-    'schema': pk.ORDER_SHEET_SCHEMA, 'map_id': 'zone_wide_two_doors_tags_v1',
-    'map_sha256': 'a' * 64,
+MAP_ID = 'zone_wide_two_doors_tags_v1'
+SCENARIO = {
+    'schema': SCENARIO_SCHEMA, 'scenario_id': 'c_protocol_fixture', 'map_id': MAP_ID,
+    'seeds': [3, 4, 5, 13],
     'orders': [
         {'order_id': 'order-1', 'kind': 'long_beam', 'item_ids': ['long_beam-1'], 'count': 1,
-         'required_robots': 2, 'roles': ['end_neg', 'end_pos'], 'destination_zone': 'A',
+         'required_robots': 2, 'destination_zone': 'A', 'identity': 'specific_item',
          'initial_location': {'pickup_bay': 'P1', 'slot': 'P1-2'}},
         {'order_id': 'order-2', 'kind': 'tile', 'item_ids': ['tile-1'], 'count': 1,
-         'required_robots': 1, 'roles': ['west'], 'destination_zone': 'C',
+         'required_robots': 1, 'destination_zone': 'C', 'identity': 'specific_item',
          'initial_location': {'pickup_bay': 'P2', 'slot': 'P2-1'}},
     ],
 }
-MAP_PUBLIC = {
-    'schema': 'ugrp.zone_arena.v1', 'map_id': 'zone_wide_two_doors_tags_v1', 'version': 1,
-    'frame': 'world metres; x east, y north', 'bounds_m': [-1.05, 3.4, -1.5, 1.5],
-    'regions': {'pickup': {'center_m': [0, 0], 'half_extents_m': [1, 1.4]},
-                'zone_A': {'center_m': [3, 1], 'half_extents_m': [.4, .4]},
-                'zone_B': {'center_m': [3, 0], 'half_extents_m': [.4, .4]},
-                'zone_C': {'center_m': [3, -1], 'half_extents_m': [.4, .4]}},
-    'zone_slots': {'A': 3, 'B': 3, 'C': 3},
-    'pickup_bays': {'P1': {'slots': ['P1-1', 'P1-2']}, 'P2': {'slots': ['P2-1']}},
-    'passages': [{'id': 'door_narrow', 'kind': 'door', 'width_m': .5},
-                 {'id': 'door_wide', 'kind': 'door', 'width_m': 1.}],
-    'obstacles': [{'id': 'wall_north', 'kind': 'wall'}],
-    'box_kinds': ['cyan', 'red'], 'approach_convention': 'facing east (+x)',
-}
 JPEG = bytes([0xFF, 0xD8, 0xFF, 0xE0]) + b'kiro-test-wrist' * 4
+# 2026-09-26 review finding 1: an image is bound to the reference that declares
+# its digest, so a fixture ref must carry the digest of the REAL bytes.
+FRAME_SHA = pk.image_sha256(JPEG)
+MAP_PNG = bytes([0x89, 0x50, 0x4E, 0x47]) + b'kiro-test-map' * 4
+MAP_PNG_SHA = pk.image_sha256(MAP_PNG)
 KO_TEXT = 'order-1은 제가 end_neg 역할로 맡겠습니다. door_narrow가 좁아 door_wide로 돌아갑니다.'
 EN_TEXT = 'I will take order-1 as end_neg and go through the wide door instead.'
+_BUNDLE = None
 
 
-def inputs(**kw):
-    base = dict(map_public=pk.public_map(MAP_PUBLIC), map_sha256='b' * 64,
-                order_sheet=pk.validate_order_sheet(ORDER_SHEET), order_sheet_sha256='c' * 64,
-                wrist_jpeg=JPEG, own_commands=({'command': 'drive', 'issued_at_sim_s': 1.0},),
-                own_belief={'region': 'unknown', 'confidence': 'low'}, sim_time_s=4.0)
-    base.update(kw)
-    return pk.StudyInputs(**base)
+def bundle():
+    """Real map bundle (no schematic render: these tests need no PNG)."""
+    global _BUNDLE
+    if _BUNDLE is None:
+        _BUNDLE = map_bundle(MAP_ID, schematic=False)
+    return _BUNDLE
+
+
+def source():
+    return OrderSheetSource(SCENARIO, bundle())
+
+
+def payload(condition='peer_ko', rid='r1', *, seed=None, request_id='req_1', sim_time_s=4.0,
+            inbox=None, own_rgb=True, commands=None, belief=None, team_rgb=None, issued_orders=None):
+    """One validated package A per-call payload."""
+    spec = contract_condition(condition)
+    allow = spec.input_allowlist
+    kw = {}
+    if 'own_rgb_refs' in allow:
+        kw['own_rgb_refs'] = [own_rgb_ref(rid, 42, 3.5, FRAME_SHA)] if own_rgb else []
+    if 'own_command_history' in allow:
+        kw['own_command_history'] = list(commands if commands is not None else
+                                        [command_entry('cmd-0001', 1.0, 'goto',
+                                                       {'target_zone': 'A'})])
+    if 'self_belief' in allow:
+        kw['self_belief'] = belief if belief is not None else {'region': 'unknown', 'confidence': 'low'}
+    if 'inbox' in allow:
+        kw['inbox'] = list(inbox or [])
+    if 'team_rgb_refs' in allow:
+        kw['team_rgb_refs'] = list(team_rgb if team_rgb is not None else
+                                   [own_rgb_ref(r, 42, 3.5, FRAME_SHA) for r in ROBOTS])
+    if 'issued_orders' in allow:
+        kw['issued_orders'] = list(issued_orders or [])
+    return build_call_input(robot_id=rid, condition_name=condition, request_id=request_id,
+                            sim_time_s=sim_time_s, static_map=static_map_section(bundle()),
+                            source=source(), seed=seed, **kw)
+
+
+def inputs(condition='peer_ko', rid='r1', *, seed=None, map_figure_jpeg=None, **kw):
+    """A :class:`pk.StudyInputs` wrapping a real A payload."""
+    data = payload(condition, rid, seed=seed, **kw)
+    if map_figure_jpeg is not None:
+        data['static_map'] = dict(data['static_map'])
+        data['static_map']['schematic_ref'] = {
+            'ref': f'map-{MAP_ID}-schematic', 'kind': 'map_schematic',
+            'png_sha256': pk.image_sha256(map_figure_jpeg)}
+    if rid == zp.COMMANDER:
+        return pk.StudyInputs(payload=data, robot_views={r: JPEG for r in ROBOTS},
+                              map_figure_jpeg=map_figure_jpeg, seed=seed)
+    return pk.StudyInputs(payload=data, wrist_jpeg=JPEG, map_figure_jpeg=map_figure_jpeg, seed=seed)
 
 
 def transport(condition, **kw):
-    args = dict(item_ids=('long_beam-1', 'tile-1'), order_ids=('order-1', 'order-2'),
-                roles=('end_neg', 'end_pos', 'west'), passages=('door_narrow', 'door_wide'),
-                location_refs=('pickup', 'P1', 'P1-2', 'zone_A'))
+    args = dict(vocabulary=vocabulary(source().sheet(), bundle()['public_map']))
     args.update(kw)
     t = zp.Transport(condition, **args)
     t.open_window('w1', at_sim_s=10.0)
@@ -98,7 +140,27 @@ def test_four_main_conditions_and_the_reference_ceiling():
     same = {tuple(getattr(zp.SPECS[c], f) for f in fields if f not in channel) for c in main}
     assert same == {(True, False, True)}               # robot_llm, commander_llm, main_condition
     assert {zp.SPECS[c].topology for c in main} == {'none', 'mesh', 'star'}
-    assert {zp.SPECS[c].encoding for c in main} == {'none', 'ko_free', 'structured'}
+    # package A's encoding literals
+    assert {zp.SPECS[c].encoding for c in main} == {'none', 'free_ko', 'schema'}
+
+
+def test_specs_are_derived_from_the_package_a_registry():
+    """A condition, topology or encoding change in A must reach this protocol."""
+    from harness.zone_study_contract import CONDITIONS as A_CONDITIONS
+
+    assert tuple(zp.SPECS) == tuple(A_CONDITIONS) == zp.CONDITIONS
+    for name, contract in A_CONDITIONS.items():
+        s = zp.SPECS[name]
+        assert (s.topology, s.encoding) == (contract.topology, contract.encoding)
+        assert s.rotating_leader is contract.leader_rotation
+        assert s.robot_llm is contract.robot_llm and s.main_condition is contract.is_main
+        from harness.zone_study_contract import allowed_edges as a_edges
+        if s.channel_open:
+            assert zp.allowed_edges(name, seed=13) == a_edges(name, 13)
+        else:
+            # no message channel here: reference_R orders through an action, so
+            # this protocol relays nothing even though A declares a downlink
+            assert zp.allowed_edges(name, seed=13) == frozenset()
 
 
 def test_leader_rotates_r1_r2_r3_by_seed():
@@ -141,7 +203,7 @@ def test_peer_mesh_delivers_to_named_recipients_only():
     t = transport('peer_ko')
     r = t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=10.)
     assert r.accepted and r.deliveries == (('r2', 10.1),)
-    assert [m['from_robot'] for m in t.inbox('r2', now_sim_s=10.1)] == ['r1']
+    assert [m['sender'] for m in t.inbox('r2', now_sim_s=10.1)] == ['r1']
     assert t.inbox('r3', now_sim_s=99.) == ()          # never addressed
     assert t.send('r2', recipients=['r1', 'r3'], text=KO_TEXT, at_sim_s=11.).accepted
     assert len(t.inbox('r3', now_sim_s=99.)) == 1
@@ -175,7 +237,7 @@ def test_structured_channel_refuses_free_text_and_unknown_ids():
     assert t.send('r1', recipients=['r2'], structured=struct(confidence=0.9),
                   at_sim_s=10.).rejection == 'schema'
     ok = t.send('r1', recipients=['r2'], structured=struct(), at_sim_s=10.)
-    assert ok.accepted and t.inbox('r2', now_sim_s=10.1)[0]['message'] == struct()
+    assert ok.accepted and t.inbox('r2', now_sim_s=10.1)[0]['body'] == struct()
     assert t.sent_count() == 1
 
 
@@ -239,8 +301,10 @@ def test_delivery_delay_and_inbox_fields():
     assert t.inbox('r2', now_sim_s=10.05) == ()        # not yet delivered
     record, = t.inbox('r2', now_sim_s=10.1)
     assert set(record) <= set(zp.INBOX_FIELDS)
-    assert record['text'] == KO_TEXT and record['from_robot'] == 'r1'
-    assert record['sent_at_sim_s'] == 10. and record['delivered_at_sim_s'] == 10.1
+    assert record['body'] == {'text': KO_TEXT} and record['sender'] == 'r1'
+    # package A's envelope pins when it was CREATED; the delivery time is the
+    # scheduler's and the evaluation log's, never a robot input
+    assert record['created_at_sim_s'] == 10. and 'delivered_at_sim_s' not in record
     for banned in ('language', 'flags', 'reason', 'action', 'claim', 'hangul_ratio'):
         assert banned not in record
 
@@ -261,7 +325,7 @@ def test_a_message_cannot_change_claims_reservations_or_peer_actions():
     value['messages'][0]['text'] = '양보하겠습니다.'
     value['action']['kind'] = 'claim'
     record, = t.inbox('r1', now_sim_s=99.)
-    assert record['text'] == frozen['messages'][0]['text']
+    assert record['body'] == {'text': frozen['messages'][0]['text']}
     assert set(record) <= set(zp.INBOX_FIELDS) and 'action' not in record
     # no decision state is stored, and no transport entry point can be handed one
     assert not (set(vars(t)) & set(zp.FORBIDDEN_TRANSPORT_PARAMS))
@@ -273,7 +337,7 @@ def test_structured_bodies_are_copied_not_shared():
     body = struct()
     t.send('r1', recipients=['r2'], structured=body, at_sim_s=10.)
     body['zone'] = 'C'                                # a later host edit must not reach the inbox
-    assert t.inbox('r2', now_sim_s=99.)[0]['message']['zone'] == 'A'
+    assert t.inbox('r2', now_sim_s=99.)[0]['body']['zone'] == 'A'
 
 
 def test_structured_reply_to_cannot_smuggle_a_sentence():
@@ -393,9 +457,9 @@ def test_a_delivered_record_is_a_copy():
     t = transport('structured')
     t.send('r1', recipients=['r2'], structured=struct(), at_sim_s=10.)
     record = t.inbox('r2', now_sim_s=99.)[0]
-    record['message']['zone'] = 'C'
+    record['body']['zone'] = 'C'
     record['recipients'].append('r3')
-    assert t.inbox('r2', now_sim_s=99.)[0]['message']['zone'] == 'A'
+    assert t.inbox('r2', now_sim_s=99.)[0]['body']['zone'] == 'A'
     assert t.inbox('r2', now_sim_s=99.)[0]['recipients'] == ['r2']
 
 
@@ -410,59 +474,103 @@ def test_validated_action_is_a_copy_of_the_reply():
 def test_the_prompt_states_the_transports_real_budget():
     """A window context from the transport, not the condition default."""
     t = zp.Transport('peer_ko', max_window_utterances=30, max_robot_utterances=9,
-                     max_total_utterances=50)
+                     max_total_utterances=50,
+                     vocabulary=vocabulary(source().sheet(), bundle()['public_map']))
     t.open_window('w1', at_sim_s=10.)
     t.send('r1', recipients=['r2'], text=KO_TEXT, at_sim_s=10.)
     context = t.window_context('r1', now_sim_s=99.)
-    body = json.loads(pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
-                                       window=context)['messages'][1]['content'])
-    assert body['dialogue_window'] == {'window_id': 'w1', 'max_utterances': 30,
-                                       'max_your_utterances': 9, 'your_utterances_left': 8,
-                                       'received': [], 'sent': ['w1-r1-1']}
+    body = json.loads(pk.build_request(inputs(), window=context)['messages'][1]['content'])
+    # ``received`` is not duplicated here: package A's ``inbox`` carries it.
+    assert body[pk.WINDOW_KEY] == {'window_id': 'w1', 'max_utterances': 30,
+                                   'max_your_utterances': 9, 'your_utterances_left': 8,
+                                   'sent': ['w1-r1-1']}
+    assert set(body[pk.WINDOW_KEY]) == set(pk.WINDOW_FIELDS)
     with pytest.raises(zp.ProtocolError):             # an open channel needs its window id
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs())
+        pk.build_request(inputs())
     with pytest.raises(zp.ProtocolError):             # unknown window fields are refused
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
-                         window={'window_id': 'w1', 'budget': 99})
+        pk.build_request(inputs(), window={'window_id': 'w1', 'budget': 99})
     assert zp.Transport('no_comm').window_context('r1', now_sim_s=1.) is None
 
 
 def test_build_request_requires_the_validated_input_bundle():
-    """A look-alike object must not be able to skip the input boundary."""
-    leaky = SimpleNamespace(map_public={**MAP_PUBLIC, 'top_cameras': [{'name': 'TOP_NW'}]},
-                            map_sha256='b' * 64, order_sheet=ORDER_SHEET, order_sheet_sha256='c' * 64,
-                            wrist_jpeg=JPEG, own_commands=({'command': 'drive', 'measured_qpos': [1]},),
-                            own_belief={'ground_truth_xyz_m': [1, 2, 0]}, map_figure_jpeg=None,
-                            sim_time_s=1.0, adapter='fake')
+    """A look-alike object must not be able to skip package A's boundary."""
+    leaky = SimpleNamespace(payload=payload('no_comm'), wrist_jpeg=JPEG, map_figure_jpeg=None,
+                            robot_views=None, seed=None, condition='no_comm', robot_id='r1',
+                            request_id='q', sim_time_s=1.0, inbox=())
     with pytest.raises(zp.ProtocolError):
-        pk.build_request('no_comm', 'r1', request_id='q', inputs=leaky)
+        pk.build_request(leaky)
+    # and a raw dict payload is not a StudyInputs either
+    with pytest.raises(zp.ProtocolError):
+        pk.build_request(payload('no_comm'))
 
 
-def test_live_state_hidden_one_level_down_is_refused():
-    sheet = copy.deepcopy(ORDER_SHEET)
-    sheet['orders'][0]['initial_location'] = {'pickup_bay': 'P1', 'slot': {'xyz_m': [1, 2, 0]}}
-    with pytest.raises(zp.ProtocolError):
-        pk.validate_order_sheet(sheet)
-    with pytest.raises(zp.ProtocolError):
-        pk.validate_own_commands(({'command': 'drive', 'args': {'qpos': [0.1, 0.2]}},))
-    with pytest.raises(zp.ProtocolError):
-        pk.validate_own_commands(({'command': 'drive', 'args': {'held_by': 'r2'}},))
-    assert pk.validate_own_commands(({'command': 'drive', 'args': {'speed': 0.2}},))
-
-
-def test_order_sheet_element_types_are_checked():
-    for mutate in (lambda o: o.update(kind=''),
-                   lambda o: o.update(item_ids=[{'id': 'long_beam-1'}]),
-                   lambda o: o.update(roles=[None, 'end_pos'])):
-        sheet = copy.deepcopy(ORDER_SHEET)
-        mutate(sheet['orders'][0])
+def test_study_inputs_refuse_a_payload_outside_the_contract():
+    """The boundary is package A's: a tampered payload never reaches a prompt."""
+    for mutate in ({'top_rgb': ['top-0001']},                       # evaluation-only camera
+                   {'teacher_receipt': {'placed': True}},           # teacher judgement
+                   {'peer_commands': []},                           # another robot's commands
+                   {'hidden_events': []},                           # private schedule
+                   {'zone_counts': {'A': 1}}):                      # host progress
+        bad = {**payload('no_comm'), **mutate}
         with pytest.raises(zp.ProtocolError):
-            pk.validate_order_sheet(sheet)
+            pk.StudyInputs(payload=bad, wrist_jpeg=JPEG)
+    # a foreign wrist frame is refused too
+    bad = payload('no_comm')
+    bad['own_rgb_refs'] = [own_rgb_ref('r2', 42, 3.5, FRAME_SHA)]
+    with pytest.raises(zp.ProtocolError):
+        pk.StudyInputs(payload=bad, wrist_jpeg=JPEG)
+    # the wrong schema id is refused before anything else
+    with pytest.raises(zp.ProtocolError):
+        pk.StudyInputs(payload={**payload('no_comm'), 'schema': 'ugrp.zone_study_call_input.v0'},
+                       wrist_jpeg=JPEG)
+
+
+def test_package_a_rejects_the_live_state_the_local_validators_used_to_catch():
+    """The checks that were local to package C now live in package A's contract."""
+    with pytest.raises(ContractViolation):            # a measured joint inside own command arguments
+        command_entry('cmd-1', 1., 'goto', {'qpos': [.1, .2]})
+    with pytest.raises(ContractViolation):            # peer state inside own command arguments
+        inputs('no_comm', commands=[{'command_id': 'cmd-1', 'issued_at_sim_s': 1., 'kind': 'goto',
+                                     'arguments': {'held_by': 'r2'}, 'local_state': 'command_issued'}])
+    assert command_entry('cmd-1', 1., 'goto', {'speed': .2})['local_state'] == 'command_issued'
+    with pytest.raises(ContractViolation):            # an executor success is not a self state
+        command_entry('cmd-1', 1., 'goto', {}, local_state='grasp_success')
+    for bad in ({'ground_truth_xyz_m': [1, 2, 0]},                 # ground truth
+                {'r2_position_m': [1, 2]},                         # peer position
+                {'top_rgb_ref': 'top-0001'}):                      # evaluation-only camera
+        with pytest.raises(ContractViolation):
+            inputs('no_comm', belief=bad)
+    allowed = inputs('no_comm', belief={'region': 'pickup', 'confidence': 'low',
+                                       'sources': ['own-r1-0042']})
+    assert allowed.own_belief['confidence'] == 'low'
+    # A checks key names and structure, not the meaning of a value: an off-enum
+    # confidence passes the contract, so whoever fills the belief owns that.
+    assert inputs('no_comm', belief={'region': 'pickup', 'confidence': 0.9}).own_belief == \
+        {'region': 'pickup', 'confidence': 0.9}
+
+
+def test_order_sheet_comes_from_the_config_and_rejects_live_state():
+    sheet = source().sheet()
+    assert sheet['schema'] == pk.ORDER_SHEET_SCHEMA
+    assert sheet['orders'][0]['initial_location']['slot'] == 'P1-2'
+    assert sheet['kinds']['long_beam']['roles'] == ['end_neg', 'end_pos']
+    for mutate in (lambda o: o.update(status='delivered'),
+                   lambda o: o.update(xyz_m=[1, 2, 0]),
+                   lambda o: o.update(required_robots=1),
+                   lambda o: o.update(destination_zone='D'),
+                   lambda o: o.update(item_ids=[]),
+                   lambda o: o.update(initial_location={'slot': 'P1-2'})):
+        scenario = copy.deepcopy(SCENARIO)
+        mutate(scenario['orders'][0])
+        with pytest.raises(ContractViolation):
+            OrderSheetSource(scenario, bundle())
+    with pytest.raises(ContractViolation):
+        OrderSheetSource({**SCENARIO, 'schema': 'ugrp.zone_scenario.v0'}, bundle())
 
 
 def test_image_bytes_are_copied_at_construction():
     buf = bytearray(JPEG)
-    got = inputs(wrist_jpeg=buf)
+    got = pk.StudyInputs(payload=payload('no_comm'), wrist_jpeg=buf)
     buf[0] = 0
     assert got.wrist_jpeg == JPEG
 
@@ -586,7 +694,7 @@ def test_non_korean_message_is_flagged_and_still_delivered_unchanged():
     assert receipt.accepted                                   # flagged, not blocked
     assert 'non_korean' in receipt.language['flags'] and receipt.language['korean'] is False
     record, = t.inbox('r2', now_sim_s=10.1)
-    assert record['text'] == EN_TEXT                          # byte-identical, never rewritten
+    assert record['body'] == {'text': EN_TEXT}                # byte-identical, never rewritten
     assert 'language' not in record and 'flags' not in record
     entry, = [e for e in t.log if e['accepted']]
     assert 'non_korean' in entry['language']['flags']          # evaluation log only
@@ -644,8 +752,8 @@ def test_condition_blocks_say_exactly_what_the_channel_allows():
     lead = pk.system_prompt('leader_ko', 'r2', seed=13)       # seed 13 -> leader r2
     follow = pk.system_prompt('leader_ko', 'r3', seed=13)
     assert 'leader는 당신입니다' in lead and 'follower끼리는 서로 말할 수 없으므로' in lead
-    assert 'leader는 r2입니다' in follow and '다른 follower를 recipients에 넣은 메시지는' in follow
-    assert 'r2에게만' in follow
+    assert 'leader는 r2입니다' in follow and '다른 follower를 넣은 메시지는' in follow
+    assert 'recipients에는 r2만 넣습니다' in follow
     structured = pk.system_prompt('structured', 'r1')
     assert '자유 문장 없이' in structured and ', '.join(zp.STRUCT_ACTS) in structured
     assert 'text, reason, note' in structured
@@ -672,160 +780,117 @@ def test_goal_and_input_boundary_text_is_identical_across_all_main_conditions():
 
 @pytest.mark.parametrize('condition,rid,seed', CASES)
 def test_every_call_carries_the_static_map_the_order_sheet_and_own_inputs(condition, rid, seed):
-    views = {r: JPEG for r in ROBOTS} if rid == zp.COMMANDER else None
     channel = {'window': {'window_id': 'w1'}} if zp.spec(condition).channel_open else {}
-    req = pk.build_request(condition, rid, request_id='q-9', inputs=inputs(), seed=seed,
-                           robot_views=views, **channel)
+    bundled = inputs(condition, rid, seed=seed)
+    req = pk.build_request(bundled, **channel)
     body = json.loads(req['messages'][1]['content'])
-    assert body['static_map']['map_id'] == MAP_PUBLIC['map_id']
-    assert body['static_map_sha256'] == 'b' * 64 and body['order_sheet_sha256'] == 'c' * 64
+    assert body['schema'] == pk.CONTRACT_PAYLOAD_SCHEMA
+    assert body['static_map']['map_id'] == MAP_ID
+    assert body['static_map']['public_map_sha256'] == bundle()['public_map_sha256']
+    assert body['static_map']['map_file_sha256'] == bundle()['map_file_sha256']
     assert [o['order_id'] for o in body['order_sheet']['orders']] == ['order-1', 'order-2']
-    assert body['request_id'] == 'q-9' and body['sim_time_s'] == 4.0
+    assert body['request_id'] == 'req_1' and body['sim_time_s'] == 4.0
+    assert req['input_sha256'] == bundled.payload_sha256
     labels = [i['label'] for i in req['images']]
     if rid == zp.COMMANDER:
         assert labels == ['WRIST RGB r1', 'WRIST RGB r2', 'WRIST RGB r3']
-        assert body['robot_views'] == labels and 'own_belief' not in body
+        assert 'self_belief' not in body and 'own_rgb_refs' not in body
+        assert [r['ref'] for r in body['team_rgb_refs']] == [f'own-{r}-0042' for r in ROBOTS]
     else:
         assert labels == [pk.IMAGE_OWN]
-        assert body['own_commands'] and body['own_belief']['region'] == 'unknown'
+        assert body['own_command_history'] and body['self_belief']['region'] == 'unknown'
+        assert body['own_rgb_refs'][0]['ref'] == f'own-{rid}-0042'
     assert not any('TOP' in label for label in labels)
     assert 'top_cameras' not in req['messages'][1]['content']
+    assert body['channel']['role'] == req['prompt_role']
 
 
 def test_dialogue_window_only_exists_where_the_channel_does():
-    for condition in ('no_comm', 'reference_R'):
-        rid = zp.COMMANDER if condition == 'reference_R' else 'r1'
-        views = {r: JPEG for r in ROBOTS} if rid == zp.COMMANDER else None
-        body = json.loads(pk.build_request(condition, rid, request_id='q', inputs=inputs(),
-                                           robot_views=views)['messages'][1]['content'])
-        assert 'dialogue_window' not in body
-        with pytest.raises(zp.ProtocolError):
-            pk.build_request(condition, rid, request_id='q', inputs=inputs(), robot_views=views,
-                             inbox=({'message_id': 'm', 'from_robot': 'r2'},))
+    for condition, rid in (('no_comm', 'r1'), ('reference_R', zp.COMMANDER)):
+        body = json.loads(pk.build_request(inputs(condition, rid))['messages'][1]['content'])
+        assert pk.WINDOW_KEY not in body
+        # package A refuses an inbox for a condition that delivers nothing
+        with pytest.raises(ContractViolation):
+            build_call_input(robot_id=rid, condition_name=condition, request_id='req_1',
+                             sim_time_s=4., static_map=static_map_section(bundle()),
+                             source=source(), inbox=[{'message_id': 'm'}])
     t = transport('peer_ko')
     t.send('r2', recipients=['r1'], text=KO_TEXT, at_sim_s=10.)
     inbox = t.inbox('r1', now_sim_s=10.1)
-    body = json.loads(pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
-                                       window={'window_id': 'w1'}, inbox=inbox,
-                                       sent=())['messages'][1]['content'])
-    window = body['dialogue_window']
-    assert window['window_id'] == 'w1' and window['received'] == [dict(inbox[0])]
+    bundled = inputs('peer_ko', 'r1', inbox=inbox, sim_time_s=11.)
+    body = json.loads(pk.build_request(bundled, window={'window_id': 'w1'})['messages'][1]['content'])
+    window = body[pk.WINDOW_KEY]
+    assert window['window_id'] == 'w1' and 'received' not in window
+    assert body['inbox'] == [dict(inbox[0])]           # the delivered message is A's inbox
     assert (window['max_utterances'], window['max_your_utterances']) == (6, 2)
     assert window['your_utterances_left'] == 2
 
 
-def test_build_request_refuses_evaluation_fields_in_a_delivered_record():
-    leaky = {'message_id': 'w1-r2-1', 'from_robot': 'r2', 'recipients': ['r1'], 'sent_at_sim_s': 1.,
-             'delivered_at_sim_s': 1.1, 'reply_to': None, 'text': KO_TEXT,
-             'language': {'flags': ['non_korean']}}
-    with pytest.raises(zp.ProtocolError):
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), inbox=(leaky,))
+def test_the_inbox_is_package_a_envelopes_without_evaluation_fields():
+    """A transport record carries no language flag and no delivery time."""
+    t = transport('peer_ko')
+    t.send('r2', recipients=['r1'], text=EN_TEXT, at_sim_s=10.)      # flagged, still delivered
+    record = t.inbox('r1', now_sim_s=10.1)[0]  # noqa: F841 - checked below
+    assert set(record) <= set(zp.INBOX_FIELDS)
+    assert record['schema'] == 'ugrp.zone_study_message.v1'
+    assert record['encoding'] == 'free_ko' and record['body'] == {'text': EN_TEXT}
+    assert 'language' not in record and 'delivered_at_sim_s' not in record
+    assert t.log[-1]['language']['flags']              # the flag stays in the evaluation log
+    # an extra field cannot ride along: package A closes the envelope
+    with pytest.raises(ContractViolation):
+        payload('peer_ko', 'r1', sim_time_s=11.,
+                inbox=[{**record, 'language': {'flags': ['non_korean']}}])
 
 
 def test_commander_views_only_in_the_reference_condition():
     with pytest.raises(zp.ProtocolError):
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(),
-                         robot_views={r: JPEG for r in ROBOTS})
+        pk.StudyInputs(payload=payload('peer_ko'), wrist_jpeg=JPEG,
+                       robot_views={r: JPEG for r in ROBOTS})
     with pytest.raises(zp.ProtocolError):
-        pk.build_request('reference_R', zp.COMMANDER, request_id='q', inputs=inputs())
+        pk.StudyInputs(payload=payload('reference_R', zp.COMMANDER), wrist_jpeg=JPEG)
+    # package A drops the own camera for reference_R robots and gives them no payload
+    with pytest.raises(ContractViolation):
+        payload('reference_R', 'r1')
 
 
-# --- map projection and order sheet (local package A adapter) -------------
+# --- the package A boundary seen from package C ----------------------------
 
-def test_public_map_drops_the_top_cameras():
-    authored = {**MAP_PUBLIC, 'top_cameras': [{'name': 'cctv_top'}], 'digest': 'd' * 64}
-    out = pk.public_map(authored)
-    assert 'top_cameras' not in out and 'digest' not in out
-    assert out['passages'] == MAP_PUBLIC['passages'] and out['regions'] == MAP_PUBLIC['regions']
-    with pytest.raises(zp.ProtocolError):
-        pk.public_map({'regions': {}})
-    # a forbidden key nested inside an allowed block cannot be dropped safely
-    with pytest.raises(zp.ProtocolError):
-        pk.public_map({**MAP_PUBLIC, 'regions': {**MAP_PUBLIC['regions'],
-                                                 'zone_A': {'top_cameras': ['cctv_top']}}})
-
-
-def test_study_inputs_enforce_the_boundary_at_construction():
-    """Building the bundle by hand cannot bypass the input allowlists."""
-    # a TOP camera or any key outside the allowlist is projected away
-    dropped = inputs(map_public={**MAP_PUBLIC, 'top_cameras': [{'name': 'cctv_top'}],
-                                 'box_positions': {'tile-1': [1, 2, 0]}})
-    assert 'top_cameras' not in json.dumps(dropped.map_public)
-    assert 'box_positions' not in dropped.map_public
-    # anything that cannot be dropped safely is refused
-    for bad in ({'map_public': {**MAP_PUBLIC, 'regions': {'zone_A': {'top_cameras': ['cctv_top']}}}},
-                {'order_sheet': {**ORDER_SHEET, 'orders': [{**ORDER_SHEET['orders'][0],
-                                                            'status': 'delivered'}]}},
-                {'own_belief': {'ground_truth_xyz_m': [1, 2, 0]}},
-                {'own_belief': {'r2_position_m': [1, 2]}},
-                {'own_belief': {'region': 'pickup', 'confidence': 0.9}},
-                {'own_commands': ({'command': 'drive', 'measured_qpos': [0.1]},)},
-                {'own_commands': ({'command': 'drive', 'status': 'grasp_success'},)},
-                {'own_commands': ({'robot': 'r2', 'command': 'drive'},)},
-                {'map_sha256': 'short'}):
-        with pytest.raises(zp.ProtocolError):
-            inputs(**bad)
-    allowed = inputs(own_belief={'region': 'pickup', 'confidence': 'low', 'sources': ['own-r1-0042']},
-                     own_commands=({'command': 'drive', 'issued_at_sim_s': 1., 'status': 'queue_empty'},))
-    assert allowed.own_belief['confidence'] == 'low' and allowed.own_commands[0]['status'] == 'queue_empty'
+def test_the_public_map_projection_carries_no_top_camera():
+    public = bundle()['public_map']
+    text = json.dumps(public, ensure_ascii=False)
+    for token in ('top_camera', 'cctv', 'nav_cam', 'box_positions', 'robot_positions'):
+        assert token not in text
+    assert [p['id'] for p in public['passages']] == ['door_narrow', 'door_wide']
+    assert inputs('no_comm').map_sha256 == bundle()['public_map_sha256']
 
 
 def test_delivered_records_must_match_the_condition_encoding():
-    free = {'message_id': 'w1-r2-1', 'from_robot': 'r2', 'recipients': ['r1'], 'sent_at_sim_s': 1.,
-            'delivered_at_sim_s': 1.1, 'reply_to': None, 'text': KO_TEXT}
-    fixed = {**free, 'message': struct()}
-    del fixed['text']
-    w = {'window_id': 'w1'}
-    with pytest.raises(zp.ProtocolError):             # free text into the structured condition
-        pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(free,))
-    with pytest.raises(zp.ProtocolError):             # structured body into the Korean condition
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(fixed,))
-    with pytest.raises(zp.ProtocolError):             # never both
-        pk.build_request('peer_ko', 'r1', request_id='q', inputs=inputs(), window=w,
-                         inbox=({**free, 'message': struct()},))
-    assert pk.build_request('structured', 'r1', request_id='q', inputs=inputs(), window=w, inbox=(fixed,))
+    free = transport('peer_ko')
+    free.send('r2', recipients=['r1'], text=KO_TEXT, at_sim_s=10.)
+    ko_record = free.inbox('r1', now_sim_s=10.1)[0]
+    fixed = transport('structured')
+    fixed.send('r2', recipients=['r1'], structured=struct(), at_sim_s=10.)
+    schema_record = fixed.inbox('r1', now_sim_s=10.1)[0]
+    with pytest.raises(ContractViolation):            # free text into the structured condition
+        payload('structured', 'r1', sim_time_s=11., inbox=[ko_record])
+    with pytest.raises(ContractViolation):            # structured body into the Korean condition
+        payload('peer_ko', 'r1', sim_time_s=11., inbox=[schema_record])
+    assert pk.build_request(inputs('structured', 'r1', sim_time_s=11., inbox=[schema_record]),
+                            window={'window_id': 'w1'})
 
 
 def test_commander_views_must_be_the_robot_roster():
-    with pytest.raises(zp.ProtocolError):
-        pk.build_request('reference_R', zp.COMMANDER, request_id='q', inputs=inputs(),
-                         robot_views={'ground_truth_view': JPEG})
-    with pytest.raises(zp.ProtocolError):
-        pk.build_request('reference_R', zp.COMMANDER, request_id='q', inputs=inputs(),
-                         robot_views={'r1': JPEG, 'r2': JPEG})
-
-
-def test_order_sheet_rejects_live_state_and_bad_roles():
-    assert pk.validate_order_sheet(ORDER_SHEET)['orders'][0]['initial_location']['slot'] == 'P1-2'
-    for mutate in (lambda o: o.update(status='delivered'),
-                   lambda o: o.update(xyz_m=[1, 2, 0]),
-                   lambda o: o.update(roles=['end_neg']),
-                   lambda o: o.update(destination_zone='D'),
-                   lambda o: o.update(item_ids=[]),
-                   lambda o: o.update(initial_location={'pickup_bay': 'P1'})):
-        sheet = copy.deepcopy(ORDER_SHEET)
-        mutate(sheet['orders'][0])
+    data = payload('reference_R', zp.COMMANDER)
+    for views in ({'ground_truth_view': JPEG}, {'r1': JPEG, 'r2': JPEG}):
         with pytest.raises(zp.ProtocolError):
-            pk.validate_order_sheet(sheet)
-    with pytest.raises(zp.ProtocolError):
-        pk.validate_order_sheet({**ORDER_SHEET, 'schema': 'ugrp.zone_order.v0'})
-
-
-def test_contract_adapter_is_duck_typed_and_flagged_for_alignment():
-    got = pk.from_contract({'map_public': MAP_PUBLIC, 'map_sha256': 'b' * 64,
-                            'order_sheet': ORDER_SHEET, 'order_sheet_sha256': 'c' * 64,
-                            'wrist_jpeg': JPEG, 'sim_time_s': 2.0})
-    assert got.order_ids() == ('order-1', 'order-2') and got.item_ids() == ('long_beam-1', 'tile-1')
-    assert got.roles_by_order()['order-1'] == ('end_neg', 'end_pos')
-    assert got.passages() == ('door_narrow', 'door_wide') and 'P1-2' in got.location_refs()
-    assert got.adapter == 'from_contract_v1' and 'package A' in pk.ADAPTER_NOTE
-    with pytest.raises(zp.ProtocolError):
-        pk.from_contract({'map_public': MAP_PUBLIC})
+            pk.StudyInputs(payload=data, robot_views=views)
+    assert pk.StudyInputs(payload=data, robot_views={r: JPEG for r in ROBOTS}).robot_views.keys() \
+        == {'r1', 'r2', 'r3'}
 
 
 def test_module_takes_no_host_decision_state():
     names = set()
-    for func in (pk.build_request, pk.system_prompt, pk.public_map, pk.validate_order_sheet):
+    for func in (pk.build_request, pk.system_prompt):
         names.update(inspect.signature(func).parameters)
     assert not (names & set(zp.FORBIDDEN_TRANSPORT_PARAMS))
 
@@ -841,31 +906,32 @@ def test_one_window_round_trip_per_condition(condition, seed):
     model failure, and the delivered messages only reach the named recipients.
     """
     s = zp.spec(condition)
-    t = zp.Transport(condition, seed=seed, item_ids=('long_beam-1', 'tile-1'),
-                     order_ids=('order-1', 'order-2'), roles=('end_neg', 'end_pos', 'west'),
-                     passages=('door_narrow', 'door_wide'), location_refs=('P1-2',))
+    vocab = vocabulary(source().sheet(), bundle()['public_map'])
+    t = zp.Transport(condition, seed=seed, vocabulary=vocab)
     t.open_window('w1', at_sim_s=10.)
     lead = zp.leader_of(condition, seed=seed)
     sent = 0
     for rid in ROBOTS:
-        channel = dict(window={'window_id': 'w1'}, inbox=t.inbox(rid, now_sim_s=10.)) if s.channel_open else {}
-        request = pk.build_request(condition, rid, request_id=f'q-{rid}', inputs=inputs(), seed=seed,
-                                   **channel)
+        inbox = t.inbox(rid, now_sim_s=10.) if s.channel_open else None
+        channel = dict(window={'window_id': 'w1'}) if s.channel_open else {}
+        bundled = inputs(condition, rid, seed=seed, sim_time_s=10.,
+                         **({'inbox': inbox} if s.channel_open else {}))
+        request = pk.build_request(bundled, **channel)
         assert len(request['messages']) == 2 and len(request['images']) == 1
         target = lead if (lead and rid != lead) else next(b for b in ROBOTS if b != (lead or rid))
         messages = []
         if s.channel_open:
             body = {'recipients': [target], 'reply_to': None}
             body.update({'text': f'{target}에게 보고합니다. order-1을 확인했습니다.'}
-                        if s.encoding == 'ko_free' else {'message': struct(act='inform')})
+                        if s.encoding == 'free_ko' else {'message': struct(act='inform')})
             messages = [body]
-        reply = {'request_id': f'q-{rid}', 'action': {'kind': 'wait'},
+        reply = {'request_id': bundled.request_id, 'action': {'kind': 'wait'},
                  'decision_sources': ['static_map', 'own_rgb'], 'messages': messages}
-        value = zp.validate_reply(json.dumps(reply, ensure_ascii=False), request_id=f'q-{rid}',
-                                 condition=condition, actor=rid, order_ids=('order-1', 'order-2'),
-                                 item_ids=('long_beam-1', 'tile-1'),
-                                 roles_by_order={'order-1': ('end_neg', 'end_pos')},
-                                 passages=('door_narrow', 'door_wide'), location_refs=('P1-2',))
+        value = zp.validate_reply(json.dumps(reply, ensure_ascii=False), request_id=bundled.request_id,
+                                 condition=condition, actor=rid, order_ids=bundled.order_ids(),
+                                 item_ids=bundled.item_ids(),
+                                 roles_by_order=bundled.roles_by_order(),
+                                 passages=bundled.passages(), location_refs=bundled.location_refs())
         receipts = zp.relay(t, rid, value, at_sim_s=10. + 0.1 * len(ROBOTS))
         sent += sum(r.accepted for r in receipts)
     assert t.sent_count() == sent == (0 if not s.channel_open else 3)
@@ -875,9 +941,10 @@ def test_one_window_round_trip_per_condition(condition, seed):
     # the leader hears both followers; each robot only sees what was addressed to it
     if lead:
         assert len(t.inbox(lead, now_sim_s=99.)) == 2
-    after = pk.build_request(condition, ROBOTS[0], request_id='q-2', inputs=inputs(), seed=seed,
-                             window={'window_id': 'w1'}, inbox=t.inbox(ROBOTS[0], now_sim_s=99.),
-                             sent=t.sent_ids(ROBOTS[0], 'w1'))
-    window = json.loads(after['messages'][1]['content'])['dialogue_window']
+    delivered = t.inbox(ROBOTS[0], now_sim_s=99.)
+    after = pk.build_request(inputs(condition, ROBOTS[0], seed=seed, sim_time_s=99., inbox=delivered),
+                             window={'window_id': 'w1'}, sent=t.sent_ids(ROBOTS[0], 'w1'))
+    body = json.loads(after['messages'][1]['content'])
+    window = body[pk.WINDOW_KEY]
     assert t.sent_ids(ROBOTS[0], 'w1') and window['your_utterances_left'] == 1
-    assert all(set(m) <= set(zp.INBOX_FIELDS) for m in window['received'])
+    assert all(set(m) <= set(zp.INBOX_FIELDS) for m in body['inbox'])

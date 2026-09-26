@@ -1,0 +1,2198 @@
+{
+  "actor_isolation": {
+    "attributes": [
+      "actor",
+      "condition",
+      "seed",
+      "calls"
+    ],
+    "ok": true,
+    "parameters": [
+      "self",
+      "request"
+    ],
+    "problems": []
+  },
+  "backflow_probes": [
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s1_normal_mixed",
+      "seed": 601
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s1_normal_mixed",
+      "seed": 601
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s1_normal_mixed",
+      "seed": 601
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s1_normal_mixed",
+      "seed": 601
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s1_normal_mixed",
+      "seed": 601
+    },
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s2_unmapped_blockage",
+      "seed": 611
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s2_unmapped_blockage",
+      "seed": 611
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s2_unmapped_blockage",
+      "seed": 611
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s2_unmapped_blockage",
+      "seed": 611
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s2_unmapped_blockage",
+      "seed": 611
+    },
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s3_late_rendezvous",
+      "seed": 621
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s3_late_rendezvous",
+      "seed": 621
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s3_late_rendezvous",
+      "seed": 621
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s3_late_rendezvous",
+      "seed": 621
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        1,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s3_late_rendezvous",
+      "seed": 621
+    },
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s4_narrow_door_standoff",
+      "seed": 631
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s4_narrow_door_standoff",
+      "seed": 631
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s4_narrow_door_standoff",
+      "seed": 631
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s4_narrow_door_standoff",
+      "seed": 631
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s4_narrow_door_standoff",
+      "seed": 631
+    },
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        2,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s5_moved_dropped_item",
+      "seed": 641
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        2,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s5_moved_dropped_item",
+      "seed": 641
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        2,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s5_moved_dropped_item",
+      "seed": 641
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        2,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s5_moved_dropped_item",
+      "seed": 641
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        2,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s5_moved_dropped_item",
+      "seed": 641
+    },
+    {
+      "condition": "no_comm",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s6_novel_relation",
+      "seed": 651
+    },
+    {
+      "condition": "peer_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s6_novel_relation",
+      "seed": 651
+    },
+    {
+      "condition": "leader_ko",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s6_novel_relation",
+      "seed": 651
+    },
+    {
+      "condition": "structured",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s6_novel_relation",
+      "seed": 651
+    },
+    {
+      "condition": "reference_R",
+      "hidden_events": [
+        0,
+        1
+      ],
+      "identical": {
+        "actions_sha256": true,
+        "calls_sha256": true,
+        "messages_sha256": true,
+        "request_sha256": true,
+        "trace_sha256": true
+      },
+      "ok": true,
+      "problems": [],
+      "scenario": "s6_novel_relation",
+      "seed": 651
+    }
+  ],
+  "conditions": [
+    "no_comm",
+    "peer_ko",
+    "leader_ko",
+    "structured",
+    "reference_R"
+  ],
+  "frames": {
+    "frame_dir": "tests/fixtures/markerless_box/blue_floor_release",
+    "frames": {
+      "0245-wrist.jpg": "8dd2cca8f94948701c85a90b4722c6913743bc6b6e46f7315b2d11ecef80e6c0",
+      "0246-wrist.jpg": "18b1cd2a38a71eaae3489133d71f345ef550a2592232a873c1a36ba90d2d52db",
+      "0249-wrist.jpg": "dda79d27c776efa58157f241a7420c904b80cc9de4e012a5786e7a402569cf78",
+      "0250-wrist.jpg": "056975677c24f32057f9cee1762a5dc033b39b04e813c41d37ebfe94a0cce3c2",
+      "0253-wrist.jpg": "79273dfde405a43501f72aab8b98871bc190d57d08730cb2bc7c75016c35ddf8",
+      "0258-wrist.jpg": "f9492289b6a213504fccea1081d77c62a97434c12cf19b04cc2a8f74e5f42e12",
+      "0266-wrist.jpg": "1bb8bf6c3dd570dc5d1a8b7caff93294b37a9e16deb899f8155aa7f951de50e8"
+    }
+  },
+  "note_ko": "프로토콜·비용·로그·평가 배선만 검증한다. 언어 이해, 통신 효과, 물리 운반 성공은 입증하지 않는다.",
+  "ok": true,
+  "scenarios": [
+    "s1_normal_mixed",
+    "s2_unmapped_blockage",
+    "s3_late_rendezvous",
+    "s4_narrow_door_standoff",
+    "s5_moved_dropped_item",
+    "s6_novel_relation"
+  ],
+  "schema": "ugrp.zone_study_offline.v1",
+  "trials": [
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "0ba5dabd216bc12b850f61ce48d8ca6e5faf172f30d611101186ef272089d0ad",
+      "run_id": "no_comm-s1_normal_mixed-s601",
+      "scenario": "s1_normal_mixed",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 601,
+      "trace_sha256": "fe6406f63ade00341a26ec0bdf994ba4cc04d3101d1b129bbc45ce159dd7477c"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "c4fb6ffe2a8f523799b1303ae357784bfce56909f0bf8aabbb08eaf02a2fcf04",
+      "run_id": "peer_ko-s1_normal_mixed-s601",
+      "scenario": "s1_normal_mixed",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 601,
+      "trace_sha256": "a6783ff18a029ed1c86ed630e73887ee925eccd0db6320bd583cd9760f26c183"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r2",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 1,
+          "r2": 2,
+          "r3": 1
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r2",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "bac24740150bf90a4e2e052e9c8a3bf234a277e86120aa91dcaabbbcf47fa363",
+      "run_id": "leader_ko-s1_normal_mixed-s601",
+      "scenario": "s1_normal_mixed",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 601,
+      "trace_sha256": "b65295bd50927d67ec5b99f78bf665641ffef2a289cf122bb06f89caad19fda1"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "068191c3fbc42737ea75bc0f7feed0975359555a3f4e1c0041fe5ae0c83cbc31",
+      "run_id": "structured-s1_normal_mixed-s601",
+      "scenario": "s1_normal_mixed",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 601,
+      "trace_sha256": "a6783ff18a029ed1c86ed630e73887ee925eccd0db6320bd583cd9760f26c183"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "ebc9e7f2e0b7a9fe398de77920426abf79291d6a42845ac95dc014ad734630a2",
+      "run_id": "reference_R-s1_normal_mixed-s601",
+      "scenario": "s1_normal_mixed",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 601,
+      "trace_sha256": "0dd1c2c7168c781941217c97878b124f66db001c1457658f3638b379734d691e"
+    },
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "99920e22da9088cf9c27f370a3ab528004faef9775fcdf9c019e6d1b52e84013",
+      "run_id": "no_comm-s2_unmapped_blockage-s611",
+      "scenario": "s2_unmapped_blockage",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 611,
+      "trace_sha256": "ed81f248def4f5469719eba23d83c3cc9187caec882149bbd1b82b8dc0f65c97"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "685e08bbf2d95e81676e5e30f5f89872fe543e5eda6879f4341b68625c1da951",
+      "run_id": "peer_ko-s2_unmapped_blockage-s611",
+      "scenario": "s2_unmapped_blockage",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 611,
+      "trace_sha256": "d1b32dd453b9fd8258e6be11bf723196ed562528bae6bcc404e6a61e3a2a7133"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r3",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 1,
+          "r2": 1,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r3",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "26aa375ba6cbd44835626ea0c79cdd6b1d040fcca7187d3b4f788ccf8eb1ebda",
+      "run_id": "leader_ko-s2_unmapped_blockage-s611",
+      "scenario": "s2_unmapped_blockage",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 611,
+      "trace_sha256": "5da66addfd254cf699f373f813574037343d48baa0e2abacd71116f39b4a137e"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "52ff891ef150b66e951b598c3c756a674abe33cd3a196b9dbd6cc9b1e5c979bc",
+      "run_id": "structured-s2_unmapped_blockage-s611",
+      "scenario": "s2_unmapped_blockage",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 611,
+      "trace_sha256": "d1b32dd453b9fd8258e6be11bf723196ed562528bae6bcc404e6a61e3a2a7133"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "fe7168e82c03317294af46c7a4044bfca2c43dd5ad506f8453c423e2f535b772",
+      "run_id": "reference_R-s2_unmapped_blockage-s611",
+      "scenario": "s2_unmapped_blockage",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 611,
+      "trace_sha256": "54179d4bcf2e6809fea56c786e351d8acc43566eade93c7ab66fe80cfbe632c5"
+    },
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "5e9307072ffa8332acfd9836695edadf4c74718fa805856af18da42970def8dc",
+      "run_id": "no_comm-s3_late_rendezvous-s621",
+      "scenario": "s3_late_rendezvous",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 621,
+      "trace_sha256": "eb7118836d0ecf1b44bfc1c25cb75abecb24314d7af014495fadf1633940a84d"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "3e5c6503870bc4911af06969ac762d79bfa330bd34fb1362424ae5ca5e3dd8e7",
+      "run_id": "peer_ko-s3_late_rendezvous-s621",
+      "scenario": "s3_late_rendezvous",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 621,
+      "trace_sha256": "078dadf8e0f03257fd5a885fbf5ce722a50f14a125452f51e121d78cfc5de9f1"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r1",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 1,
+          "r3": 1
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r1",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "efe4ecf401c2449915fee438022691fbb24ca001bbd7d5d28c9b94138b12701e",
+      "run_id": "leader_ko-s3_late_rendezvous-s621",
+      "scenario": "s3_late_rendezvous",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 621,
+      "trace_sha256": "318dea8555960dac1d003b166e10e5754d28ee6f6d0f022cee0315c07f93b8f9"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "45da188f674e81dc0299431ab581c9cf489d418ee5100fda45d48d0cc1a23c32",
+      "run_id": "structured-s3_late_rendezvous-s621",
+      "scenario": "s3_late_rendezvous",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 621,
+      "trace_sha256": "078dadf8e0f03257fd5a885fbf5ce722a50f14a125452f51e121d78cfc5de9f1"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "7d80e92b6b173be28401ba6c6dec3460b8568502184c6c981792b8aad2460808",
+      "run_id": "reference_R-s3_late_rendezvous-s621",
+      "scenario": "s3_late_rendezvous",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 621,
+      "trace_sha256": "c0a8b47a4e988d7dc85d2d8af6a752e2a44c11b686f8331ab835bd6bb403ff1f"
+    },
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "ccb2f745043f8e77553083a8bc3ab9acadcc5747c6505860e1e11d93cd374692",
+      "run_id": "no_comm-s4_narrow_door_standoff-s631",
+      "scenario": "s4_narrow_door_standoff",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 631,
+      "trace_sha256": "3498bd3526be5c4bea340e15ed49022a9b368a60e1ea1d4e2ee086b866c00f0c"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "4f47dd97ab93d5d11138d5c415ed97dcda18a6454ec748ddb92fdf5c09b44ee1",
+      "run_id": "peer_ko-s4_narrow_door_standoff-s631",
+      "scenario": "s4_narrow_door_standoff",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 631,
+      "trace_sha256": "6965a032b4c88894780f57df1c1914d88b2ea406a2e561d591e7f512b3cbcbd0"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r2",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 1,
+          "r2": 2,
+          "r3": 1
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r2",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "3e23fa7cb2199df365e7c1cdc274239231912c00dc7b10ea8c55c6b2692d7441",
+      "run_id": "leader_ko-s4_narrow_door_standoff-s631",
+      "scenario": "s4_narrow_door_standoff",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 631,
+      "trace_sha256": "204fa051d5e0be3ce08523008a42bc0193981e3a3d4a8b3558740b2d6abea332"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "29e9c412abd3b552f83d7946a5118128c3b9fd48a267ee60fbd6e8dc02f5abaa",
+      "run_id": "structured-s4_narrow_door_standoff-s631",
+      "scenario": "s4_narrow_door_standoff",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 631,
+      "trace_sha256": "6965a032b4c88894780f57df1c1914d88b2ea406a2e561d591e7f512b3cbcbd0"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "abcc1aa879e3d29d2c992da91806fd4b057d47129cde379af03fb106f2afe12b",
+      "run_id": "reference_R-s4_narrow_door_standoff-s631",
+      "scenario": "s4_narrow_door_standoff",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 631,
+      "trace_sha256": "f1d605cfe87727f15485579c7aee3daaef3d69c6cc7bdfa015d94e77bcb7f349"
+    },
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "3804ab95158fb7ddecf0fcee64e624fd0501186a1f4fa1cd7a807d41ba46a1d9",
+      "run_id": "no_comm-s5_moved_dropped_item-s641",
+      "scenario": "s5_moved_dropped_item",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 641,
+      "trace_sha256": "341a07e0eb8cfd4f4270ee4f99a1e42557a53515794c08acf72b8e3a16a7e8f3"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "08a7966b3c5378d16918b8c3ee0828bbae14d46b8510e27f5723889f4fd876c1",
+      "run_id": "peer_ko-s5_moved_dropped_item-s641",
+      "scenario": "s5_moved_dropped_item",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 641,
+      "trace_sha256": "a648f6f91f51fbc9a0d722e9b0213206914115923deea3323ed37f6b062d1142"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r3",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 1,
+          "r2": 1,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r3",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "cd48f20cfb78ba4551bd918c3855364546c5c88e51605709901c7048df556a35",
+      "run_id": "leader_ko-s5_moved_dropped_item-s641",
+      "scenario": "s5_moved_dropped_item",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 641,
+      "trace_sha256": "f671671919a295666a325a618c03b9089c4725e7a24480f68e9e954644faf6fe"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "21237610da555bf6f20222b491bf7c1718e3ab30cbadd5265e06bb2a8605c042",
+      "run_id": "structured-s5_moved_dropped_item-s641",
+      "scenario": "s5_moved_dropped_item",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 641,
+      "trace_sha256": "a648f6f91f51fbc9a0d722e9b0213206914115923deea3323ed37f6b062d1142"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "b5ff3c1daab47a00a7c9e618d9925ae275b59f908ffb3a8e9f7093f8943fb35a",
+      "run_id": "reference_R-s5_moved_dropped_item-s641",
+      "scenario": "s5_moved_dropped_item",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 641,
+      "trace_sha256": "0dd1c2c7168c781941217c97878b124f66db001c1457658f3638b379734d691e"
+    },
+    {
+      "actions": 72,
+      "calls": 72,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "no_comm",
+        "delivery_edges": 0,
+        "encoding": "none",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 0,
+          "r2": 0,
+          "r3": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "none"
+      },
+      "condition": "no_comm",
+      "cost": {
+        "charged_sim_s": 187.2,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 187.2,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 72,
+      "request_input_sha256_digest": "3d272cd88ff525a41de856fb14f8231dac79d6cd82a48c0dd684952bb61de781",
+      "run_id": "no_comm-s6_novel_relation-s651",
+      "scenario": "s6_novel_relation",
+      "scheduler": {
+        "calls": 72,
+        "deliveries": 0,
+        "events": 1113,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 651,
+      "trace_sha256": "f223e3d9ea164c3ea8518b573b9d2a15a14db3f35a035f98aeecbb1f1102e33c"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "peer_ko",
+        "delivery_edges": 6,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 3,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "peer_ko",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "57ded0567e420c9255bb66b41cc050525499a71c20c8279c9b5d6d0e15d0c19d",
+      "run_id": "peer_ko-s6_novel_relation-s651",
+      "scenario": "s6_novel_relation",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 651,
+      "trace_sha256": "522cab1207be6ddcade5060951dfac0cb9aa3a98510bea0010e1ab8cda68f160"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 4,
+        "condition": "leader_ko",
+        "delivery_edges": 4,
+        "encoding": "free_ko",
+        "follower_to_follower": 0,
+        "free_text_messages": 4,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": "r1",
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 1,
+          "r3": 1
+        },
+        "rejected": 0,
+        "sent": 4,
+        "topology": "star"
+      },
+      "condition": "leader_ko",
+      "cost": {
+        "charged_sim_s": 237.6,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.4,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 237.6,
+        "talk_sim_s": 1.2
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": "r1",
+      "messages": 4,
+      "request_count": 90,
+      "request_input_sha256_digest": "49f22a193f66862b9366e03b98e8f8d6efc9739e16d8577077c570978f1c511b",
+      "run_id": "leader_ko-s6_novel_relation-s651",
+      "scenario": "s6_novel_relation",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 4,
+        "events": 1176,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 651,
+      "trace_sha256": "a0a3dbe57d4f832aa7028e706f068593404fab9701207f11fc5adb13103f10e8"
+    },
+    {
+      "actions": 90,
+      "calls": 90,
+      "channel": {
+        "accepted_messages": 3,
+        "condition": "structured",
+        "delivery_edges": 6,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "r1": 2,
+          "r2": 2,
+          "r3": 2
+        },
+        "rejected": 0,
+        "sent": 3,
+        "topology": "mesh"
+      },
+      "condition": "structured",
+      "cost": {
+        "charged_sim_s": 236.7,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0.3,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 236.7,
+        "talk_sim_s": 0.9
+      },
+      "end_reason": "budget_exhausted",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 3,
+      "request_count": 90,
+      "request_input_sha256_digest": "9769d28c07397c6bf05ad6c0b1ac1dac401009b14656406abe5638a79b6adced",
+      "run_id": "structured-s6_novel_relation-s651",
+      "scenario": "s6_novel_relation",
+      "scheduler": {
+        "calls": 90,
+        "deliveries": 6,
+        "events": 1182,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 651,
+      "trace_sha256": "522cab1207be6ddcade5060951dfac0cb9aa3a98510bea0010e1ab8cda68f160"
+    },
+    {
+      "actions": 24,
+      "calls": 24,
+      "channel": {
+        "accepted_messages": 0,
+        "condition": "reference_R",
+        "delivery_edges": 0,
+        "encoding": "schema",
+        "follower_to_follower": 0,
+        "free_text_messages": 0,
+        "inbox_agrees_with_scheduler": true,
+        "leader_id": null,
+        "ok": true,
+        "problems": [],
+        "received": {
+          "commander": 0
+        },
+        "rejected": 0,
+        "sent": 0,
+        "topology": "commander_downlink"
+      },
+      "condition": "reference_R",
+      "cost": {
+        "charged_sim_s": 62.4,
+        "delivery_delay_s": 0.1,
+        "delivery_sim_s": 0,
+        "ok": true,
+        "params_digest": "81b59966e0e23b2eb3608bf7e116272ee5676abebf464f7ab4b6f04884e73934",
+        "params_version": "zone_sim_cost.v1",
+        "problems": [],
+        "scheduler_thinking_sim_s": 62.4,
+        "talk_sim_s": 0.0
+      },
+      "end_reason": "sim_horizon",
+      "end_sim_s": 300.0,
+      "leader_id": null,
+      "messages": 0,
+      "request_count": 24,
+      "request_input_sha256_digest": "37c3e11cc39a6f91d019065122a624aaafd631e0b14edc7f6bf4f3842cebc41b",
+      "run_id": "reference_R-s6_novel_relation-s651",
+      "scenario": "s6_novel_relation",
+      "scheduler": {
+        "calls": 24,
+        "deliveries": 0,
+        "events": 371,
+        "schema": "ugrp.zone_event_scheduler.v1",
+        "sim_s": 300.0,
+        "stop_reason": "until"
+      },
+      "seed": 651,
+      "trace_sha256": "ceca1e0e4bba4aaa3324990b1bde0fc29fba71413501d1fc0628e7bc110ac3e5"
+    }
+  ]
+}

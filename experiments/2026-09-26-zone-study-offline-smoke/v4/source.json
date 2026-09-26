@@ -1,0 +1,69 @@
+{
+  "agent_lock": "잡지 않음(물리·학습·wall 시간 비교 없음)",
+  "branch": "kiro/zone-study-core",
+  "code_sha": "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/ugrp_session.py run kiro-zone-study-smoke-v4 -- /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/run_zone_study_offline_smoke.py --output /Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4",
+  "driver": "scripts/run_zone_study_offline_smoke.py",
+  "exit_code": 0,
+  "head_at_start": "c21a6fe9ddd33203aff4e34a0577e0d8adb95334 dirty=0",
+  "load_average": {
+    "after": [
+      35.57,
+      72.43,
+      72.77
+    ],
+    "at_run_start": [
+      48.33,
+      79.57,
+      75.18
+    ],
+    "before": [
+      99.55,
+      101.17,
+      69.89
+    ],
+    "note_ko": "공유 Mac이라 다른 작업 부하가 있었다. 가짜 SIM 시계만 쓰므로 결과는 wall 시간과 무관하다."
+  },
+  "loop": "harness/zone_study_offline.py",
+  "machine_sim_cap": {
+    "cap": 6,
+    "literal_grep_before": 10,
+    "note_ko": "지정 grep은 실행 중인 kiro-cli 에이전트 4개(프롬프트 문자열에 run_ 포함)와 다른 작업의 TensorBoard 뷰어 1개도 센다. 실제 시뮬·평가 프로세스가 6개 미만이 될 때까지 기다렸다(15:47에 6개 → 15:51에 5개).",
+    "own_processes": 1,
+    "sim_eval_processes_before": 5
+  },
+  "model_calls": 0,
+  "physics_steps": 0,
+  "previous_version": {
+    "code_sha": "eb5572bd9f34744373d02b63e1033979f0a0a920",
+    "record": "experiments/2026-09-26-zone-study-offline-smoke/v3"
+  },
+  "record_version": "v4",
+  "report_run": {
+    "command": "... scripts/ugrp_session.py run kiro-zone-study-report-v4 -- ... scripts/zone_study_report.py <raw>/trial_records --output /Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4-report --tb-events /Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-study-offline-smoke-v4",
+    "exit_code": 0,
+    "load_average": {
+      "after": [
+        10.85,
+        25.21,
+        47.2
+      ],
+      "before": [
+        11.74,
+        26.36,
+        48.12
+      ]
+    },
+    "wall_clock": {
+      "end": "2026-09-26T16:10:34+0900",
+      "start": "2026-09-26T16:10:13+0900"
+    }
+  },
+  "review": "codex-194-r4 (Codex fourth re-review of PR 194, #16 three counterexamples)",
+  "session_status_after": "stopped (python3 scripts/ugrp_session.py status kiro-zone-study-smoke-v4)",
+  "wall_clock": {
+    "end": "2026-09-26T16:01:41+0900",
+    "start": "2026-09-26T15:52:59+0900"
+  },
+  "worktree": "/Users/changmin/projects/ugrp-wt/kiro-study-core-v4-frozen (detached c21a6fe9, clean; removed after the run)"
+}

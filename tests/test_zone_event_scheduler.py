@@ -19,10 +19,19 @@ from harness.zone_event_scheduler import (CallPolicy, CallReply, EventScheduler,
 ACTORS = ('r1', 'r2', 'r3')
 
 
-def _reply(out=120, utt=0, action=None, messages=(), outcome='ok', tokens_in=8000, attempts=None):
+def _reply(out=120, utt=None, action=None, messages=(), outcome='ok', tokens_in=8000, attempts=None):
+    """One scripted reply.
+
+    2026-09-26 review finding 6: the BILLED utterance count must equal the number
+    of utterances the reply carries, so ``utt`` defaults to ``len(messages)`` and
+    a test that wants a mismatch has to state it explicitly.
+    """
+    messages = tuple(messages)
+    if utt is None:
+        utt = len(messages)
     return CallReply(attempts=attempts or (zc.Attempt(outcome=outcome, input_tokens=tokens_in,
                                                       output_tokens=out, utterances=utt),),
-                     action=action, messages=tuple(messages))
+                     action=action, messages=messages)
 
 
 def _scheduler(replies, *, params=None, policy=None, track=True, **kw):
@@ -49,7 +58,8 @@ def test_zero_cost_finishes_in_the_same_sim_instant():
 
 
 def test_positive_cost_moves_sim_time_and_physics_runs_through_the_wait():
-    sched = _scheduler({'r1': [_reply(out=120, utt=1, action='go A')]})
+    sched = _scheduler({'r1': [_reply(out=120, action='go A',
+                                      messages=[Message(sender='r1', recipients=('r2',), body='보고')])]})
     sched.trigger('r1', 'start')
     sched.run(until_s=100)
     call = sched.calls[0]
@@ -83,7 +93,9 @@ def test_action_and_messages_are_invisible_before_the_cost_is_paid():
     sched.run(until_s=100)
     assert applied == [('r1', 'go A', pytest.approx(5.3))]
     assert delivered == [('r2', '왼쪽 통로 막힘', pytest.approx(5.4))]   # + delivery_s
-    assert sched.inbox('r2')[0]['delivered_sim_s'] == pytest.approx(5.4)
+    assert sched.delivery_log('r2')[0]['delivered_sim_s'] == pytest.approx(5.4)
+    # the robot-facing inbox row is package A's envelope, without a delivery time
+    assert 'delivered_sim_s' not in sched.inbox('r2')[0]
     assert sched.inbox('r3') == ()                        # not a recipient
 
 
@@ -91,22 +103,24 @@ def test_action_and_messages_are_invisible_before_the_cost_is_paid():
 # Concurrency
 
 def test_concurrent_calls_overlap_instead_of_adding_up():
-    replies = {a: [_reply(out=120, utt=1)] for a in ACTORS}
+    # silent replies: the utterance term is billed against real messages now
+    # (review finding 6), and this test is about overlap, not about talking.
+    replies = {a: [_reply(out=120)] for a in ACTORS}
     sched = _scheduler(replies)
     for actor in ACTORS:
         sched.trigger(actor, 'start')
     sched.run(until_s=100)
     assert {c.actor for c in sched.calls} == set(ACTORS)
-    assert [c.cost.sim_s for c in sched.calls] == [pytest.approx(5.3)] * 3
-    assert sched.now() == pytest.approx(5.3)              # not 15.9
-    assert sum(sched.metrics[a]['thinking_sim_s'] for a in ACTORS) == pytest.approx(15.9)
+    assert [c.cost.sim_s for c in sched.calls] == [pytest.approx(5.0)] * 3
+    assert sched.now() == pytest.approx(5.0)              # not 15.0
+    assert sum(sched.metrics[a]['thinking_sim_s'] for a in ACTORS) == pytest.approx(15.0)
 
 
 def test_different_reply_lengths_finish_at_different_sim_times():
     sched = _scheduler({'r1': [_reply(out=40)], 'r2': [_reply(out=120)], 'r3': [_reply(out=600)]})
     for actor in ACTORS:
         sched.trigger(actor, 'start')
-        sched.run(until_s=.0)                             # start all three at t=0
+        sched.run(until_s=.0, close_at_horizon=False)                             # start all three at t=0
     sched.run(until_s=100)
     done = {c.actor: c.finished_sim_s for c in sched.calls}
     assert done['r1'] < done['r2'] < done['r3']
@@ -267,16 +281,16 @@ def test_delivering_to_an_unknown_actor_fails_loudly():
 # Errors, retries, timeouts
 
 def test_a_malformed_reply_pays_and_its_retry_is_a_separate_costed_call():
-    sched = _scheduler({'r1': [_reply(out=40, outcome='invalid'), _reply(out=120, utt=1, action='go A')]})
+    sched = _scheduler({'r1': [_reply(out=40, outcome='invalid'), _reply(out=120, action='go A')]})
     sched.trigger('r1', 'start')
     sched.run(until_s=100)
     first, retry = sched.calls
     assert first.cost.outcome == 'invalid' and first.cost.sim_s == pytest.approx(3.4)  # 1.0+1.6+0.8
     assert retry.trigger == 'retry' and retry.retry_of == first.call_id
     # the retry starts when the failed call finished (already past the 2 s minimum interval)
-    assert retry.started_sim_s == pytest.approx(3.4) and retry.finished_sim_s == pytest.approx(8.7)
+    assert retry.started_sim_s == pytest.approx(3.4) and retry.finished_sim_s == pytest.approx(8.4)
     assert sched.metrics['r1'] == {**sched.metrics['r1'], 'calls': 2, 'retries': 1, 'invalid': 1}
-    assert sched.metrics['r1']['thinking_sim_s'] == pytest.approx(8.7)
+    assert sched.metrics['r1']['thinking_sim_s'] == pytest.approx(8.4)
 
 
 def test_a_transport_error_costs_the_pre_registered_error_time():
@@ -330,7 +344,7 @@ def test_retries_are_bounded_and_exhaustion_is_logged():
 def test_the_same_actor_respects_its_minimum_call_interval():
     sched = _scheduler({'r1': [_reply(out=0, tokens_in=0), _reply(out=0, tokens_in=0)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)                                   # first call done at 1.0
+    sched.run(until_s=1., close_at_horizon=False)                                   # first call done at 1.0
     sched.trigger('r1', 'idle')
     sched.run(until_s=100)
     assert [c.started_sim_s for c in sched.calls] == [0., pytest.approx(2.)]
@@ -340,10 +354,10 @@ def test_the_same_actor_respects_its_minimum_call_interval():
 def test_triggers_that_arrive_while_thinking_merge_into_one_call_with_the_strongest_label():
     sched = _scheduler({'r1': [_reply(out=120), _reply(out=0, tokens_in=0)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)                                   # r1 is thinking until 5.0
+    sched.run(until_s=1., close_at_horizon=False)                                   # r1 is thinking until 5.0
     for label in ('idle', 'report', 'failure'):
         sched.trigger('r1', label)
-        sched.run(until_s=1.)
+        sched.run(until_s=1., close_at_horizon=False)
     assert sched.metrics['r1']['deferred'] == 3
     sched.run(until_s=100)
     assert len(sched.calls) == 2
@@ -356,9 +370,9 @@ def test_triggers_that_arrive_while_thinking_merge_into_one_call_with_the_strong
 def test_only_one_call_per_actor_is_outstanding():
     sched = _scheduler({'r1': [_reply(out=120), _reply(out=120)]})
     sched.trigger('r1', 'start')
-    sched.run(until_s=1.)
+    sched.run(until_s=1., close_at_horizon=False)
     sched.trigger('r1', 'blockage')
-    sched.run(until_s=2.)
+    sched.run(until_s=2., close_at_horizon=False)
     assert sched.holding() == ('r1',) and len(sched.calls) == 0
     sched.run(until_s=100)
     assert [c.started_sim_s for c in sched.calls] == [0., pytest.approx(5.0)]
@@ -433,7 +447,7 @@ def test_run_stops_on_a_quiet_queue_on_until_and_on_max_events():
     assert sched.run().stop_reason == 'quiet'
     sched.trigger('r1', 'start')
     assert sched.run(max_events=1).stop_reason == 'max_events'
-    assert sched.run(until_s=.5).stop_reason == 'until'
+    assert sched.run(until_s=.5, close_at_horizon=False).stop_reason == 'until'
     assert sched.run(until_s=100).stop_reason == 'quiet'
 
 

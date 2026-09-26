@@ -1,0 +1,93 @@
+{
+  "schema": "ugrp.zone_scenario.v1",
+  "scenario_id": "s1_normal_mixed",
+  "map_id": "zone_wide_door_tags_v1",
+  "landmark_detail": "full",
+  "seeds": [601, 602, 603],
+  "orders": [
+    {
+      "order_id": "order-1",
+      "kind": "cyan",
+      "count": 2,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "A",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-1"}
+    },
+    {
+      "order_id": "order-2",
+      "kind": "red",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-1"}
+    },
+    {
+      "order_id": "order-3",
+      "kind": "can",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-2"}
+    },
+    {
+      "order_id": "order-4",
+      "kind": "tile",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "B",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-2"}
+    },
+    {
+      "order_id": "order-5",
+      "kind": "long_beam",
+      "count": 1,
+      "identity": "specific_item",
+      "item_ids": ["beam_1"],
+      "required_robots": 2,
+      "destination_zone": "A",
+      "initial_location": {"pickup_bay": "P2", "slot": "P2-3"}
+    },
+    {
+      "order_id": "order-6",
+      "kind": "green",
+      "count": 1,
+      "identity": "kind_fungible",
+      "required_robots": 1,
+      "destination_zone": "C",
+      "initial_location": {"pickup_bay": "P1", "slot": "P1-3"}
+    }
+  ],
+  "eval": {
+    "schema": "ugrp.zone_study_scenario_private.v1",
+    "design_notes_ko": "정상 혼합 배송 대조군. 숨은 사건이 없고 정적 지도와 주문서만으로 계획이 가능하므로, 통신이 줄일 수 있는 비용은 중복 작업과 배정 불균형뿐이다. 무통신 조건도 고정 관례로 해결할 수 있어야 한다.",
+    "tests_ko": "대조군: 정보 비대칭도 사건도 없는 상태에서 4조건의 배정·중복·makespan 차이를 재는 기준선. 5인분 단독 작업과 2대 빔 1건이 섞여 있어 '누가 빔의 짝인가'만이 협상 대상이다.",
+    "notes_ko": "배치는 zone_wide 계열 pickup 격자(열 -0.20/0.40/1.00/1.60, 행 -2.45/-1.65/-0.85/-0.05/0.75) 위에 두어 기존 교사 주행 여유를 유지한다. 물리적 도달성은 장면 빌더·러너 통합에서 따로 검증한다.",
+    "setup": {
+      "arena_variant": "zone_wide_door",
+      "map_file_sha256": "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14",
+      "contact_profile": "local_contact_fine",
+      "weld": "off",
+      "robot_spawns": "arena_default",
+      "placements": [
+        {"item_id": "cyan_1", "kind": "cyan", "order_id": "order-1", "slot": "P1-1", "pose_m": [-0.2, -2.45, 0.0]},
+        {"item_id": "cyan_2", "kind": "cyan", "order_id": "order-1", "slot": "P1-1", "pose_m": [0.4, -2.45, 0.0]},
+        {"item_id": "red_1", "kind": "red", "order_id": "order-2", "slot": "P2-1", "pose_m": [1.0, -2.45, 0.0]},
+        {"item_id": "can_1", "kind": "can", "order_id": "order-3", "slot": "P1-2", "pose_m": [0.4, -0.85, 0.0]},
+        {"item_id": "tile_1", "kind": "tile", "order_id": "order-4", "slot": "P2-2", "pose_m": [1.0, -0.85, 0.0]},
+        {"item_id": "beam_1", "kind": "long_beam", "order_id": "order-5", "slot": "P2-3", "pose_m": [1.275, 0.45, 1.5708], "notes_ko": "장축을 남북으로 두어 end_neg는 남쪽, end_pos는 북쪽에서 접근한다."},
+        {"item_id": "green_1", "kind": "green", "order_id": "order-6", "slot": "P1-3", "pose_m": [-0.2, 0.75, 0.0]}
+      ]
+    },
+    "hidden_events": [],
+    "budget": {
+      "sim_seconds": 1800,
+      "http_attempts_per_trial": 90,
+      "http_attempts_per_actor": 30,
+      "output_tokens_per_call": 768
+    }
+  }
+}

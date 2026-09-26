@@ -1,0 +1,83 @@
+{
+  "committed": {
+    "cohort_summary.json": "acc6000d8fceaa01f02e7840875979ec940f58c37c86996a7de21f551208bc53",
+    "config.json": "b53d6208f825eae509707a3c0482f2386872836c2a8be12c8903732d162fd049",
+    "control_runs.json": "d6855679f489347b3ba84f721f842cb461bc04a69eb907ffefc3ed8eea59daad",
+    "environment.json": "80785d9aa5fb6356091e73e543ea78c9612729dccaea8ddeecba88a7bd165ab9",
+    "example_trial_record.json.gz": "72e2ccec45cb1bff6ad74fb5ce359cac847616e9c02059c839aec725f1bb31ad",
+    "mutations.json": "9139a11b6925cb75ec61c79dc7c11bb2c3ff03e531982fc9056ac73949726934",
+    "results.json": "6914fde48e8332e85ff52fc551b3faa6c1178389e4c7ea141da9c87326d0f1d1",
+    "sha256.json": "c66fd4c5affe9b02869b1e9130edbd27ba3f1fb5231b4b4f738226e2e2c39424",
+    "source.json": "6c8ed618d91ed8622a1c6f4d7519d3d3779354c6d592f8730d953bfaefe47475"
+  },
+  "example": {
+    "calls": 90,
+    "decompressed": "peer_ko-s1_normal_mixed-s601.json",
+    "decompressed_sha256": "b7a746be4a5529cd6ba97abb3801a730c244c2ec548874d95947b154a3a27fe8",
+    "file": "example_trial_record.json.gz",
+    "rehashed": 90,
+    "reopen_ok": true
+  },
+  "location": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3",
+  "note_ko": "raw 30건 trial record(요청 원문 포함)는 기본 체크아웃의 outputs/에만 있고 Git에 넣지 않는다. 처음에는 worktree의 outputs/에 썼고 2026-09-26에 mv로 옮겼다(relocation). 원격 백업이 아니다.",
+  "raw_bytes": 57427644,
+  "raw_files": {
+    "leader_ko-s1_normal_mixed-s601.json": "41395bf452426d249801bc0ef71c59833bb335b8a20086e4778d796993b51505",
+    "leader_ko-s2_unmapped_blockage-s611.json": "3f549a09b8f6e88831bcf710ccf362d179212700e561b64023c4d5d86cc86662",
+    "leader_ko-s3_late_rendezvous-s621.json": "e1af7debe908470ed2b2212d890417afbe9e87ed8f3b3a67d36993789127596c",
+    "leader_ko-s4_narrow_door_standoff-s631.json": "ad5740dcce3ea4f90adec81b3913b3f7ecd2f1056ff8c32eb1de13ddc9270bcf",
+    "leader_ko-s5_moved_dropped_item-s641.json": "162d44be8ffc28565230be12f7f82a26f3f8cbb7a8a75a97954be054ee34754f",
+    "leader_ko-s6_novel_relation-s651.json": "7eb5d05ceeb64cc4a5cf62f312458908809343916491b2b930fa86399310149f",
+    "no_comm-s1_normal_mixed-s601.json": "2c5de17ca323522c966f25436079f1e033bfb862b3be5fb1143cfa48765a86ee",
+    "no_comm-s2_unmapped_blockage-s611.json": "fc99a7236b6c154b192606ee2c9f122360ff55aa8108ef0554e7cb4e19d25aeb",
+    "no_comm-s3_late_rendezvous-s621.json": "005ef45a735ea2b5945e00cf69c44e766adb744971054d4aecbbab504e2b4553",
+    "no_comm-s4_narrow_door_standoff-s631.json": "86a1b018c88ead8045f4919f240e8d8289600b365a9b55b773f36460a778e8da",
+    "no_comm-s5_moved_dropped_item-s641.json": "d7d2175cc48cb185b2b580be7e311a27d1e8b74cec858aaba1185fb8d3e558f6",
+    "no_comm-s6_novel_relation-s651.json": "8c79dce84c84704f8bbbba9215a2f59f5ddcd6c04bb971095b07bb350c6e35d5",
+    "peer_ko-s1_normal_mixed-s601.json": "b7a746be4a5529cd6ba97abb3801a730c244c2ec548874d95947b154a3a27fe8",
+    "peer_ko-s2_unmapped_blockage-s611.json": "db049a7dafdd84ea2c09e925a02291dd9ac47f2333c0956308aa89d0b7f2cbbb",
+    "peer_ko-s3_late_rendezvous-s621.json": "b9684a2d45216054e281161947a754799b889b2b618bbdb3b5d3dc8bf9a4f8f4",
+    "peer_ko-s4_narrow_door_standoff-s631.json": "32acbae7077cad5231a7f0ae98b46c5301dfd60dcc12361923fa303a66715c5f",
+    "peer_ko-s5_moved_dropped_item-s641.json": "b2e9c1fec068eea9430cc549a945b093a3b4d1906d7b3d32f759b8ca229fc39f",
+    "peer_ko-s6_novel_relation-s651.json": "1308a392886f35a698ae801a34c7e1ab07210faad08b184985dd71344af4fb40",
+    "reference_R-s1_normal_mixed-s601.json": "51341c90d21d76cb2c17c8f03f5a9ecb7c123f220cace492c5577f5b955541f3",
+    "reference_R-s2_unmapped_blockage-s611.json": "546eb2e5eea9f07a91d49159eb6a00683017d06303b4100ad93a631e45d5f44f",
+    "reference_R-s3_late_rendezvous-s621.json": "7dbe1b6096eeda6b09f115587a59218d7c7042a522d05ba6bf8be4bdb26392a6",
+    "reference_R-s4_narrow_door_standoff-s631.json": "9475ee1386f86f6d23393680f1780f43130178fa9092ec841e5394c47a819c91",
+    "reference_R-s5_moved_dropped_item-s641.json": "1c95f43ed7da2dc53647d7cd395f69e10bb1835ef83c66d47ef7ca0f227c96b8",
+    "reference_R-s6_novel_relation-s651.json": "26c82be5f8330179e6560009cb841f670d64282a4498f801b76b84151627fe09",
+    "structured-s1_normal_mixed-s601.json": "b1772fa1eb6134a1c02e052702e05172c4a95470e82c18ca7d9a32aa859013b4",
+    "structured-s2_unmapped_blockage-s611.json": "902b84760aa7f893f960302d1ceb729bf9eaaf2224f8e2a0d36227c995be29c5",
+    "structured-s3_late_rendezvous-s621.json": "66ded181d7d3c913afd8faebe5cdc8a9eeb81eb22500a4e63d684743ab87c912",
+    "structured-s4_narrow_door_standoff-s631.json": "8855a5423a0ef06c8a72af3ab1e7a2ed4932b57a104775412e08c938d8491481",
+    "structured-s5_moved_dropped_item-s641.json": "85294cdf2d5e40000b3934f91524c492b1aa122f6cf661721c81b77930a4fa33",
+    "structured-s6_novel_relation-s651.json": "e9fe08922ea401b1fbf28a8ad85a17c70ecd8b4a023d39a31dbb08521f3befad"
+  },
+  "relocation": {
+    "backup_ko": "로컬 보관이며 원격 백업이 아니다.",
+    "control_runs_note_ko": "control_runs.json의 \"raw\": \"outputs/zone-study-offline-smoke-v3-run-dc8ac28\"는 기본 체크아웃 기준 상대 경로로 그대로 유효하다. 해시가 committed에 있으므로 그 파일은 수정하지 않았다.",
+    "date": "2026-09-26",
+    "method_ko": "mv -n(같은 파일시스템 rename). 복사·재생성·압축 없음. 이동 대상 경로는 이동 전에 없었다.",
+    "moved": [
+      {
+        "bytes": 57682714,
+        "files": 34,
+        "from": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3",
+        "to": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3"
+      },
+      {
+        "bytes": 57682179,
+        "files": 34,
+        "from": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3-run-dc8ac28",
+        "to": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3-run-dc8ac28"
+      }
+    ],
+    "previous_value": {
+      "location": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3",
+      "note_ko": "raw 30건 trial record(요청 원문 포함)는 worktree의 outputs/에만 있고 Git에 넣지 않는다. 원격 백업이 아니다."
+    },
+    "request_ko": "사용자 요청(2026-09-26): raw 출력은 기본 체크아웃의 outputs/에만 둔다. worktree 로컬 outputs/의 raw를 같은 상대 경로로 mv한다.",
+    "verification_ko": "이동 전후 SHA-256 목록(4개 디렉터리 136개 파일)이 바이트 단위로 같았다(목록 SHA-256 9d1753b5cc1131056143f372be757306cbd3ad236a269a748e01ee1df61e6baf). 이 기록에 커밋된 파일 해시도 새 위치에서 모두 일치했다.",
+    "verified_here": "raw_files 30/30 (trial_records/, raw_bytes 57427644 일치), sha256.json 33/33; dc8ac28 실행 raw는 자기 sha256.json 33/33"
+  }
+}

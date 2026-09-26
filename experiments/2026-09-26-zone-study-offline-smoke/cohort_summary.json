@@ -1,0 +1,413 @@
+{
+  "conditions": {
+    "leader_ko": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "dialogue": {
+        "acts_coarse": {
+          "order": 12,
+          "report": 24
+        },
+        "acts_fine": {
+          "claim": 12,
+          "order": 12,
+          "other": 12
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 24,
+        "grounds_by_verdict": {
+          "unknown": 24
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 24,
+        "korean_ok": 24,
+        "korean_share": 1.0,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 24
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "③ 한국어 지휘 겸임",
+      "leader_ids": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "metrics": {
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "http_attempts": 90,
+        "idle_robot_s": 237.6,
+        "idle_share": 0.132,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.6,
+        "think_sim_cost_s": 237.6,
+        "tokens_input": 360000,
+        "tokens_output": 3720,
+        "tokens_total": 363720,
+        "undelivered_items": 4.3333
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "trials": 6
+    },
+    "no_comm": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "dialogue": {
+        "acts_coarse": {},
+        "acts_fine": {},
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 0,
+        "grounds_by_verdict": {},
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 0
+      },
+      "end_reasons": {
+        "sim_horizon": 6
+      },
+      "is_reference": false,
+      "label_ko": "① 무통신",
+      "leader_ids": [],
+      "metrics": {
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "http_attempts": 72,
+        "idle_robot_s": 187.2,
+        "idle_share": 0.104,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 72,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 0.0,
+        "think_sim_cost_s": 187.2,
+        "tokens_input": 288000,
+        "tokens_output": 2880,
+        "tokens_total": 290880,
+        "undelivered_items": 4.3333
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "trials": 6
+    },
+    "peer_ko": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "dialogue": {
+        "acts_coarse": {
+          "report": 18
+        },
+        "acts_fine": {
+          "claim": 18
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 36,
+        "grounds_by_verdict": {
+          "unknown": 18
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 18,
+        "korean_ok": 18,
+        "korean_share": 1.0,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 18
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "② 자유 한국어 동료 대화",
+      "leader_ids": [],
+      "metrics": {
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "http_attempts": 90,
+        "idle_robot_s": 236.7,
+        "idle_share": 0.1315,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.2,
+        "think_sim_cost_s": 236.7,
+        "tokens_input": 360000,
+        "tokens_output": 3690,
+        "tokens_total": 363690,
+        "undelivered_items": 4.3333
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "trials": 6
+    },
+    "reference_R": {
+      "boundary_clean_trials": 0,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "dialogue": {
+        "acts_coarse": {},
+        "acts_fine": {},
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 0,
+        "grounds_by_verdict": {},
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 0
+      },
+      "end_reasons": {
+        "sim_horizon": 6
+      },
+      "is_reference": true,
+      "label_ko": "R 전지적 지휘 참조 상한",
+      "leader_ids": [],
+      "metrics": {
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "http_attempts": 24,
+        "idle_robot_s": 0.0,
+        "idle_share": 0.0,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 24,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 0.0,
+        "think_sim_cost_s": 62.4,
+        "tokens_input": 96000,
+        "tokens_output": 960,
+        "tokens_total": 96960,
+        "undelivered_items": 4.3333
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "trials": 6
+    },
+    "structured": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "dialogue": {
+        "acts_coarse": {
+          "request": 18
+        },
+        "acts_fine": {
+          "propose": 18
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 36,
+        "grounds_by_verdict": {
+          "unknown": 18
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 18
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "④ 정형 메시지 대조",
+      "leader_ids": [],
+      "metrics": {
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "http_attempts": 90,
+        "idle_robot_s": 236.7,
+        "idle_share": 0.1315,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.2,
+        "think_sim_cost_s": 236.7,
+        "tokens_input": 360000,
+        "tokens_output": 3690,
+        "tokens_total": 363690,
+        "undelivered_items": 4.3333
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "trials": 6
+    }
+  },
+  "provenance": {
+    "mixed_fields": [
+      "map_file_sha256",
+      "order_sheet_sha256",
+      "public_map_sha256"
+    ],
+    "single_bundle": false,
+    "values": {
+      "code_sha": [
+        "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c"
+      ],
+      "cost_profile_id": [
+        "zone_sim_cost.v1"
+      ],
+      "execution_bundle_id": [
+        "zone_study_offline_v1"
+      ],
+      "input_profile_id": [
+        "zone_study_inputs.v1"
+      ],
+      "map_file_sha256": [
+        "2562d2f09940e9ba864cf1fe71740592e5305835a6c1af24b3493298a583c4ed",
+        "a349d42d60f3fcefd1efa29016aeb39e15e40c0092268c0485814e7f9f3916db",
+        "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14"
+      ],
+      "model": [
+        "none-fixture-v1"
+      ],
+      "model_settings_sha256": [
+        "None"
+      ],
+      "order_sheet_sha256": [
+        "0b1ad7e93cf294a8803e84fc1b6efac185b532d9ea49273d1813bceedc41085e",
+        "4647438472990b8d6f569787b6ea99496ad9bf141bdabeb8c28e229d109347ea",
+        "6b939c6c438ade062085fb6ac078918b985a3b04082f5b301107b06f98806f5c",
+        "763d1b5bb9c62efc2b5632469c5c2def0c34f914997f561de74ee43742724e2a",
+        "b438f7d90e291ad841e184537a0c2ee80a5bd597d4d891f37de4c47bd7e4988f",
+        "c3f714a1877ef0574bbf5756ff52f8aa23a14cbc90e02ec70de23487f1dc073c"
+      ],
+      "prompt_template_sha256": [
+        "b0ec067f6c5fb566214198a5679872a315ff8015d482489be0f067e20a8bd205"
+      ],
+      "provider": [
+        "None"
+      ],
+      "public_map_sha256": [
+        "08eeebbad8f069eddfe403c811913905cd89270a36c9b40940d74c9159bcc321",
+        "4c7de01361aedabc7471ba780763cbbd3a5888147b55c5dfbe44055f8cfee524",
+        "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba"
+      ],
+      "registry_sha256": [
+        "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181"
+      ]
+    }
+  },
+  "scenarios": [
+    "s1_normal_mixed",
+    "s2_unmapped_blockage",
+    "s3_late_rendezvous",
+    "s4_narrow_door_standoff",
+    "s5_moved_dropped_item",
+    "s6_novel_relation"
+  ],
+  "trials": 30
+}

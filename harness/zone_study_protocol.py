@@ -38,9 +38,13 @@ caller that subclasses these types, uses ``object.__setattr__`` on a frozen
 value, or passes a mapping that lies in ``keys()``; that is out of scope and
 would need a different design.
 
-Package A (``harness/zone_study_contract.py``) is not merged yet; the study
-contract adapter lives in ``harness/zone_study_prompts_ko.py`` and must be
-aligned with A once it lands.
+Package A (``harness/zone_study_contract.py``) owns the condition registry, the
+message envelope, the structured-message schema and the input boundary. This
+module derives ``SPECS`` from ``A.CONDITIONS``, delivers A envelopes
+(``ugrp.zone_study_message.v1``) into the inbox and delegates the structured
+schema to ``A.structured_violations``; it adds only what A leaves to the
+protocol: dialogue windows, utterance budgets, rejection names, the model reply
+schema and the evaluation-only language report.
 """
 from __future__ import annotations
 
@@ -51,10 +55,16 @@ from dataclasses import dataclass, field
 
 from harness.three_robot_plan import parse
 from harness.zone_dialogue_metrics import english_words, hangul_ratio, id_issues
+from harness.zone_study_contract import (CONDITIONS as CONTRACT_CONDITIONS, CONFIDENCE,
+                                         ENVELOPE_KEYS, FREE_TEXT_FIELDS,
+                                         MESSAGE_ENVELOPE_SCHEMA, ROBOTS as CONTRACT_ROBOTS,
+                                         STRUCTURED_ACTS, STRUCTURED_FIELDS, STRUCTURED_STATES,
+                                         Vocabulary, language_violations as contract_language_violations,
+                                         structured_violations)
 
-ROBOTS = ('r1', 'r2', 'r3')
+ROBOTS = CONTRACT_ROBOTS
 ZONES = ('A', 'B', 'C')
-CONDITIONS = ('no_comm', 'peer_ko', 'leader_ko', 'structured', 'reference_R')
+CONDITIONS = tuple(CONTRACT_CONDITIONS)
 COMMANDER = 'commander'
 PROTOCOL_VERSION = 'ugrp.zone_study_protocol.v1'
 
@@ -69,24 +79,23 @@ DELIVERY_DELAY_SIM_S = 0.1
 # Korean compliance threshold of the evaluation-only flag (pilot V2: 0.992).
 KOREAN_MIN_RATIO = 0.9
 
-# Structured-message schema (condition 4). Exactly these keys, ``act`` required.
-STRUCT_FIELDS = ('act', 'item', 'zone', 'role', 'passage', 'location_ref', 'state',
-                 'confidence', 'observed_at_sim_s', 'reply_to')
-STRUCT_ACTS = ('propose', 'request', 'accept', 'reject', 'inform', 'correct', 'yield', 'cancel')
-STRUCT_STATES = ('unknown', 'suspected', 'clear', 'blocked', 'present', 'absent', 'held', 'placed')
-CONFIDENCE = ('low', 'medium', 'high')
-# Free-text smuggling: any of these keys in a structured message is refused.
-FREE_TEXT_KEYS = ('text', 'reason', 'note', 'comment', 'other', 'message', 'detail', 'description')
+# Structured-message schema (condition 4), from package A. This module keeps its
+# stricter rule that ALL fields are present, so a reply cannot omit a field.
+STRUCT_FIELDS = STRUCTURED_FIELDS
+STRUCT_ACTS = STRUCTURED_ACTS
+STRUCT_STATES = STRUCTURED_STATES
+# Free-text smuggling: package A's list plus two names this protocol also refuses.
+FREE_TEXT_KEYS = tuple(dict.fromkeys(FREE_TEXT_FIELDS + ('detail', 'description')))
 
 REPLY_FIELDS = ('request_id', 'action', 'decision_sources', 'messages')
 ROBOT_ACTION_KINDS = ('claim', 'continue', 'release', 'wait')
 COMMANDER_ACTION_KINDS = ('order',)
 DECISION_SOURCES = ('static_map', 'order_sheet', 'own_rgb', 'own_commands', 'own_belief', 'message')
 
-# Robot-facing fields of a delivered message. Evaluation data (language flags,
-# the sender's reason, any action) must never appear in an inbox record.
-INBOX_FIELDS = ('message_id', 'from_robot', 'recipients', 'sent_at_sim_s', 'delivered_at_sim_s',
-                'reply_to', 'text', 'message')
+# Robot-facing fields of a delivered message: package A's closed message
+# envelope. Evaluation data (language flags, the sender's reason, any action) can
+# therefore never appear in an inbox record, and neither can the delivery time.
+INBOX_FIELDS = ENVELOPE_KEYS
 # No public callable of this module may take host decision state.
 FORBIDDEN_TRANSPORT_PARAMS = ('claims', 'claim', 'reservation', 'reservations', 'board', 'ledger',
                               'jobs', 'actions', 'assignments')
@@ -112,10 +121,15 @@ class ProtocolError(ValueError):
 
 @dataclass(frozen=True)
 class ConditionSpec:
-    """One study condition. Only the channel fields differ between 1-4."""
+    """One study condition. Only the channel fields differ between 1-4.
+
+    ``topology`` and ``encoding`` carry package A's literals
+    (``none|mesh|star|commander_downlink`` and ``none|free_ko|schema``); the
+    utterance caps are this protocol's own budget, which A does not define.
+    """
     name: str
-    topology: str            # 'none' | 'mesh' | 'star' | 'commander'
-    encoding: str            # 'none' | 'ko_free' | 'structured'
+    topology: str            # A: 'none' | 'mesh' | 'star' | 'commander_downlink'
+    encoding: str            # A: 'none' | 'free_ko' | 'schema'
     rotating_leader: bool
     robot_llm: bool
     commander_llm: bool
@@ -128,13 +142,20 @@ class ConditionSpec:
         return self.topology in ('mesh', 'star')
 
 
-SPECS = {
-    'no_comm': ConditionSpec('no_comm', 'none', 'none', False, True, False, True, 0, 0),
-    'peer_ko': ConditionSpec('peer_ko', 'mesh', 'ko_free', False, True, False, True),
-    'leader_ko': ConditionSpec('leader_ko', 'star', 'ko_free', True, True, False, True),
-    'structured': ConditionSpec('structured', 'mesh', 'structured', False, True, False, True),
-    'reference_R': ConditionSpec('reference_R', 'commander', 'none', False, False, True, False, 0, 0),
-}
+def _spec_from_contract(name, contract):
+    """One ``ConditionSpec`` derived from package A's ``Condition`` row."""
+    open_channel = contract.topology in ('mesh', 'star')
+    return ConditionSpec(name=name, topology=contract.topology, encoding=contract.encoding,
+                         rotating_leader=contract.leader_rotation, robot_llm=contract.robot_llm,
+                         commander_llm=contract.topology == 'commander_downlink',
+                         main_condition=contract.is_main,
+                         max_window_utterances=MAX_WINDOW_UTTERANCES if open_channel else 0,
+                         max_robot_utterances=MAX_ROBOT_UTTERANCES if open_channel else 0)
+
+
+#: Derived from package A: a new condition or a changed topology/encoding there
+#: reaches this protocol automatically instead of drifting.
+SPECS = {name: _spec_from_contract(name, contract) for name, contract in CONTRACT_CONDITIONS.items()}
 
 
 def spec(condition: str) -> ConditionSpec:
@@ -160,8 +181,15 @@ def actors(condition: str, robots=ROBOTS) -> tuple[str, ...]:
     return (COMMANDER,) if spec(condition).commander_llm else tuple(robots)
 
 
-def leader_of(condition: str, *, seed=None, leader=None, robots=ROBOTS):
-    """Resolve the leader: explicit id, or the seed rotation. None when unused."""
+def leader_of(condition: str, *, seed=None, leader=None, robots=ROBOTS, allow_override=False):
+    """Resolve the leader from the SEED rotation. None when the condition has none.
+
+    2026-09-26 review finding 9: an explicit ``leader`` used to win over the
+    seed, so a whole cohort could run with a fixed leader while the payload and
+    the transport disagreed. A study run may now only pass the leader the seed
+    rotation places; ``allow_override=True`` is for diagnostics that say so
+    explicitly and must never be used for a reported condition.
+    """
     if not spec(condition).rotating_leader:
         if leader is not None:
             raise ProtocolError(f'condition {condition!r} has no leader')
@@ -169,25 +197,37 @@ def leader_of(condition: str, *, seed=None, leader=None, robots=ROBOTS):
     if leader is not None:
         if leader not in robots:
             raise ProtocolError(f'unknown leader {leader!r}')
+        if seed is None:
+            if not allow_override:
+                raise ProtocolError('leader_ko rotates the leader by seed: pass the seed, or set '
+                                    'allow_override=True for an explicitly labelled diagnostic')
+            return leader
+        rotated = leader_for_seed(seed, robots)
+        if leader != rotated and not allow_override:
+            raise ProtocolError(f'seed {seed} rotates the leader to {rotated!r}, not {leader!r}; the '
+                                'rotation is a user decision (2026-09-26) and cannot be overridden in a '
+                                'study run')
         return leader
     if seed is None:
         raise ProtocolError('leader_ko needs a seed (leader rotation) or an explicit leader')
     return leader_for_seed(seed, robots)
 
 
-def allowed_edges(condition: str, *, seed=None, leader=None, robots=ROBOTS) -> frozenset:
+def allowed_edges(condition: str, *, seed=None, leader=None, robots=ROBOTS,
+                  allow_override=False) -> frozenset:
     """Directed (sender, recipient) pairs the channel allows."""
     s = spec(condition)
     if not s.channel_open:
         return frozenset()
     if s.topology == 'mesh':
         return frozenset((a, b) for a in robots for b in robots if a != b)
-    lead = leader_of(condition, seed=seed, leader=leader, robots=robots)
+    lead = leader_of(condition, seed=seed, leader=leader, robots=robots, allow_override=allow_override)
     return frozenset([*((lead, b) for b in robots if b != lead),
                       *((b, lead) for b in robots if b != lead)])
 
 
-def role_of(condition: str, rid: str, *, seed=None, leader=None, robots=ROBOTS) -> str:
+def role_of(condition: str, rid: str, *, seed=None, leader=None, robots=ROBOTS,
+            allow_override=False) -> str:
     """Prompt role of an actor: 'peer' | 'leader' | 'follower' | 'commander'."""
     if rid == COMMANDER:
         if not spec(condition).commander_llm:
@@ -195,7 +235,7 @@ def role_of(condition: str, rid: str, *, seed=None, leader=None, robots=ROBOTS) 
         return 'commander'
     if rid not in robots:
         raise ProtocolError(f'unknown robot {rid!r}')
-    lead = leader_of(condition, seed=seed, leader=leader, robots=robots)
+    lead = leader_of(condition, seed=seed, leader=leader, robots=robots, allow_override=allow_override)
     if lead is None:
         return 'peer'
     return 'leader' if rid == lead else 'follower'
@@ -242,17 +282,25 @@ class Envelope:
     structured: dict | None = None
     reply_to: str | None = None
 
-    def record(self, *, delivered_at_sim_s) -> dict:
-        """Robot-facing record: only ``INBOX_FIELDS``, and a copy of the body so
-        a caller editing the record cannot change what was delivered."""
-        out = {'message_id': self.message_id, 'from_robot': self.sender,
-               'recipients': list(self.recipients), 'sent_at_sim_s': self.sent_at_sim_s,
-               'delivered_at_sim_s': delivered_at_sim_s, 'reply_to': self.reply_to}
-        if self.text is not None:
-            out['text'] = self.text
-        else:
-            out['message'] = copy.deepcopy(self.structured)
-        return out
+    def body(self) -> dict:
+        """The message body as package A sees it: ``{"text": ...}`` or the schema object."""
+        return {'text': self.text} if self.text is not None else copy.deepcopy(self.structured)
+
+    def record(self, *, delivered_at_sim_s=None) -> dict:
+        """Robot-facing record: package A's closed message envelope
+        (``ugrp.zone_study_message.v1``), with a copy of the body so a caller
+        editing the record cannot change what was delivered.
+
+        ``delivered_at_sim_s`` is accepted and deliberately NOT forwarded: A's
+        envelope carries no delivery time, and the SIM delivery order belongs to
+        the scheduler and the evaluation log, not to a robot input.
+        """
+        del delivered_at_sim_s
+        body = {'text': self.text} if self.text is not None else copy.deepcopy(self.structured)
+        return {'schema': MESSAGE_ENVELOPE_SCHEMA, 'message_id': self.message_id, 'sender': self.sender,
+                'recipients': list(self.recipients),
+                'encoding': 'free_ko' if self.text is not None else 'schema',
+                'created_at_sim_s': float(self.sent_at_sim_s), 'reply_to': self.reply_to, 'body': body}
 
 
 @dataclass(frozen=True)
@@ -263,6 +311,9 @@ class Receipt:
     envelope: Envelope | None = None
     deliveries: tuple = ()
     language: dict | None = None
+    #: The utterance was accepted and delivered but breaks the Korean rule
+    #: (user decision 2026-09-26: flag and cost it, never block).
+    language_violation: bool = False
 
 
 @dataclass
@@ -279,32 +330,58 @@ class Transport:
     It owns inboxes and an evaluation log, nothing else. There is no claim,
     reservation or job state here, and no method takes one, so a message can
     never directly change a host claim, a reservation or another robot's action.
+
+    **One owner of the message bus** (2026-09-26 review finding 2). C used to
+    deliver into its own inbox at ``at_sim_s + delivery_delay`` while D minted a
+    second id and delivered into a second inbox, so the two clocks and the two id
+    spaces could disagree and a message could be visible before its call was
+    charged. With ``delivery_owner`` set, this transport validates, costs, logs
+    and CREATES the canonical envelope, but only that owner may commit a
+    delivery (``commit_delivery``). ``delivery_owner=None`` keeps the standalone
+    behaviour used by the package-C unit tests and by callers that have no
+    scheduler.
     """
 
     def __init__(self, condition, *, seed=None, leader=None, robots=ROBOTS,
                  item_ids=(), order_ids=(), roles=(), passages=(), location_refs=(),
+                 vocabulary=None, delivery_owner=None, allow_leader_override=False,
                  delivery_delay_sim_s=DELIVERY_DELAY_SIM_S, max_window_utterances=None,
                  max_robot_utterances=None, max_total_utterances=None):
         self.spec = spec(condition)
         self.condition = self.spec.name
         self.robots = tuple(robots)
-        self.leader = leader_of(self.condition, seed=seed, leader=leader, robots=self.robots)
-        self.edges = allowed_edges(self.condition, seed=seed, leader=self.leader, robots=self.robots)
+        self.leader = leader_of(self.condition, seed=seed, leader=leader, robots=self.robots,
+                                allow_override=allow_leader_override)
+        self.edges = allowed_edges(self.condition, seed=seed, leader=self.leader, robots=self.robots,
+                                   allow_override=allow_leader_override)
+        self.delivery_owner = delivery_owner
         self.delivery_delay_sim_s = float(delivery_delay_sim_s)
         self.cap_window = self.spec.max_window_utterances if max_window_utterances is None else max_window_utterances
         self.cap_robot = self.spec.max_robot_utterances if max_robot_utterances is None else max_robot_utterances
         # Optional episode budget. Re-opening windows must not be a way around
         # the per-window cap, so the runner can bound the whole run here.
         self.cap_total = max_total_utterances
-        self.vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
-                      'role': frozenset(roles), 'passage': frozenset(passages),
-                      'location_ref': frozenset(location_refs)}
+        if vocabulary is not None:
+            # Package A's Vocabulary (order sheet + public map) is the preferred
+            # source: then a message can only name an ID the robot was given.
+            self.vocab = {'item': frozenset(vocabulary.items), 'zone': frozenset(vocabulary.zones),
+                          'role': frozenset(vocabulary.roles), 'passage': frozenset(vocabulary.passages),
+                          'location_ref': frozenset(vocabulary.location_refs)}
+        else:
+            self.vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
+                          'role': frozenset(roles), 'passage': frozenset(passages),
+                          'location_ref': frozenset(location_refs)}
         self._inbox = {rid: [] for rid in self.robots}
         self.window = None
         self.windows = []      # every window id opened, in order
         self.log = []          # evaluation only: every attempt, accepted or not
         self.rejections = []   # evaluation only
         self.truncations = []  # evaluation only: inbox records a caller cut off
+        self.language_flags = []   # evaluation only: delivered but flagged
+        # single-owner bus bookkeeping (review finding 2)
+        self.pending = {}      # accepted, waiting for the owner to commit delivery
+        self.delivered = {}    # message_id -> envelope, once committed
+        self._committed = set()
 
     def _received_ids(self, rid, at_sim_s=None) -> frozenset:
         """Message ids actually delivered to ``rid`` (by ``at_sim_s`` if given).
@@ -371,16 +448,66 @@ class Transport:
             self.rejections.append({**attempt, 'rejection': exc.reason, 'detail': exc.detail})
             return receipt
         delivered_at = float(at_sim_s) + self.delivery_delay_sim_s
-        for rid in envelope.recipients:
-            self._inbox[rid].append((delivered_at, envelope))
+        if self.delivery_owner is None:
+            for rid in envelope.recipients:
+                self._inbox[rid].append((delivered_at, envelope))
+        else:
+            # The SIM scheduler owns delivery: it calls ``commit_delivery`` at the
+            # SIM time it charged, so nothing is readable before the call is paid.
+            self.pending[envelope.message_id] = envelope
+            delivered_at = None
         self.window.utterances += 1
         self.window.per_robot[sender] = self.window.per_robot.get(sender, 0) + 1
+        slip = contract_language_violations(self.condition, envelope.body(),
+                                            literals=self._literals()) if text is not None else []
         self.log.append({**attempt, 'accepted': True, 'message_id': envelope.message_id,
                          'delivered_at_sim_s': delivered_at, 'edges': len(envelope.recipients),
-                         'broadcast': len(envelope.recipients) > 1, 'language': language})
+                         'broadcast': len(envelope.recipients) > 1, 'language': language,
+                         'language_violation': bool(slip), 'language_reasons': slip,
+                         'delivery_owner': self.delivery_owner})
+        if slip:
+            # Delivered, flagged, costed — never blocking (user decision
+            # 2026-09-26, review finding 8).
+            self.language_flags.append({'message_id': envelope.message_id, 'sender': sender,
+                                        'reasons': slip})
         return Receipt(True, envelope=envelope,
                        deliveries=tuple((rid, delivered_at) for rid in envelope.recipients),
-                       language=language)
+                       language=language, language_violation=bool(slip))
+
+    def _literals(self):
+        return sorted(self.vocab['item'] | self.vocab['role'] | self.vocab['passage']
+                      | self.vocab['location_ref'])
+
+    def commit_delivery(self, message_id, *, at_sim_s, owner, recipients=None) -> tuple:
+        """Put one accepted envelope into its recipients' inboxes (single owner).
+
+        Only the registered ``delivery_owner`` may call this, and only once per
+        (message, recipient): the canonical id created by ``send`` stays the id
+        the robot sees, the SIM scheduler decides WHEN, and nothing else can add,
+        duplicate or reorder an inbox entry (review finding 2).
+        """
+        if self.delivery_owner is None:
+            raise ProtocolError('this transport delivers its own messages; construct it with '
+                                'delivery_owner=... to hand delivery to a SIM scheduler')
+        if owner != self.delivery_owner:
+            raise ProtocolError(f'{owner!r} does not own this message bus ({self.delivery_owner!r})')
+        envelope = self.pending.get(message_id) or self.delivered.get(message_id)
+        if envelope is None:
+            raise ProtocolError(f'unknown message_id {message_id!r}: only an accepted envelope is delivered')
+        targets = tuple(recipients) if recipients is not None else envelope.recipients
+        out = []
+        for rid in targets:
+            if rid not in envelope.recipients:
+                raise ProtocolError(f'{message_id} was not addressed to {rid!r}')
+            if (message_id, rid) in self._committed:
+                raise ProtocolError(f'{message_id} was already delivered to {rid!r}')
+            self._committed.add((message_id, rid))
+            self._inbox[rid].append((float(at_sim_s), envelope))
+            out.append((rid, float(at_sim_s)))
+        self.delivered[message_id] = envelope
+        if set(self._committed) >= {(message_id, r) for r in envelope.recipients}:
+            self.pending.pop(message_id, None)
+        return tuple(out)
 
     def _build(self, sender, recipients, text, structured, reply_to, at_sim_s) -> Envelope:
         if not self.spec.channel_open:
@@ -418,7 +545,7 @@ class Transport:
         return Envelope(mid, sender, tuple(targets), float(at_sim_s), body_text, body_struct, reply_to)
 
     def _body(self, text, structured):
-        if self.spec.encoding == 'ko_free':
+        if self.spec.encoding == 'free_ko':
             if structured is not None:
                 raise _Reject('structured_not_allowed', 'free Korean channel carries text')
             if not isinstance(text, str) or not text.strip():
@@ -496,8 +623,23 @@ class _Reject(ProtocolError):
 
 # --- validators -----------------------------------------------------------
 
+def _contract_vocabulary(vocab) -> Vocabulary:
+    """Package A ``Vocabulary`` from this module's internal per-field mapping."""
+    if isinstance(vocab, Vocabulary):
+        return vocab
+    return Vocabulary(items=frozenset(vocab.get('item', ())), zones=frozenset(vocab.get('zone', ZONES)),
+                      roles=frozenset(vocab.get('role', ())), passages=frozenset(vocab.get('passage', ())),
+                      location_refs=frozenset(vocab.get('location_ref', ())))
+
+
 def validate_structured(value, *, vocab) -> dict:
-    """Condition-4 message: fixed fields, enums and IDs only, no free text."""
+    """Condition-4 message: package A's schema, with every field required here.
+
+    Field names, enums and the ID vocabulary are A's
+    (``harness.zone_study_contract.structured_violations``). This protocol adds
+    two rules A leaves open: the full field set must be present, and ``reply_to``
+    must be a ``message_id`` of this transport's id shape.
+    """
     if not isinstance(value, dict):
         raise ProtocolError('structured message must be an object')
     for key in value:
@@ -505,23 +647,9 @@ def validate_structured(value, *, vocab) -> dict:
             raise _Reject('free_text_not_allowed', f'field {key!r}')
     if set(value) != set(STRUCT_FIELDS):
         raise ProtocolError('structured message needs exactly ' + ', '.join(STRUCT_FIELDS))
-    if value['act'] not in STRUCT_ACTS:
-        raise ProtocolError(f"unknown act {value['act']!r}")
-    for key in ('item', 'zone', 'role', 'passage', 'location_ref'):
-        got = value[key]
-        if got is None:
-            continue
-        if not isinstance(got, str):
-            raise ProtocolError(f'{key} must be a string or null')
-        if got not in vocab[key]:
-            raise ProtocolError(f'{key} {got!r} is not a declared id')
-    if value['state'] is not None and value['state'] not in STRUCT_STATES:
-        raise ProtocolError(f"unknown state {value['state']!r}")
-    if value['confidence'] is not None and value['confidence'] not in CONFIDENCE:
-        raise ProtocolError(f"confidence must be one of {CONFIDENCE} or null")
-    seen = value['observed_at_sim_s']
-    if seen is not None and (isinstance(seen, bool) or not isinstance(seen, (int, float)) or seen < 0):
-        raise ProtocolError('observed_at_sim_s must be a non-negative number or null')
+    problems = structured_violations(value, vocabulary=_contract_vocabulary(vocab))
+    if problems:
+        raise ProtocolError('; '.join(problems))
     if value['reply_to'] is not None and not is_message_id(value['reply_to']):
         raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
     return copy.deepcopy(value)
@@ -582,14 +710,21 @@ def _check_job(job, *, order_ids, roles_by_order, where, claim=False):
         raise ProtocolError(f'{where}: role must be a non-empty string')
 
 
-def validate_reply(raw, *, request_id, condition, actor, order_ids=(), item_ids=(), roles_by_order=None,
-                   passages=(), location_refs=(), robots=ROBOTS) -> dict:
+def validate_reply(raw, *, request_id, condition, actor, order_ids=(), item_ids=(), kinds=(),
+                   roles_by_order=None, passages=(), location_refs=(), vocabulary=None,
+                   robots=ROBOTS) -> dict:
     """Parse and check one model reply. Raises ProtocolError; never repairs.
 
     Shape for every condition and actor:
     ``{"request_id", "action", "decision_sources", "messages"}``. ``messages``
     is [] unless the condition's channel is open, so ``no_comm`` and
     ``reference_R`` cannot smuggle an utterance through the reply either.
+
+    ``vocabulary`` is package A's :class:`~harness.zone_study_contract.Vocabulary`
+    and is the preferred input: without it the structured validator only knew the
+    order and item ids, so an item KIND that A allows (``item="red"`` of a
+    fungible order) was rejected here and the structured condition could not
+    express what the free-text conditions could (2026-09-26 review finding 7).
     """
     s = spec(condition)
     try:
@@ -617,9 +752,15 @@ def validate_reply(raw, *, request_id, condition, actor, order_ids=(), item_ids=
         raise ProtocolError(f'{condition} sends no message: messages must be []')
     if actor == COMMANDER and messages:
         raise ProtocolError('the reference commander orders through action, not messages')
-    vocab = {'item': frozenset(item_ids) | frozenset(order_ids), 'zone': frozenset(ZONES),
-             'role': frozenset(r for roles in (roles_by_order or {}).values() for r in roles),
-             'passage': frozenset(passages), 'location_ref': frozenset(location_refs)}
+    if vocabulary is not None:
+        vocab = {'item': frozenset(vocabulary.items), 'zone': frozenset(vocabulary.zones),
+                 'role': frozenset(vocabulary.roles), 'passage': frozenset(vocabulary.passages),
+                 'location_ref': frozenset(vocabulary.location_refs)}
+    else:
+        vocab = {'item': frozenset(item_ids) | frozenset(order_ids) | frozenset(kinds),
+                 'zone': frozenset(ZONES),
+                 'role': frozenset(r for roles in (roles_by_order or {}).values() for r in roles),
+                 'passage': frozenset(passages), 'location_ref': frozenset(location_refs)}
     value['messages'] = [_check_message(m, spec=s, robots=robots, vocab=vocab, actor=actor)
                          for m in messages]
     return value
@@ -633,7 +774,7 @@ def _check_message(value, *, spec, robots, vocab, actor):
     recipient must cost the utterance, not void the whole reply and its action,
     so the mistake stays measurable.
     """
-    keys = {'recipients', 'reply_to', 'text' if spec.encoding == 'ko_free' else 'message'}
+    keys = {'recipients', 'reply_to', 'text' if spec.encoding == 'free_ko' else 'message'}
     if not isinstance(value, dict) or set(value) != keys:
         raise ProtocolError('each message needs exactly ' + ', '.join(sorted(keys)))
     recipients = value['recipients']
@@ -646,7 +787,7 @@ def _check_message(value, *, spec, robots, vocab, actor):
             raise ProtocolError('a robot does not address itself')
     if value['reply_to'] is not None and not is_message_id(value['reply_to']):
         raise ProtocolError(f'reply_to must be a message_id (at most {MESSAGE_ID_MAX} id characters) or null')
-    if spec.encoding == 'ko_free':
+    if spec.encoding == 'free_ko':
         text = value['text']
         if not isinstance(text, str) or not text.strip():
             raise ProtocolError('text must be a non-empty string')

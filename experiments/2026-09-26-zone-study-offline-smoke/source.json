@@ -1,0 +1,16 @@
+{
+  "branch": "kiro/zone-study-core",
+  "code_sha": "d87e0f2bc179d00ad4c8de48e0559408d46d6a0c",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. python3 scripts/ugrp_session.py run kiro-zone-study-offline-smoke -- python3 scripts/run_zone_study_offline_smoke.py --output outputs/zone-study-offline-smoke",
+  "driver": "scripts/run_zone_study_offline_smoke.py",
+  "loop": "harness/zone_study_offline.py",
+  "merged_package_branches": {
+    "A_contract_pr187": "8587bb9017c035ab2a043194ccd7b2e656bfb232",
+    "C_protocol_pr184": "e8c80eb093d66c99b35a49b3f030869ad1819abf",
+    "D_sim_cost_pr186": "6be139590336bf281af912145740c9766a180019",
+    "E_scenarios_pr190": "3186100117c49e44c6a156a864d1e5bb69da1db8",
+    "I_eval_pr185": "a68ce05683cd2c530c9b7ac34e2b1223ba4fea00",
+    "base_main": "1cd9ea17b13583f99f94e79ad206b7254bd3f200"
+  },
+  "worktree": "/Users/changmin/projects/ugrp-wt/kiro-study-core"
+}

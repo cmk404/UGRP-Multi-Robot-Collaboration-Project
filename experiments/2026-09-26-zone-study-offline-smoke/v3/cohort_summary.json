@@ -1,0 +1,443 @@
+{
+  "conditions": {
+    "leader_ko": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "cohort_tokens_total": 4416948,
+      "dialogue": {
+        "acts_coarse": {
+          "order": 12,
+          "report": 24
+        },
+        "acts_fine": {
+          "claim": 12,
+          "order": 12,
+          "other": 12
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 24,
+        "grounds_by_verdict": {
+          "unknown": 24
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 24,
+        "korean_ok": 24,
+        "korean_share": 1.0,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 24
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "③ 한국어 지휘 겸임",
+      "leader_ids": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "metrics": {
+        "call_sim_cost_s": 316.65,
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "delivery_sim_cost_s": 0.4,
+        "http_attempts": 90,
+        "idle_robot_s": 316.65,
+        "idle_share": 0.1759,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.6,
+        "think_sim_cost_s": 315.45,
+        "tokens_input": 732438,
+        "tokens_output": 3720,
+        "tokens_total": 736158,
+        "undelivered_items": 4.3333,
+        "utterance_sim_cost_s": 1.2
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "tokens_incomplete_trials": 0,
+      "trials": 6,
+      "usage_unknown_calls": 0
+    },
+    "no_comm": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "cohort_tokens_total": 3271821,
+      "dialogue": {
+        "acts_coarse": {},
+        "acts_fine": {},
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 0,
+        "grounds_by_verdict": {},
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 0
+      },
+      "end_reasons": {
+        "sim_horizon": 6
+      },
+      "is_reference": false,
+      "label_ko": "① 무통신",
+      "leader_ids": [],
+      "metrics": {
+        "call_sim_cost_s": 232.95,
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "delivery_sim_cost_s": 0.0,
+        "http_attempts": 68.5,
+        "idle_robot_s": 232.95,
+        "idle_share": 0.1294,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 68.5,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 0.0,
+        "think_sim_cost_s": 232.95,
+        "tokens_input": 542563.5,
+        "tokens_output": 2740,
+        "tokens_total": 545303.5,
+        "undelivered_items": 4.3333,
+        "utterance_sim_cost_s": 0.0
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "tokens_incomplete_trials": 0,
+      "trials": 6,
+      "usage_unknown_calls": 0
+    },
+    "peer_ko": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "cohort_tokens_total": 4447548,
+      "dialogue": {
+        "acts_coarse": {
+          "report": 18
+        },
+        "acts_fine": {
+          "claim": 18
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 36,
+        "grounds_by_verdict": {
+          "unknown": 18
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 18,
+        "korean_ok": 18,
+        "korean_share": 1.0,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 18
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "② 자유 한국어 동료 대화",
+      "leader_ids": [],
+      "metrics": {
+        "call_sim_cost_s": 315.85,
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "delivery_sim_cost_s": 0.3,
+        "http_attempts": 90,
+        "idle_robot_s": 315.85,
+        "idle_share": 0.1755,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.2,
+        "think_sim_cost_s": 314.95,
+        "tokens_input": 737568,
+        "tokens_output": 3690,
+        "tokens_total": 741258,
+        "undelivered_items": 4.3333,
+        "utterance_sim_cost_s": 0.9
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "tokens_incomplete_trials": 0,
+      "trials": 6,
+      "usage_unknown_calls": 0
+    },
+    "reference_R": {
+      "boundary_clean_trials": 0,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "cohort_tokens_total": 1079479,
+      "dialogue": {
+        "acts_coarse": {},
+        "acts_fine": {},
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 0,
+        "grounds_by_verdict": {},
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 0
+      },
+      "end_reasons": {
+        "sim_horizon": 6
+      },
+      "is_reference": true,
+      "label_ko": "R 전지적 지휘 참조 상한",
+      "leader_ids": [],
+      "metrics": {
+        "call_sim_cost_s": 77.95,
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "delivery_sim_cost_s": 0.0,
+        "http_attempts": 22.8333,
+        "idle_robot_s": 0.0,
+        "idle_share": 0.0,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 22.8333,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 0.0,
+        "think_sim_cost_s": 77.95,
+        "tokens_input": 178999.8333,
+        "tokens_output": 913.3333,
+        "tokens_total": 179913.1667,
+        "undelivered_items": 4.3333,
+        "utterance_sim_cost_s": 0.0
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "tokens_incomplete_trials": 0,
+      "trials": 6,
+      "usage_unknown_calls": 0
+    },
+    "structured": {
+      "boundary_clean_trials": 6,
+      "boundary_violation_trials": 0,
+      "censored_trials": 6,
+      "cohort_tokens_total": 4503924,
+      "dialogue": {
+        "acts_coarse": {
+          "request": 18
+        },
+        "acts_fine": {
+          "propose": 18
+        },
+        "changes_with_prior_inbound": 0,
+        "claims_false": 0,
+        "claims_true": 0,
+        "claims_unverifiable": 0,
+        "code_switch_messages": 0,
+        "decision_changes": 0,
+        "delivery_edges": 36,
+        "grounds_by_verdict": {
+          "unknown": 18
+        },
+        "id_issue_messages": 0,
+        "korean_checked": 0,
+        "korean_ok": 0,
+        "korean_share": null,
+        "preceding_acts": {},
+        "silent_messages": 0,
+        "truthful_share": null,
+        "utterances": 18
+      },
+      "end_reasons": {
+        "budget_exhausted": 6
+      },
+      "is_reference": false,
+      "label_ko": "④ 정형 메시지 대조",
+      "leader_ids": [],
+      "metrics": {
+        "call_sim_cost_s": 319.8,
+        "conflicts": 0,
+        "deadlock_sim_s": 0,
+        "deadlocks": 0,
+        "delivered_items": 0,
+        "delivery_rate": 0.0,
+        "delivery_sim_cost_s": 0.3,
+        "http_attempts": 90,
+        "idle_robot_s": 319.8,
+        "idle_share": 0.1777,
+        "makespan_sim_s": 300.0,
+        "makespan_success_only_s": null,
+        "misdelivered_items": 0,
+        "model_calls": 90,
+        "par_makespan_sim_s": 600.0,
+        "replans": 0,
+        "talk_sim_cost_s": 1.2,
+        "think_sim_cost_s": 318.9,
+        "tokens_input": 746964,
+        "tokens_output": 3690,
+        "tokens_total": 750654,
+        "undelivered_items": 4.3333,
+        "utterance_sim_cost_s": 0.9
+      },
+      "seeds": [
+        601,
+        611,
+        621,
+        631,
+        641,
+        651
+      ],
+      "success_rate": 0.0,
+      "successes": 0,
+      "tokens_incomplete_trials": 0,
+      "trials": 6,
+      "usage_unknown_calls": 0
+    }
+  },
+  "provenance": {
+    "mixed_fields": [
+      "map_file_sha256",
+      "order_sheet_sha256",
+      "public_map_sha256"
+    ],
+    "single_bundle": false,
+    "values": {
+      "code_sha": [
+        "eb5572bd9f34744373d02b63e1033979f0a0a920"
+      ],
+      "cost_profile_id": [
+        "zone_sim_cost.v1"
+      ],
+      "execution_bundle_id": [
+        "zone_study_offline_v1"
+      ],
+      "input_profile_id": [
+        "zone_study_inputs.v1"
+      ],
+      "map_file_sha256": [
+        "2562d2f09940e9ba864cf1fe71740592e5305835a6c1af24b3493298a583c4ed",
+        "a349d42d60f3fcefd1efa29016aeb39e15e40c0092268c0485814e7f9f3916db",
+        "f86fc314ed3c4c2866f9b5c8448b9b1919462f0c1a958bedf46442513604ea14"
+      ],
+      "model": [
+        "none-fixture-v1"
+      ],
+      "model_settings_sha256": [
+        "None"
+      ],
+      "order_sheet_sha256": [
+        "1176f3483e5d64565ce1d54873e5ad0e3aedcd2d1f824bfe3e9102450ab7e2e3",
+        "52a814d560cd1588bea4f0c36af15acec3cb41c9a378be9250b090c30a9c8ae5",
+        "621ae5685ca505d9a82945d2dc31321e1cf20d8b03a27b33a17748e46def3192",
+        "c2d8709a61984c85ee7214b92c31585b7a82fa35ab014da7ea8e59468f31a79d",
+        "db4cac0d33da4a0ca4d2ee07cf063158ee35c552cf07d17374fcfde31e24cb7b",
+        "f5c0c33b684da8ee1145429fb2f8bc1ec812c7266483bc8a1467d01d456c5667"
+      ],
+      "prompt_template_sha256": [
+        "00926041f51da5aac70ba912a9a0c5f09d5a86cda68eb645d22373e7ae4666e1"
+      ],
+      "provider": [
+        "None"
+      ],
+      "public_map_sha256": [
+        "08eeebbad8f069eddfe403c811913905cd89270a36c9b40940d74c9159bcc321",
+        "4c7de01361aedabc7471ba780763cbbd3a5888147b55c5dfbe44055f8cfee524",
+        "5ec0c26b49adc9d20e9b4c80901745f71d841e4b64f5b5c2840b280a21938fba"
+      ],
+      "registry_sha256": [
+        "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181"
+      ]
+    }
+  },
+  "scenarios": [
+    "s1_normal_mixed",
+    "s2_unmapped_blockage",
+    "s3_late_rendezvous",
+    "s4_narrow_door_standoff",
+    "s5_moved_dropped_item",
+    "s6_novel_relation"
+  ],
+  "trials": 30
+}

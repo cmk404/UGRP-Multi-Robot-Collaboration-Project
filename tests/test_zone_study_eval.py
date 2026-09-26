@@ -62,8 +62,10 @@ def trial(condition='peer_ko', scenario='mixed', seed=101, *, end_reason='orders
             'sim_cost_s': {'think': 24.0, 'talk': 3.0, 'delivery': 0.5},
             'wall_latency_ms': [810.0, 930.0]},
         'requests': requests if requests is not None else [
-            {'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0, 'input_keys': list(ALLOWED_KEYS)},
-            {'request_id': 'req-2', 'robot': 'r2', 'sim_s': 1.0, 'input_keys': list(ALLOWED_KEYS)}],
+            {'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0, 'input_keys': list(ALLOWED_KEYS),
+             'payload_validated': True},
+            {'request_id': 'req-2', 'robot': 'r2', 'sim_s': 1.0, 'input_keys': list(ALLOWED_KEYS),
+             'payload_validated': True}],
         'utterances': list(utterances),
     }
     if leader_id:
@@ -72,7 +74,7 @@ def trial(condition='peer_ko', scenario='mixed', seed=101, *, end_reason='orders
 
 
 def utter(message_id='m-1', sender='r1', recipients=('r2',), sim_s=100.0, text='',
-          encoding='ko_free', **extra):
+          encoding='free_ko', **extra):
     row = {'message_id': message_id, 'sender': sender, 'recipients': list(recipients),
            'sim_s': sim_s, 'delivered_sim_s': sim_s + 0.1, 'encoding': encoding,
            'text': text, 'sim_cost_s': 1.9}
@@ -120,14 +122,22 @@ class ParseTest(unittest.TestCase):
         with self.assertRaises(ev.TrialError):
             ev.parse_trial(bad)
 
-    def test_package_c_condition_names_are_accepted(self):
-        for logged, expected in (('structured', 'peer_structured'),
-                                 ('reference_R', ev.REFERENCE_CONDITION)):
+    def test_provisional_condition_names_are_normalised_onto_package_a(self):
+        """Package A's names are canonical; the earlier spellings still parse."""
+        for logged, expected in (('peer_structured', 'structured'),
+                                 ('central_rgb_reference', ev.REFERENCE_CONDITION)):
             record = trial()
             record['condition'] = logged
             parsed = ev.parse_trial(record)
             self.assertEqual(parsed['condition'], expected)
             self.assertEqual(parsed['condition_as_logged'], logged)
+        # package A's own names need no alias
+        for name in ('no_comm', 'peer_ko', 'structured', ev.REFERENCE_CONDITION):
+            record = trial()
+            record['condition'] = name
+            parsed = ev.parse_trial(record)
+            self.assertEqual(parsed['condition'], name)
+            self.assertNotIn('condition_as_logged', parsed)
 
     def test_package_c_envelope_fields_are_accepted(self):
         record = trial(condition='peer_ko', utterances=[{
@@ -238,6 +248,17 @@ class BoundaryTest(unittest.TestCase):
         self.assertTrue(audit['clean'])
         self.assertEqual(audit['input_leaks'], [])
 
+    def test_a_trial_without_audit_evidence_is_unverified_not_clean(self):
+        """Second review: no request rows, or rows without payload_validated,
+        are not evidence of a clean boundary."""
+        for requests in ([], [{'request_id': 'req-1', 'robot': 'r1', 'sim_s': 0.0,
+                               'input_keys': list(ALLOWED_KEYS)}]):
+            audit = ev.audit_input_boundary(ev.parse_trial(trial(requests=requests)))
+            self.assertFalse(audit['clean'], requests)
+            self.assertTrue(audit['missing_evidence'], requests)
+            self.assertEqual(ev.boundary_status(audit), 'unverified')
+            self.assertEqual(ev.boundary_failures(audit), {})
+
     def test_referee_and_top_inputs_are_flagged(self):
         for leaked in ('top_rgb', 'referee', 'gt_pose', 'teacher_receipt',
                        'peer_rgb', 'measured_joints', 'nav_cam'):
@@ -301,20 +322,36 @@ class ChannelTest(unittest.TestCase):
 
     def test_leader_hub_and_spoke_only(self):
         ok = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r2',
+            condition='leader_ko', seed=103, leader_id='r2',
             utterances=[utter('m-1', 'r2', ('r1',), text='r1, crate-2를 B로 배달하십시오.'),
                         utter('m-2', 'r1', ('r2',), text='알겠습니다.')])))
+        # seed 103 rotates the leader to r2, so these edges are legal; the
+        # mismatch case below shows the rotation audit (review finding 9).
         self.assertEqual(ok['violations'], [])
+        mismatch = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=101, leader_id='r2',
+            utterances=[utter('m-1', 'r2', ('r1',), text='r1, crate-2를 B로 배달하십시오.')])))
+        # seed 101 rotates the leader to r3, so the declared r2 is itself a
+        # design violation (review finding 9) even though every EDGE is legal.
+        self.assertEqual([v['kind'] for v in mismatch['violations']], ['leader_rotation_mismatch'])
+        rotated = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=101, leader_id='r3',
+            utterances=[utter('m-1', 'r3', ('r1',), text='r1, crate-2를 B로 배달하십시오.'),
+                        utter('m-2', 'r1', ('r3',), text='알겠습니다.')])))
+        self.assertEqual(rotated['violations'], [])
         bad = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r2',
-            utterances=[utter('m-3', 'r1', ('r3',), text='r3, 같이 갑시다.')])))
-        self.assertEqual(bad['violations'][0]['kind'], 'follower_to_follower')
+            condition='leader_ko', seed=101, leader_id='r3',
+            utterances=[utter('m-3', 'r1', ('r2',), text='r2, 같이 갑시다.')])))
+        self.assertEqual([v['kind'] for v in bad['violations']], ['follower_to_follower'])
 
-    def test_leader_broadcast_is_flagged(self):
-        bad = ev.channel_compliance(ev.parse_trial(trial(
-            condition='leader_ko', leader_id='r1',
+    def test_a_leader_broadcast_to_every_follower_is_allowed(self):
+        """Review finding 13: leader -> both followers satisfies every
+        hub-and-spoke edge of packages A and C, so it is not a violation."""
+        ok = ev.channel_compliance(ev.parse_trial(trial(
+            condition='leader_ko', seed=102, leader_id='r1',
             utterances=[utter('m-1', 'r1', ('r2', 'r3'), text='모두 대기하십시오.')])))
-        self.assertEqual(bad['violations'][0]['kind'], 'leader_broadcast')
+        self.assertEqual(ok['violations'], [])
+        self.assertNotIn('leader_broadcast', [v['kind'] for v in ok['violations']])
 
     def test_structured_condition_rejects_free_text(self):
         bad = ev.channel_compliance(ev.parse_trial(trial(
@@ -400,7 +437,7 @@ class DialogueTest(unittest.TestCase):
         self.assertNotIn('order', acts['coarse'])
 
     def test_structured_act_enum_maps_to_coarse_types(self):
-        acts = ev.act_types(utter(encoding='structured',
+        acts = ev.act_types(utter(encoding='schema',
                                   message={'act': 'reject', 'item': 'crate-2'}))
         self.assertEqual(acts['fine'], ['reject'])
         self.assertEqual(acts['coarse'], ['objection'])
@@ -600,9 +637,10 @@ class SummaryTest(unittest.TestCase):
                                        utterances=[utter(text='A 구역으로 갑니다.')]))]
         scalars = ev.scalar_export(ev.summarise(trials))
         runs = {r['run'] for r in scalars['runs']}
-        self.assertIn('no_comm/mixed-s1', runs)
+        # fifth review: ``<condition>/<trial_id>``, one run per trial
+        self.assertIn('no_comm/no_comm-mixed-s1', runs)
         self.assertIn('cohort/peer_ko', runs)
-        trial_run = next(r for r in scalars['runs'] if r['run'] == 'peer_ko/mixed-s1')
+        trial_run = next(r for r in scalars['runs'] if r['run'] == 'peer_ko/peer_ko-mixed-s1')
         self.assertIn('result/par_makespan_sim_s', trial_run['scalars'])
         self.assertIn('dialogue/utterances', trial_run['scalars'])
         self.assertEqual(trial_run['hparams']['condition'], 'peer_ko')
@@ -659,7 +697,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(metrics['summary']['conditions']['peer_ko']['trials'], 3)
         self.assertEqual(len(metrics['sources']), 12)
         scalars = json.loads((self.dir / 'report' / 'scalars.json').read_text())
-        self.assertEqual(scalars['schema'], 'ugrp.zone_study_scalars.v1')
+        self.assertEqual(scalars['schema'], 'ugrp.zone_study_scalars.v2')
         self.assertTrue(any(r['run'].startswith('cohort/') for r in scalars['runs']))
 
     def test_report_records_source_hashes(self):
@@ -677,7 +715,10 @@ class ReportTest(unittest.TestCase):
         out = report.build([self.trials], self.dir / 'report', resamples=100, now=0.0)
         self.assertEqual(out['boundary_clean_trials'], out['trials'] - 1)
         text = (self.dir / 'report' / 'summary.md').read_text()
-        self.assertIn('평가 자료가 로봇 입력으로 흘러간 시행이 있다', text)
+        self.assertIn('입력 경계 감사에 실패한 시행이 있다', text)
+        # review finding 14: every audit failure category is aggregated the same way
+        self.assertIn('시행 상태 집계', text)
+        self.assertEqual(out['boundary_violation_trials'], 1)
         self.assertIn('referee', text)
 
     def test_reference_trials_do_not_raise_the_main_leak_warning(self):
