@@ -122,7 +122,7 @@ def _team_ex(robots, switch=True):
     ex = FixZoneTeamExecutor.__new__(FixZoneTeamExecutor)
     logs = []
     ex.switches = {'b3_claim_yield': switch, 'b4_return_setdown': True}
-    ex.fix_events = {k: 0 for k in ('claim_yield', 'station_staged', 'arrival_reset')}
+    ex.fix_events = {k: 0 for k in ('claim_yield', 'station_staged', 'arrival_reset', 'yield_short_fallback')}
     ex.log = lambda ev, rid, now, **kw: logs.append((ev, rid))
     ex.robots = robots
     ref = PoseReference([(0., 0., 0.), (3., 0., 0.)])
@@ -140,8 +140,12 @@ def _robot(rid, pose, *, claim_state=None, busy=None, station=None):
     claim = None if claim_state is None else SimpleNamespace(live=True, state=claim_state, item_id='heavy_crate_0',
                                                              arrived_at=5.)
     robot = SimpleNamespace(rid=rid, pose=lambda: pose, claim=claim, yield_req=None, staged=None,
-                            busy=bool(claim) if busy is None else busy, station=station,
-                            request_yield=lambda req, avoid, now: asked.append(req.rid))
+                            busy=bool(claim) if busy is None else busy, station=station)
+
+    def request_yield(req, avoid, now):
+        asked.append(req.rid)
+        robot.yield_req = {'by': req, 'avoid': avoid, 'target': None, 'until': now + 20.}
+    robot.request_yield = request_yield
     return robot, asked
 
 
@@ -150,6 +154,31 @@ def test_a_robot_waiting_at_a_station_on_the_route_is_asked_to_yield():
     ex, carry, logs = _team_ex({'r3': r3})
     assert ex.carry_blockers(carry, 30.) == {'r3'}
     assert asked3 == ['team:long_beam_0@g1'] and ex.fix_events['claim_yield'] == 1 and ('claim_yield', 'r3') in logs
+    # avoid the whole remaining route (3 m at 0.05 m/s), with PR #169's next 12 SIM s kept as the fallback
+    req = r3.yield_req
+    assert req['avoid'][0] == (0., 0.) and req['avoid'][-1] == (3., 0.)
+    assert max(x for x, _ in req['avoid_short']) == pytest.approx(.6)
+    assert ex.carry_blockers(carry, 30.1) == {'r3'} and asked3 == ['team:long_beam_0@g1']   # asked once
+
+
+def test_a_yield_with_no_spot_clear_of_the_whole_route_falls_back_to_the_short_avoid(monkeypatch):
+    from scripts import zone_team_teacher
+    from scripts.zone_team_teacher_fix import FixTeamRobot
+    seen = []
+
+    def base_yield(self, now, discs_for):
+        seen.append(len(self.yield_req['avoid']))
+        if len(self.yield_req['avoid']) > 2:        # "no spot" for the whole route
+            self.yield_req = None
+            return False
+        self.yield_req['target'] = (1., 1.)
+        return True
+    monkeypatch.setattr(zone_team_teacher.TeamRobot, '_yield', base_yield)
+    robot = FixTeamRobot.__new__(FixTeamRobot)
+    robot.ex = SimpleNamespace(fix_events={'yield_short_fallback': 0})
+    robot.yield_req = {'avoid': [(0, 0), (1, 0), (2, 0)], 'avoid_short': [(0, 0)], 'target': None, 'until': 50.}
+    assert robot._yield(30., None) is True and seen == [3, 1] and robot.ex.fix_events['yield_short_fallback'] == 1
+    assert 'avoid_short' not in robot.yield_req
 
 
 def test_a_robot_in_a_job_or_off_the_route_is_not_asked_and_the_switch_restores_pr169():
@@ -173,17 +202,22 @@ def test_a_claimed_station_inside_the_team_route_is_staged_and_resets_the_arriva
     assert ex.station_in_team_path(on) is None
 
 
-def test_arrival_is_reset_only_for_a_robot_that_left_its_station_to_yield_or_stage(monkeypatch):
+def test_a_robot_standing_aside_is_no_station_occupant_and_its_arrival_is_reset(monkeypatch):
     from scripts import zone_team_teacher
-    monkeypatch.setattr(zone_team_teacher.ZoneTeamExecutor, '_claims_tick', lambda self, now: None)
+    seen = []
+    monkeypatch.setattr(zone_team_teacher.ZoneTeamExecutor, '_claims_tick',
+                        lambda self, now: seen.append({r: c.state for r, c in self.claims.items()}))
     staged, _ = _robot('r3', (0., 0., 0.), claim_state='waiting')
     staged.staged = ('long_beam_0@g1', 1.)
     calm, _ = _robot('r1', (0., 0., 0.), claim_state='waiting')
     ex, _, _ = _team_ex({'r3': staged, 'r1': calm})
     ex.claims = {'r3': staged.claim, 'r1': calm.claim}
     ex._claims_tick(40.)
+    assert seen == [{'r3': 'aside', 'r1': 'waiting'}]          # the PR #169 rule never sees r3 this tick
     assert staged.claim.arrived_at is None and staged.claim.state == 'to_station'
     assert calm.claim.arrived_at == 5. and ex.fix_events['arrival_reset'] == 1
+    ex._claims_tick(40.1)
+    assert ex.fix_events['arrival_reset'] == 1 and staged.claim.state == 'to_station'
 
 
 def test_a_staged_robot_holds_and_replans_to_its_station_when_the_route_clears(monkeypatch):
@@ -202,7 +236,8 @@ def test_a_staged_robot_holds_and_replans_to_its_station_when_the_route_clears(m
     robot.log = lambda ev, rid, now, **kw: logs.append(ev)
     robot._set = lambda phase, now, **kw: phases.append(phase)
     robot.ex = SimpleNamespace(switches={'b3_claim_yield': True}, fix_events={'station_staged': 0},
-                               station_in_team_path=lambda r: team[0])
+                               station_in_team_path=lambda r: team[0],
+                               yield_if_in_team_path=lambda r, jid, now: False)
     robot.tick(10., None)
     robot.tick(10.1, None)
     assert holds == [10., 10.1] and ticks == [] and robot.ex.fix_events['station_staged'] == 1

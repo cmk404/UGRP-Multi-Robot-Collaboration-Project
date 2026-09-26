@@ -18,13 +18,20 @@ inside the team's route. Fix (switch ``b3_claim_yield``):
   1. a robot with a live claim that is not yet in a job (``to_station`` /
      ``waiting``) inside the team's lookahead hull is asked to yield like an
      idle robot;
-  2. while its claimed station lies inside a carrying team's hull over
-     ``STAGE_LOOKAHEAD_S``, the robot holds where it is (``station_staged``)
-     instead of driving to the station; afterwards it re-plans to the station;
-  3. leaving the station this way resets its own arrival time, so the 60 SIM s
-     rendezvous wait counts from its next physical arrival (the rule itself is
-     unchanged). Inputs: the carrying team's held item and its planned route
-     (a physical team in motion), never a claim, goal or robot id.
+  2. a yielding robot (idle or holding a claim) steps clear of the team's whole
+     remaining route, not only of its next 12 SIM s (the PR #169 yield spot lay
+     further along the same route, so the robot was herded ahead of the team
+     and paused it again); if no such spot exists it falls back to the PR #169
+     spot;
+  3. while its claimed station lies inside a carrying team's hull over
+     ``STAGE_LOOKAHEAD_S``, the robot does not drive to or wait at the station
+     (``station_staged``): it holds where it is, or yields at once if it stands
+     inside that hull; afterwards it re-plans to the station;
+  4. a robot that is yielding or staged is not a station occupant for the
+     rendezvous rule and its own arrival time is reset, so the 60 SIM s wait
+     counts from its next physical arrival (the rule itself is unchanged).
+  Inputs: the carrying team's held item and its planned route (a physical
+  team in motion), never a claim, goal or robot id.
 
 B4 (``hold_lower`` set a beam down where it blocked another item's station).
 Root cause: a post-contact failure lowered the item wherever the team stood.
@@ -52,6 +59,8 @@ DEFAULT_SWITCHES = {'b3_claim_yield': True, 'b4_return_setdown': True}
 STAGE_LOOKAHEAD_S = 2*CARRY_LOOKAHEAD_S
 RETURN_REASONS = ('carry_blocked', 'carry_timeout')
 PRE_JOB = ('to_station', 'waiting')
+ASIDE = 'aside'                 # transient claim state inside _claims_tick only
+ROUTE_AVOID_STEP_S = 2.
 
 
 def source_sha256():
@@ -95,9 +104,10 @@ class FixTeamRobot(TeamRobot):
                     self.staged = (team, now)
                     self.ex.fix_events['station_staged'] += 1
                     self.log('station_staged', self.rid, now, team=team, own_phase=self.phase)
-                self.arm.tick(now)
-                self.port.hold(now)
-                return
+                if not self.ex.yield_if_in_team_path(self, team, now):
+                    self.arm.tick(now)
+                    self.port.hold(now)
+                    return
             if self.staged is not None:
                 self.log('station_unstaged', self.rid, now, team=self.staged[0],
                          held_s=round(now - self.staged[1], 2))
@@ -105,9 +115,24 @@ class FixTeamRobot(TeamRobot):
                 self._set('to_box', now, after='staged')
         was_yielding = self.yield_req is not None
         super().tick(now, discs_for)
+        if self.staged is not None and not self.yield_req and not _pre_job(self.claim):
+            self.staged = None
         if was_yielding and self.yield_req is None and pre and self.claim is c and self.phase == 'align_box':
             # the straight station hold is only for short range: re-plan from the yield spot
             self._set('to_box', now, after='yield')
+
+
+    def _yield(self, now, discs_for):
+        req = self.yield_req
+        short = req.pop('avoid_short', None) if req['target'] is None else None
+        if super()._yield(now, discs_for):
+            return True
+        if short is not None and self.yield_req is None and req['target'] is None and now < req['until']:
+            # no spot clear of the whole route: the PR #169 spot (clear of the next 12 SIM s)
+            self.yield_req = dict(req, avoid=short)
+            self.ex.fix_events['yield_short_fallback'] += 1
+            return super()._yield(now, discs_for)
+        return False
 
 
 class FixTeamCarry(TeamCarry):
@@ -176,8 +201,8 @@ class FixZoneTeamExecutor(ZoneTeamExecutor):
         for robot in self.robots.values():
             robot.team = self.robots
             robot.ex = self
-        self.fix_events = {k: 0 for k in ('claim_yield', 'station_staged', 'arrival_reset', 'return_started',
-                                          'return_finished', 'return_failed')}
+        self.fix_events = {k: 0 for k in ('claim_yield', 'station_staged', 'arrival_reset', 'yield_short_fallback',
+                                          'return_started', 'return_finished', 'return_failed')}
 
     def _stage_hulls(self, carry):
         return [carry.footprint.hull_at(p) for p in carry.ref.lookahead(STAGE_LOOKAHEAD_S)]
@@ -194,6 +219,23 @@ class FixZoneTeamExecutor(ZoneTeamExecutor):
                 return jid
         return None
 
+    def request_team_yield(self, robot, carry, now):
+        """Yield clear of the team's whole remaining route (fallback: PR #169's next 12 SIM s)."""
+        full = [p[:2] for p in carry.ref.lookahead(carry.ref.total_s, step=ROUTE_AVOID_STEP_S)]
+        robot.request_yield(carry.proxy, full, now)
+        robot.yield_req['avoid_short'] = [p[:2] for p in carry.ref.lookahead(CARRY_LOOKAHEAD_S*2)]
+        if _pre_job(robot.claim):
+            self.fix_events['claim_yield'] += 1
+            self.log('claim_yield', robot.rid, now, team=carry.job.job_id, item=robot.claim.item_id)
+
+    def yield_if_in_team_path(self, robot, jid, now):
+        """A staged robot standing inside the team's STAGE_LOOKAHEAD_S hull yields now; True if yielding."""
+        carry = self.carries[jid]
+        x, y, _ = robot.pose()
+        if robot.yield_req is None and station_in_hulls((x, y), self._stage_hulls(carry)):
+            self.request_team_yield(robot, carry, now)
+        return robot.yield_req is not None
+
     def carry_blockers(self, carry, now):
         if not self.switches['b3_claim_yield']:
             return super().carry_blockers(carry, now)
@@ -206,13 +248,8 @@ class FixZoneTeamExecutor(ZoneTeamExecutor):
             disc = circle(x, y, ROBOT_DISC_M)
             if any(polygons_overlap(h, disc) for h in hulls):
                 out.add(rid)
-                pre = _pre_job(robot.claim)
-                if (not robot.busy or pre) and not robot.yield_req:
-                    avoid = [p[:2] for p in carry.ref.lookahead(CARRY_LOOKAHEAD_S*2)]
-                    robot.request_yield(carry.proxy, avoid, now)
-                    if pre:
-                        self.fix_events['claim_yield'] += 1
-                        self.log('claim_yield', rid, now, team=carry.job.job_id, item=robot.claim.item_id)
+                if (not robot.busy or _pre_job(robot.claim)) and not robot.yield_req:
+                    self.request_team_yield(robot, carry, now)
         for jid, other in self.carries.items():
             if other is carry or other.job.terminal or other.n == 1 or not self.held(other.item_id):
                 continue
@@ -222,15 +259,26 @@ class FixZoneTeamExecutor(ZoneTeamExecutor):
         return out
 
     def _claims_tick(self, now):
+        aside = []
         if self.switches['b3_claim_yield']:
             for rid, c in self.claims.items():
                 robot = self.robots[rid]
-                if _pre_job(c) and c.arrived_at is not None and (robot.yield_req or robot.staged):
+                if not (_pre_job(c) and (robot.yield_req or robot.staged)):
+                    continue
+                if c.arrived_at is not None:
                     self.fix_events['arrival_reset'] += 1
                     self.log('arrival_reset', rid, now, item=c.item_id, arrived_at=round(c.arrived_at, 2),
                              cause='yield' if robot.yield_req else 'staged')
-                    c.arrived_at, c.state = None, 'to_station'
-        super()._claims_tick(now)
+                    c.arrived_at = None
+                # not a station occupant while it stands aside (hidden from the rule for this tick)
+                c.state = ASIDE
+                aside.append(c)
+        try:
+            super()._claims_tick(now)
+        finally:
+            for c in aside:
+                if c.state == ASIDE:
+                    c.state = 'to_station'
 
     def _commit(self, claims, now):
         before = set(self.carries)
