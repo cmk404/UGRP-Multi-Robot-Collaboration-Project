@@ -56,7 +56,7 @@ v1·v2와 같다. 이 결과는 언어 이해, 조건 간 우열, 물리 운반 
 | `sha256.json` | 실행기가 계산한 산출물 해시 |
 | `raw_index.json` | raw 30건의 위치·해시와 커밋 파일 해시 |
 
-raw 30건(57.4 MB, 요청 원문 포함)은 `outputs/zone-study-offline-smoke-v3/`에 있다. `dc8ac28` 실행 raw는 `outputs/zone-study-offline-smoke-v3-run-dc8ac28/`에 있다. 둘 다 worktree 로컬에만 보관하며 원격 백업이 아니다.
+raw 30건(57.4 MB, 요청 원문 포함)은 기본 체크아웃의 `/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3/`에 있다. `dc8ac28` 실행 raw는 같은 폴더의 `zone-study-offline-smoke-v3-run-dc8ac28/`에 있다. 둘 다 처음에는 worktree의 `outputs/`에 썼고, 2026-09-26에 같은 상대 경로로 `mv`했다. 이동 전후 해시가 같았다(`raw_index.json`의 `relocation`). 로컬 보관이며 원격 백업이 아니다.
 
 예시 기록을 다시 여는 방법:
 

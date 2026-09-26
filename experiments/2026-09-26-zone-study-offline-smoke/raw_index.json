@@ -69,6 +69,25 @@
     "trial_records/structured-s5_moved_dropped_item-s641.json": "500cb3361e2567d47184218481d9dc75261eed5bc785360af42c516c882bb549",
     "trial_records/structured-s6_novel_relation-s651.json": "ca6606cc53bf91b59809952d0c5251855a583a02aea18c92b37c48044d866884"
   },
-  "local_only_path": "outputs/zone-study-offline-smoke",
-  "note_ko": "raw 결과는 로컬 outputs/에만 있고 Git에서 제외된다. 해시만 저장한 것은 백업이 아니다."
+  "local_only_path": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke",
+  "note_ko": "raw 결과는 로컬 outputs/에만 있고 Git에서 제외된다. 해시만 저장한 것은 백업이 아니다.",
+  "relocation": {
+    "backup_ko": "로컬 보관이며 원격 백업이 아니다.",
+    "date": "2026-09-26",
+    "method_ko": "mv -n(같은 파일시스템 rename). 복사·재생성·압축 없음. 이동 대상 경로는 이동 전에 없었다.",
+    "moved": [
+      {
+        "bytes": 6482087,
+        "files": 34,
+        "from": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke",
+        "to": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke"
+      }
+    ],
+    "previous_value": {
+      "local_only_path": "outputs/zone-study-offline-smoke (worktree 기준 상대 경로)"
+    },
+    "request_ko": "사용자 요청(2026-09-26): raw 출력은 기본 체크아웃의 outputs/에만 둔다. worktree 로컬 outputs/의 raw를 같은 상대 경로로 mv한다.",
+    "verification_ko": "이동 전후 SHA-256 목록(4개 디렉터리 136개 파일)이 바이트 단위로 같았다(목록 SHA-256 9d1753b5cc1131056143f372be757306cbd3ad236a269a748e01ee1df61e6baf). 이 기록에 커밋된 파일 해시도 새 위치에서 모두 일치했다.",
+    "verified_here": "files 33/33"
+  }
 }

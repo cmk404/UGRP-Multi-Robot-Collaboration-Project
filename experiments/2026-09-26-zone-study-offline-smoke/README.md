@@ -87,7 +87,7 @@ macOS 27.2 arm64, Python 3.12.13, CPU 8. 스레드 환경변수 `OMP_NUM_THREADS
 | `source.json` | 실행 SHA, 병합한 다섯 패키지 브랜치 SHA, 실행 명령 |
 | `raw_index.json` | raw 결과의 **로컬 경로**와 파일별 sha256·크기 |
 
-raw 결과 전체(30개 시행 기록, 6.3 MB)는 로컬 `outputs/zone-study-offline-smoke/`에만 있고 Git에서 제외된다. **해시만 저장한 것은 백업이 아니다.**
+raw 결과 전체(30개 시행 기록, 6.3 MB)는 로컬에만 있고 Git에서 제외된다. 위치는 기본 체크아웃의 `/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke/`다. 처음에는 worktree의 `outputs/`에 썼고, 2026-09-26에 같은 상대 경로로 `mv`했다. 이동 전후 해시가 같았다(`raw_index.json`의 `relocation`). **해시만 저장한 것은 백업이 아니다.**
 
 ## 재현
 

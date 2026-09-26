@@ -71,4 +71,4 @@ v1과 같다. 언어 이해, 통신 효과(조건 간 우열), 물리 운반 성
 | `sha256.json` | 실행기가 계산한 산출물 해시 |
 | `raw_index.json` | raw 30건 trial record의 로컬 위치와 해시(Git에는 넣지 않는다) |
 
-raw 30건은 `outputs/zone-study-offline-smoke-v2/trial_records/`(6.0 MB)에 로컬 보관이며 원격 백업이 아니다.
+raw 30건(6.0 MB)은 기본 체크아웃의 `/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v2/trial_records/`에 있다. 처음에는 worktree의 `outputs/`에 썼고, 2026-09-26에 같은 상대 경로로 `mv`했다. 이동 전후 해시가 같았다(`raw_index.json`의 `relocation`). 로컬 보관이며 원격 백업이 아니다.

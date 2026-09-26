@@ -18,8 +18,8 @@
     "rehashed": 90,
     "reopen_ok": true
   },
-  "location": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3",
-  "note_ko": "raw 30건 trial record(요청 원문 포함)는 worktree의 outputs/에만 있고 Git에 넣지 않는다. 원격 백업이 아니다.",
+  "location": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3",
+  "note_ko": "raw 30건 trial record(요청 원문 포함)는 기본 체크아웃의 outputs/에만 있고 Git에 넣지 않는다. 처음에는 worktree의 outputs/에 썼고 2026-09-26에 mv로 옮겼다(relocation). 원격 백업이 아니다.",
   "raw_bytes": 57427644,
   "raw_files": {
     "leader_ko-s1_normal_mixed-s601.json": "41395bf452426d249801bc0ef71c59833bb335b8a20086e4778d796993b51505",
@@ -52,5 +52,32 @@
     "structured-s4_narrow_door_standoff-s631.json": "8855a5423a0ef06c8a72af3ab1e7a2ed4932b57a104775412e08c938d8491481",
     "structured-s5_moved_dropped_item-s641.json": "85294cdf2d5e40000b3934f91524c492b1aa122f6cf661721c81b77930a4fa33",
     "structured-s6_novel_relation-s651.json": "e9fe08922ea401b1fbf28a8ad85a17c70ecd8b4a023d39a31dbb08521f3befad"
+  },
+  "relocation": {
+    "backup_ko": "로컬 보관이며 원격 백업이 아니다.",
+    "control_runs_note_ko": "control_runs.json의 \"raw\": \"outputs/zone-study-offline-smoke-v3-run-dc8ac28\"는 기본 체크아웃 기준 상대 경로로 그대로 유효하다. 해시가 committed에 있으므로 그 파일은 수정하지 않았다.",
+    "date": "2026-09-26",
+    "method_ko": "mv -n(같은 파일시스템 rename). 복사·재생성·압축 없음. 이동 대상 경로는 이동 전에 없었다.",
+    "moved": [
+      {
+        "bytes": 57682714,
+        "files": 34,
+        "from": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3",
+        "to": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3"
+      },
+      {
+        "bytes": 57682179,
+        "files": 34,
+        "from": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3-run-dc8ac28",
+        "to": "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v3-run-dc8ac28"
+      }
+    ],
+    "previous_value": {
+      "location": "/Users/changmin/projects/ugrp-wt/kiro-study-core/outputs/zone-study-offline-smoke-v3",
+      "note_ko": "raw 30건 trial record(요청 원문 포함)는 worktree의 outputs/에만 있고 Git에 넣지 않는다. 원격 백업이 아니다."
+    },
+    "request_ko": "사용자 요청(2026-09-26): raw 출력은 기본 체크아웃의 outputs/에만 둔다. worktree 로컬 outputs/의 raw를 같은 상대 경로로 mv한다.",
+    "verification_ko": "이동 전후 SHA-256 목록(4개 디렉터리 136개 파일)이 바이트 단위로 같았다(목록 SHA-256 9d1753b5cc1131056143f372be757306cbd3ad236a269a748e01ee1df61e6baf). 이 기록에 커밋된 파일 해시도 새 위치에서 모두 일치했다.",
+    "verified_here": "raw_files 30/30 (trial_records/, raw_bytes 57427644 일치), sha256.json 33/33; dc8ac28 실행 raw는 자기 sha256.json 33/33"
   }
 }
