@@ -54,7 +54,7 @@ from harness import m1_contract, m1_owncam_contract
 from harness import team_carry_status as tcs
 from harness import zone_study_offline as zo
 from harness import zone_study_prompts_ko as pk
-from harness.zone_own_executor import API_TO_ACTION_KIND
+from harness.zone_own_executor import API_TO_ACTION_KIND, EVENTS as EXECUTOR_EVENTS
 from harness.zone_sim_cost import params as cost_params_for
 from harness.zone_study_contract import (COMMAND_ARGUMENT_KEYS, MAIN_CONDITIONS, ROBOTS, ContractViolation,
                                          digest)
@@ -331,8 +331,8 @@ class IntegratedTrial(zo.OfflineTrial):
     def on_executor_event(self, event, *, at_s):
         """One OWN executor event of ``event['robot_id']``: own history state + own wake only."""
         rid = event.get('robot_id') if isinstance(event, Mapping) else None
-        if rid not in self.actors:
-            raise ContractViolation(f'executor event of unknown robot {rid!r}')
+        if rid not in self.actors or event.get('event') not in EXECUTOR_EVENTS:
+            raise ContractViolation(f'not an own executor event of a robot of this trial: {event!r:.200}')
         self.executor_events.append(copy.deepcopy(dict(event)))
         if event['event'] in ('job_done', 'job_failed'):
             entry = self._jobs.pop(event.get('job_id'), None)

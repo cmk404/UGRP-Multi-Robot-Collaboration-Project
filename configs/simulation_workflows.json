@@ -627,6 +627,24 @@
         "--prereg"
       ],
       "output_kind": "directory"
+    },
+    {
+      "id": "zone-study-integration-run",
+      "purpose": "구역 대화 연구 통합 러너: 연구 뼈대(#194 조건·프롬프트·프로토콜·SIM 비용·스케줄러)가 자기 카메라 실행기(#206) 3대를 구동(no-LLM fixture, 자세 제공자는 설정으로 선택; tags_temporary = 임시, 표식 사용, 연구 결과 아님)",
+      "entry": "scripts/run_zone_study_integration.py",
+      "docs": "experiments/2026-09-26-zone-study-integration/README.md",
+      "requires": "local Mac/Linux offscreen rendering; synchronous SIM only; run bundle must match the prereg bundle_sha256; robot inputs = own robot_cam + own commands + static map + order sheet + delivered messages; GT only in eval_only/; weld OFF; no model call",
+      "version": "1.0.0",
+      "runner": "scripts.run_zone_study_integration",
+      "output_flag": "--output",
+      "side_effect": "local_simulation",
+      "adapter": "managed_legacy_cli",
+      "required_inputs": [
+        "--prereg",
+        "--episode",
+        "--condition"
+      ],
+      "output_kind": "directory"
     }
   ]
 }
