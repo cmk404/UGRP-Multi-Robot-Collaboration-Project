@@ -65,7 +65,7 @@ APPROACH_LIMIT_S = 200.
 APPROACH_WAIT_S = 150.          # same limit in both status-channel arms
 KEEPOUT_PAD_M = .06             # order-sheet grid error (<= 0.05 m) + 1 cm
 PARTNER_KEEPOUT_HALF_M = .17    # partner's order-sheet station/pre-station (robot radius)
-STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning'}
+STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning', 'pregrasp_look': 'aligning'}
 CONTACT_PROFILES = study.CONTACT_PROFILES
 # seed -> setup beam pose (x, y, yaw) and per-robot start offsets from the map spawn (dx, dy, dyaw).
 # The robots receive only coarse_order_sheet(beam); the start offsets are never given to them.
@@ -101,6 +101,8 @@ DOOR_ALIGN_S = 6.               # own lateral/heading correction onto the door a
 DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
 DOOR_ALIGN_MAX_RAD = .20
 TURN_GAIN = 1.4885              # static drive calibration (loop-v2 motion gain, turn), unloaded
+PREGRASP_MAX_SWEEPS = 2         # door stage: stationary relocalization sweeps before the grasp
+PREGRASP_FIX_STD_M = .06
 DOOR_SCENARIOS = {
     # stage 2 development (door carry; tuning allowed, labelled dev)
     801: {'beam': (1.00, .08, .04), 'start': {'r1': (.00, .00, .00), 'r2': (.00, .00, .00)}},
@@ -204,6 +206,49 @@ class M2DoorStudent(M2Student):
         super().__init__(*args, **kw)
         self.door_plan, self.axial_m = door_plan, float(axial_m)
         self.grasp_estimate = None
+        self.pregrasp_done = False
+        self.pregrasp_sweeps = 0
+        self.pg_pans = []
+
+    # Dev 801 (0bb4d6e): dead reckoning through the align phase is not usable -- the loop-v2 motion
+    # model is fit for the drive posture and over-predicted the arm-lowered align pulses ~4x (r1 grasp
+    # estimate 1.37 m off). The robot therefore relocalizes from scratch while standing still, after it
+    # is aligned and before it grasps (fresh localizer + the M1 wide look sweep, own frames only).
+    def _queue_grasp(self, now):
+        if self.pregrasp_done:
+            return super()._queue_grasp(now)
+        from harness.owncam_drive import LOOK_P20, WIDE_LOOK_PANS
+        from harness.owncam_localizer import OwnCamLocalizer
+        drv = self.driver
+        drv.loc = OwnCamLocalizer(drv.map, drv.loc.params, seed=int(drv.loc.rng.integers(1 << 30)))
+        drv.loc.command({'t': float(now), 'kind': 'initial_servo_command', 'pulses': dict(drv.servo)})
+        self.pregrasp_sweeps += 1
+        self.pg_pans = list(WIDE_LOOK_PANS)
+        self.arm.queue({**LOOK_P20, 6: self.pg_pans.pop(0)}, now, duration=.8, settle=.6)
+        self.set('pregrasp_look', now, sweep=self.pregrasp_sweeps)
+
+    def _pregrasp_look(self, now, arm_idle):
+        import cv2
+        if not arm_idle:
+            return
+        obs = self.look(now)
+        jpeg = base64.b64decode(obs['image'])
+        rgb = cv2.cvtColor(cv2.imdecode(np.frombuffer(jpeg, np.uint8), cv2.IMREAD_COLOR), cv2.COLOR_BGR2RGB)
+        est = self.driver.observe(now, rgb)
+        self.eval_hook(self.rid, now, est, 'pregrasp_look')
+        if self.pg_pans:
+            self.arm.queue({6: self.pg_pans.pop(0)}, now, duration=.4, settle=.6)
+            return
+        est = self.driver.loc.estimate()
+        ok = bool(est.get('initialized')) and est['std_xy_m'] <= PREGRASP_FIX_STD_M
+        self.log(self.rid, 'pregrasp_fix', now, ok=ok, std_xy_m=est.get('std_xy_m'), sweep=self.pregrasp_sweeps)
+        if ok:
+            self.pregrasp_done = True
+            self.arm.queue(ob2.pose_of(self.look_name), now, duration=.8, settle=.3)   # back to the align view
+            return super()._queue_grasp(now)
+        if self.pregrasp_sweeps >= PREGRASP_MAX_SWEEPS:
+            return self.fail('DOOR_POSE_NOT_LOCALIZED', now)
+        self._queue_grasp(now)
 
     def set(self, state, now, **detail):
         if state == 'grasp' and self.grasp_estimate is None:
@@ -465,7 +510,7 @@ def main():
                 for rid, st in students.items():
                     was = st.state
                     st.tick(now)
-                    if a.stage == 'door' and st.state not in ('approach', 'wait_approach', 'align_start', 'align'):
+                    if a.stage == 'door' and st.state not in ('approach', 'wait_approach', 'align_start', 'align', 'pregrasp_look'):
                         feed_stop[rid] = True
                     if st.state == 'failed' and was != 'failed':
                         ports[rid].hold(now)                   # the failed robot's own stop
