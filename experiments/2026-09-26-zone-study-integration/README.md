@@ -76,9 +76,22 @@ A payload 그대로다. 정적 지도(태그 포함, 해시 고정), 시나리�
 - 스모크: `smoke-i700`(layout seed 700, trial seed 700 → leader r2), 주 4조건 × 1회, horizon 480 SIM s, `cargo_noslip_v1`, weld OFF, 동기 SIM, 스레드 1, 동시 2개.
 - raw: `/Users/changmin/projects/ugrp/outputs/zone-study-integration-20260926/smoke-45999d9c/`(로컬 전용, 원격 백업 아님).
 
-## 결과
+## 결과 v1 — `smoke-i700`, 소스 `45999d9c`, 번들 `25d7634a` (배선, 연구 결과 아님)
 
-(스모크 완료 후 기록)
+`results_v1.json`(`build_results.py --prereg prereg.json`)에 기록했다. **사전 등록 게이트 P1–P8은 4조건 모두 통과했다.** 사후 검사 P9(재질문 간격)는 실패했으며, 아래 D1이 그 결함이다.
+
+| 조건 | 멈춤 | SIM s | 호출 | 발화 | 사고 SIM s | 발화+전달 SIM s | 첫 배달 명령 | eval 배송 | wall s |
+|---|---|---:|---:|---:|---:|---:|---:|---|---:|
+| `no_comm` | 예산 소진 | 478.3 | 90 | 0 | 315.0 | 0.0 | 4.8 s | C 337.2 s, B 397.2 s | 2938 |
+| `peer_ko` | 예산 소진 | 445.4 | 90 | 3 | 325.2 | 0.9+0.3 | 5.7 s | C 343.8 s, B 410.0 s | 2750 |
+| `leader_ko` (리더 r2) | 예산 소진 | 456.1 | 90 | 4 | 320.2 | 1.2+0.4 | 5.7 s, 리더 6.6 s | C 349.5 s, B 409.1 s | 2901 |
+| `structured` | 예산 소진 | 445.4 | 90 | 3 | 325.5 | 0.9+0.3 | 5.7 s | C 343.8 s, B 410.0 s | 2859 |
+
+- **경로 연결:** 네 조건 모두 fixture의 claim 3건이 각 로봇 실행기에 **비용이 해제되는 SIM 시각**에 도달했다. 그 뒤 추가 claim 6건은 실행기가 `BUSY`로 거절했고, 81건은 `continue`였다. 발화 비용이 첫 물리 명령을 늦췄다. `no_comm` 4.8 s, 발화 1개 조건 5.7 s(+0.9 s = 발화 γ 0.3 + 출력 30토큰 × 0.02), 발화 2개인 리더 r2 6.6 s였다.
+- **물리:** 네 조건 모두 같았다. r1이 P2-2의 cyan을 C1에, r2가 P2-1의 cyan을 B1에 놓았고 둘 다 자기 카메라로 확인했다(`SKILL_OWN_RGB_PLACEMENT_IN_SLOT`). r3은 P1-3을 `SEARCH_NOT_FOUND`(약 75 s)로 놓쳤다. #206 smoke-s700의 r3과 같은 실패다. 주문 2/3, 거짓 확인 0, weld `eq_active` 0, `noslip_iterations` 10, 벽 접촉 0이었다. r1–r2 로봇 간 접촉은 `no_comm` 3074, `peer_ko`·`structured` 2026, `leader_ko` 0 physics step이었다.
+- **채널:** `no_comm` 송수신 0. `leader_ko`는 r1→r2, r3→r2, r2→r1, r2→r3 각 1건이고 follower↔follower는 0이다. `structured` 자유 문장 0. 짝 상태 채널 config SHA-256은 네 조건 모두 `9dfe20cf…`이고, 트래픽은 0(2대 주문 없음)이다.
+- **입력:** 요청 90×4건이 모두 재해시됐다. 이미지는 그 로봇 자기 프레임 로그의 JPEG 1장(`CURRENT OWN WRIST RGB`)이고, 금지 키·값은 0이다. 스케줄러–물리 시계 차이는 최대 7e-12 s였다.
+- **TensorBoard:** `outputs/tensorboard/0926-zone-study-integration-tags-temporary-v1`(run 8개, scalar 208개 재읽기 일치, run마다 Text `provenance/pose_provider` 라벨). 보기 키는 `zone_study_integration_smoke_v1_20260926`이다. 다른 작업이 소유한 서버(PID 9291)를 재시작하지 않고 `/data` API로 값을 대조했다. 고정 카드 8개는 `outputs/zone-study-integration-20260926/smoke-45999d9c-report/tensorboard-pinned-v1.png`(`tb_capture.py`)에 있다.
 
 ## 경계별로 깨진 것
 

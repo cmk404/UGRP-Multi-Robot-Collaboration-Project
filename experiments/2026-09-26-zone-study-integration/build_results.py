@@ -147,7 +147,9 @@ def main(argv=None):
     p.add_argument('--runs', required=True)
     p.add_argument('--out', required=True)
     p.add_argument('--episode', default='smoke-i700')
+    p.add_argument('--prereg', default=str(HERE / 'prereg.json'), help='whose gates decide all_pass')
     args = p.parse_args(argv)
+    prereg = json.loads(Path(args.prereg).read_text())
     runs_root = Path(args.runs)
     runs = {c: load_run(runs_root / f'{c}-{args.episode}') for c in CONDITIONS}
     gates, detail, obs = {}, {}, {}
@@ -169,15 +171,19 @@ def main(argv=None):
                       if (d / 'study' / 'trial_record.json').is_file() else None,
                       'files': len(list(d.rglob('*'))),
                       'bytes': sum(q.stat().st_size for q in d.rglob('*') if q.is_file())}
+    key = {'P8': 'P8_records', 'P9': 'P9_reask'}
+    registered = [key.get(g, g) for g in prereg['gates']]
     out = {'schema': 'ugrp.zone_study_integration_results.v1', 'episode': args.episode,
-           'runs_root': str(runs_root), 'prereg_sha256': sha(HERE / 'prereg.json'),
+           'runs_root': str(runs_root), 'prereg': Path(args.prereg).name, 'prereg_sha256': sha(args.prereg),
            'plumbing_only': True, 'pose_provider': 'tags_temporary',
            'note_ko': '배선 스모크(no-LLM fixture, 1 seed). 통신 효과·연구 결과가 아니다. 임시, 표식 사용, 연구 결과 아님.',
            'gates': {'per_condition': gates, 'P7_pair_status_sha256': shas, 'summary': summary,
-                     'all_pass': all(summary.values())},
+                     'registered': registered, 'post_hoc': sorted(set(summary) - set(registered)),
+                     'all_registered_pass': all(summary[g] for g in registered),
+                     'note_ko': 'P8은 기록 라벨만 여기서 본다. TensorBoard run 라벨은 tb_snapshot.py의 재읽기에서 확인한다.'},
            'gate_detail': detail, 'observed': obs, 'raw': raw}
     Path(args.out).write_text(json.dumps(out, indent=1, ensure_ascii=False, default=str) + '\n')
-    print(json.dumps({'summary': summary, 'all_pass': out['gates']['all_pass'],
+    print(json.dumps({'summary': summary, 'all_registered_pass': out['gates']['all_registered_pass'],
                       'dispatch': {c: (o or {}).get('dispatch') for c, o in obs.items()},
                       'deliveries': {c: len((o or {}).get('eval_only_deliveries') or []) for c, o in obs.items()}},
                      ensure_ascii=False, default=str))
