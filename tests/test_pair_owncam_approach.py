@@ -144,3 +144,19 @@ def test_v2_relocalizes_after_unfixed_looks_then_gives_up():
     drv.state, drv.relocalizations, drv.looks_without_fix = 'drive', pa.MAX_RELOCALIZE, MAX_LOOKS_WITHOUT_FIX
     drv.tick(1.)
     assert drv.outcome == 'lost'
+
+
+def test_door_v2_pose_from_arrival_estimate_and_own_beam_views():
+    from scripts import run_m2_pair as rm
+    st = rm.M2DoorStudent.__new__(rm.M2DoorStudent)
+    x0, y0, t0 = .1, -.2, .3                         # arrival estimate
+    G = (x0 + math.cos(t0) * .46 - math.sin(t0) * .02, y0 + math.sin(t0) * .46 + math.cos(t0) * .02)
+    phi = t0 + .05                                    # beam axis heading in the world
+    xf, yf, tf = .35, -.12, .33                       # true pose after the align
+    dx, dy = G[0] - xf, G[1] - yf
+    gf = (math.cos(tf) * dx + math.sin(tf) * dy, -math.sin(tf) * dx + math.cos(tf) * dy)
+    st.claims = {'at_prestation': {'estimate': [x0, y0, t0]}}
+    st.vo_obs = [{'g': [.46, .02], 'h': .05, 'moved_before': False},
+                 {'g': list(gf), 'h': phi - tf, 'moved_before': True}]
+    x, y, t = st._vo_pose()
+    assert math.isclose(x, xf, abs_tol=1e-9) and math.isclose(y, yf, abs_tol=1e-9) and math.isclose(t, tf, abs_tol=1e-9)

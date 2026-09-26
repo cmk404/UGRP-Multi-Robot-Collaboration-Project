@@ -67,7 +67,7 @@ APPROACH_WAIT_S = 150.          # same limit in both status-channel arms
 KEEPOUT_PAD_M = .06             # order-sheet grid error (<= 0.05 m) + 1 cm
 PARTNER_KEEPOUT_HALF_M = .17    # partner's order-sheet station/pre-station (robot radius)
 STATUS_OF = {**study.STATUS_OF, 'approach': 'aligning', 'wait_approach': 'aligning', 'pregrasp_look': 'aligning',
-             'cp_open': 'put_down'}
+             'cp_open': 'put_down', 'reapproach': 'aligning'}
 CONTACT_PROFILES = study.CONTACT_PROFILES
 # seed -> setup beam pose (x, y, yaw) and per-robot start offsets from the map spawn (dx, dy, dyaw).
 # The robots receive only coarse_order_sheet(beam); the start offsets are never given to them.
@@ -104,6 +104,14 @@ DOOR_ALIGN_MAX_M = .15          # larger own offsets are clamped (logged)
 DOOR_ALIGN_MAX_RAD = .20
 TURN_GAIN = 1.4885              # static drive calibration (loop-v2 motion gain, turn), unloaded
 PREGRASP_MAX_SWEEPS = 2         # door stage: stationary relocalization sweeps before the grasp
+# door v2 (after the stage 2 cohort fa682a6): wider checkpoint sweep (+-72 deg, 11.1 PWM/deg) for
+# robots facing a far wall (814: r2 facing west from x 1.5, std 0.085-0.092 after two +-48 deg sweeps);
+# approach/beam consistency: the first own view of the beam end after the approach must be near where
+# the order-sheet pre-station puts it (813: r1 'arrived' with a 0.57 m wrong estimate).
+PREGRASP_PANS_V2 = (1500, 1230, 970, 700, 1770, 2030, 2300, 1500)
+EXPECT_GRIP_X_M = .30 + .162    # PRESTATION_BACK_M + align grip radius
+CONSIST_X_M, CONSIST_Y_M = .25, .20
+MAX_REAPPROACH = 1
 PREGRASP_FIX_STD_M = .06
 DOOR_SCENARIOS = {
     # stage 2 development (door carry; tuning allowed, labelled dev)
@@ -212,9 +220,21 @@ class M2DoorStudent(M2Student):
     puts its OWN base onto the order-sheet door axis with its own heading target (the pair formation
     rotates onto the axis because both ends go there), then the fixed axial carry from the sheet."""
 
-    def __init__(self, *args, door_plan, axial_m, sheet_beam_x, regrasp='stored', **kw):
+    def __init__(self, *args, door_plan, axial_m, sheet_beam_x, version='v1', **kw):
         super().__init__(*args, **kw)
-        self.regrasp = regrasp
+        self.version = version
+        self.regrasp = 'realign' if version == 'v2' else 'stored'
+        self.vo_obs = []               # own beam observations in the first align (door v2)
+        self.vo_pose = None
+        self.reapproaches = 0
+        self.align_cmds0 = None
+        base_log = self.log
+
+        def log(rid, kind, now, **detail):
+            base_log(rid, kind, now, **detail)
+            if kind == 'beam_obs' and self.state == 'align' and self.seg == 0:
+                self._on_beam_obs(now, detail)
+        self.log = log
         self.door_plan, self.axial_m = door_plan, float(axial_m)
         # Segmented carry (dev 801/802 at 076cf53: open-loop formation yaw drift 0.06-0.1 rad/m over the
         # 2.2 m carry; the held view shows only the beam): checkpoints from the order sheet, identical
@@ -233,16 +253,78 @@ class M2DoorStudent(M2Student):
     # model is fit for the drive posture and over-predicted the arm-lowered align pulses ~4x (r1 grasp
     # estimate 1.37 m off). The robot therefore relocalizes from scratch while standing still, after it
     # is aligned and before it grasps (fresh localizer + the M1 wide look sweep, own frames only).
+    def _on_beam_obs(self, now, beam):
+        if not beam.get('visible') or beam.get('grip_base_m') is None or beam.get('axis_heading_rad') is None:
+            return
+        moved = self.align_cmds0 is not None and self.commands > self.align_cmds0
+        self.vo_obs.append({'t': now, 'g': list(beam['grip_base_m']), 'h': float(beam['axis_heading_rad']),
+                            'end_visible': bool(beam.get('end_visible')), 'moved_before': moved})
+        if self.version == 'v2' and len(self.vo_obs) == 1 and not moved:
+            gx, gy = beam['grip_base_m']
+            if abs(gx - EXPECT_GRIP_X_M) > CONSIST_X_M or abs(gy) > CONSIST_Y_M:
+                self.pending_reapproach = [round(gx, 3), round(gy, 3)]      # acted on at the next tick
+
+    def _start_reapproach(self, now, seen):
+        self.reapproaches += 1
+        self.log(self.rid, 'approach_inconsistent', now, grip_seen_m=seen, expected_m=[EXPECT_GRIP_X_M, 0.],
+                 count=self.reapproaches)
+        if self.reapproaches > MAX_REAPPROACH:
+            return self.fail('APPROACH_INCONSISTENT_WITH_BEAM', now)
+        self.vo_obs, self.align_cmds0 = [], None
+        drv = self.driver
+        drv.outcome = None
+        drv.arrival_checked = False
+        drv.rotated = False
+        drv.hold_yaw = None
+        self.arm.events, self.arm.until = [], now          # drop queued align postures
+        self.port.hold(now)
+        drv._relocalize(now)
+        self.set('reapproach', now)
+
+    def _reapproach(self, now, arm_idle):
+        # Same own-camera approach, then straight back to align (the approach barrier already passed).
+        self._approach(now, arm_idle)
+        if self.state == 'wait_approach':
+            self.arm.commanded.update({k: v for k, v in self.driver.servo.items() if k in self.arm.commanded})
+            self.set('align_start', now)
+
+    def tick(self, now):
+        if getattr(self, 'pending_reapproach', None) is not None and self.state == 'align':
+            seen, self.pending_reapproach = self.pending_reapproach, None
+            return self._start_reapproach(now, seen)
+        return super().tick(now)
+
+    def _vo_pose(self):
+        """Pose at the grasp from the arrival estimate and own beam views (first grasp, door v2)."""
+        arr = self.claims.get('at_prestation')
+        first = next((o for o in self.vo_obs if not o['moved_before']), None)
+        if arr is None or first is None or len(self.vo_obs) < 2:
+            return None
+        last = self.vo_obs[-1]
+        x0, y0, t0 = arr['estimate']
+        c, s_ = math.cos(t0), math.sin(t0)
+        gwx, gwy = x0 + c * first['g'][0] - s_ * first['g'][1], y0 + s_ * first['g'][0] + c * first['g'][1]
+        tf = study.wrap(t0 + first['h'] - last['h'])
+        c, s_ = math.cos(tf), math.sin(tf)
+        return [gwx - (c * last['g'][0] - s_ * last['g'][1]), gwy - (s_ * last['g'][0] + c * last['g'][1]), tf]
+
     def _queue_grasp(self, now):
         if self.pregrasp_done:
             return super()._queue_grasp(now)
+        if self.version == 'v2' and self.seg == 0:
+            self.vo_pose = self._vo_pose()
+            self.log(self.rid, 'vo_pose', now, pose=None if self.vo_pose is None else [round(v, 4) for v in self.vo_pose],
+                     observations=len(self.vo_obs))
+            if self.vo_pose is not None:
+                self.pregrasp_done = True
+                return super()._queue_grasp(now)
         from harness.owncam_drive import LOOK_P20, WIDE_LOOK_PANS
         from harness.owncam_localizer import OwnCamLocalizer
         drv = self.driver
         drv.loc = OwnCamLocalizer(drv.map, drv.loc.params, seed=int(drv.loc.rng.integers(1 << 30)))
         drv.loc.command({'t': float(now), 'kind': 'initial_servo_command', 'pulses': dict(drv.servo)})
         self.pregrasp_sweeps += 1
-        self.pg_pans = list(WIDE_LOOK_PANS)
+        self.pg_pans = list(PREGRASP_PANS_V2 if self.version == 'v2' else WIDE_LOOK_PANS)
         self.arm.queue({**LOOK_P20, 6: self.pg_pans.pop(0)}, now, duration=.8, settle=.6)
         self.set('pregrasp_look', now, sweep=self.pregrasp_sweeps)
 
@@ -270,6 +352,13 @@ class M2DoorStudent(M2Student):
         self._queue_grasp(now)
 
     def set(self, state, now, **detail):
+        if state == 'align' and self.seg == 0 and self.align_cmds0 is None:
+            self.align_cmds0 = self.commands
+        if state == 'grasp' and self.grasp_estimate is None and self.vo_pose is not None and self.seg == 0:
+            self.grasp_estimate = list(self.vo_pose)
+            self.claims['grasp_pose_estimate'] = {'xyyaw': [round(v, 4) for v in self.vo_pose], 'source':
+                                                  'arrival estimate + own-RGB beam displacement (door v2)',
+                                                  'sim_time': now}
         if state == 'grasp' and self.grasp_estimate is None:
             loc = self.driver.loc
             loc.predict_to(now)
@@ -358,8 +447,9 @@ def main():
     p.add_argument('--on-failure', choices=('continue', 'halt_all'), default='continue',
                    help='continue: runner never stops the partner (M2); halt_all: pair study comparator')
     p.add_argument('--hold-check', choices=study.HOLD_CHECKS, default='fullframe_v3')
-    p.add_argument('--door-regrasp', choices=('stored', 'realign'), default='stored',
-                   help='door stage checkpoint re-grasp: stored grip point (door v1) or own-RGB re-align (door v2)')
+    p.add_argument('--door-version', choices=('v1', 'v2'), default='v1',
+                   help='door stage v1 (stage 2 cohort fa682a6) or v2 (own-RGB pose at the first grasp, '
+                        'checkpoint re-align, wide checkpoint sweeps, approach/beam consistency check)')
     p.add_argument('--approach', choices=('v1', 'v2'), default='v1',
                    help='approach driver: v1 (stage 1/3 cohorts) or v2 (turn in place first + relocalize)')
     p.add_argument('--inject-drop', default=None,
@@ -475,7 +565,7 @@ def main():
         students = {r: M2DoorStudent(r, ports[r], arms[r], sync_for, log, save,
                                      (channel, tcs.StatusPublisher(channel, r)) if channel else None,
                                      a.hold_check, drivers[r], eval_hook, door_plan=DOOR_PLAN, axial_m=axial_m,
-                                     sheet_beam_x=sheet['beam_xyyaw'][0], regrasp=a.door_regrasp)
+                                     sheet_beam_x=sheet['beam_xyyaw'][0], version=a.door_version)
                     for r in ROLES}
     else:
         students = {r: M2Student(r, ports[r], arms[r], sync_for, log, save,
@@ -708,7 +798,7 @@ def main():
         'gt_at_runtime': False, 'on_failure': a.on_failure,
         'development_seed': a.seed in DEV_SEEDS, 'stage1_test_seed': a.seed in STAGE1_TEST_SEEDS,
         'stage3_test_seed': a.seed in STAGE3_TEST_SEEDS, 'stage2_test_seed': a.seed in STAGE2_TEST_SEEDS,
-        'approach_version': a.approach, 'door_regrasp': a.door_regrasp if a.stage == 'door' else None,
+        'approach_version': a.approach, 'door_version': a.door_version if a.stage == 'door' else None,
         'imports': 'experiments/2026-09-26-zone-m2-pair/imports.json (byte-identical, read-only)',
         'perception': ob2.PROFILE, 'hold_check': {'selected': a.hold_check, 'profile': hv3.PROFILE},
         'approach_driver': {'schema': pa.SCHEMA, 'version': drivers['r1'].version,
