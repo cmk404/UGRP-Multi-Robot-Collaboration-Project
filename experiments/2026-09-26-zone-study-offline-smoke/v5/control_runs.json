@@ -1,0 +1,1224 @@
+{
+  "vs_v4_c21a6fe9": {
+    "by_condition": {
+      "leader_ko": {
+        "calls": [
+          540,
+          429
+        ],
+        "censored_calls": [
+          0,
+          6
+        ],
+        "charged_sim_s": [
+          1899.9,
+          1491.6
+        ],
+        "end_reason_v4": {
+          "budget_exhausted": 6
+        },
+        "end_reason_v5": {
+          "sim_horizon": 6
+        },
+        "messages": [
+          24,
+          24
+        ],
+        "request_input_identical": 0,
+        "trace_identical": 0,
+        "trials": 6
+      },
+      "no_comm": {
+        "calls": [
+          411,
+          411
+        ],
+        "censored_calls": [
+          3,
+          3
+        ],
+        "charged_sim_s": [
+          1397.7,
+          1397.7
+        ],
+        "end_reason_v4": {
+          "sim_horizon": 6
+        },
+        "end_reason_v5": {
+          "sim_horizon": 6
+        },
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": 6,
+        "trace_identical": 6,
+        "trials": 6
+      },
+      "peer_ko": {
+        "calls": [
+          540,
+          447
+        ],
+        "censored_calls": [
+          0,
+          6
+        ],
+        "charged_sim_s": [
+          1895.1,
+          1549.5
+        ],
+        "end_reason_v4": {
+          "budget_exhausted": 6
+        },
+        "end_reason_v5": {
+          "sim_horizon": 6
+        },
+        "messages": [
+          18,
+          18
+        ],
+        "request_input_identical": 0,
+        "trace_identical": 0,
+        "trials": 6
+      },
+      "reference_R": {
+        "calls": [
+          137,
+          137
+        ],
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          467.7,
+          467.7
+        ],
+        "end_reason_v4": {
+          "sim_horizon": 6
+        },
+        "end_reason_v5": {
+          "sim_horizon": 6
+        },
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": 6,
+        "trace_identical": 6,
+        "trials": 6
+      },
+      "structured": {
+        "calls": [
+          540,
+          447
+        ],
+        "censored_calls": [
+          0,
+          9
+        ],
+        "charged_sim_s": [
+          1918.8,
+          1557.6
+        ],
+        "end_reason_v4": {
+          "budget_exhausted": 6
+        },
+        "end_reason_v5": {
+          "sim_horizon": 6
+        },
+        "messages": [
+          18,
+          18
+        ],
+        "request_input_identical": 0,
+        "trace_identical": 0,
+        "trials": 6
+      }
+    },
+    "code_sha": [
+      "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+      "8ab8f7edbc78e7cb27985dfe81dde092823e01b1"
+    ],
+    "note_ko": "재질문 타이머 규칙(로봇당 대기 1개)은 메시지로 시작된 호출이 있는 채널 3조건만 바꾼다. no_comm·reference_R은 호출마다 타이머 사슬이 하나뿐이라 v4와 SIM trace·요청 입력 해시가 같다. 기록의 차이는 provenance(code_sha, execution_bundle_id, registry_sha256)뿐이다.",
+    "provenance_fields_that_differ": {
+      "no_comm-s1_normal_mixed-s601": {
+        "code_sha": [
+          "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+          "8ab8f7edbc78e7cb27985dfe81dde092823e01b1"
+        ],
+        "execution_bundle_id": [
+          "zone_study_offline_v1",
+          "zone_study_offline_v2"
+        ],
+        "registry_sha256": [
+          "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181",
+          "c9bb55567a82eef535e7b296ae69f35d5a08e8372479a56ef14c1ac76f08037c"
+        ]
+      },
+      "peer_ko-s1_normal_mixed-s601": {
+        "code_sha": [
+          "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+          "8ab8f7edbc78e7cb27985dfe81dde092823e01b1"
+        ],
+        "execution_bundle_id": [
+          "zone_study_offline_v1",
+          "zone_study_offline_v2"
+        ],
+        "registry_sha256": [
+          "f1ff6a49a93124a9ff5a03cd52c9b6a6629783ce43e88a9c29b3e4fb01d89181",
+          "c9bb55567a82eef535e7b296ae69f35d5a08e8372479a56ef14c1ac76f08037c"
+        ]
+      }
+    },
+    "raw": [
+      "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v4",
+      "/Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v5"
+    ],
+    "smoke_json_sha256": [
+      "6914fde48e8332e85ff52fc551b3faa6c1178389e4c7ea141da9c87326d0f1d1",
+      "d61b7e9be534d6024203c574706f4dc315bb5e82a540d5f953adbf15ccb5ad80"
+    ],
+    "trials": [
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          318.3,
+          244.8
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s1_normal_mixed-s601",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          309.1,
+          247.9
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s2_unmapped_blockage-s611",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          317.5,
+          244.0
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s3_late_rendezvous-s621",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          69
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          336.3,
+          258.6
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s4_narrow_door_standoff-s631",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          309.6,
+          248.4
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s5_moved_dropped_item-s641",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          309.1,
+          247.9
+        ],
+        "condition": "leader_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          4,
+          4
+        ],
+        "request_input_identical": false,
+        "run_id": "leader_ko-s6_novel_relation-s651",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          69,
+          69
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          3,
+          3
+        ],
+        "charged_sim_s": [
+          229.8,
+          229.8
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s1_normal_mixed-s601",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          69,
+          69
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          227.7,
+          227.7
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s2_unmapped_blockage-s611",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          69,
+          69
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          234.6,
+          234.6
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s3_late_rendezvous-s621",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          66,
+          66
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          243.6,
+          243.6
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s4_narrow_door_standoff-s631",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          69,
+          69
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          234.3,
+          234.3
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s5_moved_dropped_item-s641",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          69,
+          69
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          227.7,
+          227.7
+        ],
+        "condition": "no_comm",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "no_comm-s6_novel_relation-s651",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          317.4,
+          254.4
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s1_normal_mixed-s601",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          308.4,
+          257.4
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s2_unmapped_blockage-s611",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          316.8,
+          253.8
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s3_late_rendezvous-s621",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          335.4,
+          268.8
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s4_narrow_door_standoff-s631",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          308.7,
+          257.7
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s5_moved_dropped_item-s641",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          308.4,
+          257.4
+        ],
+        "condition": "peer_ko",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "peer_ko-s6_novel_relation-s651",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          23,
+          23
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          78.2,
+          78.2
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s1_normal_mixed-s601",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          23,
+          23
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          75.9,
+          75.9
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s2_unmapped_blockage-s611",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          23,
+          23
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          78.2,
+          78.2
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s3_late_rendezvous-s621",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          22,
+          22
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          81.3,
+          81.3
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s4_narrow_door_standoff-s631",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          23,
+          23
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          78.2,
+          78.2
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s5_moved_dropped_item-s641",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          23,
+          23
+        ],
+        "calls_identical_apart_from_provenance": true,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          75.9,
+          75.9
+        ],
+        "condition": "reference_R",
+        "end_reason": [
+          "sim_horizon",
+          "sim_horizon"
+        ],
+        "messages": [
+          0,
+          0
+        ],
+        "request_input_identical": true,
+        "run_id": "reference_R-s6_novel_relation-s651",
+        "trace_identical": true,
+        "trial_record_fields_that_differ": [
+          "calls",
+          "provenance"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          324.6,
+          259.8
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s1_normal_mixed-s601",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          308.4,
+          257.4
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s2_unmapped_blockage-s611",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          317.4,
+          254.4
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s3_late_rendezvous-s621",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          72
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          343.2,
+          274.8
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s4_narrow_door_standoff-s631",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          3
+        ],
+        "charged_sim_s": [
+          316.8,
+          253.8
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s5_moved_dropped_item-s641",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      },
+      {
+        "calls": [
+          90,
+          75
+        ],
+        "calls_identical_apart_from_provenance": false,
+        "censored_calls": [
+          0,
+          0
+        ],
+        "charged_sim_s": [
+          308.4,
+          257.4
+        ],
+        "condition": "structured",
+        "end_reason": [
+          "budget_exhausted",
+          "sim_horizon"
+        ],
+        "messages": [
+          3,
+          3
+        ],
+        "request_input_identical": false,
+        "run_id": "structured-s6_novel_relation-s651",
+        "trace_identical": false,
+        "trial_record_fields_that_differ": [
+          "actions",
+          "budget",
+          "calls",
+          "end_reason",
+          "idle",
+          "model",
+          "provenance",
+          "request_archive"
+        ]
+      }
+    ]
+  }
+}

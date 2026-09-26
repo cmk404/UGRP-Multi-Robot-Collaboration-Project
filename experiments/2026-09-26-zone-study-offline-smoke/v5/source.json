@@ -1,0 +1,70 @@
+{
+  "agent_lock": "잡지 않음(물리·학습·wall 시간 비교 없음)",
+  "branch": "kiro/zone-study-core",
+  "code_sha": "8ab8f7edbc78e7cb27985dfe81dde092823e01b1",
+  "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/ugrp_session.py run kiro-zone-study-smoke-v5 -- /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/run_zone_study_offline_smoke.py --output /Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v5",
+  "driver": "scripts/run_zone_study_offline_smoke.py",
+  "exit_code": 0,
+  "head_at_start": "8ab8f7edbc78e7cb27985dfe81dde092823e01b1 dirty=0",
+  "load_average": {
+    "after": [
+      3.16,
+      3.7,
+      4.39
+    ],
+    "at_run_start": [
+      3.98,
+      3.92,
+      4.5
+    ],
+    "before": [
+      4.12,
+      3.9,
+      4.56
+    ],
+    "note_ko": "가짜 SIM 시계만 쓰므로 결과는 wall 시간과 무관하다."
+  },
+  "loop": "harness/zone_study_offline.py",
+  "machine_sim_cap": {
+    "cap": 6,
+    "literal_grep_before": 8,
+    "note_ko": "지정 grep 8개 = 다른 작업의 TensorBoard 뷰어 1(PID 9291), 실행 중인 kiro-cli 에이전트 6(프롬프트 문자열에 run_ 포함), 다른 작업의 평가 1(eval_topcam.py). 실제 시뮬·평가 프로세스는 1개라 상한(6) 아래에서 시작했다.",
+    "own_processes": 1,
+    "sim_eval_processes_before": 1
+  },
+  "model_calls": 0,
+  "physics_steps": 0,
+  "previous_version": {
+    "code_sha": "c21a6fe9ddd33203aff4e34a0577e0d8adb95334",
+    "record": "experiments/2026-09-26-zone-study-offline-smoke/v4"
+  },
+  "record_version": "v5",
+  "report_run": {
+    "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=. /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/ugrp_session.py run kiro-zone-study-report-v5 -- /Users/changmin/projects/ugrp/.venv-sim-worker-mac/bin/python scripts/zone_study_report.py /Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v5/trial_records --output /Users/changmin/projects/ugrp/outputs/zone-study-offline-smoke-v5-report --tb-events /Users/changmin/projects/ugrp/outputs/tensorboard/0926-zone-study-offline-smoke-v5",
+    "exit_code": 0,
+    "load_average": {
+      "after": [
+        2.34,
+        3.37,
+        4.22
+      ],
+      "before": [
+        2.32,
+        3.4,
+        4.24
+      ]
+    },
+    "wall_clock": {
+      "end": "2026-09-26T21:14:25+0900",
+      "start": "2026-09-26T21:14:18+0900"
+    }
+  },
+  "review": "codex-194-r6 (Codex sixth review of PR 194) + integration PR #229 findings on issue #222",
+  "session_status_after": "stopped (python3 scripts/ugrp_session.py status kiro-zone-study-smoke-v5)",
+  "wall_clock": {
+    "end": "2026-09-26T21:12:52+0900",
+    "start": "2026-09-26T21:11:10+0900"
+  },
+  "why_new_version_ko": "재질문 타이머 규칙(로봇당 대기 1개)이 채널 3조건의 SIM trace·호출 수·종료 이유를 바꾼다. 실행 번들 ID(zone_study_offline_v2)·계약 버전(v2)·registry 해시도 바뀌었다. v4를 덮어쓰지 않고 새 버전으로 남긴다.",
+  "worktree": "/Users/changmin/projects/ugrp-wt/kiro-study-core (HEAD 8ab8f7ed, clean: git status --porcelain 0 lines)"
+}
