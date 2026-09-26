@@ -1,10 +1,35 @@
 # UGRP 연구 TODO — 통신 효과 중심
 
-작성: 2026-09-22. 기준 main: `120cc821b6a1d5c104aab8c8ef2260cf7f8c9a7b`.
-이 문서는 앞으로의 연구 우선순위와 완료 기준이다. 체크박스는 아래 기준의 검증이 남았다는 뜻이며, 관련 코드가 전혀 없다는 뜻은 아니다. 이번 작성에서는 실험을 새로 실행하지 않았다.
+최초 작성: 2026-09-22. **2026-09-26 개정:** §0 로드맵과 이슈 연결을 추가했다. §1 이하는 연구 방법의 원칙으로 유지한다. 단, 9/22의 A/B/C 조건 표기는 §0의 조건 4개로 대체한다. 개정 전 판은 git 이력 `6588dafc`에 있다.
 
-첫 구현 배치의 담당·파일 소유권·의존 관계는 [병렬 작업 배정](research_parallel_work.md)을 따른다.
-1차 PR 이후 실제 스킬·비동기 판단·재협상·통합 runner의 후속 배치는 [2차 고급 연구 작업](research_advanced_work.md)을 따른다.
+## 0. 현재 로드맵 (2026-09-26)
+
+진행 관리는 GitHub 마일스톤 **"E2E 첫 파일럿"**과 `roadmap` 라벨 이슈로 한다. 모든 PR 본문에 `Refs #이슈`를 적고, 작업이 끝나면 해당 이슈에 결과 댓글을 남긴다. 이슈가 대체되면 이유와 대체 이슈를 적고 닫는다(`superseded` 라벨).
+
+**연구 질문:** 로봇 사이의 한국어 자연어 대화가 다중 로봇 작업 효율에 영향을 주는가.
+- **조건 4개:** 무통신 / 자유 한국어 peer 대화 / 리더 교대(한 로봇이 리더를 겸함, 허브-스포크, seed마다 r1·r2·r3 교대) / 정형 메시지. 모든 것을 보는 지휘자(R)는 참고용 상한이다.
+- **로봇 LLM 입력:** 자기 팔 끝 RGB, 정적 지도, 주문서, 자기 명령 이력. TOP 카메라는 평가 전용이다. 대화·생각 시간은 SIM 시간 비용으로 계산한다.
+- **최종 환경:** walls_v3(0.40 m), **AprilTag 0개**. 문·문기둥·벽 모서리를 비전으로 인식해 위치를 추정한다. cargo_noslip_v1 사용, weld OFF. 짝 상태 채널은 모든 조건에 넣는다.
+
+| 단계 | 이슈 | 관련 PR | 상태 (9/26) |
+|---|---|---|---|
+| 1 표식 없는 비전 위치 추정 | [#216](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/216) | #210, VIS2 | 진행 중. **가장 큰 위험** |
+| 2 로봇별 관측 기억 (표식 무관) | [#217](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/217) | #211 | 표식 무관 방식으로 재작업 중 |
+| 3 최종 환경 고정 | [#218](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/218) | #208 | 벽 완료, 표식 0개 버전 확정 필요 |
+| 4 자기 카메라 기술 재검증 (M1·M2) | [#219](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/219) | #201, #203, #205 | 옛 환경 결과만 있음 |
+| 5 인식 잔여 오류 | [#220](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/220) | #193 | v3.1, 그림자·가림 오류 남음 |
+| 6 실행기 보완·3대 no-LLM 스모크 | [#221](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/221) | #206 | 1차 3/6, 수정 대기 |
+| 7 대화 연구 뼈대·실제 LLM adapter | [#222](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/222) | #184–#190, #194 | 1건 수정 중 |
+| 8 통합·조건 연결·host 교란 제거 | [#223](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/223) | – | 미착수 |
+| 9 스모크 → LLM 파일럿 → 본 실험 | [#224](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/224) | – | 미착수 |
+| 지원: 교사 실행기 (시연 전용) | [#225](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/225) | #207 | 진행 중 |
+| 운영: 디스크·속도·기록 | [#226](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/226), [#3](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/3), [#6](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/6) | #191, #192, #195, #199, #209, #212 | 진행 중 |
+| 후속: 도메인 랜덤화 | [#213](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/213) | – | VIS2 1차 결과 뒤 |
+| 후속: sim2real | [#214](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/214) | – | 연구 뒤, 사용자 확인 필요 |
+
+**사용자 결정이 필요한 것:** 실제 LLM 파일럿의 모델과 비용 한도(#222), sim2real의 로봇 대수·경기장·천장 카메라(#214).
+
+2026-09-26 이슈 정리로 닫은 옛 이슈: #1, #2, #21, #26, #29, #30, #35, #37, #39, #49, #50, #51, #116, #117. 각 이슈에 대체 이유를 댓글로 남겼다.
 
 ## 1. 연구 목표와 판단 기준
 
@@ -159,13 +184,11 @@ R1의 감사와 R2의 실행기 점검은 함께 진행할 수 있다. S1–S3 �
 - [ ] 단독 기본 동작→두 로봇 공동 동작→제한된 협업/통신 비교 순으로 진행한다. 실물 결과는 별도 조건표·로그·영상으로 보고한다.
 - [ ] 2026-09-26 sim2real 계획([#214](https://github.com/cmkang131/UGRP-Multi-Robot-Collaboration-Project/issues/214)): 시뮬과 비슷한 실물 경기장(벽 0.40 m, 표식 없음)을 만들고 실측한 정적 지도를 같은 형식으로 준다. H0 조기 확인으로 벽·문 모형 앞 실물 카메라 사진에서 비전 위치 추정을 미리 점검한다. 이어서 1대 배달→문 통과→2대 공동 운반→조건 4개 소규모 파일럿 순으로 진행한다. 로봇 대수, 경기장 공간·재료, 천장 평가 카메라는 사용자 확인이 필요하다.
 
-## 6. 바로 착수할 세 가지
+## 6. 바로 착수할 일
 
-1. **R0/R1:** 현재 RGB 실행 경로 기준으로 A/B/C 입력·메시지·동기화 표를 쓰고, 옛 CoELA와의 차이 및 새 adapter 경계를 고정한다.
-2. **R2/R3:** 지원되는 작은 임무 하나에서 공통 운동 스킬을 세 독립 에이전트에 연결하고 무통신·정형·자연어 전환 검사를 한다.
-3. **R4:** 동일 조건의 6회 연결 파일럿으로 실제 협상/실행·실패·비용 로그를 회수한다. 성공 여부와 별개로 측정 가능한 설계인지 판단하고 본실험 크기를 정한다.
+2026-09-26부터는 §0 로드맵과 마일스톤 이슈를 따른다. 9/22에 적은 "바로 착수할 세 가지"(A/B/C 표, CoELA 연결, 6회 파일럿)는 로드맵 7·8·9단계로 흡수됐다.
 
-새 작업은 관련 TODO ID, 연구 질문과의 연결, 종료 조건, 필요한 원본을 첫 기록에 적는다. 첫 단계 완료 증거가 없으면 모델·맵·학습량 확대보다 해당 경계부터 해결한다.
+새 작업은 관련 이슈 번호, 연구 질문과의 연결, 종료 조건, 필요한 원본을 첫 기록에 적는다.
 
 ## 7. 구현·검증 진입점
 
@@ -177,6 +200,6 @@ R1의 감사와 R2의 실행기 점검은 함께 진행할 수 있다. S1–S3 �
 | 맵·시나리오 | [맵/ACT 보조 계획](act_map_generalization_plan.md), [다중 물건 실행](multi_object_execution.md), [지도 목록](../maps/README.md) |
 | 운영·증거 | [개발·검증](../CONTRIBUTING.md), [Colab CLI](colab_simulation.md), [Kaggle CLI](kaggle_simulation.md), [실험 인덱스](../experiments/README.md), [TensorBoard](tensorboard.md) |
 
-기존 테스트가 CI 기본 목록에 포함되는지도 함께 확인한다. 테스트 존재·과거 통과·현재 통합 검증을 같은 상태로 세지 않는다. 관련 기존 작업은 [#39 공동 운반](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/39), [#49 예약·양보](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/49), [#50 상위 계획 연결](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/50), [#51 통합 비교](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/51)다. 각 이슈의 구현 효과와 본 문서의 통신 효과 비교를 구분한다.
+기존 테스트가 CI 기본 목록에 포함되는지도 함께 확인한다. 테스트 존재·과거 통과·현재 통합 검증을 같은 상태로 세지 않는다. (2026-09-26: 아래 #39·#49·#50·#51은 로드맵 이슈로 대체되어 닫혔다.) 관련 기존 작업은 [#39 공동 운반](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/39), [#49 예약·양보](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/49), [#50 상위 계획 연결](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/50), [#51 통합 비교](https://github.com/cmk404/UGRP-Multi-Robot-Collaboration-Project/issues/51)다. 각 이슈의 구현 효과와 본 문서의 통신 효과 비교를 구분한다.
 
-실행 환경은 최신 프로젝트 지침을 따른다. 기본 무거운 실행은 Colab CLI, 허용된 Kaggle 작업은 유한한 배치로 한다. 다른 작업에서 기록된 특정 Mac 실행 허용을 이 TODO 전체에 확대하지 않는다. 결과·참고 자료는 로컬 프로젝트에 보존하고 UGRP에서는 Drive를 사용하지 않는다.
+실행 환경은 최신 프로젝트 지침(AGENTS.md)을 따른다. 기본 경로는 로컬 CLI와 MuJoCo이고, Colab/Kaggle은 명시적으로 선택하는 유한 배치 경로다. 다른 작업에서 기록된 특정 Mac 실행 허용을 이 TODO 전체에 확대하지 않는다. 결과·참고 자료는 로컬 프로젝트에 보존하고 UGRP에서는 Drive를 사용하지 않는다.
