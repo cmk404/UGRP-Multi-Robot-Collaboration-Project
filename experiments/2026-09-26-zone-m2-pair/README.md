@@ -264,3 +264,31 @@ M2에서 새로 쓴 코드는 다음 세 가지다.
 - **팔:** ON 6 + OFF 6. `--stage door --approach v2 --door-version v2 --on-failure continue`, `fullframe_v3`, `cargo_noslip_v1`, weld OFF.
 - **관문:** 2단계와 같은 M2-D1(≥ 4/6), D2, D3(≥ 5/6), D4. 팔별로 판정한다.
 - **중단 규칙·실행 조건:** 1단계와 같다. 동결 detached worktree, 스레드 1개, SIM 최대 2개, 부하 기록.
+
+## 2b단계 결과 (동결 ed15489, detached worktree `zone-m2-pair-s2b-frozen`) — **미완료 코호트**
+
+사용자 결정으로 M2가 Kiro에 인계되어 코호트를 중간에 멈췄다. 결과는 `results-stage2b-ed15489.json`(`build_results.py stage2b stage2b-ed15489 --allow-incomplete`, SHA-256 `788ba6fa…ffb`)에 있다.
+
+| seed | ON | OFF | 최종 오차 (m) |
+|---|---|---|---|
+| 821 | 성공 | 성공 | 0.154 |
+| 822 | 성공 | 성공 | 0.119 |
+| 823 | 성공 | 성공 | 0.089 |
+| 824 | 실패: r2 `LOAD_NOT_HELD_AFTER_LIFT`, r1 `PARTNER_ABORT` | 실패: r2 `LOAD_NOT_HELD_AFTER_LIFT`, r1 `BARRIER_CARRY_TIMEOUT` | 0.793 |
+| 825 | 누락 (실행 도중 정지) | 누락 (실행 도중 정지) | — |
+| 826 | 누락 (실행 안 함) | 누락 (실행 안 함) | — |
+
+- **관문:**
+  - M2-D1(≥ 4/6): 완료분 3/4이고 남은 2개가 결과를 바꿀 수 있어 **판정 불가**.
+  - D2(벽 접촉 없음): 완료분에서 **통과**.
+  - D3(≥ 5/6 도착): 완료분 4/4 도착, 나머지 누락으로 **판정 불가**.
+  - D4: 완료분에서 **통과**.
+- **비용(완료분 평균):**
+  - ON: SIM 245.1 s, 명령 2495.8.
+  - OFF: SIM 248.9 s, 명령 2495.8.
+  - 부하 평균은 `cohort.log`에 있다(4.5–7.5, 다른 에이전트 `kiro-cli` 부하 포함).
+- **2단계(fa682a6, 1/6)와 비교:** 같은 seed가 아니므로 직접 비교는 아니다. 다만 문 v2가 2단계의 네 가지 실패 원인(격벽 동쪽 파지 시야 거짓 음성, 접근 경로 교차 충돌, 사전 파지 sweep 표준편차, 체크포인트 재정렬)을 dev와 이 완료분에서 재현 없이 넘겼다.
+- **824:** 들기 직후 r2가 빔을 놓쳤다(`LOAD_NOT_HELD_AFTER_LIFT`). 파지 위치·접촉 원인은 **분석하지 않았다.** 상대 r1의 반응은 조건에 따라 달랐다. ON은 상태 채널로 곧바로 abort했고, OFF는 운반 장벽 시간 초과로 끝났다. 3단계 관찰과 같은 방향이다.
+- **정지 경위 정정:** 인계 지시에 따라 코호트 루프(PID 44061)만 멈추려 했다. 그러나 `ugrp_session`은 주 자식이 끝나면 그룹 전체를 정지시키므로, 실행 중이던 825 ON/OFF SIM도 함께 멈췄다. 이 때문에 825에는 `result.json`이 없고 826은 시작하지 않았다. `cohort.log` 12:12:22 줄은 825가 계속 도는 것처럼 읽히는데, 이는 잘못이다. 정정 줄을 같은 로그 끝에 덧붙였고, 원래 줄은 보존했다.
+- **TensorBoard:** snapshot `0926-zone-m2-pair-stage2b-incomplete`(13 run: test 8 + dev 5, `collection.json` SHA-256 `9646bc2d…155`), view key `zone_m2_pair_stage2b_20260926`. 공용 서버(PID 9291)에서 run 13개와 824 ON `reported_success=0`, 821 OFF `sim_s=252.3` 값을 확인했다.
+- **원본:** `outputs/zone-m2-pair-20260926/stage2b-ed15489/`(로컬, gitignore. 원격 백업 아님).

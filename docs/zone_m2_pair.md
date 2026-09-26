@@ -10,7 +10,7 @@ workflow `zone-m2-pair` → `scripts/run_m2_pair.py`. 실험 기록: [experiment
 | 정적 태그 지도 `zone_wide_door_tags_v2`, loop-v2 위치 추정 보정(#201 e10f88d) | 손가락 접촉 힘, 빔 높이·기울기 |
 | 개략 주문서: 빔 자세를 0.10 m / 10° 격자로 반올림한 값, 역할, 운반 구간·속도 | 빔 설정 자세 자체 |
 | 승인된 쌍 장벽 `PairCarrySync`(자기 frame id) | 상대 로봇의 위치 |
-| (플래그) 후보 상태 채널 `--status-channel on` — 사용자 결정 대기 | |
+| 쌍 실행기 상태 채널 `--status-channel on`(aligning/ready/lift/carry/put_down/abort) — 2026-09-26 사용자 결정으로 **모든 조건(no_comm 포함)에 포함**, 작업·계획 내용 금지 | |
 
 ## 단계(로봇마다)
 
@@ -27,7 +27,7 @@ workflow `zone-m2-pair` → `scripts/run_m2_pair.py`. 실험 기록: [experiment
 ```bash
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 MKL_NUM_THREADS=1
 python3 scripts/ugrp_session.py run m2 -- .venv-sim/bin/python scripts/run_m2_pair.py \
-  --seed 701 --status-channel off --output outputs/zone-m2-pair/<run>
+  --seed 701 --status-channel on --output outputs/zone-m2-pair/<run>
 ```
 
-weld OFF. `cargo_noslip_v1`이 주 프로필이며 사용자 결정을 기다린다.
+weld OFF. `cargo_noslip_v1`은 2026-09-26 사용자 결정으로 연구 전체 접촉 프로필로 승인됐다. 상태 채널도 같은 결정으로 모든 조건에 들어가므로 앞으로 기본은 `--status-channel on`이고, `off`는 진단·비교용이다(현 러너는 `--status-channel`을 필수 인자로 받으며 help 문구의 "pending user decision"은 아직 고치지 않았다).
