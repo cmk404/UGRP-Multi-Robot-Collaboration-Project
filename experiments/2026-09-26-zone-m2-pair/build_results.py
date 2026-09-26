@@ -6,7 +6,10 @@ Usage:
   python experiments/2026-09-26-zone-m2-pair/build_results.py stage1 <cohort-dir> [--tensorboard <snapshot>]
   python experiments/2026-09-26-zone-m2-pair/build_results.py stage3 <cohort-dir> [--tensorboard <snapshot>]
   python experiments/2026-09-26-zone-m2-pair/build_results.py stage2 <cohort-dir> [--tensorboard <snapshot>]
+  python experiments/2026-09-26-zone-m2-pair/build_results.py stage2c <cohort-dir> --raw <root> [--tensorboard <snapshot>]
+  python experiments/2026-09-26-zone-m2-pair/build_results.py stage2b-completion <cohort-dir> --raw <root>
 Dev runs (``dev*`` folders under the raw root) are added to the TensorBoard view labelled dev.
+``--raw`` (Kiro, door v3): raw root other than Claude's outputs/zone-m2-pair-20260926 (never written by Kiro).
 """
 from __future__ import annotations
 
@@ -20,8 +23,13 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RAW = Path('/Users/changmin/projects/ugrp/outputs/zone-m2-pair-20260926')
 TB = Path('/Users/changmin/projects/ugrp/outputs/tensorboard')
-STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': tuple(range(811, 817)), 'stage2b': tuple(range(821, 827))}
+STAGES = {'stage1': tuple(range(711, 719)), 'stage3': tuple(range(721, 725)), 'stage2': tuple(range(811, 817)), 'stage2b': tuple(range(821, 827)),
+          'stage2c': tuple(range(831, 837)), 'stage2b-completion': (826,)}
 ARMS = ('on', 'off')
+# stage 2c experimenter open-at-lift arm (pre-registered): seed -> (arm, folder suffix)
+STAGE2C_INTERVENTION = {837: 'on-openlift', 838: 'on-openlift'}
+if '--raw' in sys.argv:
+    RAW = Path(sys.argv[sys.argv.index('--raw') + 1])
 
 
 def sha(path):
@@ -59,7 +67,22 @@ def summarise(folder):
             'looks': sum(v['looks'] for v in ap.values()),
             'status_messages': r['status_channel']['messages'],
             'load_average_start': r['load_average_start'], 'load_average_end': r['load_average_end'],
-            'contact_profile': r['contact_profile'], 'weld': r['weld'], 'profile': r['profile']}
+            'contact_profile': r['contact_profile'], 'weld': r['weld'], 'profile': r['profile'],
+            'door_version': r.get('door_version'), 'lift_check': r.get('lift_check'),
+            'open_at_lift_injection': ev.get('open_at_lift_injection'), 'unplanned_drops': ev.get('unplanned_drops'),
+            'makespan_sim_s': ev.get('makespan_sim_s'), 'lift_views': lift_views(folder)}
+
+
+def lift_views(folder):
+    """Every lift_view with the evaluation-only held label (beam z > 0.03 m, both own fingers > 1 N)."""
+    ev = [json.loads(line) for line in (folder / 'events.jsonl').read_text().splitlines()]
+    truth = [json.loads(line) for line in (folder / 'evaluation-only.jsonl').read_text().splitlines()]
+    out = []
+    for e in (e for e in ev if e['event'] == 'lift_view'):
+        gt = min(truth, key=lambda r: abs(r['t'] - e['sim_time_s']))
+        out.append({'robot': e['robot'], 't': e['sim_time_s'], 'seg': e.get('seg'), 'held_iou': e['held_iou'],
+                    'held_gt': bool(gt['beam_xyz'][2] > .03 and min(gt['finger_n'][e['robot']]) > 1.)})
+    return out
 
 
 def gates_stage1(runs):
@@ -146,10 +169,60 @@ def gates_stage2(runs):
     return out
 
 
+def gates_stage2c(runs):
+    """Door v3 (pre-registered in README 2c): D1-D4 as stage 2 per arm, plus L1 (lift sensitivity), L2 (specificity)."""
+    main = [x for x in runs if x['seed'] in STAGES['stage2c']]
+    out = gates_stage2(main)
+    for arm in ARMS:
+        rs = [x for x in main if x['arm'] == arm]
+        fn = [{'seed': x['seed'], **v} for x in rs for v in x['lift_views'] if v['held_gt'] and v['held_iou'] < .45]
+        out[arm]['M2-L1_no_lift_false_negative'] = {'lifts_held_gt': sum(v['held_gt'] for x in rs for v in x['lift_views']),
+                                                    'false_negatives': fn, 'pass': not fn}
+        out[arm]['unplanned_drops'] = {x['seed']: len(x['unplanned_drops'] or []) for x in rs}
+        out[arm]['arrived_both'] = {x['seed']: x['arrived_both'] for x in rs}
+        out[arm]['makespan_sim_s'] = {x['seed']: x['makespan_sim_s'] for x in rs}
+        ok = [x['makespan_sim_s'] for x in rs if x['success_gt'] and x['makespan_sim_s'] is not None]
+        out[arm]['makespan_sim_s_mean_successful'] = round(sum(ok) / len(ok), 1) if ok else None
+    inter = [x for x in runs if x['seed'] in STAGE2C_INTERVENTION]
+    rows = []
+    for x in inter:
+        inj = x['open_at_lift_injection'] or {}
+        fp = x['failure_propagation'] or {}
+        rows.append({'seed': x['seed'], 'injection': inj, 'applied': inj.get('applied_at_s') is not None,
+                     'victim_detected_at_lift': bool(inj.get('victim_failed_at_intervened_lift')),
+                     'partner_failure': fp.get('partner_failure'), 'partner_latency_s': fp.get('partner_terminal_latency_s'),
+                     'partner_motion_commands_after': fp.get('partner_motion_commands_after')})
+    applied = [r for r in rows if r['applied']]
+    out['intervention'] = {'runs': rows, 'measurable': f'{len(applied)}/{len(STAGE2C_INTERVENTION)}',
+                           'M2-L2_specificity': {'pass': len(applied) == len(STAGE2C_INTERVENTION) and
+                                                 all(r['victim_detected_at_lift'] for r in applied)},
+                           'M2-L3_partner_abort_on': {'pass': len(applied) == len(STAGE2C_INTERVENTION) and all(
+                               r['partner_failure'] == 'PARTNER_ABORT' and r['partner_latency_s'] is not None
+                               and r['partner_latency_s'] <= .5 for r in applied)}}
+    return out
+
+
+def gates_completion(runs):
+    return {'runs': {f"{x['seed']}-{x['arm']}": {'success_gt': x['success_gt'], 'failures': x['failures'],
+                                                 'arrived_both': x['arrived_both'], 'final_error_m': x['final_error_m'],
+                                                 'wall_contacts': x['robot_wall_contact_samples'] + (x['beam_wall_contact_samples'] or 0),
+                                                 'robot_robot_contact_samples': x['robot_robot_contact_samples'],
+                                                 'makespan_sim_s': x['makespan_sim_s'], 'sim_seconds': x['sim_seconds'],
+                                                 'commands': x['commands'], 'source_sha': x['source_sha'],
+                                                 'dirty_source': x['dirty_source']} for x in runs}}
+
+
 def collect(stage, cohort):
     runs, missing = [], []
     for seed in STAGES[stage]:
         for arm in ARMS:
+            folder = RAW / cohort / f's{seed}-{arm}'
+            if (folder / 'result.json').exists():
+                runs.append(summarise(folder))
+            else:
+                missing.append({'seed': seed, 'arm': arm, 'status': 'missing/infrastructure_failure'})
+    if stage == 'stage2c':
+        for seed, arm in STAGE2C_INTERVENTION.items():
             folder = RAW / cohort / f's{seed}-{arm}'
             if (folder / 'result.json').exists():
                 runs.append(summarise(folder))
@@ -164,7 +237,8 @@ def main():
     if missing and '--allow-incomplete' not in sys.argv:
         raise SystemExit(f'pre-registered runs missing {missing}; the cohort report is blocked')
     log = RAW / cohort / 'cohort.log'
-    gates = {'stage1': gates_stage1, 'stage2': gates_stage2, 'stage2b': gates_stage2, 'stage3': gates_stage3}[stage](runs)
+    gates = {'stage1': gates_stage1, 'stage2': gates_stage2, 'stage2b': gates_stage2, 'stage3': gates_stage3,
+             'stage2c': gates_stage2c, 'stage2b-completion': gates_completion}[stage](runs)
     dev = [summarise(p.parent) for p in sorted(RAW.glob('dev*/result.json'))]
     out = {'experiment_id': '2026-09-26-zone-m2-pair', 'stage': stage, 'cohort': cohort,
            'raw_root_local_only': str(RAW), 'raw_note': 'raw outputs are local (gitignored); not a remote backup',
@@ -172,6 +246,10 @@ def main():
            'runs': runs, 'missing': missing, 'report_blocked': bool(missing), 'gates': gates,
            'development_runs': [{k: d[k] for k in ('raw_dir', 'result_sha256', 'seed', 'stage', 'arm', 'source_sha',
                                                   'dirty_source', 'success_gt', 'final_error_m', 'failures')} for d in dev]}
+    if stage == 'stage2c':
+        out['development_runs'] = [dict(d, door_version=x['door_version'], open_at_lift_injection=x['open_at_lift_injection'],
+                                        lift_views=x['lift_views'], makespan_sim_s=x['makespan_sim_s'])
+                                   for d, x in zip(out['development_runs'], dev)]
     (HERE / f'results-{cohort}.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')
     print(json.dumps(gates, ensure_ascii=False))
     if '--tensorboard' in sys.argv:
@@ -185,6 +263,9 @@ def tensorboard(runs, dev, stage, cohort, snapshot):
                                                    and (d['drop_injection'] is not None) == (stage == 'stage3')]:
         name = (f"m2{x['stage'][0]}{'' if label == 'test' else 'dev'}-{x['arm']}-s{x['seed']}"
                 + ('-drop' if x['drop_injection'] else ''))
+        if stage == 'stage2c':
+            name = (f"m2c{'' if label == 'test' else 'dev'}-{x['door_version'] or 'v?'}-{x['arm']}-s{x['seed']}"
+                    + ('-openlift' if x['open_at_lift_injection'] else ''))
         derived = {'derived_view_only': True, 'derived_from': x['raw_dir'], 'source_result_sha256': x['result_sha256'],
                    'success': bool(x['success_gt']),
                    'success_definition': ('GT evaluation only: both done, lifted > 0.06 m, released on floor, '
@@ -192,10 +273,18 @@ def tensorboard(runs, dev, stage, cohort, snapshot):
                                              else 'final error <= 0.10 m') + '; NO GT at runtime'),
                    'mode': 'test' if label == 'test' else 'development',
                    'policy': x['profile'], 'scope': f"M2 pair long_beam, {x['stage']}, no runtime GT",
-                   'case': f"{x['stage']} status_channel={x['arm']} (candidate){' drop_test' if x['drop_injection'] else ''}",
+                   'case': (f"{x['stage']} door {x['door_version']} status_channel={x['arm']}"
+                            + (' (approved infrastructure)' if x['arm'] == 'on' else ' (barrier-only diagnostic)')
+                            + (' open_at_lift_intervention' if x['open_at_lift_injection'] else '')
+                            if stage == 'stage2c' else
+                            f"{x['stage']} status_channel={x['arm']} (candidate){' drop_test' if x['drop_injection'] else ''}"),
                    'config': {'contact_profile': x['contact_profile'], 'status_channel': x['arm'],
                               'on_failure': x['on_failure'], 'stage': x['stage'], 'weld': x['weld'],
-                              'drop_injection': bool(x['drop_injection'])},
+                              'drop_injection': bool(x['drop_injection']),
+                              **({'door_version': x['door_version'], 'lift_check': x['lift_check'],
+                                  'open_at_lift': bool(x['open_at_lift_injection'])} if stage == 'stage2c' else {})},
+                   **({'makespan_sim_s': x['makespan_sim_s'], 'unplanned_drops': len(x['unplanned_drops'] or []),
+                       'arrived_both': int(x['arrived_both'])} if stage == 'stage2c' else {}),
                    'stop_reason': json.dumps(x['failures']),
                    'sim_s': x['sim_seconds'], 'wall_s': x['wall_seconds'], 'commands': x['commands'],
                    'model_calls': 0,
@@ -208,7 +297,9 @@ def tensorboard(runs, dev, stage, cohort, snapshot):
                    'seed': x['seed'], 'source_sha': x['source_sha']}
         (view / name).mkdir(parents=True, exist_ok=True)
         (view / name / 'result.json').write_text(json.dumps(derived, indent=1, default=str) + '\n')
-        names[name] = f"{x['stage']} {label} status_channel={x['arm']} (candidate, pending user decision)"
+        names[name] = (f"2c door {x['door_version']} {label} status_channel={x['arm']}"
+                       + (' +open-at-lift' if x['open_at_lift_injection'] else '') if stage == 'stage2c' else
+                       f"{x['stage']} {label} status_channel={x['arm']} (candidate, pending user decision)")
     target = TB / snapshot
     if target.exists():
         raise SystemExit(f'{target} exists; snapshots are never overwritten')
