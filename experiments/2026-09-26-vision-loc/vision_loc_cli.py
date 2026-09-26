@@ -73,6 +73,27 @@ def load_json(path):
     return json.loads(Path(path).read_text()) if path else {}
 
 
+def require_frozen(episodes, *, checkpoint=None, config=None, calibration=None):
+    """Test episodes only with the pre-registered student: prereg.json present and every frozen hash unchanged."""
+    if not any(split_of(e) == 'test' for e in episodes):
+        return None
+    path = HERE/'prereg.json'
+    if not path.exists():
+        raise SystemExit('test refused: no prereg.json (register the gate and the frozen student first)')
+    pre = json.loads(path.read_text())
+    st = pre['student']
+    bad = [f for f, h in st['frozen_files_sha256'].items() if sha_file(HERE/f) != h]
+    if checkpoint is not None and sha_file(checkpoint) != st['model']['sha256']:
+        bad.append('checkpoint')
+    if config is not None and sha_file(config) != st['config']['sha256']:
+        bad.append('config')
+    if calibration is not None and sha_file(calibration) != st['calibration']['sha256']:
+        bad.append('calibration')
+    if bad:
+        raise SystemExit(f'test refused: differs from prereg.json: {bad}')
+    return {'prereg_sha256': sha_file(path)}
+
+
 # ----------------------------------------------------------------------------- calibrate (TRAIN, GT offline)
 class OwnState:
     """Own servo pulses, own load state and own servo-command time from own commands."""
@@ -318,6 +339,7 @@ def load_obs(path: Path) -> tuple[dict, dict]:
 
 def segment(args):
     import seg_model
+    require_frozen(args.episodes, checkpoint=args.checkpoint, config=args.config)
     seg = seg_model.Segmenter(Path(args.checkpoint), args.device)
     obs_params = {**vl.DEFAULT_OBS, **load_json(args.config).get('obs', {})}
     cols = vl.column_positions(int(obs_params['columns']), int(obs_params['strip_half_px']))
@@ -424,6 +446,9 @@ class Sink:
 
 
 def localize(args):
+    frozen = require_frozen(args.episodes, config=args.config, calibration=args.calibration)
+    if frozen and args.motion:
+        raise SystemExit('test refused: the registered student uses the M1 motion model')
     m1 = mp.load_m1_localizer()
     m1_cal, m1_prov = mp.load_m1_calibration()
     params = m1_cal['params']
@@ -555,6 +580,7 @@ def false_detections(vis: vl.ColumnObs, orc: vl.ColumnObs, tol_px: float) -> dic
 
 
 def score(args):
+    require_frozen(args.episodes)
     est_dir = Path(args.estimates)
     report = {'schema': 'ugrp.vision_loc.metrics.v1', 'episodes': {}, 'pooled': {}, 'false_detections': {}}
     pooled: dict = {}
